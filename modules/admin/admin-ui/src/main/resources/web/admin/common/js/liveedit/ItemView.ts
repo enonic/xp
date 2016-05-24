@@ -279,7 +279,7 @@ module api.liveedit {
         }
 
         highlight() {
-            Highlighter.get().setMode(HighlighterMode.CROSSHAIR).highlightItemView(this);
+            Highlighter.get().highlightItemView(this);
             if (this.isSelected()) {
                 // Remove selected hilighter to see the hover hilight
                 this.unhighlightSelected();

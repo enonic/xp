@@ -17,7 +17,6 @@ import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 
 import Mask = api.ui.mask.Mask;
 import Highlighter = api.liveedit.Highlighter;
-import HighlighterType = api.liveedit.HighlighterMode;
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -644,7 +643,7 @@ export class PageComponentsView extends api.dom.DivEl {
             if (hoveredNode) {
                 var data = hoveredNode.getData();
                 if (data.getType().isComponentType() && !api.BrowserHelper.isMobile()) {
-                    Highlighter.get().setMode(HighlighterType.RECTANGLE).highlightElement(dimensions,
+                    Highlighter.get().highlightElement(dimensions,
                         data.getType().getConfig().getHighlighterStyle());
                 }
                 if (api.BrowserHelper.isIOS()) {

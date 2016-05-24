@@ -40,7 +40,7 @@ module api.liveedit {
 
         public static get(): Highlighter {
             if (!Highlighter.INSTANCE) {
-                Highlighter.INSTANCE = new Highlighter(HighlighterMode.CROSSHAIR);
+                Highlighter.INSTANCE = new Highlighter();
             }
             return Highlighter.INSTANCE;
         }

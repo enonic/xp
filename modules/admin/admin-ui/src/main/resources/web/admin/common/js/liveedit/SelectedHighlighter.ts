@@ -5,7 +5,7 @@ module api.liveedit {
         private static SELECT_INSTANCE: SelectedHighlighter;
 
         constructor() {
-            super();
+            super(HighlighterMode.CROSSHAIR);
         }
 
         public static get(): SelectedHighlighter {
@@ -16,12 +16,12 @@ module api.liveedit {
         }
 
 
-        protected preProcessStyle(style: api.liveedit.HighlighterStyle): api.liveedit.HighlighterStyle {
+        /*        protected preProcessStyle(style: api.liveedit.HighlighterStyle): api.liveedit.HighlighterStyle {
             return {
                 stroke: 'rgba(0, 0, 0, 1)',     //'#4294de',
                 strokeDasharray: '',
                 fill: style.fill
             };
-        }
+         }*/
     }
 }
