@@ -1,8 +1,14 @@
 package com.enonic.xp.portal.impl.macro;
 
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.macro.MacroProcessor;
@@ -17,6 +23,13 @@ public final class MacroProcessorScriptFactoryImpl
 {
     private PortalScriptService scriptService;
 
+    private final Map<String, MacroProcessor> macroProcessors;
+
+    public MacroProcessorScriptFactoryImpl()
+    {
+        this.macroProcessors = Maps.newConcurrentMap();
+    }
+
     @Override
     public MacroProcessor fromDir( final ResourceKey dir )
     {
@@ -29,20 +42,7 @@ public final class MacroProcessorScriptFactoryImpl
         if ( isSystem( scriptResourceKey ) )
         {
             final String name = StringUtils.substringBefore( scriptResourceKey.getName(), ".js" );
-            // TODO make resolving dynamic
-            switch ( name )
-            {
-                case "youtube":
-                    return new YoutubeMacroProcessor();
-                case "tweet":
-                    return new TwitterMacroProcessor();
-                case "code":
-                    return new EmbeddedCodeMacroProcessor();
-                case "noformat":
-                    return new NoFormatMacroProcessor();
-                default:
-                    return null;
-            }
+            return this.macroProcessors.get( name );
         }
         else
         {
@@ -62,4 +62,15 @@ public final class MacroProcessorScriptFactoryImpl
         this.scriptService = scriptService;
     }
 
+
+    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
+    public void addMacroProcessor( final BuiltInMacroProcessor value )
+    {
+        this.macroProcessors.put( value.getName(), value );
+    }
+
+    public void removeMacroProcessor( final BuiltInMacroProcessor value )
+    {
+        this.macroProcessors.remove( value.getName() );
+    }
 }

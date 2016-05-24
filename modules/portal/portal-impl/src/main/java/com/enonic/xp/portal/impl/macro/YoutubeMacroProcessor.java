@@ -2,12 +2,17 @@ package com.enonic.xp.portal.impl.macro;
 
 import java.util.regex.Pattern;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.macro.MacroContext;
-import com.enonic.xp.portal.macro.MacroProcessor;
+import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
 
+@Component(immediate = true, service = BuiltInMacroProcessor.class)
 public class YoutubeMacroProcessor
-    implements MacroProcessor
+    implements BuiltInMacroProcessor
 {
 
     private static final String URL_PARAM = "url";
@@ -21,6 +26,18 @@ public class YoutubeMacroProcessor
     private static final Pattern YOUTUBE_URL_PATTERN =
         Pattern.compile( "^(https://|http://)?(www\\.)?(m\\.)?(youtu\\.be/|youtube\\.com/)(.)+" );
 
+    private static final String COMMON_STYLE_ASSET_PATH = "css/macro/youtube/youtube.css";
+
+    private static final String SYSTEM_APPLICATION_KEY = "com.enonic.xp.app.system";
+
+    private PortalUrlService urlService;
+
+    @Override
+    public String getName()
+    {
+        return "youtube";
+    }
+
     @Override
     public PortalResponse process( final MacroContext context )
     {
@@ -28,6 +45,12 @@ public class YoutubeMacroProcessor
         {
             return null;
         }
+
+        final AssetUrlParams assetParams = new AssetUrlParams().portalRequest( context.getRequest() ).
+            application( SYSTEM_APPLICATION_KEY ).
+            path( COMMON_STYLE_ASSET_PATH );
+        final String cssAssetUrl = urlService.assetUrl( assetParams );
+        // TODO use in page contributions
 
         final String html =
             "<iframe src=\"" + convertUrl( context.getParam( URL_PARAM ) ) + "\"" + makeWidthAttr( context ) + makeHeightAttr( context ) +
@@ -102,5 +125,11 @@ public class YoutubeMacroProcessor
     {
         final String result = macroContext.getParam( HEIGHT_PARAM );
         return result != null ? " height=\"" + result + "\"" : "";
+    }
+
+    @Reference
+    public void setPortalUrlService( final PortalUrlService portalUrlService )
+    {
+        this.urlService = portalUrlService;
     }
 }
