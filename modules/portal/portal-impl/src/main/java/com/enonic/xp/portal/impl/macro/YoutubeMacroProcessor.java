@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.macro.MacroContext;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 
@@ -16,10 +17,6 @@ public class YoutubeMacroProcessor
 {
 
     private static final String URL_PARAM = "url";
-
-    private static final String WIDTH_PARAM = "width";
-
-    private static final String HEIGHT_PARAM = "height";
 
     private static final String YOUTUBE_EMBED_URL = "https://www.youtube.com/embed/";
 
@@ -46,17 +43,35 @@ public class YoutubeMacroProcessor
             return null;
         }
 
+        final PortalResponse.Builder response = PortalResponse.create();
+        addBody( response, context );
+        addAssetContribution( response, context );
+        return response.build();
+    }
+
+    private void addBody( final PortalResponse.Builder portalResponse, final MacroContext context )
+    {
+        final String html =
+            "<div class='youtube-video-wrapper'><iframe src='" + convertUrl( context.getParam( URL_PARAM ) ) + "'></iframe></div>";
+        portalResponse.body( html );
+    }
+
+    private void addAssetContribution( final PortalResponse.Builder portalResponse, final MacroContext context )
+    {
+        portalResponse.contribution( HtmlTag.HEAD_BEGIN, makeAssetContribution( getCssAssetUrl( context ) ) );
+    }
+
+    private String getCssAssetUrl( final MacroContext context )
+    {
         final AssetUrlParams assetParams = new AssetUrlParams().portalRequest( context.getRequest() ).
             application( SYSTEM_APPLICATION_KEY ).
             path( COMMON_STYLE_ASSET_PATH );
-        final String cssAssetUrl = urlService.assetUrl( assetParams );
-        // TODO use in page contributions
+        return urlService.assetUrl( assetParams );
+    }
 
-        final String html =
-            "<iframe src=\"" + convertUrl( context.getParam( URL_PARAM ) ) + "\"" + makeWidthAttr( context ) + makeHeightAttr( context ) +
-                "></iframe>";
-
-        return PortalResponse.create().body( html ).build();
+    private String makeAssetContribution( final String cssAssetUrl )
+    {
+        return "<link rel='stylesheet' type='text/css' href='" + cssAssetUrl + "'/>";
     }
 
     private boolean isYoutubeUrl( final String url )
@@ -113,18 +128,6 @@ public class YoutubeMacroProcessor
     private boolean urlPathHasAttributes( final String path )
     {
         return path.contains( "?" );
-    }
-
-    private String makeWidthAttr( final MacroContext macroContext )
-    {
-        final String result = macroContext.getParam( WIDTH_PARAM );
-        return result != null ? " width=\"" + result + "\"" : "";
-    }
-
-    private String makeHeightAttr( final MacroContext macroContext )
-    {
-        final String result = macroContext.getParam( HEIGHT_PARAM );
-        return result != null ? " height=\"" + result + "\"" : "";
     }
 
     @Reference

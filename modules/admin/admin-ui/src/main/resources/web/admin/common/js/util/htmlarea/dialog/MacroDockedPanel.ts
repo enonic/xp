@@ -203,6 +203,10 @@ module api.util.htmlarea.dialog {
 
         private id: string = "macro-preview-frame-id";
 
+        private debouncedResizeHandler: () => void = api.util.AppHelper.debounce(() => {
+            this.adjustFrameHeight();
+        }, 300, false);
+
         constructor(macroPreview: MacroPreview) {
             super("preview-iframe");
             this.setId(this.id);
@@ -221,6 +225,7 @@ module api.util.htmlarea.dialog {
                 doc.write(this.makeContentForPreviewFrame(macroPreview));
                 doc.close();
 
+                this.debouncedResizeHandler();
                 this.adjustFrameHeightOnContentsUpdate();
             });
         }
@@ -228,19 +233,21 @@ module api.util.htmlarea.dialog {
         private adjustFrameHeightOnContentsUpdate() {
             var frameWindow = this.getHTMLElement()["contentWindow"];
             if (!!frameWindow) {
-                var debouncedResizeHandler: () => void = api.util.AppHelper.debounce(() => {
-                    try {
-                        var scrollHeight = frameWindow.document.body.scrollHeight;
-                        this.getEl().setHeightPx(scrollHeight > 150
-                            ? frameWindow.document.body.scrollHeight
-                            : wemjq("#" + this.id).contents().find('body').outerHeight());
-                    } catch (error) {}
-                }, 300, false);
-                var observer = new MutationObserver(debouncedResizeHandler);
+                var observer = new MutationObserver(this.debouncedResizeHandler),
+                    config = {attributes: true, childList: true, characterData: true};
 
-                var config = {attributes: true, childList: true, characterData: true};
                 observer.observe(frameWindow.document.body, config);
             }
+        }
+
+        private adjustFrameHeight() {
+            try {
+                var frameWindow = this.getHTMLElement()["contentWindow"],
+                    scrollHeight = frameWindow.document.body.scrollHeight;
+                this.getEl().setHeightPx(scrollHeight > 150
+                    ? frameWindow.document.body.scrollHeight
+                    : wemjq("#" + this.id).contents().find('body').outerHeight());
+            } catch (error) {}
         }
 
         private makeContentForPreviewFrame(macroPreview: MacroPreview): string {
