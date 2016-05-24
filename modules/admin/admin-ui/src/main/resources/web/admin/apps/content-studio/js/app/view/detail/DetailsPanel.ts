@@ -10,11 +10,9 @@ import Widget = api.content.Widget;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 import {WidgetView} from "./WidgetView";
 import {WidgetsSelectionRow} from "./WidgetsSelectionRow";
-import {VersionsWidgetItemView} from "./VersionsWidgetItemView";
-import {StatusWidgetItemView} from "./StatusWidgetItemView";
-import {PropertiesWidgetItemView} from "./PropertiesWidgetItemView";
-import {AttachmentsWidgetItemView} from "./AttachmentsWidgetItemView";
-import {UserAccessWidgetItemView} from "./UserAccessWidgetItemView";
+import {VersionsWidgetItemView} from "./widget/version/VersionsWidgetItemView";
+import {DependenciesWidgetItemView} from "./widget/dependency/DependenciesWidgetItemView";
+import {InfoWidgetView} from "./widget/info/InfoWidgetView";
 
 export class DetailsPanel extends api.ui.panel.Panel {
 
@@ -42,17 +40,12 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private slideOutFunction: () => void;
 
     private activeWidget: WidgetView;
-    private defaultWidgetView: WidgetView;
+    private defaultWidgetView: InfoWidgetView;
 
     private alreadyFetchedCustomWidgets: boolean;
 
     private versionsWidgetItemView: VersionsWidgetItemView;
-    private statusWidgetItemView: StatusWidgetItemView;
-    private propWidgetItemView: PropertiesWidgetItemView;
-    private attachmentsWidgetItemView: AttachmentsWidgetItemView;
-    private userAccessWidgetItemView: UserAccessWidgetItemView;
-
-    private static DEFAULT_WIDGET_NAME: string = "Info";
+    private dependenciesWidgetItemView: DependenciesWidgetItemView;
 
     public static debug = false;
 
@@ -148,15 +141,17 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     setActiveWidgetWithName(value: string) {
-        if (DetailsPanel.DEFAULT_WIDGET_NAME == value) {
-            this.defaultWidgetView.setActive();
-            return;
-        }
+        var widgetFound = false;
         this.widgetViews.forEach((widgetView: WidgetView) => {
             if (widgetView.getWidgetName() == value && widgetView != this.activeWidget) {
                 widgetView.setActive();
+                widgetFound = true;
             }
         });
+
+        if (!widgetFound) {
+            this.activateDefaultWidget();
+        }
     }
 
     resetActiveWidget() {
@@ -246,7 +241,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
 
         this.updateViewer();
 
-        var defaultPromise = this.updateDefaultWidgetViews();
+        var defaultPromise = this.defaultWidgetView.updateWidgetViews();
         var commonPromise = this.updateCommonWidgetViews();
         var customPromise = this.updateCustomWidgetViews();
 
@@ -257,19 +252,13 @@ export class DetailsPanel extends api.ui.panel.Panel {
         });
     }
 
-    private updateDefaultWidgetViews(): wemQ.Promise<any> {
-        var promises = [];
-        if (this.item) {
-            promises.push(this.statusWidgetItemView.setStatus(this.item.getCompareStatus()));
-            promises.push(this.propWidgetItemView.setContent(this.item.getContentSummary()));
-            promises.push(this.attachmentsWidgetItemView.setContent(this.item.getContentSummary()));
-            promises.push(this.userAccessWidgetItemView.setContentId(this.item.getContentId()));
-        }
-        return wemQ.all(promises);
-    }
-
     private updateCommonWidgetViews(): wemQ.Promise<any> {
-        return this.versionsWidgetItemView.setItem(this.item);
+        var promises = [];
+
+        promises.push(this.versionsWidgetItemView.setItem(this.item));
+        promises.push(this.dependenciesWidgetItemView.setItem(this.item));
+
+        return wemQ.all(promises);
     }
 
     private updateCustomWidgetViews(): wemQ.Promise<any> {
@@ -289,14 +278,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     private initDefaultWidgetView() {
-        this.statusWidgetItemView = new StatusWidgetItemView();
-        this.propWidgetItemView = new PropertiesWidgetItemView();
-        this.attachmentsWidgetItemView = new AttachmentsWidgetItemView();
-        this.userAccessWidgetItemView = new UserAccessWidgetItemView();
-
-        this.defaultWidgetView = WidgetView.create().setName(DetailsPanel.DEFAULT_WIDGET_NAME).setDetailsPanel(this).addWidgetItemView(
-            this.statusWidgetItemView).addWidgetItemView(this.userAccessWidgetItemView).addWidgetItemView(
-            this.propWidgetItemView).addWidgetItemView(this.attachmentsWidgetItemView).build();
+        this.defaultWidgetView = new InfoWidgetView(this);
 
         this.detailsContainer.appendChild(this.defaultWidgetView);
     }
@@ -304,11 +286,17 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private initCommonWidgetViews() {
 
         this.versionsWidgetItemView = new VersionsWidgetItemView();
+        this.dependenciesWidgetItemView = new DependenciesWidgetItemView();
 
-        var versionsWidgetView = WidgetView.create().setName("Version history").setDetailsPanel(this).addWidgetItemView(
-            this.versionsWidgetItemView).build();
+        var versionsWidgetView = WidgetView.create().setName("Version history").setDetailsPanel(this)
+                                    .addWidgetItemView(this.versionsWidgetItemView).build();
 
-        this.addWidgets([versionsWidgetView]);
+        var dependenciesWidgetView = WidgetView.create().setName("Dependencies").setDetailsPanel(this)
+                                    .addWidgetItemView(this.dependenciesWidgetItemView).build();
+
+        dependenciesWidgetView.addClass("dependency-widget");
+
+        this.addWidgets([versionsWidgetView, dependenciesWidgetView]);
     }
 
     private getAndInitCustomWidgetViews(): wemQ.Promise<any> {

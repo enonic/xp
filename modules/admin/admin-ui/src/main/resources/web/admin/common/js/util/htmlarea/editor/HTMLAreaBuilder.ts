@@ -1,17 +1,11 @@
 module api.util.htmlarea.editor {
 
-    import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
-    import AnchorModalDialog = api.util.htmlarea.dialog.AnchorModalDialog;
-    import ImageModalDialog = api.util.htmlarea.dialog.ImageModalDialog;
-    import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
-    import HtmlAreaAnchor = api.util.htmlarea.dialog.HtmlAreaAnchor;
-    import HtmlAreaImage = api.util.htmlarea.dialog.HtmlAreaImage;
-
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 
     export class HTMLAreaBuilder {
 
         private contentId: api.content.ContentId; // used for image dialog
+        private contentPath: api.content.ContentPath; // used for macro dialog
 
         private assetsUri: string;
         private selector: string;
@@ -88,6 +82,11 @@ module api.util.htmlarea.editor {
             return this;
         }
 
+        setContentPath(contentPath: api.content.ContentPath): HTMLAreaBuilder {
+            this.contentPath = contentPath;
+            return this;
+        }
+
         setConvertUrls(convertUrls: boolean): HTMLAreaBuilder {
             this.convertUrls = convertUrls;
             return this;
@@ -115,7 +114,7 @@ module api.util.htmlarea.editor {
                 convert_urls: this.convertUrls,
 
                 toolbar: [
-                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image link unlink | table | code"
+                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image macro link unlink | table | code"
                 ],
 
                 formats: {
@@ -158,7 +157,8 @@ module api.util.htmlarea.editor {
                 external_plugins: {
                     "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
                     "anchor": this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
-                    "image": this.assetsUri + "/common/js/util/htmlarea/plugins/image.js"
+                    "image": this.assetsUri + "/common/js/util/htmlarea/plugins/image.js",
+                    "macro": this.assetsUri + "/common/js/util/htmlarea/plugins/macro.js"
                 },
                 object_resizing: "table",
                 autoresize_min_height: 100,
@@ -168,6 +168,7 @@ module api.util.htmlarea.editor {
                     editor.addCommand("openLinkDialog", this.notifyLinkDialog, this);
                     editor.addCommand("openAnchorDialog", this.notifyAnchorDialog, this);
                     editor.addCommand("openImageDialog", this.notifyImageDialog, this) ;
+                    editor.addCommand("openMacroDialog", this.notifyMacroDialog, this);
                     editor.on('NodeChange', (e) => {
                         if (!!this.onNodeChangeHandler) {
                             this.onNodeChangeHandler(e);
@@ -253,6 +254,15 @@ module api.util.htmlarea.editor {
             let event = CreateHtmlAreaDialogEvent.create().
                 setConfig(config).
                 setType(api.util.htmlarea.dialog.HtmlAreaDialogType.ANCHOR).
+                build();
+            this.publishCreateDialogEvent(event);
+        }
+
+        private notifyMacroDialog(config) {
+            let event = CreateHtmlAreaDialogEvent.create().
+                setConfig(config).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).
+                setContentPath(this.contentPath).
                 build();
             this.publishCreateDialogEvent(event);
         }

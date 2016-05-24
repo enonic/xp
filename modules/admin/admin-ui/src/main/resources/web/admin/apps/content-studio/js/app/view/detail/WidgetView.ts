@@ -188,6 +188,10 @@ export class WidgetView extends api.dom.DivEl {
         return !!this.widget && !!this.widget.getUrl();
     }
 
+    public getDetailsPanel(): DetailsPanel {
+        return this.detailsPanel;
+    }
+
     public static create(): WidgetViewBuilder {
         return new WidgetViewBuilder();
     }
@@ -220,6 +224,11 @@ export class WidgetViewBuilder {
 
     public setWidget(widget: Widget): WidgetViewBuilder {
         this.widget = widget;
+        return this;
+    }
+
+    public setWidgetItemViews(widgetItemViews: WidgetItemView[]): WidgetViewBuilder {
+        this.widgetItemViews = widgetItemViews;
         return this;
     }
 

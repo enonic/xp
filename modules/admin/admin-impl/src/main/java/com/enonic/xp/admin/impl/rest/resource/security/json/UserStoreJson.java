@@ -18,13 +18,6 @@ public final class UserStoreJson
 
     private final List<UserStoreAccessControlEntryJson> permissions;
 
-    public UserStoreJson( final UserStore userStore, final AuthDescriptorMode idProviderMode )
-    {
-        super( userStore );
-        this.idProviderMode = idProviderMode;
-        this.permissions = null;
-    }
-
     public UserStoreJson( final UserStore userStore, final AuthDescriptorMode idProviderMode,
                           final UserStoreAccessControlList userStoreAccessControlList, final Principals principals )
     {

@@ -51,7 +51,7 @@ public final class NashornHelper
 
     public static void addToNativeArray( final Object array, final Object value )
     {
-        NativeArray.push( array, value );
+        NativeArray.push( array, new Object[] { value } );
     }
 
     public static Object wrap( final Object source )

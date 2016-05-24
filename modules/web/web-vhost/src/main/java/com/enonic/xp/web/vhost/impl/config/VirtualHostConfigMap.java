@@ -63,7 +63,7 @@ final class VirtualHostConfigMap
             return null;
         }
 
-        return value;
+        return value.trim();
     }
 
     private boolean getBoolean( final String name, final boolean defValue )

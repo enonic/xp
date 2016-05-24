@@ -4,9 +4,9 @@ var authLib = require('/lib/xp/auth');
 
 exports.login = function (req) {
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
-    var appLoginJsUrl = portalLib.assetUrl({path: "js/simple-auth.js"});
+    var appLoginJsUrl = portalLib.assetUrl({path: "js/app-system.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
-    var appBackgroundUrl = portalLib.assetUrl({path: "common/images/background-1920.jpg"});
+    var appLoginBackgroundUrl = portalLib.assetUrl({path: "common/images/background-1920.jpg"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
 
     var view = resolve('idprovider.html');
@@ -14,7 +14,7 @@ exports.login = function (req) {
         jQueryUrl: jQueryUrl,
         appLoginJsUrl: appLoginJsUrl,
         appLoginCssUrl: appLoginCssUrl,
-        appBackgroundUrl: appBackgroundUrl,
+        appLoginBackgroundUrl: appLoginBackgroundUrl,
         appLoginServiceUrl: appLoginServiceUrl
     };
     var body = mustacheLib.render(view, params);

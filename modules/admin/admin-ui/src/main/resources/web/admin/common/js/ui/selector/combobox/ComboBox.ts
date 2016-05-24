@@ -29,6 +29,8 @@ module api.ui.selector.combobox {
 
         minWidth?: number;
 
+        maxHeight?: number;
+
         value?: string;
 
         noOptionsText?: string;
@@ -120,7 +122,7 @@ module api.ui.selector.combobox {
             }
 
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
-                maxHeight: 200,
+                maxHeight: config.maxHeight ? config.maxHeight : 200,
                 width: this.input.getWidth(),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,

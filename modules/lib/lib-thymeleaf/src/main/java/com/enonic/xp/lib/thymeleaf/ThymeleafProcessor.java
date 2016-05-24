@@ -67,7 +67,7 @@ public final class ThymeleafProcessor
 
     private RuntimeException handleException( final TemplateProcessingException e )
     {
-        final int lineNumber = e.getLineNumber() != null ? e.getLineNumber() : 0;
+        final int lineNumber = e.getLine() != null ? e.getLine() : 0;
         final ResourceKey resource = e.getTemplateName() != null ? ResourceKey.from( e.getTemplateName() ) : null;
         return ResourceProblemException.create().
             lineNumber( lineNumber ).

@@ -1,5 +1,4 @@
 import "../../api.ts";
-
 import {StatusSelectionItem} from "./StatusSelectionItem";
 import {DependantItemViewer} from "./DependantItemViewer";
 
@@ -108,6 +107,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     close() {
         super.close();
         this.remove();
+        this.itemList.clearItems();
+        this.dependantList.clearItems();
     }
 
     setAutoUpdateTitle(value: boolean) {

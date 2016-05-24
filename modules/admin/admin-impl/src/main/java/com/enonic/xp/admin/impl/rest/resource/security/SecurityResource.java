@@ -3,7 +3,6 @@ package com.enonic.xp.admin.impl.rest.resource.security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -100,14 +99,7 @@ public final class SecurityResource
     public UserStoresJson getUserStores()
     {
         final UserStores userStores = securityService.getUserStores();
-        final List<UserStoreJson> userStoreJsonList = userStores.
-            stream().
-            map( userStore -> {
-                final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
-                return new UserStoreJson( userStore, idProviderMode );
-            } ).
-            collect( Collectors.toList() );
-        return new UserStoresJson( userStoreJsonList );
+        return new UserStoresJson( userStores );
     }
 
     @GET

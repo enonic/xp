@@ -27,3 +27,5 @@
 ///<reference path='EffectivePermissionMemberJson.ts' />
 ///<reference path='GetContentVersionsForViewResultsJson.ts' />
 ///<reference path='ContentVersionViewJson.ts' />
+///<reference path='ContentDependencyGroupJson.ts' />
+///<reference path='ContentDependencyJson.ts' />

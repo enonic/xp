@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class ExtractedTextCleanerTest
 {
-    @Test
+    //   @Test
     public void strip_consecutive_linebreaks_and_whitespaces()
         throws Exception
     {
@@ -22,7 +22,7 @@ public class ExtractedTextCleanerTest
         assertEquals( expected, cleanedText );
     }
 
-    @Test
+    //   @Test
     public void strip_consecutive_linebreaks_and_whitespaces_2()
         throws Exception
     {

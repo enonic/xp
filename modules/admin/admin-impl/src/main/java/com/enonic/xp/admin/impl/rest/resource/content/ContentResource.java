@@ -43,6 +43,7 @@ import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
+import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
@@ -82,6 +83,8 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -197,6 +200,8 @@ public final class ContentResource
     private RelationshipTypeService relationshipTypeService;
 
     private ContentIconUrlResolver contentIconUrlResolver;
+
+    private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     private BinaryExtractor extractor;
 
@@ -443,6 +448,19 @@ public final class ContentResource
         }
 
         return jsonResult;
+    }
+
+    @GET
+    @Path("getDependencies")
+    public DependenciesJson getDependencies( @QueryParam("id") final String id )
+    {
+
+        final ContentId contentId = ContentId.from( id );
+
+        final ResolveDependenciesAggregationFactory resolveDependenciesAggregationFactory =
+            new ResolveDependenciesAggregationFactory( contentTypeIconUrlResolver, contentService );
+
+        return resolveDependenciesAggregationFactory.create( contentId );
     }
 
     @POST
@@ -1248,6 +1266,7 @@ public final class ContentResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentIconUrlResolver = new ContentIconUrlResolver( contentTypeService );
+        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( new ContentTypeIconResolver( contentTypeService ) );
     }
 
     @Reference

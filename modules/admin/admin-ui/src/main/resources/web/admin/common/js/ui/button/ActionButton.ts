@@ -41,6 +41,10 @@ module api.ui.button {
             });
         }
 
+        getAction(): Action {
+            return this.action;
+        }
+
         getTooltip(): Tooltip {
             return this.tooltip;
         }
