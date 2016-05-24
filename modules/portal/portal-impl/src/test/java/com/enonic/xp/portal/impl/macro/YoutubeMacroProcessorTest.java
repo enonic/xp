@@ -1,15 +1,32 @@
 package com.enonic.xp.portal.impl.macro;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.portal.macro.MacroContext;
-import com.enonic.xp.portal.macro.MacroProcessor;
+import com.enonic.xp.portal.url.PortalUrlService;
 
+import static com.enonic.xp.portal.impl.macro.YoutubeMacroProcessor.COMMON_STYLE_ASSET_PATH;
+import static com.enonic.xp.portal.impl.macro.YoutubeMacroProcessor.SYSTEM_APPLICATION_KEY;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 
 public class YoutubeMacroProcessorTest
 {
-    final MacroProcessor macroProcessor = new YoutubeMacroProcessor();
+    private YoutubeMacroProcessor macroProcessor;
+
+    @Before
+    public void setup()
+        throws Exception
+    {
+        final PortalUrlService portalUrlService = Mockito.mock( PortalUrlService.class );
+        final String url = "/admin/portal/preview/draft/_/asset/" + SYSTEM_APPLICATION_KEY + ":1464071104/" + COMMON_STYLE_ASSET_PATH;
+        Mockito.when( portalUrlService.assetUrl( any() ) ).thenReturn( url );
+
+        macroProcessor = new YoutubeMacroProcessor();
+        macroProcessor.setPortalUrlService( portalUrlService );
+    }
 
     @Test
     public void testProcessUrlAndHeight()

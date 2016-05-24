@@ -26,9 +26,9 @@ public class YoutubeMacroProcessor
     private static final Pattern YOUTUBE_URL_PATTERN =
         Pattern.compile( "^(https://|http://)?(www\\.)?(m\\.)?(youtu\\.be/|youtube\\.com/)(.)+" );
 
-    private static final String COMMON_STYLE_ASSET_PATH = "css/macro/youtube/youtube.css";
+    static final String COMMON_STYLE_ASSET_PATH = "css/macro/youtube/youtube.css";
 
-    private static final String SYSTEM_APPLICATION_KEY = "com.enonic.xp.app.system";
+    static final String SYSTEM_APPLICATION_KEY = "com.enonic.xp.app.system";
 
     private PortalUrlService urlService;
 
