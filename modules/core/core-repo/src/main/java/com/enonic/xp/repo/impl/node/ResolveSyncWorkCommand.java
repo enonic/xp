@@ -15,12 +15,15 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -135,7 +138,8 @@ public class ResolveSyncWorkCommand
 
         // Parent not in the diff result, but must be published since they are new
         parentComparisons.getNodeComparisons().stream().
-            filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ) ).
+            filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
+                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
             forEach( ( comparison ) -> newResolveStuff( comparison.getNodeId() ) );
 
         System.out.println( "getAllPossibleNodesToPublish2: " + allPossibleTimer.stop() );
@@ -145,7 +149,17 @@ public class ResolveSyncWorkCommand
 
     private void markChildrenForDeletion( final NodeId nodeId )
     {
+        final NodeIds childrenToBeDeleted = FindNodeIdsByParentCommand.create( this ).
+            params( FindNodesByParentParams.create().
+                size( SearchService.GET_ALL_SIZE_FLAG ).
+                parentId( nodeId ).
+                childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
+                recursive( true ).
+                build() ).
+            build().
+            execute();
 
+        this.result.addAll( childrenToBeDeleted );
     }
 
     private NodeComparisons getParentCompares( final Set<NodeComparison> comparisons )

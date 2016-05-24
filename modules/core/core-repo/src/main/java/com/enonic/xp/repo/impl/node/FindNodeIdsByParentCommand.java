@@ -7,9 +7,14 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 
@@ -75,11 +80,11 @@ public class FindNodeIdsByParentCommand
         }
         else
         {
-            throw new RuntimeException( "implement this" );
+            builder.query( QueryExpr.from(
+                CompareExpr.like( FieldExpr.from( NodeIndexPath.PARENT_PATH ), ValueExpr.string( parentPath.toString() + "*" ) ) ) );
         }
 
         return builder.build();
-
     }
 
     private NodePath getParentPath()

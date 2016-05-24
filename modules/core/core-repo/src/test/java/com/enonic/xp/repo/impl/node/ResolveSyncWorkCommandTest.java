@@ -323,6 +323,7 @@ public class ResolveSyncWorkCommandTest
 
         assertEquals( resultChildrenIncluded.getSize(), 0 );
         assertEquals( resultChildrenNotIncluded.getSize(), 3 );
+
     }
 
     /**
@@ -686,8 +687,10 @@ public class ResolveSyncWorkCommandTest
 
         final NodeIds result = resolveSyncWorkResult( "a2_1" );
 
-        assertEquals( 4, result.getSize() );
-
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1" ).
+            referred( "b2_1" ).
+            parent( "b2", "s2" ) );
     }
 
     @Test
@@ -993,14 +996,11 @@ public class ResolveSyncWorkCommandTest
             implicit( "s1" ).
             child( "a1", "a2", "a2_1" ) );
 
+        result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
             child( "a1", "a2", "a2_1" ).
-            referred( "b2_1" ).
-            parent( "b2", "s2" ) );
-
-        result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
-        assertEquals( 4, result.getSize() );
+            referred( "b2_1" ) );
     }
 
     @Test
@@ -1064,16 +1064,6 @@ public class ResolveSyncWorkCommandTest
         assertEquals( 1, result.getSize() );
 
         assertTrue( result.contains( NodeId.from( "s1" ) ) );
-    }
-
-    @Test
-    public void exclude_children_from_the_middle()
-    {
-        createS1S2Tree();
-        refresh();
-
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2" ), true );
-        assertEquals( 6, result.getSize() );
     }
 
     @Test
