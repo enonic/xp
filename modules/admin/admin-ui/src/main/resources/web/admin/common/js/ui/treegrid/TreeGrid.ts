@@ -293,15 +293,6 @@ module api.ui.treegrid {
 
             this.onLoaded(() => this.unmask());
 
-            /* if (this.toolbar) {
-             this.gridData.onRowCountChanged(() => {
-             this.toolbar.refresh();
-             });
-
-             this.onSelectionChanged(() => {
-             this.toolbar.refresh();
-             });
-             }*/
         }
 
         public isInRenderingView(): boolean {

@@ -10,9 +10,9 @@ module api.ui.treegrid.actions {
 
         private actions: api.ui.Action[] = [];
 
-        constructor(grid: TreeGrid<any>, selectedItemsCount?: number) {
+        constructor(grid: TreeGrid<any>) {
             this.SELECT_ALL = new SelectAllAction(grid);
-            this.CLEAR_SELECTION = new ClearSelectionAction(grid, selectedItemsCount);
+            this.CLEAR_SELECTION = new ClearSelectionAction(grid);
             this.actions.push(this.SELECT_ALL, this.CLEAR_SELECTION);
         }
 

@@ -20,18 +20,5 @@ module api.ui.treegrid {
 
             this.treeGrid = treeGrid;
         }
-
-        refresh(selectedItemsCount: number) {
-            this.removeChild(this.refreshButton);
-            this.removeGreedySpacer();
-            this.removeActions();
-
-            var actions = new api.ui.treegrid.actions.TreeGridToolbarActions(this.treeGrid, selectedItemsCount).getAllActions();
-
-            this.addActions(actions);
-            this.addGreedySpacer();
-            this.addElement(this.refreshButton);
-        }
-
     }
 }

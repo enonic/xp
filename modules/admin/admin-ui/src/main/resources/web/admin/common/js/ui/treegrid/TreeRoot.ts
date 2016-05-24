@@ -107,7 +107,7 @@ module api.ui.treegrid {
                     return el.getDataId();
                 });
                 fullSelection = fullSelection.filter((value, index, self) => {
-                    return fullIds.indexOf(value.getDataId()) === index;
+                    return value.getDataId() && fullIds.indexOf(value.getDataId()) === index;
                 });
             }
 
