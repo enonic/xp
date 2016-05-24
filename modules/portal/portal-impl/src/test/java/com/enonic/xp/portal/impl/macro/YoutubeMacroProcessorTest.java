@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.macro.MacroContext;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.url.PortalUrlService;
 
 import static com.enonic.xp.portal.impl.macro.YoutubeMacroProcessor.COMMON_STYLE_ASSET_PATH;
@@ -29,19 +30,6 @@ public class YoutubeMacroProcessorTest
     }
 
     @Test
-    public void testProcessUrlAndHeight()
-    {
-        final MacroContext macroContext = MacroContext.create().name( "name" ).
-            body( "body" ).
-            param( "url", "https://www.youtube.com/watch?v=iDdDd" ).
-            param( "height", "100" ).
-            build();
-
-        assertEquals( "<iframe src=\"https://www.youtube.com/embed/iDdDd\" height=\"100\"></iframe>",
-                      macroProcessor.process( macroContext ).getBody() );
-    }
-
-    @Test
     public void testProcessWithMissingUrl()
     {
         final MacroContext macroContext = MacroContext.create().name( "name" ).
@@ -58,7 +46,8 @@ public class YoutubeMacroProcessorTest
             param( "url", "https://www.youtube.com/watch?v=iDdDd" ).
             build();
 
-        assertEquals( "<iframe src=\"https://www.youtube.com/embed/iDdDd\"></iframe>", macroProcessor.process( macroContext ).getBody() );
+        assertEquals( "<div class='youtube-video-wrapper'><iframe src='https://www.youtube.com/embed/iDdDd'></iframe></div>",
+                      macroProcessor.process( macroContext ).getBody() );
     }
 
     @Test
@@ -69,7 +58,8 @@ public class YoutubeMacroProcessorTest
             param( "url", "https://www.youtube.com/watch?v=iDdDd" ).
             build();
 
-        assertEquals( "<iframe src=\"https://www.youtube.com/embed/iDdDd\"></iframe>", macroProcessor.process( macroContext ).getBody() );
+        assertEquals( "<div class='youtube-video-wrapper'><iframe src='https://www.youtube.com/embed/iDdDd'></iframe></div>",
+                      macroProcessor.process( macroContext ).getBody() );
     }
 
     @Test
@@ -80,7 +70,8 @@ public class YoutubeMacroProcessorTest
             param( "url", "https://www.youtube.com/watch?someParam=xXx&v=iDdDd&t=25" ).
             build();
 
-        assertEquals( "<iframe src=\"https://www.youtube.com/embed/iDdDd\"></iframe>", macroProcessor.process( macroContext ).getBody() );
+        assertEquals( "<div class='youtube-video-wrapper'><iframe src='https://www.youtube.com/embed/iDdDd'></iframe></div>",
+                      macroProcessor.process( macroContext ).getBody() );
     }
 
     @Test
@@ -91,7 +82,7 @@ public class YoutubeMacroProcessorTest
             param( "url", "http://youtu.be/cFfxuWUgcvI" ).
             build();
 
-        assertEquals( "<iframe src=\"https://www.youtube.com/embed/cFfxuWUgcvI\"></iframe>",
+        assertEquals( "<div class='youtube-video-wrapper'><iframe src='https://www.youtube.com/embed/cFfxuWUgcvI'></iframe></div>",
                       macroProcessor.process( macroContext ).getBody() );
     }
 
@@ -103,7 +94,8 @@ public class YoutubeMacroProcessorTest
             param( "url", "http://www.youtube.com/v/gdfgdfg" ).
             build();
 
-        assertEquals( "<iframe src=\"https://www.youtube.com/embed/gdfgdfg\"></iframe>", macroProcessor.process( macroContext ).getBody() );
+        assertEquals( "<div class='youtube-video-wrapper'><iframe src='https://www.youtube.com/embed/gdfgdfg'></iframe></div>",
+                      macroProcessor.process( macroContext ).getBody() );
     }
 
     @Test
@@ -114,20 +106,23 @@ public class YoutubeMacroProcessorTest
             param( "url", "http://www.youtube.com/v/gdfgdfg?version=3&autohide=1" ).
             build();
 
-        assertEquals( "<iframe src=\"https://www.youtube.com/embed/gdfgdfg\"></iframe>", macroProcessor.process( macroContext ).getBody() );
+        assertEquals( "<div class='youtube-video-wrapper'><iframe src='https://www.youtube.com/embed/gdfgdfg'></iframe></div>",
+                      macroProcessor.process( macroContext ).getBody() );
     }
 
     @Test
-    public void testProcessUrlWithHeightAndWidth()
+    public void testProcessUrlHasCommmonAssetRef()
     {
         final MacroContext macroContext = MacroContext.create().name( "name" ).
             body( "body" ).
-            param( "url", "https://www.youtube.com/watch?v=iDdDd" ).
-            param( "width", "200" ).
-            param( "height", "100" ).
+            param( "url", "http://www.youtube.com/v/gdfgdfg?version=3&autohide=1" ).
             build();
 
-        assertEquals( "<iframe src=\"https://www.youtube.com/embed/iDdDd\" width=\"200\" height=\"100\"></iframe>",
+        assertEquals( "<div class='youtube-video-wrapper'><iframe src='https://www.youtube.com/embed/gdfgdfg'></iframe></div>",
                       macroProcessor.process( macroContext ).getBody() );
+
+        assertEquals(
+            "<link rel='stylesheet' type='text/css' href='/admin/portal/preview/draft/_/asset/com.enonic.xp.app.system:1464071104/css/macro/youtube/youtube.css'/>",
+            macroProcessor.process( macroContext ).getContributions( HtmlTag.HEAD_BEGIN ).get( 0 ) );
     }
 }
