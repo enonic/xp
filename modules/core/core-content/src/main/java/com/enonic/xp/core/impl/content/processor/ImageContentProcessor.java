@@ -76,7 +76,6 @@ public final class ImageContentProcessor
 
     private ContentService contentService;
 
-
     protected ContentTypeService contentTypeService;
 
     protected MixinService mixinService;
@@ -310,7 +309,7 @@ public final class ImageContentProcessor
         final FormItem formItem = geoMixin.getForm().getFormItems().getItemByName( MediaInfo.GPS_INFO_GEO_POINT );
         if ( FormItemType.INPUT.equals( formItem.getType() ) )
         {
-            Input input = (Input) formItem;
+            final Input input = (Input) formItem;
             if ( InputTypeName.GEO_POINT.equals( input.getInputType() ) )
             {
                 final GeoPoint geoPoint = new GeoPoint( geoLat, geoLong );
