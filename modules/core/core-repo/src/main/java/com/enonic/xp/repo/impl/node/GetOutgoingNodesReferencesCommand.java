@@ -34,27 +34,23 @@ public class GetOutgoingNodesReferencesCommand
 
     public NodeIds execute()
     {
-
         final NodeIds.Builder builder = NodeIds.create();
 
         // TODO: Make bulk-version
 
-        for ( final NodeId nodeId : this.nodeIds )
+        final ReturnValues returnValues = this.storageService.getIndexedData( nodeIds, ReturnFields.from( NodeIndexPath.REFERENCE ),
+                                                                              InternalContext.from( ContextAccessor.current() ) );
+
+        final ReturnValue returnValue = returnValues.get( NodeIndexPath.REFERENCE.getPath() );
+
+        if ( returnValue == null || returnValue.getValues().isEmpty() )
         {
-            final ReturnValues returnValues = this.storageService.getIndexedData( nodeId, ReturnFields.from( NodeIndexPath.REFERENCE ),
-                                                                                  InternalContext.from( ContextAccessor.current() ) );
+            return NodeIds.empty();
+        }
 
-            final ReturnValue returnValue = returnValues.get( NodeIndexPath.REFERENCE.getPath() );
-
-            if ( returnValue == null || returnValue.getValues().isEmpty() )
-            {
-                continue;
-            }
-
-            for ( final Object value : returnValue.getValues() )
-            {
-                builder.add( NodeId.from( value.toString() ) );
-            }
+        for ( final Object value : returnValue.getValues() )
+        {
+            builder.add( NodeId.from( value.toString() ) );
         }
 
         return builder.build();

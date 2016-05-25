@@ -209,6 +209,12 @@ public class StorageServiceImpl
     }
 
     @Override
+    public ReturnValues getIndexedData( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context )
+    {
+        return this.indexedDataService.get( nodeIds, returnFields, context );
+    }
+
+    @Override
     public NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
     {
         return this.branchService.get( nodeId, context );

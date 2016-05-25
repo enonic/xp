@@ -53,6 +53,9 @@ public interface StorageService
 
     ReturnValues getIndexedData( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context );
 
+    ReturnValues getIndexedData( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context );
+
+
     NodeId getIdForPath( final NodePath nodePath, final InternalContext context );
 
     NodePath getParentPath( final NodeId nodeId, final InternalContext context );

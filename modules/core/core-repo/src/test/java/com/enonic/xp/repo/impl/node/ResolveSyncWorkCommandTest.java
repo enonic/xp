@@ -513,6 +513,13 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         assertEquals( 6, result.getSize() );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( node1_1.id() ).
+            parent( node1.id() ).
+            referred( node2.id() ) );
+
+
        /*
         assertNotNull( result.get( node1.id() ) );
         assertNotNull( result.get( node1_1.id() ) );
@@ -1019,6 +1026,20 @@ public class ResolveSyncWorkCommandTest
 
     }
 
+    /*
+        - S1
+          - A1
+          - A2
+             - A2_1 - Ref:B2_1
+        - S2
+          - B1
+          - B2
+             - B2_1
+        - S1d (New)
+          - A1d
+          - A2d
+            - A2_1 - Ref:B2_1
+        */
     @Test
     public void exclude_itself()
     {

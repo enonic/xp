@@ -31,6 +31,11 @@ public class ReturnValues
         return this.returnValues.get( key );
     }
 
+    public Map<String, ReturnValue> getReturnValues()
+    {
+        return returnValues;
+    }
+
     public static Builder create()
     {
         return new Builder();
