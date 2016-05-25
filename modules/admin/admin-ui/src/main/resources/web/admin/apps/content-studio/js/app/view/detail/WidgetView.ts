@@ -56,7 +56,7 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private getFullUrl(url: string) {
-        return url + this.detailsPanel.getEl().getWidth();
+        return url + "/" + this.detailsPanel.getEl().getWidth();
     }
 
     private isDetailsPanelVisible(): boolean {
