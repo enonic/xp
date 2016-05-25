@@ -59,8 +59,11 @@
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='PublishContentRequest.ts' />
 ///<reference path='PublishContentResult.ts' />
+///<reference path='UnpublishContentRequest.ts' />
+///<reference path='UnpublishContentResult.ts' />
 ///<reference path='ResolvePublishRequestedContentsRequest.ts' />
 ///<reference path='ResolvePublishDependenciesRequest.ts' />
+///<reference path='ResolvePublishDependenciesResult.ts' />
 ///<reference path='CompareContentRequest.ts' />
 ///<reference path='CompareContentResults.ts' />
 ///<reference path='CompareContentResult.ts' />
@@ -71,6 +74,7 @@
 ///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
 ///<reference path='ContentSummaryAndCompareStatusViewer.ts' />
 ///<reference path='ContentVersion.ts' />
+///<reference path='ContentPublishItem.ts' />
 ///<reference path='ContentVersionViewer.ts' />
 ///<reference path='GetActiveContentVersionsRequest.ts' />
 ///<reference path='GetContentVersionsRequest.ts' />
@@ -103,3 +107,4 @@
 ///<reference path='WidgetDescriptorResourceRequest.ts' />
 ///<reference path='GetWidgetsByInterfaceRequest.ts' />
 ///<reference path='GetEffectivePermissions.ts' />
+///<reference path='ResolveDependenciesRequest.ts' />

@@ -99,17 +99,9 @@ module api.ui.time {
         private setupListeners(builder: TimePickerBuilder) {
 
             if (builder.closeOnOutsideClick) {
-                let focusoutTimeout = 0;
-
-                this.onFocusOut(() => {
-                    focusoutTimeout = setTimeout(() => {
-                        this.popup.hide();
-                    }, 50);
-                });
-
-                this.onFocusIn(() => {
-                    clearTimeout(focusoutTimeout);
-                });
+                api.util.AppHelper.focusInOut(this, () => {
+                    this.popup.hide();
+                }, 50, false);
 
                 // Prevent focus loss on mouse down
                 this.popup.onMouseDown((event: MouseEvent) => {
@@ -119,12 +111,7 @@ module api.ui.time {
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
                 e.preventDefault();
-
-                if (this.popup.isVisible()) {
-                    this.popup.hide();
-                } else {
-                    this.popup.show();
-                }
+                this.setVisible(!this.popup.isVisible());
             });
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {

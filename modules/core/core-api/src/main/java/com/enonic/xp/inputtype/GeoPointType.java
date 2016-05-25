@@ -4,6 +4,8 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.util.GeoPoint;
 
 final class GeoPointType
     extends InputTypeBase
@@ -21,6 +23,16 @@ final class GeoPointType
         return ValueFactory.newGeoPoint( value.asGeoPoint() );
     }
 
+    @Override
+    public Value createDefaultValue( final Input input )
+    {
+        final String rootValue = input.getDefaultValue().getRootValue();
+        if ( rootValue != null )
+        {
+            return ValueFactory.newGeoPoint( GeoPoint.from(rootValue) );
+        }
+        return super.createDefaultValue( input );
+    }
     @Override
     public void validate( final Property property, final InputTypeConfig config )
     {

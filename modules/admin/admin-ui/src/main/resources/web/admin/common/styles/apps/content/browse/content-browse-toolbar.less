@@ -1,5 +1,13 @@
-.content-browse-toolbar .fold-button .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}:hover {
-  background-color: @admin-bg-light-gray;
+.content-browse-toolbar {
+  .fold-button .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}:hover {
+    background-color: @admin-bg-light-gray;
+  }
+
+  &._0-240, &._240-360, &._360-540 {
+    .content-publish-menu {
+      display: none !important;
+    }
+  }
 }
 
 button.icon-toolbar-settings {

@@ -6,8 +6,6 @@ module api.content {
 
         private deleteOnline: boolean;
 
-        private deletePending: boolean;
-
         constructor(contentPath?: ContentPath) {
             super();
             this.setHeavyOperation(true);
@@ -31,18 +29,13 @@ module api.content {
             this.deleteOnline = deleteOnline;
         }
 
-        setDeletePending(deletePending: boolean) {
-            this.deletePending = deletePending;
-        }
-
         getParams(): Object {
             var fn = (contentPath: ContentPath) => {
                 return contentPath.toString();
             };
             return {
                 contentPaths: this.contentPaths.map(fn),
-                deleteOnline: this.deleteOnline,
-                deletePending: this.deletePending
+                deleteOnline: this.deleteOnline
             };
         }
 

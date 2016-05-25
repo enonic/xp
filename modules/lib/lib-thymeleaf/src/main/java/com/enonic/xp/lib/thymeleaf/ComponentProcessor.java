@@ -1,55 +1,38 @@
 package com.enonic.xp.lib.thymeleaf;
 
-import java.util.List;
-
-import org.thymeleaf.Arguments;
-import org.thymeleaf.Configuration;
-import org.thymeleaf.dom.Comment;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.processor.attr.AbstractFragmentHandlingAttrProcessor;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.engine.AttributeName;
+import org.thymeleaf.model.IComment;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
-
-import com.google.common.collect.Lists;
+import org.thymeleaf.templatemode.TemplateMode;
 
 final class ComponentProcessor
-    extends AbstractFragmentHandlingAttrProcessor
+    extends AbstractAttributeTagProcessor
 {
-    public ComponentProcessor()
+    ComponentProcessor( final String dialectPrefix )
     {
-        super( "component" );
+        super( TemplateMode.HTML, dialectPrefix, null, false, "component", true, 100, true );
     }
 
     @Override
-    public int getPrecedence()
+    protected void doProcess( final ITemplateContext context, final IProcessableElementTag tag, final AttributeName attributeName,
+                              final String attributeValue, final IElementTagStructureHandler structureHandler )
     {
-        return 100;
-    }
+        structureHandler.removeAttribute( attributeName );
 
-    @Override
-    protected boolean getRemoveHostNode( final Arguments arguments, final Element element, final String attributeName,
-                                         final String attributeValue )
-    {
-        return false;
-    }
+        final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser( context.getConfiguration() );
 
-    @Override
-    protected List<Node> computeFragment( final Arguments arguments, final Element element, final String attributeName,
-                                          final String attributeValue )
-    {
-        final Configuration configuration = arguments.getConfiguration();
-        final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser( configuration );
-
-        final IStandardExpression expression = expressionParser.parseExpression( configuration, arguments, attributeValue );
-        final Object result = expression.execute( configuration, arguments );
+        final IStandardExpression expression = expressionParser.parseExpression( context, attributeValue );
+        final Object result = expression.execute( context );
 
         final String componentPath = ( result == null ? "" : result.toString() );
 
-        final List<Node> list = Lists.newArrayList();
-        final Comment comment = new Comment( "# COMPONENT " + componentPath + " " );
-        list.add( comment );
-        return list;
+        final IComment model = context.getModelFactory().createComment( "# COMPONENT " + componentPath + " " );
+        structureHandler.setBody( model, false );
     }
 }

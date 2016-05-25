@@ -42,7 +42,8 @@ module api.ui.selector.combobox {
                 delayedInputValueChangedHandling: builder.delayedInputValueChangedHandling,
                 minWidth: builder.minWidth,
                 value: builder.value,
-                noOptionsText: builder.noOptionsText
+                noOptionsText: builder.noOptionsText,
+                maxHeight: builder.maxHeight
             };
 
             this.loader = builder.loader;
@@ -445,6 +446,8 @@ module api.ui.selector.combobox {
 
         minWidth: number;
 
+        maxHeight: number;
+
         value: string;
 
         noOptionsText: string;
@@ -496,6 +499,11 @@ module api.ui.selector.combobox {
 
         setMinWidth(value: number): RichComboBoxBuilder<T> {
             this.minWidth = value;
+            return this;
+        }
+
+        setMaxHeight(value: number): RichComboBoxBuilder<T> {
+            this.maxHeight = value;
             return this;
         }
 

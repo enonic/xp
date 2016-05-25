@@ -310,3 +310,29 @@ exports.findPrincipals = function (params) {
 
     return __.toNativeObject(bean.findPrincipals());
 };
+
+/**
+ * This function returns the ID provider configuration for the current user store.
+ * It is meant to be called from an ID provider controller.
+ *
+ * @example-ref examples/auth/getIdProviderConfig.js
+ *
+ * @returns {object} The ID provider configuration for current user store as JSON.
+ */
+exports.getIdProviderConfig = function () {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function returns the current user store.
+ * It is meant to be called from an ID provider controller.
+ *
+ * @example-ref examples/auth/getUserStore.js
+ *
+ * @returns {object} The current user store as JSON.
+ */
+exports.getUserStore = function () {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetUserStoreHandler');
+    return __.toNativeObject(bean.execute());
+};

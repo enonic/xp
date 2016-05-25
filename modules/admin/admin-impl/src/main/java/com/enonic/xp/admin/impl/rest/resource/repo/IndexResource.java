@@ -15,9 +15,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -30,7 +27,6 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 
-@Api("repo")
 @Path(ResourceConstants.REST_ROOT + "repo")
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
@@ -43,7 +39,6 @@ public final class IndexResource
     @Path("reindex")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation("Reindexes a specified repository")
     public ReindexResultJson reindex( final ReindexRequestJson request )
     {
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
@@ -59,7 +54,6 @@ public final class IndexResource
     @Path("updateIndexSettings")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation("Update index settings")
     public UpdateIndexSettingsResultJson updateIndexSettings( final UpdateIndexSettingsRequestJson request )
     {
         final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().

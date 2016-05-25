@@ -8,6 +8,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 final class TextLineType
     extends InputTypeBase
@@ -31,14 +32,14 @@ final class TextLineType
     }
 
     @Override
-    public Value createDefaultValue( final InputTypeDefault defaultConfig )
+    public Value createDefaultValue( final Input input )
     {
-        final String defaultValue = defaultConfig.getRootValue();
+        final String defaultValue = input.getDefaultValue().getRootValue();
         if ( StringUtils.isNotEmpty( defaultValue ) )
         {
             return ValueFactory.newString( defaultValue );
         }
-        return super.createDefaultValue( defaultConfig );
+        return super.createDefaultValue( input );
     }
 
     @Override

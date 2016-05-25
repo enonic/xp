@@ -39,12 +39,9 @@ module api.liveedit.part {
                 partComponent.setDescriptor(descriptor.getKey(), descriptor);
             });
 
-            partView.getLiveEditModel().getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    request.setApplicationKeys(partView.getLiveEditModel().getSiteModel().getApplicationKeys());
-                    loader.load();
-                }
-            });
+            var siteModel = partView.getLiveEditModel().getSiteModel();
+            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
+            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
 
             this.displayName = new api.dom.H3El('display-name');
             this.appendChild(this.displayName);
@@ -52,6 +49,11 @@ module api.liveedit.part {
             if (partComponent && partComponent.getName()) {
                 this.setDisplayName(partComponent.getName().toString());
             }
+        }
+
+        private reloadDescriptorsOnApplicationChange(siteModel: SiteModel, request: GetPartDescriptorsByApplicationsRequest) {
+            request.setApplicationKeys(siteModel.getApplicationKeys());
+            this.comboBox.getLoader().load();
         }
 
         setDisplayName(name: string) {

@@ -111,7 +111,7 @@ module api.ui.dialog {
                             this.tabbable[this.tabbable.length - 1].giveFocus();
                         }
                     }
-                }, 10);
+                }, 50);
             });
 
             this.buttonRow.onFocusIn((event) => {

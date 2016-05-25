@@ -46,17 +46,20 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         var descriptorsRequest = new GetPartDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
         var loader = new PartDescriptorLoader(descriptorsRequest);
         loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
-        this.partSelector = new PartDescriptorDropdown("", {loader: loader});
+        this.partSelector = new PartDescriptorDropdown("", loader);
         this.partForm = new DescriptorBasedDropdownForm(this.partSelector, "Part");
         loader.load();
+
+        liveEditModel.getSiteModel().onApplicationUnavailable(() => {
+            this.partSelector.hideDropdown();
+        });
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
             // Ensure displayed config form and selector option are removed when descriptor is removed
             if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
                 if (!this.partComponent.hasDescriptor()) {
-                    this.setupComponentForm(this.partComponent, null);
-                    this.partSelector.setDescriptor(null);
+                    this.setSelectorValue(null, false);
                 }
             }
         };
@@ -64,6 +67,14 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.initSelectorListeners();
         this.appendChild(this.partForm);
 
+        liveEditModel.getSiteModel().onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(liveEditModel, descriptorsRequest));
+        liveEditModel.getSiteModel().onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(liveEditModel, descriptorsRequest));
+
+    }
+
+    private reloadDescriptorsOnApplicationChange(liveEditModel: LiveEditModel, request: GetPartDescriptorsByApplicationsRequest) {
+        request.setApplicationKeys(liveEditModel.getSiteModel().getApplicationKeys());
+        this.partSelector.getLoader().load();
     }
 
     setComponent(component: PartComponent, descriptor?: PartDescriptor) {
@@ -72,9 +83,14 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.partSelector.setDescriptor(descriptor);
     }
 
-    private setSelectorValue(descriptor: PartDescriptor) {
-        this.handleSelectorEvents = false;
+    private setSelectorValue(descriptor: PartDescriptor, silent: boolean = true) {
+        if (silent) {
+            this.handleSelectorEvents = false;
+        }
+
         this.partSelector.setDescriptor(descriptor);
+        this.setupComponentForm(this.partComponent, descriptor);
+
         this.handleSelectorEvents = true;
     }
 
@@ -101,18 +117,15 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
             var descriptor: PartDescriptor = this.partSelector.getDescriptor(key);
             if (descriptor) {
                 this.setSelectorValue(descriptor);
-                this.setupComponentForm(this.partComponent, descriptor);
             } else {
                 new GetPartDescriptorByKeyRequest(key).sendAndParse().then((descriptor: PartDescriptor) => {
                     this.setSelectorValue(descriptor);
-                    this.setupComponentForm(this.partComponent, descriptor);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
             }
         } else {
             this.setSelectorValue(null);
-            this.setupComponentForm(this.partComponent, null);
         }
 
         this.registerComponentListeners(this.partComponent);

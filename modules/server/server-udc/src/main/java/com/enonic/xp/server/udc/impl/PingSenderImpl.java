@@ -7,21 +7,23 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Charsets;
+
 final class PingSenderImpl
     implements PingSender
 {
     private final static Logger LOG = LoggerFactory.getLogger( PingSenderImpl.class );
 
-    private final static long HTTP_TIMEOUT = TimeUnit.SECONDS.toMillis( 5 );
+    private final static long HTTP_TIMEOUT = TimeUnit.SECONDS.toMillis( 20 );
 
     private final UdcInfoGenerator generator;
 
-    private final UdcUrlBuilder urlBuilder;
+    private final String url;
 
-    public PingSenderImpl( final UdcInfoGenerator generator, final UdcUrlBuilder urlBuilder )
+    PingSenderImpl( final UdcInfoGenerator generator, final String url )
     {
         this.generator = generator;
-        this.urlBuilder = urlBuilder;
+        this.url = url;
     }
 
     @Override
@@ -30,21 +32,24 @@ final class PingSenderImpl
         try
         {
             final UdcInfo info = this.generator.generate();
-            final URL url = this.urlBuilder.build( info );
-            send( url );
+            send( info.toJson() );
         }
         catch ( final Exception e )
         {
-            LOG.error( "Failed to send UDC ping", e );
+            LOG.debug( "Failed to send UDC ping", e );
         }
     }
 
-    private void send( final URL url )
+    private void send( final String body )
         throws Exception
     {
-        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        final HttpURLConnection conn = (HttpURLConnection) new URL( this.url ).openConnection();
+        conn.setDoOutput( true );
         conn.setConnectTimeout( (int) HTTP_TIMEOUT );
         conn.setReadTimeout( (int) HTTP_TIMEOUT );
+        conn.setRequestMethod( "POST" );
+
+        conn.getOutputStream().write( body.getBytes( Charsets.UTF_8 ) );
 
         final int status = conn.getResponseCode();
         if ( status >= 300 )
@@ -53,6 +58,6 @@ final class PingSenderImpl
             return;
         }
 
-        conn.getInputStream().close();
+        conn.disconnect();
     }
 }

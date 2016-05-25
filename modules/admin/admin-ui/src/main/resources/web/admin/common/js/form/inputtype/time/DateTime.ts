@@ -37,7 +37,7 @@ module api.content.form.inputtype.time {
         }
 
         newInitialValue(): Value {
-            return this.valueType.newNullValue();
+            return super.newInitialValue() || this.valueType.newNullValue();
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {

@@ -18,7 +18,7 @@ module api.content.page.region {
                 setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
                 setLoader(loader).
                 setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText(
-                "No layouts available in required applications"));
+                "No layouts available"));
         }
         getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {
             var option = this.getOptionByValue(descriptorKey.toString());

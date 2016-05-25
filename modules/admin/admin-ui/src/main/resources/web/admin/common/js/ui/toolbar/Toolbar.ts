@@ -1,4 +1,6 @@
 module api.ui.toolbar {
+    
+    import ActionButton = api.ui.button.ActionButton;
 
     export class Toolbar extends api.dom.DivEl implements api.ui.ActionContainer {
 
@@ -20,10 +22,10 @@ module api.ui.toolbar {
             this.onShown((event) => this.foldOrExpand());
         }
 
-        addAction(action: api.ui.Action) {
+        addAction(action: api.ui.Action): ActionButton {
             this.actions.push(action);
-            this.addElement(new api.ui.button.ActionButton(action));
             action.onPropertyChanged((action) => this.foldOrExpand());
+            return <ActionButton>this.addElement(new ActionButton(action));
         }
 
         addActions(actions: api.ui.Action[]) {
@@ -49,13 +51,15 @@ module api.ui.toolbar {
             return this.actions;
         }
 
-        addElement(element: api.dom.Element) {
+        addElement(element: api.dom.Element): api.dom.Element {
             if (this.hasGreedySpacer) {
                 element.addClass('pull-right');
                 element.insertAfterEl(this.fold);
             } else {
                 element.insertBeforeEl(this.fold);
             }
+            
+            return element;
         }
 
         addGreedySpacer() {

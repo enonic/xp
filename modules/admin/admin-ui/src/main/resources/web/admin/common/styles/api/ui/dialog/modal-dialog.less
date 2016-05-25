@@ -1,3 +1,9 @@
+.dialog-button(@color: @form-button-font, @bg: @admin-button-blue2, @hoverColor: @color, @hoverBg: lighten(@bg, 10%), @useFocus: true) {
+  .button(@color, @bg, @hoverColor, @hoverBg, @useFocus);
+  padding: 4px 19px 4px 19px;
+  margin-left: 11px;
+}
+
 .@{_COMMON_PREFIX}modal-dialog {
   .reset(true);
 
@@ -52,9 +58,7 @@
     }
 
     .@{_COMMON_PREFIX}button {
-      .button(@form-button-font, @admin-button-blue2);
-      padding: 4px 19px 4px 19px;
-      margin-left: 11px;
+      .dialog-button();
     }
   }
 

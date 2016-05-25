@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.enonic.xp.security.UserStoreKey;
+
 import static org.junit.Assert.*;
 
 public class VirtualHostMappingTest
@@ -62,6 +64,15 @@ public class VirtualHostMappingTest
 
         this.mapping.setTarget( null );
         assertEquals( "/", this.mapping.getTarget() );
+    }
+
+    @Test
+    public void testGetUserStoreKey()
+    {
+        assertEquals( null, this.mapping.getUserStoreKey() );
+
+        this.mapping.setUserStoreKey( UserStoreKey.system() );
+        assertEquals( UserStoreKey.system(), this.mapping.getUserStoreKey() );
     }
 
     @Test

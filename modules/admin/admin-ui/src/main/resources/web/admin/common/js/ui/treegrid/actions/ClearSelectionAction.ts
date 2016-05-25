@@ -4,8 +4,8 @@ module api.ui.treegrid.actions {
 
     export class ClearSelectionAction<DATA> extends Action {
 
-        constructor(treeGrid: TreeGrid<DATA>, count?: number) {
-            super(this.createLabel(count));
+        constructor(treeGrid: TreeGrid<DATA>) {
+            super(this.createLabel(treeGrid.getRoot().getFullSelection().length));
 
             this.setEnabled(true);
             this.onExecuted(() => {

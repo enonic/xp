@@ -1,7 +1,7 @@
-module api.form.json{
+module api.form.json {
 
-    export class LayoutJson extends FormItemJson {
+    export interface LayoutJson extends FormItemJson {
 
-        layoutType:string;
+        layoutType: string;
     }
 }

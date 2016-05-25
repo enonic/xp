@@ -22,6 +22,7 @@ module api.form.inputtype.text {
 
         private editors: HtmlAreaOccurrenceInfo[];
         private content: api.content.ContentSummary;
+        private contentPath: api.content.ContentPath;
 
         private focusListeners: {(event: FocusEvent): void}[] = [];
 
@@ -33,6 +34,7 @@ module api.form.inputtype.text {
 
             this.addClass("html-area");
             this.editors = [];
+            this.contentPath = config.contentPath;
             this.content = config.content;
         }
 
@@ -41,7 +43,7 @@ module api.form.inputtype.text {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.STRING.newValue("");
+            return super.newInitialValue() || ValueTypes.STRING.newValue("");
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
@@ -149,6 +151,7 @@ module api.form.inputtype.text {
                 setOnBlurHandler(onBlurHandler).
                 setOnKeydownHandler(onKeydownHandler).
                 setOnNodeChangeHandler(onNodeChangeHandler).
+                setContentPath(this.contentPath).
                 setContent(this.content).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {

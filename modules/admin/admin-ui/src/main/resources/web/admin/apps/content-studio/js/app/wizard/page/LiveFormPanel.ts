@@ -358,7 +358,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             RenderingMode.EDIT,
             api.content.Branch.DRAFT);
 
-        this.contentWizardPanel.saveChanges().then(() => {
+        this.contentWizardPanel.saveChangesWithoutValidation().then(() => {
             this.pageSkipReload = false;
             componentView.showLoadingSpinner();
             return this.liveEditPageProxy.loadComponent(componentView, componentUrl);
@@ -428,7 +428,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 this.inspectComponent(<ComponentView<Component>>itemView);
             }
 
-            if (!this.pageView.isLocked()  && !event.isRightClicked()) {
+            if (!this.pageView.isLocked() && !event.isRightClicked()) {
                 this.minimizeContentFormPanelIfNeeded();
             }
         });

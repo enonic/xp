@@ -9,7 +9,7 @@ module api.security.event {
     export class PrincipalServerChangeItem extends NodeServerChangeItem<string> {
 
         static fromJson(node: NodeEventNodeJson): PrincipalServerChangeItem {
-            return new PrincipalServerChangeItem(node.path.substr("/identity".length));
+            return new PrincipalServerChangeItem(node.path.substr("/identity".length), node.branch);
         }
 
     }

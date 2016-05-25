@@ -2,7 +2,7 @@ module api.ui.selector.combobox {
 
     import Option = api.ui.selector.Option;
     import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
-    import DropdownHandle = api.ui.selector.DropdownHandle;
+    import DropdownHandle = api.ui.button.DropdownHandle;
     import Viewer = api.ui.Viewer;
     import DelayedFunctionCall = api.util.DelayedFunctionCall;
     import Button = api.ui.button.Button;
@@ -28,6 +28,8 @@ module api.ui.selector.combobox {
         delayedInputValueChangedHandling?: number;
 
         minWidth?: number;
+
+        maxHeight?: number;
 
         value?: string;
 
@@ -120,7 +122,7 @@ module api.ui.selector.combobox {
             }
 
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
-                maxHeight: 200,
+                maxHeight: config.maxHeight ? config.maxHeight : 200,
                 width: this.input.getWidth(),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
@@ -162,17 +164,13 @@ module api.ui.selector.combobox {
             return this.comboBoxDropdown.isDropdownShown();
         }
 
+        // 
         showDropdown() {
 
             this.doUpdateDropdownTopPositionAndWidth();
             this.notifyExpanded(true);
 
-            if (this.input.getValue() === "") {
-                this.comboBoxDropdown.showDropdown(this.getSelectedOptions(), this.noOptionsText);
-            }
-            else {
-                this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
-            }
+            this.comboBoxDropdown.showDropdown(this.getSelectedOptions(), this.isInputEmpty() ? this.noOptionsText : null);
 
             this.dropdownHandle.down();
 
@@ -196,13 +194,12 @@ module api.ui.selector.combobox {
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[], saveSelection?: boolean) {
-            if (this.input.getValue() === "") {
-                this.comboBoxDropdown.setOptions(options, this.getSelectedOptions(), saveSelection, this.noOptionsText);
-            }
-            else {
-                this.comboBoxDropdown.setOptions(options, this.getSelectedOptions(), saveSelection);
-            }
+            this.comboBoxDropdown.setOptions(options, this.isInputEmpty() ? this.noOptionsText : null, this.getSelectedOptions(),
+                saveSelection);
+        }
 
+        private isInputEmpty(): boolean {
+            return this.input.getValue() === "";
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
@@ -490,23 +487,10 @@ module api.ui.selector.combobox {
         }
 
         private setupListeners() {
-
-            let focusoutTimeout = 0;
-
-            this.onFocusOut(() => {
-                focusoutTimeout = setTimeout(() => {
-                    this.hideDropdown();
-                    this.active = false;
-                }, 50);
-            });
-
-            this.onFocusIn(() => {
-                clearTimeout(focusoutTimeout);
-            });
-
-            // Prevent focus loss on mouse down
-            this.onMouseDown((event: MouseEvent) => {
-                event.preventDefault();
+            
+            api.util.AppHelper.focusInOut(this, () => {
+                this.hideDropdown();
+                this.active = false;
             });
 
             this.onScrolled((event: WheelEvent) => {
@@ -551,7 +535,7 @@ module api.ui.selector.combobox {
                 this.preservedInputValueChangedEvent = event;
                 if (this.delayedInputValueChangedHandling == 0) {
                     this.handleInputValueChanged();
-                } else {
+                } else if (!event.valuesAreEqual()) {
                     this.setEmptyDropdownText("Just keep on typing...");
                     this.delayedHandleInputValueChangedFnCall.delayCall();
                 }

@@ -75,6 +75,11 @@ public class CreateAttachment
         return new Builder();
     }
 
+    public static Builder create( final CreateAttachment source )
+    {
+        return new Builder( source );
+    }
+
     public static class Builder
     {
         private ByteSource byteSource;
@@ -86,6 +91,19 @@ public class CreateAttachment
         private String label;
 
         private String text;
+
+        public Builder()
+        {
+        }
+
+        public Builder( final CreateAttachment source )
+        {
+            this.name = source.name;
+            this.mimeType = source.mimeType;
+            this.label = source.label;
+            this.byteSource = source.byteSource;
+            this.text = source.textContent;
+        }
 
         public Builder mimeType( final String value )
         {

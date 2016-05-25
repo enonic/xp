@@ -1,17 +1,17 @@
-module api.form.json{
+module api.form.json {
 
-    export class FormItemSetJson extends FormItemJson{
+    export interface FormItemSetJson extends FormItemJson {
 
-        customText:string;
+        customText: string;
 
-        helpText:string;
+        helpText: string;
 
-        immutable:boolean;
+        immutable: boolean;
 
-        items:FormItemTypeWrapperJson[];
+        items: FormItemTypeWrapperJson[];
 
-        label:string;
+        label: string;
 
-        occurrences:OccurrencesJson;
+        occurrences: OccurrencesJson;
     }
 }

@@ -18,18 +18,6 @@ public class UserStoreTest
     }
 
     @Test
-    public void testCreateCopyUserStore()
-        throws Exception
-    {
-        final UserStoreKey userStoreKey = UserStoreKey.from( "myUserStore" );
-        final UserStore userStore = UserStore.create().displayName( "my user store" ).key( userStoreKey ).build();
-        final UserStore userStoreCopy = UserStore.create( userStore ).build();
-
-        assertEquals( "myUserStore", userStoreCopy.getKey().toString() );
-        assertEquals( "my user store", userStoreCopy.getDisplayName() );
-    }
-
-    @Test
     public void testUserStoreKey()
         throws Exception
     {

@@ -293,15 +293,6 @@ module api.ui.treegrid {
 
             this.onLoaded(() => this.unmask());
 
-            /* if (this.toolbar) {
-             this.gridData.onRowCountChanged(() => {
-             this.toolbar.refresh();
-             });
-
-             this.onSelectionChanged(() => {
-             this.toolbar.refresh();
-             });
-             }*/
         }
 
         public isInRenderingView(): boolean {
@@ -1131,7 +1122,7 @@ module api.ui.treegrid {
             return this;
         }
 
-        private notifyDataChanged(event: DataChangedEvent<DATA>) {
+        notifyDataChanged(event: DataChangedEvent<DATA>) {
             this.dataChangeListeners.forEach((listener) => {
                 listener(event);
             });

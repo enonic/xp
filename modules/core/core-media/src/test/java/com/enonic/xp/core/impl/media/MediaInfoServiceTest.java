@@ -1,16 +1,19 @@
 package com.enonic.xp.core.impl.media;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.tika.detect.DefaultDetector;
-import org.apache.tika.parser.DefaultParser;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
+import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.MediaInfo;
 
 import static org.junit.Assert.*;
@@ -23,10 +26,17 @@ public class MediaInfoServiceTest
     public void setup()
     {
         this.service = new MediaInfoServiceImpl();
-        this.service.setDetector( new DefaultDetector() );
-        this.service.setParser( new DefaultParser() );
+        service.setBinaryExtractor( source -> {
+            Map<String, List<String>> data = Maps.newHashMap();
+            data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpeg" ) );
+            data.put( "myExtractedValue", Lists.newArrayList( "fisk" ) );
 
-        this.service.activate();
+            return ExtractedData.create().
+                metadata( data ).
+                text( "myTextValue" ).
+                imageOrientation( "1" ).
+                build();
+        } );
     }
 
     @Test

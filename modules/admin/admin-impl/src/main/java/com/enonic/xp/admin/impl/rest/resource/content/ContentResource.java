@@ -35,8 +35,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
-import io.swagger.annotations.ApiOperation;
-
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -45,11 +43,13 @@ import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
+import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
+import com.enonic.xp.admin.impl.json.content.UnpublishContentResultJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -81,7 +81,10 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContent
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -128,9 +131,12 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.extractor.BinaryExtractor;
+import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
@@ -194,6 +200,10 @@ public final class ContentResource
     private RelationshipTypeService relationshipTypeService;
 
     private ContentIconUrlResolver contentIconUrlResolver;
+
+    private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
+
+    private BinaryExtractor extractor;
 
     @POST
     @Path("create")
@@ -398,10 +408,9 @@ public final class ContentResource
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
-                    contentPath( contentToDelete ).
+                contentPath( contentToDelete ).
                 deleteOnline( json.isDeleteOnline() ).
-                deletePending( json.isDeletePending() ).
-                    build();
+                build();
 
             try
             {
@@ -427,7 +436,7 @@ public final class ContentResource
                     if ( content != null )
                     {
                         jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName(),
-                                e.getMessage() );
+                                               e.getMessage() );
                     }
                 }
                 catch ( final Exception e2 )
@@ -441,15 +450,30 @@ public final class ContentResource
         return jsonResult;
     }
 
+    @GET
+    @Path("getDependencies")
+    public DependenciesJson getDependencies( @QueryParam("id") final String id )
+    {
+
+        final ContentId contentId = ContentId.from( id );
+
+        final ResolveDependenciesAggregationFactory resolveDependenciesAggregationFactory =
+            new ResolveDependenciesAggregationFactory( contentTypeIconUrlResolver, contentService );
+
+        return resolveDependenciesAggregationFactory.create( contentId );
+    }
+
     @POST
     @Path("publish")
     public PublishContentResultJson publish( final PublishContentJson params )
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
 
         final PushContentsResult result = contentService.push( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
+            excludedContentIds( excludeContentIds ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
             build() );
@@ -467,6 +491,7 @@ public final class ContentResource
     {
         //Resolved the requested ContentPublishItem
         final ContentIds requestedContentIds = ContentIds.from( params.getIds() );
+        final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
         final List<ContentPublishItemJson> requestedContentPublishItemList = resolveContentPublishItems( requestedContentIds );
 
         //Resolves the publish dependencies
@@ -474,6 +499,7 @@ public final class ContentResource
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
                 target( ContentConstants.BRANCH_MASTER ).
                 contentIds( requestedContentIds ).
+                excludedContentIds( excludeContentIds ).
                 includeChildren( params.includeChildren() ).
                 build() );
 
@@ -920,6 +946,19 @@ public final class ContentResource
         return new ContentIdJson( setActiveContentVersionResult.getContentId() );
     }
 
+    @POST
+    @Path("unpublish")
+    public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
+    {
+        final Contents contents = this.contentService.unpublishContent( UnpublishContentParams.create().
+            contentIds( ContentIds.from( params.getIds() ) ).
+            includeChildren( params.isIncludeChildren() ).
+            unpublishBranch( ContentConstants.BRANCH_MASTER ).
+            build() );
+
+        return new UnpublishContentResultJson( contents );
+    }
+
     @GET
     @Path("locales")
     public LocaleListJson getLocales( @QueryParam("query") final String query )
@@ -1023,7 +1062,6 @@ public final class ContentResource
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed(RoleKeys.ADMIN_ID)
-    @ApiOperation("Reprocesses content")
     public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
     {
         final List<ContentPath> updated = new ArrayList<>();
@@ -1088,10 +1126,13 @@ public final class ContentResource
     {
         final MultipartItem mediaFile = form.get( "file" );
 
+        final ExtractedData extractedData = this.extractor.extract( mediaFile.getBytes() );
+
         final CreateAttachment attachment = CreateAttachment.create().
             name( attachmentName ).
             mimeType( mediaFile.getContentType().toString() ).
             byteSource( getFileItemByteSource( mediaFile ) ).
+            text( extractedData.getText() ).
             build();
 
         final UpdateContentParams params = new UpdateContentParams().
@@ -1157,7 +1198,7 @@ public final class ContentResource
         return result.getTotalHits();
     }
 
-    private QueryExpr constructExprToFindChildren(final ContentPaths contentsPaths )
+    private QueryExpr constructExprToFindChildren( final ContentPaths contentsPaths )
     {
         final FieldExpr fieldExpr = FieldExpr.from( "_path" );
 
@@ -1167,8 +1208,7 @@ public final class ContentResource
         {
             if ( !contentPath.equals( contentsPaths.first() ) )
             {
-                ConstraintExpr likeExpr =
-                    CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
+                ConstraintExpr likeExpr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
                 expr = LogicalExpr.or( expr, likeExpr );
             }
         }
@@ -1179,13 +1219,14 @@ public final class ContentResource
     private ContentSummaryListJson getDescendantsOfContents( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-                contentQuery( ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
-                build() );
+            contentQuery(
+                ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
+            build() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().
-                totalHits( result.getTotalHits() ).
-                hits( result.getHits() ).
-                build();
+            totalHits( result.getTotalHits() ).
+            hits( result.getHits() ).
+            build();
 
         return new ContentSummaryListJson( result.getContents(), metaData, contentIconUrlResolver );
     }
@@ -1221,6 +1262,7 @@ public final class ContentResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentIconUrlResolver = new ContentIconUrlResolver( contentTypeService );
+        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( new ContentTypeIconResolver( contentTypeService ) );
     }
 
     @Reference
@@ -1234,5 +1276,11 @@ public final class ContentResource
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;
+    }
+
+    @Reference
+    public void setExtractor( final BinaryExtractor extractor )
+    {
+        this.extractor = extractor;
     }
 }

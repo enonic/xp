@@ -17,6 +17,8 @@ public interface PortalUrlService
 
     String attachmentUrl( AttachmentUrlParams params );
 
+    String identityUrl( IdentityUrlParams params );
+
     String generateUrl( GenerateUrlParams params );
 
     String processHtml( ProcessHtmlParams params );
