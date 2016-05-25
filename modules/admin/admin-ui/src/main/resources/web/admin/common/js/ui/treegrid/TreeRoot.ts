@@ -106,10 +106,14 @@ module api.ui.treegrid {
                 var fullIds = fullSelection.map((el) => {
                     return el.getDataId();
                 });
-                fullSelection = fullSelection.filter((value, index, self) => {
+                fullSelection = fullSelection.filter((value, index) => {
                     return fullIds.indexOf(value.getDataId()) === index;
                 });
             }
+
+            fullSelection = fullSelection.filter((value) => {
+                return !!value.getDataId();
+            });
 
             return fullSelection;
         }
