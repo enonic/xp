@@ -47,8 +47,8 @@ public class MacroDescriptorServiceTest
         final MacroDescriptor descriptor = this.service.getByKey( macroKey );
         assertNotNull( descriptor );
         assertTrue( descriptor.getKey().equals( macroKey ) );
-        assertEquals( "Youtube macro", descriptor.getDisplayName() );
-        assertEquals( "Youtube macro", descriptor.getDescription() );
+        assertEquals( "YouTube macro", descriptor.getDisplayName() );
+        assertEquals( "Stream a video directly from your website", descriptor.getDescription() );
         assertNotNull( descriptor.getForm() );
     }
 
