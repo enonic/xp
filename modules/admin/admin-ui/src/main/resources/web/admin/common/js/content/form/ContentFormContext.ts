@@ -64,6 +64,7 @@ module api.content.form {
                 parentDataPath: parentPropertyPath,
                 site: this.getSite(),
                 content: this.getPersistedContent(),
+                contentPath: this.getContentPath(),
                 parentContentPath: this.getParentContentPath()
             };
         }
