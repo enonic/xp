@@ -8,6 +8,8 @@ module api.content.form.inputtype {
 
         content: api.content.ContentSummary;
 
+        contentPath: api.content.ContentPath;
+
         parentContentPath: api.content.ContentPath;
     }
 }
