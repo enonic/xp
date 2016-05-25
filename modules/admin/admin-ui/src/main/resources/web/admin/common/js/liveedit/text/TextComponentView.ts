@@ -108,8 +108,8 @@ module api.liveedit.text {
             this.htmlAreaEditor = null;
         }
 
-        private getContentId(): api.content.ContentId {
-            return this.liveEditModel.getContent().getContentId();
+        private getContent(): api.content.ContentSummary {
+            return this.liveEditModel.getContent();
         }
 
         private getContentPath(): api.content.ContentPath {
@@ -324,7 +324,7 @@ module api.liveedit.text {
                 setOnBlurHandler(this.onBlurHandler.bind(this)).
                 setOnKeydownHandler(this.onKeydownHandler.bind(this)).
                 setFixedToolbarContainer('.mce-toolbar-container').
-                setContentId(this.getContentId()).
+                setContent(this.getContent()).
                 setContentPath(this.getContentPath()).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {

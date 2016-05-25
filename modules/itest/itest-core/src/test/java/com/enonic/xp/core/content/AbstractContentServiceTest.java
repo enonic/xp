@@ -270,20 +270,38 @@ public class AbstractContentServiceTest
             build() );
     }
 
+
+    protected Content createContent( final ContentPath parentPath, final String displayName )
+        throws Exception
+    {
+        return doCreateContent( parentPath, displayName, new PropertyTree() );
+    }
+
     protected Content createContent( ContentPath parentPath )
         throws Exception
     {
+        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree() );
+    }
 
+    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
+        throws Exception
+    {
+
+        return doCreateContent( parentPath, displayName, data );
+    }
+
+    private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
+    {
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my test content #" + UUID.randomUUID().toString() ).
+            contentData( data ).
+            displayName( displayName ).
             parent( parentPath ).
+            contentData( data ).
             type( ContentTypeName.folder() ).
             build();
 
         return this.contentService.create( createContentParams );
     }
-
 
     protected PropertyTree createPropertyTreeForAllInputTypes()
     {

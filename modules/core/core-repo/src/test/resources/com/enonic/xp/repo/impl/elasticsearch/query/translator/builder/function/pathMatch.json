@@ -1,0 +1,8 @@
+{
+  "match": {
+    "mypath._path": {
+      "query": "/fisk",
+      "minimum_should_match": "1"
+    }
+  }
+}

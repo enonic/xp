@@ -2,6 +2,7 @@ module api.util.htmlarea.dialog {
 
     import ContentId = api.content.ContentId;
     import ContentPath = api.content.ContentPath;
+    import ContentSummary = api.content.ContentSummary;
 
     export enum HtmlAreaDialogType {
         ANCHOR, IMAGE, LINK, MACRO
@@ -13,7 +14,7 @@ module api.util.htmlarea.dialog {
 
         private type: HtmlAreaDialogType;
 
-        private contentId: ContentId;
+        private content: ContentSummary;
 
         private contentPath: ContentPath;
 
@@ -22,7 +23,7 @@ module api.util.htmlarea.dialog {
 
             this.config = builder.config;
             this.type = builder.type;
-            this.contentId = builder.contentId;
+            this.content = builder.content;
             this.contentPath = builder.contentPath;
         }
 
@@ -34,8 +35,8 @@ module api.util.htmlarea.dialog {
             return this.type;
         }
 
-        getContentId(): ContentId {
-            return this.contentId;
+        getContent(): ContentSummary {
+            return this.content;
         }
 
         getContentPath(): ContentPath {
@@ -61,12 +62,12 @@ module api.util.htmlarea.dialog {
 
         type: HtmlAreaDialogType;
 
-        contentId: ContentId;
+        content: ContentSummary;
 
         contentPath: ContentPath;
 
-        setContentId(contentId: ContentId): HtmlAreaDialogShownEventBuilder {
-            this.contentId = contentId;
+        setContent(content: ContentSummary): HtmlAreaDialogShownEventBuilder {
+            this.content = content;
             return this;
         }
 

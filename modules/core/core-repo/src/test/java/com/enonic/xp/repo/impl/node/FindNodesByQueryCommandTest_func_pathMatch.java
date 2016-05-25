@@ -1,0 +1,93 @@
+package com.enonic.xp.repo.impl.node;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+
+import static org.junit.Assert.*;
+
+public class FindNodesByQueryCommandTest_func_pathMatch
+    extends AbstractNodeTest
+{
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
+
+    @Test
+    public void matches_subPath()
+        throws Exception
+    {
+        createNode( CreateNodeParams.create().
+            name( "node1" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1')" );
+
+        assertEquals( 1, result.getNodes().getSize() );
+    }
+
+
+    @Test
+    public void matches_subPath_minimum_match()
+        throws Exception
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            name( "node1" ).
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            name( "node1_1" ).
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            name( "node1_1_1" ).
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            build() );
+
+        final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1', 2)" );
+
+        assertOrder( result, node1_1_1, node1_1 );
+    }
+
+    @Test
+    public void score_order_most_matching_first()
+        throws Exception
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            name( "node1" ).
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            name( "node1_1" ).
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            name( "node1_1_1" ).
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            build() );
+
+        final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1')" );
+
+        assertOrder( result, node1_1_1, node1_1, node1 );
+    }
+}
