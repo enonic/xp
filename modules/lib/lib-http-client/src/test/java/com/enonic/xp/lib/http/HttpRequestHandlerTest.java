@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
@@ -263,6 +264,7 @@ public class HttpRequestHandlerTest
         runScript( "/site/lib/xp/examples/http-client/multipart.js" );
     }
 
+    @Ignore
     @Test
     public void testExampleProxy()
         throws Exception
