@@ -30,6 +30,7 @@ function checkRequired(params, name) {
  *
  * @example-ref examples/http-client/request.js
  * @example-ref examples/http-client/multipart.js
+ * @example-ref examples/http-client/proxy.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.url URL to which the request is sent.

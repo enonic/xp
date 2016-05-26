@@ -4,6 +4,7 @@ var assert = require('/lib/xp/assert');
 function getServerHost() {
     return testInstance.getServerHost();
 }
+var myImageStream = testInstance.getImageStream();
 
 // BEGIN
 var response = httpClientLib.request({

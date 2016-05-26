@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -241,11 +242,32 @@ public class HttpRequestHandlerTest
         return server.getHostName() + ":" + server.getPort();
     }
 
+    public ByteSource getImageStream()
+    {
+        return ByteSource.wrap( "image_data".getBytes() );
+    }
+
     @Test
     public void testExample()
         throws Exception
     {
         this.server.enqueue( addResponse( "POST request" ) );
         runScript( "/site/lib/xp/examples/http-client/request.js" );
+    }
+
+    @Test
+    public void testExampleMultipart()
+        throws Exception
+    {
+        this.server.enqueue( addResponse( "POST request" ) );
+        runScript( "/site/lib/xp/examples/http-client/multipart.js" );
+    }
+
+    @Test
+    public void testExampleProxy()
+        throws Exception
+    {
+        this.server.enqueue( addResponse( "POST request" ) );
+        runScript( "/site/lib/xp/examples/http-client/proxy.js" );
     }
 }
