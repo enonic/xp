@@ -225,9 +225,11 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 node.setViewer("name", viewer);
             }
             viewer.setObject(node.getData(), node.calcLevel() > 1);
-            return viewer.toString();
+            return viewer ? viewer.toString() : '';
 
         }
+        
+        return '... loading more content.';
     }
 
 
