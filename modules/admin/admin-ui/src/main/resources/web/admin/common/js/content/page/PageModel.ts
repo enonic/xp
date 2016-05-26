@@ -433,10 +433,6 @@ module api.content.page {
             return this.defaultTemplate;
         }
 
-        getDefaultPageTemplateController(): PageDescriptor {
-            return this.defaultTemplateDescriptor;
-        }
-
         getMode(): PageMode {
             return this.mode;
         }
@@ -447,6 +443,25 @@ module api.content.page {
 
         hasController(): boolean {
             return !!this.controller;
+        }
+
+        /**
+         * Return page descriptor depending on page mode
+         */
+        getDescriptor(): PageDescriptor {
+            var descriptor: PageDescriptor;
+
+            if (!this.isPageTemplate()) {
+                if (this.mode == PageMode.FORCED_TEMPLATE) {
+                    return this.templateDescriptor;
+                }
+
+                if (this.mode == PageMode.AUTOMATIC) {
+                    return this.defaultTemplateDescriptor;
+                }
+            }
+
+            return this.controller;
         }
 
         getController(): PageDescriptor {
@@ -471,10 +486,6 @@ module api.content.page {
 
         getTemplate(): PageTemplate {
             return this.template;
-        }
-
-        getTemplateDescriptor(): PageDescriptor {
-            return this.templateDescriptor;
         }
 
         getRegions(): api.content.page.region.Regions {
