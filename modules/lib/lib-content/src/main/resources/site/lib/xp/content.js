@@ -75,6 +75,41 @@ exports.getAttachmentStream = function (params) {
     return bean.getStream();
 };
 
+
+/**
+ * This function returns the parent site of a content.
+ *
+ * @example-ref examples/content/getSite.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ *
+ * @returns {object} The current site as JSON.
+ */
+exports.getSite = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetSiteHandler');
+    bean.key = nullOrValue(params.key);
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function returns the site configuration for this app in the parent site of a content.
+ *
+ * @example-ref examples/content/getSiteConfig.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {string} params.applicationKey Application key.
+ *
+ * @returns {object} The site configuration for current application as JSON.
+ */
+exports.getSiteConfig = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetSiteConfigHandler');
+    bean.key = nullOrValue(params.key);
+    bean.applicationKey = nullOrValue(params.applicationKey);
+    return __.toNativeObject(bean.execute());
+};
+
 /**
  * This function deletes a content.
  *

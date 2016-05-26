@@ -30,14 +30,14 @@ module api.rendering {
         public static getComponentUri(contentId: string, componentPath: api.content.page.region.ComponentPath, renderingMode: RenderingMode,
                                       workspace: api.content.Branch): string {
             var elementDivider = api.content.ContentPath.ELEMENT_DIVIDER,
-                componentPart = elementDivider + "_" + elementDivider + "component"  + elementDivider;
+                componentPart = elementDivider + "_" + elementDivider + "component" + elementDivider;
             var componentPathStr = componentPath ? componentPath.toString() : "";
             return UriHelper.getPortalUri(contentId + componentPart + componentPathStr, renderingMode, workspace);
         }
 
         public static getAdminUri(baseUrl: string, contentPath: string): string {
-            return UriHelper.getPortalUri(contentPath, RenderingMode.ADMIN, api.content.Branch.DRAFT) +
-                   api.content.ContentPath.ELEMENT_DIVIDER + baseUrl;
+            var adminUrl = UriHelper.getPortalUri(contentPath, RenderingMode.ADMIN, api.content.Branch.DRAFT);
+            return adminUrl + (adminUrl.endsWith('/') ? "" : api.content.ContentPath.ELEMENT_DIVIDER) + baseUrl;
         }
     }
 }
