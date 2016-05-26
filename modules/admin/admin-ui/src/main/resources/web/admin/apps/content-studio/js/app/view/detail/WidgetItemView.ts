@@ -21,7 +21,7 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     private getFullWidgetUrl(url: string, uid: string, contentId: string) {
-        return url + "?uid=" + uid + "&contentid=" + contentId;
+        return url + "?uid=" + uid + "&contentId=" + contentId;
     }
 
     public setUrl(url: string, contentId: string, keepId: boolean = false): wemQ.Promise<void> {
