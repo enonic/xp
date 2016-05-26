@@ -282,7 +282,7 @@ module api.liveedit {
             Highlighter.get().highlightItemView(this);
             if (this.isSelected()) {
                 // Remove selected hilighter to see the hover hilight
-                this.unhighlightSelected();
+                // this.unhighlightSelected();
             }
         }
 
@@ -290,7 +290,7 @@ module api.liveedit {
             Highlighter.get().hide();
             if (this.isSelected()) {
                 // Restore selected highlight after leaving
-                this.highlightSelected();
+                // this.highlightSelected();
             }
         }
 

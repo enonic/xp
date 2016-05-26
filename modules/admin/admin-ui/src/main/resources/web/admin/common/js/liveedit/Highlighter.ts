@@ -84,12 +84,17 @@ module api.liveedit {
         }
 
         protected preProcessStyle(style: HighlighterStyle): HighlighterStyle {
-            return style;
+            return {
+                stroke: '',
+                strokeDasharray: '',
+                fill: 'rgba(158,158,158,.3)'
+            }
         }
 
         private resize(dimensions: ElementDimensions, style: HighlighterStyle): void {
             var w = Math.round(dimensions.width),
                 h = Math.round(dimensions.height),
+                strokeW,
                 top = Math.round(dimensions.top),
                 left = Math.round(dimensions.left);
 
@@ -109,8 +114,13 @@ module api.liveedit {
                     screenH = bodyEl.getHeight(),
                     screenW = bodyEl.getWidth();
 
+                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue("stroke-width"));
+
                 this.path.getEl()
-                    .setAttribute('d', this.generatePath(left, top, w, h, screenW, screenH))
+                    .setAttribute('d',
+                    this.generatePath(left + strokeW / 2, top + strokeW / 2,
+                        w - strokeW, h - strokeW,
+                        screenW - strokeW, screenH - strokeW))
                     .setStroke(style.stroke)
                     .setStrokeDasharray(style.strokeDasharray)
                     .setFill('transparent');

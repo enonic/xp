@@ -16,12 +16,12 @@ module api.liveedit {
         }
 
 
-        /*        protected preProcessStyle(style: api.liveedit.HighlighterStyle): api.liveedit.HighlighterStyle {
+        protected preProcessStyle(style: api.liveedit.HighlighterStyle): api.liveedit.HighlighterStyle {
             return {
                 stroke: 'rgba(0, 0, 0, 1)',     //'#4294de',
-                strokeDasharray: '',
+                strokeDasharray: style.strokeDasharray,
                 fill: style.fill
             };
-         }*/
+        }
     }
 }
