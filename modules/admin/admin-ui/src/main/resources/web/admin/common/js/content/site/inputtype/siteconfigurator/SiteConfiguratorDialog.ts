@@ -8,6 +8,7 @@ module api.content.site.inputtype.siteconfigurator {
     import ModalDialogHeader = api.ui.dialog.ModalDialogHeader;
     import InputView = api.form.InputView;
     import ContentSelector = api.content.form.inputtype.contentselector.ContentSelector;
+    import PrincipalSelector = api.content.form.inputtype.principalselector.PrincipalSelector;
     import ImageSelector = api.content.form.inputtype.image.ImageSelector;
     import ComboBox = api.ui.selector.combobox.ComboBox;
 
@@ -99,7 +100,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         private checkItemViewAndSubscribe(itemView: api.form.FormItemView, comboboxArray: ComboBox<any>[]) {
             var inputView: InputView = <InputView> itemView;
-            if (this.isContentOrImageOrComboSelectorInput(inputView)) {
+            if (this.isContentOrImageOrPrincipalOrComboSelectorInput(inputView)) {
                 var combobox = this.getComboboxFromSelectorInputView(inputView);
                 if (!!combobox) {
                     comboboxArray.push(combobox);
@@ -133,16 +134,19 @@ module api.content.site.inputtype.siteconfigurator {
                 contentComboBox = (<ContentSelector> inputTypeView).getContentComboBox();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, ImageSelector)) {
                 contentComboBox = (<ImageSelector> inputTypeView).getContentComboBox();
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, PrincipalSelector)) {
+                contentComboBox = (<PrincipalSelector> inputTypeView).getPrincipalComboBox();
             } else {
                 return (<api.form.inputtype.combobox.ComboBox> inputTypeView).getComboBox();
             }
             return !!contentComboBox ? contentComboBox.getComboBox() : null;
         }
 
-        private isContentOrImageOrComboSelectorInput(inputView: InputView): boolean {
+        private isContentOrImageOrPrincipalOrComboSelectorInput(inputView: InputView): boolean {
             return !!inputView &&
                    (api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), ContentSelector) ||
                     api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), ImageSelector) ||
+                    api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), PrincipalSelector) ||
                     api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), api.form.inputtype.combobox.ComboBox));
         }
 
