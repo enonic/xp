@@ -1,11 +1,15 @@
 package com.enonic.xp.lib.http;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteSource;
+import com.squareup.okhttp.Authenticator;
+import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.MediaType;
@@ -20,6 +24,8 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 public final class HttpRequestHandler
 {
+    private final static int DEFAULT_PROXY_PORT = 8080;
+
     static long MAX_IN_MEMORY_BODY_STREAM_BYTES = 10_000_000;
 
     private String url;
@@ -42,72 +48,13 @@ public final class HttpRequestHandler
 
     private List<Map<String, Object>> multipart;
 
-    public void setContentType( final String contentType )
-    {
-        this.contentType = contentType;
-    }
+    private String proxyHost;
 
-    public void setBody( final Object value )
-    {
-        this.bodyStream = null;
-        this.bodyString = null;
-        if ( value == null )
-        {
-            return;
-        }
-        if ( value instanceof ByteSource )
-        {
-            this.bodyStream = (ByteSource) value;
-        }
-        else
-        {
-            this.bodyString = value.toString();
-        }
-    }
+    private Integer proxyPort;
 
-    public void setHeaders( final Map<String, String> headers )
-    {
-        this.headers = headers;
-    }
+    private String proxyUser;
 
-    public void setUrl( final String value )
-    {
-        this.url = value;
-    }
-
-    public void setParams( final Map<String, Object> params )
-    {
-        this.params = params;
-    }
-
-    public void setMethod( final String value )
-    {
-        if ( value != null )
-        {
-            this.method = value.trim().toUpperCase();
-        }
-    }
-
-    public void setConnectionTimeout( final Integer value )
-    {
-        if ( value != null )
-        {
-            this.connectionTimeout = value;
-        }
-    }
-
-    public void setReadTimeout( final Integer value )
-    {
-        if ( value != null )
-        {
-            this.readTimeout = value;
-        }
-    }
-
-    public void setMultipart( final List<Map<String, Object>> multipart )
-    {
-        this.multipart = multipart;
-    }
+    private String proxyPassword;
 
     public ResponseMapper request()
         throws IOException
@@ -122,6 +69,7 @@ public final class HttpRequestHandler
         final OkHttpClient client = new OkHttpClient();
         client.setReadTimeout( this.readTimeout, TimeUnit.MILLISECONDS );
         client.setConnectTimeout( this.connectionTimeout, TimeUnit.MILLISECONDS );
+        setupProxy( client );
         return client.newCall( request ).execute();
     }
 
@@ -253,6 +201,126 @@ public final class HttpRequestHandler
                 request.header( header.getKey(), header.getValue() );
             }
         }
+    }
+
+    private void setupProxy( final OkHttpClient client )
+    {
+        if ( proxyHost == null || proxyHost.trim().isEmpty() )
+        {
+            return;
+        }
+        int proxyPort = this.proxyPort == null ? DEFAULT_PROXY_PORT : this.proxyPort;
+        client.setProxy( new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) ) );
+
+        if ( proxyUser == null || proxyUser.trim().isEmpty() )
+        {
+            return;
+        }
+        Authenticator proxyAuthenticator = new Authenticator()
+        {
+            @Override
+            public Request authenticate( final Proxy proxy, final Response response )
+                throws IOException
+            {
+                return null;
+            }
+
+            @Override
+            public Request authenticateProxy( final Proxy proxy, final Response response )
+                throws IOException
+            {
+                String credential = Credentials.basic( proxyUser, proxyPassword );
+                return response.request().newBuilder().header( "Proxy-Authorization", credential ).build();
+            }
+        };
+        client.setAuthenticator( proxyAuthenticator );
+    }
+
+    public void setContentType( final String contentType )
+    {
+        this.contentType = contentType;
+    }
+
+    public void setBody( final Object value )
+    {
+        this.bodyStream = null;
+        this.bodyString = null;
+        if ( value == null )
+        {
+            return;
+        }
+        if ( value instanceof ByteSource )
+        {
+            this.bodyStream = (ByteSource) value;
+        }
+        else
+        {
+            this.bodyString = value.toString();
+        }
+    }
+
+    public void setHeaders( final Map<String, String> headers )
+    {
+        this.headers = headers;
+    }
+
+    public void setUrl( final String value )
+    {
+        this.url = value;
+    }
+
+    public void setParams( final Map<String, Object> params )
+    {
+        this.params = params;
+    }
+
+    public void setMethod( final String value )
+    {
+        if ( value != null )
+        {
+            this.method = value.trim().toUpperCase();
+        }
+    }
+
+    public void setConnectionTimeout( final Integer value )
+    {
+        if ( value != null )
+        {
+            this.connectionTimeout = value;
+        }
+    }
+
+    public void setReadTimeout( final Integer value )
+    {
+        if ( value != null )
+        {
+            this.readTimeout = value;
+        }
+    }
+
+    public void setMultipart( final List<Map<String, Object>> multipart )
+    {
+        this.multipart = multipart;
+    }
+
+    public void setProxyHost( final String proxyHost )
+    {
+        this.proxyHost = proxyHost;
+    }
+
+    public void setProxyPort( final Integer proxyPort )
+    {
+        this.proxyPort = proxyPort;
+    }
+
+    public void setProxyUser( final String proxyUser )
+    {
+        this.proxyUser = proxyUser;
+    }
+
+    public void setProxyPassword( final String proxyPassword )
+    {
+        this.proxyPassword = proxyPassword;
     }
 
 }
