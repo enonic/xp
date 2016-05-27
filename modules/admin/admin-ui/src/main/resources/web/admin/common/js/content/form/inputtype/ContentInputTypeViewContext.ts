@@ -6,7 +6,7 @@ module api.content.form.inputtype {
 
         site: api.content.site.Site;
 
-        contentId: api.content.ContentId;
+        content: api.content.ContentSummary;
 
         contentPath: api.content.ContentPath;
 

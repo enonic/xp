@@ -14,11 +14,11 @@ module api.content {
 
         public static DEFAULT_SIZE = 15;
 
-        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("_modifiedTime"), OrderDirection.DESC);
+        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
 
-        public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
+        public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
-        private order: OrderExpr[] = ContentSelectorQueryRequest.ORDER_BY_MODIFIED_TIME_DESC;
+        public static DEFAULT_ORDER: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC, ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
 
         private queryExpr: api.query.expr.QueryExpr;
 
@@ -28,7 +28,7 @@ module api.content {
 
         private expand: api.rest.Expand = api.rest.Expand.SUMMARY;
 
-        private id: ContentId;
+        private content: ContentSummary;
 
         private inputName: string;
 
@@ -45,6 +45,8 @@ module api.content {
         constructor() {
             super();
             super.setMethod("POST");
+
+            this.setQueryExpr();
         }
 
         setInputName(name: string) {
@@ -55,12 +57,13 @@ module api.content {
             return this.inputName;
         }
 
-        setId(id: ContentId) {
-            this.id = id;
+        setContent(content: ContentSummary) {
+            this.content = content;
+            this.setQueryExpr();
         }
 
-        getId(): ContentId {
-            return this.id;
+        getContent(): ContentSummary {
+            return this.content;
         }
 
         setFrom(from: number) {
@@ -91,16 +94,20 @@ module api.content {
             this.relationshipType = relationshipType;
         }
 
-        setQueryExpr(searchString: string) {
+        setQueryExpr(searchString: string = "") {
+            var fulltextExpression = this.createSearchExpression(searchString);
 
-            var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().
-                setSearchString(searchString).
-                addField(new QueryField(QueryField.DISPLAY_NAME, 5)).
-                addField(new QueryField(QueryField.NAME, 3)).
-                addField(new QueryField(QueryField.ALL)).
-                build();
+            this.queryExpr = new QueryExpr(fulltextExpression, ContentSelectorQueryRequest.DEFAULT_ORDER);
+        }
 
-            this.queryExpr = new QueryExpr(fulltextExpression, this.order);
+        private createSearchExpression(searchString): Expression {
+            return new api.query.PathMatchExpressionBuilder()
+                        .setSearchString(searchString)
+                        .setPath(this.content ? this.content.getPath().toString() : "")
+                        .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
+                        .addField(new QueryField(QueryField.NAME, 3))
+                        .addField(new QueryField(QueryField.ALL))
+                        .build();
         }
 
         getQueryExpr(): api.query.expr.QueryExpr {
@@ -125,7 +132,6 @@ module api.content {
         }
 
         getParams(): Object {
-
             var queryExprAsString = this.getQueryExpr() ? this.getQueryExpr().toString() : "";
 
             return {
@@ -133,7 +139,7 @@ module api.content {
                 from: this.getFrom(),
                 size: this.getSize(),
                 expand: this.expandAsString(),
-                contentId: this.getId().toString(),
+                contentId: this.content.getId().toString(),
                 inputName: this.getInputName(),
                 contentTypeNames: this.contentTypeNames,
                 allowedContentPaths: this.allowedContentPaths,
@@ -143,25 +149,25 @@ module api.content {
 
         sendAndParse(): wemQ.Promise<ContentSummary[]> {
 
-            return this.send().
-                then((response: api.rest.JsonResponse<json.ContentQueryResultJson<ContentSummaryJson>>) => {
+            return this.send().then((response: api.rest.JsonResponse<json.ContentQueryResultJson<ContentSummaryJson>>) => {
 
-                    var responseResult: json.ContentQueryResultJson<ContentSummaryJson> = response.getResult();
+                var responseResult: json.ContentQueryResultJson<ContentSummaryJson> = response.getResult();
 
-                    var contentsAsJson: json.ContentSummaryJson[] = responseResult.contents;
+                var contentsAsJson: json.ContentSummaryJson[] = responseResult.contents;
 
-                    var contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
+                var contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(
+                    <json.ContentSummaryJson[]>contentsAsJson);
 
-                    if (this.from === 0) {
-                        this.results = [];
-                    }
-                    this.from += responseResult.metadata["hits"];
-                    this.loaded = this.from >= responseResult.metadata["totalHits"];
+                if (this.from === 0) {
+                    this.results = [];
+                }
+                this.from += responseResult.metadata["hits"];
+                this.loaded = this.from >= responseResult.metadata["totalHits"];
 
-                    this.results = this.results.concat(contentSummaries);
+                this.results = this.results.concat(contentSummaries);
 
-                    return this.results;
-                });
+                return this.results;
+            });
         }
 
         private expandAsString(): string {

@@ -44,6 +44,24 @@ module api.liveedit {
             });
         }
 
+        private initPageController(page: api.content.page.Page, pageModel: PageModel, pageDescriptor: PageDescriptor) {
+
+            var config = page.hasConfig() ?
+                         page.getConfig().copy() :
+                         new PropertyTree();
+
+            var regions = page.hasRegions() ?
+                          page.getRegions().clone() :
+                          Regions.create().build();
+
+            var setController = new SetController(this).
+                setDescriptor(pageDescriptor).
+                setConfig(config).
+                setRegions(regions);
+
+            pageModel.initController(setController);
+        }
+
         private initPageModel(defaultPageTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor): Q.Promise<PageModel> {
 
             var deferred = wemQ.defer<PageModel>();
@@ -129,23 +147,16 @@ module api.liveedit {
                 else if (pageMode == PageMode.FORCED_CONTROLLER) {
 
                     var pageDescriptorKey = page.getController();
-                    pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
-                    pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
 
-                        var config = page.hasConfig() ?
-                                     page.getConfig().copy() :
-                                     new PropertyTree();
-
-                        var regions = page.hasRegions() ?
-                                      page.getRegions().clone() :
-                                      Regions.create().build();
-
-                        var setController = new SetController(this).
-                            setDescriptor(pageDescriptor).
-                            setConfig(config).
-                            setRegions(regions);
-                        pageModel.initController(setController);
-                    });
+                    if (pageDescriptorKey) {
+                        pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
+                        pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
+                            this.initPageController(page, pageModel, pageDescriptor);
+                        });
+                    }
+                    else {
+                        this.initPageController(page, pageModel, null);
+                    }
                 }
                 else if (pageMode == PageMode.AUTOMATIC) {
                     pageModel.setAutomaticTemplate(this);

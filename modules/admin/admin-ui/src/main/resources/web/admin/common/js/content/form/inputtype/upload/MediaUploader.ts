@@ -102,9 +102,9 @@ module api.content.form.inputtype.upload {
         }
 
         updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
-            if ((!unchangedOnly || !this.mediaUploaderEl.isDirty()) && this.getContext().contentId) {
+            if ((!unchangedOnly || !this.mediaUploaderEl.isDirty()) && this.getContext().content.getContentId()) {
 
-                this.mediaUploaderEl.setValue(this.getContext().contentId.toString());
+                this.mediaUploaderEl.setValue(this.getContext().content.getContentId().toString());
 
                 if (property.hasNonNullValue()) {
                     this.mediaUploaderEl.setFileName(this.getFileNameFromProperty(property));
@@ -116,7 +116,7 @@ module api.content.form.inputtype.upload {
         private manageSVGImageIfPresent(content: api.content.Content) {
             if (content.getType().isVectorMedia()) {
                 this.addClass("with-svg-image");
-                var imgUrl = new api.content.ContentImageUrlResolver().setContentId(this.getContext().contentId).setTimestamp(
+                var imgUrl = new api.content.ContentImageUrlResolver().setContentId(this.getContext().content.getContentId()).setTimestamp(
                     content.getModifiedTime()).resolve();
 
                 this.svgImage.setSrc(imgUrl);
@@ -126,7 +126,7 @@ module api.content.form.inputtype.upload {
         }
 
         private deleteContent(property: Property) {
-            var contentId = this.getContext().contentId;
+            var contentId = this.getContext().content.getContentId();
 
             new api.content.GetContentByIdRequest(contentId).sendAndParse().then((content: api.content.Content) => {
                 var deleteRequest = new api.content.DeleteContentRequest();
@@ -181,7 +181,7 @@ module api.content.form.inputtype.upload {
 
                 var content = this.config.formContext.getPersistedContent();
 
-                var imgUrl = new api.content.ContentImageUrlResolver().setContentId(this.getContext().contentId).setTimestamp(
+                var imgUrl = new api.content.ContentImageUrlResolver().setContentId(this.getContext().content.getContentId()).setTimestamp(
                     content.getModifiedTime()).resolve();
 
                 this.svgImage.setSrc(imgUrl);
@@ -230,7 +230,7 @@ module api.content.form.inputtype.upload {
 
             return new api.content.MediaUploaderEl({
                 params: {
-                    content: this.getContext().contentId.toString()
+                    content: this.getContext().content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.update,
                 allowTypes: allowTypes,

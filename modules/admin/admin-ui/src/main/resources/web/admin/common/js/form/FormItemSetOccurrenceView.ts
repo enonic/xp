@@ -3,6 +3,7 @@ module api.form {
     import PropertySet = api.data.PropertySet;
     import PropertyArray = api.data.PropertyArray;
     import PropertyPath = api.data.PropertyPath;
+    import PropertyPathElement = api.data.PropertyPathElement;
     import Property = api.data.Property;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
@@ -103,15 +104,14 @@ module api.form {
 
                         var previousValidState = this.previousValidationRecording.isValid();
                         if (event.isValid()) {
-                            this.previousValidationRecording.removeByPath(event.getOrigin());
-                        }
-                        else {
+                            this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
+                        } else {
                             this.previousValidationRecording.flatten(event.getRecording());
                         }
 
                         if (previousValidState != this.previousValidationRecording.isValid()) {
                             this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
-                                this.resolveValidationRecordingPath()));
+                                this.resolveValidationRecordingPath()).setIncludeChildren(true));
                         }
                     });
                 });

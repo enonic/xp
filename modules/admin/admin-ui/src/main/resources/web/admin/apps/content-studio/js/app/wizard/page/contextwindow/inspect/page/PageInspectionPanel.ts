@@ -137,6 +137,10 @@ class BaseInspectionHandler {
 
     pageTemplateForm: PageTemplateForm;
 
+    private pageDescriptorForm: api.ui.form.Form;
+
+    private propertyChangedListener: (event: PropertyChangedEvent) => void;
+
     setPageModel(value: PageModel): BaseInspectionHandler {
         this.pageModel = value;
         return this;
@@ -149,19 +153,63 @@ class BaseInspectionHandler {
 
     setPageControllerForm(value: PageControllerForm): BaseInspectionHandler {
         this.pageControllerForm = value;
+        if (this.pageModel.isPageTemplate()) {
+            this.pageDescriptorForm = value;
+        }
         return this;
     }
 
     setPageTemplateForm(value: PageTemplateForm): BaseInspectionHandler {
         this.pageTemplateForm = value;
+        if (!this.pageModel.isPageTemplate()) {
+            this.pageDescriptorForm = value;
+        }
         return this;
     }
 
     setModel(liveEditModel: LiveEditModel) {
-        throw new Error("Must be implemented by inheritors");
+        this.initListener(liveEditModel);
+
+        this.showPageConfig(liveEditModel.getPageModel(), liveEditModel.getFormContext());
+
+        if (liveEditModel.getPageModel().getMode() !== PageMode.FRAGMENT) {
+            this.pageDescriptorForm.show();
+        }
     }
 
-    refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree, context: FormContext) {
+    private initListener(liveEditModel: LiveEditModel) {
+        var pageModel = liveEditModel.getPageModel();
+
+        if (this.propertyChangedListener) {
+            liveEditModel.getPageModel().unPropertyChanged(this.propertyChangedListener);
+        }
+
+        this.propertyChangedListener = (event: PropertyChangedEvent) => {
+            if (this === event.getSource()) {
+                return;
+            }
+
+            if ([PageModel.PROPERTY_CONFIG, PageModel.PROPERTY_CONTROLLER].indexOf(event.getPropertyName()) == -1) {
+                return;
+            }
+
+            if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER) {
+                this.pageControllerForm.show();
+            }
+            else {
+                this.pageDescriptorForm.show();
+            }
+
+            var controller = pageModel.getController();
+            if (controller) {
+                this.refreshConfigForm(controller, pageModel.getConfig(), liveEditModel.getFormContext());
+            }
+        };
+
+        pageModel.onPropertyChanged(this.propertyChangedListener);
+    }
+
+    private refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree, context: FormContext) {
         if (this.configForm) {
             this.configForm.remove();
             this.configForm = null;
@@ -184,53 +232,29 @@ class BaseInspectionHandler {
 
     refreshConfigView(liveEditModel: LiveEditModel) {
     }
+
+    protected showPageConfig(pageModel: PageModel, formContext: FormContext) {
+        this.refreshConfigForm(pageModel.getDescriptor(), pageModel.getConfig(), formContext);
+    }
 }
 
 class PageTemplateInspectionHandler extends BaseInspectionHandler {
 
     setModel(liveEditModel: LiveEditModel) {
-
-        var pageModel = liveEditModel.getPageModel();
+        super.setModel(liveEditModel);
 
         this.pageControllerForm.getSelector().load();
-        this.pageControllerForm.show();
-
-        this.refreshConfigForm(pageModel.getController(), pageModel.getConfig(), liveEditModel.getFormContext());
-
-
-        pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-            if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
-
-                this.pageControllerForm.show();
-
-                this.refreshConfigForm(pageModel.getController(), pageModel.getConfig(), liveEditModel.getFormContext());
-            }
-            else if (event.getPropertyName() == PageModel.PROPERTY_CONFIG && this !== event.getSource()) {
-
-                this.pageControllerForm.show();
-
-                var controller = pageModel.getController();
-                if (controller) {
-                    this.refreshConfigForm(controller, pageModel.getConfig(), liveEditModel.getFormContext());
-                }
-            }
-        });
     }
 }
 
 class ContentInspectionHandler extends BaseInspectionHandler {
 
-    private propertyChangedListener: (event: PropertyChangedEvent) => void;
-
     refreshConfigView(liveEditModel: LiveEditModel) {
         var pageModel = liveEditModel.getPageModel();
         var pageMode = pageModel.getMode();
 
-        if (pageMode == PageMode.FORCED_TEMPLATE) {
+        if (pageMode == PageMode.FORCED_TEMPLATE || pageMode == PageMode.AUTOMATIC) {
             this.showPageConfig(pageModel, liveEditModel.getFormContext());
-        }
-        else if (pageMode == PageMode.AUTOMATIC) {
-            this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
         }
         else {
             throw new Error("Unsupported PageMode: " + PageMode[pageMode]);
@@ -238,66 +262,9 @@ class ContentInspectionHandler extends BaseInspectionHandler {
     }
 
     setModel(liveEditModel: LiveEditModel) {
-
-        var pageModel = liveEditModel.getPageModel();
-
-        if (this.propertyChangedListener) {
-            pageModel.unPropertyChanged(this.propertyChangedListener);
-        }
-
-        this.initListener(pageModel, liveEditModel);
-
-        var pageMode = pageModel.getMode();
+        super.setModel(liveEditModel);
 
         this.pageTemplateForm.getSelector().setModel(liveEditModel);
-        if (pageMode !== PageMode.FRAGMENT) {
-            this.pageTemplateForm.show();
-        }
-
-        if (pageMode == PageMode.AUTOMATIC) {
-            this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
-        }
-        else {
-            this.showPageConfig(pageModel, liveEditModel.getFormContext());
-        }
-
-        pageModel.onPropertyChanged(this.propertyChangedListener);
     }
 
-    private initListener(pageModel: PageModel, liveEditModel: LiveEditModel) {
-        this.propertyChangedListener = (event: PropertyChangedEvent) => {
-            if (event.getPropertyName() == "controller" && this !== event.getSource()) {
-
-                this.pageControllerForm.show();
-
-                var controller = pageModel.getController();
-                if (controller) {
-                    this.refreshConfigForm(controller, pageModel.getConfig(), liveEditModel.getFormContext());
-                }
-            }
-            else if (event.getPropertyName() == PageModel.PROPERTY_CONFIG && this !== event.getSource()) {
-
-                this.pageTemplateForm.show();
-
-                if (pageModel.getMode() == PageMode.AUTOMATIC) {
-                    this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
-                }
-                else {
-                    this.showPageConfig(pageModel, liveEditModel.getFormContext());
-                }
-            }
-        };
-    }
-
-    private showPageConfig(pageModel: PageModel, formContext: FormContext) {
-
-        this.refreshConfigForm(pageModel.getTemplateDescriptor(), pageModel.getConfig(), formContext);
-    }
-
-    private showDefaultPageTemplateConfig(pageModel: PageModel, formContext: FormContext) {
-
-        var controller = pageModel.getDefaultPageTemplateController();
-        var config = pageModel.getConfig();
-        this.refreshConfigForm(controller, config, formContext);
-    }
 }

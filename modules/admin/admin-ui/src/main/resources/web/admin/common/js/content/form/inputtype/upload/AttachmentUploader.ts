@@ -54,7 +54,7 @@ module api.content.form.inputtype.upload {
                 this.uploaderEl.onUploadCompleted(() => {
 
                     this.validate(false);
-                    new ContentRequiresSaveEvent(this.getContext().contentId).fire();
+                    new ContentRequiresSaveEvent(this.getContext().content.getContentId()).fire();
 
                 });
 
@@ -80,7 +80,7 @@ module api.content.form.inputtype.upload {
 
             return new api.content.AttachmentUploaderEl({
                 params: {
-                    id: this.getContext().contentId.toString()
+                    id: this.getContext().content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.update,
                 name: this.getContext().input.getName(),
@@ -104,7 +104,7 @@ module api.content.form.inputtype.upload {
             this.getPropertyArray().remove(index);
             this.attachmentNames = this.getFileNamesFromProperty(this.getPropertyArray());
 
-            new ContentRequiresSaveEvent(this.getContext().contentId).fire();
+            new ContentRequiresSaveEvent(this.getContext().content.getContentId()).fire();
         }
 
     }

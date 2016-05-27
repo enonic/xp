@@ -18,7 +18,7 @@ export class PageControllerSelector extends api.content.page.PageDescriptorDropd
 
         this.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
 
-            if (this.pageModel.hasController()) {
+            if (this.pageModel.hasController() && this.pageModel.getController().getKey().toString() !== this.getValue()) {
                 this.selectController(this.pageModel.getController().getKey());
             }
         });

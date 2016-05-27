@@ -263,7 +263,7 @@ final class CreateContentCommand
             if ( contentProcessor.supports( contentType ) )
             {
                 final ProcessCreateResult processCreateResult =
-                    contentProcessor.processCreate( new ProcessCreateParams( createContentParams, mediaInfo ) );
+                    contentProcessor.processCreate( new ProcessCreateParams( processedParams, mediaInfo ) );
 
                 processedParams = CreateContentParams.create( processCreateResult.getCreateContentParams() ).
                     build();

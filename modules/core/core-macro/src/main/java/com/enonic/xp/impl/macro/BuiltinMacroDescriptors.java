@@ -33,7 +33,7 @@ public class BuiltinMacroDescriptors
     private MacroDescriptors generateMacroDescriptors()
     {
         final ImmutableSet.Builder<MacroDescriptor> macroDescriptors = ImmutableSet.builder();
-        macroDescriptors.add( generateYouTubeMacroDescriptor() ).
+        macroDescriptors.add( generateYoutubeMacroDescriptor() ).
             add( generateTwitterMacroDescriptor() ).
             add( generateEmbeddedCodeMacroDescriptor() ).
             add( generateNoFormatMacroDescriptor() );
@@ -41,16 +41,14 @@ public class BuiltinMacroDescriptors
         return MacroDescriptors.from( macroDescriptors.build() );
     }
 
-    private MacroDescriptor generateYouTubeMacroDescriptor()
+    private MacroDescriptor generateYoutubeMacroDescriptor()
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "youtube" );
         final Form form = Form.create().
             addFormItem( createTextLineInput( "url", "Url" ).occurrences( 1, 1 ).build() ).
-            addFormItem( createTextLineInput( "width", "Width" ).occurrences( 0, 1 ).build() ).
-            addFormItem( createTextLineInput( "height", "Height" ).occurrences( 0, 1 ).build() ).
             build();
 
-        return create( macroKey, "Youtube macro", "Youtube macro", form );
+        return create( macroKey, "YouTube macro", "Stream a video directly from your website", form );
     }
 
     private MacroDescriptor generateTwitterMacroDescriptor()
@@ -61,7 +59,7 @@ public class BuiltinMacroDescriptors
             addFormItem( createTextLineInput( "lang", "Language" ).occurrences( 0, 1 ).build() ).
             build();
 
-        return create( macroKey, "Twitter macro", "Twitter macro", form );
+        return create( macroKey, "Twitter macro", "Insert a single Tweet into your article or website", form );
     }
 
     private MacroDescriptor generateEmbeddedCodeMacroDescriptor()
@@ -72,7 +70,7 @@ public class BuiltinMacroDescriptors
             addFormItem( createTextAreaInput( "body", "Code" ).occurrences( 1, 1 ).build() ).
             build();
 
-        return create( macroKey, "Embedded code macro", "Embedded code macro", form );
+        return create( macroKey, "Embedded code macro", "Embed a code snippet on your webpage", form );
     }
 
     private MacroDescriptor generateNoFormatMacroDescriptor()
@@ -83,7 +81,7 @@ public class BuiltinMacroDescriptors
             addFormItem( createTextAreaInput( "body", "Contents" ).occurrences( 1, 1 ).build() ).
             build();
 
-        return create( macroKey, "No Format macro", "The contents of the body will not be formatted", form );
+        return create( macroKey, "No Format macro", "Contents of this macro will not be formatted", form );
     }
 
     private MacroDescriptor create( final MacroKey macroKey, final String displayName, final String description, final Form form )

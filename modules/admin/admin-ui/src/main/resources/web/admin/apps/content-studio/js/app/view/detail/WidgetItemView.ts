@@ -20,14 +20,14 @@ export class WidgetItemView extends api.dom.DivEl {
         return wemQ<any>(null);
     }
 
-    private getFullWidgetUrl(url: string, uid: string) {
-        return url + "?uid=" + uid;
+    private getFullWidgetUrl(url: string, uid: string, contentId: string) {
+        return url + "?uid=" + uid + "&contentId=" + contentId;
     }
 
-    public setUrl(url: string, keepId: boolean = false): wemQ.Promise<void> {
+    public setUrl(url: string, contentId: string, keepId: boolean = false): wemQ.Promise<void> {
         var deferred = wemQ.defer<void>(),
             uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid,
-            linkEl = new LinkEl(this.getFullWidgetUrl(url, uid)),
+            linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)),
             el = this.getEl(),
             onLinkLoaded = ((event: UIEvent) => {
                 var mainContainer = wemjq(event.target["import"]).find("div")[0];

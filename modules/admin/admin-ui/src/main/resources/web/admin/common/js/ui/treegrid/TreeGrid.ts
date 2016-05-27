@@ -293,15 +293,6 @@ module api.ui.treegrid {
 
             this.onLoaded(() => this.unmask());
 
-            /* if (this.toolbar) {
-             this.gridData.onRowCountChanged(() => {
-             this.toolbar.refresh();
-             });
-
-             this.onSelectionChanged(() => {
-             this.toolbar.refresh();
-             });
-             }*/
         }
 
         public isInRenderingView(): boolean {
@@ -633,18 +624,21 @@ module api.ui.treegrid {
         }
 
         deselectNodes(dataIds: string[]) {
-            var oldSelected = this.grid.getSelectedRows(),
-                newSelected = [];
+            var oldSelected = this.root.getFullSelection(),
+                newSelected = [],
+                newSelectedRows = [];
+
             for (var i = 0; i < oldSelected.length; i++) {
-                if (dataIds.indexOf(this.gridData.getItem(oldSelected[i]).getDataId()) < 0) {
+                if (dataIds.indexOf(oldSelected[i].getDataId()) < 0) {
                     newSelected.push(oldSelected[i]);
+                    newSelectedRows.push(this.grid.getDataView().getRowById(oldSelected[i].getId()));
                 }
             }
 
             this.root.removeSelections(dataIds);
 
             if (oldSelected.length !== newSelected.length) {
-                this.grid.setSelectedRows(newSelected);
+                this.grid.setSelectedRows(newSelectedRows);
             }
         }
 

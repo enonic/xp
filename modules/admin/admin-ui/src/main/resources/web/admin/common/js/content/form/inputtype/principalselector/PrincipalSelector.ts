@@ -1,4 +1,4 @@
-module api.content.form.inputtype.contentselector {
+module api.content.form.inputtype.principalselector {
 
     import Property = api.data.Property;
     import PropertyArray = api.data.PropertyArray;
@@ -30,6 +30,10 @@ module api.content.form.inputtype.contentselector {
                     filter((val) => !!val).
                     map((val: string) => api.security.PrincipalType[val]).
                     filter((val) => !!val);
+        }
+
+        public getPrincipalComboBox(): api.ui.security.PrincipalComboBox {
+            return this.comboBox;
         }
 
         getValueType(): ValueType {

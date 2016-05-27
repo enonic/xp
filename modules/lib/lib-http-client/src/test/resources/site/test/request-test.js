@@ -183,3 +183,57 @@ exports.getWithConnectTimeout = function (mockServer) {
     }
 
 };
+
+exports.requestWithProxy = function (mockServer, proxyHost, proxyPort) {
+
+    var result = http.request({
+        url: 'http://' + mockServer + '/my/url',
+        method: 'post',
+        proxy: {
+            host: proxyHost,
+            port: proxyPort
+        }
+    });
+
+    var expectedJson = {
+        "status": 200,
+        "message": "OK",
+        "body": "POST request",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "12",
+            "content-type": "text/plain"
+        }
+    };
+
+    assert.assertJsonEquals('http.request result not equals', expectedJson, result);
+
+};
+
+exports.requestWithProxyAuth = function (mockServer, proxyHost, proxyPort) {
+
+    var result = http.request({
+        url: 'http://' + mockServer + '/my/url',
+        method: 'post',
+        proxy: {
+            host: proxyHost,
+            port: proxyPort,
+            user: 'admin',
+            password: 'secret'
+        }
+    });
+
+    var expectedJson = {
+        "status": 200,
+        "message": "OK",
+        "body": "POST request authenticated",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "26",
+            "content-type": "text/plain"
+        }
+    };
+
+    assert.assertJsonEquals('http.request result not equals', expectedJson, result);
+
+};

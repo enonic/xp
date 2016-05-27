@@ -353,6 +353,18 @@ public abstract class AbstractNodeTest
         return doFindByQuery( query );
     }
 
+    protected void assertOrder( final FindNodesByQueryResult result, Node... nodes )
+    {
+        assertEquals( nodes.length, result.getHits() );
+
+        final Iterator<Node> iterator = result.getNodes().iterator();
+
+        for ( final Node node : nodes )
+        {
+            assertEquals( node.id(), iterator.next().id() );
+        }
+    }
+
     protected void assertOrder( final FindNodesByQueryResult result, String... ids )
     {
         assertEquals( ids.length, result.getHits() );

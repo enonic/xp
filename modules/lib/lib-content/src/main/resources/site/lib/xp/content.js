@@ -75,6 +75,41 @@ exports.getAttachmentStream = function (params) {
     return bean.getStream();
 };
 
+
+/**
+ * This function returns the parent site of a content.
+ *
+ * @example-ref examples/content/getSite.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ *
+ * @returns {object} The current site as JSON.
+ */
+exports.getSite = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetSiteHandler');
+    bean.key = nullOrValue(params.key);
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function returns the site configuration for this app in the parent site of a content.
+ *
+ * @example-ref examples/content/getSiteConfig.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {string} params.applicationKey Application key.
+ *
+ * @returns {object} The site configuration for current application as JSON.
+ */
+exports.getSiteConfig = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetSiteConfigHandler');
+    bean.key = nullOrValue(params.key);
+    bean.applicationKey = nullOrValue(params.applicationKey);
+    return __.toNativeObject(bean.execute());
+};
+
 /**
  * This function deletes a content.
  *
@@ -267,12 +302,32 @@ exports.createMedia = function (params) {
 };
 
 /**
+ * Rename a content or move it to a new path.
+ *
+ * @example-ref examples/content/move.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.source Path or id of the content to be moved or renamed.
+ * @param {string} params.target New path or name for the content. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the content.
+ * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
+ *
+ * @returns {boolean} True if the content was successfully moved or renamed, false otherwise.
+ */
+exports.move = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.MoveContentHandler');
+    bean.source = required(params, 'source');
+    bean.target = required(params, 'target');
+    bean.branch = nullOrValue(params.branch);
+    return __.toNativeObject(bean.execute());
+};
+
+/**
  * Sets permissions on a content.
  *
  * @example-ref examples/content/setPermissions.js
  *
  * @param {object} params JSON parameters.
- * @param {string} params.key Path or ID of the content.
+ * @param {string} params.key Path or id of the content.
  * @param {boolean} [params.inheritPermissions] Set to true if the content must inherit permissions. Default to false.
  * @param {boolean} [params.overwriteChildPermissions] Set to true to overwrite child permissions. Default to false.
  * @param {array} [params.permissions] Array of permissions.
@@ -305,7 +360,7 @@ exports.setPermissions = function (params) {
  * @example-ref examples/content/getPermissions.js
  *
  * @param {object} params JSON parameters.
- * @param {string} params.key Path or ID of the content.
+ * @param {string} params.key Path or id of the content.
  * @returns {object} Content permissions.
  */
 exports.getPermissions = function (params) {

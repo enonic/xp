@@ -21,7 +21,7 @@ module api.form.inputtype.text {
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
         private editors: HtmlAreaOccurrenceInfo[];
-        private contentId: api.content.ContentId;
+        private content: api.content.ContentSummary;
         private contentPath: api.content.ContentPath;
 
         private focusListeners: {(event: FocusEvent): void}[] = [];
@@ -34,8 +34,8 @@ module api.form.inputtype.text {
 
             this.addClass("html-area");
             this.editors = [];
-            this.contentId = config.contentId;
             this.contentPath = config.contentPath;
+            this.content = config.content;
         }
 
         getValueType(): ValueType {
@@ -151,8 +151,8 @@ module api.form.inputtype.text {
                 setOnBlurHandler(onBlurHandler).
                 setOnKeydownHandler(onKeydownHandler).
                 setOnNodeChangeHandler(onNodeChangeHandler).
-                setContentId(this.contentId).
                 setContentPath(this.contentPath).
+                setContent(this.content).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.setEditorContent(id, property);

@@ -17,6 +17,8 @@ public enum IndexValueType
 
     GEO_POINT( "_geopoint" ),
 
+    PATH( "_path" ),
+
     STRING( "" ),
 
     NODE( "" );

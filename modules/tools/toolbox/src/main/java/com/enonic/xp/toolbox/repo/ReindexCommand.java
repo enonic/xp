@@ -29,6 +29,7 @@ public final class ReindexCommand
     protected void execute()
         throws Exception
     {
+        System.out.println( "Check server log for progress" );
         final String result = postRequest( REINDEX_REST_PATH, createJsonRequest() );
         System.out.println( result );
     }

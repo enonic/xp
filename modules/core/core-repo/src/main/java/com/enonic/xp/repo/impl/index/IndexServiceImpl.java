@@ -5,6 +5,8 @@ import java.time.Instant;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
@@ -48,6 +50,8 @@ public class IndexServiceImpl
 
     private NodeVersionDao nodeVersionDao;
 
+    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
+
     @Override
     public ReindexResult reindex( final ReindexParams params )
     {
@@ -76,9 +80,23 @@ public class IndexServiceImpl
                 branch( branch ).
                 build() );
 
-            for ( final NodeBranchEntry nodeBranchEntry : results )
+            long nodeIndex = 1;
+            final long total = results.getSize();
+            final long logStep = total < 10 ? 1 : total < 100 ? 10 : total < 1000 ? 100 : 1000;
+
+            LOG.info( "Starting reindexing '" + branch + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
+                          " items to process" );
+
+            for ( final NodeBranchMetadata nodeBranchMetadata : results )
             {
-                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchEntry.getVersionId() );
+                if ( nodeIndex % logStep == 0 )
+                {
+                    LOG.info(
+                        "Reindexing '" + branch + "' in '" + params.getRepositoryId() + "'" + ": processed " + nodeIndex + " of " + total +
+                            "..." );
+                }
+
+                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchMetadata.getVersionId() );
 
                 final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
@@ -88,7 +106,12 @@ public class IndexServiceImpl
                     build() );
 
                 builder.add( node.id() );
+
+                nodeIndex++;
             }
+
+            LOG.info( "Finished reindexing '" + branch + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
+                          " items reindexed" );
         }
 
         final long stop = System.currentTimeMillis();
