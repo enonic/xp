@@ -17,20 +17,20 @@ module api.ui {
         setObject(object: OBJECT, relativePath: boolean = false) {
             super.setObject(object);
 
-            var displayName = this.resolveDisplayName(object) || this.normalizeDisplayName(this.resolveUnnamedDisplayName(object)),
-                subName = this.resolveSubName(object, relativePath) || api.content.ContentUnnamed.prettifyUnnamed(),
-                subTitle    = this.resolveSubTitle(object),
-                iconClass   = this.resolveIconClass(object),
-                iconUrl     = this.resolveIconUrl(object);
+            const displayName = this.resolveDisplayName(object) || this.normalizeDisplayName(this.resolveUnnamedDisplayName(object));
+            const subName = this.resolveSubName(object, relativePath) || api.content.ContentUnnamed.prettifyUnnamed();
+            const subTitle = this.resolveSubTitle(object);
+            const iconClass = this.resolveIconClass(object);
+            const iconUrl = this.resolveIconUrl(object);
 
             this.namesAndIconView.setMainName(displayName).
                                   setSubName(subName, subTitle).
                                   setIconClass(iconClass);
-            if (!!iconUrl) {
+            if (iconUrl) {
                 this.namesAndIconView.setIconUrl(iconUrl);
             }
 
-            this.render();
+            this.appendChild(this.namesAndIconView);
         }
 
         private normalizeDisplayName(displayName: string): string {
@@ -71,12 +71,6 @@ module api.ui {
 
         getNamesAndIconView(): api.app.NamesAndIconView {
             return this.namesAndIconView;
-        }
-
-        doRender() {
-            this.removeChildren();
-            this.appendChild(this.namesAndIconView);
-            return true;
         }
     }
 }

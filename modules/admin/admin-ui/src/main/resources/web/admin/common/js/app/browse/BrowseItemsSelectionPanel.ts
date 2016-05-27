@@ -16,8 +16,8 @@ module api.app.browse {
             var index = this.indexOf(item);
             if (index >= 0) {
                 // item already exist
-                var currentItem = this.items[index];
-                if (!item.equals(currentItem)) {
+                const currentItem = this.items[index];
+                if (!this.compareItems(currentItem, item)) {
                     // update current item
                     this.items[index] = item;
                     this.selectionItems[index].setBrowseItem(item);
@@ -126,6 +126,10 @@ module api.app.browse {
 
         onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
             this.deselectedListeners.push(listener);
+        }
+
+        protected compareItems(currentItem: BrowseItem<M>, updatedItem: BrowseItem<M>): boolean {
+            return updatedItem.equals(currentItem);
         }
 
         private notifyDeselected(item: BrowseItem<M>) {
