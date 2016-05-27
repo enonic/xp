@@ -107,7 +107,7 @@ module api.content.form.inputtype.tag {
         }
 
         protected getNumberOfValids(): number {
-            return this.tags.countTags();
+            return this.getPropertyArray().getSize();
         }
 
         giveFocus(): boolean {
