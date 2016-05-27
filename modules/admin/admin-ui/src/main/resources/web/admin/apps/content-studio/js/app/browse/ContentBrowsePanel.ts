@@ -149,7 +149,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems(),
                 item: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus> = null;
             if (browseItems.length > 0) {
-                item = browseItems[browseItems.length - 1];
+                item = browseItems[0];
             }
             this.doUpdateDetailsPanel(item ? item.getModel() : null);
         });

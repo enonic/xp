@@ -10,7 +10,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @SuppressWarnings("UnusedDeclaration")
-public final class RootPermissionsJson
+public class RootPermissionsJson
 {
     private final List<AccessControlEntryJson> accessControlList;
 
@@ -20,7 +20,7 @@ public final class RootPermissionsJson
         this.accessControlList = aclToJson( contentPermissions, principals );
     }
 
-    private List<AccessControlEntryJson> aclToJson( final AccessControlList acl, final Principals principals )
+    protected List<AccessControlEntryJson> aclToJson( final AccessControlList acl, final Principals principals )
     {
         final List<AccessControlEntryJson> jsonList = new ArrayList<>();
         for ( AccessControlEntry entry : acl )

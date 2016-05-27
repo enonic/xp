@@ -1,8 +1,8 @@
 module api.content.json {
 
-    export interface ContentPermissionsJson {
+    export interface ContentPermissionsJson extends PermissionsJson {
 
-        permissions: api.security.acl.AccessControlEntryJson[];
-
+        contentId: string;
+        
     }
 }
