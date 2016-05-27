@@ -101,4 +101,29 @@
     }
   }
 
+  .dependencies-filter-section {
+
+    position: relative;
+
+    label {
+      font-size: 14px;
+    }
+
+    .dependency-item {
+      margin: 10px 0px;
+    }
+
+    .action-button.btn-close {
+      .icon-close2();
+      position: absolute;
+      padding: 0px;
+      font-size: 18px;
+      top: 35px;
+      right: 0px;
+      background-color: @admin-white;
+      &:before {
+        color: @admin-font-gray2;
+      }
+    }
+  }
 }

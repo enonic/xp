@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.codehaus.jparsec.util.Lists;
+
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
@@ -13,10 +15,13 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlR
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.ResolveDependenciesAggregationResult;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
@@ -30,27 +35,28 @@ public class ResolveDependenciesAggregationFactory
 
     final ContentService contentService;
 
-    public ResolveDependenciesAggregationFactory(final ContentTypeIconUrlResolver contentTypeIconUrlResolver, final ContentService contentService) {
+    public ResolveDependenciesAggregationFactory( final ContentTypeIconUrlResolver contentTypeIconUrlResolver,
+                                                  final ContentService contentService )
+    {
         this.contentTypeIconUrlResolver = contentTypeIconUrlResolver;
         this.contentService = contentService;
     }
 
-    public DependenciesJson create( final ContentId contentId)
+    public DependenciesJson create( final ContentId contentId )
     {
         final List<DependenciesAggregationJson> inbound = this.resolveInboundDependenciesAggregation( contentId ).stream().
-            map( aggregation -> {
-                return new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver);
-            } ).collect( Collectors.toList() );
+            map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
+            Collectors.toList() );
 
         final List<DependenciesAggregationJson> outbound = this.resolveOutboundDependenciesAggregation( contentId ).stream().
-            map( aggregation -> {
-                return new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver );
-            } ).collect( Collectors.toList() );
+            map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
+            Collectors.toList() );
 
         return new DependenciesJson( inbound, outbound );
     }
 
-    private Collection<ResolveDependenciesAggregationResult> resolveInboundDependenciesAggregation( final ContentId contentId ) {
+    private Collection<ResolveDependenciesAggregationResult> resolveInboundDependenciesAggregation( final ContentId contentId )
+    {
 
         final FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
             contentQuery( ContentQuery.create().
@@ -64,32 +70,36 @@ public class ResolveDependenciesAggregationFactory
 
         final BucketAggregation bucketAggregation = (BucketAggregation) result.getAggregations().get( "type" );
 
-        return bucketAggregation.getBuckets().getSet().stream().map( bucket -> {
-            return new ResolveDependenciesAggregationResult( bucket );
-        } ).collect( Collectors.toList() );
+        return bucketAggregation.getBuckets().getSet().stream().map( bucket -> new ResolveDependenciesAggregationResult( bucket ) ).collect(
+            Collectors.toList() );
     }
 
-    private Collection<ResolveDependenciesAggregationResult> resolveOutboundDependenciesAggregation(final ContentId contentId) {
+    private Collection<ResolveDependenciesAggregationResult> resolveOutboundDependenciesAggregation( final ContentId contentId )
+    {
 
         final Content content = this.contentService.getById( contentId );
-        content.getData().getProperties( ValueTypes.REFERENCE );
 
         Map<ContentTypeName, ResolveDependenciesAggregationResult> aggregationJsonMap = Maps.newHashMap();
 
-        content.getData().getProperties( ValueTypes.REFERENCE ).forEach( property -> {
-            final ContentId curContentID = ContentId.from( property.getValue().toString() );
-            final Content curContent = this.contentService.getById( curContentID );
+        final List<ContentId> contentIds = Lists.arrayList();
 
-            if(curContent != null)
+        content.getData().getProperties( ValueTypes.REFERENCE ).forEach(
+            property -> contentIds.add( ContentId.from( property.getValue().toString() ) ) );
+
+        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( contentIds ) ) );
+
+        contents.forEach( existingContent -> {
+            final ContentTypeName contentTypeName = existingContent.getType();
+            if ( aggregationJsonMap.containsKey( contentTypeName ) )
             {
-                final ContentTypeName contentTypeName = curContent.getType();
-                if ( aggregationJsonMap.containsKey(contentTypeName) ) {
-                    aggregationJsonMap.get( contentTypeName ).increaseCount();
-                } else {
-                    aggregationJsonMap.put( contentTypeName, new ResolveDependenciesAggregationResult( contentTypeName.toString(), 1l ) );
-                }
+                aggregationJsonMap.get( contentTypeName ).increaseCount();
             }
-        });
+            else
+            {
+                aggregationJsonMap.put( contentTypeName, new ResolveDependenciesAggregationResult( contentTypeName.toString(), 1l ) );
+            }
+        } );
+
         return aggregationJsonMap.values();
     }
 

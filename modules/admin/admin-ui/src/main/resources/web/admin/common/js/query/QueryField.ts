@@ -16,6 +16,8 @@ module api.query {
 
         static CONTENT_TYPE: string = "type";
 
+        static REFERENCES: string = "_references";
+
         weight: number;
 
         name: string;
