@@ -13,12 +13,15 @@ public class NodeVersionDiffQuery
 
     private final NodePath nodePath;
 
+    private final ExcludeEntries excludes;
+
     private NodeVersionDiffQuery( Builder builder )
     {
         super( builder );
-        source = builder.source;
-        target = builder.target;
-        nodePath = builder.nodePath;
+        this.source = builder.source;
+        this.target = builder.target;
+        this.nodePath = builder.nodePath;
+        this.excludes = builder.excludes;
     }
 
     public Branch getSource()
@@ -36,6 +39,11 @@ public class NodeVersionDiffQuery
         return nodePath;
     }
 
+    public ExcludeEntries getExcludes()
+    {
+        return excludes;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -50,26 +58,35 @@ public class NodeVersionDiffQuery
 
         private NodePath nodePath;
 
+        private ExcludeEntries excludes = ExcludeEntries.empty();
+
+
         public Builder()
         {
             super();
         }
 
-        public Builder source( Branch source )
+        public Builder source( final Branch source )
         {
             this.source = source;
             return this;
         }
 
-        public Builder target( Branch target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;
         }
 
-        public Builder nodePath( NodePath nodePath )
+        public Builder nodePath( final NodePath nodePath )
         {
             this.nodePath = nodePath;
+            return this;
+        }
+
+        public Builder excludes( final ExcludeEntries excludes )
+        {
+            this.excludes = excludes;
             return this;
         }
 

@@ -14,6 +14,16 @@ public class ReturnValues
         this.returnValues = builder.returnValues;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static ReturnValues empty()
+    {
+        return ReturnValues.create().build();
+    }
+
     public Object getSingleValue( final String key )
     {
         final ReturnValue returnValue = returnValues.get( key );
@@ -34,11 +44,6 @@ public class ReturnValues
     public Map<String, ReturnValue> getReturnValues()
     {
         return returnValues;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static final class Builder

@@ -15,7 +15,7 @@ USER="xp"
 USER_ID=1337
 USER_HOME="/home/${USER}"
 
-# Files location
+# Files location<
 XP_INSTALL_BASE="/opt/enonic"
 LINK_NAME="xp"
 XP_INSTALL_PATH=${XP_INSTALL_BASE}/${LINK_NAME}

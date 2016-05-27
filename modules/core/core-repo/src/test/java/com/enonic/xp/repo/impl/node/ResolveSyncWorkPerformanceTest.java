@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Stopwatch;
@@ -23,6 +24,7 @@ public class ResolveSyncWorkPerformanceTest
         this.createDefaultRootNode();
     }
 
+    @Ignore
     @Test
     public void testReferencePerformance()
         throws Exception

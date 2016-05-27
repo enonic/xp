@@ -308,10 +308,21 @@ public class ElasticsearchDaoImpl
         }
         catch ( ElasticsearchException e )
         {
-            LOG.error( "Search request failed", e.getRootCause() );
-
-            throw new IndexException( "Search request failed", e );
+            throw new IndexException(
+                "Search request failed after [" + this.searchTimeout + "], query: [" + createQueryString( searchRequestBuilder ) + "]", e );
         }
+    }
+
+    private String createQueryString( final SearchRequestBuilder searchRequestBuilder )
+    {
+        final String queryAsString = searchRequestBuilder.toString();
+
+        if ( queryAsString.length() > 5000 )
+        {
+            return queryAsString.substring( 0, 5000 ) + "....(more)";
+        }
+
+        return queryAsString;
     }
 
     private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )

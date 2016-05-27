@@ -13,6 +13,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.repo.impl.StorageType;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
+import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
+import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class DiffQueryFactory
@@ -23,6 +25,8 @@ public class DiffQueryFactory
 
     private final NodePath nodePath;
 
+    private final ExcludeEntries excludes;
+
     private final StorageType childStorageType;
 
     private DiffQueryFactory( Builder builder )
@@ -31,6 +35,7 @@ public class DiffQueryFactory
         target = builder.query.getTarget();
         nodePath = builder.query.getNodePath();
         childStorageType = builder.childStorageType;
+        this.excludes = builder.query.getExcludes();
     }
 
     public QueryBuilder execute()
@@ -70,14 +75,31 @@ public class DiffQueryFactory
 
     private BoolQueryBuilder wrapInPathQueryIfNecessary( final BoolQueryBuilder sourceTargetCompares )
     {
+        final BoolQueryBuilder pathFilters = new BoolQueryBuilder().
+            must( sourceTargetCompares );
+
+        boolean addedPathFilter = false;
+
         if ( this.nodePath != null && !this.nodePath.isRoot() )
         {
-            return new BoolQueryBuilder().
-                must( hasPath() ).
-                must( sourceTargetCompares );
+            addedPathFilter = true;
+            pathFilters.
+                must( hasPath( this.nodePath, true ) );
         }
-        return sourceTargetCompares;
+
+        if ( !this.excludes.isEmpty() )
+        {
+            addedPathFilter = true;
+            for ( final ExcludeEntry exclude : excludes )
+            {
+                pathFilters.
+                    mustNot( hasPath( exclude.getNodePath(), exclude.isRecursive() ) );
+            }
+        }
+
+        return addedPathFilter ? pathFilters : sourceTargetCompares;
     }
+
 
     private BoolQueryBuilder joinOnlyInQueries( final BoolQueryBuilder inSourceOnly, final BoolQueryBuilder inTargetOnly,
                                                 final BoolQueryBuilder deletedInSourceOnly, final BoolQueryBuilder deletedInTargetOnly )
@@ -89,14 +111,18 @@ public class DiffQueryFactory
             should( deletedInTargetOnly );
     }
 
-    private HasChildQueryBuilder hasPath()
+    private HasChildQueryBuilder hasPath( final NodePath nodePath, final boolean recursive )
     {
-        final String queryPath = this.nodePath.toString();
+        final String queryPath = nodePath.toString();
 
         final BoolQueryBuilder pathQuery = new BoolQueryBuilder().
-            should( new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
-                                              queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) ).
             should( new TermQueryBuilder( BranchIndexPath.PATH.getPath(), queryPath ) );
+
+        if ( recursive )
+        {
+            pathQuery.should( new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
+                                                        queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) );
+        }
 
         return new HasChildQueryBuilder( childStorageType.getName(), pathQuery );
     }

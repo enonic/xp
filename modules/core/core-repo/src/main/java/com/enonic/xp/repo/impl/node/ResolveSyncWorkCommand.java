@@ -1,15 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
@@ -17,7 +11,6 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
@@ -34,8 +27,6 @@ import com.enonic.xp.repo.impl.search.SearchService;
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
-
     private final Branch target;
 
     private final NodePath repositoryRoot;
@@ -49,12 +40,6 @@ public class ResolveSyncWorkCommand
     private final NodeIds excludedIds;
 
     private final NodeIds.Builder result;
-
-    private int parentTimer = 0;
-
-    private int resolveTimer = 0;
-
-    private Map<NodeId, Integer> processedTimes = Maps.newHashMap();
 
     private boolean allPossibleNodesAreIncluded;
 
@@ -91,60 +76,134 @@ public class ResolveSyncWorkCommand
 
     public NodeIds execute()
     {
-        getAllPossibleNodesToPublish2();
+        getAllPossibleNodesToBePublished();
 
         return this.result.build();
     }
 
-    private NodeIds getAllPossibleNodesToPublish2()
+    private NodeIds getAllPossibleNodesToBePublished()
     {
-        final Stopwatch allPossibleTimer = Stopwatch.createStarted();
-
         final NodeIds.Builder diffAndDependantsBuilder = NodeIds.create();
 
-        final NodeIds initialDiff = getInitialDiff().getNodesWithDifferences();
+        final NodeIds initialDiff = getInitialDiff();
         diffAndDependantsBuilder.addAll( initialDiff );
+        diffAndDependantsBuilder.addAll( getNodeDependencies( initialDiff ) );
 
-        final Stopwatch dependenciesTimer = Stopwatch.createStarted();
-        diffAndDependantsBuilder.addAll( ResolveNodesDependenciesCommand.create( this ).
+        final Set<NodeComparison> comparisons = getFilteredComparisons( diffAndDependantsBuilder );
+
+        addNewAndMovedParents( comparisons );
+
+        comparisons.forEach( ( comparison -> addToResult( comparison.getNodeId() ) ) );
+
+        markPendingDeleteChildrenForDeletion( comparisons );
+
+        return NodeIds.empty();
+    }
+
+    private NodeIds getInitialDiff()
+    {
+        if ( !includeChildren )
+        {
+            return NodeIds.from( this.publishRootNode.id() );
+        }
+
+        final NodeVersionDiffResult nodesWithVersionDifference = findNodesWithVersionDifference( this.publishRootNode.path() );
+
+        return NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
+            filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
+            collect( Collectors.toSet() ) );
+    }
+
+    private NodeVersionDiffResult findNodesWithVersionDifference( final NodePath nodePath )
+    {
+        return FindNodesWithVersionDifferenceCommand.create().
+            target( target ).
+            source( ContextAccessor.current().getBranch() ).
+            nodePath( nodePath ).
+            excludes( this.excludedIds ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            build().
+            execute();
+    }
+
+    private NodeIds getNodeDependencies( final NodeIds initialDiff )
+    {
+        final NodeIds dependencies = FindNodesDependenciesCommand.create( this ).
             nodeIds( initialDiff ).
             recursive( true ).
             build().
-            execute() );
-        System.out.println( "DependenciesTimer: " + dependenciesTimer.stop() );
+            execute();
 
-        final Stopwatch compareTimer = Stopwatch.createStarted();
+        return NodeIds.from( dependencies.getSet().stream().
+            filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
+            collect( Collectors.toSet() ) );
+    }
+
+    private void addNewAndMovedParents( final Set<NodeComparison> comparisons )
+    {
+        final NodePaths.Builder parentPathsBuilder = NodePaths.create();
+
+        for ( final NodeComparison comparison : comparisons )
+        {
+            addParentPaths( parentPathsBuilder, comparison.getSourceEntry().getNodePath() );
+        }
+
+        final NodePaths parentPaths = parentPathsBuilder.build();
+
+        final NodeIds.Builder parentIdBuilder = NodeIds.create();
+
+        for ( final NodePath parent : parentPaths )
+        {
+            final NodeId parentId = this.storageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
+            parentIdBuilder.add( parentId );
+        }
+
+        final NodeIds parentIds = parentIdBuilder.build();
+
+        final NodeIds parentsDependencies = getNodeDependencies( parentIds );
+
+        doAddNewAndMoved( CompareNodesCommand.create().
+            nodeIds( NodeIds.create().
+                addAll( parentsDependencies ).
+                addAll( parentIds ).
+                build() ).
+            target( this.target ).
+            storageService( this.storageService ).
+            build().
+            execute() );
+    }
+
+    private void doAddNewAndMoved( final NodeComparisons parentComparisons )
+    {
+        parentComparisons.getNodeComparisons().stream().
+            filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
+                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
+            forEach( ( comparison ) -> addToResult( comparison.getNodeId() ) );
+    }
+
+    private void markPendingDeleteChildrenForDeletion( final Set<NodeComparison> comparisons )
+    {
+        comparisons.stream().
+            filter( comparison -> comparison.getCompareStatus().equals( CompareStatus.PENDING_DELETE ) ).
+            forEach( comparison -> markChildrenForDeletion( comparison.getNodeId() ) );
+    }
+
+    private Set<NodeComparison> getFilteredComparisons( final NodeIds.Builder diffAndDependantsBuilder )
+    {
         final NodeComparisons allNodesComparisons = CompareNodesCommand.create().
             target( this.target ).
             nodeIds( NodeIds.from( diffAndDependantsBuilder.build() ) ).
             storageService( this.storageService ).
             build().
             execute();
-        System.out.println( "CompareTimer: " + compareTimer.stop() );
 
-        final Set<NodeComparison> comparisons = allNodesComparisons.getNodeComparisons().stream().
+        return allNodesComparisons.getNodeComparisons().stream().
             filter( comparison -> !( nodeNotChanged( comparison ) || nodeNotInSource( comparison ) ) ).
             filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
             filter( comparison -> !this.excludedIds.contains( comparison.getNodeId() ) ).
             collect( Collectors.toSet() );
-
-        final NodeComparisons parentComparisons = getParentCompares( comparisons );
-
-        comparisons.forEach( ( comparison -> newResolveStuff( comparison.getNodeId() ) ) );
-
-        comparisons.stream().
-            filter( comparison -> comparison.getCompareStatus().equals( CompareStatus.PENDING_DELETE ) ).
-            forEach( comparison -> markChildrenForDeletion( comparison.getNodeId() ) );
-
-        // Parent not in the diff result, but must be published since they are new
-        parentComparisons.getNodeComparisons().stream().
-            filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
-                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
-            forEach( ( comparison ) -> newResolveStuff( comparison.getNodeId() ) );
-
-        System.out.println( "getAllPossibleNodesToPublish2: " + allPossibleTimer.stop() );
-
-        return NodeIds.empty();
     }
 
     private void markChildrenForDeletion( final NodeId nodeId )
@@ -159,42 +218,19 @@ public class ResolveSyncWorkCommand
             build().
             execute();
 
-        this.result.addAll( childrenToBeDeleted );
+        addToResult( childrenToBeDeleted );
     }
-
-    private NodeComparisons getParentCompares( final Set<NodeComparison> comparisons )
-    {
-        final NodePaths.Builder parentPathsBuilder = NodePaths.create();
-
-        for ( final NodeComparison comparison : comparisons )
-        {
-            addParentPaths( parentPathsBuilder, comparison.getSourceEntry().getNodePath() );
-        }
-
-        final NodePaths parentPaths = parentPathsBuilder.build();
-
-        final NodeIds.Builder parentIds = NodeIds.create();
-
-        for ( final NodePath parent : parentPaths )
-        {
-            final NodeId parentId = this.storageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
-            parentIds.add( parentId );
-        }
-
-        return CompareNodesCommand.create().
-            nodeIds( parentIds.build() ).
-            target( this.target ).
-            storageService( this.storageService ).
-            build().
-            execute();
-    }
-
 
     private void addParentPaths( final NodePaths.Builder parentPathsBuilder, final NodePath path )
     {
+        if ( path.isRoot() )
+        {
+            return;
+        }
+
         for ( NodePath parentPath : path.getParentPaths() )
         {
-            if ( parentPath.isRoot() || parentPath.equals( this.publishRootNode.path() ) )
+            if ( parentPath.isRoot() )
             {
                 return;
             }
@@ -203,43 +239,17 @@ public class ResolveSyncWorkCommand
         }
     }
 
-    private NodeVersionDiffResult getInitialDiff()
-    {
-        final Stopwatch initialDiff = Stopwatch.createStarted();
 
-        if ( !includeChildren )
-        {
-            return NodeVersionDiffResult.create().
-                add( this.publishRootNode.id() ).
-                build();
-        }
-
-        final NodeVersionDiffResult nodesWithVersionDifference = findNodesWithVersionDifference( this.publishRootNode.path() );
-
-        System.out.println( "GetInitialDiff: " + initialDiff.stop().toString() );
-
-        return nodesWithVersionDifference;
-    }
-
-    private NodeVersionDiffResult findNodesWithVersionDifference( final NodePath nodePath )
-    {
-        return FindNodesWithVersionDifferenceCommand.create().
-            query( FindNodesWithVersionDifferenceParams.create().
-                target( target ).
-                source( ContextAccessor.current().getBranch() ).
-                nodePath( nodePath ).
-                size( SearchService.GET_ALL_SIZE_FLAG ).
-                build() ).
-            searchService( this.searchService ).
-            build().
-            execute();
-    }
-
-
-    private void newResolveStuff( final NodeId nodeId )
+    private void addToResult( final NodeId nodeId )
     {
         this.result.add( nodeId );
         this.processedIds.add( nodeId );
+    }
+
+    private void addToResult( final NodeIds nodeIds )
+    {
+        this.result.addAll( nodeIds );
+        this.processedIds.addAll( nodeIds.getSet() );
     }
 
     private boolean nodeNotInSource( final NodeComparison comparison )
@@ -250,32 +260,6 @@ public class ResolveSyncWorkCommand
     private boolean nodeNotChanged( final NodeComparison comparison )
     {
         return comparison.getCompareStatus() == CompareStatus.EQUAL;
-    }
-
-    private boolean nodePendingDelete( final NodeComparison comparison )
-    {
-        return comparison.getCompareStatus() == CompareStatus.PENDING_DELETE;
-    }
-
-    private boolean shouldBeResolvedDiffFor( final NodeComparison nodeComparison )
-    {
-        final CompareStatus status = nodeComparison.getCompareStatus();
-        return status == CompareStatus.NEW || status == CompareStatus.MOVED;
-    }
-
-    private boolean isProcessed( final NodeId nodeId )
-    {
-        return this.processedIds.contains( nodeId );
-    }
-
-    private NodeComparison getNodeComparison( final NodeId nodeId )
-    {
-        return CompareNodeCommand.create().
-            target( this.target ).
-            storageService( this.storageService ).
-            nodeId( nodeId ).
-            build().
-            execute();
     }
 
     public static final class Builder

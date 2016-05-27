@@ -18,7 +18,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodePublishRequests;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -30,7 +29,7 @@ public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
 {
 
-    public static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
+    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
 
@@ -449,7 +448,14 @@ public class ResolveSyncWorkCommandTest
         return builder.toString();
     }
 
-
+    /*
+    - Node1
+      - Node1_1 -> Ref2_1_1
+    - Node2 -> Ref3
+      - Node2_1
+        - Node2_1_1
+    - Node3 -> Ref:2_1
+  */
     @Test
     public void reference_to_another_branch_with_another_branch_reference()
         throws Exception
@@ -512,24 +518,11 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        assertEquals( 6, result.getSize() );
-
         assertNodes( result, ExpectedNodes.create().
-            implicit( node1_1.id() ).
-            parent( node1.id() ).
-            referred( node2.id() ) );
-
-
-       /*
-        assertNotNull( result.get( node1.id() ) );
-        assertNotNull( result.get( node1_1.id() ) );
-        assertNotNull( result.get( node2.id() ) );
-        assertNotNull( result.get( node2_1.id() ) );
-        assertNotNull( result.get( node2_1_1.id() ) );
-        assertTrue( result.get( node2_1_1.id() ).reasonReferredFrom() );
-        assertNotNull( result.get( node3.id() ) );
-        assertTrue( result.get( node3.id() ).reasonReferredFrom() );
-        */
+            implicit( node1.id() ).
+            child( node1_1.id() ).
+            referred( node2_1_1.id(), node3.id() ).
+            parent( node2_1.id(), node2.id() ) );
     }
 
     @Test
@@ -872,7 +865,11 @@ public class ResolveSyncWorkCommandTest
 
         final NodeIds result = resolveSyncWorkResult( NodeId.from( "a2_1" ), true );
 
-        assertEquals( 6, result.getSize() );
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1" ).
+            parent( "a2", "s1" ).
+            referred( "b2_1" ).
+            parent( "b2", "s2" ) );
     }
 
     /*
@@ -1051,7 +1048,7 @@ public class ResolveSyncWorkCommandTest
         assertNodes( result, ExpectedNodes.create().
             child( NodeId.from( "a1" ), NodeId.from( "a2" ), NodeId.from( "a2_1" ) ).
             referred( NodeId.from( "b2_1" ) ).
-            parent( NodeId.from( "b2" ), NodeId.from( "s2" ) ) );
+            parent( NodeId.from( "b2" ), NodeId.from( "s2" ), NodeId.from( "s1" ) ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), false );
 
@@ -1087,6 +1084,21 @@ public class ResolveSyncWorkCommandTest
         assertTrue( result.contains( NodeId.from( "s1" ) ) );
     }
 
+      /*
+        - S1 (New)
+          - A1 (New)
+          - A2 (New)
+             - A2_1 - Ref:B2_1 (New)
+        - S2 (New)
+          - B1 (New)
+          - B2 (New)
+             - B2_1 (New)
+        - S1d (New)
+          - A1d (New)
+          - A2d (New)
+            - A2_1d - Ref:B2_1 (New)
+        */
+
     @Test
     public void exclude_child_with_refs()
     {
@@ -1094,6 +1106,11 @@ public class ResolveSyncWorkCommandTest
         refresh();
 
         final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2_1" ), true );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ).
+            child( "a1", "a2" ) );
+
         assertEquals( 3, result.getSize() );
 
         assertFalse( result.contains( NodeId.from( "b2" ) ) );
@@ -1278,7 +1295,7 @@ public class ResolveSyncWorkCommandTest
         refresh();
     }
 
-    void moveNode( final String nodeId, final NodePath newParent, final String newName )
+    private void moveNode( final String nodeId, final NodePath newParent, final String newName )
     {
         MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
@@ -1314,19 +1331,6 @@ public class ResolveSyncWorkCommandTest
         }
 
         return data;
-    }
-
-    private void assertNodes( final NodePublishRequests nodePublishRequests, final String... nodeIds )
-    {
-        for ( final String nodeId : nodeIds )
-        {
-            assertNotNull( nodePublishRequests.get( NodeId.from( nodeId ) ) );
-        }
-    }
-
-    private void assertNode( final NodePublishRequests nodePublishRequests, final String s1 )
-    {
-        assertNotNull( nodePublishRequests.get( NodeId.from( s1 ) ) );
     }
 
     private NodeIds resolveSyncWorkResult( final NodeId nodeId, final NodeIds excludeIds, final boolean includeChildren )
