@@ -74,7 +74,7 @@ module api.content {
             this.setSearchQueryExpr();
         }
 
-        setSearchQueryExpr(searchString: string ="") {
+        setSearchQueryExpr(searchString: string = "") {
             var fulltextExpression = this.createSearchExpression(searchString);
 
             this.contentQuery.setQueryExpr(new QueryExpr(fulltextExpression, ContentSummaryRequest.DEFAULT_ORDER));

@@ -190,8 +190,7 @@ module api.content.form.inputtype.image {
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
                                    [ContentTypeName.IMAGE.toString()];
 
-            var contentSelectorLoader = ContentSelectorLoader.create().
-                setContent(this.config.content).
+            var contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
                 setInputName(inputName).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(contentTypes).

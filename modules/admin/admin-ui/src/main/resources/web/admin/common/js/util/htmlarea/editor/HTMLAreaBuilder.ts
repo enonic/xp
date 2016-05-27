@@ -235,18 +235,14 @@ module api.util.htmlarea.editor {
 
         private notifyLinkDialog(config) {
             let event = CreateHtmlAreaDialogEvent.create().
-                setConfig(config).
-                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).
-                setContent(this.content).
+                setConfig(config).setType(api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).setContent(this.content).
                 build();
             this.publishCreateDialogEvent(event);
         }
 
         private notifyImageDialog(config) {
             let event = CreateHtmlAreaDialogEvent.create().
-                setConfig(config).
-                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).
-                setContent(this.content).
+                setConfig(config).setType(api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).setContent(this.content).
                 build();
             this.publishCreateDialogEvent(event);
         }

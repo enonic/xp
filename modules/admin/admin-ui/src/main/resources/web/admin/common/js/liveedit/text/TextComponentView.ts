@@ -322,9 +322,8 @@ module api.liveedit.text {
                 }).
                 setOnFocusHandler(this.onFocusHandler.bind(this)).
                 setOnBlurHandler(this.onBlurHandler.bind(this)).
-                setOnKeydownHandler(this.onKeydownHandler.bind(this)).
-                setFixedToolbarContainer('.mce-toolbar-container').
-                setContent(this.getContent()).
+                setOnKeydownHandler(this.onKeydownHandler.bind(this)).setFixedToolbarContainer('.mce-toolbar-container').setContent(
+                this.getContent()).
                 setContentPath(this.getContentPath()).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {

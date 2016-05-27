@@ -54,10 +54,7 @@ module api.liveedit {
                           page.getRegions().clone() :
                           Regions.create().build();
 
-            var setController = new SetController(this).
-                setDescriptor(pageDescriptor).
-                setConfig(config).
-                setRegions(regions);
+            var setController = new SetController(this).setDescriptor(pageDescriptor).setConfig(config).setRegions(regions);
 
             pageModel.initController(setController);
         }

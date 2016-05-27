@@ -87,7 +87,7 @@ public class IndexServiceImpl
             LOG.info( "Starting reindexing '" + branch + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
                           " items to process" );
 
-            for ( final NodeBranchMetadata nodeBranchMetadata : results )
+            for ( final NodeBranchEntry nodeBranchEntry : results )
             {
                 if ( nodeIndex % logStep == 0 )
                 {
@@ -96,7 +96,7 @@ public class IndexServiceImpl
                             "..." );
                 }
 
-                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchMetadata.getVersionId() );
+                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchEntry.getVersionId() );
 
                 final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
