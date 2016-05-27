@@ -24,6 +24,8 @@ public class ContentQuery
 
     private final ContentTypeNames contentTypeNames;
 
+    private final ContentIds filterContentIds;
+
     private final AggregationQueries aggregationQueries;
 
     private final Filters queryFilters;
@@ -36,6 +38,7 @@ public class ContentQuery
     {
         this.queryExpr = builder.queryExpr;
         this.contentTypeNames = builder.contentTypeNamesBuilder.build();
+        this.filterContentIds = builder.filterContentIds;
         this.from = builder.from;
         this.size = builder.size;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
@@ -55,6 +58,11 @@ public class ContentQuery
     public ContentTypeNames getContentTypes()
     {
         return contentTypeNames;
+    }
+
+    public ContentIds getFilterContentIds()
+    {
+        return filterContentIds;
     }
 
     public int getFrom()
@@ -83,6 +91,8 @@ public class ContentQuery
 
         private ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
 
+        private ContentIds filterContentIds;
+
         private int from = 0;
 
         private int size = DEFAULT_FETCH_SIZE;
@@ -94,6 +104,12 @@ public class ContentQuery
         public Builder queryExpr( final QueryExpr queryExpr )
         {
             this.queryExpr = queryExpr;
+            return this;
+        }
+
+        public Builder filterContentIds( final ContentIds filterContentIds )
+        {
+            this.filterContentIds = filterContentIds;
             return this;
         }
 
