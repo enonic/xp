@@ -1,5 +1,7 @@
 module api {
 
+    import NumberHelper = api.util.NumberHelper;
+
     /**
      * Helps with doing a IFRAME-safe instanceof and doing equals on different types of objects.
      */
@@ -212,19 +214,11 @@ module api {
             return a == b;
         }
 
+        /*
+         * Keep in mind that !0 is true as well as !null
+         */
         static numberEquals(a: number, b: number) {
-
-            if (!a && !b) {
-                return true;
-            }
-            else if (!a && b) {
-                return false;
-            }
-            else if (a && !b) {
-                return false;
-            }
-
-            return a == b;
+            return NumberHelper.isNumber(a) && NumberHelper.isNumber(b) && a == b;
         }
 
         static dateEquals(a: Date, b: Date) {

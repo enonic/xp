@@ -240,11 +240,9 @@ module api.form.inputtype.support {
 
             var additionalValidation: api.form.AdditionalValidationRecord = this.getSpecialValidation();
             recording.setAdditionalValidationRecord(additionalValidation);
-            if (!silent) {
 
-                if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
-                }
+            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
             }
 
             this.previousValidationRecording = recording;

@@ -94,9 +94,8 @@ module api.form {
                         }
                         else {
                             if (event.isValid()) {
-                                this.previousValidationRecording.removeByPath(event.getOrigin());
-                            }
-                            else {
+                                this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
+                            } else {
                                 this.previousValidationRecording.flatten(event.getRecording());
                             }
 

@@ -103,8 +103,7 @@ module api.form {
                 propertyArray: propertyArray
             });
 
-            var layoutPromise = this.formItemSetOccurrences.layout();
-            layoutPromise.then(() => {
+            this.formItemSetOccurrences.layout().then(() => {
 
                 this.formItemSetOccurrences.onOccurrenceRendered(() => {
                     this.validate(false);
@@ -195,7 +194,7 @@ module api.form {
             }
             var previousValidState = this.previousValidationRecording.isValid();
             if (event.isValid()) {
-                this.previousValidationRecording.removeByPath(event.getOrigin());
+                this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
             }
             else {
                 this.previousValidationRecording.flatten(event.getRecording());
@@ -218,23 +217,21 @@ module api.form {
                 this.previousValidationRecording.breaksMinimumOccurrences(validationRecordingPath);
                 occurrenceRecording.breaksMinimumOccurrences(validationRecordingPath);
             } else {
-                this.previousValidationRecording.removeUnreachedMinimumOccurrencesByEqualPath(validationRecordingPath);
+                this.previousValidationRecording.removeUnreachedMinimumOccurrencesByPath(validationRecordingPath, true);
             }
 
             if (this.formItemSet.getOccurrences().maximumBreached(numberOfValids)) {
                 this.previousValidationRecording.breaksMaximumOccurrences(validationRecordingPath);
                 occurrenceRecording.breaksMaximumOccurrences(validationRecordingPath);
             } else {
-                this.previousValidationRecording.removeBreachedMaximumOccurrencesByEqualPath(validationRecordingPath);
+                this.previousValidationRecording.removeBreachedMaximumOccurrencesByPath(validationRecordingPath, true);
             }
 
             this.renderValidationErrors(occurrenceRecording);
 
             if (previousValidState != this.previousValidationRecording.isValid()) {
                 this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
-                    this.resolveValidationRecordingPath()));
-            } else if (previousValidState != event.isValid()) {
-                this.notifyValidityChanged(event);
+                    validationRecordingPath).setIncludeChildren(true));
             }
         }
 
