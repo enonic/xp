@@ -1400,6 +1400,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         contentCopy.getContentData().onChanged(this.dataChangedListener);
 
         this.contentWizardStepForm.update(contentCopy.getContentData(), unchangedOnly);
+        this.contentWizardStepForm.validate();
 
         if (contentCopy.isSite()) {
             this.siteModel.update(<Site>contentCopy);
