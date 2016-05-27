@@ -80,7 +80,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="default">
+  <xs:complexType name="default" mixed="true">
     <xs:sequence>
       <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
     </xs:sequence>
