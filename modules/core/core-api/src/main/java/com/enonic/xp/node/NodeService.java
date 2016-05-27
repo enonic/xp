@@ -55,7 +55,7 @@ public interface NodeService
 
     NodeVersion getByNodeVersion( NodeVersionMetadata nodeVersionMetadata );
 
-    NodeIds resolveSyncWork( SyncWorkResolverParams params );
+    ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
     SnapshotResult snapshot( SnapshotParams params );
 

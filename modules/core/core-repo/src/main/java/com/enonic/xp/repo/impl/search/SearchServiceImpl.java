@@ -149,6 +149,7 @@ public class SearchServiceImpl
         return builder.build();
     }
 
+
     private StorageSettings createSettings( final StorageType storageType, final StorageName storageName )
     {
         return StorageSettings.create().

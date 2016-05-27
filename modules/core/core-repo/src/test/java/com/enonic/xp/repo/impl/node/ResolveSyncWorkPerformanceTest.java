@@ -9,8 +9,8 @@ import com.google.common.base.Stopwatch;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.util.Reference;
 
 public class ResolveSyncWorkPerformanceTest
@@ -40,7 +40,7 @@ public class ResolveSyncWorkPerformanceTest
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        final NodeIds resolvedNodes = ResolveSyncWorkCommand.create().
+        final ResolveSyncWorkResult resolvedNodes = ResolveSyncWorkCommand.create().
             nodeId( rootNode.id() ).
             target( CTX_OTHER.getBranch() ).
             indexServiceInternal( this.indexServiceInternal ).

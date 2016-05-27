@@ -10,13 +10,9 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.PushContentsResult;
-import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -36,7 +32,7 @@ public class PushContentCommand
 
     private final Branch target;
 
-    private final boolean includeDependencies;
+    private final boolean resolveSyncWork;
 
     private final PushContentsResult.Builder resultBuilder;
 
@@ -48,7 +44,7 @@ public class PushContentCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
-        this.includeDependencies = builder.includeDependencies;
+        this.resolveSyncWork = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
     }
@@ -60,39 +56,37 @@ public class PushContentCommand
 
     PushContentsResult execute()
     {
+        final Stopwatch timer = Stopwatch.createStarted();
+
         this.nodeService.refresh( RefreshMode.ALL );
 
-        if ( includeDependencies )
+        if ( resolveSyncWork )
         {
-            pushAndDelete( getWithDependents() );
+            pushAndDelete( getSyncWork() );
         }
         else
         {
-            pushAndDelete( this.contentIds );
+            pushAndDelete( CompareContentsCommand.create().
+                contentIds( this.contentIds ).
+                nodeService( this.nodeService ).
+                target( this.target ).
+                build().
+                execute() );
         }
+
+        System.out.println( "PushContentCommand done in " + timer.stop() );
 
         this.nodeService.refresh( RefreshMode.ALL );
 
         return resultBuilder.build();
     }
 
-    private void pushAndDelete( final ContentIds contentIds )
+    private void pushAndDelete( final CompareContentResults results )
     {
         NodeIds.Builder pushNodesIds = NodeIds.create();
         NodeIds.Builder deletedNodesIds = NodeIds.create();
 
-        LOG.info( "Ok, fetched " + contentIds.getSize() + " content ids that should be published, now get contentComparisons" );
-
-        final Stopwatch compareContentTimer = Stopwatch.createStarted();
-        final CompareContentResults contentsComparisons = CompareContentsCommand.create().
-            nodeService( this.nodeService ).
-            contentIds( contentIds ).
-            target( this.target ).
-            build().
-            execute();
-        LOG.info( "Compare content done in " + compareContentTimer.stop().toString() );
-
-        for ( CompareContentResult compareResult : contentsComparisons )
+        for ( CompareContentResult compareResult : results )
         {
             if ( compareResult.getCompareStatus() == CompareStatus.PENDING_DELETE )
             {
@@ -104,14 +98,9 @@ public class PushContentCommand
             }
         }
 
-        LOG.info( "Done sorting, now do other stuff, like validate" );
-        final Stopwatch timer = Stopwatch.createStarted();
-
-        final Stopwatch transformTimer = Stopwatch.createStarted();
         final ContentIds pushContentsIds = ContentIds.from( pushNodesIds.build().stream().
             map( ( n ) -> ContentId.from( n.toString() ) ).
             toArray( ContentId[]::new ) );
-        LOG.info( "Transform to contentIds from pushNodesIds [" + transformTimer.stop().toString() );
 
         final boolean validContents = checkIfAllContentsValid( pushContentsIds );
 
@@ -120,10 +109,23 @@ public class PushContentCommand
             return;
         }
 
-        LOG.info( "Validation is done in " + timer.stop().toString() );
-
         doPushNodes( pushNodesIds.build() );
         doDeleteNodes( deletedNodesIds.build() );
+    }
+
+    private CompareContentResults getSyncWork()
+    {
+        return ResolveContentsToBePublishedCommand.create().
+            contentIds( this.contentIds ).
+            excludedContentIds( this.excludedContentIds ).
+            includeChildren( this.includeChildren ).
+            target( this.target ).
+            contentTypeService( this.contentTypeService ).
+            eventPublisher( this.eventPublisher ).
+            translator( this.translator ).
+            nodeService( this.nodeService ).
+            build().
+            execute();
     }
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
@@ -136,34 +138,8 @@ public class PushContentCommand
             contentIds( pushContentsIds ).
             build().
             execute();
-/*
-        final Stopwatch contentsToPushTimer = Stopwatch.createStarted();
-        final Contents contentsToPush = getContentByIds( new GetContentByIdsParams( pushContentsIds ).setGetChildrenIds( false ) );
-        LOG.info( "contentsToPushTimer [" + contentsToPushTimer.stop().toString() );
-
-        final Stopwatch validCheck = Stopwatch.createStarted();
-        final boolean validContents = ensureValidContents( contentsToPush );
-        LOG.info( "validCheck [" + validCheck.stop().toString() );
-        return validContents;
-*/
     }
 
-    private ContentIds getWithDependents()
-    {
-        final ResolvePublishDependenciesResult resolvedResult = ResolveContentsToBePublishedCommand.create().
-            contentIds( this.contentIds ).
-            excludedContentIds( this.excludedContentIds ).
-            includeChildren( this.includeChildren ).
-            target( this.target ).
-            contentTypeService( this.contentTypeService ).
-            eventPublisher( this.eventPublisher ).
-            translator( this.translator ).
-            nodeService( this.nodeService ).
-            build().
-            execute();
-
-        return resolvedResult.contentIds();
-    }
 
     private void doPushNodes( final NodeIds nodesToPush )
     {
@@ -198,21 +174,6 @@ public class PushContentCommand
         } );
     }
 
-    private boolean ensureValidContents( final Contents contents )
-    {
-        return contents.stream().allMatch( Content::isValid );
-    }
-
-    private Contents getContentByIds( final GetContentByIdsParams getContentParams )
-    {
-        return GetContentByIdsCommand.create( getContentParams ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            contentTypeService( this.contentTypeService ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-    }
 
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>

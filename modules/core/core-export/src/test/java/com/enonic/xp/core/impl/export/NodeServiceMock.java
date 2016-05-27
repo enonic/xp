@@ -49,6 +49,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
@@ -64,15 +65,20 @@ import com.enonic.xp.util.BinaryReference;
 class NodeServiceMock
     implements NodeService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( NodeServiceMock.class );
+
     private final Map<NodeId, Node> nodeIdMap = new HashMap<>();
 
     private final Map<NodePath, Node> nodePathMap = new HashMap<>();
 
     private final MockNodeTree<NodePath> nodeTree = new MockNodeTree<>( NodePath.ROOT );
 
-    private final static Logger LOG = LoggerFactory.getLogger( NodeServiceMock.class );
-
     private final Map<BinaryReference, ByteSource> blobStore = Maps.newHashMap();
+
+    public NodeServiceMock()
+    {
+        super();
+    }
 
     @Override
     public Node create( final CreateNodeParams params )
@@ -315,7 +321,7 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeIds resolveSyncWork( final SyncWorkResolverParams params )
+    public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -348,11 +354,6 @@ class NodeServiceMock
     public Node getRoot()
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    public NodeServiceMock()
-    {
-        super();
     }
 
     @Override

@@ -3,12 +3,12 @@ package com.enonic.xp.core.content;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
-import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -21,6 +21,8 @@ public class ContentServiceImplTest_resolvePublishDependencies
     extends AbstractContentServiceTest
 {
     private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+
+    private Content content1, content2, child1, child2;
 
     @Override
     public void setUp()
@@ -48,17 +50,14 @@ public class ContentServiceImplTest_resolvePublishDependencies
 
         refresh();
 
-        final ResolvePublishDependenciesResult result =
-            this.contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
-                contentIds( ContentIds.from( content.getId() ) ).
-                includeChildren( true ).
-                target( WS_OTHER ).
-                build() );
+        final CompareContentResults result = this.contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            includeChildren( true ).
+            target( WS_OTHER ).
+            build() );
 
         assertEquals( 1, result.contentIds().getSize() );
     }
-
-    private Content content1, content2, child1, child2;
 
     @Test
     public void resolve_children_excluded()
@@ -70,7 +69,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
 
         refresh();
 
-        final ResolvePublishDependenciesResult result = this.contentService.resolvePublishDependencies( builder.build() );
+        final CompareContentResults result = this.contentService.resolvePublishDependencies( builder.build() );
 
         assertEquals( 1, result.contentIds().getSize() );
         assertFalse( result.contentIds().contains( child1.getId() ) );
@@ -97,7 +96,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
             excludedContentIds( ContentIds.from( child1.getId() ) ).
             build();
 
-        final ResolvePublishDependenciesResult result = this.contentService.resolvePublishDependencies( pushParams );
+        final CompareContentResults result = this.contentService.resolvePublishDependencies( pushParams );
 
         assertEquals( 4, result.contentIds().getSize() );
 

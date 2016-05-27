@@ -128,7 +128,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
-import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -499,16 +498,15 @@ public final class ContentResource
         final List<ContentPublishItemJson> requestedContentPublishItemList = resolveContentPublishItems( requestedContentIds );
 
         //Resolves the publish dependencies
-        final ResolvePublishDependenciesResult resolvePublishDependenciesResult =
-            contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
-                target( ContentConstants.BRANCH_MASTER ).
-                contentIds( requestedContentIds ).
-                excludedContentIds( excludeContentIds ).
-                includeChildren( params.includeChildren() ).
-                build() );
+        final CompareContentResults results = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+            target( ContentConstants.BRANCH_MASTER ).
+            contentIds( requestedContentIds ).
+            excludedContentIds( excludeContentIds ).
+            includeChildren( params.includeChildren() ).
+            build() );
 
         //Resolved the dependent ContentPublishItem
-        final List<ContentId> dependentContentIdList = resolvePublishDependenciesResult.contentIds().
+        final List<ContentId> dependentContentIdList = results.contentIds().
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() );

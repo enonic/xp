@@ -57,7 +57,6 @@ import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
-import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -311,7 +310,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ResolvePublishDependenciesResult resolvePublishDependencies( ResolvePublishDependenciesParams params )
+    public CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params )
     {
         return ResolveContentsToBePublishedCommand.create().
             nodeService( this.nodeService ).

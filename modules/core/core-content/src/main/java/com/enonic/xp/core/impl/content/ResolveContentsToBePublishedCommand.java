@@ -5,11 +5,12 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
 public class ResolveContentsToBePublishedCommand
@@ -21,7 +22,7 @@ public class ResolveContentsToBePublishedCommand
 
     private final Branch target;
 
-    private final ResolvePublishDependenciesResult.Builder resultBuilder;
+    private final CompareContentResults.Builder resultBuilder;
 
     private final boolean includeChildren;
 
@@ -31,7 +32,7 @@ public class ResolveContentsToBePublishedCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
-        this.resultBuilder = ResolvePublishDependenciesResult.create();
+        this.resultBuilder = CompareContentResults.create();
         this.includeChildren = builder.includeChildren;
     }
 
@@ -40,7 +41,7 @@ public class ResolveContentsToBePublishedCommand
         return new Builder();
     }
 
-    ResolvePublishDependenciesResult execute()
+    CompareContentResults execute()
     {
         resolveDependencies();
 
@@ -51,13 +52,13 @@ public class ResolveContentsToBePublishedCommand
     {
         for ( final ContentId contentId : this.contentIds )
         {
-            final NodeIds syncWorkResult = getWorkResult( contentId, excludedContentIds, includeChildren );
+            final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId, excludedContentIds, includeChildren );
 
-            this.resultBuilder.addAll( ContentNodeHelper.toContentIds( syncWorkResult ) );
+            this.resultBuilder.addAll( CompareResultTranslator.translate( syncWorkResult.getNodeComparisons() ) );
         }
     }
 
-    private NodeIds getWorkResult( final ContentId contentId, final ContentIds excludedContentIds, boolean includeChildren )
+    private ResolveSyncWorkResult getWorkResult( final ContentId contentId, final ContentIds excludedContentIds, boolean includeChildren )
     {
 
         final NodeIds nodeIds = excludedContentIds != null ? NodeIds.from( excludedContentIds.

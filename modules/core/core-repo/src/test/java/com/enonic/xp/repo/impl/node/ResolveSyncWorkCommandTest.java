@@ -19,6 +19,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
@@ -40,6 +41,7 @@ public class ResolveSyncWorkCommandTest
         super.setUp();
         this.createDefaultRootNode();
     }
+
 
     @Test
     public void detect_children_marked_for_deletion()
@@ -80,7 +82,7 @@ public class ResolveSyncWorkCommandTest
         markAsDelete( node2_1.id() );
         markAsDelete( node3.id() );
 
-        final NodeIds result = ResolveSyncWorkCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             nodeId( ROOT_UUID ).
             includeChildren( true ).
             target( WS_OTHER ).
@@ -137,7 +139,7 @@ public class ResolveSyncWorkCommandTest
 
         refresh();
 
-        final NodeIds result = ResolveSyncWorkCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             nodeId( node1_1.id() ).
             includeChildren( true ).
             target( WS_OTHER ).
@@ -148,9 +150,7 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         assertEquals( 3, result.getSize() );
-        assertTrue( result.contains( node1_1.id() ) );
-        assertTrue( result.contains( node1_1_1.id() ) );
-        assertTrue( result.contains( node1_1_1_1.id() ) );
+
     }
 
     @Test
@@ -189,7 +189,7 @@ public class ResolveSyncWorkCommandTest
 
         pushNodes( WS_OTHER, node1.id(), node2.id(), node3.id() );
 
-        final NodeIds result = ResolveSyncWorkCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( getNodeByPath( NodePath.ROOT ).id() ).
             target( WS_OTHER ).
@@ -256,8 +256,8 @@ public class ResolveSyncWorkCommandTest
 
         moveNode( node1, node2.path() );
 
-        final NodeIds resultChildrenIncluded = resolveSyncWorkResult( node1_1_1_1.id(), true );
-        final NodeIds resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1_1.id(), false );
+        final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1_1.id(), true );
+        final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1_1.id(), false );
 
         assertEquals( resultChildrenIncluded.getSize(), 0 );
         assertEquals( resultChildrenNotIncluded.getSize(), 4 );
@@ -317,8 +317,8 @@ public class ResolveSyncWorkCommandTest
 
         moveNode( node1, node2.path() );
 
-        final NodeIds resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
-        final NodeIds resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
+        final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
+        final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
         assertEquals( resultChildrenIncluded.getSize(), 0 );
         assertEquals( resultChildrenNotIncluded.getSize(), 3 );
@@ -380,8 +380,8 @@ public class ResolveSyncWorkCommandTest
 
         refresh();
 
-        final NodeIds resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
-        final NodeIds resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
+        final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
+        final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
         assertEquals( resultChildrenIncluded.getSize(), 1 );
         assertEquals( resultChildrenNotIncluded.getSize(), 1 );
@@ -432,7 +432,7 @@ public class ResolveSyncWorkCommandTest
             name( "node2_1" ).
             build() );
 
-        final NodeIds result = resolveSyncWorkResult( node1_1.id(), false );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( node1_1.id(), false );
 
         assertNodes( result, ExpectedNodes.create().
             implicit( node1_1.id() ).
@@ -508,7 +508,7 @@ public class ResolveSyncWorkCommandTest
             data( node3_data ).
             build() );
 
-        final NodeIds result = ResolveSyncWorkCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
@@ -554,7 +554,7 @@ public class ResolveSyncWorkCommandTest
 
         refresh();
 
-        final NodeIds result = ResolveSyncWorkCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( node1Duplicate.id() ).
             target( WS_OTHER ).
@@ -585,7 +585,7 @@ public class ResolveSyncWorkCommandTest
     {
         createS1S2Tree();
 
-        final NodeIds results = resolveSyncWorkResult( getNodeByPath( NodePath.ROOT ).id(), true );
+        final ResolveSyncWorkResult results = resolveSyncWorkResult( getNodeByPath( NodePath.ROOT ).id(), true );
 
         assertEquals( 9, results.getSize() );
 
@@ -628,7 +628,7 @@ public class ResolveSyncWorkCommandTest
 
         moveNode( "b2_1", NodePath.create( "/s2" ).build(), "b2_1" );
 
-        final NodeIds result = resolveSyncWorkResult( "a2_1" );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
         assertEquals( 2, result.getSize() );
     }
@@ -657,7 +657,7 @@ public class ResolveSyncWorkCommandTest
         updateNode( "b2" );
         updateNode( "b2_1" );
 
-        final NodeIds result = resolveSyncWorkResult( "a2_1" );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
         assertEquals( 2, result.getSize() );
     }
@@ -685,7 +685,7 @@ public class ResolveSyncWorkCommandTest
         updateNode( "a2_1" );
         moveNode( "s2", NodePath.ROOT, "s2edit" );
 
-        final NodeIds result = resolveSyncWorkResult( "a2_1" );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "a2_1" ).
@@ -706,7 +706,7 @@ public class ResolveSyncWorkCommandTest
 
         refresh();
 
-        final NodeIds result = resolveSyncWorkResult( "a2_1" );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "a2_1" ) );
@@ -741,7 +741,7 @@ public class ResolveSyncWorkCommandTest
             name( "b2_2" ).
             build() );
 
-        final NodeIds result = resolveSyncWorkResult( "a2_1" );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
         assertEquals( 6, result.getSize() );
 
@@ -777,7 +777,7 @@ public class ResolveSyncWorkCommandTest
 
         duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
         assertEquals( 7, result.getSize() );
     }
@@ -799,7 +799,7 @@ public class ResolveSyncWorkCommandTest
     {
         createS1S2Tree();
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
         assertEquals( 7, result.getSize() );
     }
@@ -821,7 +821,7 @@ public class ResolveSyncWorkCommandTest
     {
         createS1S2Tree();
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "a1" ), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "a1" ), true );
 
         assertEquals( 2, result.getSize() );
     }
@@ -843,7 +843,7 @@ public class ResolveSyncWorkCommandTest
     {
         createS1S2Tree();
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "a2" ), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "a2" ), true );
 
         assertEquals( 6, result.getSize() );
     }
@@ -863,7 +863,7 @@ public class ResolveSyncWorkCommandTest
     {
         createS1S2Tree();
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "a2_1" ), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "a2_1" ), true );
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "a2_1" ).
@@ -900,7 +900,7 @@ public class ResolveSyncWorkCommandTest
 
         refresh();
 
-        final NodeIds result = resolveSyncWorkResult( s1d.id(), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( s1d.id(), true );
 
         assertEquals( 7, result.getSize() );
 
@@ -954,7 +954,7 @@ public class ResolveSyncWorkCommandTest
             name( "node3" ).
             build() );
 
-        final NodeIds result = ResolveSyncWorkCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
@@ -987,7 +987,7 @@ public class ResolveSyncWorkCommandTest
     {
         createS1S2Tree();
 
-        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
+        ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
         assertEquals( 7, result.getSize() );
 
         pushAllNodesInS1S2Tree();
@@ -1013,10 +1013,10 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
         refresh();
 
-        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), false );
+        ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), false );
         assertEquals( 1, result.getSize() );
-
-        assertTrue( result.contains( NodeId.from( "s1" ) ) );
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), true );
         assertEquals( 7, result.getSize() );
@@ -1043,7 +1043,7 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
         refresh();
 
-        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), true );
+        ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), true );
 
         assertNodes( result, ExpectedNodes.create().
             child( NodeId.from( "a1" ), NodeId.from( "a2" ), NodeId.from( "a2_1" ) ).
@@ -1061,8 +1061,9 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
         refresh();
 
-        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1", "a1", "a2", "a2_1", "b2_1", "b2", "s2" ), true );
-        assertEquals( 0, result.getSize() );
+        ResolveSyncWorkResult result =
+            resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1", "a1", "a2", "a2_1", "b2_1", "b2", "s2" ), true );
+        assertEquals( 0, result.getNodeComparisons().getSize() );
     }
 
     @Test
@@ -1073,15 +1074,13 @@ public class ResolveSyncWorkCommandTest
 
         final NodeIds children = NodeIds.from( "a1", "a2", "a2_1", "b2_1", "b2", "s2" );
 
-        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), children, false );
-        assertEquals( 1, result.getSize() );
-
-        assertTrue( result.contains( NodeId.from( "s1" ) ) );
+        ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), children, false );
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), children, true );
-        assertEquals( 1, result.getSize() );
-
-        assertTrue( result.contains( NodeId.from( "s1" ) ) );
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ) );
     }
 
       /*
@@ -1105,17 +1104,11 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
         refresh();
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2_1" ), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2_1" ), true );
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
             child( "a1", "a2" ) );
-
-        assertEquals( 3, result.getSize() );
-
-        assertFalse( result.contains( NodeId.from( "b2" ) ) );
-        assertFalse( result.contains( NodeId.from( "b2_1" ) ) );
-        assertFalse( result.contains( NodeId.from( "s2" ) ) );
     }
 
     @Test
@@ -1124,12 +1117,11 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
         refresh();
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "b2_1" ), true );
-        assertEquals( 4, result.getSize() );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "b2_1" ), true );
 
-        assertFalse( result.contains( NodeId.from( "b2" ) ) );
-        assertFalse( result.contains( NodeId.from( "b2_1" ) ) );
-        assertFalse( result.contains( NodeId.from( "s2" ) ) );
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ).
+            child( "a1", "a2", "a2_1" ) );
     }
 
     /*
@@ -1152,7 +1144,7 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
         refresh();
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
@@ -1190,9 +1182,9 @@ public class ResolveSyncWorkCommandTest
         refresh();
 
         final Stopwatch timer = Stopwatch.createStarted();
-        final NodeIds nodeIds = resolveSyncWorkResult( rootNode.id(), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( rootNode.id(), true );
         timer.stop();
-        System.out.println( timer.toString() + " diffing " + nodeIds.getSize() + " nodes" );
+        System.out.println( timer.toString() + " diffing " + result.getNodeComparisons().getNodeIds() + " nodes" );
     }
 
     private void createChildren( final NodePath parent, final int numberOfChildren )
@@ -1333,7 +1325,7 @@ public class ResolveSyncWorkCommandTest
         return data;
     }
 
-    private NodeIds resolveSyncWorkResult( final NodeId nodeId, final NodeIds excludeIds, final boolean includeChildren )
+    private ResolveSyncWorkResult resolveSyncWorkResult( final NodeId nodeId, final NodeIds excludeIds, final boolean includeChildren )
     {
         return ResolveSyncWorkCommand.create().
             nodeId( nodeId ).
@@ -1347,17 +1339,28 @@ public class ResolveSyncWorkCommandTest
             execute();
     }
 
-    private NodeIds resolveSyncWorkResult( final NodeId nodeId, final boolean includeChildren )
+    private ResolveSyncWorkResult resolveSyncWorkResult( final NodeId nodeId, final boolean includeChildren )
     {
         return resolveSyncWorkResult( NodeId.from( nodeId ), NodeIds.empty(), includeChildren );
     }
 
-    private NodeIds resolveSyncWorkResult( final String nodeId )
+    private ResolveSyncWorkResult resolveSyncWorkResult( final String nodeId )
     {
         return resolveSyncWorkResult( NodeId.from( nodeId ), false );
     }
 
+    private void assertNodes( final ResolveSyncWorkResult result, final ExpectedNodes expectedNodes )
+    {
+        doAssertNodes( result.getNodeComparisons().getNodeIds(), expectedNodes );
+    }
+
+
     private void assertNodes( final NodeIds result, final ExpectedNodes expectedNodes )
+    {
+        doAssertNodes( result, expectedNodes );
+    }
+
+    private void doAssertNodes( final NodeIds result, final ExpectedNodes expectedNodes )
     {
         boolean fail = false;
 

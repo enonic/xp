@@ -1,9 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
@@ -12,6 +14,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -21,6 +24,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersionDiffResult;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.search.SearchService;
 
@@ -33,13 +37,15 @@ public class ResolveSyncWorkCommand
 
     private final boolean includeChildren;
 
+    private final boolean checkDependencies;
+
     private final Node publishRootNode;
 
     private final Set<NodeId> processedIds;
 
     private final NodeIds excludedIds;
 
-    private final NodeIds.Builder result;
+    private final ResolveSyncWorkResult.Builder result;
 
     private boolean allPossibleNodesAreIncluded;
 
@@ -49,10 +55,11 @@ public class ResolveSyncWorkCommand
         this.target = builder.target;
         this.includeChildren = builder.includeChildren;
         this.repositoryRoot = builder.repositoryRoot;
-        this.result = NodeIds.create();
+        this.result = ResolveSyncWorkResult.create();
         this.processedIds = Sets.newHashSet();
         this.excludedIds = builder.excludedIds;
         this.allPossibleNodesAreIncluded = builder.allPossibleNodesAreIncluded;
+        this.checkDependencies = builder.checkDependencies;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -74,30 +81,42 @@ public class ResolveSyncWorkCommand
         return new Builder();
     }
 
-    public NodeIds execute()
+    public ResolveSyncWorkResult execute()
     {
+        final Stopwatch timer = Stopwatch.createStarted();
         getAllPossibleNodesToBePublished();
+        timer.stop();
 
-        return this.result.build();
+        final ResolveSyncWorkResult result = this.result.build();
+
+        final String speed = timer.elapsed( TimeUnit.SECONDS ) == 0 ? "N/A" : result.getSize() / timer.elapsed( TimeUnit.SECONDS ) + "/s";
+
+        System.out.println( "ResolveSyncWorkCommand: " + timer + ", found " + result.getSize() + ", speed: " + speed );
+        return result;
     }
 
-    private NodeIds getAllPossibleNodesToBePublished()
+    private void getAllPossibleNodesToBePublished()
     {
+
         final NodeIds.Builder diffAndDependantsBuilder = NodeIds.create();
 
         final NodeIds initialDiff = getInitialDiff();
         diffAndDependantsBuilder.addAll( initialDiff );
-        diffAndDependantsBuilder.addAll( getNodeDependencies( initialDiff ) );
+
+        if ( checkDependencies )
+        {
+            diffAndDependantsBuilder.addAll( getNodeDependencies( initialDiff ) );
+        }
 
         final Set<NodeComparison> comparisons = getFilteredComparisons( diffAndDependantsBuilder );
 
         addNewAndMovedParents( comparisons );
 
-        comparisons.forEach( ( comparison -> addToResult( comparison.getNodeId() ) ) );
+        comparisons.forEach( ( comparison -> addToResult( comparison ) ) );
 
         markPendingDeleteChildrenForDeletion( comparisons );
 
-        return NodeIds.empty();
+
     }
 
     private NodeIds getInitialDiff()
@@ -177,17 +196,17 @@ public class ResolveSyncWorkCommand
 
     private void doAddNewAndMoved( final NodeComparisons parentComparisons )
     {
-        parentComparisons.getNodeComparisons().stream().
+        parentComparisons.getSet().stream().
             filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
                 comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
-            forEach( ( comparison ) -> addToResult( comparison.getNodeId() ) );
+            forEach( this::addToResult );
     }
 
     private void markPendingDeleteChildrenForDeletion( final Set<NodeComparison> comparisons )
     {
         comparisons.stream().
             filter( comparison -> comparison.getCompareStatus().equals( CompareStatus.PENDING_DELETE ) ).
-            forEach( comparison -> markChildrenForDeletion( comparison.getNodeId() ) );
+            forEach( this::markChildrenForDeletion );
     }
 
     private Set<NodeComparison> getFilteredComparisons( final NodeIds.Builder diffAndDependantsBuilder )
@@ -199,26 +218,33 @@ public class ResolveSyncWorkCommand
             build().
             execute();
 
-        return allNodesComparisons.getNodeComparisons().stream().
+        return allNodesComparisons.getSet().stream().
             filter( comparison -> !( nodeNotChanged( comparison ) || nodeNotInSource( comparison ) ) ).
             filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
             filter( comparison -> !this.excludedIds.contains( comparison.getNodeId() ) ).
             collect( Collectors.toSet() );
     }
 
-    private void markChildrenForDeletion( final NodeId nodeId )
+    private void markChildrenForDeletion( final NodeComparison comparison )
     {
         final NodeIds childrenToBeDeleted = FindNodeIdsByParentCommand.create( this ).
             params( FindNodesByParentParams.create().
                 size( SearchService.GET_ALL_SIZE_FLAG ).
-                parentId( nodeId ).
+                parentId( comparison.getNodeId() ).
                 childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
                 recursive( true ).
                 build() ).
             build().
             execute();
 
-        addToResult( childrenToBeDeleted );
+        final NodeBranchEntries brancEntries =
+            this.storageService.getBranchNodeVersions( childrenToBeDeleted, InternalContext.from( ContextAccessor.current() ) );
+
+        addToResult( NodeComparisons.create().
+            addAll( brancEntries.stream().
+                map( ( branchEntry ) -> new NodeComparison( branchEntry, branchEntry, CompareStatus.PENDING_DELETE ) ).
+                collect( Collectors.toSet() ) ).
+            build() );
     }
 
     private void addParentPaths( final NodePaths.Builder parentPathsBuilder, final NodePath path )
@@ -240,16 +266,16 @@ public class ResolveSyncWorkCommand
     }
 
 
-    private void addToResult( final NodeId nodeId )
+    private void addToResult( final NodeComparison comparison )
     {
-        this.result.add( nodeId );
-        this.processedIds.add( nodeId );
+        this.result.add( comparison );
+        this.processedIds.add( comparison.getNodeId() );
     }
 
-    private void addToResult( final NodeIds nodeIds )
+    private void addToResult( final NodeComparisons comparisons )
     {
-        this.result.addAll( nodeIds );
-        this.processedIds.addAll( nodeIds.getSet() );
+        this.result.addAll( comparisons.getSet() );
+        this.processedIds.addAll( comparisons.getNodeIds().getSet() );
     }
 
     private boolean nodeNotInSource( final NodeComparison comparison )
@@ -276,6 +302,8 @@ public class ResolveSyncWorkCommand
         private NodePath repositoryRoot = NodePath.ROOT;
 
         private boolean allPossibleNodesAreIncluded = false;
+
+        private boolean checkDependencies = true;
 
         private Builder()
         {
@@ -313,6 +341,13 @@ public class ResolveSyncWorkCommand
             this.includeChildren = includeChildren;
             return this;
         }
+
+        public Builder checkDependencies( final boolean checkDependencies )
+        {
+            this.checkDependencies = checkDependencies;
+            return this;
+        }
+
 
         public Builder allPossibleNodesAreIncluded( final boolean allPossibleNodesAreIncluded )
         {
