@@ -103,7 +103,7 @@ public class ContentServiceImplTest_delete
         final Contents deletedContents =
             this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
         assertNotNull( deletedContents );
-        assertEquals( Contents.from( content ), deletedContents );
+        assertEquals( Contents.from( child2Content, subChildContent, child1Content, content ), deletedContents );
 
         //Checks that the content and the children are deleted
         final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams(

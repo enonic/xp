@@ -67,6 +67,15 @@ final class DeleteContentCommand
 
     private void recursiveDelete( Node nodeToDelete, Nodes.Builder deletedNodes )
     {
+        final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
+            parentPath( nodeToDelete.path() ).
+            build() );
+
+        for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
+        {
+            recursiveDelete( childNodeToDelete, deletedNodes );
+        }
+
         final CompareStatus status = getCompareStatus( nodeToDelete );
 
         if ( status == CompareStatus.NEW )
@@ -93,15 +102,6 @@ final class DeleteContentCommand
             build() );
 
         deletedNodes.addAll( setNodeStateResult.getUpdatedNodes() );
-
-        final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
-            parentPath( nodeToDelete.path() ).
-            build() );
-
-        for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
-        {
-            recursiveDelete( childNodeToDelete, deletedNodes );
-        }
     }
 
     private CompareStatus getCompareStatus( final Node nodeToDelete )
