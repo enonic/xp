@@ -224,6 +224,8 @@ public class ElasticsearchDaoImpl
     @Override
     public SnapshotInfo getSnapshot( final String snapshotName )
     {
+        checkSnapshotRepository();
+
         final GetSnapshotsRequestBuilder getSnapshotsRequestBuilder = new GetSnapshotsRequestBuilder( this.client.admin().cluster() ).
             setRepository( SNAPSHOT_REPOSITORY_NAME ).
             setSnapshots( snapshotName );
