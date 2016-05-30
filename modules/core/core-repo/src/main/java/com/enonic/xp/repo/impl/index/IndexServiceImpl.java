@@ -21,6 +21,7 @@ import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -52,6 +53,8 @@ public class IndexServiceImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
 
+    private final static int BATCH_SIZE = 10_000;
+
     @Override
     public ReindexResult reindex( final ReindexParams params )
     {
@@ -76,6 +79,8 @@ public class IndexServiceImpl
             final NodeBranchQueryResult results = this.searchService.query( NodeBranchQuery.create().
                 query( QueryExpr.from( compareExpr ) ).
                 size( SearchService.GET_ALL_SIZE_FLAG ).
+                batchSize( BATCH_SIZE ).
+                searchMode( SearchMode.SCAN ).
                 build(), InternalContext.create( ContextAccessor.current() ).
                 branch( branch ).
                 build() );

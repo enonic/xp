@@ -9,13 +9,13 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AclFilterBuilderFactory;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.search.SearchService;
 
 public class FindNodesByIdsCommand
     extends AbstractNodeCommand
@@ -23,6 +23,8 @@ public class FindNodesByIdsCommand
     private final NodeIds ids;
 
     private final OrderExpressions orderExpressions;
+
+    private static final int BATCH_SIZE = 10_000;
 
     private FindNodesByIdsCommand( final Builder builder )
     {
@@ -45,9 +47,10 @@ public class FindNodesByIdsCommand
                     build() ).
                 build() ).
             size( ids.getSize() ).
+            batchSize( BATCH_SIZE ).
+            searchMode( SearchMode.SCAN ).
             addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) ).
             setOrderExpressions( this.orderExpressions ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         System.out.println( "findNodesByIdsCommand query: " + queryTimer.stop().toString() );

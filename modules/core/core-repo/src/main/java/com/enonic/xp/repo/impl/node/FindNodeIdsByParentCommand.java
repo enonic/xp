@@ -70,7 +70,7 @@ public class FindNodeIdsByParentCommand
         final NodeQuery.Builder builder = NodeQuery.create().
             from( params.getFrom() ).
             size( params.getSize() ).
-            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
+            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SCAN ).
             setOrderExpressions( order.getOrderExpressions() ).
             accurateScoring( true );
 

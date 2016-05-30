@@ -10,6 +10,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
@@ -19,6 +20,9 @@ import com.enonic.xp.security.acl.Permission;
 public class SetNodeChildOrderCommand
     extends AbstractNodeCommand
 {
+
+    public static final int BATCH_SIZE = 10_000;
+
     private final NodeId nodeId;
 
     private final ChildOrder childOrder;
@@ -74,6 +78,8 @@ public class SetNodeChildOrderCommand
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
             size( SearchService.GET_ALL_SIZE_FLAG ).
+            batchSize( BATCH_SIZE ).
+            searchMode( SearchMode.SCAN ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         final LinkedList<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
@@ -83,8 +89,6 @@ public class SetNodeChildOrderCommand
 
         for ( final NodeManualOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : orderedNodeIds )
         {
-            // TODO: Bulk?
-
             final Node node = doGetById( nodeIdOrderValue.getNodeId() );
 
             final Node editedNode = Node.create( node ).manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).build();

@@ -27,6 +27,9 @@ import com.enonic.xp.security.acl.Permission;
 public class MoveNodeCommand
     extends AbstractNodeCommand
 {
+
+    public static final int BATCH_SIZE = 10_000;
+
     private final NodeId nodeId;
 
     private final NodePath newParentPath;
@@ -145,7 +148,8 @@ public class MoveNodeCommand
             parent( persistedNode.path() ).
             from( 0 ).
             size( SearchService.GET_ALL_SIZE_FLAG ).
-            searchMode( SearchMode.SEARCH ).
+            batchSize( BATCH_SIZE ).
+            searchMode( SearchMode.SCAN ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         final NodeBranchEntries nodeBranchEntries =
