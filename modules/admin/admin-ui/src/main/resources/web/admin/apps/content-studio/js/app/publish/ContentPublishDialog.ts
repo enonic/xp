@@ -137,6 +137,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.loadMask.show();
         this.disableCheckbox();
 
+        this.setSubTitle("Resolving items...");
+
         return this.loadDependants().then((dependants: ContentSummaryAndCompareStatus[]) => {
 
             if (resetDependantItems) { // just opened or first time loading children
