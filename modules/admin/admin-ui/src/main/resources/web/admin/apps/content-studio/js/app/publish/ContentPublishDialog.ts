@@ -28,8 +28,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private childrenLoaded: boolean = false;
 
-    private loadMask: LoadMask;
-
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked:string]:ContentSummaryAndCompareStatus[]} = {};
 
@@ -48,8 +46,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         this.initChildrenCheckbox();
 
-        this.initLoadMask();
-
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
             if (!this.isIgnoreItemsChanged()) {
                 this.clearStashedItems();
@@ -57,12 +53,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
             }
         });
     }
-
-    private initLoadMask() {
-        this.loadMask = new LoadMask(this.getContentPanel());
-        this.appendChildToContentPanel(this.loadMask);
-    }
-
 
     protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
         let dependants = new PublishDialogDependantList();
@@ -81,12 +71,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
         });
 
         return dependants;
-    }
-
-    show() {
-        super.show();
-        this.appendChildToContentPanel(this.loadMask);
-        this.loadMask.show();
     }
 
     open() {
@@ -126,8 +110,14 @@ export class ContentPublishDialog extends DependantItemsDialog {
             return this.reloadPublishDependencies(childrenNotLoadedYet);
         } else {
             // apply the stash to avoid extra heavy request
-            this.setDependantItems(stashedItems.slice());
-            this.centerMyself();
+            this.publishButton.setEnabled(false);
+            this.loadMask.show();
+            setTimeout(() => {
+                this.setDependantItems(stashedItems.slice());
+                this.centerMyself();
+                this.publishButton.setEnabled(true);
+                this.loadMask.hide();
+            }, 100);
             return wemQ<void>(null);
         }
     }
@@ -222,7 +212,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         this.overwriteDefaultArrows(this.childrenCheckbox);
 
-        this.appendChildToContentPanel(this.childrenCheckbox);
+        this.getButtonRow().appendChild(this.childrenCheckbox);
     }
 
     private getContentToPublishIds(): ContentId[] {

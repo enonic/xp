@@ -57,6 +57,8 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
 
             this.hideLoadingSpinnerAtButton();
             this.unpublishButton.setEnabled(true);
+        }).finally(() => {
+            this.loadMask.hide();
         });
 
     }

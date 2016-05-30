@@ -51,20 +51,37 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.updateSubTitle();
 
         var items = this.getItemList().getItems();
+
+        this.manageDescendants(items);
+
+        this.countItemsToDeleteAndUpdateButtonCounter();
+    }
+
+    protected manageDescendants(items: ContentSummaryAndCompareStatus[]) {
+        this.loadMask.show();
+        this.deleteButton.setEnabled(false);
         this.loadDescendants(items)
             .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
                 this.setDependantItems(descendants);
 
-                if (!this.isAnyOnline(items) && !this.isAnyOnline(descendants)) {
-                    this.instantDeleteCheckbox.hide();
+                if (!this.isAnyOnline(items)) {
+                    this.verifyInstantDeleteVisibility(descendants);
                 }
 
                 this.centerMyself();
+            }).finally(() => {
+                this.loadMask.hide();
+                this.deleteButton.setEnabled(true);
             });
+    }
 
-
-        this.countItemsToDeleteAndUpdateButtonCounter();
+    private verifyInstantDeleteVisibility(items: ContentSummaryAndCompareStatus[]) {
+        if (this.isAnyOnline(items)) {
+            this.instantDeleteCheckbox.show();
+        } else {
+            this.instantDeleteCheckbox.hide();
+        }
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
@@ -73,26 +90,11 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.setIgnoreItemsChanged(false);
         this.updateSubTitle();
 
-        if (this.isAnyOnline(contents)) {
-            this.instantDeleteCheckbox.show();
-        } else {
-            this.instantDeleteCheckbox.hide();
-        }
+        this.verifyInstantDeleteVisibility(contents);
+
         this.instantDeleteCheckbox.setChecked(false, true);
 
-        if (contents) {
-            this.loadDescendants(contents)
-                .then((descendants: ContentSummaryAndCompareStatus[]) => {
-
-                    this.setDependantItems(descendants);
-
-                    if (!this.isAnyOnline(contents) && this.isAnyOnline(descendants)) {
-                        this.instantDeleteCheckbox.show();
-                    }
-
-                    this.centerMyself();
-                });
-        }
+        this.manageDescendants(contents);
 
         this.countItemsToDeleteAndUpdateButtonCounter();
 
