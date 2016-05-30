@@ -1,8 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 
@@ -37,8 +34,6 @@ public class PushNodesCommand
     private final Branch target;
 
     private final NodeIds ids;
-
-    private final static Logger LOG = LoggerFactory.getLogger( PushNodesCommand.class );
 
     private PushNodesCommand( final Builder builder )
     {

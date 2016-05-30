@@ -7,8 +7,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 
-import com.google.common.base.Stopwatch;
-
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
 import com.enonic.xp.repo.impl.search.result.SearchHits;
@@ -27,8 +25,6 @@ class ScanAndScrollExecutor
 
     SearchResult execute( final ElasticsearchQuery query )
     {
-        final Stopwatch scanTimer = Stopwatch.createStarted();
-
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
             setTypes( query.getIndexType() );
 
@@ -51,14 +47,10 @@ class ScanAndScrollExecutor
         {
             searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
 
-            final Stopwatch innerScanTimer = Stopwatch.createStarted();
-
             scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
                 setScroll( defaultScrollTime ).
                 execute().
                 actionGet();
-
-            System.out.println( "Scan-timer: " + innerScanTimer.stop() + " for [" + scrollResp.getHits().hits().length + "] hits" );
 
             if ( scrollResp.getHits().getHits().length == 0 )
             {
@@ -67,8 +59,6 @@ class ScanAndScrollExecutor
         }
 
         final SearchHits build = searchHitsBuilder.build();
-
-        System.out.println( "Fetched [" + build.getSize() + "] in " + scanTimer.stop() );
 
         return SearchResult.create().
             hits( build ).
