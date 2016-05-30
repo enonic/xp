@@ -135,11 +135,15 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
             .setContentPaths(summaries.map(summary => summary.getContentSummary().getPath())).sendAndParse()
             .then((result: api.content.ContentResponse<ContentSummary>) => {
 
-                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
-                    .then((compareContentResults: api.content.CompareContentResults) => {
+                let ids = summaries.map(contentAndStatus => contentAndStatus.getContentId().toString()),
+                    contents = result.getContents().filter((item) => {
+                        return ids.indexOf(item.getContentId().toString()) < 0;
+                    });
 
+                return api.content.CompareContentRequest.fromContentSummaries(contents).sendAndParse()
+                    .then((compareContentResults: api.content.CompareContentResults) => {
                         return ContentSummaryAndCompareStatusFetcher
-                            .updateCompareStatus(result.getContents(), compareContentResults);
+                            .updateCompareStatus(contents, compareContentResults);
                     });
             });
     }
