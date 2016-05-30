@@ -41,6 +41,7 @@ import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdListJson;
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
+import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
@@ -57,6 +58,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryR
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -693,6 +695,20 @@ public final class ContentResource
     {
         final AccessControlList permissions = contentService.getPermissionsById( ContentId.from( contentId ) );
         return new RootPermissionsJson( permissions, principalsResolver );
+    }
+
+    @POST
+    @Path("contentPermissionsByIds")
+    public List<ContentPermissionsJson> getPermissionsByIds( final ContentIdsJson params )
+    {
+        final List<ContentPermissionsJson> result = new ArrayList<>();
+        for ( String contentId : params.getContentIds() )
+        {
+            final AccessControlList permissions = contentService.getPermissionsById( ContentId.from( contentId ) );
+            result.add( new ContentPermissionsJson( contentId, permissions, principalsResolver ) );
+        }
+
+        return result;
     }
 
     @POST

@@ -1,5 +1,6 @@
 module api.security.acl {
 
+    import PermissionsJson = api.content.json.PermissionsJson;
     export class AccessControlList implements api.Equitable, api.Cloneable {
 
         private entries: {[key: string]: AccessControlEntry};
@@ -76,9 +77,9 @@ module api.security.acl {
             return new AccessControlList(entries);
         }
 
-        static fromJson(json: api.security.acl.AccessControlEntryJson[]): AccessControlList {
+        static fromJson(json: PermissionsJson): AccessControlList {
             var acl = new AccessControlList();
-            json.forEach((entryJson: api.security.acl.AccessControlEntryJson) => {
+            json.permissions.forEach((entryJson: api.security.acl.AccessControlEntryJson) => {
                 var entry = AccessControlEntry.fromJson(entryJson);
                 acl.add(entry);
             });
