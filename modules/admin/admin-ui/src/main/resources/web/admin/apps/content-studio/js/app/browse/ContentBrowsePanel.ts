@@ -317,7 +317,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         handler.onContentUpdated((data: ContentSummaryAndCompareStatus[]) => this.handleContentUpdated(data));
 
         handler.onContentRenamed((data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
-            this.handleContentCreated(data, oldPaths)
+            this.handleContentCreated(data, oldPaths);
         });
 
         handler.onContentDeleted((data: api.content.event.ContentServerChangeItem[]) => {
@@ -369,6 +369,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                                 this.contentTreeGrid.xUpdatePathsInChildren(node);
                             }
                         });
+                        this.contentTreeGrid.xPlaceContentNodes(nodes);
                     } else {
                         this.contentTreeGrid.xAppendContentNodes(
                             createResult[i].getNodes().map((node) => {
