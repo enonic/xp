@@ -2,11 +2,13 @@ package com.enonic.xp.node;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.CompareStatus;
@@ -17,14 +19,22 @@ public class NodeComparisons
 {
     private final ImmutableSet<NodeComparison> nodeComparisons;
 
+    private final Map<NodeId, NodeComparison> comparisonMap;
+
     private NodeComparisons( Builder builder )
     {
         nodeComparisons = ImmutableSet.copyOf( builder.nodeComparisons );
+        this.comparisonMap = builder.nodeIdNodeComparisonMap;
     }
 
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public NodeComparison get( final NodeId nodeId )
+    {
+        return this.comparisonMap.get( nodeId );
     }
 
     @Override
@@ -64,6 +74,8 @@ public class NodeComparisons
     {
         private final Set<NodeComparison> nodeComparisons = Sets.newHashSet();
 
+        private final Map<NodeId, NodeComparison> nodeIdNodeComparisonMap = Maps.newHashMap();
+
         private Builder()
         {
         }
@@ -71,12 +83,16 @@ public class NodeComparisons
         public Builder add( final NodeComparison nodeComparison )
         {
             this.nodeComparisons.add( nodeComparison );
+            this.nodeIdNodeComparisonMap.put( nodeComparison.getNodeId(), nodeComparison );
             return this;
         }
 
         public Builder addAll( final Collection<NodeComparison> nodeComparisons )
         {
             this.nodeComparisons.addAll( nodeComparisons );
+            nodeComparisons.stream().
+                forEach( comparison -> this.nodeIdNodeComparisonMap.put( comparison.getNodeId(), comparison ) );
+
             return this;
         }
 

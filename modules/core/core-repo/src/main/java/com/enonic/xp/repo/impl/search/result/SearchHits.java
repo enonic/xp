@@ -67,6 +67,12 @@ public class SearchHits
             return this;
         }
 
+        public Builder addAll( final SearchHits entries )
+        {
+            this.hits.putAll( entries.hits );
+            return this;
+        }
+
         public Builder totalHits( final long totalHits )
         {
             this.totalHits = totalHits;

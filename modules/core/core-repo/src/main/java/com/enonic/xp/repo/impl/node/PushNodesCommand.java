@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -16,9 +17,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PushNodesResult;
@@ -57,42 +58,10 @@ public class PushNodesCommand
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
 
-        final NodeBranchEntries nodeBranchEntries = FindNodeBranchEntriesByIdCommand.create( this ).
-            ids( ids ).
-            orderExpressions( OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ) ).
-            build().
-            execute();
+        final NodeBranchEntries nodeBranchEntries = getNodeBranchEntries();
+        final NodeComparisons comparisons = getNodeComparisons( nodeBranchEntries );
 
-        final PushNodesResult.Builder builder = PushNodesResult.create();
-
-        for ( final NodeBranchEntry nodeBranchEntry : nodeBranchEntries )
-        {
-            final NodeComparison nodeComparison = CompareNodeCommand.create().
-                nodeId( nodeBranchEntry.getNodeId() ).
-                storageService( this.storageService ).
-                target( this.target ).
-                build().
-                execute();
-
-            // if ( !NodePermissionsResolver.userHasPermission( authInfo, Permission.PUBLISH, node ) )
-            //  {
-            //      builder.addFailed( node, PushNodesResult.Reason.ACCESS_DENIED );
-            //      continue;
-            //  }
-
-            if ( nodeComparison.getCompareStatus() == CompareStatus.EQUAL )
-            {
-                builder.addSuccess( nodeBranchEntry );
-                continue;
-            }
-
-            pushNode( context, builder, nodeBranchEntry );
-
-            if ( nodeComparison.getCompareStatus() == CompareStatus.MOVED )
-            {
-                updateTargetChildrenMetaData( nodeBranchEntry, builder );
-            }
-        }
+        final PushNodesResult.Builder builder = pushNodes( context, nodeBranchEntries, comparisons );
 
         RefreshCommand.create().
             refreshMode( RefreshMode.ALL ).
@@ -103,25 +72,68 @@ public class PushNodesCommand
         return builder.build();
     }
 
-    private void pushNode( final Context context, final PushNodesResult.Builder builder, final NodeBranchEntry nodeBranchEntry )
+    private PushNodesResult.Builder pushNodes( final Context context, final NodeBranchEntries nodeBranchEntries,
+                                               final NodeComparisons comparisons )
     {
-        final NodeVersionId nodeVersionId =
-            this.storageService.getBranchNodeVersion( nodeBranchEntry.getNodeId(), InternalContext.from( context ) ).getVersionId();
+        final PushNodesResult.Builder builder = PushNodesResult.create();
+        for ( final NodeBranchEntry branchEntry : nodeBranchEntries )
+        {
+            final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
 
-        if ( nodeVersionId == null )
-        {
-            throw new NodeNotFoundException( "Node version for node with id '" + nodeBranchEntry.getNodeId() + "' not found" );
-        }
+            final NodeBranchEntry nodeBranchEntry = nodeBranchEntries.get( comparison.getNodeId() );
 
-        if ( !targetParentExists( nodeBranchEntry.getNodePath(), context ) )
-        {
-            builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
+            // TODO: Add permission-stuff here
+
+            // if ( !NodePermissionsResolver.userHasPermission( authInfo, Permission.PUBLISH, node ) )
+            //  {
+            //      builder.addFailed( node, PushNodesResult.Reason.ACCESS_DENIED );
+            //      continue;
+            //  }
+
+            if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
+            {
+                builder.addSuccess( nodeBranchEntry );
+                continue;
+            }
+
+            if ( !targetParentExists( nodeBranchEntry.getNodePath(), context ) )
+            {
+                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
+            }
+            else
+            {
+                doPushNode( context, nodeBranchEntry, nodeBranchEntry.getVersionId() );
+                builder.addSuccess( nodeBranchEntry );
+            }
+
+            if ( comparison.getCompareStatus() == CompareStatus.MOVED )
+            {
+                updateTargetChildrenMetaData( nodeBranchEntry, builder );
+            }
         }
-        else
-        {
-            doPushNode( context, nodeBranchEntry, nodeVersionId );
-            builder.addSuccess( nodeBranchEntry );
-        }
+        return builder;
+    }
+
+    private NodeComparisons getNodeComparisons( final NodeBranchEntries nodeBranchEntries )
+    {
+        return CompareNodesCommand.create().
+            nodeIds( NodeIds.from( nodeBranchEntries.getKeys() ) ).
+            storageService( this.storageService ).
+            target( this.target ).
+            build().
+            execute();
+    }
+
+    private NodeBranchEntries getNodeBranchEntries()
+    {
+        final Stopwatch timer = Stopwatch.createStarted();
+        final NodeBranchEntries nodeBranchEntries = FindNodeBranchEntriesByIdCommand.create( this ).
+            ids( ids ).
+            orderExpressions( OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ) ).
+            build().
+            execute();
+        System.out.println( "FindNodeBranchEntries: " + timer.stop() );
+        return nodeBranchEntries;
     }
 
     private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, PushNodesResult.Builder resultBuilder )
@@ -151,7 +163,6 @@ public class PushNodesCommand
 
         for ( final NodeBranchEntry child : childEntries )
         {
-
             final NodeBranchEntry targetNodeEntry =
                 this.storageService.getBranchNodeVersion( child.getNodeId(), InternalContext.from( targetContext ) );
 

@@ -34,6 +34,8 @@ public class ElasticsearchQuery
 
     private final int size;
 
+    private final int batchSize;
+
     private final ImmutableSet<AbstractAggregationBuilder> aggregations;
 
     private final ReturnFields returnFields;
@@ -48,6 +50,7 @@ public class ElasticsearchQuery
         this.indexName = builder.indexName;
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
         this.size = builder.size;
+        this.batchSize = builder.batchSize;
         this.from = builder.from;
         this.aggregations = ImmutableSet.copyOf( builder.aggregations );
         this.returnFields = builder.returnFields;
@@ -92,6 +95,11 @@ public class ElasticsearchQuery
     public int getSize()
     {
         return size;
+    }
+
+    public int getBatchSize()
+    {
+        return batchSize;
     }
 
     public ReturnFields getReturnFields()
@@ -154,6 +162,8 @@ public class ElasticsearchQuery
 
         private int size = DEFAULT_SIZE;
 
+        private int batchSize = 10_000;
+
         private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
 
         private ReturnFields returnFields = ReturnFields.empty();
@@ -205,6 +215,12 @@ public class ElasticsearchQuery
         public Builder size( final int size )
         {
             this.size = size;
+            return this;
+        }
+
+        public Builder batchSize( final int batchSize )
+        {
+            this.batchSize = batchSize;
             return this;
         }
 

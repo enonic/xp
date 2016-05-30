@@ -68,9 +68,8 @@ public class FindNodesDependenciesCommandTest
         assertEquals( "Should contain [node1_1(r)], contains " + dependants.getAsStrings(), 1, dependants.getSize() );
     }
 
-
     @Test
-    public void lopping_dependencies()
+    public void looping_dependencies()
         throws Exception
     {
 

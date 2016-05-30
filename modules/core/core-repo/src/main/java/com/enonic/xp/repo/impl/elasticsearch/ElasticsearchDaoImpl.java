@@ -143,6 +143,11 @@ public class ElasticsearchDaoImpl
     @Override
     public SearchResult search( final ElasticsearchQuery query )
     {
+        if ( query.getSearchType().equals( SearchType.SCAN ) )
+        {
+            return new ScanAndScrollExecutor( this.client ).execute( query );
+        }
+
         final SearchRequestBuilder searchRequest = SearchRequestBuilderFactory.newFactory().
             query( query ).
             client( this.client ).
@@ -296,6 +301,7 @@ public class ElasticsearchDaoImpl
 
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder, final SearchType searchType )
     {
+
         try
         {
             final SearchResponse searchResponse = searchRequestBuilder.

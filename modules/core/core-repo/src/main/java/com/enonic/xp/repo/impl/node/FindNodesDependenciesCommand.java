@@ -10,6 +10,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -17,7 +18,6 @@ import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResultEntry;
-import com.enonic.xp.repo.impl.search.SearchService;
 
 public class FindNodesDependenciesCommand
     extends AbstractNodeCommand
@@ -27,6 +27,8 @@ public class FindNodesDependenciesCommand
     private final Set<NodeId> processed = Sets.newHashSet();
 
     private final boolean recursive;
+
+    private final int BATCH_SIZE = 10_000;
 
     private FindNodesDependenciesCommand( final Builder builder )
     {
@@ -86,15 +88,19 @@ public class FindNodesDependenciesCommand
     private NodeQueryResult getReferences( final Set<NodeId> nonProcessedNodes )
     {
         return this.searchService.query( NodeQuery.create().
+            addQueryFilter( ExistsFilter.create().
+                fieldName( NodeIndexPath.REFERENCE.getPath() ).
+                build() ).
             addQueryFilter( ValueFilter.create().
                 fieldName( NodeIndexPath.ID.getPath() ).
                 addValues( NodeIds.from( nonProcessedNodes ).getAsStrings() ).
                 build() ).
-            addQueryFilter( ExistsFilter.create().
-                fieldName( NodeIndexPath.REFERENCE.getPath() ).
-                build() ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            from( 0 ).
+            size( nonProcessedNodes.size() ).
+            batchSize( BATCH_SIZE ).
+            searchMode( SearchMode.SCAN ).
             build(), ReturnFields.from( NodeIndexPath.REFERENCE ), InternalContext.from( ContextAccessor.current() ) );
+
     }
 
     private void addNodeIdsFromReferenceReturnValues( final NodeQueryResult result, final NodeIds.Builder builder )

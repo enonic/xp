@@ -38,6 +38,8 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final StorageService storageService;
 
+    private final int batchSize = 20_000;
+
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
     {
         nodeId = builder.nodeId;
@@ -68,7 +70,7 @@ public class FindNodesWithVersionDifferenceCommand
             target( target ).
             nodePath( nodePath ).
             excludes( excludeEntries ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            batchSize( batchSize ).
             build(), context );
     }
 

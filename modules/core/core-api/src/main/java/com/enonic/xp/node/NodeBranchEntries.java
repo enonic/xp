@@ -66,6 +66,12 @@ public class NodeBranchEntries
             return this;
         }
 
+        public Builder addAll( final NodeBranchEntries nodeBranchEntries )
+        {
+            this.branchNodeVersions.addAll( nodeBranchEntries.getSet() );
+            return this;
+        }
+
         public NodeBranchEntries build()
         {
             return new NodeBranchEntries( this );

@@ -31,7 +31,9 @@ public class NodeVersionDiffQueryTranslator
             query( queryBuilder ).
             setReturnFields( ReturnFields.from( VersionIndexPath.NODE_ID, VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP ) ).
             size( query.getSize() ).
+            batchSize( query.getBatchSize() ).
             from( query.getFrom() ).
+            searchType( SearchType.SCAN ).
             addSortBuilder( new FieldSortBuilder( VersionIndexPath.NODE_PATH.getPath() ).order( SortOrder.ASC ) ).
             searchType( SearchType.valueOf( request.getSearchType().toString() ) ).
             build();

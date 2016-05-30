@@ -23,7 +23,7 @@ public class NodeComparison
 
     public NodeId getNodeId()
     {
-        return sourceEntry.getNodeId();
+        return sourceEntry != null ? sourceEntry.getNodeId() : targetEntry != null ? targetEntry.getNodeId() : null;
     }
 
     public NodeBranchEntry getSourceEntry()

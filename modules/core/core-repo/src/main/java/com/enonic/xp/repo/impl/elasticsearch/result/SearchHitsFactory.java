@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.result;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchHits;
 
-class SearchHitsFactory
+public class SearchHitsFactory
 {
     public static SearchHits create( final org.elasticsearch.search.SearchHits searchHits )
     {

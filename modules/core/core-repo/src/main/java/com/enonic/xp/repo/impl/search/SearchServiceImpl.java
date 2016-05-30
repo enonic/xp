@@ -7,6 +7,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageName;
@@ -61,7 +62,7 @@ public class SearchServiceImpl
         final SearchRequest searchRequest = SearchRequest.create().
             settings( createSettings( storageType, storageName ) ).
             acl( context.getPrincipalsKeys() ).
-            searchType( query.isAccurateScoring() ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH ).
+            searchType( resolveSearchType( query ) ).
             query( query ).
             returnFields( returnFields ).
             build();
@@ -69,6 +70,18 @@ public class SearchServiceImpl
         final SearchResult result = searchDao.search( searchRequest );
 
         return NodeQueryResultFactory.create( result );
+    }
+
+    private SearchType resolveSearchType( final NodeQuery query )
+    {
+        final SearchMode searchMode = query.getSearchMode();
+
+        if ( searchMode.equals( SearchMode.SCAN ) )
+        {
+            return SearchType.SCAN;
+        }
+
+        return query.isAccurateScoring() ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH;
     }
 
     @Override
@@ -105,7 +118,7 @@ public class SearchServiceImpl
             settings( createSettings( storageType, storageName ) ).
             returnFields( VERSION_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
-            searchType( SearchType.DFS_QUERY_THEN_FETCH ).
+            searchType( SearchType.SCAN ).
             query( query ).
             build();
 
@@ -129,6 +142,7 @@ public class SearchServiceImpl
             settings( createSettings( storageType, storageName ) ).
             returnFields( VERSION_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
+            searchType( SearchType.SCAN ).
             query( query ).
             build();
 

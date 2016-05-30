@@ -97,7 +97,6 @@ public class ResolveSyncWorkCommand
 
     private void getAllPossibleNodesToBePublished()
     {
-
         final NodeIds.Builder diffAndDependantsBuilder = NodeIds.create();
 
         final NodeIds initialDiff = getInitialDiff();
@@ -105,14 +104,15 @@ public class ResolveSyncWorkCommand
 
         if ( checkDependencies )
         {
-            diffAndDependantsBuilder.addAll( getNodeDependencies( initialDiff ) );
+            final NodeIds nodeDependencies = getNodeDependencies( initialDiff );
+            diffAndDependantsBuilder.addAll( nodeDependencies );
         }
 
         final Set<NodeComparison> comparisons = getFilteredComparisons( diffAndDependantsBuilder );
 
         addNewAndMovedParents( comparisons );
 
-        comparisons.forEach( ( comparison -> addToResult( comparison ) ) );
+        comparisons.forEach( ( this::addToResult ) );
 
         markPendingDeleteChildrenForDeletion( comparisons );
 

@@ -20,7 +20,7 @@ import com.enonic.xp.query.filter.Filters;
 public class AbstractQuery
     implements Query
 {
-    protected final static int DEFAULT_QUERY_SIZE = 10;
+    private final static int DEFAULT_QUERY_SIZE = 10;
 
     private final QueryExpr query;
 
@@ -34,6 +34,8 @@ public class AbstractQuery
 
     private final int size;
 
+    private final int batchSize;
+
     private final SearchMode searchMode;
 
     private final ImmutableList<OrderExpr> orderBys;
@@ -44,6 +46,7 @@ public class AbstractQuery
         this.query = builder.query;
         this.from = builder.from;
         this.size = builder.size;
+        this.batchSize = builder.batchSize;
         this.searchMode = builder.searchMode;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
         this.orderBys = setOrderExpressions( builder );
@@ -100,6 +103,11 @@ public class AbstractQuery
         return size;
     }
 
+    public int getBatchSize()
+    {
+        return batchSize;
+    }
+
     public SearchMode getSearchMode()
     {
         return searchMode;
@@ -118,6 +126,8 @@ public class AbstractQuery
         private int from;
 
         private int size = DEFAULT_QUERY_SIZE;
+
+        private int batchSize = 10_000;
 
         private List<OrderExpr> orderBys = Lists.newLinkedList();
 
@@ -181,6 +191,13 @@ public class AbstractQuery
         public B size( int size )
         {
             this.size = size;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B batchSize( int batchSize )
+        {
+            this.batchSize = batchSize;
             return (B) this;
         }
 
