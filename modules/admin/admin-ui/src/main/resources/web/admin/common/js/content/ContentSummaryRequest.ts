@@ -1,18 +1,20 @@
 module api.content {
 
     import QueryField = api.query.QueryField;
-    import Expression = api.query.expr.Expression;
     import OrderExpr = api.query.expr.OrderExpr;
     import QueryExpr = api.query.expr.QueryExpr;
     import FieldExpr = api.query.expr.FieldExpr;
     import FieldOrderExpr = api.query.expr.FieldOrderExpr;
     import OrderDirection = api.query.expr.OrderDirection;
+    import ConstraintExpr = api.query.expr.ConstraintExpr;
 
     export class ContentSummaryRequest extends api.rest.ResourceRequest<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary[]> {
 
         private contentQuery: query.ContentQuery;
 
         private path: ContentPath;
+
+        private searchString: string = "";
 
         private request: ContentQueryRequest<json.ContentSummaryJson, ContentSummary>;
 
@@ -27,6 +29,10 @@ module api.content {
             this.contentQuery = new query.ContentQuery();
             this.request = new ContentQueryRequest<json.ContentSummaryJson, ContentSummary>(this.contentQuery).
                 setExpand(api.rest.Expand.SUMMARY);
+        }
+
+        getSearhchString(): string {
+            return this.searchString;
         }
 
         getRestPath(): api.rest.Path {
@@ -46,11 +52,14 @@ module api.content {
         }
 
         send(): wemQ.Promise<api.rest.JsonResponse<json.ContentQueryResultJson<json.ContentSummaryJson>>> {
+            this.buildSearchQueryExpr();
+            
             return this.request.send();
         }
 
         sendAndParse(): wemQ.Promise<ContentSummary[]> {
-
+            this.buildSearchQueryExpr();    
+            
             return this.request.sendAndParse().
                 then((queryResult: ContentQueryResult<ContentSummary,json.ContentSummaryJson>) => {
                     return queryResult.getContents();
@@ -71,27 +80,24 @@ module api.content {
 
         setContentPath(path: ContentPath) {
             this.path = path;
-            this.setSearchQueryExpr();
         }
 
-        setSearchQueryExpr(searchString: string ="") {
-            var fulltextExpression = this.createSearchExpression(searchString);
-
-            this.contentQuery.setQueryExpr(new QueryExpr(fulltextExpression, ContentSummaryRequest.DEFAULT_ORDER));
+        setSearchString(value: string = "") {
+            this.searchString = value;
         }
 
-        private createSearchExpression(searchString): Expression {
+        private buildSearchQueryExpr() {
+            this.contentQuery.setQueryExpr(new QueryExpr(this.createSearchExpression(), ContentSummaryRequest.DEFAULT_ORDER));
+        }
+
+        protected createSearchExpression(): ConstraintExpr {
             return new api.query.PathMatchExpressionBuilder()
-                .setSearchString(searchString)
+                .setSearchString(this.searchString)
                 .setPath(this.path ? this.path.toString() : "")
                 .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
                 .addField(new QueryField(QueryField.NAME, 3))
                 .addField(new QueryField(QueryField.ALL))
                 .build();
-        }
-
-        setQueryExpr(queryExpr: QueryExpr) {
-            this.contentQuery.setQueryExpr(queryExpr);
         }
 
         private createContentTypeNames(names: string[]): api.schema.content.ContentTypeName[] {
