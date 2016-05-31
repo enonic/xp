@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
@@ -19,7 +20,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.executor.SearchExecutor;
+import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultsFactory;
@@ -65,6 +68,13 @@ public class StorageDaoImpl
         return doStore( indexRequest, request.getTimeout() );
     }
 
+    public void store( final Collection<IndexDocument> indexDocuments )
+    {
+        StoreExecutor.create().
+            client( this.client ).
+            build().
+            store( indexDocuments );
+    }
 
     @Override
     public boolean delete( final DeleteRequest request )

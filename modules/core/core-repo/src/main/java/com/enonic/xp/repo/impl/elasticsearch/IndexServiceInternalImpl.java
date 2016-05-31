@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.elasticsearch.ElasticsearchException;
@@ -32,11 +31,7 @@ import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
 import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.index.IndexSettings;
@@ -48,22 +43,19 @@ import com.enonic.xp.repository.RepositoryId;
 public class IndexServiceInternalImpl
     implements IndexServiceInternal
 {
+    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
 
     private static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
 
-    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
+    private final static String DELETE_INDEX_TIMEOUT = "5s";
 
-    private static final String INDICES_RESPONSE_TIMEOUT = "10s";
+    private final static String CREATE_INDEX_TIMEOUT = "5s";
 
-    private final static String DELETE_TIMEOUT = "5s";
-
-    private final static String CREATE_TIMEOUT = "5s";
-
-    private final static String UPDATE_TIMEOUT = "5s";
+    private final static String UPDATE_INDEX_TIMEOUT = "5s";
 
     private final static String APPLY_MAPPING_TIMEOUT = "5s";
 
-    private final static String EXISTS_TIMEOUT = "5s";
+    private final static String INDEX_EXISTS_TIMEOUT = "5s";
 
     private final static String CLUSTER_STATE_TIMEOUT = "5s";
 
@@ -139,7 +131,7 @@ public class IndexServiceInternalImpl
             final CreateIndexResponse createIndexResponse = client.admin().
                 indices().
                 create( createIndexRequest ).
-                actionGet( CREATE_TIMEOUT );
+                actionGet( CREATE_INDEX_TIMEOUT );
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
         }
@@ -162,7 +154,7 @@ public class IndexServiceInternalImpl
             final UpdateSettingsResponse updateSettingsResponse = client.admin().
                 indices().
                 updateSettings( updateSettingsRequest ).
-                actionGet( UPDATE_TIMEOUT );
+                actionGet( UPDATE_INDEX_TIMEOUT );
 
             LOG.info( "Index {} updated with status {}", indexName, updateSettingsResponse.isAcknowledged() );
         }
@@ -210,7 +202,7 @@ public class IndexServiceInternalImpl
     {
         IndicesExistsRequest request = new IndicesExistsRequestBuilder( this.client.admin().indices() ).setIndices( indices ).request();
 
-        final IndicesExistsResponse response = client.admin().indices().exists( request ).actionGet( EXISTS_TIMEOUT );
+        final IndicesExistsResponse response = client.admin().indices().exists( request ).actionGet( INDEX_EXISTS_TIMEOUT );
 
         return response.isExists();
     }
@@ -242,29 +234,13 @@ public class IndexServiceInternalImpl
 
         try
         {
-            client.admin().indices().delete( req ).actionGet( DELETE_TIMEOUT );
+            client.admin().indices().delete( req ).actionGet( DELETE_INDEX_TIMEOUT );
             LOG.info( "Deleted index {}", indexName );
         }
         catch ( ElasticsearchException e )
         {
             LOG.warn( "Failed to delete index {}", indexName );
         }
-    }
-
-    @Override
-    public void store( final Node node, final InternalContext context )
-    {
-        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
-            node( node ).
-            branch( context.getBranch() ).
-            repositoryId( context.getRepositoryId() ).
-            build().
-            create();
-
-        StoreExecutor.create().
-            client( this.client ).
-            build().
-            store( indexDocuments );
     }
 
     @Reference

@@ -126,7 +126,7 @@ public class StorageServiceImpl
             nodePath( node.path() ).
             build(), context );
 
-        this.indexServiceInternal.store( node, context );
+        this.indexDataService.store( node, context );
     }
 
     @Override
@@ -288,7 +288,7 @@ public class StorageServiceImpl
 
     private void indexNode( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        this.indexServiceInternal.store( Node.create( node ).
+        this.indexDataService.store( Node.create( node ).
             nodeVersionId( nodeVersionId ).
             build(), context );
     }
@@ -346,7 +346,7 @@ public class StorageServiceImpl
             previousPath( previousPath ).
             build(), context );
 
-        this.indexServiceInternal.store( node, context );
+        this.indexDataService.store( node, context );
 
         return node;
     }

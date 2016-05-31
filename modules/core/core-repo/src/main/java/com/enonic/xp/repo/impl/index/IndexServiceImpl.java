@@ -36,6 +36,7 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.RepositoryIndexMappingProvider;
 import com.enonic.xp.repo.impl.repository.RepositorySearchIndexSettingsProvider;
 import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
@@ -45,15 +46,17 @@ public class IndexServiceImpl
 {
     private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
 
+    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
+
+    private final static int BATCH_SIZE = 10_000;
+
     private IndexServiceInternal indexServiceInternal;
+
+    private IndexDataService indexDataService;
 
     private SearchService searchService;
 
     private NodeVersionDao nodeVersionDao;
-
-    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
-
-    private final static int BATCH_SIZE = 10_000;
 
     @Override
     public ReindexResult reindex( final ReindexParams params )
@@ -105,7 +108,7 @@ public class IndexServiceImpl
 
                 final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
-                this.indexServiceInternal.store( node, InternalContext.create( ContextAccessor.current() ).
+                this.indexDataService.store( node, InternalContext.create( ContextAccessor.current() ).
                     repositoryId( params.getRepositoryId() ).
                     branch( branch ).
                     build() );
@@ -211,5 +214,11 @@ public class IndexServiceImpl
     public void setNodeVersionDao( final NodeVersionDao nodeVersionDao )
     {
         this.nodeVersionDao = nodeVersionDao;
+    }
+
+    @Reference
+    public void setIndexDataService( final IndexDataService indexDataService )
+    {
+        this.indexDataService = indexDataService;
     }
 }

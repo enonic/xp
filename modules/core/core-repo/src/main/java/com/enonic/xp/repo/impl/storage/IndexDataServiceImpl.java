@@ -1,14 +1,19 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.Collection;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.elasticsearch.NodeStoreDocumentFactory;
+import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.search.SearchStorageName;
 import com.enonic.xp.repo.impl.search.SearchStorageType;
 
@@ -77,6 +82,18 @@ public class IndexDataServiceImpl
             build() );
     }
 
+    @Override
+    public void store( final Node node, final InternalContext context )
+    {
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
+            node( node ).
+            branch( context.getBranch() ).
+            repositoryId( context.getRepositoryId() ).
+            build().
+            create();
+
+        this.storageDao.store( indexDocuments );
+    }
 
     @Reference
     public void setStorageDao( final StorageDao storageDao )
