@@ -12,7 +12,10 @@ module api.form {
 
             if (fieldSetJson.items != null) {
                 fieldSetJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
-                    this.addFormItem(FormItemFactory.createFormItem(formItemJson));
+                    var formItem = FormItemFactory.createFormItem(formItemJson);
+                    if (formItem) {
+                        this.addFormItem(formItem);
+                    }
                 });
             }
         }

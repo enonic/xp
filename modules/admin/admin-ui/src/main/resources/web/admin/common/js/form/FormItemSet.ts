@@ -11,7 +11,7 @@ module api.form {
 
         private formItems: FormItem[] = [];
 
-        private formItemByName: {[name:string] : FormItem; } = {};
+        private formItemByName: {[name: string]: FormItem; } = {};
 
         private immutable: boolean;
 
@@ -31,7 +31,10 @@ module api.form {
 
             if (formItemSetJson.items != null) {
                 formItemSetJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
-                    this.addFormItem(FormItemFactory.createFormItem(formItemJson));
+                    var formItem = FormItemFactory.createFormItem(formItemJson);
+                    if (formItem) {
+                        this.addFormItem(formItem);
+                    }
                 });
             }
         }

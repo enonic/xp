@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -28,6 +30,8 @@ import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 public final class PageDescriptorServiceImpl
     implements PageDescriptorService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( PageDescriptorServiceImpl.class );
+
     private final static String PATH = "/site/pages";
 
     private MixinService mixinService;
@@ -65,12 +69,18 @@ public final class PageDescriptorServiceImpl
         final List<PageDescriptor> list = Lists.newArrayList();
         for ( final DescriptorKey descriptorKey : findDescriptorKeys( key ) )
         {
-            final PageDescriptor descriptor = getByKey( descriptorKey );
-            if ( descriptor != null )
+            try
             {
-                list.add( descriptor );
+                final PageDescriptor descriptor = getByKey( descriptorKey );
+                if ( descriptor != null )
+                {
+                    list.add( descriptor );
+                }
             }
-
+            catch ( IllegalArgumentException e )
+            {
+                LOG.error( "Error in page descriptor: " + descriptorKey.toString(), e );
+            }
         }
 
         return PageDescriptors.from( list );
