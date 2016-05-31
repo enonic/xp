@@ -180,9 +180,9 @@ public class PushNodesCommand
         }
     }
 
-    private void doPushNode( final Context context, final NodeBranchEntry node, final NodeVersionId nodeVersionId )
+    private void doPushNode( final Context context, final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId )
     {
-        this.storageService.publish( node, nodeVersionId, InternalContext.create( context ).
+        this.storageService.publish( nodeBranchEntry, nodeVersionId, InternalContext.create( context ).
             branch( this.target ).
             build(), context.getBranch() );
     }
