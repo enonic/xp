@@ -5,6 +5,7 @@ import ContentDependencyJson = api.content.json.ContentDependencyJson;
 import ContentDependencyGroupJson = api.content.json.ContentDependencyGroupJson;
 import {WidgetItemView} from "../../WidgetItemView";
 import {DependencyGroup, DependencyType} from "./DependencyGroup";
+import {ToggleSearchPanelWithDependenciesEvent} from "../../../../browse/ToggleSearchPanelWithDependenciesEvent";
 import ActionButton = api.ui.button.ActionButton;
 import Action = api.ui.Action;
 
@@ -29,6 +30,17 @@ export class DependenciesWidgetItemView extends WidgetItemView {
         this.inboundButton = this.appendButton("Show Inbound", "btn-inbound");
         this.appendMainContainer();
         this.outboundButton = this.appendButton("Show Outbound", "btn-outbound");
+        this.manageButtonClick();
+    }
+
+    private manageButtonClick() {
+        this.inboundButton.getAction().onExecuted((action: Action) => {
+            new ToggleSearchPanelWithDependenciesEvent(this.item.getContentSummary(), true).fire();
+        });
+
+        this.outboundButton.getAction().onExecuted((action: Action) => {
+            new ToggleSearchPanelWithDependenciesEvent(this.item.getContentSummary(), false).fire();
+        });
     }
 
     private setButtonDecoration(button: ActionButton, dependencies: DependencyGroup[]) {
@@ -56,6 +68,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
             console.debug('DependenciesWidgetItemView.setItem: ', item);
         }
 
+        this.item = item;
         return this.resolveDependencies(item);
     }
 

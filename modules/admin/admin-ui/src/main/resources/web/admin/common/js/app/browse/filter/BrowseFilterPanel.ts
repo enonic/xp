@@ -73,6 +73,7 @@ module api.app.browse.filter {
                 this.appendChild(this.hideFilterPanelButton);
                 this.appendChild(this.searchField);
                 this.appendChild(hitsCounterAndClearButtonWrapper);
+                this.appendExtraSection();
                 this.appendChild(this.aggregationContainer);
                 this.appendChild(showResultsButtonWrapper);
 
@@ -82,6 +83,9 @@ module api.app.browse.filter {
                     setTimeout(this.giveFocusToSearch.bind(this), 100);
                 }).setGlobal(true));
             })
+        }
+
+        protected appendExtraSection() {
         }
 
         setRefreshOfFilterRequired() {

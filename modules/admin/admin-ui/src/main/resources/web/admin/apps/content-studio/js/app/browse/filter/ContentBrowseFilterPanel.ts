@@ -16,6 +16,7 @@ import TermsAggregationQuery = api.query.aggregation.TermsAggregationQuery;
 import DateRangeAggregationQuery = api.query.aggregation.DateRangeAggregationQuery;
 import DateRange = api.query.aggregation.DateRange;
 import QueryExpr = api.query.expr.QueryExpr;
+import LogicalExpr = api.query.expr.LogicalExpr;
 import ValueExpr = api.query.expr.ValueExpr;
 import FunctionExpr = api.query.expr.FunctionExpr;
 import LogicalOperator = api.query.expr.LogicalOperator;
@@ -25,6 +26,9 @@ import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
 import Value = api.data.Value;
 import ValueTypes = api.data.ValueTypes;
 import QueryField = api.query.QueryField;
+import ContentSummaryViewer = api.content.ContentSummaryViewer;
+import ActionButton = api.ui.button.ActionButton;
+import Action = api.ui.Action;
 import {ContentBrowseResetEvent} from "./ContentBrowseResetEvent";
 import {ContentBrowseSearchEvent} from "./ContentBrowseSearchEvent";
 import {ContentBrowseRefreshEvent} from "./ContentBrowseRefreshEvent";
@@ -39,6 +43,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     contentTypeAggregation: ContentTypeAggregationGroupView;
     lastModifiedAggregation: AggregationGroupView;
 
+    private dependenciesSection: DependenciesSection;
+
     constructor() {
 
         this.contentTypeAggregation = new ContentTypeAggregationGroupView(
@@ -51,16 +57,33 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
         super(null, [this.contentTypeAggregation, this.lastModifiedAggregation]);
 
-
         this.initAggregationGroupView([this.contentTypeAggregation, this.lastModifiedAggregation]);
 
         this.onReset(()=> {
+            this.dependenciesSection.reset();
             this.resetFacets();
         });
 
         this.onShown(() => {
             this.refresh();
         });
+    }
+
+    protected appendExtraSection() {
+        this.dependenciesSection = new DependenciesSection(this.removeDependencyItemCallback.bind(this));
+        this.appendChild(this.dependenciesSection);
+    }
+
+    private removeDependencyItemCallback() {
+        this.dependenciesSection.reset();
+        this.search();
+    }
+
+    public setDependencyItem(item: ContentSummary, inbound: boolean) {
+        this.dependenciesSection.setItem(item, inbound);
+        if (this.dependenciesSection.isActive()) {
+            this.search();
+        }
     }
 
     doRefresh() {
@@ -78,6 +101,10 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         }
 
         this.searchDataAndHandleResponse(this.createContentQuery());
+    }
+
+    hasFilterSet(): boolean {
+        return super.hasFilterSet() || this.dependenciesSection.isActive();
     }
 
     private refreshFacets() {
@@ -106,8 +133,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     private createContentQuery(): ContentQuery {
         var contentQuery: ContentQuery = new ContentQuery(),
             values = this.getSearchInputValues();
-        this.appendFulltextSearch(values, contentQuery);
+        this.appendQueryExpression(values, contentQuery);
         this.appendContentTypeFilter(values, contentQuery);
+        this.appendOutboundReferencesFilter(contentQuery);
 
         var lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(values);
         if (lastModifiedFilter != null) {
@@ -127,8 +155,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 this.handleDataSearchResult(contentQuery, contentQueryResult);
             }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
     }
 
     private refreshDataAndHandleResponse(contentQuery: ContentQuery) {
@@ -141,8 +169,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                     this.handleNoSearchResultOnRefresh(contentQuery);
                 }
             }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
     }
 
     private handleDataSearchResult(contentQuery: ContentQuery,
@@ -175,7 +203,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     private cloneContentQueryNoContentTypes(contentQuery: ContentQuery): ContentQuery {
         var newContentQuery: ContentQuery = new ContentQuery().setContentTypeNames([]).setFrom(contentQuery.getFrom()).setQueryExpr(
             contentQuery.getQueryExpr()).setSize(contentQuery.getSize()).setAggregationQueries(
-            contentQuery.getAggregationQueries()).setQueryFilters(contentQuery.getQueryFilters());
+            contentQuery.getAggregationQueries()).setQueryFilters(contentQuery.getQueryFilters()).
+            setMustBeReferencedById(contentQuery.getMustBeReferencedById());
 
         return newContentQuery;
     }
@@ -221,8 +250,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                     aggregationGroupView.initialize();
                 });
             }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
     }
 
     private resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
@@ -241,8 +270,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                 }
             }
         ).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        });
+                api.DefaultErrorHandler.handle(reason);
+            });
     }
 
     private buildAggregationsQuery(queryExpr: QueryExpr): ContentQuery {
@@ -255,16 +284,35 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         return contentQuery;
     }
 
-    private appendFulltextSearch(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
+    private appendQueryExpression(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
+        var fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues),
+            query: QueryExpr;
+
+        if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
+            query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeDependenciesSearchExpr()));
+        } else {
+            query = new QueryExpr(fulltextSearchExpression);
+        }
+
+        contentQuery.setQueryExpr(query);
+    }
+
+    private makeDependenciesSearchExpr(): api.query.expr.Expression {
+        var args: api.query.expr.ValueExpr[] = [];
+
+        args.push(ValueExpr.stringValue(new QueryField(QueryField.REFERENCES).toString()));
+        args.push(ValueExpr.stringValue(this.dependenciesSection.getDependencyId().toString()));
+
+        return new DynamicConstraintExpr(new FunctionExpr("inboundDependencies", args));
+    }
+
+    private makeFulltextSearchExpr(searchInputValues: SearchInputValues): api.query.expr.Expression {
 
         var searchString: string = searchInputValues.getTextSearchFieldValue();
 
-        var fulltextSearchExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().setSearchString(
+        return new api.query.FulltextSearchExpressionBuilder().setSearchString(
             searchString).addField(new QueryField(QueryField.DISPLAY_NAME, 5)).addField(new QueryField(QueryField.NAME, 3)).addField(
             new QueryField(QueryField.ALL)).build();
-
-        var query: QueryExpr = new QueryExpr(fulltextSearchExpression);
-        contentQuery.setQueryExpr(query);
     }
 
     private appendContentTypeFilter(searchInputValues: SearchInputValues, contentQuery: ContentQuery): void {
@@ -274,6 +322,12 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         var contentTypeNames: ContentTypeName[] = this.parseContentTypeNames(selectedBuckets);
 
         contentQuery.setContentTypeNames(contentTypeNames);
+    }
+
+    private appendOutboundReferencesFilter(contentQuery: ContentQuery): void {
+        if (this.dependenciesSection.isActive() && !this.dependenciesSection.isInbound()) {
+            contentQuery.setMustBeReferencedById(this.dependenciesSection.getDependencyId());
+        }
     }
 
     private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.filter.Filter {
@@ -361,5 +415,98 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                 aggregationGroupView.show();
             }
         })
+    }
+
+}
+
+export class DependenciesSection extends api.dom.DivEl {
+
+    private inboundLabel: api.dom.LabelEl = new api.dom.LabelEl("Incoming Dependencies");
+    private outboundLabel: api.dom.LabelEl = new api.dom.LabelEl("Outgoing Dependencies");
+
+    private dependencyItem: ContentSummary;
+    private viewer: ContentSummaryViewer = new ContentSummaryViewer();
+
+    private inbound: boolean = true;
+
+    private closeButton: ActionButton;
+    private closeCallback: () => void;
+
+    constructor(closeCallback?: () => void) {
+        super("dependencies-filter-section");
+
+        this.checkVisibilityState();
+
+        this.closeCallback = closeCallback;
+
+        this.inboundLabel.setVisible(false);
+        this.outboundLabel.setVisible(false);
+        this.appendChildren(this.inboundLabel, this.outboundLabel);
+
+        this.viewer.addClass("dependency-item");
+        this.appendChild(this.viewer);
+
+        this.closeButton = this.appendCloseButton();
+    }
+
+    private appendCloseButton(): ActionButton {
+        var action = new Action("").onExecuted(() => {
+            this.dependencyItem = null;
+            this.checkVisibilityState();
+
+            if (!!this.closeCallback) {
+                this.closeCallback();
+            }
+        });
+        var button = new ActionButton(action);
+
+        button.addClass("btn-close");
+        this.appendChild(button);
+
+        return button;
+    }
+
+    public reset() {
+        this.dependencyItem = null;
+        this.checkVisibilityState();
+    }
+
+    public getDependencyId(): api.content.ContentId {
+        return this.dependencyItem.getContentId();
+    }
+
+    public getDependencyItem(): ContentSummary {
+        return this.dependencyItem;
+    }
+
+    private checkVisibilityState() {
+        this.setVisible(this.isActive());
+    }
+
+    public isActive(): boolean {
+        return !!this.dependencyItem;
+    }
+
+    public isInbound(): boolean {
+        return this.inbound;
+    }
+
+    public setItem(item: ContentSummary, inbound: boolean) {
+
+        this.inbound = inbound;
+        this.showRelevantLabel();
+
+        this.dependencyItem = item;
+
+        if (!!item) {
+            this.viewer.setObject(item);
+        }
+
+        this.checkVisibilityState();
+    }
+
+    private showRelevantLabel() {
+        this.inboundLabel.setVisible(this.inbound);
+        this.outboundLabel.setVisible(!this.inbound);
     }
 }
