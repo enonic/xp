@@ -854,10 +854,15 @@ public final class ContentResource
         //TODO: do we need this param? it does not seem to be checked at all
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
 
+        final ContentQueryJsonToContentQueryConverter selectorQueryProcessor = ContentQueryJsonToContentQueryConverter.create().
+            contentQueryJson( contentQueryJson ).
+            contentService( this.contentService ).
+            build();
+
         final ContentIconUrlResolver iconUrlResolver = contentIconUrlResolver;
         final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
             populateChildren( getChildrenIds ).
-            contentQuery( contentQueryJson.getContentQuery() ).
+            contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
         return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
