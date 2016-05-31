@@ -35,44 +35,43 @@ function toggleButton() {
 
 function appendLauncherPanel() {
     var div = document.createElement("div");
-    div.setAttribute("class", "launcher-panel");
-    div.classList.add("hidden");
-    div.appendChild(createLauncherLink(div));
+    div.setAttribute("class", "launcher-panel hidden");
+    loadLauncherTool(div);
 
     document.getElementsByTagName("body")[0].appendChild(div);
 
     launcherPanel = div;
 }
 
-function createLauncherLink(container) {
-    var link = document.createElement("link");
-
-    link.setAttribute("rel", "import");
-    link.setAttribute("href", launcherUrl);
-
-    link.onload = function () {
-        launcherMainContainer = link.import.querySelector('.launcher-main-container');
-        launcherMainContainer.setAttribute("hidden", "true");
-        container.appendChild(launcherMainContainer);
-        addLongClickHandler(container);
-
-        if (autoOpenLauncher) {
-            openLauncherPanel();
-            launcherButton.focus();
-            if (getBodyWidth() > minWidthForTip) {
-                setTipVisibility("table");
-            }
-        }
-        else {
-            var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
-            for (var i = 0; i < appTiles.length; i++) {
-                appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
-            }
-        }
-        highlightActiveApp();
+function loadLauncherTool(target) {
+    var http = new XMLHttpRequest();
+    http.open("GET", launcherUrl, true);
+    http.onload = function () {
+        target.innerHTML = http.responseText;
+        initLauncherPanel(target);
     };
+    http.send();
+}
 
-    return link;
+function initLauncherPanel(target) {
+    launcherMainContainer = target.querySelector('.launcher-main-container');
+    launcherMainContainer.setAttribute("hidden", "true");
+    addLongClickHandler(target);
+
+    if (autoOpenLauncher) {
+        openLauncherPanel();
+        launcherButton.focus();
+        if (getBodyWidth() > minWidthForTip) {
+            setTipVisibility("table");
+        }
+    }
+    else {
+        var appTiles = target.querySelectorAll('.launcher-app-container a');
+        for (var i = 0; i < appTiles.length; i++) {
+            appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
+        }
+    }
+    highlightActiveApp();
 }
 
 function addLongClickHandler(container) {
