@@ -32,15 +32,15 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
-import com.enonic.xp.repo.impl.elasticsearch.snapshot.ElasticsearchSnapshotService;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
-import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -94,17 +94,17 @@ public abstract class AbstractNodeTest
 
     protected BranchServiceImpl branchService;
 
-    protected ElasticsearchIndexServiceInternal indexServiceInternal;
+    protected IndexServiceInternalImpl indexServiceInternal;
 
-    protected ElasticsearchSnapshotService snapshotService;
+    protected SnapshotServiceImpl snapshotService;
 
     protected StorageServiceImpl storageService;
 
     protected SearchServiceImpl searchService;
 
-    protected ElasticsearchSearchDao searchDao;
+    protected SearchDaoImpl searchDao;
 
-    protected IndexedDataServiceImpl indexedDataService;
+    protected IndexDataServiceImpl indexedDataService;
 
     @Before
     public void setUp()
@@ -114,6 +114,7 @@ public abstract class AbstractNodeTest
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
         Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
+        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/snapshots" ) );
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
@@ -121,16 +122,14 @@ public abstract class AbstractNodeTest
 
         this.blobStore = new MemoryBlobStore();
 
-        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
-        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
-        this.searchDao = new ElasticsearchSearchDao();
-        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+        this.searchDao = new SearchDaoImpl();
+        this.searchDao.setClient( this.client );
 
-        this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
-        this.indexServiceInternal.setClient( client );
-        this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
+        this.indexServiceInternal = new IndexServiceInternalImpl();
+        this.indexServiceInternal.setClient( this.client );
 
         // Branch and version-services
 
@@ -146,7 +145,7 @@ public abstract class AbstractNodeTest
         this.nodeDao.setConfiguration( repoConfig );
         this.nodeDao.setBlobStore( blobStore );
 
-        this.indexedDataService = new IndexedDataServiceImpl();
+        this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
         this.storageService = new StorageServiceImpl();
@@ -154,15 +153,16 @@ public abstract class AbstractNodeTest
         this.storageService.setBranchService( this.branchService );
         this.storageService.setIndexServiceInternal( this.indexServiceInternal );
         this.storageService.setNodeVersionDao( this.nodeDao );
-        this.storageService.setIndexedDataService( this.indexedDataService );
+        this.storageService.setIndexDataService( this.indexedDataService );
 
         // Search-service
 
         this.searchService = new SearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
 
-        this.snapshotService = new ElasticsearchSnapshotService();
-        this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
+        this.snapshotService = new SnapshotServiceImpl();
+        this.snapshotService.setClient( this.client );
+        this.snapshotService.setConfiguration( repoConfig );
 
         createContentRepository();
         waitForClusterHealth();

@@ -37,6 +37,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.elasticsearch.document.DeleteDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
+import com.enonic.xp.repo.impl.elasticsearch.executor.DeleteExecutor;
+import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
 import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.index.IndexSettings;
@@ -45,13 +47,13 @@ import com.enonic.xp.repository.RepositoryId;
 
 
 @Component
-public class ElasticsearchIndexServiceInternal
+public class IndexServiceInternalImpl
     implements IndexServiceInternal
 {
 
     private static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
 
-    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceInternal.class );
+    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
 
     private static final String INDICES_RESPONSE_TIMEOUT = "10s";
 
@@ -66,8 +68,6 @@ public class ElasticsearchIndexServiceInternal
     private final static String EXISTS_TIMEOUT = "5s";
 
     private final static String CLUSTER_STATE_TIMEOUT = "5s";
-
-    private ElasticsearchDao elasticsearchDao;
 
     private Client client;
 
@@ -263,7 +263,10 @@ public class ElasticsearchIndexServiceInternal
             build().
             create();
 
-        elasticsearchDao.store( indexDocuments );
+        StoreExecutor.create().
+            client( this.client ).
+            build().
+            store( indexDocuments );
     }
 
     @Override
@@ -272,18 +275,16 @@ public class ElasticsearchIndexServiceInternal
         final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
         final String indexType = context.getBranch().getName();
 
-        elasticsearchDao.delete( DeleteDocument.create().
-            indexName( indexName ).
-            indexTypeName( indexType ).
-            id( nodeId.toString() ).
-            build() );
+        DeleteExecutor.create().
+            client( this.client ).
+            build().
+            delete( DeleteDocument.create().
+                id( nodeId.toString() ).
+                indexName( indexName ).
+                indexTypeName( indexType ).
+                build() );
     }
 
-    @Reference
-    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
-    {
-        this.elasticsearchDao = elasticsearchDao;
-    }
 
     @Reference
     public void setClient( final Client client )

@@ -46,7 +46,7 @@ public class StorageServiceImpl
 
     private IndexServiceInternal indexServiceInternal;
 
-    private IndexedDataService indexedDataService;
+    private IndexDataService indexDataService;
 
     @Override
     public Node store( final Node node, final InternalContext context )
@@ -205,13 +205,13 @@ public class StorageServiceImpl
     @Override
     public ReturnValues getIndexedData( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
     {
-        return this.indexedDataService.get( nodeId, returnFields, context );
+        return this.indexDataService.get( nodeId, returnFields, context );
     }
 
     @Override
     public ReturnValues getIndexedData( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context )
     {
-        return this.indexedDataService.get( nodeIds, returnFields, context );
+        return this.indexDataService.get( nodeIds, returnFields, context );
     }
 
     @Override
@@ -388,8 +388,8 @@ public class StorageServiceImpl
     }
 
     @Reference
-    public void setIndexedDataService( final IndexedDataService indexedDataService )
+    public void setIndexDataService( final IndexDataService indexDataService )
     {
-        this.indexedDataService = indexedDataService;
+        this.indexDataService = indexDataService;
     }
 }

@@ -511,12 +511,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    public void deleteSnapshotRespository()
-    {
-        this.snapshotService.deleteSnapshotRepository();
-    }
-
-    @Override
     public int applyPermissions( final ApplyNodePermissionsParams params )
     {
         final Nodes updatedNodes = ApplyNodePermissionsCommand.create().

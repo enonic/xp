@@ -15,16 +15,16 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
-import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -72,13 +72,13 @@ public class SecurityServiceImplTest
 {
     private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
+    protected EventPublisher eventPublisher;
+
     private SecurityServiceImpl securityService;
 
     private NodeServiceImpl nodeService;
 
-    private ElasticsearchIndexServiceInternal indexServiceInternal;
-
-    protected EventPublisher eventPublisher;
+    private IndexServiceInternalImpl indexServiceInternal;
 
     @Override
     @Before
@@ -92,9 +92,8 @@ public class SecurityServiceImplTest
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
         Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
-        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
-        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
         final BranchServiceImpl branchService = new BranchServiceImpl();
         branchService.setStorageDao( storageDao );
@@ -106,17 +105,16 @@ public class SecurityServiceImplTest
         nodeDao.setConfiguration( repoConfig );
         nodeDao.setBlobStore( blobStore );
 
-        this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
+        this.indexServiceInternal = new IndexServiceInternalImpl();
         this.indexServiceInternal.setClient( client );
-        this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
 
-        final ElasticsearchSearchDao searchDao = new ElasticsearchSearchDao();
-        searchDao.setElasticsearchDao( this.elasticsearchDao );
+        final SearchDaoImpl searchDao = new SearchDaoImpl();
+        searchDao.setClient( this.client );
 
         final SearchServiceImpl searchService = new SearchServiceImpl();
         searchService.setSearchDao( searchDao );
 
-        IndexedDataServiceImpl indexedDataService = new IndexedDataServiceImpl();
+        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
         indexedDataService.setStorageDao( storageDao );
 
         final StorageServiceImpl storageService = new StorageServiceImpl();
@@ -124,7 +122,7 @@ public class SecurityServiceImplTest
         storageService.setVersionService( versionService );
         storageService.setNodeVersionDao( nodeDao );
         storageService.setIndexServiceInternal( this.indexServiceInternal );
-        storageService.setIndexedDataService( indexedDataService );
+        storageService.setIndexDataService( indexedDataService );
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );

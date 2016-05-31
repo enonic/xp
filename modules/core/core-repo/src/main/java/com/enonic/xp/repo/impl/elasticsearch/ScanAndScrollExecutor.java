@@ -12,18 +12,18 @@ import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
 import com.enonic.xp.repo.impl.search.result.SearchHits;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
-class ScanAndScrollExecutor
+public class ScanAndScrollExecutor
 {
-    private final Client client;
-
     private static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
+
+    private final Client client;
 
     public ScanAndScrollExecutor( final Client client )
     {
         this.client = client;
     }
 
-    SearchResult execute( final ElasticsearchQuery query )
+    public SearchResult execute( final ElasticsearchQuery query )
     {
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
             setTypes( query.getIndexType() );

@@ -6,10 +6,11 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
 
-public interface IndexedDataService
+public interface IndexDataService
 {
     ReturnValues get( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context );
 
     ReturnValues get( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context );
+
 
 }

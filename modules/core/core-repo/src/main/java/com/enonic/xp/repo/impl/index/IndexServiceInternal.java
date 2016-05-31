@@ -18,10 +18,6 @@ public interface IndexServiceInternal
 
     boolean indicesExists( final String... indices );
 
-    void store( final Node node, final InternalContext context );
-
-    void delete( final NodeId nodeId, final InternalContext context );
-
     void applyMapping( final String indexName, final IndexType indexType, final String mapping );
 
     ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames );
@@ -31,5 +27,10 @@ public interface IndexServiceInternal
     boolean isMaster();
 
     void copy( final NodeId nodeId, final RepositoryId repositoryId, final Branch source, final Branch target );
+
+    void store( final Node node, final InternalContext context );
+
+    void delete( final NodeId nodeId, final InternalContext context );
+
 }
 

@@ -381,12 +381,6 @@ class NodeServiceMock
     }
 
     @Override
-    public void deleteSnapshotRespository()
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
     public boolean nodeExists( final NodeId nodeId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );

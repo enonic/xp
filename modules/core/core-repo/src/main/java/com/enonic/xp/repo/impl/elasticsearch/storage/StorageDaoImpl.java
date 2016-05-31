@@ -19,7 +19,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.repo.impl.StorageSettings;
-import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchDao;
+import com.enonic.xp.repo.impl.elasticsearch.executor.SearchExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultsFactory;
@@ -35,12 +35,10 @@ import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 
 @Component
-public class ElasticsearchStorageDao
+public class StorageDaoImpl
     implements StorageDao
 {
     private Client client;
-
-    private ElasticsearchDao elasticsearchDao;
 
     @Override
     public String store( final StoreRequest request )
@@ -116,7 +114,10 @@ public class ElasticsearchStorageDao
             setReturnFields( request.getReturnFields() ).
             build();
 
-        return this.elasticsearchDao.search( query );
+        return SearchExecutor.create().
+            client( this.client ).
+            build().
+            search( query );
     }
 
     @Override
@@ -186,11 +187,5 @@ public class ElasticsearchStorageDao
     public void setClient( final Client client )
     {
         this.client = client;
-    }
-
-    @Reference
-    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
-    {
-        this.elasticsearchDao = elasticsearchDao;
     }
 }

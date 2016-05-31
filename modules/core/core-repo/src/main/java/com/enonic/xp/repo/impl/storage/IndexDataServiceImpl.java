@@ -13,8 +13,8 @@ import com.enonic.xp.repo.impl.search.SearchStorageName;
 import com.enonic.xp.repo.impl.search.SearchStorageType;
 
 @Component
-public class IndexedDataServiceImpl
-    implements IndexedDataService
+public class IndexDataServiceImpl
+    implements IndexDataService
 {
     private StorageDao storageDao;
 

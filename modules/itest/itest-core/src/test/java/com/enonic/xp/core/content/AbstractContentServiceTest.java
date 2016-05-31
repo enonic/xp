@@ -49,15 +49,15 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
-import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -115,23 +115,23 @@ public class AbstractContentServiceTest
 
     protected ContentNodeTranslatorImpl translator;
 
+    protected ContentTypeServiceImpl contentTypeService;
+
     private NodeVersionDaoImpl nodeDao;
 
     private VersionServiceImpl versionService;
 
     private BranchServiceImpl branchService;
 
-    private ElasticsearchIndexServiceInternal indexService;
+    private IndexServiceInternalImpl indexService;
 
     private StorageServiceImpl storageService;
 
     private SearchServiceImpl searchService;
 
-    private IndexedDataServiceImpl indexedDataService;
+    private IndexDataServiceImpl indexedDataService;
 
-    private ElasticsearchSearchDao searchDao;
-
-    protected ContentTypeServiceImpl contentTypeService;
+    private SearchDaoImpl searchDao;
 
     @Before
     public void setUp()
@@ -146,9 +146,8 @@ public class AbstractContentServiceTest
 
         this.blobStore = new MemoryBlobStore();
 
-        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
-        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
@@ -158,9 +157,8 @@ public class AbstractContentServiceTest
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
-        this.indexService = new ElasticsearchIndexServiceInternal();
+        this.indexService = new IndexServiceInternalImpl();
         this.indexService.setClient( client );
-        this.indexService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeVersionDaoImpl();
         this.nodeDao.setConfiguration( repoConfig );
@@ -168,7 +166,7 @@ public class AbstractContentServiceTest
 
         this.contentService = new ContentServiceImpl();
 
-        this.indexedDataService = new IndexedDataServiceImpl();
+        this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
         this.storageService = new StorageServiceImpl();
@@ -176,10 +174,10 @@ public class AbstractContentServiceTest
         this.storageService.setVersionService( this.versionService );
         this.storageService.setNodeVersionDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
-        this.storageService.setIndexedDataService( this.indexedDataService );
+        this.storageService.setIndexDataService( this.indexedDataService );
 
-        this.searchDao = new ElasticsearchSearchDao();
-        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+        this.searchDao = new SearchDaoImpl();
+        this.searchDao.setClient( this.client );
 
         this.searchService = new SearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );

@@ -67,8 +67,6 @@ public interface NodeService
 
     void refresh( RefreshMode refreshMode );
 
-    void deleteSnapshotRespository();
-
     int applyPermissions( ApplyNodePermissionsParams params );
 
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
