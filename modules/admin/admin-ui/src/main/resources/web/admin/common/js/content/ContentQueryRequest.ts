@@ -33,6 +33,7 @@ module api.content {
                 from: this.contentQuery.getFrom(),
                 size: this.contentQuery.getSize(),
                 contentTypeNames: this.contentTypeNamesAsString(this.contentQuery.getContentTypes()),
+                mustBeReferencedById: this.getMustBereferencedById(),
                 expand: this.expandAsString(),
                 aggregationQueries: this.aggregationQueriesToJson(this.contentQuery.getAggregationQueries()),
                 queryFilters: this.queryFiltersToJson(this.contentQuery.getQueryFilters())
@@ -77,6 +78,13 @@ module api.content {
                 });
         }
 
+        private getMustBereferencedById(): string {
+            var contentId = this.contentQuery.getMustBeReferencedById();
+            if (!!contentId) {
+                return contentId.toString();
+            }
+            return null;
+        }
 
         private aggregationQueriesToJson(aggregationQueries: api.query.aggregation.AggregationQuery[]): api.query.aggregation.AggregationQueryTypeWrapperJson[] {
             var aggregationQueryJsons: api.query.aggregation.AggregationQueryTypeWrapperJson[] = [];
