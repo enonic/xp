@@ -65,6 +65,19 @@ public class IndexDataServiceImpl
         return allResultValues.build();
     }
 
+    @Override
+    public void delete( final NodeId nodeId, final InternalContext context )
+    {
+        this.storageDao.delete( DeleteRequest.create().
+            settings( StorageSettings.create().
+                storageType( SearchStorageType.from( context.getBranch() ) ).
+                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
+                build() ).
+            id( nodeId.toString() ).
+            build() );
+    }
+
+
     @Reference
     public void setStorageDao( final StorageDao storageDao )
     {

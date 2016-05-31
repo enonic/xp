@@ -91,7 +91,7 @@ public class StorageServiceImpl
     {
         branchService.delete( nodeId, context );
 
-        indexServiceInternal.delete( nodeId, context );
+        indexDataService.delete( nodeId, context );
     }
 
     @Override

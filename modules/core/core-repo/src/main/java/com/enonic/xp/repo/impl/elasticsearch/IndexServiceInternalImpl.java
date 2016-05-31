@@ -35,9 +35,7 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.elasticsearch.document.DeleteDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.executor.DeleteExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
 import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -268,23 +266,6 @@ public class IndexServiceInternalImpl
             build().
             store( indexDocuments );
     }
-
-    @Override
-    public void delete( final NodeId nodeId, final InternalContext context )
-    {
-        final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
-        final String indexType = context.getBranch().getName();
-
-        DeleteExecutor.create().
-            client( this.client ).
-            build().
-            delete( DeleteDocument.create().
-                id( nodeId.toString() ).
-                indexName( indexName ).
-                indexTypeName( indexType ).
-                build() );
-    }
-
 
     @Reference
     public void setClient( final Client client )

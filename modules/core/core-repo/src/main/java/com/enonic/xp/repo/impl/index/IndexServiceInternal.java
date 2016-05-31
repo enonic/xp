@@ -29,8 +29,5 @@ public interface IndexServiceInternal
     void copy( final NodeId nodeId, final RepositoryId repositoryId, final Branch source, final Branch target );
 
     void store( final Node node, final InternalContext context );
-
-    void delete( final NodeId nodeId, final InternalContext context );
-
 }
 
