@@ -13,17 +13,4 @@ export class ContentBrowseItemsSelectionPanel extends api.app.browse.BrowseItems
         viewer.setObject(item.getModel());
         return viewer;
     }
-
-    protected compareItems(currentItem: ContentBrowseItem, updatedItem: ContentBrowseItem): boolean {
-        const currentList = currentItem.getAccessControlList();
-        const updatedList = updatedItem.getAccessControlList();
-        if (!updatedList && currentList) {
-            updatedItem.setAccessControlList(currentList);
-            return super.compareItems(currentItem, updatedItem);
-        }
-
-        return updatedList.equals(currentList) && super.compareItems(currentItem, updatedItem);
-
-    }
-
 }
