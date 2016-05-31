@@ -151,8 +151,12 @@ public class AbstractContentServiceTest
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
+        this.searchDao = new SearchDaoImpl();
+        this.searchDao.setClient( this.client );
+
         this.branchService = new BranchServiceImpl();
         this.branchService.setStorageDao( storageDao );
+        this.branchService.setSearchDao( this.searchDao );
 
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
@@ -175,9 +179,6 @@ public class AbstractContentServiceTest
         this.storageService.setNodeVersionDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
         this.storageService.setIndexDataService( this.indexedDataService );
-
-        this.searchDao = new SearchDaoImpl();
-        this.searchDao.setClient( this.client );
 
         this.searchService = new SearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );

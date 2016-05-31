@@ -95,8 +95,12 @@ public class SecurityServiceImplTest
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
 
+        final SearchDaoImpl searchDao = new SearchDaoImpl();
+        searchDao.setClient( this.client );
+
         final BranchServiceImpl branchService = new BranchServiceImpl();
         branchService.setStorageDao( storageDao );
+        branchService.setSearchDao( searchDao );
 
         final VersionServiceImpl versionService = new VersionServiceImpl();
         versionService.setStorageDao( storageDao );
@@ -107,9 +111,6 @@ public class SecurityServiceImplTest
 
         this.indexServiceInternal = new IndexServiceInternalImpl();
         this.indexServiceInternal.setClient( client );
-
-        final SearchDaoImpl searchDao = new SearchDaoImpl();
-        searchDao.setClient( this.client );
 
         final SearchServiceImpl searchService = new SearchServiceImpl();
         searchService.setSearchDao( searchDao );

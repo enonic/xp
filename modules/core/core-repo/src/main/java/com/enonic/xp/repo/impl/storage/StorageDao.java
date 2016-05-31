@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.storage;
 import java.util.Collection;
 
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public interface StorageDao
 {
@@ -16,6 +15,4 @@ public interface StorageDao
     GetResult getById( final GetByIdRequest request );
 
     GetResults getByIds( final GetByIdsRequest requests );
-
-    SearchResult getByValues( final GetByValuesRequest request );
 }

@@ -135,6 +135,7 @@ public abstract class AbstractNodeTest
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setStorageDao( storageDao );
+        this.branchService.setSearchDao( this.searchDao );
 
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );

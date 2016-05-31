@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -14,24 +13,17 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.executor.SearchExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
-import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultsFactory;
-import com.enonic.xp.repo.impl.search.SearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.DeleteRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
-import com.enonic.xp.repo.impl.storage.GetByValuesRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.GetResults;
 import com.enonic.xp.repo.impl.storage.StorageDao;
@@ -68,6 +60,7 @@ public class StorageDaoImpl
         return doStore( indexRequest, request.getTimeout() );
     }
 
+    @Override
     public void store( final Collection<IndexDocument> indexDocuments )
     {
         StoreExecutor.create().
@@ -100,34 +93,6 @@ public class StorageDaoImpl
             actionGet( timeout );
 
         return indexResponse.getId();
-    }
-
-    @Override
-    public SearchResult getByValues( final GetByValuesRequest request )
-    {
-        final Map<String, Object> values = request.getValues();
-        final StorageSettings settings = request.getStorageSettings();
-
-        final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-
-        for ( final String field : values.keySet() )
-        {
-            final TermQueryBuilder termQuery = new TermQueryBuilder( field, values.get( field ) );
-            boolQueryBuilder.must( termQuery );
-        }
-
-        final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( settings.getStorageName().getName() ).
-            indexType( settings.getStorageType().getName() ).
-            query( boolQueryBuilder ).
-            size( request.expectSingleValue() ? 1 : SearchService.GET_ALL_SIZE_FLAG ).
-            setReturnFields( request.getReturnFields() ).
-            build();
-
-        return SearchExecutor.create().
-            client( this.client ).
-            build().
-            search( query );
     }
 
     @Override
