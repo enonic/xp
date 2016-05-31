@@ -161,7 +161,7 @@ module api.app.browse {
             return this.filterAndGridSplitPanel.isFirstPanelHidden();
         }
 
-        private showFilterPanel() {
+        protected showFilterPanel() {
             this.filterPanelForcedShown = true;
             this.filterPanelForcedHidden = false;
 

@@ -12,6 +12,7 @@ import {Router} from "../Router";
 import {ActiveDetailsPanelManager} from "../view/detail/ActiveDetailsPanelManager";
 import {ContentBrowseItem} from "./ContentBrowseItem";
 import {ToggleSearchPanelEvent} from "./ToggleSearchPanelEvent";
+import {ToggleSearchPanelWithDependenciesEvent} from "./ToggleSearchPanelWithDependenciesEvent";
 import {NewMediaUploadEvent} from "../create/NewMediaUploadEvent";
 import {ContentPreviewPathChangedEvent} from "../view/ContentPreviewPathChangedEvent";
 import {ContentPublishMenuManager} from "./ContentPublishMenuManager";
@@ -264,6 +265,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         ToggleSearchPanelEvent.on(() => {
             this.toggleFilterPanel();
+        });
+
+        ToggleSearchPanelWithDependenciesEvent.on((event: ToggleSearchPanelWithDependenciesEvent) => {
+            this.showFilterPanel();
+            this.contentFilterPanel.setDependencyItem(event.getContent(), event.isInbound());
         });
 
         NewMediaUploadEvent.on((event) => {
