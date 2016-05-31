@@ -29,6 +29,7 @@ public final class LauncherMain
         throws Exception
     {
         System.setProperty( "java.awt.headless", "true" );
+        System.setProperty( "java.net.preferIPv4Stack", "true" );
         new ShutdownHook( this.launcher::stop ).register();
         this.launcher.start();
     }
