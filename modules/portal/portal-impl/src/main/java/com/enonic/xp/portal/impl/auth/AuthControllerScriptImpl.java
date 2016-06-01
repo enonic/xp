@@ -49,6 +49,14 @@ final class AuthControllerScriptImpl
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
         final ScriptValue result = this.scriptExports.executeMethod( functionName, requestMapper );
-        return new PortalResponseSerializer( result ).serialize();
+
+        if ( ( result == null ) || !result.isObject() )
+        {
+            return null;
+        }
+        else
+        {
+            return new PortalResponseSerializer( result ).serialize();
+        }
     }
 }
