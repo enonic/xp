@@ -629,7 +629,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     this.contentCompareStatus = content.getCompareStatus();
                     this.contentWizardToolbarPublishControls.setCompareStatus(this.contentCompareStatus);
 
-                    this.contentWizardHeader.disableNameGeneration(this.contentCompareStatus === CompareStatus.NEW);
+                    this.contentWizardHeader.disableNameGeneration(this.contentCompareStatus === CompareStatus.EQUAL);
                 }
             });
         };
