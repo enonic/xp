@@ -73,7 +73,16 @@ module api.content.event {
                 var changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
                     return total.concat(change.getChangeItems());
                 }, []);
-                this.handleContentDeleted(changeItems);
+
+                var deletedItems = changeItems.filter(d => d.getBranch() == 'draft'),
+                    unpublishedItems = changeItems.filter(d => deletedItems.every(deleted => !api.ObjectHelper.equals(deleted.contentId,
+                        d.contentId)));
+
+                this.handleContentDeleted(deletedItems);
+                ContentSummaryAndCompareStatusFetcher.fetchByPaths(unpublishedItems.map(item => item.getPath()))
+                    .then((summaries) => {
+                        this.handleContentUnpublished(summaries);
+                    });
 
             } else {
                 ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractContentPaths(changes, useNewPaths))
@@ -137,7 +146,6 @@ module api.content.event {
                     : curr.getChangeItems().map((changeItem: ContentServerChangeItem) => changeItem.getPath()));
             }, []);
         }
-
 
         private handleContentCreated(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {

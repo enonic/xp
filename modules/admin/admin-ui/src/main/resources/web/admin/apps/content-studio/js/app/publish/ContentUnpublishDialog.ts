@@ -66,7 +66,7 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
     private filterUnpublishableItems(items: ContentSummaryAndCompareStatus[]): ContentSummaryAndCompareStatus[] {
         return items.filter(item => {
             let status = item.getCompareStatus();
-            return status == CompareStatus.EQUAL || status == CompareStatus.NEWER;
+            return status == CompareStatus.EQUAL || status == CompareStatus.NEWER || status == CompareStatus.PENDING_DELETE;
         });
     }
 
