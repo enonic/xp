@@ -49,10 +49,10 @@ function createLauncherLink(container) {
 
     link.setAttribute("rel", "import");
     link.setAttribute("href", launcherUrl);
+    link.setAttribute("async", "");
 
     link.onload = function () {
         launcherMainContainer = link.import.querySelector('.launcher-main-container');
-        launcherMainContainer.setAttribute("hidden", "true");
         container.appendChild(launcherMainContainer);
         addLongClickHandler(container);
 
@@ -140,7 +140,6 @@ function isPanelExpanded() {
 }
 
 function openLauncherPanel() {
-    launcherMainContainer.removeAttribute("hidden");
     listenToKeyboardEvents();
     toggleButton();
     showBodyMask();
@@ -149,7 +148,6 @@ function openLauncherPanel() {
 }
 
 function closeLauncherPanel(skipTransition) {
-    launcherMainContainer.setAttribute("hidden", "true");
     setTipVisibility("none");
     unlistenToKeyboardEvents();
     launcherPanel.classList.remove("visible");
