@@ -1,4 +1,5 @@
 import "../../../../../api.ts";
+import RequestError = api.rest.RequestError;
 
 export class BaseInspectionPanel extends api.ui.panel.Panel {
 
@@ -10,5 +11,9 @@ export class BaseInspectionPanel extends api.ui.panel.Panel {
                 height: '100%'
             });
         })
+    }
+
+    isNotFoundError(reason: any) {
+        return reason instanceof RequestError && reason.statusCode === 404;
     }
 }

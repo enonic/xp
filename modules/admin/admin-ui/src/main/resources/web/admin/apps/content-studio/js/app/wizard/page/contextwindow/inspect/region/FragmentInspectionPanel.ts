@@ -89,7 +89,11 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
                 new GetContentSummaryByIdRequest(contentId).sendAndParse().then((fragment: ContentSummary) => {
                     this.setSelectorValue(fragment);
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    if (this.isNotFoundError(reason)) {
+                        this.setSelectorValue(null);
+                    } else {
+                        api.DefaultErrorHandler.handle(reason);
+                    }
                 }).done();
             }
         } else {
