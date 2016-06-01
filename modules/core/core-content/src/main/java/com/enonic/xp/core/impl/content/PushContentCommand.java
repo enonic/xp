@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +76,12 @@ public class PushContentCommand
                 execute() );
         }
 
-        System.out.println( "PushContentCommand done in " + timer.stop() );
+        timer.stop();
+
+        final long secondsUsed = timer.elapsed( TimeUnit.SECONDS );
+
+        System.out.println( "PushContentCommand done in " + timer + ", speed: [" +
+                                ( secondsUsed == 0 ? "n/a" : this.contentIds.getSize() / secondsUsed ) );
 
         this.nodeService.refresh( RefreshMode.ALL );
 

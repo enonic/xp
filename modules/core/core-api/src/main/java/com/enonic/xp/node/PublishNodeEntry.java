@@ -1,20 +1,25 @@
 package com.enonic.xp.node;
 
-import com.enonic.xp.branch.Branch;
-
 public class PublishNodeEntry
 {
     private NodeBranchEntry nodeBranchEntry;
 
     private NodeVersionId nodeVersionId;
 
-    private Branch target;
-
     private PublishNodeEntry( final Builder builder )
     {
-        target = builder.target;
         nodeVersionId = builder.nodeVersionId;
         nodeBranchEntry = builder.nodeBranchEntry;
+    }
+
+    public NodeBranchEntry getNodeBranchEntry()
+    {
+        return nodeBranchEntry;
+    }
+
+    public NodeVersionId getNodeVersionId()
+    {
+        return nodeVersionId;
     }
 
     public static Builder create()
@@ -24,7 +29,6 @@ public class PublishNodeEntry
 
     public static final class Builder
     {
-        private Branch target;
 
         private NodeVersionId nodeVersionId;
 
@@ -32,12 +36,6 @@ public class PublishNodeEntry
 
         private Builder()
         {
-        }
-
-        public Builder target( final Branch val )
-        {
-            target = val;
-            return this;
         }
 
         public Builder nodeVersionId( final NodeVersionId val )

@@ -19,6 +19,8 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.PublishNodeEntries;
+import com.enonic.xp.node.PublishNodeEntry;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -70,6 +72,10 @@ public class PushNodesCommand
     private PushNodesResult.Builder pushNodes( final Context context, final NodeBranchEntries nodeBranchEntries,
                                                final NodeComparisons comparisons )
     {
+        final PublishNodeEntries.Builder publishBuilder = PublishNodeEntries.create().
+            targetBranch( this.target ).
+            targetRepo( context.getRepositoryId() );
+
         final PushNodesResult.Builder builder = PushNodesResult.create();
         for ( final NodeBranchEntry branchEntry : nodeBranchEntries )
         {
@@ -91,21 +97,33 @@ public class PushNodesCommand
                 continue;
             }
 
-            if ( !targetParentExists( nodeBranchEntry.getNodePath(), context ) )
-            {
-                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
-            }
-            else
-            {
-                doPushNode( context, nodeBranchEntry, nodeBranchEntry.getVersionId() );
-                builder.addSuccess( nodeBranchEntry );
-            }
+            // TODO: Check parent stuff, maybe check collection of stuff to be published also?
+            //   if ( !targetParentExists( nodeBranchEntry.getNodePath(), context ) )
+            //    {
+            //        builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
+            //    }
+            //    else
+            //    {
+
+            publishBuilder.add( PublishNodeEntry.create().
+                nodeBranchEntry( nodeBranchEntry ).
+                nodeVersionId( nodeBranchEntry.getVersionId() ).
+                build() );
+
+            //doPushNode( context, nodeBranchEntry, nodeBranchEntry.getVersionId() );
+            builder.addSuccess( nodeBranchEntry );
+            //  }
 
             if ( comparison.getCompareStatus() == CompareStatus.MOVED )
             {
                 updateTargetChildrenMetaData( nodeBranchEntry, builder );
             }
         }
+
+        final Stopwatch timer = Stopwatch.createStarted();
+        this.storageService.publish( publishBuilder.build(), InternalContext.from( context ) );
+        System.out.println( "publish-time: " + timer.stop() );
+
         return builder;
     }
 

@@ -6,6 +6,8 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
@@ -15,6 +17,8 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 public class ScanAndScrollExecutor
 {
     private static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
+
+    private final static Logger LOG = LoggerFactory.getLogger( ScanAndScrollExecutor.class );
 
     private final Client client;
 
@@ -28,7 +32,10 @@ public class ScanAndScrollExecutor
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
             setTypes( query.getIndexType() );
 
-        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
+        if ( !query.getSortBuilders().isEmpty() )
+        {
+            LOG.warn( "Trying to do ScrollAndScan-search with order-expression:  " );
+        }
 
         SearchResponse scrollResp = searchRequestBuilder.
             setScroll( defaultScrollTime ).
@@ -45,6 +52,8 @@ public class ScanAndScrollExecutor
 
         while ( true )
         {
+            LOG.info( "Scanning, got " + scrollResp.getHits().hits().length + " hits" );
+
             searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
 
             scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).

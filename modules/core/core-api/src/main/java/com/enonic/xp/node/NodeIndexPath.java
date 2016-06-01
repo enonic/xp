@@ -27,6 +27,8 @@ public class NodeIndexPath
 
     public static final IndexPath ID = IndexPath.from( "_id" );
 
+    public static final IndexPath SOURCE = IndexPath.from( "_source" );
+
     public static final IndexPath NAME = IndexPath.from( "_name" );
 
     public static final IndexPath REFERENCE = IndexPath.from( "_references" );

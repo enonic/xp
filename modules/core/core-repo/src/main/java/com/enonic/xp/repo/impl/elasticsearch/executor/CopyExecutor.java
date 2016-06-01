@@ -1,48 +1,46 @@
-package com.enonic.xp.repo.impl.elasticsearch;
+package com.enonic.xp.repo.impl.elasticsearch.executor;
 
 import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.unit.TimeValue;
 
+import com.google.common.base.Stopwatch;
+
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 
 public class CopyExecutor
+    extends AbstractExecutor
 {
-    private final Client client;
+    private static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
 
     private final String targetType;
 
     private final String targetIndex;
 
-    private final NodeIds nodeIds;
-
-    private static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
-
     private final ElasticsearchQuery query;
 
     private CopyExecutor( final Builder builder )
     {
-        client = builder.client;
+        super( builder );
         targetType = builder.targetType;
         targetIndex = builder.targetIndex;
-        nodeIds = builder.nodeIds;
         query = builder.query;
     }
 
-    public static Builder create()
+    public static Builder create( final Client client )
     {
-        return new Builder();
+        return new Builder( client );
     }
 
     public void execute()
     {
-
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
             setTypes( query.getIndexType() );
 
@@ -60,7 +58,12 @@ public class CopyExecutor
 
         while ( true )
         {
-            doCopy( scrollResp );
+            System.out.println( "Fetched [" + scrollResp.getHits().hits().length + "] hits, processing" );
+
+            if ( scrollResp.getHits().getHits().length > 0 )
+            {
+                doCopy( scrollResp );
+            }
 
             scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
                 setScroll( defaultScrollTime ).
@@ -91,14 +94,15 @@ public class CopyExecutor
                 refresh( false ) );
         }
 
-        bulkRequest.execute().actionGet();
+        final Stopwatch timer = Stopwatch.createStarted();
+        final BulkResponse response = bulkRequest.execute().actionGet();
+        System.out.println( "Copied [" + response.getItems().length + "] in " + timer.stop() );
     }
 
 
     public static final class Builder
+        extends AbstractExecutor.Builder<Builder>
     {
-        private Client client;
-
         private String targetType;
 
         private String targetIndex;
@@ -107,14 +111,9 @@ public class CopyExecutor
 
         private ElasticsearchQuery query;
 
-        private Builder()
+        private Builder( final Client client )
         {
-        }
-
-        public Builder client( final Client val )
-        {
-            client = val;
-            return this;
+            super( client );
         }
 
         public Builder targetType( final String val )

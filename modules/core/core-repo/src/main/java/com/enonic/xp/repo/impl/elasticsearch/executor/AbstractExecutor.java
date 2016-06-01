@@ -72,16 +72,9 @@ public abstract class AbstractExecutor
     {
         private Client client;
 
-        protected Builder()
+        protected Builder( final Client client )
         {
+            this.client = client;
         }
-
-        @SuppressWarnings("unchecked")
-        public B client( final Client val )
-        {
-            client = val;
-            return (B) this;
-        }
-
     }
 }

@@ -43,8 +43,7 @@ public class SearchDaoImpl
 
         if ( searchRequest.getQuery().getSearchMode().equals( SearchMode.COUNT ) )
         {
-            final long count = CountExecutor.create().
-                client( this.client ).
+            final long count = CountExecutor.create( this.client ).
                 build().
                 count( esQuery );
 
@@ -55,8 +54,7 @@ public class SearchDaoImpl
                 build();
         }
 
-        return SearchExecutor.create().
-            client( this.client ).
+        return SearchExecutor.create( this.client ).
             build().
             search( esQuery );
     }

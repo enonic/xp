@@ -44,6 +44,7 @@ import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -295,6 +296,11 @@ public abstract class AbstractNodeTest
     protected void printContentRepoIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
+    }
+
+    protected void printContentRepoIndex( final RepositoryId repositoryId, final Branch branch )
+    {
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getName() );
     }
 
     protected void printBranchIndex()

@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 import java.util.Collection;
 
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.slf4j.Logger;
@@ -53,14 +54,20 @@ public class StoreExecutor
         }
     }
 
-    public static Builder create()
+    public static Builder create( final Client client )
     {
-        return new Builder();
+        return new Builder( client );
     }
 
     public static final class Builder
         extends AbstractExecutor.Builder<Builder>
     {
+        private Builder( final Client client )
+        {
+            super( client );
+        }
+
+
         public StoreExecutor build()
         {
             return new StoreExecutor( this );

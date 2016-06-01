@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
 
 import com.enonic.xp.repo.impl.elasticsearch.ScanAndScrollExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
@@ -15,11 +16,6 @@ public class SearchExecutor
     private SearchExecutor( final Builder builder )
     {
         super( builder );
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public SearchResult search( final ElasticsearchQuery query )
@@ -46,8 +42,7 @@ public class SearchExecutor
     {
         if ( query.getSize() == SearchService.GET_ALL_SIZE_FLAG )
         {
-            return safeLongToInt( CountExecutor.create().
-                client( this.client ).
+            return safeLongToInt( CountExecutor.create( this.client ).
                 build().
                 count( query ) );
         }
@@ -57,12 +52,17 @@ public class SearchExecutor
         }
     }
 
+    public static Builder create( final Client client )
+    {
+        return new Builder( client );
+    }
+
     public static class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        public Builder()
+        private Builder( final Client client )
         {
-            super();
+            super( client );
         }
 
         public SearchExecutor build()

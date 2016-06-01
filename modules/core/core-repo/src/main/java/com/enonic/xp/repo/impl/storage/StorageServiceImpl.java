@@ -19,6 +19,8 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.PublishNodeEntries;
+import com.enonic.xp.node.PublishNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -142,6 +144,27 @@ public class StorageServiceImpl
             build(), context );
 
         this.indexServiceInternal.copy( nodeBranchEntry.getNodeId(), context.getRepositoryId(), source, context.getBranch() );
+    }
+
+    @Override
+    public void publish( final PublishNodeEntries entries, final InternalContext context )
+    {
+        for ( final PublishNodeEntry entry : entries )
+        {
+            final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
+
+            this.branchService.store( NodeBranchEntry.create().
+                nodeVersionId( entry.getNodeVersionId() ).
+                nodeId( nodeBranchEntry.getNodeId() ).
+                nodeState( nodeBranchEntry.getNodeState() ).
+                timestamp( nodeBranchEntry.getTimestamp() ).
+                nodePath( nodeBranchEntry.getNodePath() ).
+                build(), InternalContext.create( context ).
+                branch( entries.getTargetBranch() ).
+                build() );
+        }
+
+        this.indexDataService.push( entries.getNodeIds(), entries.getTargetBranch(), entries.getTargetRepo(), context );
     }
 
     @Override

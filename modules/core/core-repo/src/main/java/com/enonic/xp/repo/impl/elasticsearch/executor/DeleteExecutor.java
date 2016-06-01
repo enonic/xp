@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.client.Client;
 
 import com.enonic.xp.repo.impl.elasticsearch.document.DeleteDocument;
 
@@ -31,19 +32,21 @@ public class DeleteExecutor
         return deleteResponse.isFound();
     }
 
-    public static Builder create()
+    public static Builder create( final Client client )
     {
-        return new Builder();
+        return new Builder( client );
     }
+
 
     public static final class Builder
         extends AbstractExecutor.Builder<Builder>
     {
 
-        private Builder()
+        private Builder( final Client client )
         {
-            super();
+            super( client );
         }
+
 
         public DeleteExecutor build()
         {

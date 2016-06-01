@@ -79,7 +79,7 @@ public class SetNodeChildOrderCommand
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
             size( SearchService.GET_ALL_SIZE_FLAG ).
             batchSize( BATCH_SIZE ).
-            searchMode( SearchMode.SCAN ).
+            searchMode( SearchMode.SEARCH ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         final LinkedList<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();

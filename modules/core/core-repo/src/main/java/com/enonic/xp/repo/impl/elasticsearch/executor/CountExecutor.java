@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
 
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -15,9 +16,9 @@ public class CountExecutor
         super( builder );
     }
 
-    public static Builder create()
+    public static Builder create( final Client client )
     {
-        return new Builder();
+        return new Builder( client );
     }
 
     public long count( final ElasticsearchQuery query )
@@ -37,10 +38,11 @@ public class CountExecutor
     public static class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        public Builder()
+        private Builder( final Client client )
         {
-            super();
+            super( client );
         }
+
 
         public CountExecutor build()
         {

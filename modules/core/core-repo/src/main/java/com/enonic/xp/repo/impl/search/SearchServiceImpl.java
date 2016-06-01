@@ -118,7 +118,6 @@ public class SearchServiceImpl
             settings( createSettings( storageType, storageName ) ).
             returnFields( VERSION_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
-            searchType( SearchType.SCAN ).
             query( query ).
             build();
 

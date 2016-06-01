@@ -15,4 +15,7 @@ public interface StorageDao
     GetResult getById( final GetByIdRequest request );
 
     GetResults getByIds( final GetByIdsRequest requests );
+
+    void copy( final CopyRequest request );
+
 }

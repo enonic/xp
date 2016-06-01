@@ -26,7 +26,7 @@ public class PushNodesCommandTest
     }
 
     @Test
-    public void push_to_other_branch()
+    public void push_single()
         throws Exception
     {
         final Node node = createNode( CreateNodeParams.create().
@@ -178,6 +178,9 @@ public class PushNodesCommandTest
 
         pushNodes( NodeIds.from( node1.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
                    WS_OTHER );
+
+        printContentRepoIndex();
+        printContentRepoIndex( TEST_REPO.getId(), WS_OTHER );
 
         assertNotNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
 

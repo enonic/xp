@@ -11,16 +11,27 @@ import org.elasticsearch.action.get.MultiGetRequestBuilder;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermsFilterBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
+import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
+import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultsFactory;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repo.impl.search.SearchStorageType;
+import com.enonic.xp.repo.impl.storage.CopyRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
@@ -63,8 +74,7 @@ public class StorageDaoImpl
     @Override
     public void store( final Collection<IndexDocument> indexDocuments )
     {
-        StoreExecutor.create().
-            client( this.client ).
+        StoreExecutor.create( this.client ).
             build().
             store( indexDocuments );
     }
@@ -157,6 +167,29 @@ public class StorageDaoImpl
         return GetResultsFactory.create( multiGetItemResponses );
     }
 
+    @Override
+    public void copy( final CopyRequest request )
+    {
+        final TermsFilterBuilder idFilter = new TermsFilterBuilder( NodeIndexPath.ID.getPath(), request.getNodeIds().getAsStrings() );
+        QueryBuilder query = QueryBuilders.matchAllQuery();
+
+        final ElasticsearchQuery esQuery = ElasticsearchQuery.create().
+            query( QueryBuilders.filteredQuery( query, idFilter ) ).
+            index( request.getStorageSettings().getStorageName().getName() ).
+            indexType( request.getStorageSettings().getStorageType().getName() ).
+            batchSize( 5000 ).
+            from( 0 ).
+            searchType( SearchType.SCAN ).
+            setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
+            build();
+
+        CopyExecutor.create( this.client ).
+            query( esQuery ).
+            targetIndex( IndexNameResolver.resolveSearchIndexName( request.getTargetRepo() ) ).
+            targetType( SearchStorageType.from( request.getTargetBranch() ).getName() ).
+            build().
+            execute();
+    }
 
     @Reference
     public void setClient( final Client client )

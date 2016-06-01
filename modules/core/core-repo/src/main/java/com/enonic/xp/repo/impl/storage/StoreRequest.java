@@ -156,4 +156,20 @@ public class StoreRequest
             return new StoreRequest( this );
         }
     }
+
+
+    @Override
+    public String toString()
+    {
+        return "StoreRequest{" +
+            "data=" + data +
+            ", settings=" + settings +
+            ", forceRefresh=" + forceRefresh +
+            ", timeout=" + timeout +
+            ", id='" + id + '\'' +
+            ", path=" + path +
+            ", parent='" + parent + '\'' +
+            ", routing='" + routing + '\'' +
+            '}';
+    }
 }

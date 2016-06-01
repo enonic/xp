@@ -56,6 +56,7 @@ public class FindNodeBranchEntriesByIdCommand
                 build() ).
             from( 0 ).
             size( ids.getSize() ).
+            batchSize( 10000 ).
             searchMode( SearchMode.SCAN ).
             addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) ).
             setOrderExpressions( this.orderExpressions ).
