@@ -1,4 +1,9 @@
 import "../../../../../../api.ts";
+import {
+    DescriptorBasedComponentInspectionPanel,
+    DescriptorBasedComponentInspectionPanelConfig
+} from "./DescriptorBasedComponentInspectionPanel";
+import {DescriptorBasedDropdownForm} from "./DescriptorBasedDropdownForm";
 
 import Content = api.content.Content;
 import SiteModel = api.content.site.SiteModel;
@@ -20,9 +25,6 @@ import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
-import {DescriptorBasedComponentInspectionPanel} from "./DescriptorBasedComponentInspectionPanel";
-import {DescriptorBasedDropdownForm} from "./DescriptorBasedDropdownForm";
-import {DescriptorBasedComponentInspectionPanelConfig} from "./DescriptorBasedComponentInspectionPanel";
 
 export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
@@ -114,7 +116,11 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
                 new GetLayoutDescriptorByKeyRequest(key).sendAndParse().then((descriptor: LayoutDescriptor) => {
                     this.setSelectorValue(descriptor);
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    if (this.isNotFoundError(reason)) {
+                        this.setSelectorValue(null);
+                    } else {
+                        api.DefaultErrorHandler.handle(reason);
+                    }
                 }).done();
             }
         } else {

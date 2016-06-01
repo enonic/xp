@@ -1,4 +1,6 @@
 import "../../../../../../api.ts";
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
+import {ImageSelectorForm} from "./ImageSelectorForm";
 
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
@@ -13,9 +15,6 @@ import ComponentPropertyChangedEvent = api.content.page.region.ComponentProperty
 import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import PropertyTree = api.data.PropertyTree;
-import {ComponentInspectionPanel} from "./ComponentInspectionPanel";
-import {ImageSelectorForm} from "./ImageSelectorForm";
-import {ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
 
 export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
 
@@ -86,7 +85,12 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
                 new GetContentSummaryByIdRequest(contentId).sendAndParse().then((image: ContentSummary) => {
                     this.setImage(image);
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    if (this.isNotFoundError(reason)) {
+                        this.setSelectorValue(null);
+                        this.setupComponentForm(this.imageComponent);
+                    } else {
+                        api.DefaultErrorHandler.handle(reason);
+                    }
                 }).done();
             }
         } else {
