@@ -3,6 +3,10 @@ var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
 
 exports.login = function (req) {
+    if (/^\/admin\/rest\//.test(req.path)) {
+        return null;
+    }
+
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
     var appLoginJsUrl = portalLib.assetUrl({path: "js/app-system.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
@@ -28,9 +32,7 @@ exports.login = function (req) {
 
 exports.logout = function (req) {
     authLib.logout();
-    if (req.params.redirect) {
-        return {
-            redirect: req.params.redirect
-        }
-    }
+    return {
+        redirect: req.params.redirect
+    };
 };
