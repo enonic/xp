@@ -8,7 +8,7 @@ import {UserTreeGridItemType} from "../UserTreeGridItem";
 export class SynchPrincipalAction extends Action {
 
     constructor(grid: UserItemsTreeGrid) {
-        super("Synch");
+        super("Sync");
         this.setEnabled(false);
         this.onExecuted(() => {
             var principals: UserTreeGridItem[] = grid.getSelectedDataList();
