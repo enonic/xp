@@ -1,11 +1,15 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItem;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroKey;
@@ -71,7 +75,7 @@ public final class MacroInstruction
         }
 
         // execute macro
-        final MacroContext context = createContext( macroInstruction, portalRequest );
+        final MacroContext context = createContext( macroInstruction, macroDescriptor, portalRequest );
         return macroProcessor.process( context );
     }
 
@@ -105,16 +109,35 @@ public final class MacroInstruction
         return null;
     }
 
-    private MacroContext createContext( final Instruction macroInstruction, final PortalRequest request )
+    private MacroContext createContext( final Instruction macroInstruction, final MacroDescriptor macroDescriptor,
+                                        final PortalRequest request )
     {
-        final MacroContext.Builder context = MacroContext.create().name( macroInstruction.attribute( MACRO_NAME ) );
+        final Form macroForm = macroDescriptor.getForm();
+        final Map<String, String> paramCaseTranslator = new HashMap<>( macroForm.size() );
+        for ( FormItem formItem : macroForm )
+        {
+            final String name = formItem.getName();
+            paramCaseTranslator.put( name.toLowerCase(), name );
+        }
+
+        final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );
         for ( String name : macroInstruction.attributeNames() )
         {
-            if ( name.equals( MACRO_BODY ) || name.equals( MACRO_NAME ) )
+            if ( name.equalsIgnoreCase( MACRO_BODY ) || name.equalsIgnoreCase( MACRO_NAME ) )
             {
                 continue;
             }
-            context.param( name, macroInstruction.attribute( name, "" ) );
+
+            String contextParamName = name;
+            if ( macroForm.getFormItems().getItemByName( name ) == null )
+            {
+                final String normalizedName = paramCaseTranslator.get( name.toLowerCase() );
+                if ( normalizedName != null )
+                {
+                    contextParamName = normalizedName;
+                }
+            }
+            context.param( contextParamName, macroInstruction.attribute( name ) );
         }
         context.body( macroInstruction.attribute( MACRO_BODY ) );
         context.request( request );
