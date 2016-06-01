@@ -21,7 +21,7 @@ module api.security {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), 'userstore', 'synch');
+            return api.rest.Path.fromParent(super.getResourcePath(), 'userstore', 'sync');
         }
 
         sendAndParse(): wemQ.Promise<SynchUserStoreResult[]> {

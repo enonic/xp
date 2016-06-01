@@ -182,19 +182,19 @@ public final class SecurityResource
     }
 
     @POST
-    @Path("userstore/synch")
+    @Path("userstore/sync")
     public SynchUserStoresResultJson synchUserStore( final SynchUserStoreJson params, @Context HttpServletRequest httpRequest )
     {
         final SynchUserStoresResultJson resultsJson = new SynchUserStoresResultJson();
         params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
             try
             {
-                final AuthControllerExecutionParams synchParams = AuthControllerExecutionParams.create().
+                final AuthControllerExecutionParams syncParams = AuthControllerExecutionParams.create().
                     userStoreKey( userStoreKey ).
-                    functionName( "synch" ).
+                    functionName( "sync" ).
                     servletRequest( httpRequest ).
                     build();
-                authControllerService.execute( synchParams );
+                authControllerService.execute( syncParams );
                 resultsJson.add( SynchUserStoreResultJson.success( userStoreKey ) );
             }
             catch ( Exception e )
