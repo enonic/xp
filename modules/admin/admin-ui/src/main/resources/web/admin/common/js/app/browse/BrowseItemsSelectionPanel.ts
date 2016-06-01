@@ -6,10 +6,20 @@ module api.app.browse {
         private items: BrowseItem<M>[] = [];
         private selectionItems: SelectionItem<M>[] = [];
         private messageForNoSelection = "You are wasting this space - select something!";
+        private mobileView: boolean = false;
 
         constructor() {
             super("items-selection-panel");
             this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
+        }
+
+        setMobileView(mobileView: boolean) {
+            this.mobileView = mobileView;
+            if (mobileView) {
+                this.removeChildren()
+            } else {
+                this.appendChildren(...this.selectionItems);
+            }
         }
 
         private addItem(item: BrowseItem<M>) {
@@ -36,7 +46,9 @@ module api.app.browse {
             };
             var selectionItem = new SelectionItem(this.createItemViewer(item), item, removeCallback);
 
-            this.appendChild(selectionItem);
+            if (!this.mobileView) {
+                this.appendChild(selectionItem);
+            }
             this.selectionItems.push(selectionItem);
             this.items.push(item);
         }
