@@ -3,6 +3,8 @@ package com.enonic.xp.portal.impl.rendering;
 import java.text.MessageFormat;
 
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;
@@ -32,6 +34,8 @@ public final class FragmentRenderer
     private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
         "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
 
+    private final static Logger LOG = LoggerFactory.getLogger( FragmentRenderer.class );
+
     private ContentService contentService;
 
     private RendererFactory rendererFactory;
@@ -58,9 +62,11 @@ public final class FragmentRenderer
         final Component fragmentComponent = getFragmentComponent( component );
         if ( fragmentComponent == null )
         {
+            LOG.warn( "Fragment content could not be found. ContentId: " + component.getFragment().toString() );
+
             if ( renderMode == RenderMode.EDIT )
             {
-                final String errorMessage = "Fragment content could not be found (id=" + component.getFragment().toString() + ")";
+                final String errorMessage = "Fragment content could not be found";
                 return renderErrorComponentPlaceHolder( component, errorMessage );
             }
             else
