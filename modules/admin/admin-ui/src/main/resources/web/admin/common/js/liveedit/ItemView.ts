@@ -265,7 +265,7 @@ module api.liveedit {
             });
         }
 
-        private unbindMouseListeners() {
+        protected unbindMouseListeners() {
             this.unMouseEnter(this.mouseEnterListener);
             this.unMouseLeave(this.mouseLeaveListener);
             this.unClicked(this.mouseClickedListener);
