@@ -7,7 +7,7 @@ module api.util {
         }
 
         static isNumber(value: any): boolean {
-            return typeof value === 'number' && !isNaN(value);
+            return typeof value === 'number' && !isNaN(value) && isFinite(value);
         }
 
         static randomBetween(from: number, to: number): number {
