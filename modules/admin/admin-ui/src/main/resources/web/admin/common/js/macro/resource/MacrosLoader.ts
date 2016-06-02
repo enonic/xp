@@ -44,6 +44,16 @@ module api.macro.resource {
                 });
         }
 
+        search(searchString: string): wemQ.Promise<MacroDescriptor[]> {
+            if (this.hasRelevantData) {
+                return super.search(searchString);
+            } else {
+                return this.load().then(() => {
+                    return super.search(searchString);
+                });
+            }
+        }
+
         filterFn(macro: MacroDescriptor) {
             return macro.getDisplayName().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
         }
