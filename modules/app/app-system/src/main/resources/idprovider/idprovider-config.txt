@@ -1,0 +1,6 @@
+<script>
+    var CONFIG = {
+        {{#redirectUrl}}redirectUrl: "{{.}}",{{/redirectUrl}}
+        appLoginServiceUrl: "{{appLoginServiceUrl}}"
+    };
+</script>

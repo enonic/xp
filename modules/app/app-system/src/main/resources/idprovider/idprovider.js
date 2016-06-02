@@ -6,12 +6,23 @@ exports.handle403 = function (req) {
     if (/^\/admin\/rest\//.test(req.path)) {
         return null;
     }
+    var body = generateLoginPage();
 
-    return generateLoginPage();
+    return {
+        status: 403,
+        contentType: 'text/html',
+        body: body
+    };
 };
 
 exports.login = function (req) {
-    return generateLoginPage();
+    var body = generateLoginPage(req.params.redirect);
+
+    return {
+        status: 200,
+        contentType: 'text/html',
+        body: body
+    };
 }
 
 exports.logout = function (req) {
@@ -21,12 +32,18 @@ exports.logout = function (req) {
     };
 };
 
-function generateLoginPage() {
+function generateLoginPage(redirectUrl) {
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
     var appLoginJsUrl = portalLib.assetUrl({path: "js/app-system.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
     var appLoginBackgroundUrl = portalLib.assetUrl({path: "common/images/background-1920.jpg"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
+
+    var configView = resolve('idprovider-config.txt');
+    var config = mustacheLib.render(configView, {
+        appLoginServiceUrl: appLoginServiceUrl,
+        redirectUrl: redirectUrl
+    });
 
     var view = resolve('idprovider.html');
     var params = {
@@ -34,13 +51,7 @@ function generateLoginPage() {
         appLoginJsUrl: appLoginJsUrl,
         appLoginCssUrl: appLoginCssUrl,
         appLoginBackgroundUrl: appLoginBackgroundUrl,
-        appLoginServiceUrl: appLoginServiceUrl
+        config: config
     };
-    var body = mustacheLib.render(view, params);
-
-    return {
-        status: 403,
-        contentType: 'text/html',
-        body: body
-    };
+    return mustacheLib.render(view, params);
 }
