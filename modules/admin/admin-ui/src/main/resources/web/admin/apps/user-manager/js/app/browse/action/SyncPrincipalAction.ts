@@ -5,7 +5,7 @@ import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
 import {UserTreeGridItem} from "../UserTreeGridItem";
 import {UserTreeGridItemType} from "../UserTreeGridItem";
 
-export class SynchPrincipalAction extends Action {
+export class SyncPrincipalAction extends Action {
 
     constructor(grid: UserItemsTreeGrid) {
         super("Sync");
@@ -24,7 +24,7 @@ export class SynchPrincipalAction extends Action {
                 });
 
             if (userStoreKeys && userStoreKeys.length > 0) {
-                new api.security.SynchUserStoreRequest()
+                new api.security.SyncUserStoreRequest()
                     .setKeys(userStoreKeys)
                     .send()
                     .done((jsonResponse: api.rest.JsonResponse<any>) => {

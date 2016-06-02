@@ -1,6 +1,6 @@
 module api.security {
 
-    export class SynchUserStoreResult {
+    export class SyncUserStoreResult {
 
         private userStoreKey: UserStoreKey;
         private synchronized: boolean;
@@ -21,8 +21,8 @@ module api.security {
             return this.reason;
         }
 
-        static fromJson(json: api.security.SynchUserStoreResultJson): SynchUserStoreResult {
-            var result = new SynchUserStoreResult();
+        static fromJson(json: api.security.SyncUserStoreResultJson): SyncUserStoreResult {
+            var result = new SyncUserStoreResult();
             result.userStoreKey = UserStoreKey.fromString(json.userStoreKey);
             result.synchronized = json.synchronized;
             result.reason = json.reason;
