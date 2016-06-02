@@ -15,12 +15,12 @@ public class UdcServiceTest
         throws Exception
     {
         this.service = new UdcService();
+        this.service.delay = 100L;
+        this.service.interval = 10000L;
 
         this.config = Mockito.mock( UdcConfig.class );
         Mockito.when( this.config.enabled() ).thenReturn( false );
-        Mockito.when( this.config.delay() ).thenReturn( 100L );
         Mockito.when( this.config.url() ).thenReturn( "http://localhost:8080" );
-        Mockito.when( this.config.interval() ).thenReturn( 10000L );
     }
 
     @Test
