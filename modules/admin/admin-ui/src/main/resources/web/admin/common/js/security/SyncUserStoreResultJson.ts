@@ -1,6 +1,6 @@
 module api.security {
 
-    export interface SynchUserStoreResultJson {
+    export interface SyncUserStoreResultJson {
 
         userStoreKey: string;
 

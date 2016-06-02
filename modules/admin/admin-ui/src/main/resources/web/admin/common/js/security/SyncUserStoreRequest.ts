@@ -1,6 +1,6 @@
 module api.security {
 
-    export class SynchUserStoreRequest extends SecurityResourceRequest<SynchUserStoreResultsJson, SynchUserStoreResult[]> {
+    export class SyncUserStoreRequest extends SecurityResourceRequest<SyncUserStoreResultsJson, SyncUserStoreResult[]> {
 
         private keys: UserStoreKey[];
 
@@ -9,7 +9,7 @@ module api.security {
             super.setMethod("POST");
         }
 
-        setKeys(keys: UserStoreKey[]): SynchUserStoreRequest {
+        setKeys(keys: UserStoreKey[]): SyncUserStoreRequest {
             this.keys = keys.slice(0);
             return this;
         }
@@ -24,9 +24,9 @@ module api.security {
             return api.rest.Path.fromParent(super.getResourcePath(), 'userstore', 'sync');
         }
 
-        sendAndParse(): wemQ.Promise<SynchUserStoreResult[]> {
-            return this.send().then((response: api.rest.JsonResponse<SynchUserStoreResultsJson>) => {
-                return response.getResult().results.map((resultJson) => SynchUserStoreResult.fromJson(resultJson));
+        sendAndParse(): wemQ.Promise<SyncUserStoreResult[]> {
+            return this.send().then((response: api.rest.JsonResponse<SyncUserStoreResultsJson>) => {
+                return response.getResult().results.map((resultJson) => SyncUserStoreResult.fromJson(resultJson));
             });
         }
 
