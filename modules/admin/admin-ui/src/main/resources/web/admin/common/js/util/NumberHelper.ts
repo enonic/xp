@@ -7,7 +7,7 @@ module api.util {
         }
 
         static isNumber(value: any): boolean {
-            return typeof value === 'number' && !isNaN(value) && isFinite(value);
+            return typeof value === 'number' && !isNaN(value) && isFinite(value) && value > -9007199254740992 && value < 9007199254740992;
         }
 
         static randomBetween(from: number, to: number): number {
