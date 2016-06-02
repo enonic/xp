@@ -14,7 +14,7 @@ public class TextComponent
     protected TextComponent( final Builder builder )
     {
         super( builder );
-        this.text = builder.text;
+        this.text = builder.text != null ? builder.text : "";
     }
 
     public static Builder create()
