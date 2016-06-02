@@ -82,6 +82,14 @@ module api.ui.treegrid {
             this.gridData.setFilter((node: TreeNode<DATA>) => {
                 return node.isVisible();
             });
+            this.gridData.setItemMetadata((row) => {
+                const node = this.gridData.getItem(row);
+                if (this.isEmptyNode(node)) {
+                    return {cssClasses: 'empty-node'};
+                }
+
+                return null;
+            });
 
             this.columns = this.updateColumnsFormatter(builder.getColumns());
 
@@ -318,6 +326,10 @@ module api.ui.treegrid {
             }
 
             return columns;
+        }
+
+        isEmptyNode(node: TreeNode<DATA>): boolean {
+            return false;
         }
 
         getEmptyNodesCount(): number {

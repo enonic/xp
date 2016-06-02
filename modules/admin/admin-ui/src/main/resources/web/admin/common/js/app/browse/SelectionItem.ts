@@ -13,6 +13,8 @@ module api.app.browse {
             this.viewer = viewer;
             this.item = item;
             this.initRemoveButton(removeCallback);
+            this.appendChild(this.removeEl);
+            this.appendChild(this.viewer);
         }
 
         private initRemoveButton(callback?: () => void) {
@@ -26,8 +28,9 @@ module api.app.browse {
 
         setBrowseItem(item: BrowseItem<M>) {
             this.item = item;
+            this.viewer.remove();
             this.viewer.setObject(item.getModel());
-            this.render();
+            this.appendChild(this.viewer);
         }
 
         getBrowseItem(): BrowseItem<M> {
@@ -39,10 +42,6 @@ module api.app.browse {
         }
 
         doRender(): boolean {
-            this.removeChildren();
-            this.appendChild(this.removeEl);
-            this.appendChild(this.viewer);
-
             return true;
         }
     }

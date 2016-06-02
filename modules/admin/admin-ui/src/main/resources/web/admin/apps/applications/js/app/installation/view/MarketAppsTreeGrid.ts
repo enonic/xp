@@ -1,4 +1,5 @@
 import "../../../api.ts";
+import {MarketAppViewer} from "./MarketAppViewer";
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -33,7 +34,6 @@ import ApplicationEventType = api.application.ApplicationEventType;
 import MarketApplicationsFetcher = api.application.MarketApplicationsFetcher;
 import MarketApplicationResponse = api.application.MarketApplicationResponse;
 import MarketApplicationBuilder = api.application.MarketApplicationBuilder;
-import {MarketAppViewer} from "./MarketAppViewer";
 
 declare var CONFIG;
 
@@ -152,8 +152,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     }
 
     private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
-        let data = node.getData();
-        if (!!data.getAppKey()) {
+        const data = node.getData();
+        if (data.getAppKey()) {
             var viewer: MarketAppViewer = <MarketAppViewer>node.getViewer("name");
             if (!viewer) {
                 viewer = new MarketAppViewer();
@@ -161,13 +161,14 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 node.setViewer("name", viewer);
             }
             return viewer.toString();
-        } else { // `load more` node
-            var application = new api.dom.DivEl("children-to-load"),
-                parent = node.getParent();
-            application.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load.");
-
-            return application.toString();
         }
+
+        return "";
+    }
+
+    isEmptyNode(node: TreeNode<MarketApplication>): boolean {
+        const data = node.getData();
+        return !data.getAppKey();
     }
 
     private appStatusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
