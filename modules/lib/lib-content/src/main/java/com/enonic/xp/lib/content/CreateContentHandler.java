@@ -174,6 +174,12 @@ public final class CreateContentHandler
         return name;
     }
 
+    @Override
+    protected boolean strictDataValidation()
+    {
+        return this.requireValid;
+    }
+
     public void setName( final String name )
     {
         this.name = name;
@@ -189,9 +195,12 @@ public final class CreateContentHandler
         this.displayName = displayName;
     }
 
-    public void setRequireValid( final boolean requireValid )
+    public void setRequireValid( final Boolean requireValid )
     {
-        this.requireValid = requireValid;
+        if ( requireValid != null )
+        {
+            this.requireValid = requireValid;
+        }
     }
 
     public void setData( final ScriptValue data )

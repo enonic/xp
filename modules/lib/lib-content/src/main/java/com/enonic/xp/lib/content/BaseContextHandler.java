@@ -58,6 +58,11 @@ public abstract class BaseContextHandler
         return value == null ? defValue : value;
     }
 
+    protected boolean strictDataValidation()
+    {
+        return true;
+    }
+
     protected PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
@@ -67,7 +72,7 @@ public abstract class BaseContextHandler
             throw new IllegalArgumentException( "Content type not found [" + contentTypeName + "]" );
         }
 
-        final boolean strict = !contentType.getName().isUnstructured();
+        final boolean strict = ( !contentType.getName().isUnstructured() ) && strictDataValidation();
         return new JsonToPropertyTreeTranslator( inlineMixins( contentType.getForm() ), strict ).translate( json );
     }
 
@@ -77,7 +82,7 @@ public abstract class BaseContextHandler
 
         if ( mixin == null )
         {
-            throw new IllegalArgumentException( "Mixin  not found [" + mixinName + "]" );
+            throw new IllegalArgumentException( "Mixin not found [" + mixinName + "]" );
         }
 
         return new JsonToPropertyTreeTranslator( inlineMixins( mixin.getForm() ), true ).translate( json );

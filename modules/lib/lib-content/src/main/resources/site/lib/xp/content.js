@@ -168,7 +168,7 @@ exports.getChildren = function (params) {
  * @param {string} [params.name] Name of content.
  * @param {string} [params.parentPath=/] Path to place content under.
  * @param {string} [params.displayName] Display name. Default is same as `name`.
- * @param {boolean} [params.requireValid=true] The content has to be valid to be created.
+ * @param {boolean} [params.requireValid=true] The content has to be valid, according to the content type, to be created. If requireValid=true and the content is not strictly valid, an error will be thrown.
  * @param {string} params.contentType Content type to use.
  * @param {string} [params.language] The language tag representing the content’s locale.
  * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
@@ -183,7 +183,7 @@ exports.create = function (params) {
     bean.parentPath = nullOrValue(params.parentPath);
     bean.displayName = nullOrValue(params.displayName);
     bean.contentType = nullOrValue(params.contentType);
-    bean.requireValid = params.requireValid;
+    bean.requireValid = nullOrValue(params.requireValid);
     bean.language = nullOrValue(params.language);
     bean.branch = nullOrValue(params.branch);
 
@@ -232,6 +232,7 @@ exports.query = function (params) {
  * @param {string} params.key Path or id to the content.
  * @param {function} params.editor Editor callback function.
  * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
+ * @param {boolean} [params.requireValid=true] The content has to be valid, according to the content type, to be updated. If requireValid=true and the content is not strictly valid, an error will be thrown.
  *
  * @returns {object} Modified content as JSON.
  */
@@ -240,6 +241,7 @@ exports.modify = function (params) {
     bean.key = required(params, 'key');
     bean.branch = nullOrValue(params.branch);
     bean.editor = __.toScriptValue(params.editor);
+    bean.requireValid = nullOrValue(params.requireValid);
     return __.toNativeObject(bean.execute());
 };
 
