@@ -1,7 +1,7 @@
 import "../../../api.ts";
+import {MarketAppsTreeGrid} from "./MarketAppsTreeGrid";
 
 import Application = api.application.Application;
-import {MarketAppsTreeGrid} from "./MarketAppsTreeGrid";
 
 export class MarketAppPanel extends api.ui.panel.Panel {
 
@@ -25,14 +25,37 @@ export class MarketAppPanel extends api.ui.panel.Panel {
 
             this.marketAppsTreeGrid = new MarketAppsTreeGrid();
             this.marketAppsTreeGrid.updateInstallApplications(this.installApplications);
-            this.marketAppsTreeGrid.onLoaded(this.dataLoadListener.bind(this));
+            this.initDataLoadListener();
+            this.initAvailableSizeChangeListener();
             this.appendChild(this.marketAppsTreeGrid);
             gridInitialized = true;
         });
     }
 
+    private initDataLoadListener() {
+        var firstLoadListener = () => {
+            if (this.marketAppsTreeGrid.getGrid().getDataView().getLength() > 0) {
+                this.marketAppsTreeGrid.unLoaded(firstLoadListener);
+                setTimeout(() => {
+                    if (!this.gridDataLoaded) {
+                        this.gridDataLoaded = true;
+                        this.marketAppsTreeGrid.refresh();// this helps to show default app icon if one provided in json fails to upload
+                    }
+                }, 500);
+            }
+        };
+
+        this.marketAppsTreeGrid.onLoaded(firstLoadListener);
+    }
+
     public updateInstallApplications(installApplications: api.application.Application[]) {
         this.installApplications = installApplications;
+    }
+
+    private initAvailableSizeChangeListener() {
+        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+            this.marketAppsTreeGrid.getGrid().resizeCanvas();
+        });
     }
 
     public loadGrid() {
@@ -44,18 +67,6 @@ export class MarketAppPanel extends api.ui.panel.Panel {
             this.isGridLoadingData = false;
             this.marketAppsTreeGrid.getGrid().resizeCanvas();
         });
-    }
-
-    private dataLoadListener() {
-        if (this.marketAppsTreeGrid.getGrid().getDataView().getLength() > 0) {
-            this.marketAppsTreeGrid.unLoaded(this.dataLoadListener);
-            setTimeout(() => {
-                if (!this.gridDataLoaded) {
-                    this.gridDataLoaded = true;
-                    this.marketAppsTreeGrid.refresh();// this helps to show default app icon if one provided in json fails to upload
-                }
-            }, 500);
-        }
     }
 
     public getMarketAppsTreeGrid(): MarketAppsTreeGrid {
