@@ -72,7 +72,7 @@ public final class ExceptionRendererImpl
         if ( HttpStatus.UNAUTHORIZED == cause.getStatus() || HttpStatus.FORBIDDEN == cause.getStatus() )
         {
             final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                functionName( "login" ).
+                functionName( "handle403" ).
                 portalRequest( req ).
                 build();
             try

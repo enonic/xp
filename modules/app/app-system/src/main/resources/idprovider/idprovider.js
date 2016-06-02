@@ -2,11 +2,26 @@ var mustacheLib = require('/lib/xp/mustache');
 var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
 
-exports.login = function (req) {
+exports.handle403 = function (req) {
     if (/^\/admin\/rest\//.test(req.path)) {
         return null;
     }
 
+    return generateLoginPage();
+};
+
+exports.login = function (req) {
+    return generateLoginPage();
+}
+
+exports.logout = function (req) {
+    authLib.logout();
+    return {
+        redirect: req.params.redirect
+    };
+};
+
+function generateLoginPage() {
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
     var appLoginJsUrl = portalLib.assetUrl({path: "js/app-system.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
@@ -28,11 +43,4 @@ exports.login = function (req) {
         contentType: 'text/html',
         body: body
     };
-};
-
-exports.logout = function (req) {
-    authLib.logout();
-    return {
-        redirect: req.params.redirect
-    };
-};
+}
