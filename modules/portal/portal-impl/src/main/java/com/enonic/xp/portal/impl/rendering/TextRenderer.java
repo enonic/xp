@@ -47,7 +47,7 @@ public final class TextRenderer
 
         portalResponseBuilder.contentType( MediaType.create( "text", "html" ) ).postProcess( false );
 
-        if ( textComponent.getText() == null )
+        if ( textComponent.getText().isEmpty() )
         {
             renderEmptyTextComponent( textComponent, portalRequest, portalResponseBuilder );
         }
