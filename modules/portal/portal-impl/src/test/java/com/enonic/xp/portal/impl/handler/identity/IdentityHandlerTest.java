@@ -28,7 +28,7 @@ public class IdentityHandlerTest
         Mockito.when( authControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
             final AuthControllerExecutionParams arg = (AuthControllerExecutionParams) args[0];
-            if ( UserStoreKey.from( "myuserstore" ).equals( arg.getUserStoreKey() ) && "myfunction".equals( arg.getFunctionName() ) )
+            if ( UserStoreKey.from( "myuserstore" ).equals( arg.getUserStoreKey() ) && "login".equals( arg.getFunctionName() ) )
             {
                 return PortalResponse.create().build();
             }
@@ -39,7 +39,7 @@ public class IdentityHandlerTest
         this.handler.setAuthControllerService( authControllerService );
 
         this.request.setMethod( HttpMethod.GET );
-        this.request.setEndpointPath( "/_/idprovider/myuserstore/myfunction" );
+        this.request.setEndpointPath( "/_/idprovider/myuserstore/login" );
     }
 
     @Test
@@ -78,7 +78,7 @@ public class IdentityHandlerTest
 
 
     @Test
-    public void testFunctionNotFound()
+    public void testIncorrectFunction()
         throws Exception
     {
         this.request.setEndpointPath( "/_/idprovider/myuserstore/missingfunction" );
@@ -91,7 +91,7 @@ public class IdentityHandlerTest
         catch ( final PortalException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "ID Provider function [missingfunction] not found for user store [myuserstore]", e.getMessage() );
+            assertEquals( "Not a valid idprovider url pattern", e.getMessage() );
         }
     }
 
