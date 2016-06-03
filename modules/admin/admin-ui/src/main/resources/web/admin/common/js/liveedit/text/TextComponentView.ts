@@ -112,10 +112,6 @@ module api.liveedit.text {
             return this.liveEditModel.getContent();
         }
 
-        private getContentPath(): api.content.ContentPath {
-            return this.liveEditModel.getContent().getPath();
-        }
-
         private isAllTextSelected(): boolean {
             this.htmlAreaEditor.selection.getContent() == this.htmlAreaEditor.getContent();
             return this.rootElement.getHTMLElement().innerText.trim() == window['getSelection']().toString();
@@ -325,7 +321,6 @@ module api.liveedit.text {
                 setOnKeydownHandler(this.onKeydownHandler.bind(this)).
                 setFixedToolbarContainer('.mce-toolbar-container').
                 setContent(this.getContent()).
-                setContentPath(this.getContentPath()).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
