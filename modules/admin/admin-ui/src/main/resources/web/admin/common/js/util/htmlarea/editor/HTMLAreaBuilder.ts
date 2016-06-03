@@ -5,7 +5,6 @@ module api.util.htmlarea.editor {
     export class HTMLAreaBuilder {
 
         private content: api.content.ContentSummary; // used for image dialog
-        private contentPath: api.content.ContentPath; // used for macro dialog
 
         private assetsUri: string;
         private selector: string;
@@ -79,11 +78,6 @@ module api.util.htmlarea.editor {
 
         setContent(content: api.content.ContentSummary): HTMLAreaBuilder {
             this.content = content;
-            return this;
-        }
-
-        setContentPath(contentPath: api.content.ContentPath): HTMLAreaBuilder {
-            this.contentPath = contentPath;
             return this;
         }
 
@@ -263,7 +257,7 @@ module api.util.htmlarea.editor {
             let event = CreateHtmlAreaDialogEvent.create().
                 setConfig(config).
                 setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).
-                setContentPath(this.contentPath).
+                setContent(this.content).
                 build();
             this.publishCreateDialogEvent(event);
         }

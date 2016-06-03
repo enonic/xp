@@ -27,6 +27,7 @@ import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroStringResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewStringMacroJson;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.Property;
@@ -71,10 +72,11 @@ public final class MacroResource
     private static final String DEFAULT_MIME_TYPE = "image/svg+xml";
 
     @GET
-    @Path("list")
-    public MacrosJson getMacros()
+    @Path("getByApp")
+    public MacrosJson getMacrosByApp( @QueryParam("appKey") final String appKeyStr )
     {
-        return new MacrosJson( this.macroDescriptorService.getAll(), this.macroIconUrlResolver );
+        return new MacrosJson( this.macroDescriptorService.getByApplication( ApplicationKey.from( appKeyStr ) ),
+                               this.macroIconUrlResolver );
     }
 
     @GET

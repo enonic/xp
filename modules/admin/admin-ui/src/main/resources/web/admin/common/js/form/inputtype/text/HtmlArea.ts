@@ -151,7 +151,6 @@ module api.form.inputtype.text {
                 setOnBlurHandler(onBlurHandler).
                 setOnKeydownHandler(onKeydownHandler).
                 setOnNodeChangeHandler(onNodeChangeHandler).
-                setContentPath(this.contentPath).
                 setContent(this.content).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {

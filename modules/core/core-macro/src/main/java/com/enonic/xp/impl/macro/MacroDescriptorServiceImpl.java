@@ -64,11 +64,9 @@ public final class MacroDescriptorServiceImpl
     public MacroDescriptors getByApplication( final ApplicationKey applicationKey )
     {
         final List<MacroDescriptor> list = Lists.newArrayList();
-        if ( isSystem( applicationKey ) )
-        {
-            list.addAll( builtinMacrosDescriptors.getAll().getSet() );
-        }
-        else
+        list.addAll( builtinMacrosDescriptors.getAll().getSet() );
+
+        if ( !isSystem( applicationKey ) )
         {
             for ( final MacroKey descriptorKey : findDescriptorKeys( applicationKey ) )
             {

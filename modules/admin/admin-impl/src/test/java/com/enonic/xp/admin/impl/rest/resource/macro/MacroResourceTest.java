@@ -90,15 +90,15 @@ public class MacroResourceTest
     }
 
     @Test
-    public void testGetAll()
+    public void testGetByApp()
         throws Exception
     {
-        Mockito.when( this.macroDescriptorService.getAll() ).thenReturn( this.getTestDescriptors() );
+        Mockito.when( this.macroDescriptorService.getByApplication( Mockito.any() ) ).thenReturn( this.getTestDescriptors() );
 
         String response = request().
-            path( "macro/list" ).
+            path( "macro/getByApp?appKey=my-app" ).
             get().getAsString();
-        assertJson( "get_all_macros.json", response );
+        assertJson( "get_macros.json", response );
     }
 
     @Test

@@ -8,21 +8,21 @@ module api.util.htmlarea.dialog {
 
     export class MacroModalDialog extends ModalDialog {
 
-        private contentPath: api.content.ContentPath;
+        private content: api.content.ContentSummary;
 
         private macroDockedPanel: MacroDockedPanel;
 
         private callback: Function;
 
-        constructor(config: HtmlAreaMacro, contentPath: api.content.ContentPath) {
-            this.contentPath = contentPath;
+        constructor(config: HtmlAreaMacro, content: api.content.ContentSummary) {
+            this.content = content;
             this.callback = config.callback;
             super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Macro"), "macro-modal-dialog");
         }
 
         protected layout() {
             super.layout();
-            this.appendChildToContentPanel(this.macroDockedPanel = new MacroDockedPanel(this.contentPath));
+            this.appendChildToContentPanel(this.macroDockedPanel = new MacroDockedPanel(this.content.getPath()));
         }
 
         protected getMainFormItems(): FormItem[] {
@@ -36,7 +36,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createMacroSelector(id: string): FormItem {
-            var loader = new api.macro.resource.MacrosLoader(),
+            var loader = new api.macro.resource.MacrosLoader(this.content.getType().getApplicationKey()),
                 macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
                 formItem = this.createFormItem(id, "Macro", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>macroSelector),
