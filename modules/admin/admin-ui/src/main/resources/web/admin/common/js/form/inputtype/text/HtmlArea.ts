@@ -38,7 +38,7 @@ module api.form.inputtype.text {
             this.editors = [];
             this.contentPath = config.contentPath;
             this.content = config.content;
-            this.applicationKeys = config.site.getApplicationKeys();
+            this.applicationKeys = config.site ? config.site.getApplicationKeys() : [];
         }
 
         getValueType(): ValueType {

@@ -80,11 +80,7 @@ public final class MacroResource
     public MacrosJson getMacrosByApp( final ApplicationKeysParam appKeys )
     {
         final Set<ApplicationKey> keys = appKeys.getKeys();
-        if ( !keys.contains( ApplicationKey.SYSTEM ) )
-        {
-            keys.add( ApplicationKey.SYSTEM );
-        }
-
+        keys.add( ApplicationKey.SYSTEM );
         return new MacrosJson( this.macroDescriptorService.getByApplications( ApplicationKeys.from( keys ) ), this.macroIconUrlResolver );
     }
 
