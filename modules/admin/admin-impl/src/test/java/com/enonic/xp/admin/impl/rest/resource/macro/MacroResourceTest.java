@@ -11,6 +11,8 @@ import org.mockito.Mockito;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroDescriptor;
@@ -90,15 +92,17 @@ public class MacroResourceTest
     }
 
     @Test
-    public void testGetAll()
+    public void testGetByApps()
         throws Exception
     {
-        Mockito.when( this.macroDescriptorService.getAll() ).thenReturn( this.getTestDescriptors() );
+        Mockito.when( this.macroDescriptorService.getByApplications(
+            ApplicationKeys.from( ApplicationKey.SYSTEM.toString(), "appKey1", "appKey2" ) ) ).thenReturn( this.getTestDescriptors() );
 
         String response = request().
-            path( "macro/list" ).
-            get().getAsString();
-        assertJson( "get_all_macros.json", response );
+            path( "macro/getByApps" ).
+            entity( "{\"appKeys\": [\"appKey1\", \"appKey2\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+        assertJson( "get_macros.json", response );
     }
 
     @Test

@@ -3,6 +3,7 @@ module api.util.htmlarea.dialog {
     import ContentId = api.content.ContentId;
     import ContentPath = api.content.ContentPath;
     import ContentSummary = api.content.ContentSummary;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export enum HtmlAreaDialogType {
         ANCHOR, IMAGE, LINK, MACRO
@@ -18,6 +19,8 @@ module api.util.htmlarea.dialog {
 
         private contentPath: ContentPath;
 
+        private applicationKeys: ApplicationKey[];
+
         constructor(builder: HtmlAreaDialogShownEventBuilder) {
             super();
 
@@ -25,6 +28,7 @@ module api.util.htmlarea.dialog {
             this.type = builder.type;
             this.content = builder.content;
             this.contentPath = builder.contentPath;
+            this.applicationKeys = builder.applicationKeys;
         }
 
         getConfig(): any {
@@ -41,6 +45,10 @@ module api.util.htmlarea.dialog {
 
         getContentPath(): ContentPath {
             return this.contentPath;
+        }
+
+        getApplicationKeys(): ApplicationKey[] {
+            return this.applicationKeys;
         }
 
         static create(): HtmlAreaDialogShownEventBuilder {
@@ -66,6 +74,8 @@ module api.util.htmlarea.dialog {
 
         contentPath: ContentPath;
 
+        applicationKeys: ApplicationKey[];
+
         setContent(content: ContentSummary): HtmlAreaDialogShownEventBuilder {
             this.content = content;
             return this;
@@ -83,6 +93,11 @@ module api.util.htmlarea.dialog {
 
         setConfig(config: any): HtmlAreaDialogShownEventBuilder {
             this.config = config;
+            return this;
+        }
+
+        setApplicationKeys(applicationKeys: ApplicationKey[]): HtmlAreaDialogShownEventBuilder {
+            this.applicationKeys = applicationKeys;
             return this;
         }
 
