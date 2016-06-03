@@ -13,6 +13,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -80,6 +81,7 @@ public class MacroInstructionTest
         MacroKey key = MacroKey.from( ApplicationKey.SYSTEM, "mymacro" );
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
+        when( macroDescriptorService.getByApplication( any() ) ).thenReturn( MacroDescriptors.empty() );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
             ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
@@ -94,6 +96,12 @@ public class MacroInstructionTest
     public void testInstructionMissingMacro()
         throws Exception
     {
+        MacroKey key = MacroKey.from( "myapp:somemacro" );
+        Form form = Form.create().build();
+        MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).form( form ).build();
+        when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
+        when( macroDescriptorService.getByApplication( key.getApplicationKey() ) ).thenReturn( MacroDescriptors.from( macroDescriptor ) );
+
         String outputHtml =
             macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
         assertEquals( "mymacro: param1=value1, body=body", outputHtml );
@@ -111,13 +119,14 @@ public class MacroInstructionTest
             build();
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).form( form ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
+        when( macroDescriptorService.getByApplication( key.getApplicationKey() ) ).thenReturn( MacroDescriptors.from( macroDescriptor ) );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
             ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
         when( macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml =
-            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" PARAM1=\"value1\" _body=\"body\"" ).getAsString();
+            macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getAsString();
         assertEquals( "mymacro: param1=value1, body=body", outputHtml );
     }
 
