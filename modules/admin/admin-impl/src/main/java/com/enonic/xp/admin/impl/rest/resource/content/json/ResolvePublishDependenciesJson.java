@@ -10,6 +10,10 @@ public class ResolvePublishDependenciesJson
 
     private boolean includeChildren;
 
+    private Integer from;
+
+    private Integer size;
+
     public Set<String> getIds()
     {
         return ids;
@@ -40,5 +44,25 @@ public class ResolvePublishDependenciesJson
     public void setIncludeChildren( final boolean includeChildren )
     {
         this.includeChildren = includeChildren;
+    }
+
+    public Integer getFrom()
+    {
+        return from;
+    }
+
+    public void setFrom( final Integer from )
+    {
+        this.from = from;
+    }
+
+    public Integer getSize()
+    {
+        return size;
+    }
+
+    public void setSize( final Integer size )
+    {
+        this.size = size;
     }
 }

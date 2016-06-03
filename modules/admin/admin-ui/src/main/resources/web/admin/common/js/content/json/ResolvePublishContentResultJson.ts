@@ -4,5 +4,6 @@ module api.content.json {
 
         dependentContents: ContentPublishItemJson[];
         requestedContents: ContentPublishItemJson[];
+        metadata: {};
     }
 }

@@ -52,6 +52,10 @@ module api.ui.selector.list {
             this.doAddItem(false, items);
         }
 
+        addItems(items: I[]) {
+            this.doAddItem(false, items);
+        }
+
         addItemReadOnly(...items: I[]) {
             this.doAddItem(true, items);
         }
