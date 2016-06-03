@@ -78,7 +78,8 @@ public class FindNodesByParentCommand
                 build();
         }
 
-        final Nodes nodes = this.storageService.get( nodeQueryResult.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
+        final Nodes nodes =
+            this.storageService.get( nodeQueryResult.getNodeIds(), true, InternalContext.from( ContextAccessor.current() ) );
 
         return FindNodesByParentResult.create().
             nodes( nodes ).

@@ -40,7 +40,7 @@ public interface StorageService
 
     Node get( final NodePath nodePath, final InternalContext context );
 
-    Nodes get( final NodeIds nodeIds, final InternalContext context );
+    Nodes get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
 
     Nodes get( final NodePaths nodePaths, final InternalContext context );
 
@@ -50,7 +50,7 @@ public interface StorageService
 
     NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 
-    NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context );
+    NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
 
     NodeVersionMetadata getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
 

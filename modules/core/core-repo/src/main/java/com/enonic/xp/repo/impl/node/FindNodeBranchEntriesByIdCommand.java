@@ -48,7 +48,8 @@ public class FindNodeBranchEntriesByIdCommand
         final NodeIds nodeIds = getNodeIds( context );
 
         final Stopwatch getBranchTimer = Stopwatch.createStarted();
-        allResultsBuilder.addAll( this.storageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) ) );
+        allResultsBuilder.addAll(
+            this.storageService.getBranchNodeVersions( nodeIds, !this.orderExpressions.isEmpty(), InternalContext.from( context ) ) );
         System.out.println( "GetBranchTimer: " + getBranchTimer.stop() );
 
         return allResultsBuilder.build();

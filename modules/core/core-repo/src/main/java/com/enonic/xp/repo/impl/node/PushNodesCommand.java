@@ -177,7 +177,7 @@ public class PushNodesCommand
             execute();
 
         final NodeBranchEntries childEntries =
-            this.storageService.getBranchNodeVersions( children, InternalContext.from( ContextAccessor.current() ) );
+            this.storageService.getBranchNodeVersions( children, false, InternalContext.from( ContextAccessor.current() ) );
 
         for ( final NodeBranchEntry child : childEntries )
         {

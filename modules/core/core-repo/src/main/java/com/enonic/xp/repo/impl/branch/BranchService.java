@@ -19,7 +19,7 @@ public interface BranchService
 
     NodeBranchEntry get( final NodeId nodeId, final InternalContext context );
 
-    NodeBranchEntries get( final NodeIds nodeIds, final InternalContext context );
+    NodeBranchEntries get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
 
     NodeBranchEntry get( final NodePath nodePath, final InternalContext context );
 

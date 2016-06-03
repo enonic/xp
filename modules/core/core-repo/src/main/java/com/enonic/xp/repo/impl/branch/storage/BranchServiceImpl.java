@@ -23,6 +23,8 @@ import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.cache.BranchPath;
 import com.enonic.xp.repo.impl.cache.PathCache;
 import com.enonic.xp.repo.impl.cache.PathCacheImpl;
@@ -120,7 +122,17 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchEntries get( final NodeIds nodeIds, final InternalContext context )
+    public NodeBranchEntries get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context )
+    {
+        if ( keepOrder )
+        {
+            return getKeepOrder( nodeIds, context );
+        }
+
+        return getIgnoreOrder( nodeIds, context );
+    }
+
+    private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
     {
         final GetByIdsRequest getByIdsRequest = new GetByIdsRequest();
 
@@ -152,6 +164,29 @@ public class BranchServiceImpl
         }
 
         return builder.build();
+    }
+
+
+    private NodeBranchEntries getIgnoreOrder( final NodeIds nodeIds, final InternalContext context )
+    {
+        final SearchResult results = this.searchDao.search( SearchRequest.create().
+            query( NodeBranchQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
+                    addValue( ValueFactory.newString( context.getBranch().getName() ) ).
+                    build() ).
+                addQueryFilter( ValueFilter.create().
+                    fieldName( BranchIndexPath.NODE_ID.getPath() ).
+                    addValues( nodeIds.getAsStrings() ).
+                    build() ).
+                size( nodeIds.getSize() ).
+                build() ).
+            returnFields( BRANCH_RETURN_FIELDS ).
+            settings( createStorageSettings( context ) ).
+            build() );
+
+        final NodeBranchQueryResult nodeBranchEntries = NodeBranchQueryResultFactory.create( results );
+        return NodeBranchEntries.from( nodeBranchEntries.getList() );
     }
 
     @Override

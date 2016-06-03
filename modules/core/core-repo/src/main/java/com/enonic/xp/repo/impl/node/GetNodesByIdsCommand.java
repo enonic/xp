@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 
 public class GetNodesByIdsCommand
@@ -20,7 +21,13 @@ public class GetNodesByIdsCommand
 
     public Nodes execute()
     {
-        return this.storageService.get( ids, InternalContext.from( ContextAccessor.current() ) );
+        RefreshCommand.create().
+            refreshMode( RefreshMode.ALL ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+
+        return this.storageService.get( ids, true, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()

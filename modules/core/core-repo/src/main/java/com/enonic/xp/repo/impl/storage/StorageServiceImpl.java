@@ -184,9 +184,9 @@ public class StorageServiceImpl
     }
 
     @Override
-    public Nodes get( final NodeIds nodeIds, final InternalContext context )
+    public Nodes get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context )
     {
-        final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodeIds, context );
+        final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodeIds, keepOrder, context );
 
         return doReturnNodes( nodeBranchEntries );
     }
@@ -244,9 +244,9 @@ public class StorageServiceImpl
     }
 
     @Override
-    public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
+    public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context )
     {
-        return this.branchService.get( nodeIds, context );
+        return this.branchService.get( nodeIds, keepOrder, context );
     }
 
     @Override

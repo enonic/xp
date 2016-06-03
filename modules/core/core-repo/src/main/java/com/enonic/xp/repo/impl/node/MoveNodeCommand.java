@@ -159,8 +159,9 @@ public class MoveNodeCommand
             size( SearchService.GET_ALL_SIZE_FLAG ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final NodeBranchEntries nodeBranchEntries =
-            this.storageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
+        final NodeBranchEntries nodeBranchEntries = this.storageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), false,
+                                                                                               InternalContext.from(
+                                                                                                   ContextAccessor.current() ) );
 
         final NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
 

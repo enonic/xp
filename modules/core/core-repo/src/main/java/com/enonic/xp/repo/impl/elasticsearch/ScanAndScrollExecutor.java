@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.util.concurrent.TimeUnit;
 
+import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -16,7 +17,7 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class ScanAndScrollExecutor
 {
-    private static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
+    private static final TimeValue defaultScrollTime = new TimeValue( 30, TimeUnit.SECONDS );
 
     private final static Logger LOG = LoggerFactory.getLogger( ScanAndScrollExecutor.class );
 
@@ -63,6 +64,7 @@ public class ScanAndScrollExecutor
 
             if ( scrollResp.getHits().getHits().length == 0 )
             {
+                clearScroll( scrollResp );
                 break;
             }
         }
@@ -72,6 +74,14 @@ public class ScanAndScrollExecutor
         return SearchResult.create().
             hits( build ).
             build();
+    }
+
+    private void clearScroll( final SearchResponse scrollResp )
+    {
+        final ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
+        clearScrollRequest.addScrollId( scrollResp.getScrollId() );
+
+        client.clearScroll( clearScrollRequest ).actionGet();
     }
 
 }

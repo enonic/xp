@@ -246,7 +246,7 @@ public class ResolveSyncWorkCommand
             execute();
 
         final NodeBranchEntries brancEntries =
-            this.storageService.getBranchNodeVersions( childrenToBeDeleted, InternalContext.from( ContextAccessor.current() ) );
+            this.storageService.getBranchNodeVersions( childrenToBeDeleted, false, InternalContext.from( ContextAccessor.current() ) );
 
         addToResult( NodeComparisons.create().
             addAll( brancEntries.stream().

@@ -657,7 +657,13 @@ public class ResolveSyncWorkCommandTest
         updateNode( "b2" );
         updateNode( "b2_1" );
 
+        refresh();
+
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1" ).
+            referred( "b2_1" ) );
 
         assertEquals( 2, result.getSize() );
     }

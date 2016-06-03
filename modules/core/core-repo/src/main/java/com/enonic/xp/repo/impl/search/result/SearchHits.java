@@ -47,6 +47,11 @@ public class SearchHits
         return this.hits.values().iterator().next();
     }
 
+    public SearchHit get( final String id )
+    {
+        return this.hits.get( id );
+    }
+
     @Override
     public Iterator<SearchHit> iterator()
     {
