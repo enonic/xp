@@ -292,15 +292,20 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                         loginResult, item)
                 });
 
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentTypesAllowChildren && canCreate);
-                this.SORT_CONTENT.setEnabled(contentTypesAllowChildren && canCreate);
+                if (!contentTypesAllowChildren && !canCreate) {
+                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                    this.SORT_CONTENT.setEnabled(false);
+                }
 
+                if (!canDelete) {
+                    this.DELETE_CONTENT.setEnabled(false);
+                    this.MOVE_CONTENT.setEnabled(false);
+                }
 
-                this.DELETE_CONTENT.setEnabled(canDelete);
-                this.MOVE_CONTENT.setEnabled(canDelete);
-
-                this.PUBLISH_CONTENT.setEnabled(canPublish);
-                this.PUBLISH_TREE_CONTENT.setEnabled(canPublish);
+                if (!canPublish) {
+                    this.PUBLISH_CONTENT.setEnabled(false);
+                    this.PUBLISH_TREE_CONTENT.setEnabled(false);
+                }
 
         });
     }
