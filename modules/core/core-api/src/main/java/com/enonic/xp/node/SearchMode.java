@@ -4,6 +4,5 @@ public enum SearchMode
 {
     SEARCH,
     COUNT,
-    SCAN
 }
 

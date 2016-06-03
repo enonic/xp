@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
@@ -12,22 +11,22 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public abstract class AbstractExecutor
 {
-    protected final String searchPreference = "_local";
+    final String searchPreference = "_local";
 
-    protected final String searchTimeout = "10s";
+    private final String searchTimeout = "10s";
 
     protected final String storeTimeout = "10s";
 
     protected final String deleteTimeout = "5s";
 
-    protected Client client;
+    protected final Client client;
 
     protected AbstractExecutor( final Builder builder )
     {
         client = builder.client;
     }
 
-    protected static int safeLongToInt( long l )
+    static int safeLongToInt( long l )
     {
         if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
         {
@@ -36,13 +35,12 @@ public abstract class AbstractExecutor
         return (int) l;
     }
 
-    protected SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder, final SearchType searchType )
+    SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
     {
         try
         {
             final SearchResponse searchResponse = searchRequestBuilder.
                 setPreference( searchPreference ).
-                setSearchType( searchType ).
                 execute().
                 actionGet( searchTimeout );
 
@@ -70,7 +68,7 @@ public abstract class AbstractExecutor
 
     public static class Builder<B extends Builder>
     {
-        private Client client;
+        private final Client client;
 
         protected Builder( final Client client )
         {

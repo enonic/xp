@@ -38,7 +38,7 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final StorageService storageService;
 
-    private final int batchSize = 20_000;
+    private final int batchSize = 5_000;
 
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
     {
@@ -70,6 +70,7 @@ public class FindNodesWithVersionDifferenceCommand
             target( target ).
             nodePath( nodePath ).
             excludes( excludeEntries ).
+            size( this.size ).
             batchSize( batchSize ).
             build(), context );
     }
@@ -111,7 +112,7 @@ public class FindNodesWithVersionDifferenceCommand
 
         private NodeIds excludes = NodeIds.empty();
 
-        private int size;
+        private int size = SearchService.GET_ALL_SIZE_FLAG;
 
         private int from;
 

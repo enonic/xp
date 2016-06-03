@@ -17,7 +17,6 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.SearchService;
@@ -42,6 +41,16 @@ public class MoveNodeCommand
         this.nodeId = builder.id;
         this.newParentPath = builder.newParentPath;
         this.newNodeName = builder.newNodeName;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
     }
 
     public MoveNodeResult execute()
@@ -148,8 +157,6 @@ public class MoveNodeCommand
             parent( persistedNode.path() ).
             from( 0 ).
             size( SearchService.GET_ALL_SIZE_FLAG ).
-            batchSize( BATCH_SIZE ).
-            searchMode( SearchMode.SCAN ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         final NodeBranchEntries nodeBranchEntries =
@@ -219,16 +226,6 @@ public class MoveNodeCommand
         {
             throw new NodeAlreadyExistAtPathException( newParentPath );
         }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
     }
 
     public static class Builder

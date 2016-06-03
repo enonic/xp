@@ -28,7 +28,6 @@ import com.enonic.xp.repo.impl.cache.PathCache;
 import com.enonic.xp.repo.impl.cache.PathCacheImpl;
 import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.SearchType;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
@@ -220,7 +219,6 @@ public class BranchServiceImpl
 
         final SearchResult result = this.searchDao.search( SearchRequest.create().
             settings( createStorageSettings( context ) ).
-            searchType( SearchType.QUERY_THEN_FETCH ).
             returnFields( BRANCH_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
             query( query ).

@@ -35,7 +35,7 @@ public class PushNodesCommandPerformanceTest
             parent( NodePath.ROOT ).
             build(), false );
 
-        createNodes( rootNode, 20, 3, 1 );
+        createNodes( rootNode, 30, 3, 1 );
 
         refresh();
 
@@ -64,7 +64,8 @@ public class PushNodesCommandPerformanceTest
         final long elapsed = started.elapsed( TimeUnit.SECONDS );
         final int number = result.getSuccessful().getSize();
 
-        System.out.println( "Pushed : " + number + " in " + started.toString() + ", " + ( number / elapsed ) + "/s" );
+        System.out.println(
+            "Pushed : " + number + " in " + started.toString() + ", " + ( elapsed == 0 ? "n/a" : ( number / elapsed ) + "/s" ) );
     }
 
 

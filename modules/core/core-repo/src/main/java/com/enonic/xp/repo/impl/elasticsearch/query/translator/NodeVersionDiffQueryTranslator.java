@@ -1,16 +1,11 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 
-import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.elasticsearch.query.DiffQueryFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
-import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class NodeVersionDiffQueryTranslator
@@ -29,13 +24,10 @@ public class NodeVersionDiffQueryTranslator
             index( request.getSettings().getStorageName().getName() ).
             indexType( request.getSettings().getStorageType().getName() ).
             query( queryBuilder ).
-            setReturnFields( ReturnFields.from( VersionIndexPath.NODE_ID, VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP ) ).
+            setReturnFields( request.getReturnFields() ).
             size( query.getSize() ).
             batchSize( query.getBatchSize() ).
             from( query.getFrom() ).
-            searchType( SearchType.SCAN ).
-            addSortBuilder( new FieldSortBuilder( VersionIndexPath.NODE_PATH.getPath() ).order( SortOrder.ASC ) ).
-            searchType( SearchType.valueOf( request.getSearchType().toString() ) ).
             build();
     }
 }

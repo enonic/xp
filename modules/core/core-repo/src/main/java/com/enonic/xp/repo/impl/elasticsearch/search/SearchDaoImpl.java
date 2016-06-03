@@ -5,10 +5,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
-import com.enonic.xp.repo.impl.elasticsearch.executor.CountExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.executor.SearchExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.NodeBranchQueryTranslator;
@@ -17,7 +15,6 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.NodeVersionDiffQue
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.NodeVersionQueryTranslator;
 import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.result.SearchHits;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
@@ -40,19 +37,6 @@ public class SearchDaoImpl
     public SearchResult search( final SearchRequest searchRequest )
     {
         final ElasticsearchQuery esQuery = translateQuery( searchRequest );
-
-        if ( searchRequest.getQuery().getSearchMode().equals( SearchMode.COUNT ) )
-        {
-            final long count = CountExecutor.create( this.client ).
-                build().
-                count( esQuery );
-
-            return SearchResult.create().
-                hits( SearchHits.create().
-                    totalHits( count ).
-                    build() ).
-                build();
-        }
 
         return SearchExecutor.create( this.client ).
             build().

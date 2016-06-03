@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.elasticsearch.query;
 import java.util.List;
 import java.util.Set;
 
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
@@ -14,6 +13,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.node.SearchMode;
+import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.repo.impl.ReturnFields;
 
 public class ElasticsearchQuery
@@ -40,7 +41,9 @@ public class ElasticsearchQuery
 
     private final ReturnFields returnFields;
 
-    private final SearchType searchType;
+    private final SearchMode searchMode;
+
+    private final SearchOptimizer searchOptimizer;
 
     private ElasticsearchQuery( final Builder builder )
     {
@@ -54,7 +57,13 @@ public class ElasticsearchQuery
         this.from = builder.from;
         this.aggregations = ImmutableSet.copyOf( builder.aggregations );
         this.returnFields = builder.returnFields;
-        this.searchType = builder.searchType;
+        this.searchMode = builder.searchMode;
+        this.searchOptimizer = builder.searchOptimizer;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public ImmutableSet<AbstractAggregationBuilder> getAggregations()
@@ -82,11 +91,6 @@ public class ElasticsearchQuery
         return this.indexName;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public int getFrom()
     {
         return from;
@@ -112,9 +116,14 @@ public class ElasticsearchQuery
         return sortBuilders;
     }
 
-    public SearchType getSearchType()
+    public SearchMode getSearchMode()
     {
-        return searchType;
+        return searchMode;
+    }
+
+    public SearchOptimizer getSearchOptimizer()
+    {
+        return searchOptimizer;
     }
 
     @Override
@@ -168,7 +177,9 @@ public class ElasticsearchQuery
 
         private ReturnFields returnFields = ReturnFields.empty();
 
-        private SearchType searchType = SearchType.DFS_QUERY_THEN_FETCH;
+        private SearchMode searchMode = SearchMode.SEARCH;
+
+        private SearchOptimizer searchOptimizer = SearchOptimizer.DEFAULT;
 
         public Builder query( final QueryBuilder queryBuilder )
         {
@@ -236,9 +247,15 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder searchType( final SearchType searchType )
+        public Builder searchMode( final SearchMode searchMode )
         {
-            this.searchType = searchType;
+            this.searchMode = searchMode;
+            return this;
+        }
+
+        public Builder searchOptimizer( final SearchOptimizer searchOptimizer )
+        {
+            this.searchOptimizer = searchOptimizer;
             return this;
         }
 

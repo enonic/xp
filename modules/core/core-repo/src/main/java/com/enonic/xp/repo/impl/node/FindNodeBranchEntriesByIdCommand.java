@@ -8,7 +8,6 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -30,6 +29,16 @@ public class FindNodeBranchEntriesByIdCommand
         orderExpressions = builder.orderExpressions;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
     public NodeBranchEntries execute()
     {
         final Context context = ContextAccessor.current();
@@ -47,7 +56,8 @@ public class FindNodeBranchEntriesByIdCommand
 
     private NodeIds getNodeIds( final Context context )
     {
-        final NodeQueryResult result = this.searchService.query( NodeQuery.create().
+
+        final NodeQuery.Builder queryBuilder = NodeQuery.create().
             addQueryFilters( Filters.create().
                 add( ValueFilter.create().
                     fieldName( NodeIndexPath.ID.getPath() ).
@@ -57,23 +67,17 @@ public class FindNodeBranchEntriesByIdCommand
             from( 0 ).
             size( ids.getSize() ).
             batchSize( 10000 ).
-            searchMode( SearchMode.SCAN ).
-            addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) ).
-            setOrderExpressions( this.orderExpressions ).
+            addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) );
+
+        if ( !this.orderExpressions.isEmpty() )
+        {
+            queryBuilder.setOrderExpressions( this.orderExpressions );
+        }
+
+        final NodeQueryResult result = this.searchService.query( queryBuilder.
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         return result.getNodeIds();
-    }
-
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
     }
 
     public static final class Builder
@@ -81,7 +85,7 @@ public class FindNodeBranchEntriesByIdCommand
     {
         private NodeIds ids;
 
-        private OrderExpressions orderExpressions;
+        private OrderExpressions orderExpressions = OrderExpressions.empty();
 
         private Builder()
         {

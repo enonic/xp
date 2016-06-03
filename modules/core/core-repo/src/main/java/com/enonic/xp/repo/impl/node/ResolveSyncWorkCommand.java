@@ -115,8 +115,6 @@ public class ResolveSyncWorkCommand
         comparisons.forEach( ( this::addToResult ) );
 
         markPendingDeleteChildrenForDeletion( comparisons );
-
-
     }
 
     private NodeIds getInitialDiff()
@@ -126,7 +124,11 @@ public class ResolveSyncWorkCommand
             return NodeIds.from( this.publishRootNode.id() );
         }
 
+        final Stopwatch timer = Stopwatch.createStarted();
+
         final NodeVersionDiffResult nodesWithVersionDifference = findNodesWithVersionDifference( this.publishRootNode.path() );
+
+        System.out.println( "Diff-query result in " + timer.stop() );
 
         return NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
@@ -176,6 +178,12 @@ public class ResolveSyncWorkCommand
         for ( final NodePath parent : parentPaths )
         {
             final NodeId parentId = this.storageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
+
+            if ( parentId == null )
+            {
+                throw new NodeNotFoundException( "Cannot find parent with path [" + parent + "]" );
+            }
+
             parentIdBuilder.add( parentId );
         }
 

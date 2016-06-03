@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 
@@ -23,9 +26,6 @@ import com.enonic.xp.node.PublishNodeEntries;
 import com.enonic.xp.node.PublishNodeEntry;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -77,7 +77,13 @@ public class PushNodesCommand
             targetRepo( context.getRepositoryId() );
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
-        for ( final NodeBranchEntry branchEntry : nodeBranchEntries )
+
+        final Stopwatch sortTimer = Stopwatch.createStarted();
+        final ArrayList<NodeBranchEntry> list = new ArrayList<>( nodeBranchEntries.getSet() );
+        Collections.sort( list, ( e1, e2 ) -> e1.getNodePath().compareTo( e2.getNodePath() ) );
+        System.out.println( "Orderin collection of NodeBranchEntries: " + sortTimer.stop() );
+
+        for ( final NodeBranchEntry branchEntry : list )
         {
             final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
 
@@ -142,7 +148,6 @@ public class PushNodesCommand
         final Stopwatch timer = Stopwatch.createStarted();
         final NodeBranchEntries nodeBranchEntries = FindNodeBranchEntriesByIdCommand.create( this ).
             ids( ids ).
-            orderExpressions( OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ) ).
             build().
             execute();
         System.out.println( "FindNodeBranchEntries: " + timer.stop() );

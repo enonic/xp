@@ -10,7 +10,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -27,8 +26,6 @@ public class FindNodesDependenciesCommand
     private final Set<NodeId> processed = Sets.newHashSet();
 
     private final boolean recursive;
-
-    private final int BATCH_SIZE = 10_000;
 
     private FindNodesDependenciesCommand( final Builder builder )
     {
@@ -97,8 +94,6 @@ public class FindNodesDependenciesCommand
                 build() ).
             from( 0 ).
             size( nonProcessedNodes.size() ).
-            batchSize( BATCH_SIZE ).
-            searchMode( SearchMode.SCAN ).
             build(), ReturnFields.from( NodeIndexPath.REFERENCE ), InternalContext.from( ContextAccessor.current() ) );
 
     }

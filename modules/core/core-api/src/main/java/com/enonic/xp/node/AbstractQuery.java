@@ -38,6 +38,8 @@ public class AbstractQuery
 
     private final SearchMode searchMode;
 
+    private final SearchOptimizer searchOptimizer;
+
     private final ImmutableList<OrderExpr> orderBys;
 
     @SuppressWarnings("unchecked")
@@ -52,6 +54,7 @@ public class AbstractQuery
         this.orderBys = setOrderExpressions( builder );
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
+        this.searchOptimizer = builder.searchOptimizer;
     }
 
     private ImmutableList<OrderExpr> setOrderExpressions( final Builder builder )
@@ -113,25 +116,32 @@ public class AbstractQuery
         return searchMode;
     }
 
+    public SearchOptimizer getSearchOptimizer()
+    {
+        return searchOptimizer;
+    }
+
     public static abstract class Builder<B extends Builder>
     {
-        private QueryExpr query;
-
         private final Filters.Builder postFilters = Filters.create();
 
         private final Filters.Builder queryFilters = Filters.create();
 
         private final Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
+        private QueryExpr query;
+
         private int from;
 
         private int size = DEFAULT_QUERY_SIZE;
 
-        private int batchSize = 10_000;
+        private int batchSize = 5_000;
 
-        private List<OrderExpr> orderBys = Lists.newLinkedList();
+        private final List<OrderExpr> orderBys = Lists.newLinkedList();
 
         private SearchMode searchMode = SearchMode.SEARCH;
+
+        private SearchOptimizer searchOptimizer = SearchOptimizer.SPEED;
 
         protected Builder()
         {
@@ -209,13 +219,6 @@ public class AbstractQuery
         }
 
         @SuppressWarnings("unchecked")
-        public B setOrderBys( final List<OrderExpr> orderExpr )
-        {
-            this.orderBys = orderExpr;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
         public B setOrderExpressions( final OrderExpressions orderExpressions )
         {
             orderExpressions.forEach( this.orderBys::add );
@@ -226,6 +229,13 @@ public class AbstractQuery
         public B searchMode( SearchMode searchMode )
         {
             this.searchMode = searchMode;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B searchOptimizer( SearchOptimizer searchOptimizer )
+        {
+            this.searchOptimizer = searchOptimizer;
             return (B) this;
         }
     }

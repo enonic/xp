@@ -21,7 +21,6 @@ import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -83,7 +82,6 @@ public class IndexServiceImpl
                 query( QueryExpr.from( compareExpr ) ).
                 size( SearchService.GET_ALL_SIZE_FLAG ).
                 batchSize( BATCH_SIZE ).
-                searchMode( SearchMode.SCAN ).
                 build(), InternalContext.create( ContextAccessor.current() ).
                 branch( branch ).
                 build() );

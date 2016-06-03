@@ -21,7 +21,7 @@ public class CountExecutor
         return new Builder( client );
     }
 
-    public long count( final ElasticsearchQuery query )
+    public SearchResult count( final ElasticsearchQuery query )
     {
         SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
             setIndices( query.getIndexName() ).
@@ -30,9 +30,7 @@ public class CountExecutor
             setSearchType( SearchType.COUNT ).
             setPreference( searchPreference );
 
-        final SearchResult searchResult = doSearchRequest( searchRequestBuilder, query.getSearchType() );
-
-        return searchResult.getResults().getTotalHits();
+        return doSearchRequest( searchRequestBuilder );
     }
 
     public static class Builder

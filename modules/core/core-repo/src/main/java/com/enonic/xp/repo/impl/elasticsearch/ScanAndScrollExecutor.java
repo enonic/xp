@@ -52,7 +52,7 @@ public class ScanAndScrollExecutor
 
         while ( true )
         {
-            LOG.info( "Scanning, got " + scrollResp.getHits().hits().length + " hits" );
+            System.out.println( "Scanning, got " + scrollResp.getHits().hits().length + " hits" );
 
             searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
 

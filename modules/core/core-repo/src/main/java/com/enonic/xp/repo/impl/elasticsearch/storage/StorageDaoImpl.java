@@ -11,7 +11,6 @@ import org.elasticsearch.action.get.MultiGetRequestBuilder;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -177,9 +176,8 @@ public class StorageDaoImpl
             query( QueryBuilders.filteredQuery( query, idFilter ) ).
             index( request.getStorageSettings().getStorageName().getName() ).
             indexType( request.getStorageSettings().getStorageType().getName() ).
-            batchSize( 5000 ).
+            size( request.getNodeIds().getSize() ).
             from( 0 ).
-            searchType( SearchType.SCAN ).
             setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
             build();
 
