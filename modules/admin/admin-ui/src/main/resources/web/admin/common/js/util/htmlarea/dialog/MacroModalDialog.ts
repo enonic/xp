@@ -5,17 +5,21 @@ module api.util.htmlarea.dialog {
     import Panel = api.ui.panel.Panel;
     import MacroDescriptor = api.macro.MacroDescriptor;
     import FormContext = api.form.FormContext;
+    import ApplicationKey = api.application.ApplicationKey
 
     export class MacroModalDialog extends ModalDialog {
 
         private contentPath: api.content.ContentPath;
 
+        private applicationKeys: ApplicationKey[];
+
         private macroDockedPanel: MacroDockedPanel;
 
         private callback: Function;
 
-        constructor(config: HtmlAreaMacro, contentPath: api.content.ContentPath) {
+        constructor(config: HtmlAreaMacro, contentPath: api.content.ContentPath, applicationKeys: ApplicationKey[]) {
             this.contentPath = contentPath;
+            this.applicationKeys = applicationKeys;
             this.callback = config.callback;
             super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Macro"), "macro-modal-dialog");
         }
@@ -36,7 +40,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createMacroSelector(id: string): FormItem {
-            var loader = new api.macro.resource.MacrosLoader(),
+            var loader = new api.macro.resource.MacrosLoader(this.applicationKeys),
                 macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
                 formItem = this.createFormItem(id, "Macro", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>macroSelector),

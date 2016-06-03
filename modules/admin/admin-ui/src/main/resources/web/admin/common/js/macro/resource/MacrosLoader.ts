@@ -2,6 +2,7 @@ module api.macro.resource {
 
     import ApplicationEvent = api.application.ApplicationEvent;
     import ApplicationEventType = api.application.ApplicationEventType;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class MacrosLoader extends api.util.loader.BaseLoader<MacrosJson, MacroDescriptor> {
 
@@ -9,8 +10,8 @@ module api.macro.resource {
 
         private hasRelevantData: boolean;
 
-        constructor() {
-            this.getMacrosRequest = new GetMacrosRequest();
+        constructor(applicationKeys: ApplicationKey[]) {
+            this.getMacrosRequest = new GetMacrosRequest(applicationKeys);
             this.hasRelevantData = false;
             super(this.getMacrosRequest);
 

@@ -1,11 +1,13 @@
 module api.util.htmlarea.editor {
 
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
+    import ApplicationKey = api.application.ApplicationKey
 
     export class HTMLAreaBuilder {
 
         private content: api.content.ContentSummary; // used for image dialog
         private contentPath: api.content.ContentPath; // used for macro dialog
+        private applicationKeys: ApplicationKey[]; // used for macro dialog
 
         private assetsUri: string;
         private selector: string;
@@ -89,6 +91,11 @@ module api.util.htmlarea.editor {
 
         setConvertUrls(convertUrls: boolean): HTMLAreaBuilder {
             this.convertUrls = convertUrls;
+            return this;
+        }
+
+        setApplicationKeys(applicationKeys: ApplicationKey[]): HTMLAreaBuilder {
+            this.applicationKeys = applicationKeys;
             return this;
         }
 
@@ -264,6 +271,7 @@ module api.util.htmlarea.editor {
                 setConfig(config).
                 setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).
                 setContentPath(this.contentPath).
+                setApplicationKeys(this.applicationKeys).
                 build();
             this.publishCreateDialogEvent(event);
         }

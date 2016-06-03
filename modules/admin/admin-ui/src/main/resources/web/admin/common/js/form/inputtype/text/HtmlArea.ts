@@ -17,12 +17,14 @@ module api.form.inputtype.text {
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
     import ElementHelper = api.dom.ElementHelper;
+    import ApplicationKey = api.application.ApplicationKey
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
         private editors: HtmlAreaOccurrenceInfo[];
         private content: api.content.ContentSummary;
         private contentPath: api.content.ContentPath;
+        private applicationKeys: ApplicationKey[];
 
         private focusListeners: {(event: FocusEvent): void}[] = [];
 
@@ -36,6 +38,7 @@ module api.form.inputtype.text {
             this.editors = [];
             this.contentPath = config.contentPath;
             this.content = config.content;
+            this.applicationKeys = config.site.getApplicationKeys();
         }
 
         getValueType(): ValueType {
@@ -153,6 +156,7 @@ module api.form.inputtype.text {
                 setOnNodeChangeHandler(onNodeChangeHandler).
                 setContentPath(this.contentPath).
                 setContent(this.content).
+                setApplicationKeys(this.applicationKeys).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.setEditorContent(id, property);
