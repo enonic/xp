@@ -9,6 +9,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 
@@ -24,6 +25,11 @@ public class UnpublishContentCommand
         this.params = builder.params;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public Contents execute()
     {
         final Context context = ContextAccessor.current();
@@ -32,7 +38,7 @@ public class UnpublishContentCommand
             branch( params.getUnpublishBranch() ).
             build();
 
-        return unpublishContext.callWith( () -> unpublish() );
+        return unpublishContext.callWith( this::unpublish );
     }
 
     private Contents unpublish()
@@ -51,19 +57,16 @@ public class UnpublishContentCommand
     {
         if ( includeChildren )
         {
-            this.nodeService.findByParent( FindNodesByParentParams.create().parentId( nodeId ).build() ).
-                getNodes().forEach( childNode -> recursiveUnpublish( childNode.id(), true, contentsBuilder ) );
+            final FindNodesByParentResult result =
+                this.nodeService.findByParent( FindNodesByParentParams.create().parentId( nodeId ).build() );
+
+            result.getNodeIds().forEach( ( id ) -> recursiveUnpublish( id, true, contentsBuilder ) );
         }
         final Node node = this.nodeService.deleteById( nodeId );
         if ( node != null )
         {
             contentsBuilder.add( translator.fromNode( node, false ) );
         }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

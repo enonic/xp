@@ -48,8 +48,8 @@ public class SearchExecutor
         {
             if ( anyOrderExpressions || anyAggregations )
             {
-                LOG.warn( "Query with size [" + query.getSize() + "]     > threshold [" + this.SCAN_THRESHOLD +
-                              "] but with aggregations or orderExpressions, may be slow: " );
+                // LOG.warn( "Query with size [" + query.getSize() + "]     > threshold [" + this.SCAN_THRESHOLD +
+                //               "] but with aggregations or orderExpressions, may be slow: " );
             }
             else
             {

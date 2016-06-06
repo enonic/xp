@@ -7,6 +7,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.Permission;
 
@@ -47,7 +48,11 @@ abstract class AbstractDeleteNodeCommand
             build().
             execute();
 
-        for ( final Node child : result.getNodes() )
+        final Nodes childNodes = GetNodesByIdsCommand.create( this ).
+            ids( result.getNodeIds() ).
+            build().execute();
+
+        for ( final Node child : childNodes )
         {
             resolveNodesToDelete( child, nodes );
         }

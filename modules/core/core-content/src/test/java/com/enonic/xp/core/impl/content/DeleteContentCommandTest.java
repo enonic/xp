@@ -19,6 +19,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeState;
@@ -120,7 +121,7 @@ public class DeleteContentCommandTest
         Mockito.when( this.nodeService.findByParent( Mockito.isA( FindNodesByParentParams.class ) ) ).
             thenReturn( FindNodesByParentResult.create().
                 hits( 0 ).
-                nodes( Nodes.empty() ).
+                nodeIds( NodeIds.empty() ).
                 totalHits( 0 ).
                 build() );
 
@@ -180,7 +181,7 @@ public class DeleteContentCommandTest
         Mockito.when( this.nodeService.findByParent( Mockito.isA( FindNodesByParentParams.class ) ) ).
             thenReturn( FindNodesByParentResult.create().
                 hits( 0 ).
-                nodes( Nodes.empty() ).
+                nodeIds( NodeIds.empty() ).
                 totalHits( 0 ).
                 build() );
 

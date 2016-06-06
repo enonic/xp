@@ -7,9 +7,9 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
@@ -72,17 +72,14 @@ public class FindNodesByParentCommand
         if ( nodeQueryResult.getHits() == 0 )
         {
             return FindNodesByParentResult.create().
-                hits( nodeQueryResult.getHits() ).
+                hits( 0 ).
                 totalHits( nodeQueryResult.getTotalHits() ).
-                nodes( Nodes.empty() ).
+                nodeIds( NodeIds.empty() ).
                 build();
         }
 
-        final Nodes nodes =
-            this.storageService.get( nodeQueryResult.getNodeIds(), true, InternalContext.from( ContextAccessor.current() ) );
-
         return FindNodesByParentResult.create().
-            nodes( nodes ).
+            nodeIds( nodeQueryResult.getNodeIds() ).
             totalHits( nodeQueryResult.getTotalHits() ).
             hits( nodeQueryResult.getHits() ).
             build();

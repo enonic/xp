@@ -38,6 +38,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.CompareExpr;
@@ -94,20 +95,20 @@ public final class SecurityServiceImpl
 {
     private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = ImmutableSet.of( RoleKeys.EVERYONE );
 
+    private final Clock clock;
+
+    private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
+
+    private final SecureRandom secureRandom = new SecureRandom();
+
     private NodeService nodeService;
 
     private IndexService indexService;
-
-    private final Clock clock;
 
     public SecurityServiceImpl()
     {
         this.clock = Clock.systemUTC();
     }
-
-    private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
-
-    private final SecureRandom secureRandom = new SecureRandom();
 
     @Activate
     public void initialize()
@@ -125,7 +126,9 @@ public final class SecurityServiceImpl
             parentPath( UserStoreNodeTranslator.getUserStoresParentPath() ).build();
         final FindNodesByParentResult result = callWithContext( () -> this.nodeService.findByParent( findByParent ) );
 
-        return UserStoreNodeTranslator.fromNodes( result.getNodes() );
+        final Nodes nodes = this.nodeService.getByIds( result.getNodeIds() );
+
+        return UserStoreNodeTranslator.fromNodes( nodes );
     }
 
     @Override
@@ -213,7 +216,7 @@ public final class SecurityServiceImpl
         } );
     }
 
-    public void doRemoveRelationships( final PrincipalKey from )
+    private void doRemoveRelationships( final PrincipalKey from )
     {
         final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
         nodeService.update( updateNodeParams );

@@ -15,6 +15,7 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.search.SearchService;
@@ -32,6 +33,11 @@ public final class DuplicateNodeCommand
         super( builder );
         this.nodeId = builder.id;
         this.binaryBlobStore = builder.binaryBlobStore;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public Node execute()
@@ -77,7 +83,12 @@ public final class DuplicateNodeCommand
             size( SearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
-        for ( final Node node : findNodesByParentResult.getNodes() )
+        final Nodes children = GetNodesByIdsCommand.create( this ).
+            ids( findNodesByParentResult.getNodeIds() ).
+            build().
+            execute();
+
+        for ( final Node node : children )
         {
             final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).
                 parent( newParent.path() );
@@ -125,7 +136,12 @@ public final class DuplicateNodeCommand
             size( SearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
-        for ( final Node node : findNodesByParentResult.getNodes() )
+        final Nodes children = GetNodesByIdsCommand.create( this ).
+            ids( findNodesByParentResult.getNodeIds() ).
+            build().
+            execute();
+
+        for ( final Node node : children )
         {
             updateNodeReferences( node, nodeReferenceUpdatesHolder );
             updateChildReferences( node, nodeReferenceUpdatesHolder );
@@ -187,11 +203,6 @@ public final class DuplicateNodeCommand
         }
 
         return newNodeName;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

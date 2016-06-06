@@ -232,7 +232,10 @@ public final class CreateNodeCommand
 
     private Long insertAsFirst( final FindNodesByParentResult findNodesByParentResult )
     {
-        final Node first = findNodesByParentResult.getNodes().first();
+        final Node first = GetNodeByIdCommand.create( this ).
+            id( findNodesByParentResult.getNodeIds().first() ).
+            build().
+            execute();
 
         if ( first.getManualOrderValue() == null )
         {
@@ -245,7 +248,10 @@ public final class CreateNodeCommand
 
     private Long insertAsLast( final FindNodesByParentResult findNodesByParentResult )
     {
-        final Node first = findNodesByParentResult.getNodes().first();
+        final Node first = GetNodeByIdCommand.create( this ).
+            id( findNodesByParentResult.getNodeIds().first() ).
+            build().
+            execute();
 
         if ( first.getManualOrderValue() == null )
         {

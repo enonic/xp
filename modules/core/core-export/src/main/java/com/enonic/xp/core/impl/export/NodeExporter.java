@@ -107,7 +107,9 @@ public class NodeExporter
         {
             final FindNodesByParentResult childrenBatch = exportBatch( parentPath, currentFrom );
 
-            allCurrentLevelChildren.addAll( childrenBatch.getNodes() );
+            final Nodes childNodes = this.nodeService.getByIds( childrenBatch.getNodeIds() );
+
+            allCurrentLevelChildren.addAll( childNodes );
             currentFrom += this.batchSize;
         }
 
@@ -122,7 +124,9 @@ public class NodeExporter
             size( this.batchSize ).
             build() );
 
-        for ( final Node child : childrenBatch.getNodes() )
+        final Nodes childNodes = this.nodeService.getByIds( childrenBatch.getNodeIds() );
+
+        for ( final Node child : childNodes )
         {
             try
             {

@@ -405,4 +405,16 @@ public abstract class AbstractNodeTest
             }
         }
     }
+
+    protected Node getNode( final NodeId nodeId )
+    {
+        return GetNodeByIdCommand.create().
+            id( nodeId ).
+            indexServiceInternal( indexServiceInternal ).
+            storageService( storageService ).
+            searchService( searchService ).
+            build().
+            execute();
+
+    }
 }

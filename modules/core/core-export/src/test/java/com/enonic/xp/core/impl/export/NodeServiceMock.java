@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.export;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,7 +201,11 @@ class NodeServiceMock
     @Override
     public Nodes getByIds( final NodeIds ids )
     {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
+        final Nodes.Builder builder = Nodes.create();
+
+        ids.forEach( id -> builder.add( this.nodeIdMap.get( id ) ) );
+
+        return builder.build();
     }
 
     @Override
@@ -249,7 +254,9 @@ class NodeServiceMock
         final Nodes nodes = nodesBuilder.build();
 
         return resultBuilder.hits( nodes.getSize() ).
-            nodes( nodes ).
+            nodeIds( NodeIds.from( nodes.getSet().stream().
+                map( ( node ) -> node.id() ).
+                collect( Collectors.toList() ) ) ).
             totalHits( nodes.getSize() ).
             build();
     }
