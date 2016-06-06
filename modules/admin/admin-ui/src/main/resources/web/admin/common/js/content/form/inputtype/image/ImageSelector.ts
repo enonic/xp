@@ -78,19 +78,19 @@ module api.content.form.inputtype.image {
                 this.updateSelectedItemsIcons();
             });
 
-            if (!this.contentDeletedListener) {
-                this.contentDeletedListener = (event) => {
-                    event.getDeletedItems().filter((deletedItem) => {
-                        return !!deletedItem;
-                    }).forEach((deletedItem) => {
+            this.handleContentDeletedEvent();
+        }
 
-                        var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
-                        if (option != null) {
-                            this.selectedOptionsView.removeSelectedOptions([option]);
-                        }
-                    });
-                }
+        private handleContentDeletedEvent() {
+            this.contentDeletedListener = (event) => {
+                event.getDeletedItems().forEach((deletedItem) => {
+                    var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
+                    if (option != null) {
+                        this.selectedOptionsView.removeSelectedOptions([option]);
+                    }
+                });
             }
+
             ContentDeletedEvent.on(this.contentDeletedListener);
 
             this.onRemoved((event) => {
