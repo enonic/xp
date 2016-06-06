@@ -3,6 +3,8 @@ module api.app {
     import EventJson = api.event.EventJson;
 
     export class ServerEventsConnection {
+        private static INSTANCE: ServerEventsConnection;
+        
         private static KEEP_ALIVE_TIME: number = 30 * 1000;
 
         private ws: WebSocket;
@@ -21,6 +23,14 @@ module api.app {
         constructor(reconnectIntervalSeconds: number = 5) {
             this.ws = null;
             this.reconnectInterval = reconnectIntervalSeconds * 1000;
+        }
+
+        public static getInstance(): ServerEventsConnection {
+            if (!ServerEventsConnection.INSTANCE) {
+                ServerEventsConnection.INSTANCE = new ServerEventsConnection();
+            }
+
+            return ServerEventsConnection.INSTANCE;
         }
 
         public connect() {

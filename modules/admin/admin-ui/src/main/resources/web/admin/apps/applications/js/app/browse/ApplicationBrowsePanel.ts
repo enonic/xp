@@ -1,4 +1,11 @@
 import "../../api.ts";
+import {ApplicationBrowseToolbar} from "./ApplicationBrowseToolbar";
+import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
+import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
+import {ApplicationBrowseItemPanel} from "./ApplicationBrowseItemPanel";
+import {StopApplicationEvent} from "./StopApplicationEvent";
+import {StartApplicationEvent} from "./StartApplicationEvent";
+import {UninstallApplicationEvent} from "./UninstallApplicationEvent";
 
 import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;
@@ -9,13 +16,6 @@ import StopApplicationRequest = api.application.StopApplicationRequest;
 import UninstallApplicationRequest = api.application.UninstallApplicationRequest;
 import ApplicationEvent = api.application.ApplicationEvent;
 import ApplicationEventType = api.application.ApplicationEventType;
-import {ApplicationBrowseToolbar} from "./ApplicationBrowseToolbar";
-import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
-import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
-import {ApplicationBrowseItemPanel} from "./ApplicationBrowseItemPanel";
-import {StopApplicationEvent} from "./StopApplicationEvent";
-import {StartApplicationEvent} from "./StartApplicationEvent";
-import {UninstallApplicationEvent} from "./UninstallApplicationEvent";
 
 export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Application> {
 
@@ -110,7 +110,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
             } else if (ApplicationEventType.STOPPED == event.getEventType()) {
                 setTimeout(() => { // as uninstall usually follows stop event, lets wait to check if app still exists
                     var stoppedApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey());
-                    if (!!stoppedApp) { // seems to be present in the grid
+                    if (!!stoppedApp && api.app.ServerEventsConnection.getInstance().isConnected()) { // seems to be present in the grid and xp is running
                         this.applicationTreeGrid.updateApplicationNode(event.getApplicationKey());
                     }
                 }, 400);
