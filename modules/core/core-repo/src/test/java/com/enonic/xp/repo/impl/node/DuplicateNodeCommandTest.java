@@ -284,21 +284,25 @@ public class DuplicateNodeCommandTest
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "my-node" ) ).
             name( "my-node" ).
             build() );
 
         final Node childNode1 = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
+            setNodeId( NodeId.from( "child1" ) ).
             name( "child1" ).
             build() );
 
         final Node childNode2 = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
+            setNodeId( NodeId.from( "child2" ) ).
             name( "child2" ).
             build() );
 
         final Node childNode3 = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
+            setNodeId( NodeId.from( "child3" ) ).
             name( "child3" ).
             build() );
 

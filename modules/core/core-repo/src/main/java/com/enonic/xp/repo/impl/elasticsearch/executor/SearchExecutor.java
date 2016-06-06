@@ -45,7 +45,7 @@ public class SearchExecutor
 
         if ( size == SearchService.GET_ALL_SIZE_FLAG || size > SCAN_THRESHOLD )
         {
-            if ( anyOrderExpressions || anyAggregations )
+            if ( anyAggregations ) // || anyOrderExpressions)
             {
                 // LOG.warn( "Query with size [" + query.getSize() + "]     > threshold [" + this.SCAN_THRESHOLD +
                 //               "] but with aggregations or orderExpressions, may be slow: " );

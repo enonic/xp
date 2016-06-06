@@ -6,11 +6,14 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.search.sort.SortBuilder;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
@@ -42,17 +45,36 @@ public class CopyExecutor
     public void execute()
     {
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
-            setTypes( query.getIndexType() );
-
-        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
-
-        SearchResponse scrollResp = searchRequestBuilder.
+            setTypes( query.getIndexType() ).
             setScroll( defaultScrollTime ).
             setQuery( query.getQuery() ).
             setPostFilter( query.getFilter() ).
             setFrom( query.getFrom() ).
             setSize( query.getBatchSize() ).
-            addFields( query.getReturnFields().getReturnFieldNames() ).
+            addFields( query.getReturnFields().getReturnFieldNames() );
+
+        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
+
+        final ImmutableSet<SortBuilder> sortBuilders = query.getSortBuilders();
+
+        SearchType searchType;
+
+        if ( sortBuilders.isEmpty() )
+        {
+            searchType = SearchType.SCAN;
+        }
+        else
+        {
+            searchType = SearchType.DEFAULT;
+
+            for ( final SortBuilder sortBuilder : sortBuilders )
+            {
+                searchRequestBuilder.addSort( sortBuilder );
+            }
+        }
+
+        SearchResponse scrollResp = searchRequestBuilder.
+            setSearchType( searchType ).
             execute().
             actionGet();
 
