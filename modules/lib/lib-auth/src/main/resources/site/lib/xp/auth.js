@@ -32,14 +32,20 @@ function nullOrValue(value) {
  * @param {object} params JSON parameters.
  * @param {string} params.user Name of user to log in.
  * @param {string} [params.userStore] Name of user-store where the user is stored. If not specified it will try all available user-stores in order.
- * @param {string} params.password Password for the user.
+ * @param {string} [params.password] Password for the user. Ignored if verified is set to true, mandatory otherwise.
+ * @param {boolean} [params.verified=false] Force the authentication of the user.
  * @returns {object} Information for logged-in user.
  */
 exports.login = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.LoginHandler');
 
     bean.user = required(params, 'user');
-    bean.password = required(params, 'password');
+
+    if (params.verified) {
+        bean.verified = params.verified;
+    } else {
+        bean.password = required(params, 'password');
+    }
 
     if (params['userStore']) {
         bean.userStore = [].concat(params['userStore']);
