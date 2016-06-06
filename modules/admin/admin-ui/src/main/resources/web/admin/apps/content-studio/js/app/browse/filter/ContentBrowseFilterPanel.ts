@@ -83,6 +83,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.addClass("has-dependency-item");
         this.dependenciesSection.setItem(item, inbound);
         if (this.dependenciesSection.isActive()) {
+            this.reset(true);
             this.search();
         }
     }
@@ -96,7 +97,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private searchFacets() {
-        if (!this.hasFilterSet()) {
+        if (!this.hasFilterSet() && !this.isDependenciesFilterActive()) {
             this.handleEmptyFilterInput();
             return;
         }
@@ -104,12 +105,12 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.searchDataAndHandleResponse(this.createContentQuery());
     }
 
-    hasFilterSet(): boolean {
-        return super.hasFilterSet() || this.dependenciesSection.isActive();
+    isDependenciesFilterActive(): boolean {
+        return this.dependenciesSection.isActive();
     }
 
     private refreshFacets() {
-        if (!this.hasFilterSet()) {
+        if (!this.hasFilterSet() && !this.isDependenciesFilterActive()) {
             this.handleEmptyFilterInput(true);
             return;
         }
