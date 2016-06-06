@@ -296,7 +296,7 @@ module api.ui.time {
             return this.input.isDirty();
         }
 
-        hasValidUserInput(): boolean {
+        isValid(): boolean {
             return this.validUserInput;
         }
 

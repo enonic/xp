@@ -92,7 +92,7 @@ module api.ui.time {
             wrapper.appendChildren<api.dom.Element>(this.input, this.popup, this.popupTrigger);
 
             this.appendChild(wrapper);
-            
+
             this.setupListeners(builder);
         }
 
@@ -157,7 +157,7 @@ module api.ui.time {
             return this.input.isDirty();
         }
 
-        hasValidUserInput(): boolean {
+        isValid(): boolean {
             return this.validUserInput;
         }
 
