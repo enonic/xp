@@ -115,7 +115,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
             setTimeout(() => {
                 this.setDependantItems(stashedItems.slice());
                 this.centerMyself();
-                this.publishButton.setEnabled(true);
                 this.loadMask.hide();
             }, 100);
             return wemQ<void>(null);
