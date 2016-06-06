@@ -168,6 +168,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
             this.fullDependantSize = result.getMetadata().getTotalHits();
 
+            this.toggleClass("contains-removable", result.isContainsRemovable());
             return result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
         });
     }
@@ -356,9 +357,7 @@ export class PublishDialogDependantList extends DialogDependantList {
 
         if (CompareStatus.NEWER == item.getCompareStatus()) {
             view.addClass("removable");
-            if (!this.hasClass("contains-removable")) {
-                this.addClass("contains-removable");
-            }
+            this.toggleClass("contains-removable", true);
         }
 
         view.onClicked((event) => {

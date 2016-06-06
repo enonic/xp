@@ -96,6 +96,7 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
@@ -505,13 +506,14 @@ public final class ContentResource
                 includeChildren( params.includeChildren() ).
                 build() );
 
-        //Resolved the dependent ContentPublishItem
         final List<ContentId> dependentContentIdList = resolvePublishDependenciesResult.contentIds().
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() );
 
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
+
+        final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
 
         final List<ContentPublishItemJson> dependentContentPublishItemList =
             resolveContentPublishItems( dependentContentIds, params.getFrom(), params.getSize() );
@@ -525,8 +527,18 @@ public final class ContentResource
         return ResolvePublishContentResultJson.create().
             setRequestedContents( requestedContentPublishItemList ).
             setDependentContents( dependentContentPublishItemList ).
+            setContainsRemovable( anyRemovable ).
             setMetadata( metadata ).
             build();
+    }
+
+    private Boolean isAnyContentRemovableFromPublish( final ContentIds contentIds )
+    {
+        final CompareContentResults compareContentResults =
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+
+        return compareContentResults.getCompareContentResults().stream().anyMatch(
+            result -> CompareStatus.NEWER == result.getCompareStatus() );
     }
 
     private List<ContentPublishItemJson> resolveContentPublishItems( final ContentIds contentIds, final Integer from, final Integer size )
@@ -535,8 +547,8 @@ public final class ContentResource
         Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
 
         contents = getSubContents( contents.stream().
-            sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).collect( Collectors.toList() ), from,
-                                   size );
+                                       sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).collect(
+                                       Collectors.toList() ), from, size );
 
         //Retrieves the compare contents
         final CompareContentResults compareContentResults =
