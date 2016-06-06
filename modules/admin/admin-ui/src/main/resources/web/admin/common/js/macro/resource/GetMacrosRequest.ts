@@ -1,17 +1,25 @@
 module api.macro.resource {
 
+    import ApplicationKey = api.application.ApplicationKey;
+
     export class GetMacrosRequest extends MacroResourceRequest<MacrosJson, MacroDescriptor[]> {
 
-        constructor() {
+        private applicationKeys: ApplicationKey[];
+
+        constructor(applicationKeys: ApplicationKey[]) {
             super();
+            super.setMethod("POST");
+            this.applicationKeys = applicationKeys;
         }
 
         getParams(): Object {
-            return {}
+            return {
+                appKeys: ApplicationKey.toStringArray(this.applicationKeys)
+            };
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list");
+            return api.rest.Path.fromParent(super.getResourcePath(), "getByApps");
         }
 
         sendAndParse(): wemQ.Promise<MacroDescriptor[]> {

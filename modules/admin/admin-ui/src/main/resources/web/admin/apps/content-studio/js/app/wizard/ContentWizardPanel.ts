@@ -1253,7 +1253,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         if (!this.isContentFormValid) {
             this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
         }
-        var contentFormHasValidUserInput = this.contentWizardStepForm.getFormView().hasValidUserInput();
 
         var allMetadataFormsValid = true;
         var allMetadataFormsHasValidUserInput = true;
@@ -1270,7 +1269,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
             }
         }
-        return this.isContentFormValid && allMetadataFormsValid && contentFormHasValidUserInput && allMetadataFormsHasValidUserInput;
+        return this.isContentFormValid && allMetadataFormsValid && allMetadataFormsHasValidUserInput;
     }
 
     getLiveFormPanel(): LiveFormPanel {

@@ -125,7 +125,7 @@ exports.serviceUrl = function (params) {
 };
 
 /**
- * This function generates a URL pointing to the login service of the ID provider corresponding to the current execution context.
+ * This function generates a URL pointing to the login function of the ID provider corresponding to the current execution context.
  *
  *
  * @param {object} params Input parameters as JSON.
@@ -141,7 +141,7 @@ exports.loginUrl = function (params) {
 };
 
 /**
- * This function generates a URL pointing to the logout service of the ID provider corresponding to the current user.
+ * This function generates a URL pointing to the logout function of the ID provider corresponding to the current user.
  *
  *
  * @param {object} params Input parameters as JSON.

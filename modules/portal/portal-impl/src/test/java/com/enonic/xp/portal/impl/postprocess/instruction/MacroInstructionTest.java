@@ -17,6 +17,7 @@ import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
@@ -128,6 +129,17 @@ public class MacroInstructionTest
         String outputHtml =
             macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getAsString();
         assertEquals( "mymacro: param1=value1, body=body", outputHtml );
+    }
+
+    @Test
+    public void testInstructionRenderingModeEdit()
+        throws Exception
+    {
+        portalRequest.setMode( RenderMode.EDIT );
+
+        String outputHtml =
+            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
+        assertEquals( "[mymacro param1=\"value1\"]body[/mymacro]", outputHtml );
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName )

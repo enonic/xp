@@ -10,12 +10,14 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
@@ -61,6 +63,12 @@ public final class MacroInstruction
         if ( macroName == null )
         {
             return null;
+        }
+
+        if ( portalRequest.getMode() == RenderMode.EDIT )
+        {
+            final String editModeMacro = toMacroInstruction( macroInstruction );
+            return PortalResponse.create().body( editModeMacro ).build();
         }
 
         // resolve macro processor
@@ -168,6 +176,21 @@ public final class MacroInstruction
         context.body( macroInstruction.attribute( MACRO_BODY ) );
         context.request( request );
         return context.build();
+    }
+
+    private String toMacroInstruction( final Instruction macroInstruction )
+    {
+        final Macro.Builder macro = Macro.create().name( macroInstruction.attribute( MACRO_NAME ) );
+        for ( String name : macroInstruction.attributeNames() )
+        {
+            if ( name.equalsIgnoreCase( MACRO_BODY ) || name.equalsIgnoreCase( MACRO_NAME ) )
+            {
+                continue;
+            }
+            macro.param( name, macroInstruction.attribute( name ) );
+        }
+        macro.body( macroInstruction.attribute( MACRO_BODY ) );
+        return macro.build().toString();
     }
 
     @Reference
