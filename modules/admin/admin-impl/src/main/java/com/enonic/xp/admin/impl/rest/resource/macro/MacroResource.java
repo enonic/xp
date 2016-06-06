@@ -161,7 +161,7 @@ public final class MacroResource
         portalRequest.setRawRequest( req );
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setBaseUri( "/portal" );
-        portalRequest.setMode( RenderMode.EDIT );
+        portalRequest.setMode( RenderMode.PREVIEW );
         portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
         portalRequest.setScheme( "http" );
         portalRequest.setHost( "localhost" );
