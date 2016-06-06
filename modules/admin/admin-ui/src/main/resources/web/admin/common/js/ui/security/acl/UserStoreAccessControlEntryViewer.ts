@@ -21,7 +21,7 @@ module api.ui.security.acl {
         }
 
         resolveIconClass(object: UserStoreAccessControlEntry): string {
-            return "icon-users";
+            return "icon-masks";
         }
     }
 
