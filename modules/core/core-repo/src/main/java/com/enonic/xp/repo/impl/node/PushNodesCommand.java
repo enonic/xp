@@ -13,6 +13,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -168,7 +169,7 @@ public class PushNodesCommand
             repositoryId( context.getRepositoryId() ).
             build();
 
-        final NodeIds children = FindNodeIdsByParentCommand.create( this ).
+        final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
             params( FindNodesByParentParams.create().
                 parentPath( nodeBranchEntry.getNodePath() ).
                 childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
@@ -177,7 +178,7 @@ public class PushNodesCommand
             execute();
 
         final NodeBranchEntries childEntries =
-            this.storageService.getBranchNodeVersions( children, false, InternalContext.from( ContextAccessor.current() ) );
+            this.storageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
 
         for ( final NodeBranchEntry child : childEntries )
         {

@@ -97,6 +97,14 @@ public class StorageServiceImpl
     }
 
     @Override
+    public void delete( final NodeIds nodeIds, final InternalContext context )
+    {
+        branchService.delete( nodeIds, context );
+
+        indexDataService.delete( nodeIds, context );
+    }
+
+    @Override
     public Node updateMetadata( final Node node, final InternalContext context )
     {
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( node.id(), context );

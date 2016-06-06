@@ -17,6 +17,8 @@ public interface BranchService
 
     void delete( final NodeId nodeId, final InternalContext context );
 
+    void delete( final NodeIds nodeIds, final InternalContext context );
+
     NodeBranchEntry get( final NodeId nodeId, final InternalContext context );
 
     NodeBranchEntries get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );

@@ -27,6 +27,8 @@ public interface StorageService
 
     void delete( final NodeId nodeId, final InternalContext context );
 
+    void delete( final NodeIds nodeIds, final InternalContext context );
+
     Node updateMetadata( final Node node, final InternalContext context );
 
     void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );

@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.elasticsearch.storage;
 
 import java.util.Collection;
 
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -32,6 +34,7 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchStorageType;
 import com.enonic.xp.repo.impl.storage.CopyRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequest;
+import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
@@ -94,6 +97,26 @@ public class StorageDaoImpl
             actionGet( request.getTimeoutAsString() );
 
         return deleteResponse.isFound();
+    }
+
+    @Override
+    public boolean delete( final DeleteRequests request )
+    {
+        final StorageSettings settings = request.getSettings();
+
+        final BulkRequestBuilder bulkRequest = new BulkRequestBuilder( this.client );
+
+        for ( final String nodeId : request.getIds() )
+        {
+            bulkRequest.add( new DeleteRequestBuilder( this.client ).
+                setId( nodeId ).
+                setIndex( settings.getStorageName().getName() ).
+                setType( settings.getStorageType().getName() ) );
+        }
+
+        final BulkResponse response = bulkRequest.execute().actionGet();
+
+        return response.hasFailures();
     }
 
     private String doStore( final IndexRequest request, final String timeout )

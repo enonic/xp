@@ -1000,6 +1000,8 @@ public class ResolveSyncWorkCommandTest
         markAsDelete( NodeId.from( "s1" ) );
         markAsDelete( NodeId.from( "s2" ) );
 
+        refresh();
+
         result = resolveSyncWorkResult( "s1" );
 
         assertNodes( result, ExpectedNodes.create().

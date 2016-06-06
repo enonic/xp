@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.common.Strings;
 import org.osgi.service.component.annotations.Component;
@@ -32,6 +33,7 @@ import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
@@ -96,6 +98,22 @@ public class BranchServiceImpl
         storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
 
         pathCache.evict( createPath( nodeBranchEntry.getNodePath(), context ) );
+    }
+
+    @Override
+    public void delete( final NodeIds nodeIds, final InternalContext context )
+    {
+        final NodeBranchEntries nodeBranchEntries = getIgnoreOrder( nodeIds, context );
+
+        nodeBranchEntries.forEach( entry -> pathCache.evict( createPath( entry.getNodePath(), context ) ) );
+
+        storageDao.delete( DeleteRequests.create().
+            forceRefresh( false ).
+            ids( nodeIds.stream().
+                map( nodeId -> new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
+                collect( Collectors.toSet() ) ).
+            settings( createStorageSettings( context ) ).
+            build() );
     }
 
     @Override

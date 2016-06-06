@@ -17,6 +17,8 @@ public interface IndexDataService
 
     void delete( final NodeId nodeId, final InternalContext context );
 
+    void delete( final NodeIds nodeIds, final InternalContext context );
+
     void store( final Node node, final InternalContext context );
 
     void push( final NodeIds nodeIds, final Branch targetBranch, final RepositoryId targetRepo, final InternalContext context );
