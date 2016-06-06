@@ -145,11 +145,13 @@ module api.app.browse.filter {
             return;
         }
 
-        reset() {
+        reset(silent: boolean = false) {
             this.searchField.clear(true);
             this.aggregationContainer.deselectAll(true);
             this.clearFilter.hide();
-            this.notifyReset();
+            if (!silent) {
+                this.notifyReset();
+            }
         }
 
         deselectAll() {
