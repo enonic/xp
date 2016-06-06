@@ -25,10 +25,8 @@ module api.rest {
             return this;
         }
 
-        setTimeout(timeoutMillis): JsonRequest<RAW_JSON_TYPE> {
-            if (timeoutMillis) {
-                this.timeoutMillis = timeoutMillis;
-            }
+        setTimeout(timeoutMillis: number): JsonRequest<RAW_JSON_TYPE> {
+            this.timeoutMillis = timeoutMillis;
             return this;
         }
 

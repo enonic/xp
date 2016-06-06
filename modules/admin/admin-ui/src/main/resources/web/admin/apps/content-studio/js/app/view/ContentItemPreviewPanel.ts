@@ -1,4 +1,5 @@
 import "../../api.ts";
+import {ContentPreviewPathChangedEvent} from "./ContentPreviewPathChangedEvent";
 
 import RenderingMode = api.rendering.RenderingMode;
 import ContentImageUrlResolver = api.content.ContentImageUrlResolver;
@@ -7,8 +8,6 @@ import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
-import {ContentPreviewPathChangedEvent} from "./ContentPreviewPathChangedEvent";
-import {ContentBrowseItem} from "../browse/ContentBrowseItem";
 
 export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
@@ -52,7 +51,8 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
             try {
                 if (frameWindow) {
                     var pathname: string = frameWindow.location.pathname;
-                    if (pathname && pathname !== 'blank') {
+                    // /blank is for IE
+                    if (pathname && pathname !== 'blank' && pathname !== '/blank') {
                         new ContentPreviewPathChangedEvent(pathname).fire();
                     }
                     frameWindow.addEventListener("click", this.frameClickHandler.bind(this));
