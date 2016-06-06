@@ -83,38 +83,29 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.addClass("has-dependency-item");
         this.dependenciesSection.setItem(item, inbound);
         if (this.dependenciesSection.isActive()) {
+            this.reset(true);
             this.search();
         }
     }
 
     doRefresh() {
-        this.refreshFacets();
+        if (!this.isAnyFilterSet()) {
+            this.handleEmptyFilterInput(true);
+        } else {
+            this.refreshDataAndHandleResponse(this.createContentQuery());
+        }
     }
 
     doSearch(elementChanged?: api.dom.Element) {
-        this.searchFacets();
-    }
-
-    private searchFacets() {
-        if (!this.hasFilterSet()) {
+        if (!this.isAnyFilterSet()) {
             this.handleEmptyFilterInput();
-            return;
+        } else {
+            this.searchDataAndHandleResponse(this.createContentQuery());
         }
-
-        this.searchDataAndHandleResponse(this.createContentQuery());
     }
 
-    hasFilterSet(): boolean {
-        return super.hasFilterSet() || this.dependenciesSection.isActive();
-    }
-
-    private refreshFacets() {
-        if (!this.hasFilterSet()) {
-            this.handleEmptyFilterInput(true);
-            return;
-        }
-
-        this.refreshDataAndHandleResponse(this.createContentQuery());
+    private isAnyFilterSet(): boolean {
+        return this.hasFilterSet() || this.dependenciesSection.isActive();
     }
 
     private handleEmptyFilterInput(isRefresh?: boolean) {
