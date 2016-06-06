@@ -33,7 +33,11 @@ module api {
             prettifiedPathName = this.replaceHyphensAroundDot(prettifiedPathName);
             prettifiedPathName = this.ensureNiceBeginningAndEnding(prettifiedPathName);
 
-            prettifiedPathName = this.transcribe(prettifiedPathName);
+            // String.prototype.normalize is not supported on Windows 8.1, thus no sense calling transcribe (error will be thrown)
+            if (!api.BrowserHelper.isIE()) {
+                prettifiedPathName = this.transcribe(prettifiedPathName);
+            }
+
 
             if (StringHelper.isBlank(prettifiedPathName)) {
                 return '';
@@ -381,107 +385,107 @@ module api {
 
             // cyrillic letters transliteration
             // big letters
-            nonDiacriticsObject['\u0410'] = "a"; // ¿
-            nonDiacriticsObject['\u0411'] = "b"; // ¡
-            nonDiacriticsObject['\u0412'] = "v"; // ¬
-            nonDiacriticsObject['\u0413'] = "g"; // √
-            nonDiacriticsObject['\u0414'] = "d"; // ƒ
-            nonDiacriticsObject['\u0415'] = "e"; // ≈
-            nonDiacriticsObject['\u0401'] = "jo"; // ®
-            nonDiacriticsObject['\u0416'] = "zh"; // ∆
-            nonDiacriticsObject['\u0417'] = "z"; // «
-            nonDiacriticsObject['\u0418'] = "i"; // »
-            nonDiacriticsObject['\u0419'] = "j"; // …
-            nonDiacriticsObject['\u041a'] = "k"; //  
-            nonDiacriticsObject['\u041b'] = "l"; // À
-            nonDiacriticsObject['\u041c'] = "m"; // Ã
-            nonDiacriticsObject['\u041d'] = "n"; // Õ
-            nonDiacriticsObject['\u041e'] = "o"; // Œ
-            nonDiacriticsObject['\u041f'] = "p"; // œ
-            nonDiacriticsObject['\u0420'] = "r"; // –
-            nonDiacriticsObject['\u0421'] = "s"; // —
-            nonDiacriticsObject['\u0422'] = "t"; // “
-            nonDiacriticsObject['\u0423'] = "u"; // ”
-            nonDiacriticsObject['\u0424'] = "f"; // ‘
-            nonDiacriticsObject['\u0425'] = "h"; // ’
-            nonDiacriticsObject['\u0426'] = "c"; // ÷
-            nonDiacriticsObject['\u0427'] = "ch"; // ◊
-            nonDiacriticsObject['\u0428'] = "sh"; // ÿ
-            nonDiacriticsObject['\u0429'] = "sch"; // Ÿ
-            nonDiacriticsObject['\u042a'] = ""; // ⁄
-            nonDiacriticsObject['\u042b'] = "y"; // €
-            nonDiacriticsObject['\u042c'] = ""; // ‹
-            nonDiacriticsObject['\u042d'] = "eh"; // ›
-            nonDiacriticsObject['\u042e'] = "ju"; // ﬁ
-            nonDiacriticsObject['\u042f'] = "ja"; // ﬂ
+            nonDiacriticsObject['\u0410'] = "a"; // ÔøΩ
+            nonDiacriticsObject['\u0411'] = "b"; // ÔøΩ
+            nonDiacriticsObject['\u0412'] = "v"; // ÔøΩ
+            nonDiacriticsObject['\u0413'] = "g"; // ÔøΩ
+            nonDiacriticsObject['\u0414'] = "d"; // ÔøΩ
+            nonDiacriticsObject['\u0415'] = "e"; // ÔøΩ
+            nonDiacriticsObject['\u0401'] = "jo"; // ÔøΩ
+            nonDiacriticsObject['\u0416'] = "zh"; // ÔøΩ
+            nonDiacriticsObject['\u0417'] = "z"; // ÔøΩ
+            nonDiacriticsObject['\u0418'] = "i"; // ÔøΩ
+            nonDiacriticsObject['\u0419'] = "j"; // ÔøΩ
+            nonDiacriticsObject['\u041a'] = "k"; // ÔøΩ
+            nonDiacriticsObject['\u041b'] = "l"; // ÔøΩ
+            nonDiacriticsObject['\u041c'] = "m"; // ÔøΩ
+            nonDiacriticsObject['\u041d'] = "n"; // ÔøΩ
+            nonDiacriticsObject['\u041e'] = "o"; // ÔøΩ
+            nonDiacriticsObject['\u041f'] = "p"; // ÔøΩ
+            nonDiacriticsObject['\u0420'] = "r"; // ÔøΩ
+            nonDiacriticsObject['\u0421'] = "s"; // ÔøΩ
+            nonDiacriticsObject['\u0422'] = "t"; // ÔøΩ
+            nonDiacriticsObject['\u0423'] = "u"; // ÔøΩ
+            nonDiacriticsObject['\u0424'] = "f"; // ÔøΩ
+            nonDiacriticsObject['\u0425'] = "h"; // ÔøΩ
+            nonDiacriticsObject['\u0426'] = "c"; // ÔøΩ
+            nonDiacriticsObject['\u0427'] = "ch"; // ÔøΩ
+            nonDiacriticsObject['\u0428'] = "sh"; // ÔøΩ
+            nonDiacriticsObject['\u0429'] = "sch"; // ÔøΩ
+            nonDiacriticsObject['\u042a'] = ""; // ÔøΩ
+            nonDiacriticsObject['\u042b'] = "y"; // ÔøΩ
+            nonDiacriticsObject['\u042c'] = ""; // ÔøΩ
+            nonDiacriticsObject['\u042d'] = "eh"; // ÔøΩ
+            nonDiacriticsObject['\u042e'] = "ju"; // ÔøΩ
+            nonDiacriticsObject['\u042f'] = "ja"; // ÔøΩ
 
             // small letters
-            nonDiacriticsObject['\u0430'] = "a"; // ‡
-            nonDiacriticsObject['\u0431'] = "b"; // ·
-            nonDiacriticsObject['\u0432'] = "v"; // ‚
-            nonDiacriticsObject['\u0433'] = "g"; // „
-            nonDiacriticsObject['\u0434'] = "d"; // ‰
-            nonDiacriticsObject['\u0435'] = "e"; // Â
-            nonDiacriticsObject['\u0451'] = "jo"; // ∏
-            nonDiacriticsObject['\u0436'] = "zh"; // Ê
-            nonDiacriticsObject['\u0437'] = "z"; // Á
-            nonDiacriticsObject['\u0438'] = "i"; // Ë
-            nonDiacriticsObject['\u0439'] = "j"; // È
-            nonDiacriticsObject['\u043a'] = "k"; // Í
-            nonDiacriticsObject['\u043b'] = "l"; // Î
-            nonDiacriticsObject['\u043c'] = "m"; // Ï
-            nonDiacriticsObject['\u043d'] = "n"; // Ì
-            nonDiacriticsObject['\u043e'] = "o"; // Ó
-            nonDiacriticsObject['\u043f'] = "p"; // Ô
-            nonDiacriticsObject['\u0440'] = "r"; // 
-            nonDiacriticsObject['\u0441'] = "s"; // Ò
-            nonDiacriticsObject['\u0442'] = "t"; // Ú
-            nonDiacriticsObject['\u0443'] = "u"; // Û
-            nonDiacriticsObject['\u0444'] = "f"; // Ù
-            nonDiacriticsObject['\u0445'] = "h"; // ı
-            nonDiacriticsObject['\u0446'] = "c"; // ˆ
-            nonDiacriticsObject['\u0447'] = "ch"; // ˜
-            nonDiacriticsObject['\u0448'] = "sh"; // ¯
-            nonDiacriticsObject['\u0449'] = "sch"; // ˘
-            nonDiacriticsObject['\u044a'] = ""; // ˙
-            nonDiacriticsObject['\u044b'] = "y"; // ˚
-            nonDiacriticsObject['\u044c'] = ""; // ¸
-            nonDiacriticsObject['\u044d'] = "eh"; // ˝
-            nonDiacriticsObject['\u044e'] = "ju"; // ˛
-            nonDiacriticsObject['\u044f'] = "ja"; // ˇ
+            nonDiacriticsObject['\u0430'] = "a"; // ÔøΩ
+            nonDiacriticsObject['\u0431'] = "b"; // ÔøΩ
+            nonDiacriticsObject['\u0432'] = "v"; // ÔøΩ
+            nonDiacriticsObject['\u0433'] = "g"; // ÔøΩ
+            nonDiacriticsObject['\u0434'] = "d"; // ÔøΩ
+            nonDiacriticsObject['\u0435'] = "e"; // ÔøΩ
+            nonDiacriticsObject['\u0451'] = "jo"; // ÔøΩ
+            nonDiacriticsObject['\u0436'] = "zh"; // ÔøΩ
+            nonDiacriticsObject['\u0437'] = "z"; // ÔøΩ
+            nonDiacriticsObject['\u0438'] = "i"; // ÔøΩ
+            nonDiacriticsObject['\u0439'] = "j"; // ÔøΩ
+            nonDiacriticsObject['\u043a'] = "k"; // ÔøΩ
+            nonDiacriticsObject['\u043b'] = "l"; // ÔøΩ
+            nonDiacriticsObject['\u043c'] = "m"; // ÔøΩ
+            nonDiacriticsObject['\u043d'] = "n"; // ÔøΩ
+            nonDiacriticsObject['\u043e'] = "o"; // ÔøΩ
+            nonDiacriticsObject['\u043f'] = "p"; // ÔøΩ
+            nonDiacriticsObject['\u0440'] = "r"; // ÔøΩ
+            nonDiacriticsObject['\u0441'] = "s"; // ÔøΩ
+            nonDiacriticsObject['\u0442'] = "t"; // ÔøΩ
+            nonDiacriticsObject['\u0443'] = "u"; // ÔøΩ
+            nonDiacriticsObject['\u0444'] = "f"; // ÔøΩ
+            nonDiacriticsObject['\u0445'] = "h"; // ÔøΩ
+            nonDiacriticsObject['\u0446'] = "c"; // ÔøΩ
+            nonDiacriticsObject['\u0447'] = "ch"; // ÔøΩ
+            nonDiacriticsObject['\u0448'] = "sh"; // ÔøΩ
+            nonDiacriticsObject['\u0449'] = "sch"; // ÔøΩ
+            nonDiacriticsObject['\u044a'] = ""; // ÔøΩ
+            nonDiacriticsObject['\u044b'] = "y"; // ÔøΩ
+            nonDiacriticsObject['\u044c'] = ""; // ÔøΩ
+            nonDiacriticsObject['\u044d'] = "eh"; // ÔøΩ
+            nonDiacriticsObject['\u044e'] = "ju"; // ÔøΩ
+            nonDiacriticsObject['\u044f'] = "ja"; // ÔøΩ
 
             // others
-            nonDiacriticsObject['\u0406'] = "i";  // ≤
+            nonDiacriticsObject['\u0406'] = "i";  // ÔøΩ
             nonDiacriticsObject['\u0472'] = "fh";  // ?
             nonDiacriticsObject['\u0462'] = "je";  // ?
             nonDiacriticsObject['\u0474'] = "yh";  // ?
-            nonDiacriticsObject['\u0490'] = "gj";  // •
-            nonDiacriticsObject['\u0403'] = "gj";  // Å
-            nonDiacriticsObject['\u0404'] = "ye";  // ™
-            nonDiacriticsObject['\u0407'] = "yi";  // Ø
-            nonDiacriticsObject['\u0405'] = "dz";  // Ω
-            nonDiacriticsObject['\u0408'] = "jj";  // £
-            nonDiacriticsObject['\u0409'] = "lj";  // ä
-            nonDiacriticsObject['\u040a'] = "nj";  // å
-            nonDiacriticsObject['\u040c'] = "kj";  // ç
-            nonDiacriticsObject['\u040f'] = "dj";  // è
-            nonDiacriticsObject['\u040e'] = "uj";  // °
+            nonDiacriticsObject['\u0490'] = "gj";  // ÔøΩ
+            nonDiacriticsObject['\u0403'] = "gj";  // ÔøΩ
+            nonDiacriticsObject['\u0404'] = "ye";  // ÔøΩ
+            nonDiacriticsObject['\u0407'] = "yi";  // ÔøΩ
+            nonDiacriticsObject['\u0405'] = "dz";  // ÔøΩ
+            nonDiacriticsObject['\u0408'] = "jj";  // ÔøΩ
+            nonDiacriticsObject['\u0409'] = "lj";  // ÔøΩ
+            nonDiacriticsObject['\u040a'] = "nj";  // ÔøΩ
+            nonDiacriticsObject['\u040c'] = "kj";  // ÔøΩ
+            nonDiacriticsObject['\u040f'] = "dj";  // ÔøΩ
+            nonDiacriticsObject['\u040e'] = "uj";  // ÔøΩ
 
-            nonDiacriticsObject['\u0456'] = "i";  // ≥
+            nonDiacriticsObject['\u0456'] = "i";  // ÔøΩ
             nonDiacriticsObject['\u0473'] = "fh";  // ?
             nonDiacriticsObject['\u0463'] = "je";  // ?
             nonDiacriticsObject['\u0475'] = "yh";  // ?
-            nonDiacriticsObject['\u0491'] = "gj";  // ¥
-            nonDiacriticsObject['\u0453'] = "gj";  // É
-            nonDiacriticsObject['\u0454'] = "ye";  // ∫
-            nonDiacriticsObject['\u0457'] = "yi";  // ø
-            nonDiacriticsObject['\u0455'] = "dz";  // æ
-            nonDiacriticsObject['\u0458'] = "jj";  // º
-            nonDiacriticsObject['\u0459'] = "lj";  // ö
-            nonDiacriticsObject['\u045a'] = "nj";  // ú
-            nonDiacriticsObject['\u045c'] = "kj";  // ù
-            nonDiacriticsObject['\u045f'] = "dj";  // ü
-            nonDiacriticsObject['\u045e'] = "uj";   // ¢
+            nonDiacriticsObject['\u0491'] = "gj";  // ÔøΩ
+            nonDiacriticsObject['\u0453'] = "gj";  // ÔøΩ
+            nonDiacriticsObject['\u0454'] = "ye";  // ÔøΩ
+            nonDiacriticsObject['\u0457'] = "yi";  // ÔøΩ
+            nonDiacriticsObject['\u0455'] = "dz";  // ÔøΩ
+            nonDiacriticsObject['\u0458'] = "jj";  // ÔøΩ
+            nonDiacriticsObject['\u0459'] = "lj";  // ÔøΩ
+            nonDiacriticsObject['\u045a'] = "nj";  // ÔøΩ
+            nonDiacriticsObject['\u045c'] = "kj";  // ÔøΩ
+            nonDiacriticsObject['\u045f'] = "dj";  // ÔøΩ
+            nonDiacriticsObject['\u045e'] = "uj";   // ÔøΩ
 
             // greek
             // big letters
