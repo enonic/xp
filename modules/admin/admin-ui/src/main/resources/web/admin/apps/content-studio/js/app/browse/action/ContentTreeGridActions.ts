@@ -292,7 +292,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                         loginResult, item)
                 });
 
-                if (!contentTypesAllowChildren && !canCreate) {
+                if (!contentTypesAllowChildren || !canCreate) {
                     this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                     this.SORT_CONTENT.setEnabled(false);
                 }
