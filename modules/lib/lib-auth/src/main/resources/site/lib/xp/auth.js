@@ -183,7 +183,7 @@ exports.getMembers = function (principalKey) {
  * @param {string} params.userStore Key for user store where user has to be created.
  * @param {string} params.name User login name to set.
  * @param {string} params.displayName User display name.
- * @param {string} params.email User email.
+ * @param {string} [params.email] User email.
  */
 exports.createUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateUserHandler');
