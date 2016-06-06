@@ -3,14 +3,14 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.context.Context;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.security.acl.Permission;
 
 abstract class AbstractDeleteNodeCommand
@@ -23,19 +23,11 @@ abstract class AbstractDeleteNodeCommand
 
     void deleteNodeWithChildren( final Node node, final Context context )
     {
-        RefreshCommand.create().
-            refreshMode( RefreshMode.ALL ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
-
-        final NodeIds.Builder builder = NodeIds.create();
+        doRefresh();
 
         final Stopwatch timer2 = Stopwatch.createStarted();
-        resolveNodesToDelete( node.id(), builder );
+        final NodeIds nodesToBeDeleted = newResolveNodesToDelete( node );
         System.out.println( "resolveNodesToDelete: " + timer2.stop() );
-
-        final NodeIds nodesToBeDeleted = builder.build();
 
         final Stopwatch timer = Stopwatch.createStarted();
         final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).
@@ -51,24 +43,36 @@ abstract class AbstractDeleteNodeCommand
         }
 
         this.storageService.delete( nodesToBeDeleted, InternalContext.from( context ) );
+
+        doRefresh();
     }
 
-    private void resolveNodesToDelete( final NodeId nodeId, final NodeIds.Builder builder )
+    private void doRefresh()
     {
-        final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
+        RefreshCommand.create().
+            refreshMode( RefreshMode.ALL ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+    }
+
+
+    private NodeIds newResolveNodesToDelete( final Node node )
+    {
+        final NodeIds allChildren = FindNodeIdsByParentCommand.create( this ).
             params( FindNodesByParentParams.create().
-                parentId( nodeId ).
+                parentPath( node.path() ).
+                recursive( true ).
+                childOrder( ChildOrder.path() ).
+                size( SearchService.GET_ALL_SIZE_FLAG ).
                 build() ).
-            searchService( this.searchService ).
             build().
             execute();
 
-        for ( final NodeId child : result.getNodeIds() )
-        {
-            resolveNodesToDelete( child, builder );
-        }
-
-        builder.add( nodeId );
+        return NodeIds.create().
+            add( node.id() ).
+            addAll( allChildren ).
+            build();
     }
 
     public static class Builder<B extends Builder>
