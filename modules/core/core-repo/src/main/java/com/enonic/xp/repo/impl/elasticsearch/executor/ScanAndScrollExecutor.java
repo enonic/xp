@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch;
+package com.enonic.xp.repo.impl.elasticsearch.executor;
 
 import java.util.concurrent.TimeUnit;
 

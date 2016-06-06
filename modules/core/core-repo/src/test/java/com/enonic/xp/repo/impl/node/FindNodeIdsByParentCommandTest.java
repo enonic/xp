@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -51,10 +50,8 @@ public class FindNodeIdsByParentCommandTest
         refresh();
 
         final NodeIds children = FindNodeIdsByParentCommand.create().
-            params( FindNodesByParentParams.create().
-                parentPath( root.path() ).
-                recursive( true ).
-                build() ).
+            parentPath( root.path() ).
+            recursive( true ).
             searchService( this.searchService ).
             storageService( this.storageService ).
             indexServiceInternal( this.indexServiceInternal ).

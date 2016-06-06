@@ -1,11 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
@@ -17,16 +15,35 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
+import com.enonic.xp.repo.impl.search.SearchService;
 
 public class FindNodeIdsByParentCommand
     extends AbstractNodeCommand
 {
-    private final FindNodesByParentParams params;
+    private final NodePath parentPath;
 
-    private FindNodeIdsByParentCommand( Builder builder )
+    private final NodeId parentId;
+
+    private final Integer size;
+
+    private final Integer from;
+
+    private final ChildOrder childOrder;
+
+    private final boolean countOnly;
+
+    private final boolean recursive;
+
+    private FindNodeIdsByParentCommand( final Builder builder )
     {
         super( builder );
-        params = builder.params;
+        parentPath = builder.parentPath;
+        parentId = builder.parentId;
+        size = builder.size;
+        from = builder.from;
+        childOrder = builder.childOrder;
+        countOnly = builder.countOnly;
+        recursive = builder.recursive;
     }
 
     public static Builder create()
@@ -50,7 +67,7 @@ public class FindNodeIdsByParentCommand
 
         final ChildOrder order = NodeChildOrderResolver.create( this ).
             nodePath( parentPath ).
-            childOrder( params.getChildOrder() ).
+            childOrder( childOrder ).
             build().
             resolve();
 
@@ -68,13 +85,13 @@ public class FindNodeIdsByParentCommand
     private NodeQuery createFindChildrenQuery( final NodePath parentPath, final ChildOrder order )
     {
         final NodeQuery.Builder builder = NodeQuery.create().
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
+            from( from ).
+            size( size ).
+            searchMode( countOnly ? SearchMode.COUNT : SearchMode.SEARCH ).
             setOrderExpressions( order.getOrderExpressions() ).
             accurateScoring( true );
 
-        if ( !params.isRecursive() )
+        if ( !recursive )
         {
             builder.parent( parentPath );
         }
@@ -89,12 +106,12 @@ public class FindNodeIdsByParentCommand
 
     private NodePath getParentPath()
     {
-        NodePath parentPath = params.getParentPath();
+        NodePath parentPath = this.parentPath;
 
         if ( parentPath == null )
         {
             Node parent = GetNodeByIdCommand.create( this ).
-                id( params.getParentId() ).
+                id( parentId ).
                 build().
                 execute();
 
@@ -114,7 +131,19 @@ public class FindNodeIdsByParentCommand
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private FindNodesByParentParams params;
+        private NodePath parentPath;
+
+        private NodeId parentId;
+
+        private Integer size = SearchService.GET_ALL_SIZE_FLAG;
+
+        private Integer from = 0;
+
+        private ChildOrder childOrder;
+
+        private boolean countOnly = false;
+
+        private boolean recursive = false;
 
         public Builder()
         {
@@ -126,23 +155,58 @@ public class FindNodeIdsByParentCommand
             super( source );
         }
 
-        public Builder params( FindNodesByParentParams params )
-        {
-            this.params = params;
-            return this;
-        }
-
         @Override
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.params );
         }
 
         public FindNodeIdsByParentCommand build()
         {
             this.validate();
             return new FindNodeIdsByParentCommand( this );
+        }
+
+        public Builder parentPath( final NodePath val )
+        {
+            parentPath = val;
+            return this;
+        }
+
+        public Builder parentId( final NodeId val )
+        {
+            parentId = val;
+            return this;
+        }
+
+        public Builder size( final Integer val )
+        {
+            size = val;
+            return this;
+        }
+
+        public Builder from( final Integer val )
+        {
+            from = val;
+            return this;
+        }
+
+        public Builder childOrder( final ChildOrder val )
+        {
+            childOrder = val;
+            return this;
+        }
+
+        public Builder countOnly( final boolean val )
+        {
+            countOnly = val;
+            return this;
+        }
+
+        public Builder recursive( final boolean val )
+        {
+            recursive = val;
+            return this;
         }
     }
 }

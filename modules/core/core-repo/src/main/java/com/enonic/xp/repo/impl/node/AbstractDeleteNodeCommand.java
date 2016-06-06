@@ -4,7 +4,6 @@ import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeIds;
@@ -60,12 +59,10 @@ abstract class AbstractDeleteNodeCommand
     private NodeIds newResolveNodesToDelete( final Node node )
     {
         final NodeIds allChildren = FindNodeIdsByParentCommand.create( this ).
-            params( FindNodesByParentParams.create().
-                parentPath( node.path() ).
-                recursive( true ).
-                childOrder( ChildOrder.path() ).
-                size( SearchService.GET_ALL_SIZE_FLAG ).
-                build() ).
+            parentPath( node.path() ).
+            recursive( true ).
+            childOrder( ChildOrder.path() ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build().
             execute();
 
