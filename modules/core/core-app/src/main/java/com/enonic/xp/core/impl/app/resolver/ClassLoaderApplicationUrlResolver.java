@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app.resolver;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Set;
@@ -16,29 +17,37 @@ public final class ClassLoaderApplicationUrlResolver
 {
     private final ClassLoader loader;
 
+    private final ClassPath cp;
+
+    private Set<String> files;
+
     public ClassLoaderApplicationUrlResolver( final ClassLoader loader )
     {
         this.loader = loader;
-    }
-
-    @Override
-    public Set<String> findFiles()
-    {
         try
         {
-            return doFindFiles();
+            this.cp = ClassPath.from( this.loader );
         }
-        catch ( final Exception e )
+        catch ( IOException e )
         {
             throw Exceptions.unchecked( e );
         }
     }
 
-    private Set<String> doFindFiles()
-        throws Exception
+    @Override
+    public Set<String> findFiles()
     {
-        final ClassPath cp = ClassPath.from( this.loader );
-        return cp.getResources().stream().map( ClassPath.ResourceInfo::getResourceName ).collect( Collectors.toSet() );
+        if ( this.files == null )
+        {
+            this.files = doFindFiles();
+        }
+
+        return this.files;
+    }
+
+    private Set<String> doFindFiles()
+    {
+        return this.cp.getResources().stream().map( ClassPath.ResourceInfo::getResourceName ).collect( Collectors.toSet() );
     }
 
     @Override
