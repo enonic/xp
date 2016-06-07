@@ -1,9 +1,53 @@
-.browse-item-panel .items-selection-panel {
+.content-browse-items-selection-panel {
+
+  margin-bottom: 42px;
+  overflow: visible !important;
+
+  &.no-selection, &.no-toolbar {
+    margin-bottom: 0px;
+
+    .toolbar {
+      display: none;
+    }
+  }
+
+  .items-container {
+    position: static;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+
   .browse-selection-item {
     display: inline-flex;
 
     .viewer {
       float: none;
+    }
+  }
+
+  .toolbar {
+    background-color: @admin-bg-almost-white;
+    border-top: 1px solid @admin-bg-light-gray;
+
+    .@{_COMMON_PREFIX}button {
+      &:active, span {
+        color: @admin-button-blue2;
+      }
+
+      &:hover:not(:disabled) {
+        span {
+          color: @admin-button-blue3;
+        }
+      }
+
+      &:focus {
+        box-shadow: none;
+        border: none;
+      }
+    }
+
+    .@{_COMMON_PREFIX}dropdown {
+      bottom: 32px;
     }
   }
 }
