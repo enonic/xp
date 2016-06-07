@@ -15,7 +15,7 @@ public class SearchExecutor
     extends AbstractExecutor
 {
 
-    private static final int SCAN_THRESHOLD = 1000;
+    private static final int SCROLL_THRESHOLD = 1000;
 
     private final static Logger LOG = LoggerFactory.getLogger( SearchExecutor.class );
 
@@ -33,7 +33,6 @@ public class SearchExecutor
     {
         final SearchMode searchMode = query.getSearchMode();
         final int size = query.getSize();
-        final boolean anyOrderExpressions = !query.getSortBuilders().isEmpty();
         final boolean anyAggregations = !query.getAggregations().isEmpty();
 
         if ( searchMode.equals( SearchMode.COUNT ) )
@@ -43,16 +42,16 @@ public class SearchExecutor
                 count( query );
         }
 
-        if ( size == SearchService.GET_ALL_SIZE_FLAG || size > SCAN_THRESHOLD )
+        if ( size == SearchService.GET_ALL_SIZE_FLAG || size > SCROLL_THRESHOLD )
         {
-            if ( anyAggregations ) // || anyOrderExpressions)
+            if ( anyAggregations )
             {
-                // LOG.warn( "Query with size [" + query.getSize() + "]     > threshold [" + this.SCAN_THRESHOLD +
-                //               "] but with aggregations or orderExpressions, may be slow: " );
+                LOG.info( "Query with size [" + query.getSize() + "] > threshold [" + this.SCROLL_THRESHOLD +
+                              "] but with aggregations. Scan not possible." );
             }
             else
             {
-                return new ScanAndScrollExecutor( this.client ).execute( query );
+                return new ScrollExecutor( this.client ).execute( query );
             }
         }
 

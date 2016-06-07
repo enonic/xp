@@ -19,20 +19,56 @@ import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
 import com.enonic.xp.repo.impl.search.result.SearchHits;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
-class ScanAndScrollExecutor
+class ScrollExecutor
 {
     private static final TimeValue defaultScrollTime = new TimeValue( 30, TimeUnit.SECONDS );
 
-    private final static Logger LOG = LoggerFactory.getLogger( ScanAndScrollExecutor.class );
+    private final static Logger LOG = LoggerFactory.getLogger( ScrollExecutor.class );
 
     private final Client client;
 
-    public ScanAndScrollExecutor( final Client client )
+    public ScrollExecutor( final Client client )
     {
         this.client = client;
     }
 
     public SearchResult execute( final ElasticsearchQuery query )
+    {
+        final SearchRequestBuilder searchRequestBuilder = createSearchRequest( query );
+
+        SearchResponse scrollResp = searchRequestBuilder.
+            execute().
+            actionGet();
+
+        final SearchHits.Builder searchHitsBuilder = SearchHits.create().
+            totalHits( scrollResp.getHits().totalHits() );
+
+        while ( true )
+        {
+            LOG.info( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
+
+            searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
+
+            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
+                setScroll( defaultScrollTime ).
+                execute().
+                actionGet();
+
+            if ( scrollResp.getHits().getHits().length == 0 )
+            {
+                clearScroll( scrollResp );
+                break;
+            }
+        }
+
+        final SearchHits build = searchHitsBuilder.build();
+
+        return SearchResult.create().
+            hits( build ).
+            build();
+    }
+
+    private SearchRequestBuilder createSearchRequest( final ElasticsearchQuery query )
     {
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
             setTypes( query.getIndexType() ).
@@ -61,37 +97,8 @@ class ScanAndScrollExecutor
             }
         }
 
-        SearchResponse scrollResp = searchRequestBuilder.
-            setSearchType( searchType ).
-            execute().
-            actionGet();
-
-        final SearchHits.Builder searchHitsBuilder = SearchHits.create().
-            totalHits( scrollResp.getHits().totalHits() );
-
-        while ( true )
-        {
-            System.out.println( "Scrolling [" + searchType + "] , got " + scrollResp.getHits().hits().length + " hits" );
-
-            searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
-
-            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
-                setScroll( defaultScrollTime ).
-                execute().
-                actionGet();
-
-            if ( scrollResp.getHits().getHits().length == 0 )
-            {
-                clearScroll( scrollResp );
-                break;
-            }
-        }
-
-        final SearchHits build = searchHitsBuilder.build();
-
-        return SearchResult.create().
-            hits( build ).
-            build();
+        searchRequestBuilder.setSearchType( searchType );
+        return searchRequestBuilder;
     }
 
     private void clearScroll( final SearchResponse scrollResp )
