@@ -26,28 +26,22 @@ module api.ui.time {
         build(): TimePicker {
             return new TimePicker(this);
         }
-
     }
 
-    export class TimePicker extends api.dom.DivEl {
-
-        private popup: TimePickerPopup;
-
-        private input: api.ui.text.TextInput;
-
-        private popupTrigger: api.ui.button.Button;
-
-        private validUserInput: boolean;
+    export class TimePicker extends Picker {
 
         constructor(builder: TimePickerBuilder) {
-            super('time-picker');
-            this.validUserInput = true;
+            super(builder, 'time-picker');
+        }
 
+        protected initPopup(builder: TimePickerBuilder) {
             this.popup = new TimePickerPopupBuilder().
                 setHours(builder.hours).
                 setMinutes(builder.minutes).
                 build();
+        }
 
+        protected initInput(builder: TimePickerBuilder) {
             var value;
             if (builder.hours || builder.minutes) {
                 value = this.formatTime(builder.hours, builder.minutes);
@@ -56,7 +50,7 @@ module api.ui.time {
             this.input = api.ui.text.TextInput.middle(undefined, value);
             this.input.onClicked((e: MouseEvent) => {
                 e.preventDefault();
-                this.popup.show();
+                this.togglePopupVisibility();
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
@@ -84,19 +78,14 @@ module api.ui.time {
 
                 this.updateInputStyling();
             });
-
-            var wrapper = new api.dom.DivEl('wrapper');
-
-            this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-clock');
-            wrapper.appendChildren<api.dom.Element>(this.input, this.popup, this.popupTrigger);
-
-            this.appendChild(wrapper);
-            
-            this.setupListeners(builder);
         }
 
-        private setupListeners(builder: TimePickerBuilder) {
+        protected initPopupTrigger() {
+            this.popupTrigger = new api.ui.button.Button();
+            this.popupTrigger.addClass('icon-clock');
+        }
+
+        protected setupListeners(builder: TimePickerBuilder) {
 
             if (builder.closeOnOutsideClick) {
                 api.util.AppHelper.focusInOut(this, () => {
@@ -111,7 +100,7 @@ module api.ui.time {
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
                 e.preventDefault();
-                this.setVisible(!this.popup.isVisible());
+                this.togglePopupVisibility();
             });
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
@@ -153,14 +142,6 @@ module api.ui.time {
             });
         }
 
-        isDirty(): boolean {
-            return this.input.isDirty();
-        }
-
-        hasValidUserInput(): boolean {
-            return this.validUserInput;
-        }
-
         setSelectedTime(hour: number, minute: number) {
             this.input.setValue(this.formatTime(hour, minute));
             this.popup.setSelectedTime(hour, minute, true);
@@ -182,14 +163,6 @@ module api.ui.time {
             return this.popup.isHoursValid(hours) && this.popup.isMinutesValid(minutes) ?
                    this.popup.padNumber(hours, 2) + ':' + this.popup.padNumber(minutes, 2) :
                    "";
-        }
-
-        private updateInputStyling() {
-            this.input.updateValidationStatusOnUserInput(this.validUserInput);
-        }
-
-        giveFocus(): boolean {
-            return this.input.giveFocus();
         }
     }
 }
