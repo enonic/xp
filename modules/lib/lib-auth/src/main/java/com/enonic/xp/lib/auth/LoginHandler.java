@@ -30,7 +30,7 @@ public final class LoginHandler
 
     private String password;
 
-    private boolean verified;
+    private boolean skipAuth;
 
     private String[] userStore;
 
@@ -48,9 +48,9 @@ public final class LoginHandler
         this.password = password;
     }
 
-    public void setVerified( final boolean verified )
+    public void setSkipAuth( final boolean skipAuth )
     {
-        this.verified = verified;
+        this.skipAuth = skipAuth;
     }
 
     public void setUserStore( final String[] userStore )
@@ -120,7 +120,7 @@ public final class LoginHandler
 
         if ( isValidEmail( this.user ) )
         {
-            if ( this.verified )
+            if ( this.skipAuth )
             {
                 final VerifiedEmailAuthToken verifiedEmailAuthToken = new VerifiedEmailAuthToken();
                 verifiedEmailAuthToken.setEmail( this.user );
@@ -141,7 +141,7 @@ public final class LoginHandler
 
         if ( authInfo == null || !authInfo.isAuthenticated() )
         {
-            if ( this.verified )
+            if ( this.skipAuth )
             {
                 final VerifiedUsernameAuthToken usernameAuthToken = new VerifiedUsernameAuthToken();
                 usernameAuthToken.setUsername( this.user );
