@@ -32,6 +32,15 @@ var result3 = authLib.login({
 // END
 
 // BEGIN
+// Login with a explicit user store without authentication.
+var result4 = authLib.login({
+    user: 'user1@enonic.com',
+    userStore: 'enonic',
+    skipAuth: true
+});
+// END
+
+// BEGIN
 // Result of a successful login operation.
 var expected = {
     "authenticated": true,
@@ -51,3 +60,4 @@ var expected = {
 assert.assertJsonEquals(expected, result1);
 assert.assertJsonEquals(expected, result2);
 assert.assertJsonEquals(expected, result3);
+assert.assertJsonEquals(expected, result4);
