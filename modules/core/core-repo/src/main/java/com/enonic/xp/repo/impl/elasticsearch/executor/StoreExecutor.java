@@ -23,7 +23,12 @@ public class StoreExecutor
         super( builder );
     }
 
-    public void store( final Collection<IndexDocument> indexDocuments )
+    public static Builder create( final Client client )
+    {
+        return new Builder( client );
+    }
+
+    public void execute( final Collection<IndexDocument> indexDocuments )
     {
         for ( IndexDocument indexDocument : indexDocuments )
         {
@@ -36,7 +41,7 @@ public class StoreExecutor
                 index( indexDocument.getIndexName() ).
                 type( indexDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
-                refresh( indexDocument.isRefreshAfterOperation() ); //TODO Temporary fix. Should be corrected by XP-1986
+                refresh( indexDocument.isRefreshAfterOperation() );
 
             try
             {
@@ -52,11 +57,6 @@ public class StoreExecutor
                 throw new IndexException( msg, e );
             }
         }
-    }
-
-    public static Builder create( final Client client )
-    {
-        return new Builder( client );
     }
 
     public static final class Builder

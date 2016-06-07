@@ -78,7 +78,7 @@ public class StorageDaoImpl
     {
         StoreExecutor.create( this.client ).
             build().
-            store( indexDocuments );
+            execute( indexDocuments );
     }
 
     @Override

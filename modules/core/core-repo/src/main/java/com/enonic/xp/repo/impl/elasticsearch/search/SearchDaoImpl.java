@@ -40,7 +40,7 @@ public class SearchDaoImpl
 
         return SearchExecutor.create( this.client ).
             build().
-            search( esQuery );
+            execute( esQuery );
     }
 
     private ElasticsearchQuery translateQuery( final SearchRequest searchRequest )

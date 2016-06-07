@@ -29,7 +29,7 @@ public class SearchExecutor
         return new Builder( client );
     }
 
-    public SearchResult search( final ElasticsearchQuery query )
+    public SearchResult execute( final ElasticsearchQuery query )
     {
         final SearchMode searchMode = query.getSearchMode();
         final int size = query.getSize();
@@ -39,7 +39,7 @@ public class SearchExecutor
         {
             return CountExecutor.create( this.client ).
                 build().
-                count( query );
+                execute( query );
         }
 
         if ( size == SearchService.GET_ALL_SIZE_FLAG || size > SCROLL_THRESHOLD )
@@ -51,7 +51,9 @@ public class SearchExecutor
             }
             else
             {
-                return new ScrollExecutor( this.client ).execute( query );
+                return ScrollExecutor.create( this.client ).
+                    build().
+                    execute( query );
             }
         }
 
@@ -73,7 +75,7 @@ public class SearchExecutor
         {
             final SearchResult countResult = CountExecutor.create( this.client ).
                 build().
-                count( query );
+                execute( query );
 
             return safeLongToInt( countResult.getResults().getTotalHits() );
         }

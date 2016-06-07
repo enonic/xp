@@ -1,25 +1,36 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.search.sort.SortBuilder;
 
+import com.google.common.collect.ImmutableSet;
+
+import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
 import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public abstract class AbstractExecutor
 {
-    final String searchPreference = "_local";
-
-    private final String searchTimeout = "10s";
+    protected static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
 
     protected final String storeTimeout = "10s";
 
     protected final String deleteTimeout = "5s";
 
     protected final Client client;
+
+    final String searchPreference = "_local";
+
+    private final String searchTimeout = "10s";
 
     protected AbstractExecutor( final Builder builder )
     {
@@ -64,6 +75,50 @@ public abstract class AbstractExecutor
         }
 
         return queryAsString;
+    }
+
+    protected SearchRequestBuilder createScrollRequest( final ElasticsearchQuery query )
+    {
+        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
+            setTypes( query.getIndexType() ).
+            setScroll( defaultScrollTime ).
+            setQuery( query.getQuery() ).
+            setPostFilter( query.getFilter() ).
+            setFrom( query.getFrom() ).
+            setSize( query.getBatchSize() ).
+            addFields( query.getReturnFields().getReturnFieldNames() );
+
+        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
+
+        final ImmutableSet<SortBuilder> sortBuilders = query.getSortBuilders();
+
+        SearchType searchType;
+
+        if ( sortBuilders.isEmpty() )
+        {
+            searchType = SearchType.SCAN;
+        }
+        else
+        {
+            searchType = SearchType.DEFAULT;
+
+            for ( final SortBuilder sortBuilder : sortBuilders )
+            {
+                searchRequestBuilder.addSort( sortBuilder );
+            }
+        }
+
+        searchRequestBuilder.
+            setSearchType( searchType );
+        return searchRequestBuilder;
+    }
+
+    protected void clearScroll( final SearchResponse scrollResp )
+    {
+        final ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
+        clearScrollRequest.addScrollId( scrollResp.getScrollId() );
+
+        client.clearScroll( clearScrollRequest ).actionGet();
     }
 
     public static class Builder<B extends Builder>

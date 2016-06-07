@@ -2,17 +2,12 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 
 import java.util.concurrent.TimeUnit;
 
-import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
@@ -20,21 +15,25 @@ import com.enonic.xp.repo.impl.search.result.SearchHits;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 class ScrollExecutor
+    extends AbstractExecutor
 {
     private static final TimeValue defaultScrollTime = new TimeValue( 30, TimeUnit.SECONDS );
 
     private final static Logger LOG = LoggerFactory.getLogger( ScrollExecutor.class );
 
-    private final Client client;
-
-    public ScrollExecutor( final Client client )
+    public ScrollExecutor( final Builder builder )
     {
-        this.client = client;
+        super( builder );
+    }
+
+    public static Builder create( final Client client )
+    {
+        return new Builder( client );
     }
 
     public SearchResult execute( final ElasticsearchQuery query )
     {
-        final SearchRequestBuilder searchRequestBuilder = createSearchRequest( query );
+        final SearchRequestBuilder searchRequestBuilder = createScrollRequest( query );
 
         SearchResponse scrollResp = searchRequestBuilder.
             execute().
@@ -45,7 +44,7 @@ class ScrollExecutor
 
         while ( true )
         {
-            LOG.info( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
+            LOG.debug( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
 
             searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
 
@@ -68,45 +67,17 @@ class ScrollExecutor
             build();
     }
 
-    private SearchRequestBuilder createSearchRequest( final ElasticsearchQuery query )
+    public static class Builder
+        extends AbstractExecutor.Builder<Builder>
     {
-        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
-            setTypes( query.getIndexType() ).
-            setScroll( defaultScrollTime ).
-            setQuery( query.getQuery() ).
-            setPostFilter( query.getFilter() ).
-            setFrom( query.getFrom() ).
-            setSize( query.getBatchSize() ).
-            addFields( query.getReturnFields().getReturnFieldNames() );
-
-        final ImmutableSet<SortBuilder> sortBuilders = query.getSortBuilders();
-
-        SearchType searchType;
-
-        if ( sortBuilders.isEmpty() )
+        private Builder( final Client client )
         {
-            searchType = SearchType.SCAN;
-        }
-        else
-        {
-            searchType = SearchType.DEFAULT;
-
-            for ( final SortBuilder sortBuilder : sortBuilders )
-            {
-                searchRequestBuilder.addSort( sortBuilder );
-            }
+            super( client );
         }
 
-        searchRequestBuilder.setSearchType( searchType );
-        return searchRequestBuilder;
+        public ScrollExecutor build()
+        {
+            return new ScrollExecutor( this );
+        }
     }
-
-    private void clearScroll( final SearchResponse scrollResp )
-    {
-        final ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
-        clearScrollRequest.addScrollId( scrollResp.getScrollId() );
-
-        client.clearScroll( clearScrollRequest ).actionGet();
-    }
-
 }

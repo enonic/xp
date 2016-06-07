@@ -21,7 +21,7 @@ public class CountExecutor
         return new Builder( client );
     }
 
-    public SearchResult count( final ElasticsearchQuery query )
+    public SearchResult execute( final ElasticsearchQuery query )
     {
         SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
             setIndices( query.getIndexName() ).

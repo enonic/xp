@@ -1,19 +1,15 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
-import java.util.concurrent.TimeUnit;
-
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.search.sort.SortBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
@@ -21,7 +17,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 public class CopyExecutor
     extends AbstractExecutor
 {
-    private static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
+    private final static Logger LOG = LoggerFactory.getLogger( CopyExecutor.class );
 
     private final String targetType;
 
@@ -44,43 +40,15 @@ public class CopyExecutor
 
     public void execute()
     {
-        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
-            setTypes( query.getIndexType() ).
-            setScroll( defaultScrollTime ).
-            setQuery( query.getQuery() ).
-            setPostFilter( query.getFilter() ).
-            setFrom( query.getFrom() ).
-            setSize( query.getBatchSize() ).
-            addFields( query.getReturnFields().getReturnFieldNames() );
-
-        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
-
-        final ImmutableSet<SortBuilder> sortBuilders = query.getSortBuilders();
-
-        SearchType searchType;
-
-        if ( sortBuilders.isEmpty() )
-        {
-            searchType = SearchType.SCAN;
-        }
-        else
-        {
-            searchType = SearchType.DEFAULT;
-
-            for ( final SortBuilder sortBuilder : sortBuilders )
-            {
-                searchRequestBuilder.addSort( sortBuilder );
-            }
-        }
+        final SearchRequestBuilder searchRequestBuilder = createScrollRequest( this.query );
 
         SearchResponse scrollResp = searchRequestBuilder.
-            setSearchType( searchType ).
             execute().
             actionGet();
 
         while ( true )
         {
-            System.out.println( "Fetched [" + scrollResp.getHits().hits().length + "] hits, processing" );
+            LOG.debug( "Fetched [" + scrollResp.getHits().hits().length + "] hits, processing" );
 
             if ( scrollResp.getHits().getHits().length > 0 )
             {
@@ -94,6 +62,7 @@ public class CopyExecutor
 
             if ( scrollResp.getHits().getHits().length == 0 )
             {
+                clearScroll( scrollResp );
                 break;
             }
         }
@@ -118,7 +87,7 @@ public class CopyExecutor
 
         final Stopwatch timer = Stopwatch.createStarted();
         final BulkResponse response = bulkRequest.execute().actionGet();
-        System.out.println( "Copied [" + response.getItems().length + "] in " + timer.stop() );
+        LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
     }
 
 
