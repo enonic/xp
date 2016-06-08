@@ -2,6 +2,8 @@ package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.time.Instant;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,9 +41,12 @@ public class ControllerMappingsResolverTest
     public final void setup()
         throws Exception
     {
+        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( rawRequest.getRequestURI() ).thenReturn( "/portal/master/mysite/landing-page" );
+
         this.request = new PortalRequest();
         this.request.setMode( RenderMode.LIVE );
-        this.request.setPath( "/portal/master/mysite/landing-page" );
+        this.request.setRawRequest( rawRequest );
 
         this.contentService = Mockito.mock( ContentService.class );
         this.siteService = Mockito.mock( SiteService.class );
