@@ -20,8 +20,6 @@ import LoadMask = api.ui.mask.LoadMask;
  */
 export class ContentPublishDialog extends DependantItemsDialog {
 
-    private publishButton: DialogButton;
-
     private childrenCheckbox: api.ui.Checkbox;
 
     private excludedIds: ContentId[] = [];
@@ -39,8 +37,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         var publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this));
-        this.publishButton = this.addAction(publishAction, true, true);
-        this.publishButton.setEnabled(false);
+        this.actionButton = this.addAction(publishAction, true, true);
+        this.actionButton.setEnabled(false);
 
         this.addCancelButtonToBottom();
 
@@ -110,11 +108,12 @@ export class ContentPublishDialog extends DependantItemsDialog {
             return this.reloadPublishDependencies(childrenNotLoadedYet);
         } else {
             // apply the stash to avoid extra heavy request
-            this.publishButton.setEnabled(false);
+            this.actionButton.setEnabled(false);
             this.loadMask.show();
             setTimeout(() => {
                 this.setDependantItems(stashedItems.slice());
                 this.centerMyself();
+                this.actionButton.setEnabled(true);
                 this.loadMask.hide();
             }, 100);
             return wemQ<void>(null);
@@ -122,13 +121,13 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
-        this.publishButton.setEnabled(false);
+        this.actionButton.setEnabled(false);
         this.loadMask.show();
         this.disableCheckbox();
 
         this.setSubTitle("Resolving items...");
 
-        return this.loadDependants().then((dependants: ContentSummaryAndCompareStatus[]) => {
+        return this.loadDescendants().then((dependants: ContentSummaryAndCompareStatus[]) => {
 
             if (resetDependantItems) { // just opened or first time loading children
                 this.setDependantItems(dependants);
@@ -154,12 +153,22 @@ export class ContentPublishDialog extends DependantItemsDialog {
         });
     }
 
-    private loadDependants(): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+    protected loadDescendants(from?:number, size?:number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
         let ids = this.getContentToPublishIds(),
             loadChildren = this.childrenCheckbox.isChecked(),
-            resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(ids, this.excludedIds, loadChildren);
+            resolveDependenciesRequest = api.content.ResolvePublishDependenciesRequest.
+                create().
+                setIds(ids).
+                setExcludedIds(this.excludedIds).
+                setIncludeChildren(loadChildren).
+                setFrom(from).
+                setSize(size).
+                build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
+            this.fullDependantSize = result.getMetadata().getTotalHits();
+
+            this.toggleClass("contains-removable", result.isContainsRemovable());
             return result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
         });
     }
@@ -171,19 +180,20 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 (newDependantItem) => oldDependantItem.equals(newDependantItem)));
         this.getDependantList().removeItems(itemsToRemove);
 
-        let count = this.countTotalToPublish();
+        let count = this.countTotal();
+
         this.updateSubTitle(count);
-        this.updatePublishButton(count);
+        this.updateButtonCount("Publish", count);
     }
 
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
         super.setDependantItems(items);
 
-        let count = this.countTotalToPublish();
+        let count = this.countTotal();
 
         this.updateSubTitle(count);
-        this.updatePublishButton(count);
+        this.updateButtonCount("Publish", count);
 
         if (this.extendsWindowHeightSize()) {
             this.centerMyself();
@@ -239,8 +249,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private doPublish() {
 
-        this.showLoadingSpinnerAtButton();
-        this.publishButton.setEnabled(false);
+        this.showLoadingSpinner();
+        this.actionButton.setEnabled(false);
 
         var selectedIds = this.getContentToPublishIds();
 
@@ -251,14 +261,14 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
             }).finally(() => {
-                this.hideLoadingSpinnerAtButton();
-                this.publishButton.setEnabled(true);
+                this.hideLoadingSpinner();
+                this.actionButton.setEnabled(true);
             });
     }
 
-    private countTotalToPublish(): number {
+    protected countTotal(): number {
         return this.countToPublish(this.getItemList().getItems())
-               + this.countToPublish(this.getDependantList().getItems());
+               + this.getDependantSize();
     }
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
@@ -279,12 +289,13 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.toggleClass("invalid", !allValid);
     }
 
-    private updatePublishButton(count: number) {
-        this.publishButton.setLabel(count > 0 ? "Publish (" + count + ")" : "Publish");
+    protected updateButtonCount(actionString: string, count:number) {
+
+        super.updateButtonCount(actionString, count);
 
         let canPublish = count > 0 && this.areItemsAndDependantsValid();
 
-        this.publishButton.setEnabled(canPublish);
+        this.actionButton.setEnabled(canPublish);
         if (canPublish) {
             this.getButtonRow().focusDefaultAction();
             this.updateTabbable();
@@ -308,14 +319,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
         }
 
         return this.areAllValid(this.getDependantList().getItems());
-    }
-
-    private showLoadingSpinnerAtButton() {
-        this.publishButton.addClass("spinner");
-    }
-
-    private hideLoadingSpinnerAtButton() {
-        this.publishButton.removeClass("spinner");
     }
 
     private disableCheckbox() {
@@ -354,9 +357,7 @@ export class PublishDialogDependantList extends DialogDependantList {
 
         if (CompareStatus.NEWER == item.getCompareStatus()) {
             view.addClass("removable");
-            if (!this.hasClass("contains-removable")) {
-                this.addClass("contains-removable");
-            }
+            this.toggleClass("contains-removable", true);
         }
 
         view.onClicked((event) => {
