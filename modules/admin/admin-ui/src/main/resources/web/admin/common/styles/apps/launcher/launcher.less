@@ -164,6 +164,16 @@
     }
   }
 
+  &.home {
+    .launcher-app-container .app-row#home.active:hover {
+      background-color: @admin-black;
+      cursor: default;
+      .app-info .app-description {
+        color: darkgray;
+      }
+    }
+  }
+
   & > * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
