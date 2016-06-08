@@ -30,13 +30,11 @@ module api.content.form.inputtype.long {
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
 
-                var isValid = this.isValid(event.getNewValue());
-                if (isValid) {
-                    var value = ValueTypes.LONG.newValue(event.getNewValue());
-                    this.notifyOccurrenceValueChanged(inputEl, value);
-                }
-                
-                inputEl.updateValidationStatusOnUserInput(this.isValid(event.getNewValue()));
+                var isValid = this.isValid(event.getNewValue()),
+                    value = isValid ? ValueTypes.LONG.newValue(event.getNewValue()) : this.newInitialValue();
+
+                this.notifyOccurrenceValueChanged(inputEl, value);
+                inputEl.updateValidationStatusOnUserInput(isValid);
             });
 
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
