@@ -104,13 +104,15 @@ import com.enonic.xp.util.BinaryReference;
 public class ContentServiceImpl
     implements ContentService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
-
     public static final String TEMPLATES_FOLDER_NAME = "_templates";
+
+    private final static Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
 
     private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
+
+    private final ExecutorService applyPermissionsExecutor;
 
     private ContentTypeService contentTypeService;
 
@@ -119,8 +121,6 @@ public class ContentServiceImpl
     private EventPublisher eventPublisher;
 
     private MediaInfoService mediaInfoService;
-
-    private final ExecutorService applyPermissionsExecutor;
 
     private MixinService mixinService;
 
@@ -415,7 +415,7 @@ public class ContentServiceImpl
     @Override
     public Content duplicate( final DuplicateContentParams params )
     {
-        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ) );
+        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ), new DuplicateContentProcessor() );
         return translator.fromNode( createdNode, true );
     }
 
