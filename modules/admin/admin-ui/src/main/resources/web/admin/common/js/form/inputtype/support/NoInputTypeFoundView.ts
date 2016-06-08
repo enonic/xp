@@ -46,7 +46,7 @@ module api.form.inputtype.support {
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
             var input = <api.ui.text.TextInput> occurrence;
 
-            if ((!unchangedOnly || !input.isDirty()) && property != null) {
+            if (!unchangedOnly || !input.isDirty()) {
                 input.setValue(property.getString());
             }
         }
