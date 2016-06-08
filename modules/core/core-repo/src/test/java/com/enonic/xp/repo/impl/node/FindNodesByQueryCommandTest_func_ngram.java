@@ -142,7 +142,7 @@ public class FindNodesByQueryCommandTest_func_ngram
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( expected, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( expected, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 }

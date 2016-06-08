@@ -71,8 +71,8 @@ public class FindNodesByQueryCommandTest_arrays
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( nodeId ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( nodeId ) );
     }
 
 

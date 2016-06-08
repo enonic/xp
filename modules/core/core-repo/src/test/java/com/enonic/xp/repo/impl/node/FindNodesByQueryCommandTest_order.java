@@ -59,7 +59,7 @@ public class FindNodesByQueryCommandTest_order
         String[] orders = {FIELD_LONG + " " + ORDER_DESC};
         FindNodesByQueryResult result = sort( orders );
 
-        Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
@@ -72,7 +72,7 @@ public class FindNodesByQueryCommandTest_order
         String[] orders = {FIELD_STRING + " " + ORDER_ASC};
         FindNodesByQueryResult result = sort( orders );
 
-        Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         Assert.assertEquals( "node3", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
         Assert.assertEquals( "node2", iterator.next().name().toString() );
@@ -85,7 +85,7 @@ public class FindNodesByQueryCommandTest_order
         String[] orders = {FIELD_BOOL + " " + ORDER_DESC};
         FindNodesByQueryResult result = sort( orders );
 
-        Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
@@ -98,7 +98,7 @@ public class FindNodesByQueryCommandTest_order
         String[] orders = {FIELD_LONG + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_DESC};
         FindNodesByQueryResult result = sort( orders );
 
-        Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
@@ -112,7 +112,7 @@ public class FindNodesByQueryCommandTest_order
         String[] orders = {FIELD_STRING + " " + ORDER_DESC, FIELD_LONG + " " + ORDER_ASC};
         FindNodesByQueryResult result = sort( orders );
 
-        Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
@@ -125,7 +125,7 @@ public class FindNodesByQueryCommandTest_order
         String[] orders = {FIELD_LONG + " " + ORDER_ASC, FIELD_STRING + " " + ORDER_DESC};
         FindNodesByQueryResult result = sort( orders );
 
-        Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         Assert.assertEquals( "node1", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
         Assert.assertEquals( "node2", iterator.next().name().toString() );
@@ -138,7 +138,7 @@ public class FindNodesByQueryCommandTest_order
         String[] orders = {FIELD_LONG + " " + ORDER_DESC, FIELD_STRING + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_ASC};
         FindNodesByQueryResult result = sort( orders );
 
-        Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
@@ -151,7 +151,7 @@ public class FindNodesByQueryCommandTest_order
         String[] orders = {FIELD_STRING + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_DESC, FIELD_LONG + " " + ORDER_ASC};
         FindNodesByQueryResult result = sort( orders );
 
-        Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );

@@ -56,8 +56,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
     @Test
@@ -91,8 +91,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
 
         final NodeQuery query2 = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
@@ -102,8 +102,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result2 = doFindByQuery( query2 );
 
-        assertEquals( 1, result2.getNodes().getSize() );
-        assertNotNull( result2.getNodes().getNodeById( node.id() ) );
+        assertEquals( 1, result2.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
     @Test
@@ -137,8 +137,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
 
         final NodeQuery query2 = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
@@ -148,8 +148,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result2 = doFindByQuery( query2 );
 
-        assertEquals( 1, result2.getNodes().getSize() );
-        assertNotNull( result2.getNodes().getNodeById( node.id() ) );
+        assertEquals( 1, result2.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
     @Test
@@ -185,8 +185,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
     @Test
@@ -216,8 +216,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
     @Test
@@ -258,8 +258,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
 
@@ -432,8 +432,8 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( expected, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( expected, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
 }

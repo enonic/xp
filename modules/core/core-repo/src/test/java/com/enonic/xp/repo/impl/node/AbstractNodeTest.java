@@ -26,6 +26,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
@@ -350,7 +351,7 @@ public abstract class AbstractNodeTest
     {
         final FindNodesByQueryResult result = doQuery( queryString );
 
-        assertEquals( expected, result.getNodes().getSize() );
+        assertEquals( expected, result.getNodeIds().getSize() );
     }
 
     protected FindNodesByQueryResult doQuery( final String queryString )
@@ -366,7 +367,7 @@ public abstract class AbstractNodeTest
     {
         assertEquals( nodes.length, result.getHits() );
 
-        final Iterator<Node> iterator = result.getNodes().iterator();
+        final Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
 
         for ( final Node node : nodes )
         {
@@ -378,7 +379,7 @@ public abstract class AbstractNodeTest
     {
         assertEquals( ids.length, result.getHits() );
 
-        final Iterator<Node> iterator = result.getNodes().iterator();
+        final Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
 
         for ( final String id : ids )
         {
@@ -410,6 +411,18 @@ public abstract class AbstractNodeTest
     {
         return GetNodeByIdCommand.create().
             id( nodeId ).
+            indexServiceInternal( indexServiceInternal ).
+            storageService( storageService ).
+            searchService( searchService ).
+            build().
+            execute();
+
+    }
+
+    protected Nodes getNodes( final NodeIds nodeIds )
+    {
+        return GetNodesByIdsCommand.create().
+            ids( nodeIds ).
             indexServiceInternal( indexServiceInternal ).
             storageService( storageService ).
             searchService( searchService ).

@@ -285,8 +285,7 @@ public final class SecurityServiceImpl
                     addValue( ValueFactory.newString( member.toString() ) ).
                     build() ).
                 build() ) );
-
-            return PrincipalKeyNodeTranslator.fromNodes( result.getNodes() );
+            return PrincipalKeyNodeTranslator.fromNodes( this.nodeService.getByIds( result.getNodeIds() ) );
         }
         catch ( NodeNotFoundException e )
         {
@@ -458,12 +457,14 @@ public final class SecurityServiceImpl
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
         final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
 
-        if ( result.getNodes().getSize() > 1 )
+        final Nodes nodes = this.nodeService.getByIds( result.getNodeIds() );
+
+        if ( nodes.getSize() > 1 )
         {
             throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in userstore " + userStore );
         }
 
-        return result.getNodes().isEmpty() ? null : PrincipalNodeTranslator.userFromNode( result.getNodes().first() );
+        return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
     }
 
     private User findByEmail( final UserStoreKey userStore, final String email )
@@ -475,12 +476,14 @@ public final class SecurityServiceImpl
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
         final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
 
-        if ( result.getNodes().getSize() > 1 )
+        final Nodes nodes = this.nodeService.getByIds( result.getNodeIds() );
+
+        if ( nodes.getSize() > 1 )
         {
             throw new IllegalArgumentException( "Expected at most 1 user with email " + email + " in userstore " + userStore );
         }
 
-        return result.getNodes().isEmpty() ? null : PrincipalNodeTranslator.userFromNode( result.getNodes().first() );
+        return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
     }
 
     @Override
@@ -828,7 +831,7 @@ public final class SecurityServiceImpl
             final NodeQuery nodeQueryBuilder = PrincipalQueryNodeQueryTranslator.translate( query );
             final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( nodeQueryBuilder ) );
 
-            final Principals principals = PrincipalNodeTranslator.fromNodes( result.getNodes() );
+            final Principals principals = PrincipalNodeTranslator.fromNodes( this.nodeService.getByIds( result.getNodeIds() ) );
             return PrincipalQueryResult.create().
                 addPrincipals( principals ).
                 totalSize( Ints.checkedCast( result.getTotalHits() ) ).
