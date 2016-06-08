@@ -27,7 +27,7 @@ module api.content.form.inputtype.time {
             if (!ValueTypes.LOCAL_TIME.equals(property.getType())) {
                 property.convertValueType(ValueTypes.LOCAL_TIME);
             }
-            
+
             var value = this.getValueFromProperty(property);
             var timePicker = new api.ui.time.TimePickerBuilder().setHours(value.hours).setMinutes(value.minutes).build();
 
@@ -44,7 +44,8 @@ module api.content.form.inputtype.time {
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
             var localTime = <api.ui.time.TimePicker> occurrence;
 
-            if (!unchangedOnly || !localTime.isDirty()) {
+            if (!unchangedOnly || !localTime.isDirty() || !localTime.isValid()) {
+
                 var value = this.getValueFromProperty(property);
                 localTime.setSelectedTime(value.hours, value.minutes);
             }
@@ -76,7 +77,7 @@ module api.content.form.inputtype.time {
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
             var timePicker = <api.ui.time.TimePicker> inputElement;
-            return timePicker.hasValidUserInput();
+            return timePicker.isValid();
         }
 
     }
