@@ -126,7 +126,7 @@ module api.util.htmlarea.dialog {
                 this.previewPanel.appendChild(new MacroPreviewFrame(macroPreview));
             } else {
                 var appendMe = new api.dom.DivEl("preview-content");
-                appendMe.setHtml(macroPreview.getHtml(), false);
+                appendMe.setHtml(macroPreview.getHtml());
                 this.previewPanel.appendChild(appendMe)
             }
         }
