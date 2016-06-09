@@ -131,6 +131,7 @@ exports.serviceUrl = function (params) {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.userStore] Key of a user store using an ID provider.
  * If userStore is not set, then the user store corresponding to the current execution context will be used.
+ * @param {string} [params.redirect] The URL to redirect to after the function execution.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
