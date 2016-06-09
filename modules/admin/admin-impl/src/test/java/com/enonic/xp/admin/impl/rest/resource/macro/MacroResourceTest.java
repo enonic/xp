@@ -2,11 +2,14 @@ package com.enonic.xp.admin.impl.rest.resource.macro;
 
 import java.time.Instant;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.google.common.io.Resources;
 
@@ -128,6 +131,9 @@ public class MacroResourceTest
         Mockito.when( this.macroDescriptorService.getByKey( MacroKey.from( "test:uppercase" ) ) ).thenReturn( macroDescriptor );
         Mockito.when( this.macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macroProcessor );
         Mockito.when( this.portalUrlService.pageUrl( any() ) ).thenReturn( "/portal/preview/draft/mysite/page" );
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
 
         String response = request().path( "macro/preview" ).
             entity( readFromFile( "preview_macro_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

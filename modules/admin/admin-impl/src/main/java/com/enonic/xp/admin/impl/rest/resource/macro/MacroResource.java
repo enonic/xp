@@ -52,6 +52,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "macro")
 @Produces(MediaType.APPLICATION_JSON)
@@ -163,9 +164,10 @@ public final class MacroResource
         portalRequest.setBaseUri( "/portal" );
         portalRequest.setMode( RenderMode.EDIT );
         portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
-        portalRequest.setScheme( "http" );
-        portalRequest.setHost( "localhost" );
-        portalRequest.setPort( 8080 );
+        portalRequest.setScheme( ServletRequestUrlHelper.getScheme( req ) );
+        portalRequest.setHost( ServletRequestUrlHelper.getHost( req ) );
+        portalRequest.setPort( ServletRequestUrlHelper.getPort( req ) );
+        portalRequest.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
         final PageUrlParams pageUrlParams = new PageUrlParams().portalRequest( portalRequest ).path( contentPath.toString() );
         portalRequest.setPath( portalUrlService.pageUrl( pageUrlParams ) );
         return portalRequest;
