@@ -4,7 +4,8 @@ var portalLib = require('/lib/xp/portal');
 var redirectionUrl = portalLib.pageUrl({
     path: '/my/page'
 });
-var url = portalLib.logoutUrl({
+var url = portalLib.idProviderUrl({
+    userStore: "system",
     redirect: redirectionUrl
 });
 // END
