@@ -1,6 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
@@ -138,7 +137,6 @@ public class AbstractContentServiceTest
         super.setUp();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
