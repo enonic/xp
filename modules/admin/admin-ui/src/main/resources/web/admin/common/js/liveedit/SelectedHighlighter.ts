@@ -18,9 +18,9 @@ module api.liveedit {
 
         protected preProcessStyle(style: api.liveedit.HighlighterStyle): api.liveedit.HighlighterStyle {
             return {
-                stroke: 'rgba(0, 0, 0, 1)',     //'#4294de',
+                stroke: 'rgba(90, 148, 238, 1)',     //'#4294de',
                 strokeDasharray: style.strokeDasharray,
-                fill: style.fill
+                fill: 'rgba(90, 148, 238, .3)'
             };
         }
     }

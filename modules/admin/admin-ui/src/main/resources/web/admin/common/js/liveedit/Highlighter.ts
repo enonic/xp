@@ -85,9 +85,9 @@ module api.liveedit {
 
         protected preProcessStyle(style: HighlighterStyle): HighlighterStyle {
             return {
-                stroke: '',
+                stroke: 'rgba(0, 0, 0, 1)',     //'#4294de',
                 strokeDasharray: '',
-                fill: 'rgba(158,158,158,.3)'
+                fill: 'transparent'
             }
         }
 
@@ -124,7 +124,14 @@ module api.liveedit {
                     .setStroke(style.stroke)
                     .setStrokeDasharray(style.strokeDasharray)
                     .setFill('transparent');
-
+                
+                this.rectangle.getEl()
+                    .setAttribute('width', w + '')
+                    .setAttribute('height', h + '')
+                    .setAttribute('x', left + '')
+                    .setAttribute('y', top + '')
+                    .setFill(style.fill);
+                
                 this.getEl().setWidthPx(screenW).setHeightPx(screenH).setTopPx(0).setLeftPx(0);
                 break;
             }
