@@ -1,4 +1,4 @@
-exports.get = function (req) {
+exports.myfunction = function (req) {
     return {
         status: 200,
         body: 'defaultapplication/myfunction'
