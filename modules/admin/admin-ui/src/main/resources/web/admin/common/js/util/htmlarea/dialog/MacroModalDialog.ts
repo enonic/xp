@@ -95,7 +95,7 @@ module api.util.htmlarea.dialog {
 
         private insertMacroIntoTextArea(): void {
             this.macroDockedPanel.getMacroPreviewString().then((macroString: string) => {
-                var macro = this.callback(macroString);
+                var macro = this.callback(api.util.StringHelper.escapeHtml(macroString));
                 this.close();
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
