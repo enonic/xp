@@ -356,6 +356,7 @@ module api.liveedit {
             if (parentIsPage) {
                 // unbind the old view from the component and bind the new one
                 this.unregisterComponentListeners(this.component);
+                this.unbindMouseListeners();
 
                 this.getPageView().registerFragmentComponentView(replacement);
 
@@ -364,6 +365,7 @@ module api.liveedit {
 
                 // unbind the old view from the component and bind the new one
                 this.unregisterComponentListeners(this.component);
+                this.unbindMouseListeners();
 
                 var parentRegionView = this.parentRegionView;
                 this.parentRegionView.unregisterComponentView(this);

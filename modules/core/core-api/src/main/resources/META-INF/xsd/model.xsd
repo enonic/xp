@@ -66,6 +66,7 @@
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
           <xs:element minOccurs="0" name="config" type="config"/>
           <xs:element minOccurs="0" name="maximize" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="default" type="default"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="required"/>
         <xs:attribute name="name" type="xs:string" use="required"/>
@@ -74,6 +75,12 @@
   </xs:complexType>
 
   <xs:complexType name="config">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="default" mixed="true">
     <xs:sequence>
       <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
     </xs:sequence>

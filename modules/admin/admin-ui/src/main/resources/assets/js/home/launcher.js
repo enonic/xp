@@ -49,6 +49,7 @@ function createLauncherLink(container) {
 
     link.setAttribute("rel", "import");
     link.setAttribute("href", launcherUrl);
+    link.setAttribute("async", "");
 
     link.onload = function () {
         launcherMainContainer = link.import.querySelector('.launcher-main-container');

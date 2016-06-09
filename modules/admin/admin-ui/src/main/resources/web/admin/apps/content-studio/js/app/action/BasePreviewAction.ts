@@ -31,20 +31,21 @@ export class BasePreviewAction extends Action {
         return isBlocked;
     }
 
-    protected openWindows(contents: api.content.ContentSummary[]) { // should be called only in async block
-        const targetWindows = this.openBlankWindows(contents);
-        targetWindows.forEach((value, index) => {
-            if (!value.isBlocked) {
-                this.updateLocation(value.openedWindow, contents[index], false);
-            }
-        });
+    // should be called only in async block
+    protected openWindow(content: api.content.ContentSummary) {
+        const targetWindow = this.openBlankWindow(content);
+        if (!targetWindow.isBlocked) {
+            this.updateLocation(targetWindow.openedWindow, content, false);
+        }
     }
 
-    protected openBlankWindows(contents: api.content.ContentSummary[]): OpenedWindow[] { // should be called only in async block
-        return contents.map(content => this.openBlankWindow(content));
+    // should be called only in async block
+    protected openWindows(contents: api.content.ContentSummary[]) {
+        contents.forEach((content) => this.openWindow(content));
     }
 
-    protected openBlankWindow(content: api.content.ContentSummary): OpenedWindow { // should be called only in async block
+    // should be called only in async block
+    protected openBlankWindow(content: api.content.ContentSummary): OpenedWindow {
         const openedWindow = window.open('', content.getId());
         const isBlocked = this.popupCheck(openedWindow);
         return {openedWindow, isBlocked};

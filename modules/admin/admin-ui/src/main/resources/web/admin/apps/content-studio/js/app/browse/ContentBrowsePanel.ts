@@ -12,6 +12,7 @@ import {Router} from "../Router";
 import {ActiveDetailsPanelManager} from "../view/detail/ActiveDetailsPanelManager";
 import {ContentBrowseItem} from "./ContentBrowseItem";
 import {ToggleSearchPanelEvent} from "./ToggleSearchPanelEvent";
+import {ToggleSearchPanelWithDependenciesEvent} from "./ToggleSearchPanelWithDependenciesEvent";
 import {NewMediaUploadEvent} from "../create/NewMediaUploadEvent";
 import {ContentPreviewPathChangedEvent} from "../view/ContentPreviewPathChangedEvent";
 import {ContentPublishMenuManager} from "./ContentPublishMenuManager";
@@ -149,7 +150,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems(),
                 item: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus> = null;
             if (browseItems.length > 0) {
-                item = browseItems[browseItems.length - 1];
+                item = browseItems[0];
             }
             this.doUpdateDetailsPanel(item ? item.getModel() : null);
         });
@@ -266,6 +267,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             this.toggleFilterPanel();
         });
 
+        ToggleSearchPanelWithDependenciesEvent.on((event: ToggleSearchPanelWithDependenciesEvent) => {
+            this.showFilterPanel();
+            this.contentFilterPanel.setDependencyItem(event.getContent(), event.isInbound());
+        });
+
         NewMediaUploadEvent.on((event) => {
             this.handleNewMediaUpload(event);
         });
@@ -317,7 +323,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         handler.onContentUpdated((data: ContentSummaryAndCompareStatus[]) => this.handleContentUpdated(data));
 
         handler.onContentRenamed((data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
-            this.handleContentCreated(data, oldPaths)
+            this.handleContentCreated(data, oldPaths);
         });
 
         handler.onContentDeleted((data: api.content.event.ContentServerChangeItem[]) => {
@@ -369,6 +375,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                                 this.contentTreeGrid.xUpdatePathsInChildren(node);
                             }
                         });
+                        this.contentTreeGrid.xPlaceContentNodes(nodes);
                     } else {
                         this.contentTreeGrid.xAppendContentNodes(
                             createResult[i].getNodes().map((node) => {

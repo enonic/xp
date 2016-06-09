@@ -58,6 +58,7 @@ module api.content.form.inputtype.upload {
                 this.imageUploader.setOriginalDimensions(content);
 
                 this.saveToProperty(value);
+                api.notify.showFeedback(content.getDisplayName() + ' saved');
             });
 
             this.imageUploader.onUploadReset(() => {

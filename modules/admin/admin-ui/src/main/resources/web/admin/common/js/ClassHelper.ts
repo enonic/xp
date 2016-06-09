@@ -66,7 +66,9 @@ module api {
          */
         static getFullName(instance): string {
             var constructor = (typeof instance === 'function') ? instance : instance["constructor"];
-            return ClassHelper.findPath(window, constructor) || constructor["name"];
+            //last one expression for IE
+            return ClassHelper.findPath(window, constructor) || constructor["name"] ||
+                   constructor.toString().match(/^function\s*([^\s(]+)/)[1];
         }
 
         /**

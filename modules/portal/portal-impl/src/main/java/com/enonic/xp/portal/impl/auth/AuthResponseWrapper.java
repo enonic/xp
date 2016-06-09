@@ -130,7 +130,7 @@ public class AuthResponseWrapper
                 if ( Boolean.TRUE != request.getAttribute( "idprovider.handled" ) )
                 {
                     final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                        functionName( "login" ).
+                        functionName( "handle403" ).
                         servletRequest( request ).
                         response( response ).
                         build();

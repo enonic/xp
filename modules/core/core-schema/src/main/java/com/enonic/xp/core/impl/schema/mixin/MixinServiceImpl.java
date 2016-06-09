@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.schema.mixin;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -8,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -32,6 +35,8 @@ import com.enonic.xp.schema.mixin.Mixins;
 public final class MixinServiceImpl
     implements MixinService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( MixinServiceImpl.class );
+
     private final BuiltinMixinsTypes builtInTypes;
 
     private ApplicationService applicationService;
@@ -113,13 +118,18 @@ public final class MixinServiceImpl
     @Override
     public Form inlineFormItems( final Form form )
     {
+        return doInlineFormItems( form, new HashSet<>() );
+    }
+
+    private Form doInlineFormItems( final Form form, final Set<MixinName> inlineMixins )
+    {
         final Form.Builder transformedForm = Form.create();
-        final List<FormItem> transformedFormItems = transformFormItems( form );
+        final List<FormItem> transformedFormItems = transformFormItems( form, inlineMixins );
         transformedFormItems.forEach( transformedForm::addFormItem );
         return transformedForm.build();
     }
 
-    private List<FormItem> transformFormItems( final Iterable<FormItem> iterable )
+    private List<FormItem> transformFormItems( final Iterable<FormItem> iterable, final Set<MixinName> inlineMixinStack )
     {
         final List<FormItem> formItems = new ArrayList<>();
         for ( final FormItem formItem : iterable )
@@ -127,31 +137,44 @@ public final class MixinServiceImpl
             if ( formItem instanceof InlineMixin )
             {
                 final InlineMixin inline = (InlineMixin) formItem;
-                final Mixin mixin = getByName( inline.getMixinName() );
+                final MixinName mixinName = inline.getMixinName();
+                final Mixin mixin = getByName( mixinName );
                 if ( mixin != null )
                 {
-                    for ( final FormItem mixinFormItem : mixin.getForm() )
+                    if ( inlineMixinStack.contains( mixinName ) )
+                    {
+                        final String error =
+                            "Cycle detected in mixin [" + mixin.getName() + "]. It contains an inline mixin that references itself.";
+                        LOG.error( error );
+                        throw new IllegalArgumentException( error );
+                    }
+
+                    inlineMixinStack.add( mixinName );
+                    final Form mixinForm = doInlineFormItems( mixin.getForm(), inlineMixinStack );
+                    inlineMixinStack.remove( mixinName );
+
+                    for ( final FormItem mixinFormItem : mixinForm )
                     {
                         formItems.add( mixinFormItem.copy() );
                     }
                 }
                 else
                 {
-                    throw new RuntimeException( "Mixin [" + inline.getMixinName() + "] not found" );
+                    throw new IllegalArgumentException( "Inline mixin [" + mixinName + "] not found" );
                 }
             }
             else if ( formItem instanceof FormItemSet )
             {
                 final FormItemSet.Builder formItemSetBuilder = FormItemSet.create( (FormItemSet) formItem );
                 formItemSetBuilder.clearFormItems();
-                formItemSetBuilder.addFormItems( transformFormItems( (FormItemSet) formItem ) );
+                formItemSetBuilder.addFormItems( transformFormItems( (FormItemSet) formItem, inlineMixinStack ) );
                 formItems.add( formItemSetBuilder.build() );
             }
             else if ( formItem instanceof FieldSet )
             {
                 final FieldSet.Builder formItemSetBuilder = FieldSet.create( (FieldSet) formItem );
                 formItemSetBuilder.clearFormItems();
-                formItemSetBuilder.addFormItems( transformFormItems( (FieldSet) formItem ) );
+                formItemSetBuilder.addFormItems( transformFormItems( (FieldSet) formItem, inlineMixinStack ) );
                 formItems.add( formItemSetBuilder.build() );
             }
             else

@@ -44,6 +44,10 @@ final class AttachmentHandlerWorker
         {
             this.response.header( "Content-Disposition", "attachment; filename=" + attachment.getName() );
         }
+        if ( this.name.endsWith( ".svgz" ) )
+        {
+            this.response.header( "Content-Encoding", "gzip" );
+        }
         if ( this.cacheable )
         {
             final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );

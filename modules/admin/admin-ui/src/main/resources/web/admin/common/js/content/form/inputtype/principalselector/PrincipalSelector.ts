@@ -108,7 +108,7 @@ module api.content.form.inputtype.principalselector {
         }
 
         protected getNumberOfValids(): number {
-            return this.comboBox.countSelected();
+            return this.getPropertyArray().getSize();
         }
 
         giveFocus(): boolean {

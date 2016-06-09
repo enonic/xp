@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PurgeIndexParams;
@@ -57,6 +59,8 @@ public class IndexServiceImpl
 
     private NodeVersionDao nodeVersionDao;
 
+    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
+
     @Override
     public ReindexResult reindex( final ReindexParams params )
     {
@@ -78,13 +82,16 @@ public class IndexServiceImpl
                 CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
                                     ValueExpr.string( branch.getName() ) );
 
+            final Context reindexContext = ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( params.getRepositoryId() ).
+                branch( branch ).
+                build();
+
             final NodeBranchQueryResult results = this.searchService.query( NodeBranchQuery.create().
                 query( QueryExpr.from( compareExpr ) ).
-                size( SearchService.GET_ALL_SIZE_FLAG ).
                 batchSize( BATCH_SIZE ).
-                build(), InternalContext.create( ContextAccessor.current() ).
-                branch( branch ).
-                build() );
+                size( SearchService.GET_ALL_SIZE_FLAG ).
+                build(), InternalContext.from( reindexContext ) );
 
             long nodeIndex = 1;
             final long total = results.getSize();

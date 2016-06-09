@@ -26,6 +26,10 @@ final class ControllerMappingsResolver
 
     private final ContentService contentService;
 
+    private Content contentResolved;
+
+    private Site siteResolved;
+
     ControllerMappingsResolver( final SiteService siteService, final ContentService contentService )
     {
         this.siteService = siteService;
@@ -38,19 +42,29 @@ final class ControllerMappingsResolver
         {
             return null;
         }
-        final Site site = getCurrentSite( request );
-        if ( site == null )
+
+        contentResolved = request.getContent();
+        siteResolved = request.getSite();
+
+        resolveCurrentSite( request );
+        if ( siteResolved == null )
         {
             return null;
         }
 
-        final List<ControllerMappingDescriptor> descriptors = getMappingDescriptors( site );
+        final List<ControllerMappingDescriptor> descriptors = getMappingDescriptors( siteResolved );
         if ( descriptors.isEmpty() )
         {
             return null;
         }
 
-        return getFirstMatchingDescriptor( request, site, descriptors );
+        final ControllerMappingDescriptor mappingDescriptor = getFirstMatchingDescriptor( request, siteResolved, descriptors );
+        if ( mappingDescriptor != null )
+        {
+            request.setContent( contentResolved );
+            request.setSite( siteResolved );
+        }
+        return mappingDescriptor;
     }
 
     private ControllerMappingDescriptor getFirstMatchingDescriptor( final PortalRequest request, final Site site,
@@ -60,7 +74,7 @@ final class ControllerMappingsResolver
 
         return descriptors.stream().
             filter( ( d ) -> matchesUrlPattern( d, request ) ).
-            filter( ( d ) -> matchesContent( d, request ) ).
+            filter( this::matchesContent ).
             sorted( ( d1, d2 ) -> {
                 if ( d2.compareTo( d1 ) == 0 )
                 {
@@ -89,28 +103,22 @@ final class ControllerMappingsResolver
         return descriptors;
     }
 
-    private Site getCurrentSite( final PortalRequest request )
+    private void resolveCurrentSite( final PortalRequest request )
     {
         if ( request.getContentPath() == null )
         {
-            return null;
+            return;
         }
 
-        Content content = request.getContent();
-        if ( content == null )
+        if ( contentResolved == null )
         {
-            content = getContent( request );
-            request.setContent( content );
+            contentResolved = getContent( request );
         }
 
-        Site site = request.getSite();
-        if ( site == null )
+        if ( siteResolved == null )
         {
-            site = getSite( content );
-            request.setSite( site );
+            siteResolved = getSite( contentResolved );
         }
-
-        return site;
     }
 
     private Content getContent( final PortalRequest request )
@@ -196,17 +204,21 @@ final class ControllerMappingsResolver
 
     private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request )
     {
-        final boolean patternMatches = descriptor.getPattern().matcher( request.getPath() ).matches();
+        final String internalPath = request.getRawRequest().
+            getRequestURI();
+        final boolean patternMatches = descriptor.getPattern().
+            matcher( internalPath ).
+            matches();
         return descriptor.invertPattern() ? !patternMatches : patternMatches;
     }
 
-    private boolean matchesContent( final ControllerMappingDescriptor descriptor, final PortalRequest request )
+    private boolean matchesContent( final ControllerMappingDescriptor descriptor )
     {
         if ( descriptor.getContentConstraint() == null )
         {
             return true;
         }
-        return descriptor.getContentConstraint().matches( request.getContent() );
+        return descriptor.getContentConstraint().matches( contentResolved );
     }
 
 }

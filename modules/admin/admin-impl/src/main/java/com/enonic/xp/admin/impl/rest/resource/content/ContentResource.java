@@ -41,6 +41,7 @@ import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdListJson;
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
+import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
@@ -57,6 +58,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryR
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -698,6 +700,20 @@ public final class ContentResource
     }
 
     @POST
+    @Path("contentPermissionsByIds")
+    public List<ContentPermissionsJson> getPermissionsByIds( final ContentIdsJson params )
+    {
+        final List<ContentPermissionsJson> result = new ArrayList<>();
+        for ( String contentId : params.getContentIds() )
+        {
+            final AccessControlList permissions = contentService.getPermissionsById( ContentId.from( contentId ) );
+            result.add( new ContentPermissionsJson( contentId, permissions, principalsResolver ) );
+        }
+
+        return result;
+    }
+
+    @POST
     @Path("nearestSite")
     @Consumes(MediaType.APPLICATION_JSON)
     public ContentJson getNearest( final GetNearestSiteJson params )
@@ -840,10 +856,15 @@ public final class ContentResource
         //TODO: do we need this param? it does not seem to be checked at all
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
 
+        final ContentQueryJsonToContentQueryConverter selectorQueryProcessor = ContentQueryJsonToContentQueryConverter.create().
+            contentQueryJson( contentQueryJson ).
+            contentService( this.contentService ).
+            build();
+
         final ContentIconUrlResolver iconUrlResolver = contentIconUrlResolver;
         final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
             populateChildren( getChildrenIds ).
-            contentQuery( contentQueryJson.getContentQuery() ).
+            contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
         return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );

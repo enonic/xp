@@ -17,7 +17,7 @@ import com.enonic.xp.security.UserStoreKey;
 public class IdentityHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
+    private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(logout))?" );
 
     protected AuthControllerService authControllerService;
 
@@ -39,7 +39,13 @@ public class IdentityHandler
         }
 
         final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( 1 ) );
-        final String idProviderFunction = matcher.group( 2 );
+        String idProviderFunction = matcher.group( 2 );
+        if ( idProviderFunction == null )
+        {
+            idProviderFunction = req.getMethod().
+                toString().
+                toLowerCase();
+        }
 
         final IdentityHandlerWorker worker = new IdentityHandlerWorker();
         worker.userStoreKey = userStoreKey;

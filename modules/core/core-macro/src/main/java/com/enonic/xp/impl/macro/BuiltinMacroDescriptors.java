@@ -1,7 +1,10 @@
 package com.enonic.xp.impl.macro;
 
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Arrays;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
@@ -11,18 +14,21 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 
-public class BuiltinMacroDescriptors
+public final class BuiltinMacroDescriptors
 {
     private final MacroDescriptors macroDescriptors = generateMacroDescriptors();
+
+    private Map<String, MacroDescriptor> macrosByName;
 
     private static final String MACRO_DESCRIPTORS_FOLDER = "macro-descriptors";
 
     public MacroDescriptor getByKey( final MacroKey key )
     {
-        return macroDescriptors.stream().
-            filter( macroDescriptor -> macroDescriptor.getKey().equals( key ) ).
-            findFirst().
-            orElse( null );
+        if ( !ApplicationKey.SYSTEM.equals( key.getApplicationKey() ) )
+        {
+            return null;
+        }
+        return macrosByName.get( key.getName().toLowerCase() );
     }
 
     public MacroDescriptors getAll()
@@ -32,13 +38,13 @@ public class BuiltinMacroDescriptors
 
     private MacroDescriptors generateMacroDescriptors()
     {
-        final ImmutableSet.Builder<MacroDescriptor> macroDescriptors = ImmutableSet.builder();
-        macroDescriptors.add( generateYoutubeMacroDescriptor() ).
-            add( generateTwitterMacroDescriptor() ).
-            add( generateEmbeddedCodeMacroDescriptor() ).
-            add( generateNoFormatMacroDescriptor() );
+        final ImmutableMap.Builder<String, MacroDescriptor> macroDescriptors = ImmutableMap.builder();
+        Arrays.asList( generateYoutubeMacroDescriptor(), generateTwitterMacroDescriptor(), generateEmbeddedCodeMacroDescriptor(),
+                       generateNoFormatMacroDescriptor() ).stream().
+            forEach( ( md ) -> macroDescriptors.put( md.getName().toLowerCase(), md ) );
 
-        return MacroDescriptors.from( macroDescriptors.build() );
+        macrosByName = macroDescriptors.build();
+        return MacroDescriptors.from( macrosByName.values() );
     }
 
     private MacroDescriptor generateYoutubeMacroDescriptor()

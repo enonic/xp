@@ -18,6 +18,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
+import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -306,10 +307,11 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node duplicate( final NodeId nodeId )
+    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor )
     {
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( nodeId ).
+            processor( processor ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).

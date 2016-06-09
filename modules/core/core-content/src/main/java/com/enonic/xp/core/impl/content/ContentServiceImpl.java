@@ -414,7 +414,7 @@ public class ContentServiceImpl
     @Override
     public Content duplicate( final DuplicateContentParams params )
     {
-        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ) );
+        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ), new DuplicateContentProcessor() );
         return translator.fromNode( createdNode, true );
     }
 

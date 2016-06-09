@@ -1,13 +1,18 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItem;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -17,6 +22,8 @@ import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 @Component(immediate = true)
 public final class MacroInstruction
@@ -71,19 +78,25 @@ public final class MacroInstruction
         }
 
         // execute macro
-        final MacroContext context = createContext( macroInstruction, portalRequest );
+        final MacroContext context = createContext( macroInstruction, macroDescriptor, portalRequest );
         return macroProcessor.process( context );
     }
 
     private MacroDescriptor resolveMacroDescriptor( final Site site, final String macroName )
     {
         //Searches for the macro in the applications associated to the site
-        MacroDescriptor macroDescriptor = site.getSiteConfigs().
+        final SiteConfigs siteConfigs = site.getSiteConfigs();
+        MacroDescriptor macroDescriptor = siteConfigs.
             stream().
             map( siteConfig -> MacroKey.from( siteConfig.getApplicationKey(), macroName ) ).
             map( macroDescriptorService::getByKey ).
             filter( Objects::nonNull ).findFirst().
             orElse( null );
+
+        if ( macroDescriptor == null )
+        {
+            macroDescriptor = resolveMacroDescriptorCaseInsensitive( siteConfigs, macroName );
+        }
 
         //If there is no corresponding macro
         if ( macroDescriptor == null )
@@ -96,6 +109,23 @@ public final class MacroInstruction
         return macroDescriptor;
     }
 
+    private MacroDescriptor resolveMacroDescriptorCaseInsensitive( final SiteConfigs siteConfigs, final String macroName )
+    {
+        for ( SiteConfig siteConfig : siteConfigs )
+        {
+            final MacroDescriptors macroDescriptors = macroDescriptorService.getByApplication( siteConfig.getApplicationKey() );
+            final MacroDescriptor macroDescriptor = macroDescriptors.stream().
+                filter( ( md ) -> md.getName().equalsIgnoreCase( macroName ) ).
+                findFirst().
+                orElse( null );
+            if ( macroDescriptor != null )
+            {
+                return macroDescriptor;
+            }
+        }
+        return null;
+    }
+
     private MacroProcessor resolveMacroProcessor( MacroDescriptor macroDescriptor )
     {
         if ( macroDescriptor != null )
@@ -105,16 +135,35 @@ public final class MacroInstruction
         return null;
     }
 
-    private MacroContext createContext( final Instruction macroInstruction, final PortalRequest request )
+    private MacroContext createContext( final Instruction macroInstruction, final MacroDescriptor macroDescriptor,
+                                        final PortalRequest request )
     {
-        final MacroContext.Builder context = MacroContext.create().name( macroInstruction.attribute( MACRO_NAME ) );
+        final Form macroForm = macroDescriptor.getForm();
+        final Map<String, String> paramCaseTranslator = new HashMap<>( macroForm.size() );
+        for ( FormItem formItem : macroForm )
+        {
+            final String name = formItem.getName();
+            paramCaseTranslator.put( name.toLowerCase(), name );
+        }
+
+        final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );
         for ( String name : macroInstruction.attributeNames() )
         {
-            if ( name.equals( MACRO_BODY ) || name.equals( MACRO_NAME ) )
+            if ( name.equalsIgnoreCase( MACRO_BODY ) || name.equalsIgnoreCase( MACRO_NAME ) )
             {
                 continue;
             }
-            context.param( name, macroInstruction.attribute( name, "" ) );
+
+            String contextParamName = name;
+            if ( macroForm.getFormItems().getItemByName( name ) == null )
+            {
+                final String normalizedName = paramCaseTranslator.get( name.toLowerCase() );
+                if ( normalizedName != null )
+                {
+                    contextParamName = normalizedName;
+                }
+            }
+            context.param( contextParamName, macroInstruction.attribute( name ) );
         }
         context.body( macroInstruction.attribute( MACRO_BODY ) );
         context.request( request );

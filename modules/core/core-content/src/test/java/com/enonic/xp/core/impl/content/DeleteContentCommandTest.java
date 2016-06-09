@@ -63,6 +63,13 @@ public class DeleteContentCommandTest
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
 
+        Mockito.when( this.nodeService.findByParent( Mockito.isA( FindNodesByParentParams.class ) ) ).
+            thenReturn( FindNodesByParentResult.create().
+                hits( 0 ).
+                nodes( Nodes.empty() ).
+                totalHits( 0 ).
+                build() );
+
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
             thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.NEW ) );
 

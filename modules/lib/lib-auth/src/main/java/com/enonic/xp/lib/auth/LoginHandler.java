@@ -19,6 +19,8 @@ import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
+import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
+import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.session.Session;
 
 public final class LoginHandler
@@ -27,6 +29,8 @@ public final class LoginHandler
     private String user;
 
     private String password;
+
+    private boolean skipAuth;
 
     private String[] userStore;
 
@@ -42,6 +46,11 @@ public final class LoginHandler
     public void setPassword( final String password )
     {
         this.password = password;
+    }
+
+    public void setSkipAuth( final boolean skipAuth )
+    {
+        this.skipAuth = skipAuth;
     }
 
     public void setUserStore( final String[] userStore )
@@ -111,22 +120,44 @@ public final class LoginHandler
 
         if ( isValidEmail( this.user ) )
         {
-            final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
-            emailAuthToken.setEmail( this.user );
-            emailAuthToken.setPassword( this.password );
-            emailAuthToken.setUserStore( userStore );
+            if ( this.skipAuth )
+            {
+                final VerifiedEmailAuthToken verifiedEmailAuthToken = new VerifiedEmailAuthToken();
+                verifiedEmailAuthToken.setEmail( this.user );
+                verifiedEmailAuthToken.setUserStore( userStore );
 
-            authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( emailAuthToken ) );
+                authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( verifiedEmailAuthToken ) );
+            }
+            else
+            {
+                final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
+                emailAuthToken.setEmail( this.user );
+                emailAuthToken.setPassword( this.password );
+                emailAuthToken.setUserStore( userStore );
+
+                authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( emailAuthToken ) );
+            }
         }
 
         if ( authInfo == null || !authInfo.isAuthenticated() )
         {
-            final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
-            usernameAuthToken.setUsername( this.user );
-            usernameAuthToken.setPassword( this.password );
-            usernameAuthToken.setUserStore( userStore );
+            if ( this.skipAuth )
+            {
+                final VerifiedUsernameAuthToken usernameAuthToken = new VerifiedUsernameAuthToken();
+                usernameAuthToken.setUsername( this.user );
+                usernameAuthToken.setUserStore( userStore );
 
-            authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
+                authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
+            }
+            else
+            {
+                final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
+                usernameAuthToken.setUsername( this.user );
+                usernameAuthToken.setPassword( this.password );
+                usernameAuthToken.setUserStore( userStore );
+
+                authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
+            }
         }
 
         return authInfo;

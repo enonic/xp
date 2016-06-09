@@ -55,7 +55,13 @@ public final class IdentityUrlParams
     public IdentityUrlParams setAsMap( final Multimap<String, String> map )
     {
         super.setAsMap( map );
+
         redirectionUrl( singleValue( map, "_redirect" ) );
+        final String userStoreKey = singleValue( map, "_userStore" );
+        if ( userStoreKey != null )
+        {
+            userStoreKey( UserStoreKey.from( userStoreKey ) );
+        }
         getParams().putAll( map );
         return this;
     }

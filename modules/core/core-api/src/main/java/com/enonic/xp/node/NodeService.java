@@ -29,7 +29,7 @@ public interface NodeService
 
     Nodes getByPaths( NodePaths paths );
 
-    Node duplicate( NodeId nodeId );
+    Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor );
 
     Node move( NodeId nodeId, NodePath parentNodePath );
 

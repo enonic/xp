@@ -67,7 +67,7 @@ public final class Page
     @SuppressWarnings("UnusedDeclaration")
     public Region getRegion( final String name )
     {
-        return this.regions.getRegion( name );
+        return hasRegions() ? this.regions.getRegion( name ) : null;
     }
 
     public PageRegions getRegions()

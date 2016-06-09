@@ -2,6 +2,7 @@ module api.macro.resource {
 
     import ApplicationEvent = api.application.ApplicationEvent;
     import ApplicationEventType = api.application.ApplicationEventType;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class MacrosLoader extends api.util.loader.BaseLoader<MacrosJson, MacroDescriptor> {
 
@@ -9,8 +10,8 @@ module api.macro.resource {
 
         private hasRelevantData: boolean;
 
-        constructor() {
-            this.getMacrosRequest = new GetMacrosRequest();
+        constructor(applicationKeys: ApplicationKey[]) {
+            this.getMacrosRequest = new GetMacrosRequest(applicationKeys);
             this.hasRelevantData = false;
             super(this.getMacrosRequest);
 
@@ -42,6 +43,16 @@ module api.macro.resource {
                     this.setResults(macros);
                     return macros;
                 });
+        }
+
+        search(searchString: string): wemQ.Promise<MacroDescriptor[]> {
+            if (this.hasRelevantData) {
+                return super.search(searchString);
+            } else {
+                return this.load().then(() => {
+                    return super.search(searchString);
+                });
+            }
         }
 
         filterFn(macro: MacroDescriptor) {

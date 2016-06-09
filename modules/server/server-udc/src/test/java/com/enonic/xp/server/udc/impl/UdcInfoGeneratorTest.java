@@ -21,10 +21,10 @@ public class UdcInfoGeneratorTest
     {
         final UdcInfo info = this.generator.generate();
         assertNotNull( info );
+        assertNotNull( info.uuid );
         assertNotNull( info.version );
         assertNotNull( info.versionHash );
         assertEquals( "xp", info.product );
-        assertNotNull( info.hardwareAddress );
         assertTrue( info.numCpu > 0 );
         assertTrue( info.maxMemory > 0 );
         assertNotNull( info.javaVersion );

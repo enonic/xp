@@ -31,11 +31,6 @@ public final class Macro
         return body;
     }
 
-    public Iterable<String> getParamNames()
-    {
-        return params.keySet();
-    }
-
     public String getParam( final String name )
     {
         return this.params.get( name );

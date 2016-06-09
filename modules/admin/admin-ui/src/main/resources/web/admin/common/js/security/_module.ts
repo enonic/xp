@@ -38,10 +38,10 @@
 ///<reference path="DeleteUserStoreResultsJson.ts"/>
 ///<reference path="DeletePrincipalRequest.ts"/>
 ///<reference path="DeleteUserStoreRequest.ts"/>
-///<reference path="SynchUserStoreRequest.ts"/>
-///<reference path="SynchUserStoreResult.ts"/>
-///<reference path="SynchUserStoreResultJson.ts"/>
-///<reference path="SynchUserStoreResultsJson.ts"/>
+///<reference path="SyncUserStoreRequest.ts"/>
+///<reference path="SyncUserStoreResult.ts"/>
+///<reference path="SyncUserStoreResultJson.ts"/>
+///<reference path="SyncUserStoreResultsJson.ts"/>
 ///<reference path='PrincipalLoader.ts' />
 ///<reference path="PrincipalNamedEvent.ts"/>
 ///<reference path="CreateUserStoreRequest.ts"/>

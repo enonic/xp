@@ -116,7 +116,10 @@ final class PageDefaultValuesProcessor
 
     private void applyComponentDefaultValues( final DescriptorBasedComponent cmp )
     {
-        final PropertyTree cmpData = cmp.getConfig();
+        if ( cmp.getDescriptor() == null )
+        {
+            return;
+        }
         final Form cmpForm;
         if ( cmp instanceof PartComponent )
         {
@@ -131,6 +134,7 @@ final class PageDefaultValuesProcessor
 
         if ( cmpForm != null )
         {
+            final PropertyTree cmpData = cmp.getConfig();
             formDefaultValuesProcessor.setDefaultValues( cmpForm, cmpData );
         }
     }

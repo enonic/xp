@@ -7,11 +7,15 @@ module api.content {
         private contentSummaryRequest: ContentSummaryRequest;
 
         constructor() {
-            this.contentSummaryRequest = new ContentSummaryRequest();
+            this.contentSummaryRequest = this.initContentSummaryRequest();
 
             super(this.contentSummaryRequest);
 
             this.setSearchQueryExpr();
+        }
+
+        protected initContentSummaryRequest(): ContentSummaryRequest {
+            return new ContentSummaryRequest();
         }
 
         setAllowedContentTypes(contentTypes: string[]) {
@@ -26,16 +30,12 @@ module api.content {
             this.contentSummaryRequest.setSize(size);
         }
 
-        setQueryExpr(queryExpr: QueryExpr) {
-            this.contentSummaryRequest.setQueryExpr(queryExpr);
-        }
-
         setContentPath(path: ContentPath) {
             this.contentSummaryRequest.setContentPath(path);
         }
 
         private setSearchQueryExpr(searchString: string = "") {
-            this.contentSummaryRequest.setSearchQueryExpr(searchString);
+            this.contentSummaryRequest.setSearchString(searchString);
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {

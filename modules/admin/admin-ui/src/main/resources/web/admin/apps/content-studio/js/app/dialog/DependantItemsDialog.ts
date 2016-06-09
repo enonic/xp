@@ -10,6 +10,7 @@ import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
 import SelectionItem = api.app.browse.SelectionItem;
 import ListBox = api.ui.selector.list.ListBox;
+import LoadMask = api.ui.mask.LoadMask;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
@@ -28,6 +29,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     private dependantsHeader: api.dom.H6El;
 
     private dependantList: ListBox<ContentSummaryAndCompareStatus>;
+
+    protected loadMask: LoadMask;
 
     constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
         super({
@@ -73,6 +76,11 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
         this.appendChildToContentPanel(this.dependantsContainer);
 
+        this.initLoadMask();
+    }
+
+    private initLoadMask() {
+        this.loadMask = new LoadMask(this.getContentPanel());
     }
 
     protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -102,6 +110,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
+        this.appendChildToContentPanel(this.loadMask);
+        this.loadMask.show();
     }
 
     close() {
@@ -135,11 +145,15 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
             .setContentPaths(summaries.map(summary => summary.getContentSummary().getPath())).sendAndParse()
             .then((result: api.content.ContentResponse<ContentSummary>) => {
 
-                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
-                    .then((compareContentResults: api.content.CompareContentResults) => {
+                let ids = summaries.map(contentAndStatus => contentAndStatus.getContentId().toString()),
+                    contents = result.getContents().filter((item) => {
+                        return ids.indexOf(item.getContentId().toString()) < 0;
+                    });
 
+                return api.content.CompareContentRequest.fromContentSummaries(contents).sendAndParse()
+                    .then((compareContentResults: api.content.CompareContentResults) => {
                         return ContentSummaryAndCompareStatusFetcher
-                            .updateCompareStatus(result.getContents(), compareContentResults);
+                            .updateCompareStatus(contents, compareContentResults);
                     });
             });
     }

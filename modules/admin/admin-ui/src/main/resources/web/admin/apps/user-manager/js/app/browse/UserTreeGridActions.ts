@@ -7,7 +7,7 @@ import PrincipalType = api.security.PrincipalType;
 import UserStore = api.security.UserStore;
 import GetPrincipalsByUserStoreRequest = api.security.GetPrincipalsByUserStoreRequest;
 import {UserTreeGridItem, UserTreeGridItemType} from "./UserTreeGridItem";
-import {SynchPrincipalAction} from "./action/SynchPrincipalAction";
+import {SyncPrincipalAction} from "./action/SyncPrincipalAction";
 import {DeletePrincipalAction} from "./action/DeletePrincipalAction";
 import {EditPrincipalAction} from "./action/EditPrincipalAction";
 import {NewPrincipalAction} from "./action/NewPrincipalAction";
@@ -18,7 +18,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
     public NEW: Action;
     public EDIT: Action;
     public DELETE: Action;
-    public SYNCH: Action;
+    public SYNC: Action;
 
     private actions: api.ui.Action[] = [];
 
@@ -26,9 +26,9 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
         this.NEW = new NewPrincipalAction(grid);
         this.EDIT = new EditPrincipalAction(grid);
         this.DELETE = new DeletePrincipalAction(grid);
-        this.SYNCH = new SynchPrincipalAction(grid);
+        this.SYNC = new SyncPrincipalAction(grid);
 
-        this.actions.push(this.NEW, this.EDIT, this.DELETE, this.SYNCH);
+        this.actions.push(this.NEW, this.EDIT, this.DELETE, this.SYNC);
     }
 
     getAllActions(): api.ui.Action[] {
@@ -79,7 +79,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
             this.DELETE.setEnabled(false);
         }
 
-        this.SYNCH.setEnabled(anyUserStore);
+        this.SYNC.setEnabled(anyUserStore);
 
         var deferred = wemQ.defer<BrowseItem<UserTreeGridItem>[]>();
         deferred.resolve(userItemBrowseItems);

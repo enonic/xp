@@ -37,9 +37,9 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.SynchUserStoreJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.SynchUserStoreResultJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.SynchUserStoresResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoreJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoreResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateRoleJson;
@@ -182,24 +182,24 @@ public final class SecurityResource
     }
 
     @POST
-    @Path("userstore/synch")
-    public SynchUserStoresResultJson synchUserStore( final SynchUserStoreJson params, @Context HttpServletRequest httpRequest )
+    @Path("userstore/sync")
+    public SyncUserStoresResultJson synchUserStore( final SyncUserStoreJson params, @Context HttpServletRequest httpRequest )
     {
-        final SynchUserStoresResultJson resultsJson = new SynchUserStoresResultJson();
+        final SyncUserStoresResultJson resultsJson = new SyncUserStoresResultJson();
         params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
             try
             {
-                final AuthControllerExecutionParams synchParams = AuthControllerExecutionParams.create().
+                final AuthControllerExecutionParams syncParams = AuthControllerExecutionParams.create().
                     userStoreKey( userStoreKey ).
-                    functionName( "synch" ).
+                    functionName( "sync" ).
                     servletRequest( httpRequest ).
                     build();
-                authControllerService.execute( synchParams );
-                resultsJson.add( SynchUserStoreResultJson.success( userStoreKey ) );
+                authControllerService.execute( syncParams );
+                resultsJson.add( SyncUserStoreResultJson.success( userStoreKey ) );
             }
             catch ( Exception e )
             {
-                resultsJson.add( SynchUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
+                resultsJson.add( SyncUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
             }
         } );
         return resultsJson;

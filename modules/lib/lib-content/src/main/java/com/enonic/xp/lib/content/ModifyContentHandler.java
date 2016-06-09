@@ -30,6 +30,8 @@ public final class ModifyContentHandler
 
     private ScriptValue editor;
 
+    private boolean requireValid = true;
+
     @Override
     protected Object doExecute()
     {
@@ -42,6 +44,7 @@ public final class ModifyContentHandler
         final UpdateContentParams params = new UpdateContentParams();
         params.contentId( existingContent.getId() );
         params.editor( newContentEditor( existingContent ) );
+        params.requireValid( this.requireValid );
 
         final Content result = this.contentService.update( params );
         return result != null ? new ContentMapper( result ) : null;
@@ -179,6 +182,12 @@ public final class ModifyContentHandler
         return null;
     }
 
+    @Override
+    protected boolean strictDataValidation()
+    {
+        return this.requireValid;
+    }
+
     public void setKey( final String key )
     {
         this.key = key;
@@ -187,5 +196,13 @@ public final class ModifyContentHandler
     public void setEditor( final ScriptValue editor )
     {
         this.editor = editor;
+    }
+
+    public void setRequireValid( final Boolean requireValid )
+    {
+        if ( requireValid != null )
+        {
+            this.requireValid = requireValid;
+        }
     }
 }

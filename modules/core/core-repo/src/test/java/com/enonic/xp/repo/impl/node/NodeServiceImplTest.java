@@ -62,7 +62,6 @@ public class NodeServiceImplTest
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( config.getBlobStoreDir() ).thenReturn( xpHome.newFolder() );
         Mockito.when( config.getSnapshotsDir() ).thenReturn( xpHome.newFolder() );
         this.nodeService.setConfiguration( config );
 

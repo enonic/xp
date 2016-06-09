@@ -116,6 +116,10 @@ module api.liveedit.text {
             return this.liveEditModel.getContent().getPath();
         }
 
+        private getApplicationKeys(): api.application.ApplicationKey[] {
+            return this.liveEditModel.getSiteModel().getSite().getApplicationKeys();
+        }
+
         private isAllTextSelected(): boolean {
             this.htmlAreaEditor.selection.getContent() == this.htmlAreaEditor.getContent();
             return this.rootElement.getHTMLElement().innerText.trim() == window['getSelection']().toString();
@@ -320,11 +324,13 @@ module api.liveedit.text {
                 onCreateDialog(event => {
                     this.currentDialogConfig = event.getConfig();
                 }).
-                setOnFocusHandler(this.onFocusHandler.bind(this)).
-                setOnBlurHandler(this.onBlurHandler.bind(this)).
-                setOnKeydownHandler(this.onKeydownHandler.bind(this)).setFixedToolbarContainer('.mce-toolbar-container').setContent(
-                this.getContent()).
+                setFocusHandler(this.onFocusHandler.bind(this)).
+                setBlurHandler(this.onBlurHandler.bind(this)).
+                setKeydownHandler(this.onKeydownHandler.bind(this)).
+                setFixedToolbarContainer('.mce-toolbar-container').
+                setContent(this.getContent()).
                 setContentPath(this.getContentPath()).
+                setApplicationKeys(this.getApplicationKeys()).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;

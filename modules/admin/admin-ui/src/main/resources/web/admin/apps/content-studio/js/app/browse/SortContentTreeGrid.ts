@@ -70,8 +70,8 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
     }
 
     private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        if (!!node.getData().getContentSummary()) {  // default node
-
+        const data = node.getData();
+        if (data.getContentSummary()) {
             var viewer: ContentSummaryViewer = <ContentSummaryViewer>node.getViewer("name");
             if (!viewer) {
                 viewer = new ContentSummaryViewer();
@@ -80,13 +80,14 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
             }
             return viewer.toString();
 
-        } else { // `load more` node
-            var content = new api.dom.DivEl("children-to-load"),
-                parent = node.getParent();
-            content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load.");
-
-            return content.toString();
         }
+
+        return "";
+    }
+
+    isEmptyNode(node: TreeNode<ContentSummaryAndCompareStatus>): boolean {
+        const data = node.getData();
+        return !data.getContentSummary();
     }
 
     sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {

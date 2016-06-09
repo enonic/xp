@@ -161,7 +161,7 @@ module api.app.browse {
             return this.filterAndGridSplitPanel.isFirstPanelHidden();
         }
 
-        private showFilterPanel() {
+        protected showFilterPanel() {
             this.filterPanelForcedShown = true;
             this.filterPanelForcedHidden = false;
 
@@ -185,7 +185,7 @@ module api.app.browse {
 
         private setupFilterPanel() {
             var splitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndToolbarPanel)
-                .setFirstPanelSize(200, api.ui.panel.SplitPanelUnit.PIXEL)
+                .setFirstPanelSize(215, api.ui.panel.SplitPanelUnit.PIXEL)
                 .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)
                 .setAnimationDelay(100)     // filter panel animation time
                 .build();
@@ -228,10 +228,12 @@ module api.app.browse {
             if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                 if (!this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.hideSecondPanel();
+                    this.browseItemPanel.setMobileView(true);
                 }
             } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
                 if (this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.showSecondPanel();
+                    this.browseItemPanel.setMobileView(false);
                 }
             }
         }

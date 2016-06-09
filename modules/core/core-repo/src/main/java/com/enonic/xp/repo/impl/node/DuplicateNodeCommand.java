@@ -9,6 +9,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
@@ -28,11 +29,19 @@ public final class DuplicateNodeCommand
 
     private final BlobStore binaryBlobStore;
 
+    private final DuplicateNodeProcessor processor;
+
     private DuplicateNodeCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.id;
         this.binaryBlobStore = builder.binaryBlobStore;
+        this.processor = builder.processor;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public static Builder create()
@@ -49,9 +58,12 @@ public final class DuplicateNodeCommand
         final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode ).
             name( newNodeName );
         attachBinaries( existingNode, createNodeParams );
+        final CreateNodeParams originalParams = createNodeParams.build();
+
+        final CreateNodeParams processedParams = executeProcessors( originalParams );
 
         final Node duplicatedNode = CreateNodeCommand.create( this ).
-            params( createNodeParams.build() ).
+            params( processedParams ).
             binaryBlobStore( binaryBlobStore ).
             build().
             execute();
@@ -73,6 +85,16 @@ public final class DuplicateNodeCommand
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
 
         return duplicatedNode;
+    }
+
+    private CreateNodeParams executeProcessors( final CreateNodeParams originalParams )
+    {
+        if ( this.processor != null )
+        {
+            return processor.process( originalParams );
+        }
+
+        return originalParams;
     }
 
     private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder )
@@ -97,8 +119,12 @@ public final class DuplicateNodeCommand
 
             attachBinaries( node, paramsBuilder );
 
+            final CreateNodeParams originalParams = paramsBuilder.build();
+
+            final CreateNodeParams processedParams = executeProcessors( originalParams );
+
             final Node newChildNode = CreateNodeCommand.create( this ).
-                params( paramsBuilder.build() ).
+                params( processedParams ).
                 binaryBlobStore( binaryBlobStore ).
                 build().
                 execute();
@@ -212,6 +238,8 @@ public final class DuplicateNodeCommand
 
         private BlobStore binaryBlobStore;
 
+        private DuplicateNodeProcessor processor;
+
         Builder()
         {
             super();
@@ -234,6 +262,13 @@ public final class DuplicateNodeCommand
             this.binaryBlobStore = blobStore;
             return this;
         }
+
+        public Builder processor( final DuplicateNodeProcessor processor )
+        {
+            this.processor = processor;
+            return this;
+        }
+
 
         @Override
         void validate()

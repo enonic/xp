@@ -33,22 +33,6 @@ public class RepoConfigurationTest
     }
 
     @Test
-    public void testDefault()
-    {
-        final RepoConfiguration config = createConfig();
-        Assert.assertEquals( new File( this.temporaryFolder.getRoot(), "repo/blob" ), config.getBlobStoreDir() );
-    }
-
-    @Test
-    public void testCustom()
-    {
-        this.map.put( "blobStore.dir", "/a/b" );
-
-        final RepoConfiguration config = createConfig();
-        Assert.assertEquals( new File( "/a/b" ), config.getBlobStoreDir() );
-    }
-
-    @Test
     public void testSnapshotsDir()
     {
         this.map.put( "snapshots.dir", "/a/b" );

@@ -64,11 +64,14 @@ public class AuthControllerServiceImpl
 
                 final PortalResponse portalResponse = authControllerScript.execute( functionName, portalRequest );
 
-                final HttpServletResponse response = params.getResponse();
-                if ( response != null )
+                if ( portalResponse != null )
                 {
-                    final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
-                    serializer.serialize( response );
+                    final HttpServletResponse response = params.getResponse();
+                    if ( response != null )
+                    {
+                        final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
+                        serializer.serialize( response );
+                    }
                 }
                 return portalResponse;
             }

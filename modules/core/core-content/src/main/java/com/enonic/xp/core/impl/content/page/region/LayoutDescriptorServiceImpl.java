@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -27,6 +29,8 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 public final class LayoutDescriptorServiceImpl
     implements LayoutDescriptorService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( LayoutDescriptorServiceImpl.class );
+
     private final static String PATH = "/site/layouts";
 
     private MixinService mixinService;
@@ -64,12 +68,18 @@ public final class LayoutDescriptorServiceImpl
         final List<LayoutDescriptor> list = Lists.newArrayList();
         for ( final DescriptorKey descriptorKey : findDescriptorKeys( key ) )
         {
-            final LayoutDescriptor descriptor = getByKey( descriptorKey );
-            if ( descriptor != null )
+            try
             {
-                list.add( descriptor );
+                final LayoutDescriptor descriptor = getByKey( descriptorKey );
+                if ( descriptor != null )
+                {
+                    list.add( descriptor );
+                }
             }
-
+            catch ( IllegalArgumentException e )
+            {
+                LOG.error( "Error in layout descriptor: " + descriptorKey.toString(), e );
+            }
         }
 
         return LayoutDescriptors.from( list );

@@ -1,6 +1,10 @@
 function handleAuthenticateResponse(loginResult) {
     if (loginResult.authenticated) {
-        location.reload();
+        if (CONFIG.redirectUrl) {
+            location.href = CONFIG.redirectUrl;
+        } else {
+            location.reload();
+        }
     } else {
         $("#message-container").html("Login failed!");
         $("#password-input").focus();
@@ -47,7 +51,6 @@ function onInputTyped(event) {
         }
     }
 }
-
 
 $("#login-button").click(function () {
     loginButtonClick();

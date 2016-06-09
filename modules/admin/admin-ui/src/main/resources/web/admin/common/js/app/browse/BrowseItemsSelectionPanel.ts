@@ -6,18 +6,28 @@ module api.app.browse {
         private items: BrowseItem<M>[] = [];
         private selectionItems: SelectionItem<M>[] = [];
         private messageForNoSelection = "You are wasting this space - select something!";
+        private mobileView: boolean = false;
 
         constructor() {
             super("items-selection-panel");
             this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
         }
 
+        setMobileView(mobileView: boolean) {
+            this.mobileView = mobileView;
+            if (mobileView) {
+                this.removeChildren()
+            } else {
+                this.appendChildren(...this.selectionItems);
+            }
+        }
+
         private addItem(item: BrowseItem<M>) {
             var index = this.indexOf(item);
             if (index >= 0) {
                 // item already exist
-                var currentItem = this.items[index];
-                if (!item.equals(currentItem)) {
+                const currentItem = this.items[index];
+                if (!this.compareItems(currentItem, item)) {
                     // update current item
                     this.items[index] = item;
                     this.selectionItems[index].setBrowseItem(item);
@@ -36,7 +46,9 @@ module api.app.browse {
             };
             var selectionItem = new SelectionItem(this.createItemViewer(item), item, removeCallback);
 
-            this.appendChild(selectionItem);
+            if (!this.mobileView) {
+                this.appendChild(selectionItem);
+            }
             this.selectionItems.push(selectionItem);
             this.items.push(item);
         }
@@ -126,6 +138,10 @@ module api.app.browse {
 
         onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
             this.deselectedListeners.push(listener);
+        }
+
+        protected compareItems(currentItem: BrowseItem<M>, updatedItem: BrowseItem<M>): boolean {
+            return updatedItem.equals(currentItem);
         }
 
         private notifyDeselected(item: BrowseItem<M>) {

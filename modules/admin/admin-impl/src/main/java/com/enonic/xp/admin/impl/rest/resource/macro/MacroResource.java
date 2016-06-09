@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.macro;
 
+import java.util.Set;
+
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -22,11 +24,14 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.macro.json.ApplicationKeysParam;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroStringResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewStringMacroJson;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.Property;
@@ -47,6 +52,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "macro")
 @Produces(MediaType.APPLICATION_JSON)
@@ -70,11 +76,13 @@ public final class MacroResource
 
     private static final String DEFAULT_MIME_TYPE = "image/svg+xml";
 
-    @GET
-    @Path("list")
-    public MacrosJson getMacros()
+    @POST
+    @Path("getByApps")
+    public MacrosJson getMacrosByApp( final ApplicationKeysParam appKeys )
     {
-        return new MacrosJson( this.macroDescriptorService.getAll(), this.macroIconUrlResolver );
+        final Set<ApplicationKey> keys = appKeys.getKeys();
+        keys.add( ApplicationKey.SYSTEM );
+        return new MacrosJson( this.macroDescriptorService.getByApplications( ApplicationKeys.from( keys ) ), this.macroIconUrlResolver );
     }
 
     @GET
@@ -156,9 +164,10 @@ public final class MacroResource
         portalRequest.setBaseUri( "/portal" );
         portalRequest.setMode( RenderMode.EDIT );
         portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
-        portalRequest.setScheme( "http" );
-        portalRequest.setHost( "localhost" );
-        portalRequest.setPort( 8080 );
+        portalRequest.setScheme( ServletRequestUrlHelper.getScheme( req ) );
+        portalRequest.setHost( ServletRequestUrlHelper.getHost( req ) );
+        portalRequest.setPort( ServletRequestUrlHelper.getPort( req ) );
+        portalRequest.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
         final PageUrlParams pageUrlParams = new PageUrlParams().portalRequest( portalRequest ).path( contentPath.toString() );
         portalRequest.setPath( portalUrlService.pageUrl( pageUrlParams ) );
         return portalRequest;
