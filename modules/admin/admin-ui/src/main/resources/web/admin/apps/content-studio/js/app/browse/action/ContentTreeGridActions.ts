@@ -25,6 +25,7 @@ import AccessControlEntry = api.security.acl.AccessControlEntry;
 import AccessControlList = api.security.acl.AccessControlList;
 import ContentId = api.content.ContentId;
 import ContentAccessControlList = api.security.acl.ContentAccessControlList;
+import Permission = api.security.acl.Permission;
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -84,131 +85,116 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
         this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
+        switch (contentBrowseItems.length) {
+        case 0:
+            this.resetDefaultActionsNoItemsSelected();
+            break;
+        case 1:
+            this.resetDefaultActionsSingleItemSelected(contentBrowseItems);
+            break;
+        default:
+            this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
+        }
+
+        let deferred = wemQ.defer<ContentBrowseItem[]>();
+
+        let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
+
+        let parallelPromises: wemQ.Promise<any>[] = [
+            previewHandler.updateState(contentBrowseItems, changes),
+            this.updateActionsEnabledStateByPermissions(contentBrowseItems)
+        ];
+
+        wemQ.all(parallelPromises).spread<void>(() => {
+            deferred.resolve(contentBrowseItems);
+            return wemQ(null);
+        }).catch(api.DefaultErrorHandler.handle);
+
+        return deferred.promise;
+    }
+
+    private resetDefaultActionsNoItemsSelected() {
+        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
+        this.EDIT_CONTENT.setEnabled(false);
+        this.DELETE_CONTENT.setEnabled(false);
+        this.DUPLICATE_CONTENT.setEnabled(false);
+        this.MOVE_CONTENT.setEnabled(false);
+        this.SORT_CONTENT.setEnabled(false);
+
+        this.PUBLISH_CONTENT.setEnabled(false);
+        this.PUBLISH_CONTENT.setVisible(true);
+        this.PUBLISH_TREE_CONTENT.setEnabled(false);
+        this.UNPUBLISH_CONTENT.setEnabled(false);
+        this.UNPUBLISH_CONTENT.setVisible(false);
+    }
+
+    private resetDefaultActionsSingleItemSelected(contentBrowseItems: ContentBrowseItem[]) {
         let contentSummaries: ContentSummary[] = contentBrowseItems.map((elem: ContentBrowseItem) => {
             return elem.getModel().getContentSummary();
         });
 
-        let deferred = wemQ.defer<ContentBrowseItem[]>();
+        let treePublishEnabled = true,
+            unpublishEnabled = true,
+            contentSummary = contentSummaries[0],
+            publishEnabled = !this.isOnline(contentBrowseItems[0].getModel().getCompareStatus()),
+            isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
 
-        let parallelPromises: wemQ.Promise<any>[];
-
-        let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
-
-        let publishEnabled = true;
-        let treePublishEnabled = true;
-        let unpublishEnabled = true;
-
-        switch (contentBrowseItems.length) {
-        case 0:
-            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-            this.EDIT_CONTENT.setEnabled(false);
-            this.DELETE_CONTENT.setEnabled(false);
-            this.DUPLICATE_CONTENT.setEnabled(false);
-            this.MOVE_CONTENT.setEnabled(false);
-            this.SORT_CONTENT.setEnabled(false);
-
-            this.PUBLISH_CONTENT.setEnabled(false);
-            this.PUBLISH_CONTENT.setVisible(true);
-            this.PUBLISH_TREE_CONTENT.setEnabled(false);
-            this.UNPUBLISH_CONTENT.setEnabled(false);
-            this.UNPUBLISH_CONTENT.setVisible(false);
-
-            parallelPromises = [
-                previewHandler.updateState(contentBrowseItems, changes),
-                this.updateActionsEnabledStateByPermissions(contentBrowseItems)
-            ];
-
-            wemQ.all(parallelPromises).spread<void>(() => {
-                deferred.resolve(contentBrowseItems);
-                return wemQ(null);
-            }).catch(api.DefaultErrorHandler.handle);
-            break;
-        case 1:
-            let contentSummary = contentSummaries[0];
-            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-            this.EDIT_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isEditable());
-            this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
-            this.DUPLICATE_CONTENT.setEnabled(true);
-            this.MOVE_CONTENT.setEnabled(true);
-
-            let publishEnabled = !this.isOnline(contentBrowseItems[0].getModel().getCompareStatus());
-            let isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
-
-
-            if (this.isEveryLeaf(contentSummaries)) {
-                treePublishEnabled = false;
-                unpublishEnabled = isPublished;
-            } else if (this.isOneNonLeaf(contentSummaries)) {
-                // treePublishEnabled = true;
-                unpublishEnabled = isPublished;
-            }
-
-            this.PUBLISH_CONTENT.setEnabled(publishEnabled);
-            this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
-            this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
-
-            this.PUBLISH_CONTENT.setVisible(!isPublished);
-            this.UNPUBLISH_CONTENT.setVisible(isPublished);
-
-            this.SORT_CONTENT.setEnabled(true);
-            // this.PREVIEW_CONTENT.setEnabled(false);
-            parallelPromises = [
-                previewHandler.updateState(contentBrowseItems, changes),
-                this.updateActionsEnabledStateByPermissions(contentBrowseItems)
-            ];
-            wemQ.all(parallelPromises).spread<void>(() => {
-                deferred.resolve(contentBrowseItems);
-                return wemQ(null);
-            }).catch(api.DefaultErrorHandler.handle);
-            break;
-        default:
-            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-            //   this.PREVIEW_CONTENT.setEnabled(false);
-            this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
-            this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
-            this.DUPLICATE_CONTENT.setEnabled(false);
-            this.MOVE_CONTENT.setEnabled(true);
-            this.SORT_CONTENT.setEnabled(false);
-
-            let anyUnpublished = contentBrowseItems.some((browseItem) => {
-                return !this.isPublished(browseItem.getModel().getCompareStatus());
-            });
-
-            let anyPublished = contentBrowseItems.some((browseItem) => {
-                return this.isPublished(browseItem.getModel().getCompareStatus());
-            });
-
-            if (this.isEveryLeaf(contentSummaries)) {
-                //publishEnabled = anyUnpublished;
-                treePublishEnabled = false;
-                unpublishEnabled = anyPublished;
-            } else if (this.isOneNonLeaf(contentSummaries)) {
-                // publishEnabled = true;
-                // treePublishEnabled = true;
-                unpublishEnabled = anyPublished;
-            } else if (this.isNonLeafInMany(contentSummaries)) {
-                // publishEnabled = true;
-                // treePublishEnabled = true;
-                // unpublishEnabled = true;
-            }
-
-            this.PUBLISH_CONTENT.setEnabled(anyUnpublished);
-            this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
-            this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
-
-            this.PUBLISH_CONTENT.setVisible(anyUnpublished);
-            this.UNPUBLISH_CONTENT.setVisible(!anyUnpublished);
-
-            parallelPromises = [
-                previewHandler.updateState(contentBrowseItems, changes),
-                this.updateActionsEnabledStateByPermissions(contentBrowseItems)
-            ];
-            wemQ.all(parallelPromises).spread<void>(() => {
-                deferred.resolve(contentBrowseItems);
-                return wemQ(null);
-            }).catch(api.DefaultErrorHandler.handle);
+        if (this.isEveryLeaf(contentSummaries)) {
+            treePublishEnabled = false;
+            unpublishEnabled = isPublished;
+        } else if (this.isOneNonLeaf(contentSummaries)) {
+            unpublishEnabled = isPublished;
         }
-        return deferred.promise;
+
+        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
+        this.EDIT_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isEditable());
+        this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
+        this.DUPLICATE_CONTENT.setEnabled(true);
+        this.MOVE_CONTENT.setEnabled(true);
+        this.SORT_CONTENT.setEnabled(true);
+
+        this.PUBLISH_CONTENT.setEnabled(publishEnabled);
+        this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
+        this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
+        this.PUBLISH_CONTENT.setVisible(!isPublished);
+        this.UNPUBLISH_CONTENT.setVisible(isPublished);
+    }
+
+    private resetDefaultActionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[]) {
+        let contentSummaries: ContentSummary[] = contentBrowseItems.map((elem: ContentBrowseItem) => {
+            return elem.getModel().getContentSummary();
+        });
+
+        let treePublishEnabled = true,
+            unpublishEnabled = true;
+
+        let anyUnpublished = contentBrowseItems.some((browseItem) => {
+            return !this.isPublished(browseItem.getModel().getCompareStatus());
+        });
+
+        let anyPublished = contentBrowseItems.some((browseItem) => {
+            return this.isPublished(browseItem.getModel().getCompareStatus());
+        });
+
+        if (this.isEveryLeaf(contentSummaries)) {
+            treePublishEnabled = false;
+            unpublishEnabled = anyPublished;
+        } else if (this.isOneNonLeaf(contentSummaries)) {
+            unpublishEnabled = anyPublished;
+        }
+
+        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+        this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
+        this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
+        this.DUPLICATE_CONTENT.setEnabled(false);
+        this.MOVE_CONTENT.setEnabled(true);
+        this.SORT_CONTENT.setEnabled(false);
+
+        this.PUBLISH_CONTENT.setEnabled(anyUnpublished);
+        this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
+        this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
+        this.PUBLISH_CONTENT.setVisible(anyUnpublished);
+        this.UNPUBLISH_CONTENT.setVisible(!anyUnpublished);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
@@ -232,65 +218,54 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private updateActionsEnabledStateByPermissions(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
-        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-            switch (contentBrowseItems.length) {
-            case 0:
-                return this.updateActionsWhenNoItemsSelected(loginResult);
-                break;
-            case 1:
-                return this.updateActionsWhenSingleItemSelected(loginResult, contentBrowseItems);
-                break;
-            default:
-                return this.updateActionsWhenMultipleItemsSelected(loginResult, contentBrowseItems);
-            }
-        });
+        switch (contentBrowseItems.length) {
+        case 0:
+            return this.updateActionsByPermissionsNoItemsSelected();
+            break;
+        case 1:
+            return this.updateActionsByPermissionsSingleItemSelected(contentBrowseItems);
+            break;
+        default:
+            return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems);
+        }
     }
 
-    private updateActionsWhenNoItemsSelected(loginResult: api.security.auth.LoginResult): wemQ.Promise<any> {
-        return new api.content.GetContentRootPermissionsRequest().sendAndParse().then((accessControlList: AccessControlList) => {
-            var hasCreatePermission =
-                PermissionHelper.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
+    private updateActionsByPermissionsNoItemsSelected(): wemQ.Promise<any> {
+        return new api.content.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
+            (allowedPermissions: Permission[]) => {
+                let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(hasCreatePermission);
-        })
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(canCreate);
+            });
     }
 
-    private updateActionsWhenSingleItemSelected(loginResult: api.security.auth.LoginResult,
-                                                contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
+    private updateActionsByPermissionsSingleItemSelected(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
         var selectedItem = contentBrowseItems[0].getModel().getContentSummary();
 
-        this.checkIsDuplicateAllowedByPermissions(selectedItem, loginResult).then((result: boolean) => {
+        this.checkIsDuplicateAllowedByPermissions(selectedItem).then((result: boolean) => {
             this.DUPLICATE_CONTENT.setEnabled(result);
         });
 
         return this.checkIsChildrenAllowedByPermissions(selectedItem).then((contentTypesAllowChildren: boolean) => {
-            return this.updateActionsWhenMultipleItemsSelected(loginResult, contentBrowseItems, contentTypesAllowChildren);
+            return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems, contentTypesAllowChildren);
         });
     }
 
-    private updateActionsWhenMultipleItemsSelected(loginResult: api.security.auth.LoginResult, contentBrowseItems: ContentBrowseItem[],
-                                                   contentTypesAllowChildren: boolean = true): wemQ.Promise<any> {
+    private updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[],
+                                                            contentTypesAllowChildren: boolean = true): wemQ.Promise<any> {
         let selectedItemsIds: ContentId[] = contentBrowseItems.map((contentBrowseItem: ContentBrowseItem) => {
             return contentBrowseItem.getModel().getContentId();
         });
 
-        return new api.content.GetContentPermissionsByIdsRequest(selectedItemsIds).sendAndParse().then(
-            (items: ContentAccessControlList[]) => {
+        return new api.content.GetPermittedActionsRequest().addContentIds(...selectedItemsIds).addPermissionsToBeChecked(Permission.CREATE,
+            Permission.DELETE, Permission.PUBLISH).sendAndParse().then(
+            (allowedPermissions: Permission[]) => {
 
-                let canCreate = !items.some((item: ContentAccessControlList) => {
-                    return !PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
-                        loginResult, item)
-                });
+                let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-                let canDelete = !items.some((item: ContentAccessControlList) => {
-                    return !PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
-                        loginResult, item)
-                });
+                let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1;
 
-                let canPublish = !items.some((item: ContentAccessControlList) => {
-                    return !PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
-                        loginResult, item)
-                });
+                let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1;
 
                 if (!contentTypesAllowChildren || !canCreate) {
                     this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
@@ -306,7 +281,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                     this.PUBLISH_CONTENT.setEnabled(false);
                     this.PUBLISH_TREE_CONTENT.setEnabled(false);
                 }
-
         });
     }
 
@@ -321,24 +295,24 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return deferred.promise;
     }
 
-    private checkIsDuplicateAllowedByPermissions(contentSummary: ContentSummary,
-                                                 loginResult: api.security.auth.LoginResult): wemQ.Promise<Boolean> {
+    private checkIsDuplicateAllowedByPermissions(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
         var deferred = wemQ.defer<boolean>();
 
         if (contentSummary.hasParent()) {
             new api.content.GetContentByPathRequest(contentSummary.getPath().getParentPath()).sendAndParse().then(
                 (parent: api.content.Content) => {
+                    new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                        deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                            loginResult,
+                            parent.getPermissions()));
+                    });
 
-                    deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
-                        loginResult,
-                        parent.getPermissions()));
+
                 });
         } else {
-            new api.content.GetContentRootPermissionsRequest().sendAndParse().then((accessControlList: AccessControlList) => {
-
-                deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
-                    loginResult,
-                    accessControlList));
+            new api.content.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
+                (allowedPermissions: Permission[]) => {
+                    deferred.resolve(allowedPermissions.indexOf(Permission.CREATE) > -1);
             });
         }
 
