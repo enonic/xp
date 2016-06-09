@@ -1,0 +1,8 @@
+{
+  "contentIds": [],
+  "permissions": [
+    "CREATE",
+    "PUBLISH",
+    "DELETE"
+  ]
+}
