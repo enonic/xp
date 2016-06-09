@@ -40,7 +40,7 @@ public final class BuiltinMacroDescriptors
     {
         final ImmutableMap.Builder<String, MacroDescriptor> macroDescriptors = ImmutableMap.builder();
         Arrays.asList( generateYoutubeMacroDescriptor(), generateTwitterMacroDescriptor(), generateEmbeddedCodeMacroDescriptor(),
-                       generateNoFormatMacroDescriptor() ).stream().
+                       generateNoFormatMacroDescriptor(), generateEmbedIFrameMacroDescriptor() ).stream().
             forEach( ( md ) -> macroDescriptors.put( md.getName().toLowerCase(), md ) );
 
         macrosByName = macroDescriptors.build();
@@ -88,6 +88,17 @@ public final class BuiltinMacroDescriptors
             build();
 
         return create( macroKey, "No Format macro", "Contents of this macro will not be formatted", form );
+    }
+
+    private MacroDescriptor generateEmbedIFrameMacroDescriptor()
+    {
+        final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "embed" );
+
+        final Form form = Form.create().
+            addFormItem( createTextAreaInput( "body", "IFrame HTML" ).occurrences( 1, 1 ).build() ).
+            build();
+
+        return create( macroKey, "Embed IFrame", "Generic iframe embedder", form );
     }
 
     private MacroDescriptor create( final MacroKey macroKey, final String displayName, final String description, final Form form )

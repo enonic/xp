@@ -78,7 +78,7 @@ public final class MacroResource
 
     @POST
     @Path("getByApps")
-    public MacrosJson getMacrosByApp( final ApplicationKeysParam appKeys )
+    public MacrosJson getMacrosByApps( final ApplicationKeysParam appKeys )
     {
         final Set<ApplicationKey> keys = appKeys.getKeys();
         keys.add( ApplicationKey.SYSTEM );
