@@ -47,8 +47,6 @@ public class IndexServiceImpl
 {
     private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
 
-    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
-
     private final static int BATCH_SIZE = 10_000;
 
     private IndexServiceInternal indexServiceInternal;

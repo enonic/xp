@@ -44,11 +44,6 @@ public final class DuplicateNodeCommand
         return new Builder();
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public Node execute()
     {
         final Node existingNode = doGetById( nodeId );

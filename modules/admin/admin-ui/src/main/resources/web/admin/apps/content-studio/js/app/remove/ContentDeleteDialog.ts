@@ -71,8 +71,8 @@ export class ContentDeleteDialog extends DependantItemsDialog {
 
                 this.centerMyself();
             }).finally(() => {
-                this.loadMask.hide();
-                this.deleteButton.setEnabled(true);
+            this.loadMask.hide();
+            this.deleteButton.setEnabled(true);
             });
     }
 

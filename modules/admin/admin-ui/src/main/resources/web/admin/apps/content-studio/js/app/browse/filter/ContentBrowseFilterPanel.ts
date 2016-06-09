@@ -147,8 +147,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 this.handleDataSearchResult(contentQuery, contentQueryResult);
             }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+            api.DefaultErrorHandler.handle(reason);
+        }).done();
     }
 
     private refreshDataAndHandleResponse(contentQuery: ContentQuery) {
@@ -161,8 +161,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                     this.handleNoSearchResultOnRefresh(contentQuery);
                 }
             }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+            api.DefaultErrorHandler.handle(reason);
+        }).done();
     }
 
     private handleDataSearchResult(contentQuery: ContentQuery,
@@ -195,8 +195,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     private cloneContentQueryNoContentTypes(contentQuery: ContentQuery): ContentQuery {
         var newContentQuery: ContentQuery = new ContentQuery().setContentTypeNames([]).setFrom(contentQuery.getFrom()).setQueryExpr(
             contentQuery.getQueryExpr()).setSize(contentQuery.getSize()).setAggregationQueries(
-            contentQuery.getAggregationQueries()).setQueryFilters(contentQuery.getQueryFilters()).
-            setMustBeReferencedById(contentQuery.getMustBeReferencedById());
+            contentQuery.getAggregationQueries()).setQueryFilters(contentQuery.getQueryFilters()).setMustBeReferencedById(
+            contentQuery.getMustBeReferencedById());
 
         return newContentQuery;
     }
@@ -242,8 +242,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                     aggregationGroupView.initialize();
                 });
             }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+            api.DefaultErrorHandler.handle(reason);
+        }).done();
     }
 
     private resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
@@ -266,8 +266,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                 }
             }
         ).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            });
+            api.DefaultErrorHandler.handle(reason);
+        });
     }
 
     private buildAggregationsQuery(): ContentQuery {

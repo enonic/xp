@@ -31,11 +31,6 @@ public class UnpublishContentCommand
         this.params = builder.params;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public Contents execute()
     {
         final Context context = ContextAccessor.current();

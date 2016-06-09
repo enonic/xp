@@ -276,9 +276,8 @@ module api.util.htmlarea.editor {
         private notifyMacroDialog(config) {
             let event = CreateHtmlAreaDialogEvent.create().
                 setConfig(config).
-                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).
-                setContentPath(this.contentPath).
-                setApplicationKeys(this.applicationKeys).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContentPath(this.contentPath).setApplicationKeys(
+                this.applicationKeys).
                 build();
             this.publishCreateDialogEvent(event);
         }

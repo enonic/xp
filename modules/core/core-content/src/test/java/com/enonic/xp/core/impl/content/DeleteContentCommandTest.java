@@ -66,7 +66,7 @@ public class DeleteContentCommandTest
         Mockito.when( this.nodeService.findByParent( Mockito.isA( FindNodesByParentParams.class ) ) ).
             thenReturn( FindNodesByParentResult.create().
                 hits( 0 ).
-                nodes( Nodes.empty() ).
+                nodeIds( NodeIds.empty() ).
                 totalHits( 0 ).
                 build() );
 

@@ -48,6 +48,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -115,7 +116,6 @@ public abstract class AbstractNodeTest
         super.setUp();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
         Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/snapshots" ) );
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
@@ -167,7 +167,8 @@ public abstract class AbstractNodeTest
         this.snapshotService.setClient( this.client );
         this.snapshotService.setConfiguration( repoConfig );
 
-        createContentRepository();
+        createRepository( TEST_REPO );
+        createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
     }
 
