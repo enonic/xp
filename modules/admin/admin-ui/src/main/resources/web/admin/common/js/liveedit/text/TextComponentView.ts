@@ -324,9 +324,9 @@ module api.liveedit.text {
                 onCreateDialog(event => {
                     this.currentDialogConfig = event.getConfig();
                 }).
-                setOnFocusHandler(this.onFocusHandler.bind(this)).
-                setOnBlurHandler(this.onBlurHandler.bind(this)).
-                setOnKeydownHandler(this.onKeydownHandler.bind(this)).
+                setFocusHandler(this.onFocusHandler.bind(this)).
+                setBlurHandler(this.onBlurHandler.bind(this)).
+                setKeydownHandler(this.onKeydownHandler.bind(this)).
                 setFixedToolbarContainer('.mce-toolbar-container').
                 setContent(this.getContent()).
                 setContentPath(this.getContentPath()).

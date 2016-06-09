@@ -93,7 +93,7 @@ module api.form.inputtype.text {
             var focusedEditorCls = "html-area-focused";
             var baseUrl = CONFIG.assetsUri;
 
-            var onFocusHandler = (e) => {
+            var focusHandler = (e) => {
                 this.resetInputHeight();
                 textAreaWrapper.addClass(focusedEditorCls);
 
@@ -103,13 +103,11 @@ module api.form.inputtype.text {
                 new api.ui.selector.SelectorOnBlurEvent(this).fire();
             };
 
-            var onNodeChangeHandler = (e) => {
-                this.notifyValueChanged(id, textAreaWrapper);
-            };
+            var notifyValueChanged = this.notifyValueChanged.bind(this, id, textAreaWrapper);
 
             var isMouseOverRemoveOccurenceButton = false;
 
-            var onBlurHandler = (e) => {
+            var blurHandler = (e) => {
                 //checking if remove occurence button clicked or not
                 if (!isMouseOverRemoveOccurenceButton) {
                     this.setStaticInputHeight();
@@ -120,7 +118,7 @@ module api.form.inputtype.text {
                 api.util.AppHelper.dispatchCustomEvent("focusout", this);
             };
 
-            var onKeydownHandler = (e) => {
+            var keydownHandler = (e) => {
                 if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
                     e.preventDefault();
 
@@ -140,7 +138,7 @@ module api.form.inputtype.text {
                 }
             };
 
-            var onCreateDialogHandler = event => {
+            var createDialogHandler = event => {
                 api.util.htmlarea.dialog.HTMLAreaDialogHandler.createAndOpenDialog(event);
                 textAreaWrapper.addClass(focusedEditorCls);
             };
@@ -149,11 +147,12 @@ module api.form.inputtype.text {
                 setSelector('textarea.' + id.replace(/\./g, '_')).
                 setAssetsUri(baseUrl).
                 setInline(false).
-                onCreateDialog(onCreateDialogHandler).
-                setOnFocusHandler(onFocusHandler).
-                setOnBlurHandler(onBlurHandler).
-                setOnKeydownHandler(onKeydownHandler).
-                setOnNodeChangeHandler(onNodeChangeHandler).
+                onCreateDialog(createDialogHandler).
+                setFocusHandler(focusHandler).
+                setBlurHandler(blurHandler).
+                setKeydownHandler(keydownHandler).
+                setKeyupHandler(notifyValueChanged).
+                setNodeChangeHandler(notifyValueChanged).
                 setContentPath(this.contentPath).
                 setContent(this.content).
                 setApplicationKeys(this.applicationKeys).
@@ -165,14 +164,14 @@ module api.form.inputtype.text {
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
 
-                var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
-                    ".remove-button")[0];
-                removeButtonEL.addEventListener("mouseover", () => {
-                    isMouseOverRemoveOccurenceButton = true;
-                });
-                removeButtonEL.addEventListener("mouseleave", () => {
-                    isMouseOverRemoveOccurenceButton = false;
-                });
+                    var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
+                        ".remove-button")[0];
+                    removeButtonEL.addEventListener("mouseover", () => {
+                        isMouseOverRemoveOccurenceButton = true;
+                    });
+                    removeButtonEL.addEventListener("mouseleave", () => {
+                        isMouseOverRemoveOccurenceButton = false;
+                    });
 
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {

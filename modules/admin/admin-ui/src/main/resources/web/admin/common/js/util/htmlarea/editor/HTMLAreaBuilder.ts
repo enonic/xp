@@ -11,10 +11,11 @@ module api.util.htmlarea.editor {
 
         private assetsUri: string;
         private selector: string;
-        private onFocusHandler: (e) => void;
-        private onBlurHandler: (e) => void;
-        private onKeydownHandler: (e) => void;
-        private onNodeChangeHandler: (e) => void;
+        private focusHandler: (e) => void;
+        private blurHandler: (e) => void;
+        private keydownHandler: (e) => void;
+        private keyupHandler: (e) => void;
+        private nodeChangeHandler: (e) => void;
         private createDialogListeners: {(event: CreateHtmlAreaDialogEvent): void}[] = [];
         private inline: boolean = false;
         private fixedToolbarContainer: string;
@@ -49,23 +50,28 @@ module api.util.htmlarea.editor {
             })
         }
 
-        setOnFocusHandler(onFocusHandler: (e) => void): HTMLAreaBuilder {
-            this.onFocusHandler = onFocusHandler;
+        setFocusHandler(focusHandler: (e) => void): HTMLAreaBuilder {
+            this.focusHandler = focusHandler;
             return this;
         }
 
-        setOnBlurHandler(onBlurHandler: (e) => void): HTMLAreaBuilder {
-            this.onBlurHandler = onBlurHandler;
+        setBlurHandler(blurHandler: (e) => void): HTMLAreaBuilder {
+            this.blurHandler = blurHandler;
             return this;
         }
 
-        setOnKeydownHandler(onKeydownHandler: (e) => void): HTMLAreaBuilder {
-            this.onKeydownHandler = onKeydownHandler;
+        setKeydownHandler(keydownHandler: (e) => void): HTMLAreaBuilder {
+            this.keydownHandler = keydownHandler;
             return this;
         }
 
-        setOnNodeChangeHandler(onChangeHandler: (e) => void): HTMLAreaBuilder {
-            this.onNodeChangeHandler = onChangeHandler;
+        setKeyupHandler(keyupHandler: (e) => void): HTMLAreaBuilder {
+            this.keyupHandler = keyupHandler;
+            return this;
+        }
+
+        setNodeChangeHandler(nodeChangeHandler: (e) => void): HTMLAreaBuilder {
+            this.nodeChangeHandler = nodeChangeHandler;
             return this;
         }
 
@@ -177,13 +183,18 @@ module api.util.htmlarea.editor {
                     editor.addCommand("openImageDialog", this.notifyImageDialog, this) ;
                     editor.addCommand("openMacroDialog", this.notifyMacroDialog, this);
                     editor.on('NodeChange', (e) => {
-                        if (!!this.onNodeChangeHandler) {
-                            this.onNodeChangeHandler(e);
+                        if (!!this.nodeChangeHandler) {
+                            this.nodeChangeHandler(e);
+                        }
+                    });
+                    editor.on('keyup', (e) => {
+                        if (!!this.keyupHandler) {
+                            this.keyupHandler(e);
                         }
                     });
                     editor.on('focus', (e) => {
-                        if (!!this.onFocusHandler) {
-                            this.onFocusHandler(e);
+                        if (!!this.focusHandler) {
+                            this.focusHandler(e);
                         }
                     });
                     editor.on('blur', (e) => {
@@ -191,8 +202,8 @@ module api.util.htmlarea.editor {
                             e.stopImmediatePropagation();
                             this.hasActiveDialog = false;
                         }
-                        if (!!this.onBlurHandler) {
-                            this.onBlurHandler(e);
+                        if (!!this.blurHandler) {
+                            this.blurHandler(e);
                         }
                     });
                     editor.on('keydown', (e) => {
@@ -212,8 +223,8 @@ module api.util.htmlarea.editor {
                             }
                         }
 
-                        if (!!this.onKeydownHandler) {
-                            this.onKeydownHandler(e);
+                        if (!!this.keydownHandler) {
+                            this.keydownHandler(e);
                         }
                     });
 
