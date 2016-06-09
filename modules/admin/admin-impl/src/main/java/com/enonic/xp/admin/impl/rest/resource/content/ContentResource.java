@@ -59,6 +59,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissio
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -161,6 +162,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -709,6 +711,49 @@ public final class ContentResource
         }
 
         return result;
+    }
+
+    @POST
+    @Path("allowedActions")
+    public List<String> getPermittedActions( final ContentIdsPermissionsJson params )
+    {
+        final List<Permission> permissions =
+            params.getPermissions().size() > 0 ? params.getPermissions() : Arrays.asList( Permission.values() );
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            return permissions.stream().map( p -> p.name() ).collect( Collectors.toList() );
+        }
+
+        final List<AccessControlList> contentsPermissions =
+            params.getContentIds().getSize() > 0
+                ? contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) ).
+                stream().map( content -> content.getPermissions() ).collect( Collectors.toList() )
+                : Arrays.asList( contentService.getRootPermissions() );
+
+        final List<String> result = new ArrayList<>();
+
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
+
+        return result;
+    }
+
+    private boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission,
+                                       final List<AccessControlList> contentsPermissions )
+    {
+        final PrincipalKeys authInfoPrincipals = authInfo.getPrincipals();
+
+        return contentsPermissions.stream().allMatch( contentPermissions -> {
+            final PrincipalKeys principalsAllowed = contentPermissions.getPrincipalsWithPermission( permission );
+            return principalsAllowed.stream().anyMatch( ( authInfoPrincipals::contains ) );
+        } );
     }
 
     @POST
