@@ -78,7 +78,7 @@ public class MacroDescriptorServiceTest
     {
         final MacroDescriptors result = this.service.getByApplication( ApplicationKey.SYSTEM );
         assertNotNull( result );
-        assertEquals( 4, result.getSize() );
+        assertEquals( 5, result.getSize() );
     }
 
     @Test
@@ -89,7 +89,7 @@ public class MacroDescriptorServiceTest
             this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2", ApplicationKey.SYSTEM.getName() ) );
 
         assertNotNull( result );
-        assertEquals( 6, result.getSize() );
+        assertEquals( 7, result.getSize() );
     }
 
     @Test
@@ -97,6 +97,6 @@ public class MacroDescriptorServiceTest
         throws Exception
     {
         final MacroDescriptors result = this.service.getAll();
-        assertEquals( 6, result.getSize() );
+        assertEquals( 7, result.getSize() );
     }
 }
