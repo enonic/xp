@@ -207,7 +207,14 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private getAggregations(contentQuery: ContentQuery,
                             contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): wemQ.Promise<api.aggregation.Aggregation[]> {
-        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.cloneContentQueryNoContentTypes(contentQuery)).setExpand(
+
+        var clonedContentQueryNoContentTypes: ContentQuery = this.cloneContentQueryNoContentTypes(contentQuery);
+
+        if (api.ObjectHelper.objectEquals(contentQuery, clonedContentQueryNoContentTypes)) {
+            return wemQ(this.combineAggregations(contentQueryResult, contentQueryResult));
+        }
+
+        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(clonedContentQueryNoContentTypes).setExpand(
             api.rest.Expand.SUMMARY).sendAndParse().then(
             (contentQueryResultNoContentTypesSelected: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 return this.combineAggregations(contentQueryResult, contentQueryResultNoContentTypesSelected);
