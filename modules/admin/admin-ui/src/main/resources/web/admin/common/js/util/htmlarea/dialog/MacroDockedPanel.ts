@@ -125,9 +125,13 @@ module api.util.htmlarea.dialog {
                 this.previewPanel.appendChild(new MacroPreviewFrame(macroPreview));
             } else {
                 var appendMe = new api.dom.DivEl("preview-content");
-                appendMe.setHtml(macroPreview.getHtml(), false);
+                appendMe.setHtml(macroPreview.getHtml(), this.isDisableMacro());
                 this.previewPanel.appendChild(appendMe)
             }
+        }
+
+        private isDisableMacro(): boolean {
+            return this.macroDescriptor.getKey().getName().indexOf("disable") >= 0;
         }
 
         public validateMacroForm(): boolean {
