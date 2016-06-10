@@ -22,6 +22,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
+import com.google.common.html.HtmlEscapers;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.ApplicationKeysParam;
@@ -177,13 +178,15 @@ public final class MacroResource
                                              final PortalRequest portalRequest )
     {
         final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );
-        final String body = Strings.nullToEmpty( formData.getString( "body" ) );
+        String body = Strings.nullToEmpty( formData.getString( "body" ) );
+        body = HtmlEscapers.htmlEscaper().escape( body );
         context.body( body );
         for ( Property prop : formData.getProperties() )
         {
             if ( !"body".equals( prop.getName() ) && prop.hasNotNullValue() )
             {
-                context.param( prop.getName(), prop.getValue().asString() );
+                final String value = HtmlEscapers.htmlEscaper().escape( prop.getValue().asString() );
+                context.param( prop.getName(), value );
             }
         }
         context.request( portalRequest );
