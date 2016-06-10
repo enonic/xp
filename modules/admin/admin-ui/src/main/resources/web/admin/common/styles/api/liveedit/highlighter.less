@@ -8,7 +8,11 @@ svg.@{_CLS_PREFIX}highlighter {
   }
 
   path {
-    stroke-width: 1.5;
+    stroke-width: 1.2;
+
+    &[style~="stroke-dasharray:"] {
+      stroke-width: 1.5;
+    }
   }
 
   &.rectangle {

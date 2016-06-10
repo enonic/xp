@@ -57,7 +57,7 @@ module api.liveedit {
                 dimensions.top = dimensions.top - itemView.getPageView().getEditorToolbarHeight();
             }
 
-            this.resize(dimensions, this.preProcessStyle(style));
+            this.resize(dimensions, this.preProcessStyle(style, itemView.isEmpty()));
             this.show();
 
             this.lastHighlightedItemView = itemView;
@@ -83,10 +83,10 @@ module api.liveedit {
             return this;
         }
 
-        protected preProcessStyle(style: HighlighterStyle): HighlighterStyle {
+        protected preProcessStyle(style: HighlighterStyle, isEmptyView: boolean): HighlighterStyle {
             return {
-                stroke: 'rgba(0, 0, 0, 1)',     //'#4294de',
-                strokeDasharray: '',
+                stroke: 'rgba(0, 0, 0, 1)',
+                strokeDasharray: style.strokeDasharray,
                 fill: 'transparent'
             }
         }

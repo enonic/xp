@@ -19,9 +19,9 @@ module api.liveedit {
                 cursor: 'move',
                 iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-' + itemType,
                 highlighterStyle: {
-                    stroke: 'rgba(68, 68, 68, 1)',
-                    strokeDasharray: '5 5',
-                    fill: 'rgba(255, 255, 255, 0)'
+                    stroke: 'rgba(68, 68, 68, 1)', // not used
+                    strokeDasharray: '',
+                    fill: 'rgba(255, 255, 255, 0)' // not used
                 },
                 contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
             };
