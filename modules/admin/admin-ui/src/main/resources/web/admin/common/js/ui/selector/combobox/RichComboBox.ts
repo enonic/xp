@@ -131,6 +131,10 @@ module api.ui.selector.combobox {
             return this.selectedOptionsView.getByOption(option);
         }
 
+        getSelectedOptionView(): SelectedOptionsView<OPTION_DISPLAY_VALUE> {
+            return this.selectedOptionsView;
+        }
+
         isOptionSelected(option: Option<OPTION_DISPLAY_VALUE>): boolean {
             return this.comboBox.isOptionSelected(option);
         }
