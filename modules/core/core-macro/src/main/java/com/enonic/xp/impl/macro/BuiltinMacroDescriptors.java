@@ -39,14 +39,14 @@ public final class BuiltinMacroDescriptors
     private MacroDescriptors generateMacroDescriptors()
     {
         final ImmutableMap.Builder<String, MacroDescriptor> macroDescriptors = ImmutableMap.builder();
-        Arrays.asList( generateNoFormatMacroDescriptor(), generateEmbedIFrameMacroDescriptor() ).stream().
+        Arrays.asList( generateDisableMacroDescriptor(), generateEmbedIFrameMacroDescriptor() ).stream().
             forEach( ( md ) -> macroDescriptors.put( md.getName().toLowerCase(), md ) );
 
         macrosByName = macroDescriptors.build();
         return MacroDescriptors.from( macrosByName.values() );
     }
 
-    private MacroDescriptor generateNoFormatMacroDescriptor()
+    private MacroDescriptor generateDisableMacroDescriptor()
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "disable" );
 
