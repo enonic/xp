@@ -27,6 +27,13 @@ public class EmbedIframeMacroProcessorTest
     }
 
     @Test
+    public void testProcessSelfClosingIframeTagNotAllowed()
+    {
+        assertEquals( "Expected an &lt;iframe&gt; element in Embed macro",
+                      macroProcessor.process( makeContext( "<iframe src=\"www.test.url\"/>", RenderMode.EDIT ) ).getBody() );
+    }
+
+    @Test
     public void testProcessNonIframeBodyInLiveMode()
     {
         assertEquals( "", macroProcessor.process( makeContext( "body", RenderMode.LIVE ) ).getBody() );
@@ -51,13 +58,6 @@ public class EmbedIframeMacroProcessorTest
     {
         assertEquals( "<iframe width='400px' height='400px' src=\"www.test.url\"></iframe>", macroProcessor.process(
             makeContext( "<iframe width='400px' height='400px' src=\"www.test.url\"></iframe>", RenderMode.EDIT ) ).getBody() );
-    }
-
-    @Test
-    public void testProcessIframe3()
-    {
-        assertEquals( "<iframe width='400px' height='400px' src=\"www.test.url\"/>", macroProcessor.process(
-            makeContext( "<iframe width='400px' height='400px' src=\"www.test.url\"/>", RenderMode.EDIT ) ).getBody() );
     }
 
     private MacroContext makeContext( final String body, final RenderMode renderMode )

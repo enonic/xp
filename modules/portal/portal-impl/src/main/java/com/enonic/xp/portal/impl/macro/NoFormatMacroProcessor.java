@@ -14,7 +14,7 @@ public class NoFormatMacroProcessor
     @Override
     public String getName()
     {
-        return "noformat";
+        return "disable";
     }
 
     @Override
