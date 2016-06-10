@@ -7,23 +7,56 @@ module api.app.browse {
         private selectionItems: SelectionItem<M>[] = [];
         private messageForNoSelection = "You are wasting this space - select something!";
         private mobileView: boolean = false;
+        private itemsContainer: api.dom.DivEl;
+        private itemsLimit;
 
-        constructor() {
+        constructor(itemsLimit?: number) {
             super("items-selection-panel");
-            this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
+            this.getEl().addClass('no-selection');
+
+            this.itemsContainer = new api.dom.DivEl("items-container");
+            this.appendChild(this.itemsContainer);
+
+            this.itemsContainer.setHtml(this.messageForNoSelection);
+
+            this.resetLimit();
+        }
+
+        getItemsLimit(): number {
+            return this.itemsLimit;
+        }
+
+        setItemsLimit(limit) {
+            this.itemsLimit = limit;
+        }
+
+        getDefaultLimit(): number {
+            return Number.MAX_VALUE;
+        }
+
+        resetLimit() {
+            this.setItemsLimit(this.getDefaultLimit());
+        }
+
+        isLimitReached(): boolean {
+            return this.itemsLimit <= this.selectionItems.length;
+        }
+
+        updateDisplayedSelection() {
+            this.itemsContainer.appendChildren(...this.selectionItems.slice(0, this.itemsLimit));
         }
 
         setMobileView(mobileView: boolean) {
             this.mobileView = mobileView;
             if (mobileView) {
-                this.removeChildren()
+                this.itemsContainer.removeChildren();
             } else {
-                this.appendChildren(...this.selectionItems);
+                this.updateDisplayedSelection();
             }
         }
 
         private addItem(item: BrowseItem<M>) {
-            var index = this.indexOf(item);
+            const index = this.indexOf(item);
             if (index >= 0) {
                 // item already exist
                 const currentItem = this.items[index];
@@ -37,24 +70,24 @@ module api.app.browse {
 
             if (this.items.length === 0) {
                 this.removeClass('no-selection');
-                this.removeChildren();
+                this.itemsContainer.removeChildren();
             }
 
-            var removeCallback = () => {
+            const removeCallback = () => {
                 this.removeItem(item);
                 this.notifyDeselected(item);
             };
-            var selectionItem = new SelectionItem(this.createItemViewer(item), item, removeCallback);
+            const selectionItem = new SelectionItem(this.createItemViewer(item), item, removeCallback);
 
-            if (!this.mobileView) {
-                this.appendChild(selectionItem);
+            if (!this.mobileView && !this.isLimitReached()) {
+                this.itemsContainer.appendChild(selectionItem);
             }
             this.selectionItems.push(selectionItem);
             this.items.push(item);
         }
 
         private removeItem(item: BrowseItem<M>) {
-            var index = this.indexOf(item);
+            const index = this.indexOf(item);
             if (index < 0) {
                 return;
             }
@@ -63,8 +96,14 @@ module api.app.browse {
             this.selectionItems.splice(index, 1);
             this.items.splice(index, 1);
 
+            const limitReachedChanged = this.items.length === this.getDefaultLimit();
+            if (limitReachedChanged) {
+                this.resetLimit();
+            }
+
             if (this.items.length === 0) {
-                this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
+                this.addClass('no-selection');
+                this.itemsContainer.setHtml(this.messageForNoSelection);
             }
         }
 
