@@ -85,24 +85,13 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
         this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
-        switch (contentBrowseItems.length) {
-        case 0:
-            this.resetDefaultActionsNoItemsSelected();
-            break;
-        case 1:
-            this.resetDefaultActionsSingleItemSelected(contentBrowseItems);
-            break;
-        default:
-            this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
-        }
-
         let deferred = wemQ.defer<ContentBrowseItem[]>();
 
         let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
 
         let parallelPromises: wemQ.Promise<any>[] = [
             previewHandler.updateState(contentBrowseItems, changes),
-            this.updateActionsEnabledStateByPermissions(contentBrowseItems)
+            this.doUpdateActionsEnabledState(contentBrowseItems)
         ];
 
         wemQ.all(parallelPromises).spread<void>(() => {
@@ -128,21 +117,18 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.UNPUBLISH_CONTENT.setVisible(false);
     }
 
-    private resetDefaultActionsSingleItemSelected(contentBrowseItems: ContentBrowseItem[]) {
-        let contentSummaries: ContentSummary[] = contentBrowseItems.map((elem: ContentBrowseItem) => {
-            return elem.getModel().getContentSummary();
-        });
+    private resetDefaultActionsSingleItemSelected(contentBrowseItem: ContentBrowseItem) {
+        let contentSummary: ContentSummary = contentBrowseItem.getModel().getContentSummary();
 
         let treePublishEnabled = true,
             unpublishEnabled = true,
-            contentSummary = contentSummaries[0],
-            publishEnabled = !this.isOnline(contentBrowseItems[0].getModel().getCompareStatus()),
-            isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
+            publishEnabled = !this.isOnline(contentBrowseItem.getModel().getCompareStatus()),
+            isPublished = this.isPublished(contentBrowseItem.getModel().getCompareStatus());
 
-        if (this.isEveryLeaf(contentSummaries)) {
+        if (this.isEveryLeaf([contentSummary])) {
             treePublishEnabled = false;
             unpublishEnabled = isPublished;
-        } else if (this.isOneNonLeaf(contentSummaries)) {
+        } else if (this.isOneNonLeaf([contentSummary])) {
             unpublishEnabled = isPublished;
         }
 
@@ -217,15 +203,18 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return status == api.content.CompareStatus.EQUAL;
     }
 
-    private updateActionsEnabledStateByPermissions(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
+    private doUpdateActionsEnabledState(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
         switch (contentBrowseItems.length) {
         case 0:
+            this.resetDefaultActionsNoItemsSelected();
             return this.updateActionsByPermissionsNoItemsSelected();
             break;
         case 1:
+            this.resetDefaultActionsSingleItemSelected(contentBrowseItems[0]);
             return this.updateActionsByPermissionsSingleItemSelected(contentBrowseItems);
             break;
         default:
+            this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
             return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems);
         }
     }
