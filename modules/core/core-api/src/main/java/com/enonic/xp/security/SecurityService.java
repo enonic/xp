@@ -1,6 +1,5 @@
 package com.enonic.xp.security;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.google.common.annotations.Beta;
@@ -24,7 +23,7 @@ public interface SecurityService
 
     UserStore updateUserStore( UpdateUserStoreParams updateUserStoreParams );
 
-    Principals findPrincipals( UserStoreKey useStore, List<PrincipalType> types, String query );
+    PrincipalQueryResult findPrincipals( FindPrincipalsParams findPrincipalsParams );
 
     AuthenticationInfo authenticate( AuthenticationToken token );
 

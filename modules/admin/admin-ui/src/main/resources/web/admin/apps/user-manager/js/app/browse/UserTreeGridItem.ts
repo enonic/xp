@@ -92,7 +92,8 @@ export class UserTreeGridItem implements api.Equitable {
 
         case UserTreeGridItemType.USERS:
             return this.userStore.getKey().toString() + '/users';
-
+        default:
+            return "";
         }
 
     }
@@ -109,6 +110,10 @@ export class UserTreeGridItem implements api.Equitable {
 
         var other = <UserTreeGridItem> o;
         return this.principal === other.getPrincipal() && this.userStore == other.getUserStore();
+    }
+
+    static create(): UserTreeGridItemBuilder {
+        return new UserTreeGridItemBuilder();
     }
 
 }
