@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.security;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -51,6 +50,7 @@ import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
+import com.enonic.xp.security.FindPrincipalsParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
@@ -61,7 +61,6 @@ import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
-import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
@@ -292,19 +291,28 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public Principals findPrincipals( final UserStoreKey userStore, final List<PrincipalType> types, final String query )
+    public PrincipalQueryResult findPrincipals( final FindPrincipalsParams params )
     {
         final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
             getAll().
-            includeTypes( types ).
-            searchText( query );
-        if ( userStore != null )
+            includeTypes( params.getTypes() ).
+            searchText( params.getQuery() );
+        if (params.getUserStoreKey() != null )
         {
-            principalQuery.userStore( userStore );
+            principalQuery.userStore( params.getUserStoreKey() );
         }
 
-        final PrincipalQueryResult result = query( principalQuery.build() );
-        return result.getPrincipals();
+        if (params.getFrom() != null )
+        {
+            principalQuery.from( params.getFrom() );
+        }
+
+        if (params.getSize() != null )
+        {
+            principalQuery.size( params.getSize() );
+        }
+
+        return query( principalQuery.build() );
     }
 
     @Override

@@ -20,6 +20,9 @@
 ///<reference path="GetDefaultUserStoreRequest.ts"/>
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="FindPrincipalsRequest.ts"/>
+///<reference path="FindPrincipalsResult.ts"/>
+///<reference path="FindPrincipalListRequest.ts"/>
+///<reference path="FindPrincipalsResultJson.ts"/>
 ///<reference path="GetPrincipalByKeyRequest.ts"/>
 ///<reference path="GetPrincipalsByUserStoreRequest.ts"/>
 ///<reference path="CheckEmailAvailabilityRequest.ts"/>
