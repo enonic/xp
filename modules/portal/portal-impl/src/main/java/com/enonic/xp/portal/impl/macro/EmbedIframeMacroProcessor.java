@@ -13,8 +13,7 @@ import com.enonic.xp.portal.macro.MacroContext;
 public class EmbedIframeMacroProcessor
     implements BuiltInMacroProcessor
 {
-    private static final Pattern IFRAME_PATTERN =
-        Pattern.compile( "(<iframe.*</iframe>)|(&lt;iframe.*&lt;/iframe&gt;)|(<iframe.*/>|(&lt;iframe.*/&gt;))" );
+    private static final Pattern IFRAME_PATTERN = Pattern.compile( "(<iframe.*</iframe>)|(&lt;iframe.*&lt;/iframe&gt;)" );
 
     @Override
     public String getName()
