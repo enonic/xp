@@ -160,10 +160,10 @@ module api.util.htmlarea.dialog {
 
         private initPropertySetForDescriptor(macroDescriptor: MacroDescriptor) {
             if (!!this.data) {
-                this.data.unPropertyValueChanged(this.formValueChangedHandler);
+                this.data.unChanged(this.formValueChangedHandler);
             }
             this.data = this.generateBackingPropertySetForForm(macroDescriptor.getForm());
-            this.data.onPropertyValueChanged(this.formValueChangedHandler);
+            this.data.onChanged(this.formValueChangedHandler);
         }
 
         private generateBackingPropertySetForForm(form: Form): PropertySet {
