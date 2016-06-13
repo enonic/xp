@@ -9,7 +9,7 @@ exports.handle401 = function (req) {
     var body = generateLoginPage();
 
     return {
-        status: 403,
+        status: 401,
         contentType: 'text/html',
         body: body
     };
