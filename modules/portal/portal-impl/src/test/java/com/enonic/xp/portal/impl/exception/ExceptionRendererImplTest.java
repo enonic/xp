@@ -130,7 +130,8 @@ public class ExceptionRendererImplTest
         this.request.setSite( site );
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript =
-            ( portalError ) -> PortalResponse.create().body( "Custom message page" ).status( HttpStatus.BAD_REQUEST ).build();
+            ( portalError, handlerMethod ) -> PortalResponse.create().body( "Custom message page" ).status(
+                HttpStatus.BAD_REQUEST ).build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
         final Resource resource = Mockito.mock( Resource.class );
@@ -157,7 +158,7 @@ public class ExceptionRendererImplTest
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript =
-            ( portalError ) -> PortalResponse.create().body( "Custom message page" ).status( HttpStatus.NOT_FOUND ).build();
+            ( portalError, handleMethod ) -> PortalResponse.create().body( "Custom message page" ).status( HttpStatus.NOT_FOUND ).build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
         final Resource resource = Mockito.mock( Resource.class );
@@ -178,7 +179,7 @@ public class ExceptionRendererImplTest
         final Site site = newSite();
         this.request.setSite( site );
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
-        final ErrorHandlerScript errorHandlerScript = ( portalError ) -> {
+        final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) -> {
             throw new RuntimeException( "Something went wrong in the handler script" );
         };
 

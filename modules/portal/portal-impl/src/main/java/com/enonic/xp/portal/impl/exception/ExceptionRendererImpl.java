@@ -243,7 +243,7 @@ public final class ExceptionRendererImpl
 
     private boolean isUnauthorizedError( final HttpStatus httpStatus )
     {
-        return ( HttpStatus.UNAUTHORIZED == httpStatus || HttpStatus.FORBIDDEN == httpStatus ) && !isAuthenticated();
+        return ( HttpStatus.UNAUTHORIZED == httpStatus || ( HttpStatus.FORBIDDEN == httpStatus ) && !isAuthenticated() );
     }
 
     private boolean isAuthenticated()
@@ -251,12 +251,6 @@ public final class ExceptionRendererImpl
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         return authInfo.isAuthenticated();
     }
-
-    private String handlerMethod( final HttpStatus status )
-    {
-        return status == null ? DEFAULT_HANDLER : String.format( STATUS_HANDLER, status.value() );
-    }
-
 
     @Reference
     public void setResourceService( final ResourceService resourceService )
