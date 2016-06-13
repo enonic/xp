@@ -69,7 +69,7 @@ public final class ExceptionRendererImpl
             }
         }
 
-        if ( ( HttpStatus.UNAUTHORIZED == cause.getStatus() || HttpStatus.FORBIDDEN == cause.getStatus() ) && !isAuthenticated() )
+        if ( isUnauthorizedError( cause.getStatus() ) )
         {
             final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
                 functionName( "handle401" ).
@@ -210,6 +210,11 @@ public final class ExceptionRendererImpl
         {
             LOG.error( info.getMessage(), info.getCause() );
         }
+    }
+
+    private boolean isUnauthorizedError( final HttpStatus httpStatus )
+    {
+        return ( HttpStatus.UNAUTHORIZED == httpStatus || HttpStatus.FORBIDDEN == httpStatus ) && !isAuthenticated();
     }
 
     private boolean isAuthenticated()

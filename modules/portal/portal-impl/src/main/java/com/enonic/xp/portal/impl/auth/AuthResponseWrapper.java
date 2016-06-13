@@ -125,22 +125,19 @@ public class AuthResponseWrapper
 
     private void handleError( final int sc )
     {
-        if ( !errorHandled && ( 403 == sc || 401 == sc ) )
+        if ( !errorHandled && isUnauthorizedError( sc ) && !idProviderAlreadyExecuted() )
         {
             try
             {
-                if ( !idProviderAlreadyExecuted() && !isAuthenticated() )
+                final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+                    functionName( "handle401" ).
+                    servletRequest( request ).
+                    response( response ).
+                    build();
+                final boolean responseSerialized = authControllerService.execute( executionParams ) != null;
+                if ( responseSerialized )
                 {
-                    final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                        functionName( "handle401" ).
-                        servletRequest( request ).
-                        response( response ).
-                        build();
-                    final boolean responseSerialized = authControllerService.execute( executionParams ) != null;
-                    if ( responseSerialized )
-                    {
-                        errorHandled = true;
-                    }
+                    errorHandled = true;
                 }
             }
             catch ( IOException e )
@@ -148,6 +145,11 @@ public class AuthResponseWrapper
                 throw Exceptions.unchecked( e );
             }
         }
+    }
+
+    private boolean isUnauthorizedError( final int sc )
+    {
+        return ( 403 == sc || 401 == sc ) && !isAuthenticated();
     }
 
     private boolean idProviderAlreadyExecuted()
