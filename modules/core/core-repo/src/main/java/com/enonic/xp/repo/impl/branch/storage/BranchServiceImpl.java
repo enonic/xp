@@ -35,9 +35,7 @@ import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
-import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
-import com.enonic.xp.repo.impl.storage.GetResults;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
@@ -58,6 +56,8 @@ public class BranchServiceImpl
     private StorageDao storageDao;
 
     private SearchDao searchDao;
+
+    private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
     @Override
     public String store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
@@ -152,38 +152,30 @@ public class BranchServiceImpl
 
     private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
     {
-        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest();
-
-        for ( final NodeId nodeId : nodeIds )
-        {
-            getByIdsRequest.add( GetByIdRequest.create().
-                id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
-                storageSettings( createStorageSettings( context ) ).
-                returnFields( BRANCH_RETURN_FIELDS ).
-                routing( nodeId.toString() ).
-                build() );
-        }
-
-        final GetResults getResults = this.storageDao.getByIds( getByIdsRequest );
-
         final NodeBranchEntries.Builder builder = NodeBranchEntries.create();
 
-        for ( final GetResult getResult : getResults )
+        final GetBranchEntriesMethod getBranchEntriesMethod = GetBranchEntriesMethod.create().
+            context( context ).
+            pathCache( this.pathCache ).
+            returnFields( BRANCH_RETURN_FIELDS ).
+            storageDao( this.storageDao ).
+            build();
+
+        if ( nodeIds.getSize() > BATCHED_EXECUTOR_LIMIT )
         {
-            if ( !getResult.isEmpty() )
-            {
-                final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( getResult.getReturnValues() );
-
-                pathCache.cache( new BranchPath( context.getBranch(), nodeBranchEntry.getNodePath() ),
-                                 BranchDocumentId.from( getResult.getId() ) );
-
-                builder.add( nodeBranchEntry );
-            }
+            BatchedBranchEntryExecutor.create().
+                nodeIds( nodeIds ).
+                method( getBranchEntriesMethod ).
+                build().
+                execute();
+        }
+        else
+        {
+            getBranchEntriesMethod.execute( nodeIds.getSet(), builder );
         }
 
         return builder.build();
     }
-
 
     private NodeBranchEntries getIgnoreOrder( final NodeIds nodeIds, final InternalContext context )
     {
