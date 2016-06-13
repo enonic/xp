@@ -59,7 +59,7 @@ public final class ExceptionRendererImpl
                 if ( portalError != null )
                 {
                     req.getRawRequest().
-                        setAttribute( "idprovider.handled", Boolean.TRUE );
+                        setAttribute( "error.handled", Boolean.TRUE );
                     return portalError;
                 }
             }
@@ -81,7 +81,7 @@ public final class ExceptionRendererImpl
                 if ( portalResponse != null )
                 {
                     req.getRawRequest().
-                        setAttribute( "idprovider.handled", Boolean.TRUE );
+                        setAttribute( "error.handled", Boolean.TRUE );
                     return portalResponse;
                 }
             }

@@ -125,7 +125,7 @@ public class AuthResponseWrapper
 
     private void handleError( final int sc )
     {
-        if ( !errorHandled && isUnauthorizedError( sc ) && !idProviderAlreadyExecuted() )
+        if ( !errorHandled && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() )
         {
             try
             {
@@ -152,9 +152,9 @@ public class AuthResponseWrapper
         return ( 403 == sc || 401 == sc ) && !isAuthenticated();
     }
 
-    private boolean idProviderAlreadyExecuted()
+    private boolean isErrorAlreadyHandled()
     {
-        return Boolean.TRUE == request.getAttribute( "idprovider.handled" );
+        return Boolean.TRUE == request.getAttribute( "error.handled" );
     }
 
 
