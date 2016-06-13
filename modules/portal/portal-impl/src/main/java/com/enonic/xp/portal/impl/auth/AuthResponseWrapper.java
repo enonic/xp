@@ -10,10 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.web.HttpStatus;
 
 
 public class AuthResponseWrapper
@@ -148,11 +149,18 @@ public class AuthResponseWrapper
 
     private boolean isUnauthorizedError( final int sc )
     {
-        return HttpStatus.UNAUTHORIZED.value() == sc;
+        return 401 == sc || ( 403 == sc && !isAuthenticated() );
     }
 
     private boolean isErrorAlreadyHandled()
     {
         return Boolean.TRUE == request.getAttribute( "error.handled" );
+    }
+
+
+    private boolean isAuthenticated()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return authInfo.isAuthenticated();
     }
 }
