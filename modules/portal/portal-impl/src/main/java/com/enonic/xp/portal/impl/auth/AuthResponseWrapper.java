@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 
 
@@ -127,10 +129,10 @@ public class AuthResponseWrapper
         {
             try
             {
-                if ( Boolean.TRUE != request.getAttribute( "idprovider.handled" ) )
+                if ( !idProviderAlreadyExecuted() && !isAuthenticated() )
                 {
                     final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                        functionName( "handle403" ).
+                        functionName( "handle401" ).
                         servletRequest( request ).
                         response( response ).
                         build();
@@ -146,5 +148,17 @@ public class AuthResponseWrapper
                 throw Exceptions.unchecked( e );
             }
         }
+    }
+
+    private boolean idProviderAlreadyExecuted()
+    {
+        return Boolean.TRUE == request.getAttribute( "idprovider.handled" );
+    }
+
+
+    private boolean isAuthenticated()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return authInfo.isAuthenticated();
     }
 }

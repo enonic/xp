@@ -2,7 +2,7 @@ var mustacheLib = require('/lib/xp/mustache');
 var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
 
-exports.handle403 = function (req) {
+exports.handle401 = function (req) {
     if (/^\/admin\/rest\//.test(req.path)) {
         return null;
     }

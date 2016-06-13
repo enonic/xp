@@ -69,10 +69,10 @@ public final class ExceptionRendererImpl
             }
         }
 
-        if ( HttpStatus.UNAUTHORIZED == cause.getStatus() || HttpStatus.FORBIDDEN == cause.getStatus() )
+        if ( ( HttpStatus.UNAUTHORIZED == cause.getStatus() || HttpStatus.FORBIDDEN == cause.getStatus() ) && !isAuthenticated() )
         {
             final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                functionName( "handle403" ).
+                functionName( "handle401" ).
                 portalRequest( req ).
                 build();
             try
@@ -210,6 +210,12 @@ public final class ExceptionRendererImpl
         {
             LOG.error( info.getMessage(), info.getCause() );
         }
+    }
+
+    private boolean isAuthenticated()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return authInfo.isAuthenticated();
     }
 
 
