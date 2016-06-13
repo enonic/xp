@@ -4,5 +4,5 @@ import com.enonic.xp.portal.PortalResponse;
 
 public interface ErrorHandlerScript
 {
-    PortalResponse execute( PortalError portalError );
+    PortalResponse execute( PortalError portalError, String handlerMethod );
 }

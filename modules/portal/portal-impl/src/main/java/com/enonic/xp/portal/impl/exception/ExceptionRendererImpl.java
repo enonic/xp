@@ -40,6 +40,10 @@ public final class ExceptionRendererImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( ExceptionRendererImpl.class );
 
+    private static final String DEFAULT_HANDLER = "handleError";
+
+    private static final String STATUS_HANDLER = "handle%d";
+
     private ResourceService resourceService;
 
     private ErrorHandlerScriptFactory errorHandlerScriptFactory;
@@ -51,11 +55,13 @@ public final class ExceptionRendererImpl
     @Override
     public PortalResponse render( final PortalRequest req, final PortalException cause )
     {
-        if ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() )
+        final HttpStatus httpStatus = cause.getStatus();
+        if ( ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() ) && httpStatus != null )
         {
             try
             {
-                final PortalResponse portalError = renderCustomError( req, cause );
+                final String handlerMethod = String.format( STATUS_HANDLER, httpStatus.value() );
+                final PortalResponse portalError = renderCustomError( req, cause, handlerMethod );
                 if ( portalError != null )
                 {
                     req.getRawRequest().
@@ -91,10 +97,28 @@ public final class ExceptionRendererImpl
             }
         }
 
+        if ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() )
+        {
+            try
+            {
+                final PortalResponse portalError = renderCustomError( req, cause, DEFAULT_HANDLER );
+                if ( portalError != null )
+                {
+                    req.getRawRequest().
+                        setAttribute( "error.handled", Boolean.TRUE );
+                    return portalError;
+                }
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Exception while executing custom error handler", e );
+            }
+        }
+
         return renderInternalErrorPage( req, cause );
     }
 
-    private PortalResponse renderCustomError( final PortalRequest req, final PortalException cause )
+    private PortalResponse renderCustomError( final PortalRequest req, final PortalException cause, final String handlerMethod )
     {
         Site site = req.getSite();
         if ( site == null )
@@ -116,7 +140,8 @@ public final class ExceptionRendererImpl
 
                 for ( SiteConfig siteConfig : site.getSiteConfigs() )
                 {
-                    final PortalResponse response = renderApplicationCustomError( siteConfig.getApplicationKey(), portalError );
+                    final PortalResponse response =
+                        renderApplicationCustomError( siteConfig.getApplicationKey(), portalError, handlerMethod );
                     if ( response != null )
                     {
                         return response;
@@ -165,7 +190,8 @@ public final class ExceptionRendererImpl
             callWith( callable );
     }
 
-    private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final PortalError portalError )
+    private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final PortalError portalError,
+                                                         final String handlerMethod )
     {
         final ResourceKey script = ResourceKey.from( appKey, "site/error/error.js" );
         final Resource scriptResource = this.resourceService.getResource( script );
@@ -182,7 +208,7 @@ public final class ExceptionRendererImpl
         try
         {
             request.setApplicationKey( appKey );
-            return errorHandlerScript.execute( portalError );
+            return errorHandlerScript.execute( portalError, handlerMethod );
         }
         finally
         {
@@ -221,6 +247,11 @@ public final class ExceptionRendererImpl
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         return authInfo.isAuthenticated();
+    }
+
+    private String handlerMethod( final HttpStatus status )
+    {
+        return status == null ? DEFAULT_HANDLER : String.format( STATUS_HANDLER, status.value() );
     }
 
 
