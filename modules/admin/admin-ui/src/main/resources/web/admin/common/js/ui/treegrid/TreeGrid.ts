@@ -457,7 +457,10 @@ module api.ui.treegrid {
                     this.initData(this.root.getCurrentRoot().treeToList());
                     this.disableSelectionUpdates = false;
                     if (needToCheckFetchedChildren) {
-                        this.select(fetchedChildren); //#4 here
+                        this.select(fetchedChildren);
+                    }
+                    else {
+                        this.triggerSelectionChangedListeners();
                     }
                 }).catch((reason: any) => {
                     this.handleError(reason);
@@ -994,7 +997,7 @@ module api.ui.treegrid {
 
 
         initData(nodes: TreeNode<DATA>[]) {
-            this.gridData.setItems(nodes, "id"); //#1 and #2 times here
+            this.gridData.setItems(nodes, "id");
             this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ADDED));
             this.resetCurrentSelection(nodes);
         }
@@ -1013,7 +1016,7 @@ module api.ui.treegrid {
                 });
             });
 
-            this.grid.setSelectedRows(selection); //#3 here
+            this.grid.setSelectedRows(selection);
         }
 
         expandNode(node?: TreeNode<DATA>, expandAll: boolean = false) {
