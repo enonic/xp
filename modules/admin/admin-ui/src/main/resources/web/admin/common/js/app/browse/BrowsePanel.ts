@@ -88,6 +88,12 @@ module api.app.browse {
                     this.togglePreviewPanelDependingOnScreenSize(item);
                 }
             });
+
+            this.onShown(() => {
+                if (this.treeGrid.isFiltered()) {
+                    this.filterPanel.refresh();
+                }
+            });
         }
 
         doRender(): boolean {
@@ -136,7 +142,7 @@ module api.app.browse {
         }
 
         refreshFilter() {
-            if (this.filterPanel) {
+            if (this.filterPanel && this.filterPanel.isVisible()) {
                 this.filterPanel.refresh();
             }
         }
