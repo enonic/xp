@@ -7,8 +7,7 @@ public class SearchHitsFactory
 {
     public static SearchHits create( final org.elasticsearch.search.SearchHits searchHits )
     {
-        final SearchHits.Builder builder = SearchHits.create().
-            totalHits( searchHits.getTotalHits() ).
+        final SearchHits.Builder builder = SearchHits.create( searchHits.getTotalHits() ).
             maxScore( searchHits.maxScore() );
 
         for ( final org.elasticsearch.search.SearchHit hit : searchHits )
@@ -16,7 +15,6 @@ public class SearchHitsFactory
             final SearchHit resultEntry = SearchHit.create().
                 id( hit.id() ).
                 score( hit.score() ).
-                version( hit.version() ).
                 returnValues( ReturnValuesFactory.create( hit ) ).
                 build();
 

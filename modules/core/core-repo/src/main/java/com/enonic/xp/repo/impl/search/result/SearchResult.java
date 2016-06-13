@@ -42,7 +42,7 @@ public class SearchResult
 
     public static class Builder
     {
-        private SearchHits results = SearchHits.create().build();
+        private SearchHits results = SearchHits.create( 0L ).build();
 
         private Aggregations aggregations;
 

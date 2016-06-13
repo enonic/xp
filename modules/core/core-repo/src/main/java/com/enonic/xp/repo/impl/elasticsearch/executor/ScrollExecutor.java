@@ -39,12 +39,11 @@ class ScrollExecutor
             execute().
             actionGet();
 
-        final SearchHits.Builder searchHitsBuilder = SearchHits.create().
-            totalHits( scrollResp.getHits().totalHits() );
+        final SearchHits.Builder searchHitsBuilder = SearchHits.create( scrollResp.getHits().totalHits() );
 
         while ( true )
         {
-            LOG.debug( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
+            LOG.info( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
 
             searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
 

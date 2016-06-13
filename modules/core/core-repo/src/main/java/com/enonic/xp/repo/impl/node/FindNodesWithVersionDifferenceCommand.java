@@ -38,7 +38,7 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final StorageService storageService;
 
-    private final int batchSize = 5_000;
+    private final int batchSize = 20_000;
 
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
     {

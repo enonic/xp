@@ -10,15 +10,12 @@ public class SearchHit
 
     private final String id;
 
-    private final long version;//  = -1;
-
     private final ReturnValues returnValues;
 
     private SearchHit( final Builder builder )
     {
         this.score = builder.score;
         this.id = builder.id;
-        this.version = builder.version;
         this.returnValues = builder.returnValues;
     }
 
@@ -114,8 +111,6 @@ public class SearchHit
 
         private String id;
 
-        private long version = -1;
-
         private ReturnValues returnValues;
 
         public Builder score( final float score )
@@ -127,12 +122,6 @@ public class SearchHit
         public Builder id( final String id )
         {
             this.id = id;
-            return this;
-        }
-
-        public Builder version( final long version )
-        {
-            this.version = version;
             return this;
         }
 

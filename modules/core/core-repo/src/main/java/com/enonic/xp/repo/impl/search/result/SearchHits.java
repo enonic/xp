@@ -1,15 +1,13 @@
 package com.enonic.xp.repo.impl.search.result;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import java.util.List;
 
 public class SearchHits
     implements Iterable<SearchHit>
 {
-    private final ImmutableMap<String, SearchHit> hits;
+    private final List<SearchHit> hits;
 
     private final long totalHits;
 
@@ -17,14 +15,14 @@ public class SearchHits
 
     private SearchHits( final Builder builder )
     {
-        this.hits = ImmutableMap.copyOf( builder.hits );
+        this.hits = builder.hits;
         this.totalHits = builder.totalHits;
         this.maxScore = builder.maxScore;
     }
 
-    public static Builder create()
+    public static Builder create( final Long totalHits )
     {
-        return new Builder();
+        return new Builder( totalHits );
     }
 
     public long getSize()
@@ -44,37 +42,38 @@ public class SearchHits
 
     public SearchHit getFirstHit()
     {
-        return this.hits.values().iterator().next();
-    }
-
-    public SearchHit get( final String id )
-    {
-        return this.hits.get( id );
+        return this.hits.get( 0 );
     }
 
     @Override
     public Iterator<SearchHit> iterator()
     {
-        return this.hits.values().iterator();
+        return this.hits.iterator();
     }
 
     public static class Builder
     {
-        private final Map<String, SearchHit> hits = Maps.newLinkedHashMap();
+        private List<SearchHit> hits;
 
-        private long totalHits = 0;
+        private long totalHits = 0L;
 
         private float maxScore = 0;
 
+        public Builder( final Long totalHits )
+        {
+            this.totalHits = totalHits;
+            this.hits = new ArrayList<>( totalHits.intValue() );
+        }
+
         public Builder add( final SearchHit entry )
         {
-            hits.put( entry.getId(), entry );
+            hits.add( entry );
             return this;
         }
 
         public Builder addAll( final SearchHits entries )
         {
-            this.hits.putAll( entries.hits );
+            this.hits.addAll( entries.hits );
             return this;
         }
 
