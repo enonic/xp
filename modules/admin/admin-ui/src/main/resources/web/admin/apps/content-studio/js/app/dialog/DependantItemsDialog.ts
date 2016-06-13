@@ -142,8 +142,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     close() {
         super.close();
         this.remove();
-        this.itemList.clearItems();
-        this.dependantList.clearItems();
+        this.itemList.clearItems(true);
+        this.dependantList.clearItems(true);
     }
 
     setAutoUpdateTitle(value: boolean) {
@@ -228,7 +228,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         let size = this.getDependantList().getItemCount();
 
         if (!this.loading) {
-            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size) {
+            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.fullDependantSize) {
 
                 this.loading = true;
 

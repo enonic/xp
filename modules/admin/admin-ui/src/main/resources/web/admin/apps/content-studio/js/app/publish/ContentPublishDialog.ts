@@ -153,7 +153,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         });
     }
 
-    protected loadDescendants(from?:number, size?:number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+    protected loadDescendants(from?: number, size?: number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
         let ids = this.getContentToPublishIds(),
             loadChildren = this.childrenCheckbox.isChecked(),
             resolveDependenciesRequest = api.content.ResolvePublishDependenciesRequest.
@@ -207,8 +207,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
         return this;
     }
 
-    setIncludeChildItems(include: boolean) {
-        this.childrenCheckbox.setChecked(include);
+    setIncludeChildItems(include: boolean, silent?: boolean) {
+        this.childrenCheckbox.setChecked(include, silent);
         return this;
     }
 
@@ -289,7 +289,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.toggleClass("invalid", !allValid);
     }
 
-    protected updateButtonCount(actionString: string, count:number) {
+    protected updateButtonCount(actionString: string, count: number) {
 
         super.updateButtonCount(actionString, count);
 
