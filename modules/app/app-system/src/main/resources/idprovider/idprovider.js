@@ -2,14 +2,16 @@ var mustacheLib = require('/lib/xp/mustache');
 var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
 
-exports.handle403 = function (req) {
-    if (/^\/admin\/rest\//.test(req.path)) {
+exports.handle401 = function (req) {
+    var adminRestPath = portalLib.url({path: "/admin/rest"});
+    if (req.path.lastIndexOf(adminRestPath, 0) == 0) {
         return null;
     }
+
     var body = generateLoginPage();
 
     return {
-        status: 403,
+        status: 401,
         contentType: 'text/html',
         body: body
     };

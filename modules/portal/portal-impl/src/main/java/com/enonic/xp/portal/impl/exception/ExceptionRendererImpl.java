@@ -40,6 +40,10 @@ public final class ExceptionRendererImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( ExceptionRendererImpl.class );
 
+    private static final String DEFAULT_HANDLER = "handleError";
+
+    private static final String STATUS_HANDLER = "handle%d";
+
     private ResourceService resourceService;
 
     private ErrorHandlerScriptFactory errorHandlerScriptFactory;
@@ -51,50 +55,53 @@ public final class ExceptionRendererImpl
     @Override
     public PortalResponse render( final PortalRequest req, final PortalException cause )
     {
+        final HttpStatus httpStatus = cause.getStatus();
+        if ( httpStatus != null )
+        {
+            final String handlerMethod = String.format( STATUS_HANDLER, httpStatus.value() );
+            final PortalResponse statusCustomError = renderCustomError( req, cause, handlerMethod );
+            if ( statusCustomError != null )
+            {
+                req.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
+                return statusCustomError;
+            }
+        }
+
+        final PortalResponse idProviderError = renderIdProviderError( req, cause );
+        if ( idProviderError != null )
+        {
+            req.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
+            return idProviderError;
+        }
+
+        final PortalResponse defaultCustomError = renderCustomError( req, cause, DEFAULT_HANDLER );
+        if ( defaultCustomError != null )
+        {
+            req.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
+            return defaultCustomError;
+        }
+
+        return renderInternalErrorPage( req, cause );
+    }
+
+    private PortalResponse renderCustomError( final PortalRequest req, final PortalException cause, final String handlerMethod )
+    {
         if ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() )
         {
             try
             {
-                final PortalResponse portalError = renderCustomError( req, cause );
-                if ( portalError != null )
-                {
-                    req.getRawRequest().
-                        setAttribute( "idprovider.handled", Boolean.TRUE );
-                    return portalError;
-                }
+                return doRenderCustomError( req, cause, handlerMethod );
             }
             catch ( Exception e )
             {
                 LOG.error( "Exception while executing custom error handler", e );
             }
         }
-
-        if ( HttpStatus.UNAUTHORIZED == cause.getStatus() || HttpStatus.FORBIDDEN == cause.getStatus() )
-        {
-            final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                functionName( "handle403" ).
-                portalRequest( req ).
-                build();
-            try
-            {
-                final PortalResponse portalResponse = authControllerService.execute( executionParams );
-                if ( portalResponse != null )
-                {
-                    req.getRawRequest().
-                        setAttribute( "idprovider.handled", Boolean.TRUE );
-                    return portalResponse;
-                }
-            }
-            catch ( IOException e )
-            {
-                LOG.error( "Exception while executing ID provider login function", e );
-            }
-        }
-
-        return renderInternalErrorPage( req, cause );
+        return null;
     }
 
-    private PortalResponse renderCustomError( final PortalRequest req, final PortalException cause )
+
+    private PortalResponse doRenderCustomError( final PortalRequest req, final PortalException cause, final String handlerMethod )
     {
         Site site = req.getSite();
         if ( site == null )
@@ -116,7 +123,8 @@ public final class ExceptionRendererImpl
 
                 for ( SiteConfig siteConfig : site.getSiteConfigs() )
                 {
-                    final PortalResponse response = renderApplicationCustomError( siteConfig.getApplicationKey(), portalError );
+                    final PortalResponse response =
+                        renderApplicationCustomError( siteConfig.getApplicationKey(), portalError, handlerMethod );
                     if ( response != null )
                     {
                         return response;
@@ -165,7 +173,8 @@ public final class ExceptionRendererImpl
             callWith( callable );
     }
 
-    private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final PortalError portalError )
+    private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final PortalError portalError,
+                                                         final String handlerMethod )
     {
         final ResourceKey script = ResourceKey.from( appKey, "site/error/error.js" );
         final Resource scriptResource = this.resourceService.getResource( script );
@@ -182,12 +191,32 @@ public final class ExceptionRendererImpl
         try
         {
             request.setApplicationKey( appKey );
-            return errorHandlerScript.execute( portalError );
+            return errorHandlerScript.execute( portalError, handlerMethod );
         }
         finally
         {
             request.setApplicationKey( previousApp );
         }
+    }
+
+    private PortalResponse renderIdProviderError( final PortalRequest req, final PortalException cause )
+    {
+        if ( isUnauthorizedError( cause.getStatus() ) )
+        {
+            final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+                functionName( "handle401" ).
+                portalRequest( req ).
+                build();
+            try
+            {
+                return authControllerService.execute( executionParams );
+            }
+            catch ( IOException e )
+            {
+                LOG.error( "Exception while executing ID provider login function", e );
+            }
+        }
+        return null;
     }
 
     private PortalResponse renderInternalErrorPage( final PortalRequest req, final PortalException cause )
@@ -212,6 +241,16 @@ public final class ExceptionRendererImpl
         }
     }
 
+    private boolean isUnauthorizedError( final HttpStatus httpStatus )
+    {
+        return ( HttpStatus.UNAUTHORIZED == httpStatus || ( HttpStatus.FORBIDDEN == httpStatus ) && !isAuthenticated() );
+    }
+
+    private boolean isAuthenticated()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return authInfo.isAuthenticated();
+    }
 
     @Reference
     public void setResourceService( final ResourceService resourceService )
