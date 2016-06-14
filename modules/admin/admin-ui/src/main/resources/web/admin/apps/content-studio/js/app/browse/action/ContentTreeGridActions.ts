@@ -143,7 +143,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
         this.PUBLISH_CONTENT.setVisible(!isPublished);
-        this.UNPUBLISH_CONTENT.setVisible(isPublished);
+        this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
     }
 
     private resetDefaultActionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[]) {
@@ -154,18 +154,21 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         let treePublishEnabled = true,
             unpublishEnabled = true;
 
-        let anyUnpublished = contentBrowseItems.some((browseItem) => {
-            return !this.isPublished(browseItem.getModel().getCompareStatus());
+        let eachOnline = contentBrowseItems.every((browseItem) => {
+            return this.isOnline(browseItem.getModel().getCompareStatus());
         });
 
         let anyPublished = contentBrowseItems.some((browseItem) => {
             return this.isPublished(browseItem.getModel().getCompareStatus());
         });
 
+        const publishEnabled = !eachOnline;
         if (this.isEveryLeaf(contentSummaries)) {
             treePublishEnabled = false;
             unpublishEnabled = anyPublished;
         } else if (this.isOneNonLeaf(contentSummaries)) {
+            unpublishEnabled = anyPublished;
+        } else if (this.isNonLeafInMany(contentSummaries)) {
             unpublishEnabled = anyPublished;
         }
 
@@ -176,11 +179,11 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.MOVE_CONTENT.setEnabled(true);
         this.SORT_CONTENT.setEnabled(false);
 
-        this.PUBLISH_CONTENT.setEnabled(anyUnpublished);
+        this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
-        this.PUBLISH_CONTENT.setVisible(anyUnpublished);
-        this.UNPUBLISH_CONTENT.setVisible(!anyUnpublished);
+        this.PUBLISH_CONTENT.setVisible(publishEnabled);
+        this.UNPUBLISH_CONTENT.setVisible(!publishEnabled);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
