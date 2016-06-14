@@ -18,7 +18,8 @@ exports.handle401 = function (req) {
 };
 
 exports.get = function (req) {
-    var body = generateLoginPage(req.params.redirect);
+    var redirectUrl = generateRedirectUrl();
+    var body = generateLoginPage(redirectUrl);
 
     return {
         status: 200,
@@ -29,10 +30,19 @@ exports.get = function (req) {
 
 exports.logout = function (req) {
     authLib.logout();
+    var redirectUrl = generateRedirectUrl();
     return {
-        redirect: req.params.redirect
+        redirect: redirectUrl
     };
 };
+
+function generateRedirectUrl() {
+    var site = portalLib.getSite();
+    if (site) {
+        return portalLib.pageUrl({id: site._id});
+    }
+    return '/';
+}
 
 function generateLoginPage(redirectUrl) {
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
