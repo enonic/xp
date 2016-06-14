@@ -15,6 +15,9 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.region.CreateFragmentParams;
 import com.enonic.xp.region.FragmentService;
@@ -31,6 +34,8 @@ public final class FragmentResource
 {
     private FragmentService fragmentService;
 
+    private ContentService contentService;
+
     private ContentPrincipalsResolver principalsResolver;
 
     private ContentIconUrlResolver contentIconUrlResolver;
@@ -40,10 +45,19 @@ public final class FragmentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public ContentJson createFragment( final CreateFragmentJson params )
     {
-        final CreateFragmentParams command = params.getCreateFragmentParams();
+        final CreateFragmentParams command = CreateFragmentParams.create().
+            parent( getContentPath( params.getParent() ) ).
+            component( params.getComponent() ).
+            config( params.getConfig() ).
+            build();
         final Content fragmentContent = this.fragmentService.create( command );
 
         return new ContentJson( fragmentContent, contentIconUrlResolver, principalsResolver );
+    }
+
+    private ContentPath getContentPath( final ContentId contentId )
+    {
+        return this.contentService.getById( contentId ).getPath();
     }
 
     @Reference
@@ -62,5 +76,11 @@ public final class FragmentResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }
