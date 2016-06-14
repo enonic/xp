@@ -1,5 +1,5 @@
 var portalLib = require('/lib/xp/portal');
 
 // BEGIN
-var url = portalLib.logoutUrl({});
+var url = portalLib.logoutUrl();
 // END
