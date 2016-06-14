@@ -143,7 +143,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
         this.PUBLISH_CONTENT.setVisible(!isPublished);
-        this.UNPUBLISH_CONTENT.setVisible(isPublished);
+        this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
     }
 
     private resetDefaultActionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[]) {
@@ -167,6 +167,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             treePublishEnabled = false;
             unpublishEnabled = anyPublished;
         } else if (this.isOneNonLeaf(contentSummaries)) {
+            unpublishEnabled = anyPublished;
+        } else if (this.isNonLeafInMany(contentSummaries)) {
             unpublishEnabled = anyPublished;
         }
 
