@@ -33,8 +33,11 @@ import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroStringResul
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewStringMacroJson;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
@@ -52,6 +55,7 @@ import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -72,6 +76,8 @@ public final class MacroResource
     private MacroProcessorScriptFactory macroProcessorScriptFactory;
 
     private PortalUrlService portalUrlService;
+
+    private ContentService contentService;
 
     private static final MacroImageHelper HELPER = new MacroImageHelper();
 
@@ -132,7 +138,8 @@ public final class MacroResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final PortalRequest portalRequest = createPortalRequest( httpRequest, previewMacroJson.getContentPath() );
+        final ApplicationKey appKey = macroDescriptor.getKey().getApplicationKey();
+        final PortalRequest portalRequest = createPortalRequest( httpRequest, previewMacroJson.getContentPath(), appKey );
         portalRequest.setContentPath( previewMacroJson.getContentPath() );
 
         final MacroContext context = createMacroContext( macroDescriptor, previewMacroJson.getFormData(), portalRequest );
@@ -157,7 +164,7 @@ public final class MacroResource
         return new PreviewMacroStringResultJson( macro );
     }
 
-    private PortalRequest createPortalRequest( final HttpServletRequest req, final ContentPath contentPath )
+    private PortalRequest createPortalRequest( final HttpServletRequest req, final ContentPath contentPath, final ApplicationKey appKey )
     {
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setRawRequest( req );
@@ -171,6 +178,10 @@ public final class MacroResource
         portalRequest.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
         final PageUrlParams pageUrlParams = new PageUrlParams().portalRequest( portalRequest ).path( contentPath.toString() );
         portalRequest.setPath( portalUrlService.pageUrl( pageUrlParams ) );
+        portalRequest.setApplicationKey( appKey );
+        final Content content = getContent( contentPath );
+        portalRequest.setContent( content );
+        portalRequest.setSite( resolveSite( content ) );
         return portalRequest;
     }
 
@@ -215,6 +226,35 @@ public final class MacroResource
         responseBuilder.cacheControl( cacheControl );
     }
 
+
+    private Content getContent( final ContentPath contentPath )
+    {
+        try
+        {
+            return this.contentService.getByPath( contentPath );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private Site resolveSite( final Content content )
+    {
+        if ( content == null )
+        {
+            return null;
+        }
+        try
+        {
+            return this.contentService.getNearestSite( content.getId() );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
     @Reference
     public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
     {
@@ -233,5 +273,11 @@ public final class MacroResource
     public void setPortalUrlService( final PortalUrlService portalUrlService )
     {
         this.portalUrlService = portalUrlService;
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

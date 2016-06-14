@@ -16,6 +16,10 @@ import com.google.common.io.Resources;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroDescriptor;
@@ -28,6 +32,9 @@ import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -42,6 +49,8 @@ public class MacroResourceTest
 
     private PortalUrlService portalUrlService;
 
+    private ContentService contentService;
+
     private MacroResource macroResource;
 
     @Override
@@ -50,11 +59,13 @@ public class MacroResourceTest
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
         this.macroProcessorScriptFactory = Mockito.mock( MacroProcessorScriptFactory.class );
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
+        this.contentService = Mockito.mock( ContentService.class );
 
         this.macroResource = new MacroResource();
         macroResource.setMacroDescriptorService( this.macroDescriptorService );
         macroResource.setMacroProcessorScriptFactory( this.macroProcessorScriptFactory );
         macroResource.setPortalUrlService( this.portalUrlService );
+        macroResource.setContentService( this.contentService );
 
         return macroResource;
     }
@@ -132,6 +143,10 @@ public class MacroResourceTest
         Mockito.when( this.macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macroProcessor );
         Mockito.when( this.portalUrlService.pageUrl( any() ) ).thenReturn( "/portal/preview/draft/mysite/page" );
 
+        final Site site = newSite();
+        Mockito.when( this.contentService.getByPath( any() ) ).thenReturn( site );
+        Mockito.when( this.contentService.getNearestSite( any() ) ).thenReturn( site );
+
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
 
@@ -191,5 +206,22 @@ public class MacroResourceTest
             build();
 
         return MacroDescriptors.from( macroDescriptor3, macroDescriptor2, macroDescriptor1 );
+    }
+
+    public static Site newSite()
+    {
+        final PropertyTree siteConfigConfig = new PropertyTree();
+        siteConfigConfig.setLong( "Field", 42L );
+        final SiteConfig siteConfig = SiteConfig.create().
+            application( ApplicationKey.from( "myapp" ) ).
+            config( siteConfigConfig ).
+            build();
+
+        final Site.Builder site = Site.create();
+        site.id( ContentId.from( "1004242" ) );
+        site.siteConfigs( SiteConfigs.from( siteConfig ) );
+        site.name( "my-content" );
+        site.parentPath( ContentPath.ROOT );
+        return site.build();
     }
 }
