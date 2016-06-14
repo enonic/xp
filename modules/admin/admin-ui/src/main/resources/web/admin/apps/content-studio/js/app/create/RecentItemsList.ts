@@ -9,7 +9,7 @@ export class RecentItemsList extends NewContentDialogList {
         super("recent-content-types-list");
     }
 
-    setItems(items: NewContentDialogListItem[]) {
+    createItems(items: NewContentDialogListItem[]) {
         var itemsByName: {[name: string]: NewContentDialogListItem} = {};
         items.forEach((item: NewContentDialogListItem) => {
             itemsByName[item.getName()] = item;
@@ -22,6 +22,7 @@ export class RecentItemsList extends NewContentDialogList {
                 recentItems.push(itemsByName[name]);
             }
         });
-        super.setItems(recentItems);
+
+        this.setItems(recentItems)
     }
 }
