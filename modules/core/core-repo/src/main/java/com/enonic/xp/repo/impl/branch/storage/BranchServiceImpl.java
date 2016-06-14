@@ -51,13 +51,13 @@ public class BranchServiceImpl
 
     private static final Logger LOG = LoggerFactory.getLogger( BranchServiceImpl.class );
 
+    private static final int BATCHED_EXECUTOR_LIMIT = 1000;
+
     private final PathCache pathCache = new PathCacheImpl();
 
     private StorageDao storageDao;
 
     private SearchDao searchDao;
-
-    private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
     @Override
     public String store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
@@ -163,11 +163,11 @@ public class BranchServiceImpl
 
         if ( nodeIds.getSize() > BATCHED_EXECUTOR_LIMIT )
         {
-            BatchedBranchEntryExecutor.create().
+            builder.addAll( BatchedBranchEntryExecutor.create().
                 nodeIds( nodeIds ).
                 method( getBranchEntriesMethod ).
                 build().
-                execute();
+                execute() );
         }
         else
         {

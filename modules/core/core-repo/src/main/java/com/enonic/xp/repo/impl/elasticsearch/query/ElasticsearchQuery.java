@@ -171,7 +171,7 @@ public class ElasticsearchQuery
 
         private int size = DEFAULT_SIZE;
 
-        private int batchSize = 5_000;
+        private int batchSize = 15_000;
 
         private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
 

@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
-import java.util.LinkedList;
+import java.util.List;
 
 import com.google.common.base.Preconditions;
 
@@ -21,7 +21,7 @@ public class SetNodeChildOrderCommand
     extends AbstractNodeCommand
 {
 
-    public static final int BATCH_SIZE = 10_000;
+    private static final int BATCH_SIZE = 10_000;
 
     private final NodeId nodeId;
 
@@ -82,10 +82,9 @@ public class SetNodeChildOrderCommand
             searchMode( SearchMode.SEARCH ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final LinkedList<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
+        final List<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
 
-        final LinkedList<NodeManualOrderValueResolver.NodeIdOrderValue> orderedNodeIds =
-            NodeManualOrderValueResolver.resolve( childNodeIds );
+        final List<NodeManualOrderValueResolver.NodeIdOrderValue> orderedNodeIds = NodeManualOrderValueResolver.resolve( childNodeIds );
 
         for ( final NodeManualOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : orderedNodeIds )
         {

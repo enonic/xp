@@ -28,7 +28,7 @@ public class NodeBranchQueryResult
 
     public static class Builder
     {
-        private final List<NodeBranchEntry> entries = Lists.newLinkedList();
+        private final List<NodeBranchEntry> entries = Lists.newArrayList();
 
 
         public Builder add( final NodeBranchEntry nodeBranchEntry )

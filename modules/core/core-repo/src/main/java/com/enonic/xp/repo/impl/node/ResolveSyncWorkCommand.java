@@ -167,7 +167,7 @@ public class ResolveSyncWorkCommand
 
         for ( final NodeComparison comparison : comparisons )
         {
-            addParentPaths( parentPathsBuilder, comparison.getSourceEntry().getNodePath() );
+            addParentPaths( parentPathsBuilder, comparison.getSourcePath() );
         }
 
         final NodePaths parentPaths = parentPathsBuilder.build();
@@ -203,7 +203,7 @@ public class ResolveSyncWorkCommand
 
     private void doAddNewAndMoved( final NodeComparisons parentComparisons )
     {
-        parentComparisons.getSet().stream().
+        parentComparisons.getComparisons().stream().
             filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
                 comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
             forEach( this::addToResult );
@@ -225,7 +225,7 @@ public class ResolveSyncWorkCommand
             build().
             execute();
 
-        return allNodesComparisons.getSet().stream().
+        return allNodesComparisons.getComparisons().stream().
             filter( comparison -> !( nodeNotChanged( comparison ) || nodeNotInSource( comparison ) ) ).
             filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
             filter( comparison -> !this.excludedIds.contains( comparison.getNodeId() ) ).
@@ -279,7 +279,7 @@ public class ResolveSyncWorkCommand
 
     private void addToResult( final NodeComparisons comparisons )
     {
-        this.result.addAll( comparisons.getSet() );
+        this.result.addAll( comparisons.getComparisons() );
         this.processedIds.addAll( comparisons.getNodeIds().getSet() );
     }
 

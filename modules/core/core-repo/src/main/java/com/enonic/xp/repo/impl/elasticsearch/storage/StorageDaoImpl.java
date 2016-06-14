@@ -200,6 +200,7 @@ public class StorageDaoImpl
             index( request.getStorageSettings().getStorageName().getName() ).
             indexType( request.getStorageSettings().getStorageType().getName() ).
             size( request.getNodeIds().getSize() ).
+            batchSize( 10_000 ).
             from( 0 ).
             setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
             build();

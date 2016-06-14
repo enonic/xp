@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import com.google.common.collect.Lists;
 
@@ -12,9 +12,9 @@ public class NodeManualOrderValueResolver
 
     public static final Long START_ORDER_VALUE = 0L;
 
-    public static LinkedList<NodeIdOrderValue> resolve( final LinkedList<NodeId> orderedNodeIds )
+    public static List<NodeIdOrderValue> resolve( final List<NodeId> orderedNodeIds )
     {
-        final LinkedList<NodeIdOrderValue> result = Lists.newLinkedList();
+        final List<NodeIdOrderValue> result = Lists.newArrayList();
 
         Long currentValue = START_ORDER_VALUE;
 

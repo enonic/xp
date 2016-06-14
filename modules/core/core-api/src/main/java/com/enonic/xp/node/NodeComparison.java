@@ -7,33 +7,26 @@ import com.enonic.xp.content.CompareStatus;
 @Beta
 public class NodeComparison
 {
-    private final NodeBranchEntry sourceEntry;
+    private final NodePath sourcePath;
 
-    private final NodeBranchEntry targetEntry;
+    private final NodeId sourceId;
+
+    private final NodeId targetId;
 
     private final CompareStatus compareStatus;
 
     public NodeComparison( final NodeBranchEntry sourceEntry, final NodeBranchEntry targetEntry, final CompareStatus compareStatus )
     {
-        this.sourceEntry = sourceEntry;
-        this.targetEntry = targetEntry;
+        this.sourceId = sourceEntry != null ? sourceEntry.getNodeId() : null;
+        this.targetId = targetEntry != null ? targetEntry.getNodeId() : null;
+        this.sourcePath = sourceEntry != null ? sourceEntry.getNodePath() : null;
+
         this.compareStatus = compareStatus;
     }
 
-
     public NodeId getNodeId()
     {
-        return sourceEntry != null ? sourceEntry.getNodeId() : targetEntry != null ? targetEntry.getNodeId() : null;
-    }
-
-    public NodeBranchEntry getSourceEntry()
-    {
-        return sourceEntry;
-    }
-
-    public NodeBranchEntry getTargetEntry()
-    {
-        return targetEntry;
+        return sourceId != null ? sourceId : targetId;
     }
 
     public CompareStatus getCompareStatus()
@@ -41,6 +34,10 @@ public class NodeComparison
         return compareStatus;
     }
 
+    public NodePath getSourcePath()
+    {
+        return sourcePath;
+    }
 
     @Override
     public boolean equals( final Object o )
@@ -56,7 +53,15 @@ public class NodeComparison
 
         final NodeComparison that = (NodeComparison) o;
 
-        if ( sourceEntry != null ? !sourceEntry.equals( that.sourceEntry ) : that.sourceEntry != null )
+        if ( sourcePath != null ? !sourcePath.equals( that.sourcePath ) : that.sourcePath != null )
+        {
+            return false;
+        }
+        if ( sourceId != null ? !sourceId.equals( that.sourceId ) : that.sourceId != null )
+        {
+            return false;
+        }
+        if ( targetId != null ? !targetId.equals( that.targetId ) : that.targetId != null )
         {
             return false;
         }
@@ -67,7 +72,9 @@ public class NodeComparison
     @Override
     public int hashCode()
     {
-        int result = sourceEntry != null ? sourceEntry.hashCode() : 0;
+        int result = sourcePath != null ? sourcePath.hashCode() : 0;
+        result = 31 * result + ( sourceId != null ? sourceId.hashCode() : 0 );
+        result = 31 * result + ( targetId != null ? targetId.hashCode() : 0 );
         result = 31 * result + ( compareStatus != null ? compareStatus.hashCode() : 0 );
         return result;
     }

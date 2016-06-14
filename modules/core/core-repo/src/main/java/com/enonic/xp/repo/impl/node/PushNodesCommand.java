@@ -82,7 +82,7 @@ public class PushNodesCommand
         final Stopwatch sortTimer = Stopwatch.createStarted();
         final ArrayList<NodeBranchEntry> list = new ArrayList<>( nodeBranchEntries.getSet() );
         Collections.sort( list, ( e1, e2 ) -> e1.getNodePath().compareTo( e2.getNodePath() ) );
-        System.out.println( "Orderin collection of NodeBranchEntries: " + sortTimer.stop() );
+        System.out.println( "Ordering collection of NodeBranchEntries: " + sortTimer.stop() );
 
         for ( final NodeBranchEntry branchEntry : list )
         {
@@ -119,7 +119,6 @@ public class PushNodesCommand
 
             //doPushNode( context, nodeBranchEntry, nodeBranchEntry.getVersionId() );
             builder.addSuccess( nodeBranchEntry );
-            //  }
 
             if ( comparison.getCompareStatus() == CompareStatus.MOVED )
             {
@@ -146,13 +145,10 @@ public class PushNodesCommand
 
     private NodeBranchEntries getNodeBranchEntries()
     {
-        final Stopwatch timer = Stopwatch.createStarted();
-        final NodeBranchEntries nodeBranchEntries = FindNodeBranchEntriesByIdCommand.create( this ).
+        return FindNodeBranchEntriesByIdCommand.create( this ).
             ids( ids ).
             build().
             execute();
-        System.out.println( "FindNodeBranchEntries: " + timer.stop() );
-        return nodeBranchEntries;
     }
 
     private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, PushNodesResult.Builder resultBuilder )

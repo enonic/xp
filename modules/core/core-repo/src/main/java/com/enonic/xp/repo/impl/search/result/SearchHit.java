@@ -49,20 +49,6 @@ public class SearchHit
         return returnValues;
     }
 
-    public String getStringValue( final String fieldName )
-    {
-        final ReturnValue returnValue = doGetField( fieldName, true );
-
-        if ( returnValue.getSingleValue() == null )
-        {
-            return null;
-        }
-        else
-        {
-            return returnValue.getSingleValue().toString();
-        }
-    }
-
     private ReturnValue doGetField( final String fieldName, final boolean failOnMissing )
     {
         final String normalizedFieldName = IndexFieldNameNormalizer.normalize( fieldName );
@@ -107,7 +93,7 @@ public class SearchHit
 
     public static class Builder
     {
-        private float score = Float.NEGATIVE_INFINITY;
+        private float score = 0;
 
         private String id;
 

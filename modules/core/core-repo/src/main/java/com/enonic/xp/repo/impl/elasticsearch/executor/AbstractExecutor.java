@@ -20,7 +20,7 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public abstract class AbstractExecutor
 {
-    protected static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
+    static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
 
     protected final String storeTimeout = "10s";
 
@@ -30,7 +30,7 @@ public abstract class AbstractExecutor
 
     final String searchPreference = "_local";
 
-    private final String searchTimeout = "10s";
+    private final String searchTimeout = "30s";
 
     protected AbstractExecutor( final Builder builder )
     {
@@ -77,7 +77,7 @@ public abstract class AbstractExecutor
         return queryAsString;
     }
 
-    protected SearchRequestBuilder createScrollRequest( final ElasticsearchQuery query )
+    SearchRequestBuilder createScrollRequest( final ElasticsearchQuery query )
     {
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
             setTypes( query.getIndexType() ).
@@ -113,7 +113,7 @@ public abstract class AbstractExecutor
         return searchRequestBuilder;
     }
 
-    protected void clearScroll( final SearchResponse scrollResp )
+    void clearScroll( final SearchResponse scrollResp )
     {
         final ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
         clearScrollRequest.addScrollId( scrollResp.getScrollId() );

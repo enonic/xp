@@ -35,7 +35,7 @@ public class PushNodesCommandPerformanceTest
             parent( NodePath.ROOT ).
             build(), false );
 
-        createNodes( rootNode, 30, 3, 1 );
+        createNodes( rootNode, 20, 3, 1 );
 
         refresh();
 

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -53,8 +53,15 @@ public class NodeEvents
     {
         if ( updatedNodes != null )
         {
+            final Node firstNode = updatedNodes.first();
+
+            if ( firstNode == null )
+            {
+                return null;
+            }
+
             return event( NODE_STATE_UPDATED_EVENT, updatedNodes ).
-                value( "state", updatedNodes.first().getNodeState().toString() ).
+                value( "state", firstNode.getNodeState().toString() ).
                 build();
         }
         return null;
@@ -133,7 +140,7 @@ public class NodeEvents
 
     private static ImmutableList nodesToList( final Nodes nodes )
     {
-        List<ImmutableMap> list = new LinkedList<>();
+        List<ImmutableMap> list = new ArrayList<>();
         nodes.stream().
             map( NodeEvents::nodeToMap ).
             forEach( list::add );
@@ -143,7 +150,7 @@ public class NodeEvents
 
     private static ImmutableList nodesToList( final NodeBranchEntries nodes )
     {
-        List<ImmutableMap> list = new LinkedList<>();
+        List<ImmutableMap> list = new ArrayList<>();
         nodes.stream().
             map( NodeEvents::nodeToMap ).
             forEach( list::add );

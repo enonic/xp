@@ -82,7 +82,7 @@ public final class NodeQueryResult
 
     public static final class Builder
     {
-        private final List<NodeQueryResultEntry> entries = Lists.newLinkedList();
+        private final List<NodeQueryResultEntry> entries = Lists.newArrayList();
 
         private long totalHits;
 

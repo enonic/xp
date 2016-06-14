@@ -1,14 +1,13 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -84,7 +83,7 @@ public class NodeIds
 
     public static class Builder
     {
-        private LinkedHashSet<NodeId> nodeIds = Sets.newLinkedHashSet();
+        private final List<NodeId> nodeIds = Lists.newArrayList();
 
         public Builder add( final NodeId nodeId )
         {

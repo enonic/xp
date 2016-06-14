@@ -21,7 +21,7 @@ class ScrollExecutor
 
     private final static Logger LOG = LoggerFactory.getLogger( ScrollExecutor.class );
 
-    public ScrollExecutor( final Builder builder )
+    private ScrollExecutor( final Builder builder )
     {
         super( builder );
     }
@@ -43,7 +43,7 @@ class ScrollExecutor
 
         while ( true )
         {
-            LOG.info( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
+            LOG.debug( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
 
             searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
 
@@ -59,10 +59,8 @@ class ScrollExecutor
             }
         }
 
-        final SearchHits build = searchHitsBuilder.build();
-
         return SearchResult.create().
-            hits( build ).
+            hits( searchHitsBuilder.build() ).
             build();
     }
 

@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Stopwatch;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -47,17 +45,14 @@ public class FindNodeBranchEntriesByIdCommand
 
         final NodeIds nodeIds = getNodeIds( context );
 
-        final Stopwatch getBranchTimer = Stopwatch.createStarted();
         allResultsBuilder.addAll(
             this.storageService.getBranchNodeVersions( nodeIds, !this.orderExpressions.isEmpty(), InternalContext.from( context ) ) );
-        System.out.println( "GetBranchTimer: " + getBranchTimer.stop() );
 
         return allResultsBuilder.build();
     }
 
     private NodeIds getNodeIds( final Context context )
     {
-
         final NodeQuery.Builder queryBuilder = NodeQuery.create().
             addQueryFilters( Filters.create().
                 add( ValueFilter.create().

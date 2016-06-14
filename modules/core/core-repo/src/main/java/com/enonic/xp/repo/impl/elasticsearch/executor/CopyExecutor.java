@@ -48,7 +48,7 @@ public class CopyExecutor
 
         while ( true )
         {
-            LOG.debug( "Fetched [" + scrollResp.getHits().hits().length + "] hits, processing" );
+            LOG.debug( "Copy: Fetched [" + scrollResp.getHits().hits().length + "] hits, processing" );
 
             if ( scrollResp.getHits().getHits().length > 0 )
             {

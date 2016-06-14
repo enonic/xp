@@ -1,49 +1,63 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.support.AbstractImmutableEntitySet;
-
 public class NodeBranchEntries
-    extends AbstractImmutableEntitySet<NodeBranchEntry>
+    implements Iterable<NodeBranchEntry>
 {
-    private final Map<NodeId, NodeBranchEntry> branchNodeVersionMap = Maps.newHashMap();
+    private final Map<NodeId, NodeBranchEntry> branchNodeVersionMap;
 
     private NodeBranchEntries( final Builder builder )
     {
-        super( ImmutableSet.copyOf( builder.branchNodeVersions ) );
-
-        for ( final NodeBranchEntry nodeBranchEntry : set )
-        {
-            branchNodeVersionMap.put( nodeBranchEntry.getNodeId(), nodeBranchEntry );
-        }
+        this.branchNodeVersionMap = builder.map;
     }
 
-    private NodeBranchEntries( final ImmutableSet<NodeBranchEntry> list )
+    private NodeBranchEntries( final Collection<NodeBranchEntry> entries )
     {
-        super( list );
-
-        for ( final NodeBranchEntry nodeBranchEntry : list )
-        {
-            branchNodeVersionMap.put( nodeBranchEntry.getNodeId(), nodeBranchEntry );
-        }
+        branchNodeVersionMap = Maps.newLinkedHashMap();
+        entries.stream().forEach( entry -> branchNodeVersionMap.put( entry.getNodeId(), entry ) );
     }
 
     public static NodeBranchEntries from( final Collection<NodeBranchEntry> nodeBranchEntries )
     {
-        return new NodeBranchEntries( ImmutableSet.copyOf( nodeBranchEntries ) );
+        return new NodeBranchEntries( nodeBranchEntries );
     }
 
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public int getSize()
+    {
+        return this.branchNodeVersionMap.size();
+    }
+
+    public boolean isNotEmpty()
+    {
+        return !this.branchNodeVersionMap.isEmpty();
+    }
+
+    public Collection<NodeBranchEntry> getSet()
+    {
+        return this.branchNodeVersionMap.values();
+    }
+
+    public Stream<NodeBranchEntry> stream()
+    {
+        return this.branchNodeVersionMap.values().stream();
+    }
+
+    @Override
+    public Iterator<NodeBranchEntry> iterator()
+    {
+        return this.branchNodeVersionMap.values().iterator();
     }
 
     public Set<NodeId> getKeys()
@@ -58,17 +72,17 @@ public class NodeBranchEntries
 
     public static class Builder
     {
-        private final List<NodeBranchEntry> branchNodeVersions = Lists.newLinkedList();
+        private final Map<NodeId, NodeBranchEntry> map = Maps.newLinkedHashMap();
 
         public Builder add( final NodeBranchEntry nodeBranchEntry )
         {
-            this.branchNodeVersions.add( nodeBranchEntry );
+            this.map.put( nodeBranchEntry.getNodeId(), nodeBranchEntry );
             return this;
         }
 
         public Builder addAll( final NodeBranchEntries nodeBranchEntries )
         {
-            this.branchNodeVersions.addAll( nodeBranchEntries.getSet() );
+            this.map.putAll( nodeBranchEntries.branchNodeVersionMap );
             return this;
         }
 

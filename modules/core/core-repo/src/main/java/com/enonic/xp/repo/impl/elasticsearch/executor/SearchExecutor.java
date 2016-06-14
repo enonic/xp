@@ -14,7 +14,6 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 public class SearchExecutor
     extends AbstractExecutor
 {
-
     private static final int SCROLL_THRESHOLD = 1000;
 
     private final static Logger LOG = LoggerFactory.getLogger( SearchExecutor.class );
@@ -46,8 +45,8 @@ public class SearchExecutor
         {
             if ( anyAggregations )
             {
-                LOG.info( "Query with size [" + query.getSize() + "] > threshold [" + this.SCROLL_THRESHOLD +
-                              "] but with aggregations. Scan not possible." );
+                LOG.debug( "Query with size [" + query.getSize() + "] > threshold [" + this.SCROLL_THRESHOLD +
+                               "] but with aggregations. Scan not possible." );
             }
             else
             {
