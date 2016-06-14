@@ -4,6 +4,14 @@ module api.content {
 
         private contentPaths: ContentPath[] = [];
 
+        private filterStatuses: CompareStatus[] = [];
+
+        private from: number;
+
+        private size: number;
+
+        public static LOAD_SIZE: number = 20;
+
         constructor(contentPath?: ContentPath) {
             super();
             super.setMethod("POST");
@@ -17,8 +25,23 @@ module api.content {
             return this;
         }
 
+        setFilterStatuses(filterStatuses: CompareStatus[]): GetDescendantsOfContents {
+            this.filterStatuses = filterStatuses;
+            return this;
+        }
+
         addContentPath(contentPath: ContentPath): GetDescendantsOfContents {
             this.contentPaths.push(contentPath);
+            return this;
+        }
+
+        setFrom(value: number): GetDescendantsOfContents {
+            this.from = value;
+            return this;
+        }
+
+        setSize(value: number): GetDescendantsOfContents {
+            this.size = value;
             return this;
         }
 
@@ -27,7 +50,10 @@ module api.content {
                 return contentPath.toString();
             };
             return {
-                contentPaths: this.contentPaths.map(fn)
+                contentPaths: this.contentPaths.map(fn),
+                filterStatuses: this.filterStatuses,
+                from: this.from || 0,
+                size: this.size || GetDescendantsOfContents.LOAD_SIZE
             };
         }
 

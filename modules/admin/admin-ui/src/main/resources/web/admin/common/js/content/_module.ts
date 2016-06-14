@@ -87,7 +87,6 @@
 ///<reference path='OrderChildMovement.ts' />
 ///<reference path='OrderChildMovements.ts' />
 ///<reference path='CreateContentFilter.ts' />
-///<reference path='CountContentsWithDescendantsRequest.ts' />
 ///<reference path='GetDescendantsOfContents.ts' />
 
 ///<reference path='OrderExpr.ts' />
