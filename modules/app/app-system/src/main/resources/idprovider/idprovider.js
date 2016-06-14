@@ -38,6 +38,7 @@ exports.logout = function (req) {
 
 function generateRedirectUrl() {
     var site = portalLib.getSite();
+    log.info("site: %s", JSON.stringify(site, null, 2));
     if (site) {
         return portalLib.pageUrl({id: site._id});
     }
