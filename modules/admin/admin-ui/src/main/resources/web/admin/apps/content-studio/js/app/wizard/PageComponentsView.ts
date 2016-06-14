@@ -1,4 +1,6 @@
 import "../../api.ts";
+import {LiveEditPageProxy} from "./page/LiveEditPageProxy";
+import {PageComponentsTreeGrid} from "./PageComponentsTreeGrid";
 
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
@@ -21,8 +23,6 @@ import Highlighter = api.liveedit.Highlighter;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
-import {LiveEditPageProxy} from "./page/LiveEditPageProxy";
-import {PageComponentsTreeGrid} from "./PageComponentsTreeGrid";
 
 export class PageComponentsView extends api.dom.DivEl {
 
@@ -642,7 +642,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
             if (hoveredNode) {
                 var data = hoveredNode.getData();
-                if (data.getType().isComponentType() && !api.BrowserHelper.isMobile()) {
+                if (/*data.getType().isComponentType() && */!api.BrowserHelper.isMobile()) {
                     Highlighter.get().highlightElement(dimensions,
                         data.getType().getConfig().getHighlighterStyle());
                 }
