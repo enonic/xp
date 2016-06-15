@@ -91,10 +91,6 @@
 
 .site-configurator-dialog {
 
-  + .@{_COMMON_PREFIX}modal-dialog {
-    border: 1px solid;
-  }
-
   &.animated {
     .transition(margin-top 0.2s);
   }
@@ -142,4 +138,26 @@
       position: fixed !important;
     }
   }
+
+  &.masked {
+
+    border: 1px solid;
+
+    .image-selector .image-uploader-el .dropzone-container .dropzone {
+      background-color: #808080;
+      border: 1px solid #676767;
+    }
+
+    &:after {
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: black;
+      opacity: 0.5;
+      content: "";
+      position: absolute;
+    }
+  }
+
 }
