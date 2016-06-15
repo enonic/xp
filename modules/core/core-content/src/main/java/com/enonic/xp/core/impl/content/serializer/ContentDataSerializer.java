@@ -238,11 +238,11 @@ public final class ContentDataSerializer
         for ( final PropertySet attachmentAsSet : attachmentSets )
         {
             attachments.add( Attachment.create().
-                name( attachmentAsSet.getString( "name" ) ).
-                label( attachmentAsSet.getString( "label" ) ).
-                mimeType( attachmentAsSet.getString( "mimeType" ) ).
-                size( attachmentAsSet.getLong( "size" ) ).
-                textContent( attachmentAsSet.getString( "text" ) ).
+                name( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_NAME ) ).
+                label( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_LABEL ) ).
+                mimeType( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) ).
+                size( attachmentAsSet.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) ).
+                textContent( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_TEXT ) ).
                 build() );
         }
         return attachments.build();
@@ -258,12 +258,12 @@ public final class ContentDataSerializer
         for ( final Attachment attachment : attachments )
         {
             final PropertySet attachmentSet = contentAsData.addSet( ATTACHMENT );
-            attachmentSet.addString( "name", attachment.getName() );
-            attachmentSet.addString( "label", attachment.getLabel() );
+            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_NAME, attachment.getName() );
+            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_LABEL, attachment.getLabel() );
             attachmentSet.addBinaryReference( "binary", attachment.getBinaryReference() );
-            attachmentSet.addString( "mimeType", attachment.getMimeType() );
-            attachmentSet.addLong( "size", attachment.getSize() );
-            attachmentSet.addString( "text", attachment.getTextContent() );
+            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_MIMETYPE, attachment.getMimeType() );
+            attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, attachment.getSize() );
+            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_TEXT, attachment.getTextContent() );
         }
     }
 

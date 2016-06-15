@@ -237,7 +237,6 @@ public class ImageContentProcessorTest
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
         final PropertyTree data = new PropertyTree();
-        data.setString( MediaAttachmentDataProcessor.CONTENT_DATA_MEDIA_TEXT_PROPERTY, "This is the old text" );
 
         final EditableContent editableContent = new EditableContent( Content.create().
             name( "myContentName" ).
