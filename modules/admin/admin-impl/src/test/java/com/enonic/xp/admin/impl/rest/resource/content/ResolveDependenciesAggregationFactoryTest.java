@@ -83,17 +83,18 @@ public class ResolveDependenciesAggregationFactoryTest
 
         final FindContentByQueryResult findContentByQueryResult =
             FindContentByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
-            buckets( Buckets.create().
-                add( Bucket.create().key( "portal:site" ).docCount( 2 ).build() ).
-                add( Bucket.create().key( "base:folder" ).docCount( 1 ).build() ).
-                build() ).build() ) ).build();
+                buckets( Buckets.create().
+                    add( Bucket.create().key( "portal:site" ).docCount( 2 ).build() ).
+                    add( Bucket.create().key( "base:folder" ).docCount( 1 ).build() ).
+                    build() ).build() ) ).build();
 
-        Mockito.when( contentService.getById( content.getId() ) ).thenReturn(content);
+        Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.empty() );
-        Mockito.when( contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn(findContentByQueryResult);
+        Mockito.when( contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findContentByQueryResult );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.create().icon( Icon.from( new byte[]{1},"mime", Instant.now())).setBuiltIn( true ).build());
+            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
+                true ).build() );
 
         final DependenciesJson result = factory.create( content.getId() );
 
@@ -129,17 +130,18 @@ public class ResolveDependenciesAggregationFactoryTest
 
         final FindContentByQueryResult findContentByQueryResult =
             FindContentByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
-            buckets( Buckets.create().
-                build() ).build() ) ).build();
+                buckets( Buckets.create().
+                    build() ).build() ) ).build();
 
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn(
             Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
-        Mockito.when( contentService.getById( content.getId() ) ).thenReturn(content);
+        Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
 
-        Mockito.when( contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn(findContentByQueryResult);
+        Mockito.when( contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findContentByQueryResult );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.create().icon( Icon.from( new byte[]{1},"mime", Instant.now())).setBuiltIn( true ).build());
+            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
+                true ).build() );
 
         final DependenciesJson result = factory.create( content.getId() );
 
@@ -177,7 +179,8 @@ public class ResolveDependenciesAggregationFactoryTest
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findContentByQueryResult );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.create().icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn( true ).build() );
+            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
+                true ).build() );
 
         final DependenciesJson result = factory.create( content.getId() );
 

@@ -4,7 +4,7 @@
     "createdTime": null,
     "deletable": false,
     "description": "RT description",
-    "displayName": null,
+    "displayName": "the_relationship_type",
     "editable": false,
     "fromSemantic": null,
     "iconUrl": "/admin/rest/schema/relationship/icon/myapplication:the_relationship_type",
