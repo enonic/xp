@@ -19,7 +19,7 @@ public class MediaAttachmentDataProcessor
     @Override
     public boolean supports( final ContentType contentType )
     {
-        return contentType.getName().isMedia() || contentType.getName().isDescendantOfMedia();
+        return contentType.getName().isMedia() || contentType.getName().isDescendantOfMedia() || contentType.getName().isTextualMedia();
     }
 
     @Override

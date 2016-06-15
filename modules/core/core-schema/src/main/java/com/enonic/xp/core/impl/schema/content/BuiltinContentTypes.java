@@ -88,11 +88,6 @@ final class BuiltinContentTypes
             label( "Tags" ).
             occurrences( 0, 0 ).
             build() ).
-        addFormItem( Input.create().name( "text" ).
-            inputType( InputTypeName.TEXT_AREA ).
-            label( "Text" ).
-            occurrences( 0, 0 ).
-            build() ).
         build();
 
     private static final Form MEDIA_DOCUMENT_FORM = Form.create().
@@ -117,6 +112,17 @@ final class BuiltinContentTypes
         build();
 
     private static final Form MEDIA_DEFAULT_FORM = Form.create().
+        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
+            label( "Media" ).
+            inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
+        addFormItem( Input.create().name( "tags" ).
+            inputType( InputTypeName.TAG ).
+            label( "Tags" ).
+            occurrences( 0, 0 ).
+            build() ).
+        build();
+
+    private static final Form MEDIA_TEXT_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
             inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
@@ -186,10 +192,10 @@ final class BuiltinContentTypes
         setFinal( false ).setAbstract( false ).allowChildContent( false ).build();
 
     private static final ContentType MEDIA_TEXT = createSystemType( ContentTypeName.textMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_TEXT_FORM ).build();
 
     private static final ContentType MEDIA_DATA = createSystemType( ContentTypeName.dataMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_TEXT_FORM ).build();
 
     private static final ContentType MEDIA_AUDIO = createSystemType( ContentTypeName.audioMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
@@ -215,14 +221,14 @@ final class BuiltinContentTypes
 
     private static final ContentType MEDIA_SPREADSHEET =
         createSystemType( ContentTypeName.spreadsheetMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_TEXT_FORM ).build();
 
     private static final ContentType MEDIA_PRESENTATION =
         createSystemType( ContentTypeName.presentationMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_TEXT_FORM ).build();
 
     private static final ContentType MEDIA_CODE = createSystemType( ContentTypeName.codeMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_TEXT_FORM ).build();
 
     private static final ContentType MEDIA_EXECUTABLE =
         createSystemType( ContentTypeName.executableMedia() ).superType( ContentTypeName.media() ).
