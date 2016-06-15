@@ -33,7 +33,7 @@ module api.ui.geo {
             return <api.util.GeoPoint> api.util.GeoPoint.fromString(value);
         }
 
-        hasValidUserInput(): boolean {
+        isValid(): boolean {
             return this.validUserInput;
         }
 

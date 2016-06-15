@@ -53,6 +53,7 @@ module api.content.form.inputtype.time {
             var dateTimePicker = <DateTimePicker> occurrence;
 
             if (!unchangedOnly || !dateTimePicker.isDirty()) {
+
                 var date = property.hasNonNullValue()
                     ? this.valueType == ValueTypes.DATE_TIME
                                ? property.getDateTime().toDate()
@@ -64,7 +65,7 @@ module api.content.form.inputtype.time {
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
             var dateTimePicker = <api.ui.time.DateTimePicker>inputElement;
-            return dateTimePicker.hasValidUserInput();
+            return dateTimePicker.isValid();
         }
 
         availableSizeChanged() {

@@ -80,19 +80,20 @@
         }
 
         function selectNextApp() {
+            var firstAppIndex = isHomeAppActive() ? 1 : 0;
             var selectedIndex = getSelectedAppIndex();
             var apps = getLauncherMainContainer().querySelectorAll('.app-row');
 
-            selectApp((selectedIndex + 1) == apps.length ? 0 : selectedIndex + 1);
+            selectApp((selectedIndex + 1) == apps.length || selectedIndex == -1 ? firstAppIndex : selectedIndex + 1);
         }
 
         function selectPreviousApp() {
             var selectedIndex = getSelectedAppIndex();
             var nextIndex;
             if (selectedIndex == -1) {
-                nextIndex = 0;
+                nextIndex = isHomeAppActive() ? 1 : 0;
             }
-            else if (selectedIndex == 0) {
+            else if (selectedIndex == 0 || (selectedIndex == 1 && isHomeAppActive())) {
                 nextIndex = document.querySelectorAll('.app-row').length - 1;
             }
             else {
@@ -140,6 +141,10 @@
             return launcherMainContainer;
         }
 
+        function isHomeAppActive() {
+            return getLauncherMainContainer().classList.contains("home");
+        }
+
         listenToKeyboardEvents();
     }());
 </script>
@@ -154,7 +159,7 @@
 
     <div class="launcher-app-container">
         <div class="scrollable-content">
-            <a href="{{homeUrl}}" target="_blank">
+            <a href="{{homeUrl}}" target="_blank" data-id="home">
                 <div class="app-row" id="home">
                     <div class="app-icon">
                         <svg width="103px" height="137px" viewBox="0 0 103 137" xmlns="http://www.w3.org/2000/svg">
@@ -177,7 +182,7 @@
                 </div>
             </a>
             {{#adminTools}}
-            <a href="{{uri}}" target="_blank">
+            <a href="{{uri}}" target="_blank" data-id="{{appId}}">
                 <div class="app-row" id="{{appId}}">
                     <div class="app-icon">{{#icon}}{{{icon}}}{{/icon}}</div>
                     <div class="app-info">
