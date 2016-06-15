@@ -329,10 +329,10 @@ module api.liveedit {
         }
 
         private createFragment(): wemQ.Promise<Content> {
-            var contentPath = this.getPageView().getLiveEditModel().getContent().getPath();
+            var contentId = this.getPageView().getLiveEditModel().getContent().getContentId();
             var config = this.getPageView().getLiveEditModel().getPageModel().getConfig();
 
-            var request = new api.content.page.region.CreateFragmentRequest(contentPath).setConfig(config).setComponent(
+            var request = new api.content.page.region.CreateFragmentRequest(contentId).setConfig(config).setComponent(
                 this.getComponent());
 
             return request.sendAndParse();
