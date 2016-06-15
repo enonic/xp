@@ -30,9 +30,9 @@ public final class AuthFilter
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         if ( !authInfo.isAuthenticated() )
         {
-            //Executes the function authFilter of the IdProvider
+            //Executes the function autoLogin of the IdProvider
             AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                functionName( "authFilter" ).
+                functionName( "autoLogin" ).
                 servletRequest( req ).
                 build();
             authControllerService.execute( executionParams );

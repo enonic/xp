@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -112,7 +111,6 @@ public abstract class AbstractNodeTest
         super.setUp();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 

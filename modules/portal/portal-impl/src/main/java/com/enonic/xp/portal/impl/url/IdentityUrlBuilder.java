@@ -16,7 +16,17 @@ final class IdentityUrlBuilder
         appendPart( url, "_" );
         appendPart( url, "idprovider" );
         appendPart( url, this.params.getUserStoreKey().toString() );
-        appendPart( url, this.params.getIdProviderFunction() );
-        params.put( "redirect", this.params.getRedirectionUrl() );
+
+        final String idProviderFunction = this.params.getIdProviderFunction();
+        if ( idProviderFunction != null )
+        {
+            appendPart( url, idProviderFunction );
+        }
+
+        final String redirectionUrl = this.params.getRedirectionUrl();
+        if ( redirectionUrl != null )
+        {
+            params.put( "redirect", this.params.getRedirectionUrl() );
+        }
     }
 }

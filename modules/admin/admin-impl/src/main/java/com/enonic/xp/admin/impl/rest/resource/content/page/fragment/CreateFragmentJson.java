@@ -8,35 +8,45 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.json.content.page.region.ComponentJson;
-import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.CreateFragmentParams;
 
 public class CreateFragmentJson
 {
-    private final CreateFragmentParams createFragmentParams;
+    private final Component component;
+
+    private final PropertyTree config;
+
+    private final ContentId parent;
 
     @JsonCreator
-    public CreateFragmentJson( @JsonProperty("contentPath") final String contentPath,
+    public CreateFragmentJson( @JsonProperty("contentId") final String contentId,
                                @JsonProperty("config") final List<PropertyArrayJson> configJson,
                                @JsonProperty("component") final ComponentJson componentJson )
     {
-        final Component component = componentJson != null ? componentJson.getComponent() : null;
-        final PropertyTree config = configJson != null ? PropertyTreeJson.fromJson( configJson ) : null;
-
-        this.createFragmentParams = CreateFragmentParams.create().
-            parent( ContentPath.from( contentPath ) ).
-            component( component ).
-            config( config ).
-            build();
+        this.component = componentJson != null ? componentJson.getComponent() : null;
+        this.config = configJson != null ? PropertyTreeJson.fromJson( configJson ) : null;
+        this.parent = ContentId.from( contentId );
     }
 
     @JsonIgnore
-    public CreateFragmentParams getCreateFragmentParams()
+    public Component getComponent()
     {
-        return createFragmentParams;
+        return component;
+    }
+
+    @JsonIgnore
+    public PropertyTree getConfig()
+    {
+        return config;
+    }
+
+    @JsonIgnore
+    public ContentId getParent()
+    {
+        return parent;
     }
 }

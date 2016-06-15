@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.security;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -90,7 +89,6 @@ public class SecurityServiceImplTest
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );

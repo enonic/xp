@@ -8,13 +8,13 @@ import com.enonic.xp.portal.macro.MacroProcessor;
 
 import static org.junit.Assert.*;
 
-public class NoFormatMacroProcessorTest
+public class DisableMacroProcessorTest
 {
 
     @Test
     public void testProcess()
     {
-        final MacroProcessor processor = new NoFormatMacroProcessor();
+        final MacroProcessor processor = new DisableMacroProcessor();
 
         final MacroContext macroContext1 = MacroContext.create().name( "name" ).
             body( "here is macro: [macro]body[/macro]" ).

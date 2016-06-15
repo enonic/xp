@@ -161,7 +161,7 @@ public class ServiceHandlerTest
         }
         catch ( PortalException e )
         {
-            if ( HttpStatus.FORBIDDEN == e.getStatus() )
+            if ( HttpStatus.UNAUTHORIZED == e.getStatus() )
             {
                 forbiddenErrorThrown = true;
             }

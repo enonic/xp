@@ -89,7 +89,11 @@ public abstract class AbstractErrorHandlerTest
     {
         final ErrorHandlerScript controllerScript = this.factory.errorScript( ResourceKey.from( script ) );
         final PortalError portalError = PortalError.create().request( this.portalRequest ).status( status ).build();
-        this.portalResponse = controllerScript.execute( portalError );
+        this.portalResponse = controllerScript.execute( portalError, "handle" + status );
+        if ( this.portalResponse == null )
+        {
+            this.portalResponse = controllerScript.execute( portalError, "handleError" );
+        }
     }
 
 }

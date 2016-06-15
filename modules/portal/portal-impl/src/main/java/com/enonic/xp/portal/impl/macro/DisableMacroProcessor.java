@@ -7,14 +7,14 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.macro.MacroContext;
 
 @Component(immediate = true, service = BuiltInMacroProcessor.class)
-public class NoFormatMacroProcessor
+public class DisableMacroProcessor
     implements BuiltInMacroProcessor
 {
 
     @Override
     public String getName()
     {
-        return "noformat";
+        return "disable";
     }
 
     @Override
