@@ -93,8 +93,7 @@ module api.util.htmlarea.dialog {
         private fetchMacroString(): wemQ.Promise<string> {
             this.macroLoadMask.show();
 
-            return new api.macro.resource.GetPreviewStringRequest(new api.data.PropertyTree(this.data), this.macroDescriptor.getKey()).
-                sendAndParse();
+            return new api.macro.resource.GetPreviewStringRequest(new api.data.PropertyTree(this.data), this.macroDescriptor.getKey()).sendAndParse();
         }
 
         public getMacroPreviewString(): wemQ.Promise<string> {
@@ -145,7 +144,7 @@ module api.util.htmlarea.dialog {
             this.macroDescriptor = macroDescriptor;
             this.previewResolved = false;
 
-            this.initPropertySetForDescriptor(macroDescriptor);
+            this.initPropertySetForDescriptor();
             this.showDescriptorConfigView(macroDescriptor);
         }
 
@@ -158,35 +157,12 @@ module api.util.htmlarea.dialog {
             }
         }
 
-        private initPropertySetForDescriptor(macroDescriptor: MacroDescriptor) {
+        private initPropertySetForDescriptor() {
             if (!!this.data) {
-                this.data.unPropertyValueChanged(this.formValueChangedHandler);
+                this.data.unChanged(this.formValueChangedHandler);
             }
-            this.data = this.generateBackingPropertySetForForm(macroDescriptor.getForm());
-            this.data.onPropertyValueChanged(this.formValueChangedHandler);
-        }
-
-        private generateBackingPropertySetForForm(form: Form): PropertySet {
-            var propertySet = new PropertySet();
-            this.populatePropertySetWithFormItems(form.getFormItems(), propertySet);
-            return propertySet;
-        }
-
-        private populatePropertySetWithFormItems(formItems: FormItem[], propertySet: PropertySet) {
-            formItems.forEach((formItem: FormItem) => {
-
-                if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormItemSet)) {
-                    this.populatePropertySetWithFormItems((<FormItemSet>formItem).getFormItems(), propertySet);
-                }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FieldSet)) {
-                    this.populatePropertySetWithFormItems((<FieldSet>formItem).getFormItems(), propertySet);
-                }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, Input)) {
-                    var input: Input = <Input>formItem;
-
-                    propertySet.addProperty(input.getName(), api.data.ValueTypes.STRING.newNullValue());
-                }
-            });
+            this.data = new PropertySet();
+            this.data.onChanged(this.formValueChangedHandler);
         }
 
         private renderConfigView(formView: FormView) {
@@ -247,7 +223,8 @@ module api.util.htmlarea.dialog {
                 this.getEl().setHeightPx(scrollHeight > 150
                     ? frameWindow.document.body.scrollHeight
                     : wemjq("#" + this.id).contents().find('body').outerHeight());
-            } catch (error) {}
+            } catch (error) {
+            }
         }
 
         private makeContentForPreviewFrame(macroPreview: MacroPreview): string {

@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.handler.EndpointHandler;
@@ -17,7 +18,9 @@ import com.enonic.xp.security.UserStoreKey;
 public class IdentityHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "([^/]+)/(login|logout)" );
+    private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(logout))?" );
+
+    private ContentService contentService;
 
     protected AuthControllerService authControllerService;
 
@@ -39,13 +42,26 @@ public class IdentityHandler
         }
 
         final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( 1 ) );
-        final String idProviderFunction = matcher.group( 2 );
+        String idProviderFunction = matcher.group( 2 );
+        if ( idProviderFunction == null )
+        {
+            idProviderFunction = req.getMethod().
+                toString().
+                toLowerCase();
+        }
 
         final IdentityHandlerWorker worker = new IdentityHandlerWorker();
         worker.userStoreKey = userStoreKey;
         worker.idProviderFunction = idProviderFunction;
+        worker.setContentService( this.contentService );
         worker.authControllerService = this.authControllerService;
         return worker;
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 
     @Reference

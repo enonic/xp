@@ -53,7 +53,7 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
             addFormItem(new api.form.InputBuilder().
                 setName("authConfig").
                 setInputType(new api.form.InputTypeName("AuthApplicationSelector", false)).
-                setLabel("ID Provider").
+                setLabel("Application").
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
                 setInputTypeConfig({}).
                 setMaximizeUIInputWidth(true).

@@ -19,6 +19,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
+import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -210,7 +211,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node duplicate( final NodeId nodeId )
+    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

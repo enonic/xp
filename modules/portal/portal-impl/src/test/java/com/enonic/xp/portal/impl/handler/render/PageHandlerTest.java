@@ -175,7 +175,7 @@ public class PageHandlerTest
         }
         catch ( final PortalException e )
         {
-            assertEquals( HttpStatus.FORBIDDEN, e.getStatus() );
+            assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
             assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
         }
     }

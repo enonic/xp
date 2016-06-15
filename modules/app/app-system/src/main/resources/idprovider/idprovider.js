@@ -2,21 +2,24 @@ var mustacheLib = require('/lib/xp/mustache');
 var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
 
-exports.handle403 = function (req) {
-    if (/^\/admin\/rest\//.test(req.path)) {
+exports.handle401 = function (req) {
+    var adminRestPath = portalLib.url({path: "/admin/rest"});
+    if (req.path.lastIndexOf(adminRestPath, 0) == 0) {
         return null;
     }
+
     var body = generateLoginPage();
 
     return {
-        status: 403,
+        status: 401,
         contentType: 'text/html',
         body: body
     };
 };
 
-exports.login = function (req) {
-    var body = generateLoginPage(req.params.redirect);
+exports.get = function (req) {
+    var redirectUrl = generateRedirectUrl();
+    var body = generateLoginPage(redirectUrl);
 
     return {
         status: 200,
@@ -27,10 +30,19 @@ exports.login = function (req) {
 
 exports.logout = function (req) {
     authLib.logout();
+    var redirectUrl = generateRedirectUrl();
     return {
-        redirect: req.params.redirect
+        redirect: redirectUrl
     };
 };
+
+function generateRedirectUrl() {
+    var site = portalLib.getSite();
+    if (site) {
+        return portalLib.pageUrl({id: site._id});
+    }
+    return '/';
+}
 
 function generateLoginPage(redirectUrl) {
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});

@@ -1,0 +1,4 @@
+build:
+  image: java:8-jdk
+  commands:
+    - ./gradlew test

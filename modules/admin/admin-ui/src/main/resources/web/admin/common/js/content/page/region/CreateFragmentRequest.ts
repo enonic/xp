@@ -2,16 +2,16 @@ module api.content.page.region {
 
     export class CreateFragmentRequest extends FragmentResourceRequest<api.content.json.ContentJson, api.content.Content> {
 
-        private contentPath: api.content.ContentPath;
+        private contentId: api.content.ContentId;
 
         private config: api.data.PropertyTree;
 
         private component: api.content.page.region.Component;
 
-        constructor(contentPath: api.content.ContentPath) {
+        constructor(contentId: api.content.ContentId) {
             super();
             super.setMethod("POST");
-            this.contentPath = contentPath;
+            this.contentId = contentId;
         }
 
         setConfig(config: api.data.PropertyTree): CreateFragmentRequest {
@@ -26,7 +26,7 @@ module api.content.page.region {
 
         getParams(): Object {
             return {
-                contentPath: this.contentPath.toString(),
+                contentId: this.contentId.toString(),
                 config: this.config ? this.config.toJson() : null,
                 component: this.component != null ? this.component.toJson() : null
             };

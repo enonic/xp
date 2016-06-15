@@ -6,7 +6,7 @@
 XP_DISTRO_PATH="";
 
 # App info
-VERSION="6.3.0-SNAPSHOT"
+VERSION="@version@"
 APP_NAME="xp"
 DISTRO_NAME="enonic-xp-${VERSION}"
 

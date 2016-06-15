@@ -17,12 +17,6 @@ public final class RepoConfigurationImpl
     private Configuration config;
 
     @Override
-    public File getBlobStoreDir()
-    {
-        return getFileProperty( "blobStore.dir" );
-    }
-
-    @Override
     public File getSnapshotsDir()
     {
         return getFileProperty( "snapshots.dir" );

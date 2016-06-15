@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 
 
@@ -123,22 +125,19 @@ public class AuthResponseWrapper
 
     private void handleError( final int sc )
     {
-        if ( !errorHandled && ( 403 == sc || 401 == sc ) )
+        if ( !errorHandled && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() )
         {
             try
             {
-                if ( Boolean.TRUE != request.getAttribute( "idprovider.handled" ) )
+                final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+                    functionName( "handle401" ).
+                    servletRequest( request ).
+                    response( response ).
+                    build();
+                final boolean responseSerialized = authControllerService.execute( executionParams ) != null;
+                if ( responseSerialized )
                 {
-                    final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                        functionName( "handle403" ).
-                        servletRequest( request ).
-                        response( response ).
-                        build();
-                    final boolean responseSerialized = authControllerService.execute( executionParams ) != null;
-                    if ( responseSerialized )
-                    {
-                        errorHandled = true;
-                    }
+                    errorHandled = true;
                 }
             }
             catch ( IOException e )
@@ -146,5 +145,22 @@ public class AuthResponseWrapper
                 throw Exceptions.unchecked( e );
             }
         }
+    }
+
+    private boolean isUnauthorizedError( final int sc )
+    {
+        return 401 == sc || ( 403 == sc && !isAuthenticated() );
+    }
+
+    private boolean isErrorAlreadyHandled()
+    {
+        return Boolean.TRUE == request.getAttribute( "error.handled" );
+    }
+
+
+    private boolean isAuthenticated()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return authInfo.isAuthenticated();
     }
 }
