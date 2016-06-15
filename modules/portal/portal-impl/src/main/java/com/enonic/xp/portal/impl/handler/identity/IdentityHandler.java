@@ -1,10 +1,14 @@
 package com.enonic.xp.portal.impl.handler.identity;
 
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
@@ -43,6 +47,12 @@ public class IdentityHandler
 
         final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( 1 ) );
         String idProviderFunction = matcher.group( 2 );
+
+        if ( idProviderFunction != null )
+        {
+            checkTicket( req );
+        }
+
         if ( idProviderFunction == null )
         {
             idProviderFunction = req.getMethod().
@@ -56,6 +66,45 @@ public class IdentityHandler
         worker.setContentService( this.contentService );
         worker.authControllerService = this.authControllerService;
         return worker;
+    }
+
+    private void checkTicket( final PortalRequest req )
+    {
+        if ( getParameter( req, "redirect" ) != null )
+        {
+            final String ticket = getParameter( req, "_ticket" );
+            if ( ticket == null )
+            {
+                throw badRequest( "Missing ticket parameter" );
+            }
+
+            final String jSessionId = req.getCookies().get( "JSESSIONID" );
+            if ( jSessionId == null )
+            {
+                throw badRequest( "Missing session id" );
+            }
+
+            final String expectedTicket = generateTicket( jSessionId );
+            if ( !expectedTicket.equals( ticket ) )
+            {
+                throw badRequest( "Session expired" );
+            }
+        }
+    }
+
+    private String getParameter( final PortalRequest req, final String name )
+    {
+        final Collection<String> values = req.getParams().get( name );
+        return values.isEmpty() ? null : values.iterator().next();
+    }
+
+    private String generateTicket( final String jSessionId )
+    {
+        return Hashing.sha1().
+            newHasher().
+            putString( jSessionId, Charsets.UTF_8 ).
+            hash().
+            toString();
     }
 
     @Reference
