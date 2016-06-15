@@ -83,6 +83,24 @@ module api.liveedit {
             return this;
         }
 
+        isViewInsideSelectedContainer(itemView: ItemView): boolean {
+            if (!this.lastHighlightedItemView) {
+                return false;
+            }
+            
+            return this.lastHighlightedItemView.isContainer() &&
+                    itemView.isChildOfItemView(this.lastHighlightedItemView);
+        }
+        
+        getSelectedView(): ItemView {
+            return this.lastHighlightedItemView;
+        }
+
+        unselect() {
+            this.hide();
+            this.lastHighlightedItemView = null; 
+        }
+        
         protected preProcessStyle(style: HighlighterStyle, isEmptyView: boolean): HighlighterStyle {
             return {
                 stroke: 'rgba(0, 0, 0, 1)',
