@@ -18,7 +18,7 @@ import com.enonic.xp.security.UserStoreKey;
 public class IdentityHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(logout))?" );
+    private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
 
     private ContentService contentService;
 
