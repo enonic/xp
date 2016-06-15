@@ -228,10 +228,12 @@ module api.app.browse {
             if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                 if (!this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.hideSecondPanel();
+                    this.browseItemPanel.setMobileView(true);
                 }
             } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
                 if (this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.showSecondPanel();
+                    this.browseItemPanel.setMobileView(false);
                 }
             }
         }

@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import javax.mail.Address;
 import javax.mail.Authenticator;
-import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -69,7 +68,7 @@ public final class MailServiceImpl
     private void doSend( final MimeMessage message )
         throws Exception
     {
-        final Address[] to = message.getRecipients( Message.RecipientType.TO );
+        final Address[] to = message.getAllRecipients();
         final Transport transport = this.session.getTransport();
         transport.connect();
 

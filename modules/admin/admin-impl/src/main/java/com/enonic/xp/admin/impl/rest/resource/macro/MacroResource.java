@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.macro;
 
+import java.util.Set;
+
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -20,15 +22,22 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
+import com.google.common.html.HtmlEscapers;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.macro.json.ApplicationKeysParam;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroStringResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewStringMacroJson;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
@@ -46,7 +55,9 @@ import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "macro")
 @Produces(MediaType.APPLICATION_JSON)
@@ -66,15 +77,19 @@ public final class MacroResource
 
     private PortalUrlService portalUrlService;
 
+    private ContentService contentService;
+
     private static final MacroImageHelper HELPER = new MacroImageHelper();
 
     private static final String DEFAULT_MIME_TYPE = "image/svg+xml";
 
-    @GET
-    @Path("list")
-    public MacrosJson getMacros()
+    @POST
+    @Path("getByApps")
+    public MacrosJson getMacrosByApps( final ApplicationKeysParam appKeys )
     {
-        return new MacrosJson( this.macroDescriptorService.getAll(), this.macroIconUrlResolver );
+        final Set<ApplicationKey> keys = appKeys.getKeys();
+        keys.add( ApplicationKey.SYSTEM );
+        return new MacrosJson( this.macroDescriptorService.getByApplications( ApplicationKeys.from( keys ) ), this.macroIconUrlResolver );
     }
 
     @GET
@@ -123,7 +138,8 @@ public final class MacroResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final PortalRequest portalRequest = createPortalRequest( httpRequest, previewMacroJson.getContentPath() );
+        final ApplicationKey appKey = macroDescriptor.getKey().getApplicationKey();
+        final PortalRequest portalRequest = createPortalRequest( httpRequest, previewMacroJson.getContentPath(), appKey );
         portalRequest.setContentPath( previewMacroJson.getContentPath() );
 
         final MacroContext context = createMacroContext( macroDescriptor, previewMacroJson.getFormData(), portalRequest );
@@ -148,7 +164,7 @@ public final class MacroResource
         return new PreviewMacroStringResultJson( macro );
     }
 
-    private PortalRequest createPortalRequest( final HttpServletRequest req, final ContentPath contentPath )
+    private PortalRequest createPortalRequest( final HttpServletRequest req, final ContentPath contentPath, final ApplicationKey appKey )
     {
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setRawRequest( req );
@@ -156,11 +172,16 @@ public final class MacroResource
         portalRequest.setBaseUri( "/portal" );
         portalRequest.setMode( RenderMode.EDIT );
         portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
-        portalRequest.setScheme( "http" );
-        portalRequest.setHost( "localhost" );
-        portalRequest.setPort( 8080 );
+        portalRequest.setScheme( ServletRequestUrlHelper.getScheme( req ) );
+        portalRequest.setHost( ServletRequestUrlHelper.getHost( req ) );
+        portalRequest.setPort( ServletRequestUrlHelper.getPort( req ) );
+        portalRequest.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
         final PageUrlParams pageUrlParams = new PageUrlParams().portalRequest( portalRequest ).path( contentPath.toString() );
         portalRequest.setPath( portalUrlService.pageUrl( pageUrlParams ) );
+        portalRequest.setApplicationKey( appKey );
+        final Content content = getContent( contentPath );
+        portalRequest.setContent( content );
+        portalRequest.setSite( resolveSite( content ) );
         return portalRequest;
     }
 
@@ -168,13 +189,15 @@ public final class MacroResource
                                              final PortalRequest portalRequest )
     {
         final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );
-        final String body = Strings.nullToEmpty( formData.getString( "body" ) );
+        String body = Strings.nullToEmpty( formData.getString( "body" ) );
+        body = HtmlEscapers.htmlEscaper().escape( body );
         context.body( body );
         for ( Property prop : formData.getProperties() )
         {
             if ( !"body".equals( prop.getName() ) && prop.hasNotNullValue() )
             {
-                context.param( prop.getName(), prop.getValue().asString() );
+                final String value = HtmlEscapers.htmlEscaper().escape( prop.getValue().asString() );
+                context.param( prop.getName(), value );
             }
         }
         context.request( portalRequest );
@@ -203,6 +226,35 @@ public final class MacroResource
         responseBuilder.cacheControl( cacheControl );
     }
 
+
+    private Content getContent( final ContentPath contentPath )
+    {
+        try
+        {
+            return this.contentService.getByPath( contentPath );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private Site resolveSite( final Content content )
+    {
+        if ( content == null )
+        {
+            return null;
+        }
+        try
+        {
+            return this.contentService.getNearestSite( content.getId() );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
     @Reference
     public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
     {
@@ -221,5 +273,11 @@ public final class MacroResource
     public void setPortalUrlService( final PortalUrlService portalUrlService )
     {
         this.portalUrlService = portalUrlService;
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

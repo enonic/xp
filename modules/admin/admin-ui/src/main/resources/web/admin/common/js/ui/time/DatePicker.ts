@@ -57,47 +57,49 @@ module api.ui.time {
 
     }
 
-    export class DatePicker extends api.dom.DivEl {
-
-        private popup: DatePickerPopup;
-
-        private input: api.ui.text.TextInput;
-
-        private popupTrigger: api.ui.button.Button;
+    export class DatePicker extends Picker {
 
         private calendar: Calendar;
 
         private selectedDate: Date;
 
-        private validUserInput: boolean;
-
         private selectedDateChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
 
         constructor(builder: DatePickerBuilder) {
-            super('date-picker');
+            super(builder, 'date-picker');
+        }
 
-            var onDatePickerShown = this.onDatePickerShown.bind(this);
-            DatePickerShownEvent.on(onDatePickerShown);
-            this.onRemoved((event: api.dom.ElementRemovedEvent) => {
-                DatePickerShownEvent.un(onDatePickerShown);
-            });
+        protected initData(builder: DatePickerBuilder) {
+            this.initCalendar(builder);
+        }
 
+        private initCalendar(builder: DatePickerBuilder) {
             this.calendar = builder.calendar || new CalendarBuilder().
                     setSelectedDate(builder.selectedDate).
                     setMonth(builder.month).
                     setYear(builder.year).
                     setInteractive(true).
                     build();
+        }
 
+        protected handleShownEvent() {
+            var onDatePickerShown = this.onDatePickerShown.bind(this);
+            DatePickerShownEvent.on(onDatePickerShown);
+            this.onRemoved((event: api.dom.ElementRemovedEvent) => {
+                DatePickerShownEvent.un(onDatePickerShown);
+            });
+        }
+
+        protected initPopup() {
             this.popup = new DatePickerPopupBuilder().
                 setCalendar(this.calendar).
                 build();
             this.popup.onShown(() => {
                 new DatePickerShownEvent(this).fire();
             });
+        }
 
-            this.validUserInput = true;
-
+        protected initInput(builder: DatePickerBuilder) {
             var value;
             if (builder.selectedDate) {
                 value = this.formatDate(builder.selectedDate);
@@ -107,29 +109,25 @@ module api.ui.time {
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
             this.input.onClicked((e: MouseEvent) => {
-                this.togglePopupVisibility(e);
+                e.preventDefault();
+                this.togglePopupVisibility();
             });
             this.input.onFocus((e: FocusEvent) =>
-                setTimeout(() => {
-                    if (!this.popup.isVisible()) {
-                        e.preventDefault();
-                        this.popup.show();
-                    }
-                }, 150)
+                    setTimeout(() => {
+                        if (!this.popup.isVisible()) {
+                            e.preventDefault();
+                            this.popup.show();
+                        }
+                    }, 150)
             );
-
-            this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-calendar');
-
-            var wrapper = new api.dom.DivEl('wrapper');
-            wrapper.appendChildren<api.dom.Element>(this.input, this.popup, this.popupTrigger);
-
-            this.appendChild(wrapper);
-
-            this.setupListeners(builder);
         }
 
-        private setupListeners(builder: DatePickerBuilder) {
+        protected initPopupTrigger() {
+            this.popupTrigger = new api.ui.button.Button();
+            this.popupTrigger.addClass('icon-calendar');
+        }
+
+        protected setupListeners(builder: DatePickerBuilder) {
 
             if (builder.closeOnOutsideClick) {
 
@@ -144,7 +142,8 @@ module api.ui.time {
             }
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
-                this.togglePopupVisibility(e);
+                e.preventDefault();
+                this.togglePopupVisibility();
             });
 
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
@@ -216,28 +215,10 @@ module api.ui.time {
             });
         }
 
-        private togglePopupVisibility(e: MouseEvent) {
-            e.preventDefault();
-
-            if (this.popup.isVisible()) {
-                this.popup.hide();
-            } else {
-                this.popup.show();
-            }
-        }
-
         private onDatePickerShown(event: DatePickerShownEvent) {
             if (event.getDatePicker() !== this) {
                 this.popup.hide();
             }
-        }
-
-        isDirty(): boolean {
-            return this.input.isDirty();
-        }
-
-        hasValidUserInput(): boolean {
-            return this.validUserInput;
         }
 
         setSelectedDate(date: Date) {
@@ -269,11 +250,6 @@ module api.ui.time {
         private formatDate(date: Date): string {
             return date ? api.util.DateHelper.formatDate(date) : "";
         }
-
-        private updateInputStyling() {
-            this.input.updateValidationStatusOnUserInput(this.validUserInput);
-        }
-
     }
 
     export class DatePickerShownEvent extends api.event.Event {

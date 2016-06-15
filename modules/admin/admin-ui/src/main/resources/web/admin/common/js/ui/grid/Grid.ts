@@ -72,6 +72,10 @@ module api.ui.grid {
             this.dataView.setItems([], options.getDataIdProperty());
         }
 
+        setItemMetadata(metadataHandler: Function) {
+            this.dataView.setItemMetadata(metadataHandler);
+        }
+
         mask() {
             if (this.isVisible()) {
                 if (this.loadMask) {

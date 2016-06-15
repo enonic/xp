@@ -7,17 +7,16 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-public final class LoginUrlHandler
+public final class IdProviderUrlHandler
     extends AbstractUrlHandler
 {
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final UserStoreKey userStoreKey = retrieveUserStoreKey();
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( request ).
-            idProviderFunction( "login" ).
-            userStoreKey( userStoreKey == null ? UserStoreKey.system() : userStoreKey ).
+            idProviderFunction( null ).
+            userStoreKey( retrieveUserStoreKey() ).
             setAsMap( map );
         return this.urlService.identityUrl( params );
     }

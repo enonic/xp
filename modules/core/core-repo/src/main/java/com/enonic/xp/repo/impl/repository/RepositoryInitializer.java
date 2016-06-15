@@ -1,11 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
@@ -115,7 +111,7 @@ public final class RepositoryInitializer
         LOG.info( "Create search-index for repositoryId {}", repositoryId );
         final String searchIndexName = getSearchIndexName( repositoryId );
         final IndexSettings searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
-        LOG.info( "Applying search-index settings for repo {}: {}", repositoryId, searchIndexSettings.getSettingsAsString() );
+        LOG.debug( "Applying search-index settings for repo {}: {}", repositoryId, searchIndexSettings.getSettingsAsString() );
         indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
     }
 
@@ -124,32 +120,8 @@ public final class RepositoryInitializer
         LOG.info( "Create storage-index for repositoryId {}", repositoryId );
         final String storageIndexName = getStoreIndexName( repositoryId );
         final IndexSettings storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repositoryId );
-        LOG.info( "Applying storage-index settings for repo {}: {}", repositoryId, storageIndexSettings.getSettingsAsString() );
+        LOG.debug( "Applying storage-index settings for repo {}: {}", repositoryId, storageIndexSettings.getSettingsAsString() );
         indexServiceInternal.createIndex( storageIndexName, storageIndexSettings );
-    }
-
-    private void deleteExistingRepoIndices( final RepositoryId repositoryId )
-    {
-        if ( isInitialized( repositoryId ) )
-        {
-            LOG.info( "Deleting existing repository indices" );
-
-            final Set<String> repoIndexes = Sets.newHashSet();
-
-            repoIndexes.add( getStoreIndexName( repositoryId ) );
-            repoIndexes.add( getSearchIndexName( repositoryId ) );
-
-            if ( !repoIndexes.isEmpty() )
-            {
-                indexServiceInternal.deleteIndices( repoIndexes.toArray( new String[repoIndexes.size()] ) );
-            }
-
-            indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
-        }
-        else
-        {
-            LOG.info( "No existing indices found" );
-        }
     }
 
     private boolean isInitialized( final RepositoryId repositoryId )

@@ -125,27 +125,27 @@ exports.serviceUrl = function (params) {
 };
 
 /**
- * This function generates a URL pointing to the login service of the ID provider corresponding to the current execution context.
+ * This function generates a URL pointing to an ID provider.
  *
  *
- * @param {object} params Input parameters as JSON.
- * @param {string} [params.redirect] The URL to redirect to after the login.
+ * @param {object} [params] Input parameters as JSON.
+ * @param {string} [params.userStore] Key of a user store using an ID provider.
+ * If userStore is not set, then the user store corresponding to the current execution context will be used.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
  */
-exports.loginUrl = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.portal.url.LoginUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
+exports.idProviderUrl = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.url.IdProviderUrlHandler');
+    return bean.createUrl(__.toScriptValue(params || {}));
 };
 
 /**
- * This function generates a URL pointing to the logout service of the ID provider corresponding to the current user.
+ * This function generates a URL pointing to the logout function of the ID provider corresponding to the current user.
  *
  *
- * @param {object} params Input parameters as JSON.
- * @param {string} [params.redirect] The URL to redirect to after the logout.
+ * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -153,7 +153,7 @@ exports.loginUrl = function (params) {
  */
 exports.logoutUrl = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.portal.url.LogoutUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
+    return bean.createUrl(__.toScriptValue(params || {}));
 };
 
 /**

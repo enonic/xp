@@ -10,8 +10,10 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -21,6 +23,8 @@ import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 @Component(immediate = true)
 public final class MacroInstruction
@@ -64,30 +68,51 @@ public final class MacroInstruction
         final Site site = portalRequest.getSite();
         if ( site == null )
         {
-            throw new RenderException( "Macro script could not be resolved, context site could not be found." );
+            throw new RenderException( "Macro controller script could not be resolved, context site could not be found." );
         }
 
         final MacroDescriptor macroDescriptor = resolveMacroDescriptor( site, macroName );
+        if ( macroDescriptor == null )
+        {
+            final String editModeMacro = toMacroInstruction( macroInstruction );
+            return PortalResponse.create().body( editModeMacro ).build();
+        }
+
         final MacroProcessor macroProcessor = resolveMacroProcessor( macroDescriptor );
         if ( macroProcessor == null )
         {
-            throw new RenderException( "Macro script not found: " + macroName );
+            throw new RenderException( "Macro controller not found: " + macroName );
         }
 
         // execute macro
         final MacroContext context = createContext( macroInstruction, macroDescriptor, portalRequest );
-        return macroProcessor.process( context );
+        final ApplicationKey previousAppKey = portalRequest.getApplicationKey();
+        try
+        {
+            portalRequest.setApplicationKey( macroDescriptor.getKey().getApplicationKey() );
+            return macroProcessor.process( context );
+        }
+        finally
+        {
+            portalRequest.setApplicationKey( previousAppKey );
+        }
     }
 
     private MacroDescriptor resolveMacroDescriptor( final Site site, final String macroName )
     {
         //Searches for the macro in the applications associated to the site
-        MacroDescriptor macroDescriptor = site.getSiteConfigs().
+        final SiteConfigs siteConfigs = site.getSiteConfigs();
+        MacroDescriptor macroDescriptor = siteConfigs.
             stream().
             map( siteConfig -> MacroKey.from( siteConfig.getApplicationKey(), macroName ) ).
             map( macroDescriptorService::getByKey ).
             filter( Objects::nonNull ).findFirst().
             orElse( null );
+
+        if ( macroDescriptor == null )
+        {
+            macroDescriptor = resolveMacroDescriptorCaseInsensitive( siteConfigs, macroName );
+        }
 
         //If there is no corresponding macro
         if ( macroDescriptor == null )
@@ -98,6 +123,23 @@ public final class MacroInstruction
         }
 
         return macroDescriptor;
+    }
+
+    private MacroDescriptor resolveMacroDescriptorCaseInsensitive( final SiteConfigs siteConfigs, final String macroName )
+    {
+        for ( SiteConfig siteConfig : siteConfigs )
+        {
+            final MacroDescriptors macroDescriptors = macroDescriptorService.getByApplication( siteConfig.getApplicationKey() );
+            final MacroDescriptor macroDescriptor = macroDescriptors.stream().
+                filter( ( md ) -> md.getName().equalsIgnoreCase( macroName ) ).
+                findFirst().
+                orElse( null );
+            if ( macroDescriptor != null )
+            {
+                return macroDescriptor;
+            }
+        }
+        return null;
     }
 
     private MacroProcessor resolveMacroProcessor( MacroDescriptor macroDescriptor )
@@ -142,6 +184,21 @@ public final class MacroInstruction
         context.body( macroInstruction.attribute( MACRO_BODY ) );
         context.request( request );
         return context.build();
+    }
+
+    private String toMacroInstruction( final Instruction macroInstruction )
+    {
+        final Macro.Builder macro = Macro.create().name( macroInstruction.attribute( MACRO_NAME ) );
+        for ( String name : macroInstruction.attributeNames() )
+        {
+            if ( name.equalsIgnoreCase( MACRO_BODY ) || name.equalsIgnoreCase( MACRO_NAME ) )
+            {
+                continue;
+            }
+            macro.param( name, macroInstruction.attribute( name ) );
+        }
+        macro.body( macroInstruction.attribute( MACRO_BODY ) );
+        return macro.build().toString();
     }
 
     @Reference
