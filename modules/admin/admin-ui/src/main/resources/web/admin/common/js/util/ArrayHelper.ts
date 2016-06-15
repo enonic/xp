@@ -59,6 +59,20 @@ module api.util {
                 return false;
             });
         }
+
+        static findElementByFieldValue<T>(array: Array<T>, field: string, value: any): T {
+            var result: T;
+
+            array.every((element: T) => {
+                if (element[field] == value) {
+                    result = element;
+                    return false;
+                }
+                return true;
+            });
+
+            return result;
+        }
     }
 
 }

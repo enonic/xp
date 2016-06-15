@@ -1,5 +1,4 @@
 import "../../api.ts";
-
 import {MostPopularItemsList} from "./MostPopularItemsList";
 
 export class MostPopularItemsBlock extends api.dom.DivEl {
@@ -20,11 +19,18 @@ export class MostPopularItemsBlock extends api.dom.DivEl {
         this.appendChildren(this.title, this.mostPopularItemsList);
     }
 
-    getMostPopularList(): MostPopularItemsList {
+    getItemsList(): MostPopularItemsList {
         return this.mostPopularItemsList;
     }
 
     setTitle(newTitle: string) {
         this.title.setHtml(newTitle);
     }
+
+    showIfNotEmpty() {
+        if (this.mostPopularItemsList.getItems().length > 0) {
+            this.show();
+        }
+    }
 }
+

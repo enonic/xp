@@ -17,7 +17,7 @@ export class RecentItemsBlock extends api.dom.AsideEl {
         this.appendChildren(this.title, this.recentItemsList);
     }
 
-    getRecentItemsList(): RecentItemsList {
+    getItemsList(): RecentItemsList {
         return this.recentItemsList;
     }
 

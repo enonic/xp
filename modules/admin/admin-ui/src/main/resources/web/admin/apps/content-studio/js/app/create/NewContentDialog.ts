@@ -1,12 +1,11 @@
 import "../../api.ts";
 import {MostPopularItemsBlock} from "./MostPopularItemsBlock";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
 import {RecentItemsBlock} from "./RecentItemsBlock";
-import {MostPopularItem} from "./MostPopularItem";
-import {NewContentDialogList} from "./NewContentDialogList";
 import {NewContentDialogItemSelectedEvent} from "./NewContentDialogItemSelectedEvent";
 import {NewMediaUploadEvent} from "./NewMediaUploadEvent";
 import {NewContentEvent} from "./NewContentEvent";
+import {FilterableItemsList} from "./FilterableItemsList";
+import {NewContentDialogMediaUploader} from "./NewContentDialogMediaUploader";
 
 import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
@@ -25,29 +24,19 @@ import ListContentByPathRequest = api.content.ListContentByPathRequest;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
-    private parentContent: api.content.Content;
-
     private contentDialogTitle: NewContentDialogTitle;
 
-    private contentList: NewContentDialogList;
-
-    private contentListMask: api.ui.mask.LoadMask;
-    private recentListMask: api.ui.mask.LoadMask;
+    private parentContent: api.content.Content;
 
     private fileInput: api.ui.text.FileInput;
 
-    private mediaUploaderEl: api.content.MediaUploaderEl;
+    private uploader: NewContentDialogMediaUploader;
 
-    private listItems: NewContentDialogListItem[];
-    private mostPopularItems: MostPopularItem[];
+    private allContentTypes: FilterableItemsList;
 
-    private uploaderEnabled: boolean;
+    private mostPopularContentTypes: MostPopularItemsBlock;
 
-    private mockModalDialog: NewContentDialog; //used to calculate modal window height for smooth animation
-
-    private mostPopularItemsBlock: MostPopularItemsBlock;
-
-    private recentItemsBlock: RecentItemsBlock;
+    private recentContentTypes: RecentItemsBlock;
 
     constructor() {
         this.contentDialogTitle = new NewContentDialogTitle("Create Content", "");
@@ -56,64 +45,51 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
             title: this.contentDialogTitle
         });
 
-        this.uploaderEnabled = true;
+        this.addClass("new-content-dialog");
 
-        this.listItems = [];
+        this.initElements();
 
-        this.addClass("new-content-dialog hidden");
-
-        this.initContentList();
-
-        this.initMostPopularItemsBlock();
-
-        this.initFileInput();
-
-        this.initAndAppendContentSection();
-
-        this.initAndAppendRecentItemsBlock();
-
-        this.initMediaUploader();
-
-        this.initLoadingMasks();
+        this.appendElementsToDialog();
 
         api.dom.Body.get().appendChild(this);
     }
 
-    private initContentList() {
-        this.contentList = new NewContentDialogList();
-
-        this.contentList.onSelected((event: NewContentDialogItemSelectedEvent) => {
-            this.closeAndFireEventFromContentType(event.getItem());
-        });
+    private initElements() {
+        this.initContentTypesLists();
+        this.initFileInput();
+        this.initMediaUploader();
     }
 
-    private initMostPopularItemsBlock() {
-        this.mostPopularItemsBlock = new MostPopularItemsBlock();
-        this.mostPopularItemsBlock.hide();
-        this.mostPopularItems = [];
+    private initContentTypesLists() {
+        this.allContentTypes = new FilterableItemsList();
+        this.mostPopularContentTypes = new MostPopularItemsBlock();
+        this.recentContentTypes = new RecentItemsBlock();
 
-        this.mostPopularItemsBlock.getMostPopularList().onSelected((event: NewContentDialogItemSelectedEvent) => {
-            this.closeAndFireEventFromContentType(event.getItem());
-        });
+        this.allContentTypes.onSelected(this.closeAndFireEventFromContentType.bind(this));
+        this.mostPopularContentTypes.getItemsList().onSelected(this.closeAndFireEventFromContentType.bind(this));
+        this.recentContentTypes.getItemsList().onSelected(this.closeAndFireEventFromContentType.bind(this));
     }
+
 
     private initFileInput() {
         this.fileInput = new api.ui.text.FileInput('large').setPlaceholder("Search for content types").setUploaderParams({
             parent: ContentPath.ROOT.toString()
         });
 
-        this.fileInput.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
-            this.closeAndFireEventFromMediaUpload(event.getUploadItems());
-        });
+        this.initFileInputEvents();
+    }
+
+    private initFileInputEvents() {
+        this.fileInput.onUploadStarted(this.closeAndFireEventFromMediaUpload.bind(this));
 
         this.fileInput.onInput((event: Event) => {
-            if (api.util.StringHelper.isEmpty(this.fileInput.getValue()) && this.mostPopularItems.length > 0) {
-                this.mostPopularItemsBlock.show();
+            if (api.util.StringHelper.isEmpty(this.fileInput.getValue())) {
+                this.mostPopularContentTypes.showIfNotEmpty();
             } else {
-                this.mostPopularItemsBlock.hide();
+                this.mostPopularContentTypes.hide();
             }
 
-            this.filterList();
+            this.allContentTypes.filter(this.fileInput.getValue());
         });
 
         this.fileInput.onKeyUp((event: KeyboardEvent) => {
@@ -121,55 +97,20 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
                 this.getCancelAction().execute();
             }
         });
-    }
 
-    private initAndAppendContentSection() {
-        var section = new api.dom.SectionEl().setClass("column");
-        this.appendChildToContentPanel(section);
-
-        var contentTypesListDiv = new api.dom.DivEl("content-types-content");
-        contentTypesListDiv.appendChildren(<api.dom.Element>this.mostPopularItemsBlock,
-            <api.dom.Element>this.contentList);
-
-        section.appendChildren(<api.dom.Element>this.fileInput, <api.dom.Element>contentTypesListDiv);
-    }
-
-
-    private initAndAppendRecentItemsBlock() {
-        this.recentItemsBlock = new RecentItemsBlock();
-        this.appendChildToContentPanel(this.recentItemsBlock);
-
-        this.recentItemsBlock.getRecentItemsList().onSelected((event: NewContentDialogItemSelectedEvent) => {
-            this.closeAndFireEventFromContentType(event.getItem());
+        this.fileInput.onShown(() => {
+            this.fileInput.giveFocus();
         });
     }
 
     private initMediaUploader() {
+        this.uploader = new NewContentDialogMediaUploader();
+        this.uploader.onUploadStarted(this.closeAndFireEventFromMediaUpload.bind(this));
 
-        var uploaderContainer = new api.dom.DivEl('uploader-container');
-        this.appendChild(uploaderContainer);
+        this.initDragAndDropUploaderEvents();
+    }
 
-        var uploaderMask = new api.dom.DivEl('uploader-mask');
-        uploaderContainer.appendChild(uploaderMask);
-
-        this.mediaUploaderEl = new api.content.MediaUploaderEl({
-            operation: api.content.MediaUploaderElOperation.create,
-            params: {
-                parent: ContentPath.ROOT.toString()
-            },
-            name: 'new-content-uploader',
-            showResult: false,
-            showReset: false,
-            showCancel: false,
-            allowMultiSelection: true,
-            deferred: true  // wait till the window is shown
-        });
-        uploaderContainer.appendChild(this.mediaUploaderEl);
-
-        this.mediaUploaderEl.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
-            this.closeAndFireEventFromMediaUpload(event.getUploadItems());
-        });
-
+    private initDragAndDropUploaderEvents() {
         var dragOverEl;
         // make use of the fact that when dragging
         // first drag enter occurs on the child element and after that
@@ -177,77 +118,69 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         // meaning that to know when we left some element
         // we need to compare it to the one currently dragged over
         this.onDragEnter((event: DragEvent) => {
-            if (this.uploaderEnabled) {
+            if (this.uploader.isEnabled()) {
                 var target = <HTMLElement> event.target;
 
                 if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
-                    uploaderContainer.show();
+                    this.uploader.show();
                 }
                 dragOverEl = target;
             }
         });
 
         this.onDragLeave((event: DragEvent) => {
-            if (this.uploaderEnabled) {
+            if (this.uploader.isEnabled()) {
                 var targetEl = <HTMLElement> event.target;
 
                 if (dragOverEl == targetEl) {
-                    uploaderContainer.hide();
+                    this.uploader.hide();
                 }
             }
         });
 
         this.onDrop((event: DragEvent) => {
-            if (this.uploaderEnabled) {
-                uploaderContainer.hide();
+            if (this.uploader.isEnabled()) {
+                this.uploader.hide();
             }
-
         });
     }
 
-    private initLoadingMasks() {
-        this.contentListMask = new api.ui.mask.LoadMask(this.contentList);
-        this.recentListMask = new api.ui.mask.LoadMask(this.recentItemsBlock.getRecentItemsList());
-    }
-
-    private closeAndFireEventFromMediaUpload(items: UploadItem<Content>[]) {
+    private closeAndFireEventFromMediaUpload(event: FileUploadStartedEvent<Content>) {
         this.close();
-        new NewMediaUploadEvent(items, this.parentContent).fire();
+        new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire();
     }
 
-    private closeAndFireEventFromContentType(item: NewContentDialogListItem) {
+    private closeAndFireEventFromContentType(event: NewContentDialogItemSelectedEvent) {
         this.close();
-        new NewContentEvent(item.getContentType(), this.parentContent).fire();
+        new NewContentEvent(event.getItem().getContentType(), this.parentContent).fire();
     }
 
-    private filterList() {
-        var inputValue = this.fileInput.getValue();
-        var inputValueLowerCase = inputValue ? inputValue.toLowerCase() : undefined;
+    private appendElementsToDialog() {
+        var section = new api.dom.SectionEl().setClass("column");
+        this.appendChildToContentPanel(section);
 
-        var filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
-            return (!inputValueLowerCase || (item.getDisplayName().toLowerCase().indexOf(inputValueLowerCase) != -1) ||
-                    (item.getName().toLowerCase().indexOf(inputValueLowerCase) != -1));
-        });
+        this.mostPopularContentTypes.hide();
 
-        this.contentList.setItems(filteredItems);
-    }
+        var contentTypesListDiv = new api.dom.DivEl("content-types-content");
+        contentTypesListDiv.appendChildren(<api.dom.Element>this.mostPopularContentTypes,
+            <api.dom.Element>this.allContentTypes);
 
-    private filterByParentContent(items: NewContentDialogListItem[],
-                                  siteApplicationKeys: ApplicationKey[]): NewContentDialogListItem[] {
-        var createContentFilter = new api.content.CreateContentFilter().siteApplicationsFilter(siteApplicationKeys);
-        return items.filter((item: NewContentDialogListItem) =>
-            createContentFilter.isCreateContentAllowed(this.parentContent, item.getContentType())
-        );
+        section.appendChildren(<api.dom.Element>this.fileInput, <api.dom.Element>contentTypesListDiv);
+
+        this.appendChildToContentPanel(this.recentContentTypes);
+
+        this.appendChild(this.uploader);
     }
 
     setParentContent(parent: api.content.Content) {
         this.parentContent = parent;
+        this.allContentTypes.setParentContent(parent);
 
         var params: {[key: string]: any} = {
             parent: parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString()
         };
 
-        this.mediaUploaderEl.setParams(params);
+        this.uploader.setParams(params);
         this.fileInput.setUploaderParams(params)
     }
 
@@ -274,12 +207,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
         super.show();
 
-        this.fileInput.giveFocus();
-
-        if (this.mockModalDialog == null) {
-            this.createMockDialog();
-        }
-
         // CMS-3711: reload content types each time when dialog is show.
         // It is slow but newly create content types are displayed.
         this.loadContentTypes();
@@ -287,10 +214,9 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     hide() {
         super.hide();
-        this.mediaUploaderEl.stop();
-        this.addClass("hidden");
-        this.removeClass("animated");
-        this.mostPopularItemsBlock.hide();
+        this.uploader.stop();
+        this.mostPopularContentTypes.hide();
+        this.clearAllItems();
     }
 
     close() {
@@ -302,40 +228,36 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
         this.showLoadingMasks();
 
-        wemQ.all(this.prepareRequestsToFetchContentData())
+        wemQ.all(this.sendRequestsToFetchContentData())
             .spread((contentTypes: ContentTypeSummary[], directChilds: api.content.ContentResponse<api.content.ContentSummary>,
                      parentSite: Site) => {
 
-                this.listItems = this.createListOfContentTypeItems(contentTypes, parentSite);
-                this.mostPopularItems =
-                    this.createMostPopularItemList(this.listItems.map((el) => el.getContentType()), directChilds.getContents());
+                this.allContentTypes.createItems(contentTypes, parentSite);
+                this.mostPopularContentTypes.getItemsList().createItems(this.allContentTypes.getItems(), directChilds.getContents());
+                this.recentContentTypes.getItemsList().createItems(this.allContentTypes.getItems());
 
-                this.resetNewContentDialogContent();
-                this.toggleMostPopularBlockShown();
             }).catch((reason: any) => {
 
             api.DefaultErrorHandler.handle(reason);
 
         }).finally(() => {
-            this.filterList();
             this.hideLoadingMasks();
-            this.handleModalDialogAnimation();
+            this.mostPopularContentTypes.showIfNotEmpty();
+            this.centerMyself();
         }).done();
     }
 
     private showLoadingMasks() {
-        this.contentList.insertChild(this.contentListMask, 0);
-        this.recentItemsBlock.getRecentItemsList().insertChild(this.recentListMask, 0);
-        this.contentListMask.show();
-        this.recentListMask.show();
+        this.allContentTypes.showLoadingMask();
+        this.recentContentTypes.getItemsList().showLoadingMask();
     }
 
     private hideLoadingMasks() {
-        this.contentListMask.hide();
-        this.recentListMask.hide();
+        this.allContentTypes.hideLoadingMask();
+        this.recentContentTypes.getItemsList().hideLoadingMask();
     }
 
-    private prepareRequestsToFetchContentData(): wemQ.Promise<any>[] {
+    private sendRequestsToFetchContentData(): wemQ.Promise<any>[] {
         var requests: wemQ.Promise<any>[] = [];
         requests.push(new GetAllContentTypesRequest().sendAndParse());
         if (this.parentContent) {
@@ -348,50 +270,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         return requests;
     }
 
-    private showMockDialog() {
-        wemjq(this.getEl().getHTMLElement()).show();
-    }
-
-    private handleModalDialogAnimation() {
-
-        this.mockModalDialog.mostPopularItemsBlock.getMostPopularList().setItems(this.mostPopularItems);
-
-        this.toggleMockDialogMostPopularBlockShown();
-
-        this.mockModalDialog.contentList.setItems(this.listItems);
-
-        this.updateMockDialogTitlePath();
-
-        this.mockModalDialog.showMockDialog();
-
-        this.addClass("animated");
-        this.removeClass("hidden");
-
-        this.alignDialogWindowVertically();
-    }
-
-    private toggleMockDialogMostPopularBlockShown() {
-        if (this.mostPopularItems.length > 0) {
-            this.mockModalDialog.mostPopularItemsBlock.show();
-        } else {
-            this.mockModalDialog.mostPopularItemsBlock.hide();
-        }
-    }
-
-    private toggleMostPopularBlockShown() {
-        if (this.mostPopularItems.length > 0) {
-            this.mostPopularItemsBlock.show();
-        }
-    }
-
-    private updateMockDialogTitlePath() {
-        if (this.parentContent) {
-            this.mockModalDialog.contentDialogTitle.setPath(this.parentContent.getPath().toString());
-        } else {
-            this.mockModalDialog.contentDialogTitle.setPath('');
-        }
-    }
-
     private updateDialogTitlePath() {
         if (this.parentContent) {
             this.contentDialogTitle.setPath(this.parentContent.getPath().toString());
@@ -400,146 +278,22 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         }
     }
 
-    private resetNewContentDialogContent() {
-        if (this.listItems.length > 0) {
-            this.contentList.setItems(this.listItems.slice());
-            this.recentItemsBlock.getRecentItemsList().setItems(this.listItems);
-            this.mostPopularItemsBlock.getMostPopularList().setItems(this.mostPopularItems);
-        } else {
-            this.mostPopularItemsBlock.getMostPopularList().clearItems();
-            this.contentList.clearItems();
-            this.recentItemsBlock.getRecentItemsList().clearItems();
-        }
+    private clearAllItems() {
+        this.mostPopularContentTypes.getItemsList().clearItems();
+        this.allContentTypes.clearItems();
+        this.recentContentTypes.getItemsList().clearItems();
     }
 
     private toggleUploaderEnabled() {
-        this.uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
-
-        this.toggleClass("no-uploader-el", !this.uploaderEnabled);
+        var uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
+        this.uploader.setEnabled(uploaderEnabled);
+        this.toggleClass("no-uploader-el", !uploaderEnabled);
     }
 
     private resetFileInputWithUploader() {
-        this.mediaUploaderEl.reset();
+        this.uploader.reset();
         this.fileInput.reset();
-        this.mediaUploaderEl.setEnabled(this.uploaderEnabled);
-        this.fileInput.getUploader().setEnabled(this.uploaderEnabled);
-    }
-
-    private createMockDialog() {
-        this.mockModalDialog = new NewContentDialog();
-        this.mockModalDialog.close = function () {
-            wemjq(this.getEl().getHTMLElement()).hide();
-        };
-        this.getParentElement().appendChild(this.mockModalDialog);
-        this.mockModalDialog.addClass("mock-modal-dialog");
-        this.mockModalDialog.removeClass("hidden");
-    }
-
-    private createListItems(contentTypes: ContentTypeSummary[]): NewContentDialogListItem[] {
-        var contentTypesByName: {[name: string]: ContentTypeSummary} = {};
-        var items: NewContentDialogListItem[] = [];
-
-        contentTypes.forEach((contentType: ContentTypeSummary) => {
-            // filter media type descendants out
-            var contentTypeName = contentType.getContentTypeName();
-            if (!contentTypeName.isMedia() && !contentTypeName.isDescendantOfMedia() && !contentTypeName.isFragment()) {
-                contentTypesByName[contentType.getName()] = contentType;
-                items.push(NewContentDialogListItem.fromContentType(contentType))
-            }
-        });
-
-        items.sort(this.compareListItems);
-        return items;
-    }
-
-    private createListOfContentTypeItems(allContentTypes: ContentTypeSummary[], parentSite: Site): NewContentDialogListItem[] {
-        var allListItems: NewContentDialogListItem[] = this.createListItems(allContentTypes);
-        var siteApplications: ApplicationKey[] = parentSite ? parentSite.getApplicationKeys() : [];
-        return this.filterByParentContent(allListItems, siteApplications);
-    }
-
-    private findElementByFieldValue<T>(array: Array<T>, field: string, value: any): T {
-        var result: T;
-
-        array.every((element: T) => {
-            if (element[field] == value) {
-                result = element;
-                return false;
-            }
-            return true;
-        });
-
-        return result;
-    }
-
-    private sortByCountAndDate(contentType1: ContentTypeInfo, contentType2: ContentTypeInfo) {
-        if (contentType2.count == contentType1.count) {
-            return contentType2.lastModified > contentType1.lastModified ? 1 : -1;
-        }
-        return contentType2.count - contentType1.count;
-    }
-
-    private getAggregatedItemList(contentTypes: api.content.ContentSummary[]) {
-        var aggregatedList: ContentTypeInfo[] = [];
-
-        contentTypes.forEach((content: api.content.ContentSummary) => {
-            var contentType = content.getType().toString();
-            var existingContent = this.findElementByFieldValue(aggregatedList, "contentType", contentType);
-
-            if (existingContent) {
-                existingContent.count++;
-                if (content.getModifiedTime() > existingContent.lastModified) {
-                    existingContent.lastModified = content.getModifiedTime();
-                }
-            }
-            else {
-                aggregatedList.push({contentType: contentType, count: 1, lastModified: content.getModifiedTime()});
-            }
-        });
-
-        aggregatedList.sort(this.sortByCountAndDate);
-
-        return aggregatedList;
-    }
-
-    private createMostPopularItemList(allowedContentTypes: ContentTypeSummary[],
-                                      directChildContents: api.content.ContentSummary[]): MostPopularItem[] {
-        var mostPopularItems: MostPopularItem[] = [],
-            filteredList: api.content.ContentSummary[] = directChildContents.filter((content: api.content.ContentSummary) => {
-                return this.isAllowedContentType(allowedContentTypes, content);
-            }),
-            aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(filteredList);
-
-        for (var i = 0; i < aggregatedList.length && i < MostPopularItemsBlock.DEFAULT_MAX_ITEMS; i++) {
-            var contentType: ContentTypeSummary = this.findElementByFieldValue(allowedContentTypes, "name",
-                aggregatedList[i].contentType);
-            mostPopularItems.push(new MostPopularItem(contentType, aggregatedList[i].count));
-        }
-
-        return mostPopularItems;
-    }
-
-    private compareListItems(item1: NewContentDialogListItem, item2: NewContentDialogListItem): number {
-        if (item1.getDisplayName().toLowerCase() > item2.getDisplayName().toLowerCase()) {
-            return 1;
-        } else if (item1.getDisplayName().toLowerCase() < item2.getDisplayName().toLowerCase()) {
-            return -1;
-        } else if (item1.getName() > item2.getName()) {
-            return 1;
-        } else if (item1.getName() < item2.getName()) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-
-    private isAllowedContentType(allowedContentTypes: ContentTypeSummary[], content: api.content.ContentSummary) {
-        return !content.getType().isMedia() && !content.getType().isDescendantOfMedia() &&
-               Boolean(this.findElementByFieldValue(allowedContentTypes, "id", content.getType().toString()));
-    }
-
-    private alignDialogWindowVertically() {
-        this.getEl().setMarginTop("-" + ( this.mockModalDialog.getEl().getHeightWithBorder() / 2) + "px");
+        this.fileInput.getUploader().setEnabled(this.uploader.isEnabled());
     }
 }
 
@@ -558,10 +312,4 @@ export class NewContentDialogTitle extends api.ui.dialog.ModalDialogHeader {
     setPath(path: string) {
         this.pathEl.setHtml(path).setVisible(!api.util.StringHelper.isBlank(path));
     }
-}
-
-export interface ContentTypeInfo {
-    contentType: string;
-    count: number;
-    lastModified: Date;
 }
