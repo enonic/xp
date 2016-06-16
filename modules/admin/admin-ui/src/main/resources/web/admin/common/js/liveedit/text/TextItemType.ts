@@ -14,18 +14,7 @@ module api.liveedit.text {
         }
 
         constructor() {
-            super("text", <ItemTypeConfigJson>{
-                cssSelector: '[data-portal-component-type=text]',
-                draggable: true,
-                cursor: 'move',
-                iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-text',
-                highlighterStyle: {
-                    stroke: 'rgba(68, 68, 68, 1)',
-                    strokeDasharray: '5 5',
-                    fill: 'rgba(255, 255, 255, 0)'
-                },
-                contextMenuConfig: ['parent', 'edit', 'remove', 'clear', 'duplicate']
-            });
+            super("text", this.getConfigJson());
         }
 
         createView(config: CreateItemViewConfig<RegionView,TextComponent>): TextComponentView {
@@ -40,6 +29,13 @@ module api.liveedit.text {
 
         isComponentType(): boolean {
             return true
+        }
+
+        private getConfigJson(): ItemTypeConfigJson {
+            var config = this.getDefaultConfigJson("text");
+            config.contextMenuConfig.push("edit");
+            
+            return config;
         }
     }
 
