@@ -3,6 +3,7 @@ build:
     image: java:8-jdk
     commands:
       - ./gradlew clean build
+
 cache:
   mount:
     - .gradle
