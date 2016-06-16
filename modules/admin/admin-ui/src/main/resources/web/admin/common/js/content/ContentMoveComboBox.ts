@@ -29,6 +29,10 @@ module api.content {
             this.contentLoader.setFilterSourceContentType(contentType);
         }
 
+        clearCombobox() {
+            super.clearCombobox();
+            this.contentLoader.resetSearchString();
+        }
     }
 
 
