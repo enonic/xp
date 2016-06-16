@@ -11,6 +11,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.handler.EndpointHandler;
@@ -78,12 +79,7 @@ public class IdentityHandler
                 throw badRequest( "Missing ticket parameter" );
             }
 
-            final String jSessionId = req.getCookies().get( "JSESSIONID" );
-            if ( jSessionId == null )
-            {
-                throw badRequest( "Missing session id" );
-            }
-
+            final String jSessionId = getJSessionId();
             final String expectedTicket = generateTicket( jSessionId );
             if ( !expectedTicket.equals( ticket ) )
             {
@@ -96,6 +92,15 @@ public class IdentityHandler
     {
         final Collection<String> values = req.getParams().get( name );
         return values.isEmpty() ? null : values.iterator().next();
+    }
+
+    private String getJSessionId()
+    {
+        return ContextAccessor.current().
+            getLocalScope().
+            getSession().
+            getKey().
+            toString();
     }
 
     private String generateTicket( final String jSessionId )
