@@ -73,7 +73,7 @@ public class IdentityHandler
     {
         if ( getParameter( req, "redirect" ) != null )
         {
-            final String ticket = getParameter( req, "_ticket" );
+            final String ticket = removeParameter( req, "_ticket" );
             if ( ticket == null )
             {
                 throw badRequest( "Missing ticket parameter" );
@@ -91,6 +91,12 @@ public class IdentityHandler
     private String getParameter( final PortalRequest req, final String name )
     {
         final Collection<String> values = req.getParams().get( name );
+        return values.isEmpty() ? null : values.iterator().next();
+    }
+
+    private String removeParameter( final PortalRequest req, final String name )
+    {
+        final Collection<String> values = req.getParams().removeAll( name );
         return values.isEmpty() ? null : values.iterator().next();
     }
 
