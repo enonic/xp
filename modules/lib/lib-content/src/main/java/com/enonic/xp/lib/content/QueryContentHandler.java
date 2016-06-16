@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -73,7 +75,9 @@ public final class QueryContentHandler
 
     private ContentsResultMapper convert( final FindContentByQueryResult findQueryResult )
     {
-        return new ContentsResultMapper( findQueryResult.getContents(), findQueryResult.getTotalHits(), findQueryResult.getAggregations() );
+        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( findQueryResult.getContentIds() ) );
+
+        return new ContentsResultMapper( contents, findQueryResult.getTotalHits(), findQueryResult.getAggregations() );
     }
 
     public void setStart( final Integer start )

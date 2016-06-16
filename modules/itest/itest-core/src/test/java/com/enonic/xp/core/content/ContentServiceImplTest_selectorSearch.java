@@ -1,7 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.util.Iterator;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -17,8 +15,6 @@ import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-
-import static org.junit.Assert.*;
 
 public class ContentServiceImplTest_selectorSearch
     extends AbstractContentServiceTest
@@ -72,22 +68,6 @@ public class ContentServiceImplTest_selectorSearch
             build() );
 
         assertOrder( result, second, third );
-    }
-
-
-    private void assertOrder( final FindContentByQueryResult result, final Content... expectedOrder )
-    {
-        assertEquals( "Expected [" + expectedOrder.length + "] number of hits in result", expectedOrder.length, result.getHits() );
-
-        final Iterator<Content> iterator = result.getContents().iterator();
-
-        for ( final Content content : expectedOrder )
-        {
-            assertTrue( "Expected more content, iterator empty", iterator.hasNext() );
-            final Content next = iterator.next();
-            assertEquals( "Expected content with path [" + content.getPath() + "] in this position, found [" + next.getPath() + "]",
-                          content.getId(), next.getId() );
-        }
     }
 
 

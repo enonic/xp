@@ -62,6 +62,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteAttachmentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
@@ -71,7 +72,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionAc
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
@@ -96,7 +96,6 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
@@ -498,7 +497,7 @@ public final class ContentResource
         //Resolved the requested ContentPublishItem
         final ContentIds requestedContentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
-        final List<ContentPublishItemJson> requestedContentPublishItemList = resolveContentPublishItems( requestedContentIds, null, null );
+        final List<ContentPublishItemJson> requestedContentPublishItemList = resolveContentPublishItems( requestedContentIds );
 
         //Resolves the publish dependencies
         final CompareContentResults results = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
@@ -513,45 +512,20 @@ public final class ContentResource
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() );
-
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
-
-        final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
-
-        final List<ContentPublishItemJson> dependentContentPublishItemList =
-            resolveContentPublishItems( dependentContentIds, params.getFrom(), params.getSize() );
-
-        final ContentListMetaData metadata = ContentListMetaData.create().
-            totalHits( dependentContentIds.getSize() ).
-            hits( dependentContentPublishItemList.size() ).
-            build();
+        final List<ContentPublishItemJson> dependentContentPublishItemList = resolveContentPublishItems( dependentContentIds );
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
             setRequestedContents( requestedContentPublishItemList ).
             setDependentContents( dependentContentPublishItemList ).
-            setContainsRemovable( anyRemovable ).
-            setMetadata( metadata ).
             build();
     }
 
-    private Boolean isAnyContentRemovableFromPublish( final ContentIds contentIds )
-    {
-        final CompareContentResults compareContentResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
-
-        return compareContentResults.getCompareContentResults().stream().anyMatch(
-            result -> CompareStatus.NEWER == result.getCompareStatus() );
-    }
-
-    private List<ContentPublishItemJson> resolveContentPublishItems( final ContentIds contentIds, final Integer from, final Integer size )
+    private List<ContentPublishItemJson> resolveContentPublishItems( final ContentIds contentIds )
     {
         //Retrieves the contents
-        Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
-
-        contents = getSubContents( contents.stream().
-                                       sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).collect(
-                                       Collectors.toList() ), from, size );
+        final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
 
         //Retrieves the compare contents
         final CompareContentResults compareContentResults =
@@ -560,8 +534,8 @@ public final class ContentResource
 
         // Sorts the contents by path and for each
         return contents.stream().
-            // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content -> {
+            sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
+            map( content -> {
                 //Creates a ContentPublishItem
                 final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
                 return ContentPublishItemJson.create().
@@ -858,43 +832,20 @@ public final class ContentResource
 
     @POST
     @Path("getDescendantsOfContents")
-    public ContentSummaryListJson getDescendantsOfContents( final GetDescendantsOfContents json )
+    public ContentSummaryListJson getDescendantsOfContents( final CountItemsWithChildrenJson json )
     {
         final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
 
-        final Boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
+        return this.getDescendantsOfContents( contentsPaths );
+    }
 
-        FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-            contentQuery( ContentQuery.create().
-                queryExpr( constructExprToFindChildren( contentsPaths, ContentPaths.from( json.getContentPaths() ) ) ).
-                size( isFilterNeeded ? Integer.MAX_VALUE : json.getSize() ).
-                from( isFilterNeeded ? 0 : json.getFrom() ).build() ).
-            build() );
+    @POST
+    @Path("countContentsWithDescendants")
+    public long countContentsWithDescendants( final CountItemsWithChildrenJson json )
+    {
+        final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
 
-        Contents resultContents = result.getContents();
-        Long totalHits = result.getTotalHits();
-
-        if ( isFilterNeeded )
-        {
-            final CompareContentResults compareResults =
-                contentService.compare( new CompareContentsParams( resultContents.getIds(), ContentConstants.BRANCH_MASTER ) );
-            final Map<ContentId, CompareContentResult> compareResultMap = compareResults.getCompareContentResultsMap();
-
-            List<Content> filteredContentList = result.getContents().stream().
-                filter(
-                    content -> json.getFilterStatuses().contains( compareResultMap.get( content.getId() ).getCompareStatus() ) ).collect(
-                Collectors.toList() );
-
-            totalHits = Long.valueOf( filteredContentList.size() );
-            resultContents = getSubContents( filteredContentList, json.getFrom(), json.getSize() );
-        }
-
-        final ContentListMetaData metaData = ContentListMetaData.create().
-            totalHits( totalHits ).
-            hits( resultContents.getSize() ).
-            build();
-
-        return new ContentSummaryListJson( resultContents, metaData, contentIconUrlResolver );
+        return this.countContentsAndTheirChildren( contentsPaths );
     }
 
     @POST
@@ -916,7 +867,16 @@ public final class ContentResource
             contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
-        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
+        return FindContentByQuertResultJsonFactory.create().
+            contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).
+            aggregations( findResult.getAggregations() ).
+            contentPrincipalsResolver( principalsResolver ).
+            iconUrlResolver( iconUrlResolver ).
+            expand( contentQueryJson.getExpand() ).
+            hits( findResult.getHits() ).
+            totalHits( findResult.getTotalHits() ).
+            build().
+            execute();
     }
 
     @POST
@@ -937,7 +897,16 @@ public final class ContentResource
             contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
-        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
+        return FindContentByQuertResultJsonFactory.create().
+            contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).
+            aggregations( findResult.getAggregations() ).
+            contentPrincipalsResolver( principalsResolver ).
+            iconUrlResolver( iconUrlResolver ).
+            expand( contentQueryJson.getExpand() ).
+            hits( findResult.getHits() ).
+            totalHits( findResult.getTotalHits() ).
+            build().
+            execute();
     }
 
     @POST
@@ -1154,20 +1123,6 @@ public final class ContentResource
         return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
     }
 
-    private Contents getSubContents( final List<Content> contents, final Integer from, final Integer size )
-    {
-        if ( contents != null )
-        {
-            if ( from != null && size != null )
-            {
-                final Integer length = Math.max( Math.min( from + size, contents.size() ), 0 );
-                return Contents.from( contents.subList( from, length ) );
-            }
-            return Contents.from( contents );
-        }
-        return Contents.empty();
-    }
-
     private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
                                    final List<String> errors )
     {
@@ -1278,13 +1233,13 @@ public final class ContentResource
     private long countChildren( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-            contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToFindChildren( contentsPaths, null ) ).build() ).
+            contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
             build() );
 
         return result.getTotalHits();
     }
 
-    private QueryExpr constructExprToFindChildren( final ContentPaths contentsPaths, final ContentPaths excludePaths )
+    private QueryExpr constructExprToFindChildren( final ContentPaths contentsPaths )
     {
         final FieldExpr fieldExpr = FieldExpr.from( "_path" );
 
@@ -1299,16 +1254,24 @@ public final class ContentResource
             }
         }
 
-        if ( excludePaths != null )
-        {
-            for ( ContentPath contentPath : excludePaths )
-            {
-                ConstraintExpr likeExpr = CompareExpr.neq( fieldExpr, ValueExpr.string( "/content" + contentPath ) );
-                expr = LogicalExpr.and( expr, likeExpr );
-            }
-        }
-
         return QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) );
+    }
+
+    private ContentSummaryListJson getDescendantsOfContents( final ContentPaths contentsPaths )
+    {
+        FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
+            contentQuery(
+                ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
+            build() );
+
+        final ContentListMetaData metaData = ContentListMetaData.create().
+            totalHits( result.getTotalHits() ).
+            hits( result.getHits() ).
+            build();
+
+        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( result.getContentIds() ) );
+
+        return new ContentSummaryListJson( contents, metaData, contentIconUrlResolver );
     }
 
     private boolean contentNameIsOccupied( final RenameContentParams renameParams )
