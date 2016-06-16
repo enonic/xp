@@ -292,6 +292,7 @@ public final class SecurityServiceImpl
     }
 
     @Override
+    @Deprecated
     public Principals findPrincipals( final UserStoreKey userStore, final List<PrincipalType> types, final String query )
     {
         final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
