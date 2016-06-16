@@ -6,9 +6,9 @@ final class UserStorePropertyNames
 
     public static final String DESCRIPTION_KEY = "description";
 
-    public static final String AUTH_CONFIG_KEY = "authConfig";
+    public static final String ID_PROVIDER_KEY = "idProvider";
 
-    public static final String AUTH_CONFIG_APPLICATION_KEY = AUTH_CONFIG_KEY + "." + "applicationKey";
+    public static final String ID_PROVIDER_APPLICATION_KEY = ID_PROVIDER_KEY + "." + "applicationKey";
 
-    public static final String AUTH_CONFIG_FORM_KEY = AUTH_CONFIG_KEY + "." + "config";
+    public static final String ID_PROVIDER_CONFIG_FORM_KEY = ID_PROVIDER_KEY + "." + "config";
 }
