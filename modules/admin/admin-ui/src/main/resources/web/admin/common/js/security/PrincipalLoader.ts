@@ -1,12 +1,12 @@
 module api.security {
 
-    export class PrincipalLoader extends api.util.loader.BaseLoader<PrincipalListJson, Principal> {
+    export class PrincipalLoader extends api.util.loader.BaseLoader<any, any> {
 
-        private findRequest: FindPrincipalsRequest;
+        private findRequest: FindPrincipalListRequest;
         private skipPrincipalKeys: { [key:string]:PrincipalKey; };
 
         constructor() {
-            this.findRequest = new FindPrincipalsRequest();
+            this.findRequest = new FindPrincipalListRequest();
             this.skipPrincipalKeys = {};
             // allow all by default
             this.setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]);

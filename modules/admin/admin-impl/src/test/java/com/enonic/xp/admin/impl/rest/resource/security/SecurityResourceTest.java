@@ -25,6 +25,7 @@ import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
+import com.enonic.xp.security.FindPrincipalsParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
@@ -246,10 +247,15 @@ public class SecurityResourceTest
     {
         final UserStores userStores = createUserStores();
         final Principals principals = createPrincipalsFromUsers();
+        final PrincipalQueryResult result = PrincipalQueryResult.create().addPrincipals( principals ).totalSize( 2 ).build();
         final List<PrincipalType> userTypes = new ArrayList<>();
         userTypes.add( PrincipalType.USER );
-        Mockito.when( securityService.findPrincipals( userStores.get( 0 ).getKey(), userTypes, null ) ).
-            thenReturn( principals );
+
+        final FindPrincipalsParams params =
+            FindPrincipalsParams.create().userStoreKey( userStores.get( 0 ).getKey() ).types( userTypes ).build();
+
+        Mockito.doReturn( result ).
+            when( securityService ).findPrincipals( params );
 
         String jsonString = request().
             path( "security/principals" ).
