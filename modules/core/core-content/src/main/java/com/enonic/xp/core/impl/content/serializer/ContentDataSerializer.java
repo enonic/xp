@@ -76,7 +76,7 @@ public final class ContentDataSerializer
 
         if ( params.getCreateAttachments() != null )
         {
-            addAttachentInfoToDataset( params.getCreateAttachments(), contentAsData );
+            addAttachmentInfoToDataset( params.getCreateAttachments(), contentAsData );
         }
 
         return propertyTree;
@@ -248,7 +248,7 @@ public final class ContentDataSerializer
         return attachments.build();
     }
 
-    private void addAttachentInfoToDataset( final CreateAttachments createAttachments, final PropertySet contentAsData )
+    private void addAttachmentInfoToDataset( final CreateAttachments createAttachments, final PropertySet contentAsData )
     {
         AttachmentSerializer.create( contentAsData.getTree(), createAttachments );
     }
