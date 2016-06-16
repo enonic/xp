@@ -55,6 +55,7 @@ public class GlobPatternMatcher
                         if ( isDoubleAsterix( arr, i ) )
                         {
                             sb.append( ".*" );
+                            i++;
                         }
                         else
                         {
