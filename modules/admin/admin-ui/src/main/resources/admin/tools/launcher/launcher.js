@@ -28,7 +28,9 @@ function handleGet(req) {
     //Retrieves the profile informations
     var userIconUrl = portal.assetUrl({path: "icons/user.svg"});
     var launcherCss = portal.assetUrl({path: "styles/_launcher.css"});
-    var logoutUrl = portal.logoutUrl();
+    var logoutUrl = portal.logoutUrl({
+        redirect: portal.url({path: "/admin/tool"})
+    });
     var user = auth.getUser();
 
     var params = {
