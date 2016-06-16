@@ -52,7 +52,7 @@ public class GlobPatternMatcher
 
                     if ( inClass == 0 )
                     {
-                        if ( isDoubleAsterix( arr, i ) )
+                        if ( isDoubleAsterisk( arr, i ) )
                         {
                             sb.append( ".*" );
                             i++;
@@ -138,7 +138,7 @@ public class GlobPatternMatcher
         return sb.toString();
     }
 
-    private static boolean isDoubleAsterix( final char[] arr, final int i )
+    private static boolean isDoubleAsterisk( final char[] arr, final int i )
     {
         return arr.length > i + 1 && arr[i + 1] == '*';
     }
