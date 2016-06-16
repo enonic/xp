@@ -1,4 +1,5 @@
 import "../../api.ts";
+import {OpenMoveDialogEvent} from "./OpenMoveDialogEvent";
 
 import ContentPath = api.content.ContentPath;
 import ContentType = api.schema.content.ContentType;
@@ -8,74 +9,82 @@ import ContentResponse = api.content.ContentResponse;
 import ContentIds = api.content.ContentIds;
 import MoveContentResult = api.content.MoveContentResult;
 import MoveContentResultFailure = api.content.MoveContentResultFailure;
-import {OpenMoveDialogEvent} from "./OpenMoveDialogEvent";
 
 export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
-    private contentComboBox: api.content.ContentMoveComboBox;
+    private destinationSearchInput: api.content.ContentMoveComboBox;
 
     private movedContentSummaries: api.content.ContentSummary[];
 
-    private contentPath: api.dom.H6El;
+    private contentPathSubHeader: api.dom.H6El;
 
-    private contentMoveMask: api.ui.mask.LoadMask;
+    private moveMask: api.ui.mask.LoadMask;
 
     constructor() {
         super({
             title: new api.ui.dialog.ModalDialogHeader("Move item with children")
         });
-        this.getEl().addClass("move-content-dialog");
+        this.addClass("move-content-dialog");
 
-        this.contentPath = new api.dom.H6El().addClass("content-path");
+        this.contentPathSubHeader = new api.dom.H6El().addClass("content-path");
         var descMessage = new api.dom.H6El().addClass("desc-message").setHtml(
             "Moves selected items with all children and current permissions to selected destination");
-        this.appendChildToContentPanel(this.contentPath);
+        this.moveMask = new api.ui.mask.LoadMask(this);
+        this.initSearchInput();
+        this.initMoveAction();
+
+        this.listenOpenMoveDialogEvent();
+
+        this.appendChildToContentPanel(this.contentPathSubHeader);
         this.appendChildToContentPanel(descMessage);
+        this.appendChildToContentPanel(this.destinationSearchInput);
+        this.appendChildToContentPanel(this.moveMask);
+        this.addCancelButtonToBottom();
+    }
 
-        this.contentComboBox = new api.content.ContentMoveComboBox();
-        this.contentComboBox.addClass("content-selector");
-        this.appendChildToContentPanel(this.contentComboBox);
-
-        this.initializeActions();
-
-        this.contentMoveMask = new api.ui.mask.LoadMask(this);
-        this.appendChildToContentPanel(this.contentMoveMask);
-
+    private listenOpenMoveDialogEvent() {
         OpenMoveDialogEvent.on((event) => {
 
             this.movedContentSummaries = event.getContentSummaries();
-            this.contentComboBox.clearCombobox();
+            this.destinationSearchInput.clearCombobox();
 
             if (event.getContentSummaries().length == 1) {
                 var contentToMove = event.getContentSummaries()[0];
 
                 new GetContentTypeByNameRequest(contentToMove.getType()).sendAndParse().then((contentType: ContentType) => {
 
-                    this.contentComboBox.setFilterContentPath(contentToMove.getPath());
-                    this.contentComboBox.setFilterSourceContentType(contentType);
-                    this.contentPath.setHtml(contentToMove.getPath().toString());
+                    this.destinationSearchInput.setFilterContentPath(contentToMove.getPath());
+                    this.destinationSearchInput.setFilterSourceContentType(contentType);
+                    this.contentPathSubHeader.setHtml(contentToMove.getPath().toString());
 
                     this.open();
                 }).catch((reason)=> {
                     api.notify.showError(reason.getMessage());
                 }).done();
             } else {
-                this.contentComboBox.setFilterContentPath(null);
-                this.contentPath.setHtml("");
+                this.destinationSearchInput.setFilterContentPath(null);
+                this.contentPathSubHeader.setHtml("");
                 this.open();
             }
 
         });
-
-        this.addCancelButtonToBottom();
     }
 
+    private initSearchInput() {
+        this.destinationSearchInput = new api.content.ContentMoveComboBox();
+        this.destinationSearchInput.addClass("content-selector");
+        this.destinationSearchInput.onKeyUp((event: KeyboardEvent) => {
+            if (event.keyCode === 27) {
+                this.getCancelAction().execute();
+            }
+        });
+    }
 
-    private initializeActions() {
+    private initMoveAction() {
 
         this.addAction(new api.ui.Action("Move", "").onExecuted(() => {
 
-            this.contentMoveMask.show();
+            this.moveMask.show();
 
             var parentContent = this.getParentContent();
             this.moveContent(parentContent);
@@ -89,9 +98,9 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
         new api.content.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
             if (parentContent) {
-                this.contentComboBox.deselect(parentContent);
+                this.destinationSearchInput.deselect(parentContent);
             }
-            this.contentMoveMask.hide();
+            this.moveMask.hide();
 
             if (response.getMoved().length > 0) {
                 if (response.getMoved().length > 1) {
@@ -108,26 +117,18 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
         }).catch((reason)=> {
             api.notify.showWarning(reason.getMessage());
             this.close();
-            this.contentComboBox.deselect(this.getParentContent());
+            this.destinationSearchInput.deselect(this.getParentContent());
         }).done();
     }
 
     private getParentContent(): api.content.ContentSummary {
-        return this.contentComboBox.getSelectedDisplayValues()[0];
-    }
-
-
-    open() {
-        super.open();
+        return this.destinationSearchInput.getSelectedDisplayValues()[0];
     }
 
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
-        this.contentComboBox.giveFocus();
+        this.destinationSearchInput.giveFocus();
     }
 
-    close() {
-        super.close();
-    }
 }
