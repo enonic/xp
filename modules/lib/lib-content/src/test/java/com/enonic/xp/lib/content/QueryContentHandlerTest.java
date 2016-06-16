@@ -12,9 +12,11 @@ import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.aggregation.DateRangeBucket;
 import com.enonic.xp.aggregation.NumericRangeBucket;
 import com.enonic.xp.aggregation.StatsAggregation;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest
@@ -71,10 +73,11 @@ public class QueryContentHandlerTest
         final FindContentByQueryResult findResult = FindContentByQueryResult.create().
             hits( contents.getSize() ).
             totalHits( 20 ).
-            contents( contents ).
+            contents( contents.getIds() ).
             aggregations( aggregations ).
             build();
         Mockito.when( this.contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findResult );
+        Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( contents );
     }
 
     @Test
@@ -84,10 +87,11 @@ public class QueryContentHandlerTest
         final FindContentByQueryResult findResult = FindContentByQueryResult.create().
             hits( 0 ).
             totalHits( 0 ).
-            contents( Contents.empty() ).
+            contents( ContentIds.empty() ).
             aggregations( Aggregations.empty() ).
             build();
         Mockito.when( this.contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findResult );
+        Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
 
         runFunction( "/site/test/QueryContentHandlerTest.js", "queryEmpty" );
     }

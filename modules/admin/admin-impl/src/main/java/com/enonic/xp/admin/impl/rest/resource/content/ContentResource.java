@@ -867,7 +867,16 @@ public final class ContentResource
             contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
-        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
+        return FindContentByQuertResultJsonFactory.create().
+            contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).
+            aggregations( findResult.getAggregations() ).
+            contentPrincipalsResolver( principalsResolver ).
+            iconUrlResolver( iconUrlResolver ).
+            expand( contentQueryJson.getExpand() ).
+            hits( findResult.getHits() ).
+            totalHits( findResult.getTotalHits() ).
+            build().
+            execute();
     }
 
     @POST
@@ -888,7 +897,16 @@ public final class ContentResource
             contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
-        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
+        return FindContentByQuertResultJsonFactory.create().
+            contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).
+            aggregations( findResult.getAggregations() ).
+            contentPrincipalsResolver( principalsResolver ).
+            iconUrlResolver( iconUrlResolver ).
+            expand( contentQueryJson.getExpand() ).
+            hits( findResult.getHits() ).
+            totalHits( findResult.getTotalHits() ).
+            build().
+            execute();
     }
 
     @POST
@@ -1251,7 +1269,9 @@ public final class ContentResource
             hits( result.getHits() ).
             build();
 
-        return new ContentSummaryListJson( result.getContents(), metaData, contentIconUrlResolver );
+        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( result.getContentIds() ) );
+
+        return new ContentSummaryListJson( contents, metaData, contentIconUrlResolver );
     }
 
     private boolean contentNameIsOccupied( final RenameContentParams renameParams )

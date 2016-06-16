@@ -1,11 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -52,30 +49,16 @@ class ContentNodeHelper
 
     public static NodeIds toNodeIds( final ContentIds contentIds )
     {
-        final Set<NodeId> nodeIds = Sets.newHashSet();
-
-        final Iterator<ContentId> iterator = contentIds.iterator();
-
-        while ( iterator.hasNext() )
-        {
-            nodeIds.add( NodeId.from( iterator.next().toString() ) );
-        }
-
-        return NodeIds.from( nodeIds );
+        return NodeIds.from( contentIds.stream().
+            map( contentId -> NodeId.from( contentId.toString() ) ).
+            collect( Collectors.toList() ) );
     }
 
     public static ContentIds toContentIds( final NodeIds nodeIds )
     {
-        final Set<ContentId> contentIds = Sets.newHashSet();
-
-        final Iterator<NodeId> iterator = nodeIds.iterator();
-
-        while ( iterator.hasNext() )
-        {
-            contentIds.add( ContentId.from( iterator.next().toString() ) );
-        }
-
-        return ContentIds.from( contentIds );
+        return ContentIds.from( nodeIds.stream().
+            map( nodeId -> ContentId.from( nodeId.toString() ) ).
+            collect( Collectors.toList() ) );
     }
 
 }

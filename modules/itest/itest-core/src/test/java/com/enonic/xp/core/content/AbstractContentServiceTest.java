@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,8 +25,10 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -71,6 +74,8 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
+
+import static org.junit.Assert.*;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -452,5 +457,21 @@ public class AbstractContentServiceTest
                 build() ).
             addFormItem( set ).
             build();
+    }
+
+    protected void assertOrder( final FindContentByQueryResult result, final Content... expectedOrder )
+    {
+        assertEquals( "Expected [" + expectedOrder.length + "] number of hits in result", expectedOrder.length, result.getHits() );
+
+        final Iterator<ContentId> iterator = result.getContentIds().iterator();
+
+        for ( final Content content : expectedOrder )
+        {
+            assertTrue( "Expected more content, iterator empty", iterator.hasNext() );
+            final ContentId next = iterator.next();
+            assertEquals( "Expected content with path [" + content.getPath() + "] in this position, found [" +
+                              this.contentService.getById( next ).getPath() +
+                              "]", content.getId(), next );
+        }
     }
 }

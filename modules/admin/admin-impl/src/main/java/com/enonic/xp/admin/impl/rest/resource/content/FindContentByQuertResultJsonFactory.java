@@ -11,39 +11,32 @@ import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentByQueryResult;
 
 public class FindContentByQuertResultJsonFactory
 {
-    public static AbstractContentQueryResultJson create( final FindContentByQueryResult contentQueryResult, final String expand,
-                                                         final ContentIconUrlResolver iconUrlResolver,
-                                                         final ContentPrincipalsResolver contentPrincipalsResolver )
+    private final long totalHits;
+
+    private final long hits;
+
+    private final Contents contents;
+
+    private final Aggregations aggregations;
+
+    private final ContentIconUrlResolver iconUrlResolver;
+
+    private final ContentPrincipalsResolver contentPrincipalsResolver;
+
+    private final String expand;
+
+    private FindContentByQuertResultJsonFactory( final Builder builder )
     {
-        final AbstractContentQueryResultJson.Builder builder;
-
-        final ContentListMetaData metadata = ContentListMetaData.create().
-            totalHits( contentQueryResult.getTotalHits() ).
-            hits( contentQueryResult.getHits() ).
-            build();
-
-        if ( Expand.FULL.matches( expand ) )
-        {
-            builder = ContentQueryResultJson.newBuilder( iconUrlResolver, contentPrincipalsResolver );
-        }
-        else if ( Expand.SUMMARY.matches( expand ) )
-        {
-            builder = ContentSummaryQueryResultJson.newBuilder( iconUrlResolver );
-        }
-        else
-        {
-            builder = ContentIdQueryResultJson.newBuilder();
-        }
-
-        addAggregations( contentQueryResult.getAggregations(), builder );
-        addContents( contentQueryResult.getContents(), builder );
-        setMetadata( metadata, builder );
-
-        return builder.build();
+        totalHits = builder.totalHits;
+        hits = builder.hits;
+        contents = builder.contents;
+        aggregations = builder.aggregations;
+        iconUrlResolver = builder.iconUrlResolver;
+        contentPrincipalsResolver = builder.contentPrincipalsResolver;
+        expand = builder.expand;
     }
 
     private static void addContents( final Contents contents, final AbstractContentQueryResultJson.Builder builder )
@@ -68,5 +61,107 @@ public class FindContentByQuertResultJsonFactory
     private static void setMetadata( final ContentListMetaData metadata, final AbstractContentQueryResultJson.Builder builder )
     {
         builder.setMetadata( metadata );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public AbstractContentQueryResultJson execute()
+    {
+        final AbstractContentQueryResultJson.Builder builder;
+
+        final ContentListMetaData metadata = ContentListMetaData.create().
+            totalHits( this.totalHits ).
+            hits( this.hits ).
+            build();
+
+        if ( Expand.FULL.matches( expand ) )
+        {
+            builder = ContentQueryResultJson.newBuilder( iconUrlResolver, contentPrincipalsResolver );
+        }
+        else if ( Expand.SUMMARY.matches( expand ) )
+        {
+            builder = ContentSummaryQueryResultJson.newBuilder( iconUrlResolver );
+        }
+        else
+        {
+            builder = ContentIdQueryResultJson.newBuilder();
+        }
+
+        addAggregations( this.aggregations, builder );
+        addContents( this.contents, builder );
+        setMetadata( metadata, builder );
+
+        return builder.build();
+    }
+
+    public static final class Builder
+    {
+        private long totalHits;
+
+        private long hits;
+
+        private Contents contents;
+
+        private Aggregations aggregations;
+
+        private ContentIconUrlResolver iconUrlResolver;
+
+        private ContentPrincipalsResolver contentPrincipalsResolver;
+
+        private String expand;
+
+        private Builder()
+        {
+        }
+
+        public Builder totalHits( final long val )
+        {
+            totalHits = val;
+            return this;
+        }
+
+        public Builder hits( final long val )
+        {
+            hits = val;
+            return this;
+        }
+
+        public Builder contents( final Contents val )
+        {
+            contents = val;
+            return this;
+        }
+
+        public Builder aggregations( final Aggregations val )
+        {
+            aggregations = val;
+            return this;
+        }
+
+        public Builder iconUrlResolver( final ContentIconUrlResolver val )
+        {
+            iconUrlResolver = val;
+            return this;
+        }
+
+        public Builder contentPrincipalsResolver( final ContentPrincipalsResolver val )
+        {
+            contentPrincipalsResolver = val;
+            return this;
+        }
+
+        public Builder expand( final String val )
+        {
+            expand = val;
+            return this;
+        }
+
+        public FindContentByQuertResultJsonFactory build()
+        {
+            return new FindContentByQuertResultJsonFactory( this );
+        }
     }
 }
