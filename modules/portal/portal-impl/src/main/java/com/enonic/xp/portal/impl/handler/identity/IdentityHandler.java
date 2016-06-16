@@ -1,12 +1,17 @@
 package com.enonic.xp.portal.impl.handler.identity;
 
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.handler.EndpointHandler;
@@ -18,7 +23,7 @@ import com.enonic.xp.security.UserStoreKey;
 public class IdentityHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(logout))?" );
+    private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
 
     private ContentService contentService;
 
@@ -43,6 +48,12 @@ public class IdentityHandler
 
         final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( 1 ) );
         String idProviderFunction = matcher.group( 2 );
+
+        if ( idProviderFunction != null )
+        {
+            checkTicket( req );
+        }
+
         if ( idProviderFunction == null )
         {
             idProviderFunction = req.getMethod().
@@ -56,6 +67,55 @@ public class IdentityHandler
         worker.setContentService( this.contentService );
         worker.authControllerService = this.authControllerService;
         return worker;
+    }
+
+    private void checkTicket( final PortalRequest req )
+    {
+        if ( getParameter( req, "redirect" ) != null )
+        {
+            final String ticket = removeParameter( req, "_ticket" );
+            if ( ticket == null )
+            {
+                throw badRequest( "Missing ticket parameter" );
+            }
+
+            final String jSessionId = getJSessionId();
+            final String expectedTicket = generateTicket( jSessionId );
+            if ( !expectedTicket.equals( ticket ) )
+            {
+                throw badRequest( "Session expired" );
+            }
+        }
+    }
+
+    private String getParameter( final PortalRequest req, final String name )
+    {
+        final Collection<String> values = req.getParams().get( name );
+        return values.isEmpty() ? null : values.iterator().next();
+    }
+
+    private String removeParameter( final PortalRequest req, final String name )
+    {
+        final Collection<String> values = req.getParams().removeAll( name );
+        return values.isEmpty() ? null : values.iterator().next();
+    }
+
+    private String getJSessionId()
+    {
+        return ContextAccessor.current().
+            getLocalScope().
+            getSession().
+            getKey().
+            toString();
+    }
+
+    private String generateTicket( final String jSessionId )
+    {
+        return Hashing.sha1().
+            newHasher().
+            putString( jSessionId, Charsets.UTF_8 ).
+            hash().
+            toString();
     }
 
     @Reference
