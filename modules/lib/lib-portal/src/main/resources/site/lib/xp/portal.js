@@ -142,10 +142,29 @@ exports.idProviderUrl = function (params) {
 };
 
 /**
+ * This function generates a URL pointing to the login function of the ID provider corresponding to the current user.
+ *
+ *
+ * @param {object} [params] Input parameters as JSON.
+ * @param {string} [params.userStore] Key of a user store using an ID provider.
+ * If userStore is not set, then the user store corresponding to the current execution context will be used.
+ * @param {string} [params.redirect] The URL to redirect to after the login.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {object} [params.params] Custom parameters to append to the url.
+ *
+ * @returns {string} The generated URL.
+ */
+exports.loginUrl = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.url.LoginUrlHandler');
+    return bean.createUrl(__.toScriptValue(params || {}));
+};
+
+/**
  * This function generates a URL pointing to the logout function of the ID provider corresponding to the current user.
  *
  *
  * @param {object} [params] Input parameters as JSON.
+ * @param {string} [params.redirect] The URL to redirect to after the logout.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *

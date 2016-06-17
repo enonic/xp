@@ -29,6 +29,7 @@ class ExtractedTextCleaner
 
         cleanedText = cleanLineBreaks( cleanedText );
         cleanedText = cleanControlCharacters( cleanedText );
+        cleanedText = replaceNewLineWithSpace( cleanedText );
 
         return cleanedText;
     }
@@ -36,6 +37,11 @@ class ExtractedTextCleaner
     private static String cleanLineBreaks( final String original )
     {
         return original.replaceAll( CONSECUTIVE_LINE_BREAKS, SYSTEM_LINE_SEPARATOR ).replaceAll( CONSECUTIVE_HORIZONTAL_WHITESPACE, " " );
+    }
+
+    private static String replaceNewLineWithSpace( final String original )
+    {
+        return original.replaceAll( ANY_LINE_BREAK, " " );
     }
 
     private static String cleanControlCharacters( final String original )

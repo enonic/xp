@@ -26,9 +26,9 @@ public final class PortalException
         return this.status;
     }
 
-    public static PortalException notFound( final String message )
+    public static PortalException badRequest( final String message )
     {
-        return new PortalException( HttpStatus.NOT_FOUND, message );
+        return new PortalException( HttpStatus.BAD_REQUEST, message );
     }
 
     public static PortalException forbidden( final String message )
@@ -43,6 +43,12 @@ public final class PortalException
             return new PortalException( HttpStatus.UNAUTHORIZED, message );
         }
     }
+
+    public static PortalException notFound( final String message )
+    {
+        return new PortalException( HttpStatus.NOT_FOUND, message );
+    }
+
 
     public static PortalException internalServerError( final String message )
     {

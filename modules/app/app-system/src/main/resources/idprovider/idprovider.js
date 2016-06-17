@@ -26,11 +26,23 @@ exports.get = function (req) {
         contentType: 'text/html',
         body: body
     };
-}
+};
+
+exports.login = function (req) {
+    var redirectUrl = req.params.redirect || generateRedirectUrl();
+    var body = generateLoginPage(redirectUrl);
+
+    return {
+        status: 200,
+        contentType: 'text/html',
+        body: body
+    };
+};
 
 exports.logout = function (req) {
     authLib.logout();
-    var redirectUrl = generateRedirectUrl();
+    var redirectUrl = req.params.redirect || generateRedirectUrl();
+    
     return {
         redirect: redirectUrl
     };

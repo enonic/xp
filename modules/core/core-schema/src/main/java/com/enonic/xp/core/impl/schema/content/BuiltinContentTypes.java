@@ -88,11 +88,6 @@ final class BuiltinContentTypes
             label( "Tags" ).
             occurrences( 0, 0 ).
             build() ).
-        addFormItem( Input.create().name( "text" ).
-            inputType( InputTypeName.TEXT_AREA ).
-            label( "Text" ).
-            occurrences( 0, 0 ).
-            build() ).
         build();
 
     private static final Form MEDIA_DOCUMENT_FORM = Form.create().
@@ -109,11 +104,6 @@ final class BuiltinContentTypes
             label( "Tags" ).
             occurrences( 0, 0 ).
             build() ).
-        addFormItem( Input.create().name( "text" ).
-            inputType( InputTypeName.TEXT_AREA ).
-            label( "Text" ).
-            occurrences( 0, 0 ).
-            build() ).
         build();
 
     private static final Form MEDIA_DEFAULT_FORM = Form.create().
@@ -123,11 +113,6 @@ final class BuiltinContentTypes
         addFormItem( Input.create().name( "tags" ).
             inputType( InputTypeName.TAG ).
             label( "Tags" ).
-            occurrences( 0, 0 ).
-            build() ).
-        addFormItem( Input.create().name( "text" ).
-            inputType( InputTypeName.TEXT_AREA ).
-            label( "Text" ).
             occurrences( 0, 0 ).
             build() ).
         build();

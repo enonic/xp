@@ -41,7 +41,11 @@ module api.util.loader {
             return this.sendRequest().then((results: OBJECT[]) => {
                 this.results = results;
                 if (this.comparator) {
-                    this.results = results.sort(this.comparator.compare);
+                    try {
+                        this.results = results.sort(this.comparator.compare);
+                    } catch (e) {
+                        console.error('Error sorting loaded elements with ' + api.ClassHelper.getClassName(this.comparator) + ': ', e);
+                    }
                 }
                 this.notifyLoadedData(results, postLoad);
                 return this.results;

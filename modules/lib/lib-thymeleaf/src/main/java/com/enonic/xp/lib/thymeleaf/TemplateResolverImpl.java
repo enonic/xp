@@ -49,8 +49,20 @@ final class TemplateResolverImpl
 
     private ITemplateResource resolve( final ResourceKey base, final String ownerTempalte, final String location )
     {
-        final ResourceKey parent = ownerTempalte != null ? ResourceKey.from( ownerTempalte ) : base;
+        final ResourceKey parent = findParent( base, ownerTempalte );
         return resolve( parent, location );
+    }
+
+    private ResourceKey findParent( final ResourceKey base, final String ownerTempalte )
+    {
+        try
+        {
+            return ownerTempalte != null ? ResourceKey.from( ownerTempalte ) : base;
+        }
+        catch ( final Exception e )
+        {
+            return ResourceKey.from( base.getApplicationKey(), ownerTempalte );
+        }
     }
 
     @Override

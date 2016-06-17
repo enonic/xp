@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.util.GlobPatternMatcher;
 
 @Beta
 public class PatternIndexConfigDocument
@@ -55,6 +56,11 @@ public class PatternIndexConfigDocument
 
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
+            if ( GlobPatternMatcher.match( pathIndexConfig.getPath().toString(), dataPath.resetAllIndexesTo( 0 ).toString(), "." ) )
+            {
+                return pathIndexConfig.getIndexConfig();
+            }
+
             if ( pathIndexConfig.matches( dataPath ) )
             {
                 return pathIndexConfig.getIndexConfig();

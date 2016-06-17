@@ -22,7 +22,11 @@ final class IdentityHandlerWorker
         throws Exception
     {
         //Prepares the request
-        final Content content = getContentOrNull( getContentSelector() );
+        Content content = getContentOrNull( getContentSelector() );
+        if ( content != null && content.isRoot() )
+        {
+            content = null;
+        }
         this.request.setContent( content );
         final Site site = getSiteOrNull( content );
         this.request.setSite( site );

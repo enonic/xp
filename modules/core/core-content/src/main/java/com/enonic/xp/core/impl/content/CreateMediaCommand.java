@@ -40,6 +40,7 @@ final class CreateMediaCommand
     private Content doExecute()
     {
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
+
         if ( ( params.getMimeType() == null || isBinaryContentType( params.getMimeType() ) ) && mediaInfo.getMediaType() != null )
         {
             params.mimeType( mediaInfo.getMediaType() );
@@ -71,7 +72,7 @@ final class CreateMediaCommand
             mimeType( params.getMimeType() ).
             label( "source" ).
             byteSource( params.getByteSource() ).
-            text( mediaInfo.getTextContent() ).
+            text( type.isTextualMedia() ? mediaInfo.getTextContent() : "" ).
             build();
 
         final CreateContentParams createContentParams = CreateContentParams.create().

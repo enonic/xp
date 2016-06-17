@@ -64,6 +64,13 @@ public class ContentTypeNameTest
         assertTrue( ContentTypeName.codeMedia().isCodeMedia() );
         assertTrue( ContentTypeName.executableMedia().isExecutableMedia() );
 
+        assertTrue( ContentTypeName.textMedia().isTextualMedia() );
+        assertTrue( ContentTypeName.codeMedia().isTextualMedia() );
+        assertTrue( ContentTypeName.dataMedia().isTextualMedia() );
+        assertTrue( ContentTypeName.spreadsheetMedia().isTextualMedia() );
+        assertTrue( ContentTypeName.presentationMedia().isTextualMedia() );
+        assertTrue( ContentTypeName.documentMedia().isTextualMedia() );
+
         assertEquals( "base:media", ContentTypeName.media().toString() );
         assertEquals( "base:folder", ContentTypeName.folder().toString() );
         assertEquals( "portal:page-template", ContentTypeName.pageTemplate().toString() );

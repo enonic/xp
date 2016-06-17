@@ -22,7 +22,7 @@ import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
-import static com.enonic.xp.content.ContentPropertyNames.PAGE_TEXT_COMPONENT;
+import static com.enonic.xp.content.ContentPropertyNames.PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN;
 import static com.enonic.xp.content.ContentPropertyNames.SITE;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 
@@ -30,15 +30,15 @@ class ContentIndexConfigFactory
 {
     public static IndexConfigDocument create( final CreateContentTranslatorParams params, final ContentTypeService contentTypeService )
     {
-        return doCreateIndexConfig( getForm( contentTypeService, params.getType() ) );
+        return doCreateIndexConfig( getForm( contentTypeService, params.getType() ), params.getType() );
     }
 
     public static IndexConfigDocument create( final Content content, final ContentTypeService contentTypeService )
     {
-        return doCreateIndexConfig( getForm( contentTypeService, content.getType() ) );
+        return doCreateIndexConfig( getForm( contentTypeService, content.getType() ), content.getType() );
     }
 
-    private static IndexConfigDocument doCreateIndexConfig( final Form form )
+    private static IndexConfigDocument doCreateIndexConfig( final Form form, final ContentTypeName contentTypeName )
     {
         final PatternIndexConfigDocument.Builder configDocumentBuilder = PatternIndexConfigDocument.create().
             analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
@@ -48,7 +48,7 @@ class ContentIndexConfigFactory
             add( MODIFIED_TIME, IndexConfig.MINIMAL ).
             add( OWNER, IndexConfig.MINIMAL ).
             add( PAGE, IndexConfig.NONE ).
-            add( PAGE_TEXT_COMPONENT, IndexConfig.FULLTEXT ).
+            add( PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN, IndexConfig.FULLTEXT ).
             add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).
             add( DATA, IndexConfig.BY_TYPE ).
@@ -57,18 +57,37 @@ class ContentIndexConfigFactory
             add( PropertyPath.from( EXTRA_DATA ), IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE );
 
-        configDocumentBuilder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
-            enabled( true ).
-            fulltext( true ).
-            includeInAllText( false ).
-            nGram( true ).
-            decideByType( false ).
-            build() );
+        addAttachmentTextMapping( contentTypeName, configDocumentBuilder );
 
         final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor( DATA, configDocumentBuilder );
         indexConfigVisitor.traverse( form );
 
         return configDocumentBuilder.build();
+    }
+
+    private static void addAttachmentTextMapping( final ContentTypeName contentTypeName,
+                                                  final PatternIndexConfigDocument.Builder configDocumentBuilder )
+    {
+        if ( contentTypeName.isTextualMedia() )
+        {
+            configDocumentBuilder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
+                enabled( true ).
+                fulltext( true ).
+                includeInAllText( true ).
+                nGram( true ).
+                decideByType( false ).
+                build() );
+        }
+        else
+        {
+            configDocumentBuilder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
+                enabled( true ).
+                fulltext( true ).
+                includeInAllText( false ).
+                nGram( true ).
+                decideByType( false ).
+                build() );
+        }
     }
 
     private static Form getForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
