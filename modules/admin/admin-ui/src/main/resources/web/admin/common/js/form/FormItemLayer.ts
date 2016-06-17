@@ -47,7 +47,9 @@ module api.form {
 
         private doLayoutPropertySet(propertySet: PropertySet): wemQ.Promise<void> {
 
-            var layoutPromises: wemQ.Promise<void>[] = [];
+            let layoutPromises: wemQ.Promise<void>[] = [];
+
+            const inputs: InputView[] = [];
 
             this.formItems.forEach((formItem: FormItem) => {
 
@@ -73,8 +75,7 @@ module api.form {
                     this.formItemViews.push(formItemSetView);
 
                     layoutPromises.push(formItemSetView.layout());
-                }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FieldSet)) {
+                } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FieldSet)) {
 
                     var fieldSet: FieldSet = <FieldSet>formItem;
                     var fieldSetView = new FieldSetView(<FieldSetViewConfig>{
@@ -88,8 +89,7 @@ module api.form {
                     this.formItemViews.push(fieldSetView);
 
                     layoutPromises.push(fieldSetView.layout());
-                }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, Input)) {
+                } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, Input)) {
 
                     var input: Input = <Input>formItem;
 
@@ -102,9 +102,33 @@ module api.form {
                     this.parentEl.appendChild(inputView);
                     this.formItemViews.push(inputView);
 
+                    inputs.push(inputView);
+
                     layoutPromises.push(inputView.layout());
                 }
             });
+
+            // Bind next focus targets
+            if (inputs.length > 1) {
+                FocusSwitchEvent.on((event: FocusSwitchEvent) => {
+                    const inputTypeView = event.getInputTypeView();
+                    const lastIndex = inputs.length - 1;
+                    let currentIndex = -1;
+                    inputs.map((input) => input.getInputTypeView()).some((input, index) => {
+                        // quick equality check
+                        if (input.getElement() === inputTypeView.getElement()) {
+                            currentIndex = index;
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    if (currentIndex >= 0) {
+                        const nextIndex = currentIndex === lastIndex ? 0 : currentIndex + 1;
+                        inputs[nextIndex].giveFocus();
+                    }
+                });
+            }
 
             return wemQ.all(layoutPromises).spread<void>(() => {
                 return wemQ<void>(null);

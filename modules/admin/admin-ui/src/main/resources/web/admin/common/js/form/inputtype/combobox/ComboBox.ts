@@ -6,6 +6,8 @@ module api.form.inputtype.combobox {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class ComboBox extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
@@ -97,12 +99,13 @@ module api.form.inputtype.combobox {
             comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {
                 this.comboBox.setFilterArgs({searchString: event.getNewValue()});
             });
-            comboBox.onOptionSelected((selectedOption: SelectedOption<string>) => {
+            comboBox.onOptionSelected((event: SelectedOptionEvent<string>) => {
                 this.ignorePropertyChange = true;
 
-                var value = new Value(selectedOption.getOption().value, ValueTypes.STRING);
-                if (selectedOption.getIndex() >= 0) {
-                    this.getPropertyArray().set(selectedOption.getIndex(), value);
+                const option = event.getSelectedOption();
+                var value = new Value(option.getOption().value, ValueTypes.STRING);
+                if (option.getIndex() >= 0) {
+                    this.getPropertyArray().set(option.getIndex(), value);
                 } else {
                     this.getPropertyArray().add(value);
                 }
@@ -110,10 +113,10 @@ module api.form.inputtype.combobox {
                 this.ignorePropertyChange = false;
                 this.validate(false);
             });
-            comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<string>) => {
+            comboBox.onOptionDeselected((event: SelectedOptionEvent<string>) => {
                 this.ignorePropertyChange = true;
 
-                this.getPropertyArray().remove(removed.getIndex());
+                this.getPropertyArray().remove(event.getSelectedOption().getIndex());
 
                 this.ignorePropertyChange = false;
                 this.validate(false);

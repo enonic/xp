@@ -44,4 +44,4 @@
 
 ///<reference path='ValidationRecordingViewer.ts' />
 ///<reference path='AdditionalValidationRecord.ts' />
-
+///<reference path='FocusSwitchEvent.ts' />

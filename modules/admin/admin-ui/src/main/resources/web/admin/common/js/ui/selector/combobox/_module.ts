@@ -8,3 +8,4 @@
 ///<reference path='SelectedOption.ts' />
 ///<reference path='RichComboBox.ts' />
 ///<reference path='RichSelectedOptionView.ts' />
+///<reference path='SelectedOptionEvent.ts' />

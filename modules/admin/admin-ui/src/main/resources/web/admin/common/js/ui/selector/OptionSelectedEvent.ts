@@ -6,9 +6,12 @@ module api.ui.selector {
 
         private index: number;
 
-        constructor(option: Option<OPTION_DISPLAY_VALUE>, index: number = -1) {
+        private keyCode: number;
+
+        constructor(option: Option<OPTION_DISPLAY_VALUE>, index: number = -1, keyCode: number = -1) {
             this.option = option;
             this.index = index;
+            this.keyCode = keyCode;
         }
 
         getOption(): Option<OPTION_DISPLAY_VALUE> {
@@ -17,6 +20,10 @@ module api.ui.selector {
 
         getIndex(): number {
             return this.index;
+        }
+
+        getKeyCode(): number {
+            return this.keyCode;
         }
     }
 }

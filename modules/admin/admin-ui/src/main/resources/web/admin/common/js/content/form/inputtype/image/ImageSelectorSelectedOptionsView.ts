@@ -10,6 +10,7 @@ module api.content.form.inputtype.image {
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import LoadMask = api.ui.mask.LoadMask;
     import Tooltip = api.ui.Tooltip;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class ImageSelectorSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ImageSelectorDisplayValue> {
 
@@ -191,7 +192,7 @@ module api.content.form.inputtype.image {
             optionView.insertBeforeEl(this.toolbar);
 
             if (!silent) {
-                this.notifyOptionSelected(selectedOption);
+                this.notifyOptionSelected(new SelectedOptionEvent(selectedOption));
             }
 
             new Tooltip(optionView, isMissingContent ? option.value : option.displayValue.getPath(), 1000);

@@ -266,19 +266,19 @@ module api.ui.selector.combobox {
             this.comboBox.setInputIconUrl(url);
         }
 
-        onOptionDeselected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>):void;}) {
+        onOptionDeselected(listener: {(option: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionDeselected(listener);
         }
 
-        unOptionDeselected(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.unOptionDeselected(listener);
         }
 
-        onOptionSelected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+        onOptionSelected(listener: {(option: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionSelected(listener);
         }
 
-        unOptionSelected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+        unOptionSelected(listener: {(option: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.unOptionSelected(listener);
         }
 
