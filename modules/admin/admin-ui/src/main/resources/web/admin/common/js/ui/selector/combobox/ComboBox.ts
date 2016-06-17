@@ -164,7 +164,6 @@ module api.ui.selector.combobox {
             return this.comboBoxDropdown.isDropdownShown();
         }
 
-        // 
         showDropdown() {
 
             this.doUpdateDropdownTopPositionAndWidth();
@@ -275,11 +274,11 @@ module api.ui.selector.combobox {
             return value.split(';');
         }
 
-        handleRowSelected(index: number) {
+        handleRowSelected(index: number, keyCode: number = -1) {
             var option = this.getOptionByRow(index);
             if (option != null && !option.readOnly) {
                 if (!this.isOptionSelected(option)) {
-                    this.selectOption(option);
+                    this.selectOption(option, false, keyCode);
                 } else {
                     this.deselectOption(option);
                 }
@@ -308,13 +307,13 @@ module api.ui.selector.combobox {
                    (filteredOption.sort().join() !== gridOptions.sort().join());
         }
 
-        selectRowOrApplySelection(index: number) {
+        selectRowOrApplySelection(index: number, keyCode: number = -1) {
 
             // fast alternative to isSelectionChanged()
             if (this.applySelectionsButton && this.applySelectionsButton.isVisible()) {
                 this.selectiondDelta.forEach((value: string) => {
                     var row = this.comboBoxDropdown.getDropdownGrid().getRowByValue(value);
-                    this.handleRowSelected(row);
+                    this.handleRowSelected(row, keyCode);
                 });
                 this.input.setValue("");
                 this.hideDropdown();
@@ -324,13 +323,13 @@ module api.ui.selector.combobox {
             }
         }
 
-        selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
+        selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false, keyCode: number = -1) {
             api.util.assertNotNull(option, "option cannot be null");
             if (this.isOptionSelected(option)) {
                 return;
             }
 
-            var added = this.selectedOptionsView.addOption(option, silent);
+            var added = this.selectedOptionsView.addOption(option, silent, keyCode);
             if (!added) {
                 return;
             }
@@ -559,14 +558,14 @@ module api.ui.selector.combobox {
             this.onKeyDown(this.handleKeyDown.bind(this));
 
             if (this.selectedOptionsView) {
-                this.selectedOptionsView.onOptionDeselected((removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
-                    this.handleSelectedOptionRemoved(removedOption);
+                this.selectedOptionsView.onOptionDeselected((event: SelectedOptionEvent<OPTION_DISPLAY_VALUE>) => {
+                    this.handleSelectedOptionRemoved();
                 });
-                this.selectedOptionsView.onOptionSelected((addedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
-                    this.handleSelectedOptionAdded(addedOption);
+                this.selectedOptionsView.onOptionSelected((event: SelectedOptionEvent<OPTION_DISPLAY_VALUE>) => {
+                    this.handleSelectedOptionAdded();
                 });
                 this.selectedOptionsView.onOptionMoved((movedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
-                    this.handleSelectedOptionMoved(movedOption);
+                    this.handleSelectedOptionMoved();
                 });
             }
         }
@@ -641,7 +640,7 @@ module api.ui.selector.combobox {
                 event.preventDefault();
                 break;
             case 13: // Enter
-                this.selectRowOrApplySelection(this.comboBoxDropdown.getActiveRow());
+                this.selectRowOrApplySelection(this.comboBoxDropdown.getActiveRow(), 13);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
@@ -674,7 +673,7 @@ module api.ui.selector.combobox {
             return this.getOptionByRow(this.comboBoxDropdown.getActiveRow()).readOnly;
         }
 
-        private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
+        private handleSelectedOptionRemoved() {
             this.comboBoxDropdown.markSelections(this.getSelectedOptions());
 
             this.dropdownHandle.setEnabled(true);
@@ -692,13 +691,13 @@ module api.ui.selector.combobox {
             this.refreshValueChanged();
         }
 
-        private handleSelectedOptionAdded(addedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
+        private handleSelectedOptionAdded() {
 
             this.refreshDirtyState();
             this.refreshValueChanged();
         }
 
-        private handleSelectedOptionMoved(movedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
+        private handleSelectedOptionMoved() {
 
             this.refreshDirtyState();
             this.refreshValueChanged();
@@ -732,11 +731,11 @@ module api.ui.selector.combobox {
 
         }
 
-        onOptionSelected(listener: (event: SelectedOption<OPTION_DISPLAY_VALUE>)=>void) {
+        onOptionSelected(listener: (event: SelectedOptionEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.selectedOptionsView.onOptionSelected(listener);
         }
 
-        unOptionSelected(listener: (event: SelectedOption<OPTION_DISPLAY_VALUE>)=>void) {
+        unOptionSelected(listener: (event: SelectedOptionEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.selectedOptionsView.unOptionSelected(listener);
         }
 
@@ -769,11 +768,11 @@ module api.ui.selector.combobox {
             });
         }
 
-        onOptionDeselected(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+        onOptionDeselected(listener: {(removed: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.selectedOptionsView.onOptionDeselected(listener);
         }
 
-        unOptionDeselected(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.selectedOptionsView.unOptionDeselected(listener);
         }
 

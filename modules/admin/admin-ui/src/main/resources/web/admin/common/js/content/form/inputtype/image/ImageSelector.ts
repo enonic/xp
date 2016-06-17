@@ -29,6 +29,7 @@ module api.content.form.inputtype.image {
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
     import ContentSelectorLoader = api.content.form.inputtype.contentselector.ContentSelectorLoader;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
@@ -233,17 +234,18 @@ module api.content.form.inputtype.image {
             });
             comboBox.setInputIconUrl(inputIconUrl);
 
-            comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
+            comboBox.onOptionDeselected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
                 // property not found.
-                if (!!removed.getOption().displayValue.getContentSummary()) {
-                    this.getPropertyArray().remove(removed.getIndex());
+                const option = event.getSelectedOption();
+                if (option.getOption().displayValue.getContentSummary()) {
+                    this.getPropertyArray().remove(option.getIndex());
                 }
                 this.validate(false);
             });
 
-            comboBox.onOptionSelected((added: SelectedOption<ImageSelectorDisplayValue>) => {
+            comboBox.onOptionSelected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
                 if (!this.isLayoutInProgress()) {
-                    var contentId = added.getOption().displayValue.getContentId();
+                    var contentId = event.getSelectedOption().getOption().displayValue.getContentId();
                     if (!contentId) {
                         return;
                     }

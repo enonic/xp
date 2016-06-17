@@ -6,6 +6,7 @@ module api.util.htmlarea.dialog {
     import MacroDescriptor = api.macro.MacroDescriptor;
     import FormContext = api.form.FormContext;
     import ApplicationKey = api.application.ApplicationKey
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class MacroModalDialog extends ModalDialog {
 
@@ -63,11 +64,11 @@ module api.util.htmlarea.dialog {
 
             this.addClass("macro-selector");
 
-            macroSelectorComboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.macro.MacroDescriptor>) => {
+            macroSelectorComboBox.onOptionSelected((event: SelectedOptionEvent<api.macro.MacroDescriptor>) => {
                 formItem.addClass("selected-item-preview");
                 this.addClass("shows-preview");
 
-                this.macroDockedPanel.setMacroDescriptor(selectedOption.getOption().displayValue);
+                this.macroDockedPanel.setMacroDescriptor(event.getSelectedOption().getOption().displayValue);
             });
 
             macroSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {

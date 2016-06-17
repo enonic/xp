@@ -13,9 +13,9 @@ module api.ui.selector.combobox {
 
         private maximumOccurrences: number;
 
-        private optionRemovedListeners: {(removed: SelectedOption<T>): void;}[] = [];
+        private optionRemovedListeners: {(removed: SelectedOptionEvent<T>): void;}[] = [];
 
-        private optionAddedListeners: {(added: SelectedOption<T>): void;}[] = [];
+        private optionAddedListeners: {(added: SelectedOptionEvent<T>): void;}[] = [];
 
         private optionMovedListeners: {(moved: SelectedOption<T>) : void}[] = [];
 
@@ -109,7 +109,7 @@ module api.ui.selector.combobox {
             this.appendChild(selectedOption.getOptionView());
 
             if (!silent) {
-                this.notifyOptionSelected(selectedOption);
+                this.notifyOptionSelected(new SelectedOptionEvent(selectedOption));
             }
 
             return true;
@@ -182,32 +182,32 @@ module api.ui.selector.combobox {
 
         protected notifyOptionDeselected(removed: SelectedOption<T>) {
             this.optionRemovedListeners.forEach((listener) => {
-                listener(removed);
+                listener(new SelectedOptionEvent(removed));
             });
         }
 
-        onOptionDeselected(listener: {(removed: SelectedOption<T>): void;}) {
+        onOptionDeselected(listener: {(removed: SelectedOptionEvent<T>): void;}) {
             this.optionRemovedListeners.push(listener);
         }
 
-        unOptionDeselected(listener: {(removed: SelectedOption<T>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOptionEvent<T>): void;}) {
             this.optionRemovedListeners = this.optionRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        onOptionSelected(listener: (added: SelectedOption<T>)=>void) {
+        onOptionSelected(listener: (added: SelectedOptionEvent<T>)=>void) {
             this.optionAddedListeners.push(listener);
         }
 
-        unOptionSelected(listener: (added: SelectedOption<T>)=>void) {
-            this.optionAddedListeners = this.optionAddedListeners.filter((current: (added: SelectedOption<T>)=>void) => {
+        unOptionSelected(listener: (added: SelectedOptionEvent<T>)=>void) {
+            this.optionAddedListeners = this.optionAddedListeners.filter((current: (added: SelectedOptionEvent<T>)=>void) => {
                 return listener != current;
             });
         }
 
-        protected notifyOptionSelected(added: SelectedOption<T>) {
-            this.optionAddedListeners.forEach((listener: (added: SelectedOption<T>)=>void) => {
+        protected notifyOptionSelected(added: SelectedOptionEvent<T>) {
+            this.optionAddedListeners.forEach((listener: (added: SelectedOptionEvent<T>)=>void) => {
                 listener(added);
             });
         }
