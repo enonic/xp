@@ -44,9 +44,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected previousScrollTop: number;
 
-    protected fullDependantSize: number;
-
-    protected dependantIds: ContentIds;
+    protected dependantIds: ContentId[];
 
     constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
         super({
@@ -180,7 +178,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
             setContentPaths(contents.map(content => content.getContentSummary().getPath())).
             setFilterStatuses(filterStatuses).sendAndParse()
             .then((result: ContentId[]) => {
-                this.dependantIds = ContentIds.from(result);
+                this.dependantIds = result;
             });
     }
 
@@ -193,7 +191,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected countTotal(): number {
         return this.getItemList().getItemCount()
-               + this.dependantIds.length();
+               + this.dependantIds.length;
     }
 
     private doPostLoad() {
@@ -226,7 +224,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         let size = this.getDependantList().getItemCount();
 
         if (!this.loading) {
-            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.dependantIds.length()) {
+            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.dependantIds.length) {
 
                 this.loading = true;
 

@@ -5,22 +5,22 @@ module api.content {
 
     export class ResolvePublishDependenciesResult {
 
-        dependentContents: ContentIds;
-        requestedContents: ContentIds;
+        dependentContents: ContentId[];
+        requestedContents: ContentId[];
         containsRemovable: boolean;
 
 
-        constructor(dependants: ContentIds, requested: ContentIds, containsRemovable: boolean) {
+        constructor(dependants: ContentId[], requested: ContentId[], containsRemovable: boolean) {
             this.dependentContents = dependants;
             this.requestedContents = requested;
             this.containsRemovable = containsRemovable;
         }
 
-        getDependants(): ContentIds {
+        getDependants(): ContentId[] {
             return this.dependentContents;
         }
 
-        getRequested(): ContentIds {
+        getRequested(): ContentId[] {
             return this.requestedContents;
         }
 
@@ -30,8 +30,8 @@ module api.content {
 
         static fromJson(json: ResolvePublishContentResultJson): ResolvePublishDependenciesResult {
 
-            let dependants: ContentIds = ContentIds.from(json.dependentContents.map(dependant => new ContentId(dependant.id)));
-            let requested: ContentIds = ContentIds.from(json.requestedContents.map(dependant => new ContentId(dependant.id)));
+            let dependants: ContentId[] = json.dependentContents.map(dependant => new ContentId(dependant.id));
+            let requested: ContentId[] = json.requestedContents.map(dependant => new ContentId(dependant.id));
             let containsRemovable: boolean = json.containsRemovable;
 
             return new ResolvePublishDependenciesResult(dependants, requested, containsRemovable);

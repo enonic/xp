@@ -263,7 +263,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     protected countTotal(): number {
         return this.countToPublish(this.getItemList().getItems())
-               + this.dependantIds.length();
+               + this.dependantIds.length;
     }
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
