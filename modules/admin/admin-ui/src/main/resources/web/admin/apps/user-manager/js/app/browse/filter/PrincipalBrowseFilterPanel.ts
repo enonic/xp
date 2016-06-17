@@ -63,7 +63,9 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
 
     private searchDataAndHandleResponse(searchString: string, fireEvent: boolean = true) {
         new FindPrincipalsRequest().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]).setSearchQuery(
-            searchString).sendAndParse().then((principals: Principal[]) => {
+            searchString).sendAndParse().then((result: api.security.FindPrincipalsResult) => {
+
+            let principals = result.getPrincipals();
             if (fireEvent) {
                 new PrincipalBrowseSearchEvent(principals).fire();
             }
