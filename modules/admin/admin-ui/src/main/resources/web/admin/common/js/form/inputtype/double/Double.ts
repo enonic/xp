@@ -29,12 +29,11 @@ module api.content.form.inputtype.double {
             inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                var isValid = this.isValid(event.getNewValue());
-                if (isValid) {
-                    var value = ValueTypes.DOUBLE.newValue(event.getNewValue());
-                    this.notifyOccurrenceValueChanged(inputEl, value);
-                }
-                inputEl.updateValidationStatusOnUserInput(this.isValid(event.getNewValue()));
+                var isValid = this.isValid(event.getNewValue()),
+                    value = isValid ? ValueTypes.DOUBLE.newValue(event.getNewValue()) : this.newInitialValue();
+
+                this.notifyOccurrenceValueChanged(inputEl, value);
+                inputEl.updateValidationStatusOnUserInput(isValid);
             });
 
             return inputEl;

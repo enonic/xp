@@ -1,0 +1,7 @@
+{
+  "match": {
+    "_references": {
+      "query": "some-content-id"
+    }
+  }
+}

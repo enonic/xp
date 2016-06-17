@@ -146,7 +146,7 @@ class NodeStoreDocumentFactory
     {
         if ( this.node.path() != null )
         {
-            builder.add( NodeIndexPath.PATH, ValueFactory.newString( this.node.path().toString() ), IndexConfig.MINIMAL );
+            builder.add( NodeIndexPath.PATH, ValueFactory.newString( this.node.path().toString() ), IndexConfig.PATH );
         }
     }
 

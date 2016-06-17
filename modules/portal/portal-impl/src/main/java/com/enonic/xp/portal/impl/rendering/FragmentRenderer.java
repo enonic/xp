@@ -3,7 +3,10 @@ package com.enonic.xp.portal.impl.rendering;
 import java.text.MessageFormat;
 
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.content.Content;
@@ -28,6 +31,11 @@ public final class FragmentRenderer
     private static final String EDIT_MODE_FRAGMENT_WRAPPER_HTML =
         "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\">{1}</div>";
 
+    private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
+        "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
+
+    private final static Logger LOG = LoggerFactory.getLogger( FragmentRenderer.class );
+
     private ContentService contentService;
 
     private RendererFactory rendererFactory;
@@ -44,14 +52,27 @@ public final class FragmentRenderer
     public PortalResponse render( final FragmentComponent component, final PortalRequest portalRequest )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
-        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create();
         final String type = component.getType().toString();
+
+        if ( component.getFragment() == null )
+        {
+            return renderEmptyFragment( renderMode, component );
+        }
 
         final Component fragmentComponent = getFragmentComponent( component );
         if ( fragmentComponent == null )
         {
-            final String html = renderMode == RenderMode.EDIT ? MessageFormat.format( EMPTY_FRAGMENT_HTML, type ) : "";
-            return portalResponseBuilder.body( html ).contentType( MediaType.create( "text", "html" ) ).postProcess( false ).build();
+            LOG.warn( "Fragment content could not be found. ContentId: " + component.getFragment().toString() );
+
+            if ( renderMode == RenderMode.EDIT )
+            {
+                final String errorMessage = "Fragment content could not be found";
+                return renderErrorComponentPlaceHolder( component, errorMessage );
+            }
+            else
+            {
+                return renderEmptyFragment( renderMode, component );
+            }
         }
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( fragmentComponent );
@@ -88,11 +109,6 @@ public final class FragmentRenderer
     private Component getFragmentComponent( final FragmentComponent component )
     {
         final ContentId contentId = component.getFragment();
-        if ( contentId == null )
-        {
-            return null;
-        }
-
         try
         {
             final Content fragmentContent = contentService.getById( contentId );
@@ -107,6 +123,25 @@ public final class FragmentRenderer
         {
             return null;
         }
+    }
+
+    private PortalResponse renderEmptyFragment( final RenderMode renderMode, final FragmentComponent component )
+    {
+        final String type = component.getType().toString();
+        final String html = renderMode == RenderMode.EDIT ? MessageFormat.format( EMPTY_FRAGMENT_HTML, type ) : "";
+        return PortalResponse.create().body( html ).contentType( MediaType.create( "text", "html" ) ).postProcess( false ).build();
+
+    }
+
+    private PortalResponse renderErrorComponentPlaceHolder( final FragmentComponent component, final String errorMessage )
+    {
+        final String escapedMessage = HtmlEscapers.htmlEscaper().escape( errorMessage );
+        final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
+        return PortalResponse.create().
+            contentType( MediaType.create( "text", "html" ) ).
+            postProcess( false ).
+            body( html ).
+            build();
     }
 
     private RenderMode getRenderingMode( final PortalRequest portalRequest )

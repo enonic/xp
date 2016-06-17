@@ -1,6 +1,7 @@
 ///<reference path='ContentIdBaseItemJson.ts' />
 ///<reference path='ContentSummaryJson.ts' />
 ///<reference path='ContentJson.ts' />
+///<reference path='PermissionsJson.ts' />
 ///<reference path='ContentPermissionsJson.ts' />
 ///<reference path='ExtraDataJson.ts' />
 ///<reference path='ContentPublishItemJson.ts' />
@@ -27,3 +28,5 @@
 ///<reference path='EffectivePermissionMemberJson.ts' />
 ///<reference path='GetContentVersionsForViewResultsJson.ts' />
 ///<reference path='ContentVersionViewJson.ts' />
+///<reference path='ContentDependencyGroupJson.ts' />
+///<reference path='ContentDependencyJson.ts' />

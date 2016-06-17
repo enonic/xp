@@ -2,11 +2,7 @@ package com.enonic.xp.server.udc.impl;
 
 public @interface UdcConfig
 {
-    boolean enabled() default false;
+    boolean enabled() default true;
 
-    String url() default "https://udc.enonic.com";
-
-    long delay() default 10 * 60 * 1000;
-
-    long interval() default 24 * 60 * 60 * 1000;
+    String url() default "https://udc.enonic.com/collect";
 }

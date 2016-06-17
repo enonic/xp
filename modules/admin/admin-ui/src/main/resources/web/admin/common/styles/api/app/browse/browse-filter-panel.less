@@ -82,6 +82,10 @@
     top: 8px;
   }
 
+  &.has-dependency-item .hide-filter-panel-button {
+    top: 94px;
+  }
+
   .show-filter-results {
     color: @admin-button-blue1;
     text-align: center;
@@ -101,4 +105,33 @@
     }
   }
 
+  .dependencies-filter-section {
+
+    position: relative;
+    padding-top: 2px;
+
+    label {
+      font-size: 14px;
+      overflow: hidden;
+      white-space: pre;
+      text-overflow: ellipsis;
+    }
+
+    .dependency-item {
+      margin: 15px 0px 17px 0px;
+    }
+
+    .action-button.btn-close {
+      .icon-close2();
+      position: absolute;
+      padding: 0px;
+      font-size: 18px;
+      top: 3px;
+      right: -20px;
+      background-color: @admin-white;
+      &:before {
+        color: @admin-font-gray2;
+      }
+    }
+  }
 }

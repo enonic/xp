@@ -1,19 +1,20 @@
 import "../../../../../../api.ts";
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
+import {ImageSelectorForm} from "./ImageSelectorForm";
 
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
+import ContentSummaryLoader = api.content.ContentSummaryLoader;
 import GetContentSummaryByIdRequest = api.content.GetContentSummaryByIdRequest;
 import ContentComboBox = api.content.ContentComboBox;
 import ContentTypeName = api.schema.content.ContentTypeName;
+import LiveEditModel = api.liveedit.LiveEditModel;
 import ImageComponentView = api.liveedit.image.ImageComponentView;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import PropertyTree = api.data.PropertyTree;
-import {ComponentInspectionPanel} from "./ComponentInspectionPanel";
-import {ImageSelectorForm} from "./ImageSelectorForm";
-import {ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
 
 export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
 
@@ -25,6 +26,8 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     private imageSelector: ContentComboBox;
 
+    private loader: ContentSummaryLoader;
+
     private imageSelectorForm: ImageSelectorForm;
 
     private handleSelectorEvents: boolean = true;
@@ -35,9 +38,9 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         super(<ComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("image", "icon-xlarge")
         });
-        var loader = new api.content.ContentSummaryLoader();
-        loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
-        this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).build();
+        this.loader = new api.content.ContentSummaryLoader();
+        this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
+        this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(this.loader).build();
 
         this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, "Image");
 
@@ -53,6 +56,11 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
         this.initSelectorListeners();
         this.appendChild(this.imageSelectorForm);
+    }
+
+    setModel(liveEditModel: LiveEditModel) {
+        super.setModel(liveEditModel);
+        this.loader.setContentPath(liveEditModel.getContent().getPath());
     }
 
     setComponent(component: ImageComponent) {
@@ -72,14 +80,17 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         if (contentId) {
             var image: ContentSummary = this.imageSelector.getContent(contentId);
             if (image) {
-                this.setSelectorValue(image);
-                this.setupComponentForm(this.imageComponent);
+                this.setImage(image);
             } else {
                 new GetContentSummaryByIdRequest(contentId).sendAndParse().then((image: ContentSummary) => {
-                    this.setSelectorValue(image);
-                    this.setupComponentForm(this.imageComponent);
+                    this.setImage(image);
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    if (this.isNotFoundError(reason)) {
+                        this.setSelectorValue(null);
+                        this.setupComponentForm(this.imageComponent);
+                    } else {
+                        api.DefaultErrorHandler.handle(reason);
+                    }
                 }).done();
             }
         } else {
@@ -136,6 +147,11 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
                 this.imageComponent.reset();
             }
         });
+    }
+
+    private setImage(image: ContentSummary) {
+        this.setSelectorValue(image);
+        this.setupComponentForm(this.imageComponent);
     }
 
     getComponentView(): ImageComponentView {

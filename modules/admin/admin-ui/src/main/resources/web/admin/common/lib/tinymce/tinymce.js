@@ -27281,7 +27281,10 @@
                         e.clipboardData.clearData();
                         e.clipboardData.setData('text/html', editor.selection.getContent());
                         e.clipboardData.setData('text/plain', editor.selection.getContent({format: 'text'}));
-                        customDelete(true);
+
+                        setTimeout(function () {
+                            customDelete(true);
+                        }, 0);
                     }
                 });
             }

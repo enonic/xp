@@ -7,7 +7,7 @@ final class PingTask
 {
     private final PingSender sender;
 
-    public PingTask( final PingSender sender )
+    PingTask( final PingSender sender )
     {
         this.sender = sender;
     }

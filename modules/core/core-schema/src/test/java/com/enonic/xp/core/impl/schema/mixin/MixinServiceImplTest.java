@@ -92,7 +92,7 @@ public class MixinServiceImplTest
 
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
-        assertEquals( 9, types1.getSize() );
+        assertEquals( 11, types1.getSize() );
 
         final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );
@@ -100,7 +100,7 @@ public class MixinServiceImplTest
 
         final Mixins types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );
-        assertEquals( 4, types3.getSize() );
+        assertEquals( 6, types3.getSize() );
 
         final Mixin mixin = service.getByName( MixinName.from( "myapp2:mixin1" ) );
         assertNotNull( mixin );
@@ -186,5 +186,26 @@ public class MixinServiceImplTest
 
         assertEquals( "address.street", transformedForm.getInput( "address.street" ).getPath().toString() );
         assertEquals( "address.myFieldInLayout", transformedForm.getInput( "address.myFieldInLayout" ).getPath().toString() );
+    }
+
+    @Test
+    public void testInlineMixinsWithCycles()
+    {
+        initializeApps();
+
+        final Form form = Form.create().
+            addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+            addFormItem( InlineMixin.create().mixin( "myapp2:inline1" ).build() ).
+            build();
+
+        try
+        {
+            service.inlineFormItems( form );
+            fail( "Expected exception due to cycle in mixins" );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            assertEquals( "Cycle detected in mixin [myapp2:inline1]. It contains an inline mixin that references itself.", e.getMessage() );
+        }
     }
 }

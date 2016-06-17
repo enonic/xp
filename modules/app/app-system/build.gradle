@@ -1,0 +1,18 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    include project( ":lib:lib-mustache" )
+    include project( ":lib:lib-portal" )
+    include project( ":lib:lib-auth" )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP App - System'
+}
+
+task copyAdminUiCommon( type: Copy ) {
+    from '../../admin/admin-ui/target/resources/main/web/admin/common'
+    into "$buildDir/resources/main/assets/common"
+}
+
+jar.dependsOn += copyAdminUiCommon

@@ -1,0 +1,71 @@
+.html-area-modal-dialog.macro-modal-dialog {
+
+  .hasSelectedItemPreview();
+  .hideCancelTopButton();
+
+  &.macro-selector {
+    .showsSelectedOption(true);
+
+    .selected-options .selected-option {
+      height: auto;
+      .names-view .main-name {
+        font-size: 24px;
+        color: @admin-black;
+        height: 24px;
+        line-height: 24px;
+      }
+      .wrapper {
+        height: 41px;
+      }
+    }
+  }
+
+  .panel {
+    overflow: visible; // for the dropdowns to be able to go outside the dialog
+  }
+
+  .dialog-content > .docked-panel {
+    display: none;
+    margin-top: 0px;
+
+    .autosize-attendant {
+      display: none;
+    }
+  }
+
+  &.shows-preview {
+    .dialog-header {
+      display: none;
+    }
+
+    .dialog-content > .docked-panel {
+      display: block;
+
+      .input-view.invalid:not(:last-child) {
+        margin-bottom: 15px;
+      }
+
+      .macro-preview-panel {
+        .preview-message {
+          font-size: 14px;
+          text-align: center;
+          margin-top: 10px;
+          color: @admin-font-gray1;
+        }
+
+        .preview-iframe {
+          border-width: 0px;
+          margin: 0px;
+          width: 100%;
+          max-height: 300px;
+        }
+      }
+    }
+  }
+
+  .content-combo-box {
+    .options-container {
+      box-sizing: content-box;
+    }
+  }
+}

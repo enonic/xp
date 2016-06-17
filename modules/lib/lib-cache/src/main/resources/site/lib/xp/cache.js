@@ -40,7 +40,7 @@ Cache.prototype.clear = function () {
 /**
  * Returns number of elements in cache.
  *
- * @returns {number} Returns number of elements in cache.
+ * @returns {number} Returns the number of elements that are currently in the cache.
  */
 Cache.prototype.getSize = function () {
     return this.cache.getSize();
@@ -50,9 +50,10 @@ Cache.prototype.getSize = function () {
  * Creates a new cache.
  *
  * @example-ref examples/cache/newCache.js
+ * @example-ref examples/cache/httpCache.js
  *
  * @param {object} options Cache options as JSON.
- * @param {number} options.size Max size of cache.
+ * @param {number} options.size Maximum number of elements in the cache.
  * @param {number} options.expire Expire time (in sec) for cache entries. If not set, it will never expire.
  * @returns {Cache} Returns a new cache instance.
  */

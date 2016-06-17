@@ -18,7 +18,7 @@ module api.content.form.inputtype.upload {
 
             this.imageUploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
                 params: {
-                    content: config.contentId.toString()
+                    content: config.content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.update,
                 name: input.getName(),
@@ -58,6 +58,7 @@ module api.content.form.inputtype.upload {
                 this.imageUploader.setOriginalDimensions(content);
 
                 this.saveToProperty(value);
+                api.notify.showFeedback(content.getDisplayName() + ' saved');
             });
 
             this.imageUploader.onUploadReset(() => {
@@ -110,9 +111,9 @@ module api.content.form.inputtype.upload {
         }
 
         updateProperty(property: api.data.Property, unchangedOnly?: boolean): Q.Promise<void> {
-            if ((!unchangedOnly || !this.imageUploader.isDirty()) && this.getContext().contentId) {
+            if ((!unchangedOnly || !this.imageUploader.isDirty()) && this.getContext().content.getContentId()) {
 
-                return new api.content.GetContentByIdRequest(this.getContext().contentId).
+                return new api.content.GetContentByIdRequest(this.getContext().content.getContentId()).
                     sendAndParse().
                     then((content: api.content.Content) => {
 

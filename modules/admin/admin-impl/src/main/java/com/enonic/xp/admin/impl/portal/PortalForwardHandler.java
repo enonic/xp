@@ -13,7 +13,6 @@ import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.security.RoleKeys;
 
 @Component(immediate = true, service = Servlet.class,
     property = {"osgi.http.whiteboard.servlet.pattern=/admin/portal/*"})
@@ -33,12 +32,6 @@ public final class PortalForwardHandler
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) )
-        {
-            res.sendError( HttpServletResponse.SC_FORBIDDEN );
-            return;
-        }
-
         final String path = req.getRequestURI();
         if ( path.startsWith( EDIT_PREFIX ) )
         {

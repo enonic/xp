@@ -78,7 +78,10 @@ module api.schema.mixin {
 
             this.formItems = [];
             mixinJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
-                this.formItems.push(api.form.FormItemFactory.createFormItem(formItemJson));
+                var formItem = api.form.FormItemFactory.createFormItem(formItemJson);
+                if (formItem) {
+                    this.formItems.push(formItem);
+                }
             });
             this.schemaKey = "mixin:" + this.name;
             return this;

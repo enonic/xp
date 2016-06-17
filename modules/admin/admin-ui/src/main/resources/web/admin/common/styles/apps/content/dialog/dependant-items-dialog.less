@@ -55,8 +55,6 @@
     }
 
     .item-list {
-      max-height: 400px;
-      overflow-y: auto;
 
       @media screen and (max-height: 720px) {
         max-height: 350px;
@@ -148,6 +146,12 @@
 
           .dependant-item-viewer {
             width: calc(~'100% - 20px');
+
+            &.pending-delete .names-view {
+              .main-name, .sub-name {
+                text-decoration: line-through;
+              }
+            }
           }
 
           .names-and-icon-view {
@@ -182,12 +186,6 @@
             .names-view {
               .sub-name {
                 display: none;
-              }
-            }
-
-            &.pending-delete .names-view {
-              .main-name, .sub-name {
-                text-decoration: line-through;
               }
             }
 

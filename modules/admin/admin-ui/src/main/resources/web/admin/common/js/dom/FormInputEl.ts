@@ -8,7 +8,7 @@ module api.dom {
 
         private originalValue: string;
 
-        private oldValue: string;
+        private oldValue: string = "";
 
         private dirty: boolean = false;
 

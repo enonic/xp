@@ -1,4 +1,6 @@
 import "../../../../../../api.ts";
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
+import {FragmentSelectorForm} from "./FragmentSelectorForm";
 
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ContentSummary = api.content.ContentSummary;
@@ -19,9 +21,6 @@ import ValueExpr = api.query.expr.ValueExpr;
 import FragmentDropdown = api.content.page.region.FragmentDropdown;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import LiveEditModel = api.liveedit.LiveEditModel;
-import {ComponentInspectionPanel} from "./ComponentInspectionPanel";
-import {FragmentSelectorForm} from "./FragmentSelectorForm";
-import {ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
 
 export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentComponent> {
 
@@ -37,26 +36,25 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
     private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
-    private loader: api.content.ContentSummaryLoader;
+    private loader: api.content.FragmentContentSummaryLoader;
 
     constructor() {
         super(<ComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("fragment")
         });
 
-        this.loader = new api.content.ContentSummaryLoader();
-        this.loader.setAllowedContentTypeNames([ContentTypeName.FRAGMENT]);
+        this.loader = new api.content.FragmentContentSummaryLoader();
     }
 
     setModel(liveEditModel: LiveEditModel) {
         super.setModel(liveEditModel);
 
-        this.loader.setQueryExpr(this.createParentSiteFragmentsOnlyQuery());
-
         this.fragmentSelector = new FragmentDropdown("", this.loader);
 
         this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
 
+        var sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
+        this.loader.setParentSitePath(sitePath).setContentPath(liveEditModel.getContent().getPath());
         this.loader.load();
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
@@ -91,7 +89,11 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
                 new GetContentSummaryByIdRequest(contentId).sendAndParse().then((fragment: ContentSummary) => {
                     this.setSelectorValue(fragment);
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    if (this.isNotFoundError(reason)) {
+                        this.setSelectorValue(null);
+                    } else {
+                        api.DefaultErrorHandler.handle(reason);
+                    }
                 }).done();
             }
         } else {
@@ -157,12 +159,6 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
             return false;
         }
         return api.ObjectHelper.iFrameSafeInstanceOf(parent.getType(), api.liveedit.layout.LayoutItemType);
-    }
-
-    private createParentSiteFragmentsOnlyQuery(): QueryExpr {
-        var sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
-        var compareExpr: CompareExpr = CompareExpr.like(new FieldExpr("_path"), ValueExpr.string("/content" + sitePath + "/*"));
-        return new QueryExpr(compareExpr);
     }
 
     getComponentView(): FragmentComponentView {

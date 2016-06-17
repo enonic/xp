@@ -2,6 +2,8 @@ package com.enonic.xp.web.vhost;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.security.UserStoreKey;
+
 @Beta
 public interface VirtualHost
 {
@@ -12,4 +14,6 @@ public interface VirtualHost
     String getSource();
 
     String getTarget();
+
+    UserStoreKey getUserStoreKey();
 }

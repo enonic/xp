@@ -10,7 +10,7 @@ module api.app {
 
         constructor(applications: api.app.Application[]) {
             this.applications = applications;
-            this.serverEventsConnection = new api.app.ServerEventsConnection();
+            this.serverEventsConnection = api.app.ServerEventsConnection.getInstance();
             this.serverEventsConnection.onServerEvent((event: api.event.Event) => this.onServerEvent(event));
             this.aggregator = new ServerEventAggregator();
 

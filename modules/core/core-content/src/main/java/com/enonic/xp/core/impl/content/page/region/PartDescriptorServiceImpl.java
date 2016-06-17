@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -28,6 +30,8 @@ import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 public final class PartDescriptorServiceImpl
     implements PartDescriptorService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( PartDescriptorServiceImpl.class );
+
     private final static String PATH = "/site/parts";
 
     private MixinService mixinService;
@@ -39,12 +43,14 @@ public final class PartDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, PartDescriptor> processor = newProcessor( key );
         final PartDescriptor descriptor = this.resourceService.processResource( processor );
-        if ( descriptor != null )
+        if ( descriptor == null )
         {
-            return descriptor;
+            return createDefaultDescriptor( key );
         }
 
-        return createDefaultDescriptor( key );
+        return PartDescriptor.copyOf( descriptor ).
+            config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).
+            build();
     }
 
     private ResourceProcessor<DescriptorKey, PartDescriptor> newProcessor( final DescriptorKey key )
@@ -63,12 +69,18 @@ public final class PartDescriptorServiceImpl
         final List<PartDescriptor> list = Lists.newArrayList();
         for ( final DescriptorKey descriptorKey : findDescriptorKeys( key ) )
         {
-            final PartDescriptor descriptor = getByKey( descriptorKey );
-            if ( descriptor != null )
+            try
             {
-                list.add( descriptor );
+                final PartDescriptor descriptor = getByKey( descriptorKey );
+                if ( descriptor != null )
+                {
+                    list.add( descriptor );
+                }
             }
-
+            catch ( IllegalArgumentException e )
+            {
+                LOG.error( "Error in part descriptor: " + descriptorKey.toString(), e );
+            }
         }
 
         return PartDescriptors.from( list );
@@ -103,11 +115,7 @@ public final class PartDescriptorServiceImpl
         final PartDescriptor.Builder builder = PartDescriptor.create();
         parseXml( resource, builder );
         builder.name( key.getName() ).key( key );
-        final PartDescriptor partDescriptor = builder.build();
-
-        return PartDescriptor.copyOf( partDescriptor ).
-            config( mixinService.inlineFormItems( partDescriptor.getConfig() ) ).
-            build();
+        return builder.build();
     }
 
     private PartDescriptor createDefaultDescriptor( final DescriptorKey key )

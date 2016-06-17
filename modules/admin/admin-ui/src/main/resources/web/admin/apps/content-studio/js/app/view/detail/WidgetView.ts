@@ -21,6 +21,8 @@ export class WidgetView extends api.dom.DivEl {
 
     private url: string = "";
 
+    private contentId: string = "";
+
     public static debug = false;
 
     constructor(builder: WidgetViewBuilder) {
@@ -49,9 +51,8 @@ export class WidgetView extends api.dom.DivEl {
         this.containerWidth = 0;
     }
 
-    private getWidgetUrl(content: ContentSummaryAndCompareStatus) {
-        var path = content.getPath().toString();
-        return api.rendering.UriHelper.getAdminUri(this.widget.getUrl(), path);
+    private getWidgetUrl() {
+        return api.rendering.UriHelper.getAdminUri(this.widget.getUrl(), "/");
     }
 
     private getFullUrl(url: string) {
@@ -67,14 +68,15 @@ export class WidgetView extends api.dom.DivEl {
         if (!this.isUrlBased() || !this.isDetailsPanelVisible()) {
             return wemQ.resolve(null);
         }
-        this.url = this.getWidgetUrl(content);
-        return widgetItemView.setUrl(this.getFullUrl(this.url), force);
+        this.url = this.getWidgetUrl();
+        this.contentId = content.getId();
+        return widgetItemView.setUrl(this.getFullUrl(this.url), this.contentId, force);
     }
 
     public setContent(content: ContentSummaryAndCompareStatus, force: boolean = false): wemQ.Promise<any> {
         var promises = [];
         this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
-            if (this.isUrlBased() && (force || this.url !== this.getWidgetUrl(content))) {
+            if (this.isUrlBased() && (force || this.contentId !== content.getId() || this.url !== this.getWidgetUrl())) {
                 promises.push(this.setContentForWidgetItemView(widgetItemView, content, force));
             }
         });
@@ -188,6 +190,10 @@ export class WidgetView extends api.dom.DivEl {
         return !!this.widget && !!this.widget.getUrl();
     }
 
+    public getDetailsPanel(): DetailsPanel {
+        return this.detailsPanel;
+    }
+
     public static create(): WidgetViewBuilder {
         return new WidgetViewBuilder();
     }
@@ -220,6 +226,11 @@ export class WidgetViewBuilder {
 
     public setWidget(widget: Widget): WidgetViewBuilder {
         this.widget = widget;
+        return this;
+    }
+
+    public setWidgetItemViews(widgetItemViews: WidgetItemView[]): WidgetViewBuilder {
+        this.widgetItemViews = widgetItemViews;
         return this;
     }
 

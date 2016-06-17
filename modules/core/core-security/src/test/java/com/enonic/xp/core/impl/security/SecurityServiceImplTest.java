@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.security;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -90,7 +89,6 @@ public class SecurityServiceImplTest
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
@@ -751,12 +749,14 @@ public class SecurityServiceImplTest
                 key( UserStoreKey.from( "enonic" ) ).
                 displayName( "Enonic User Store" ).
                 permissions( permissions ).
+                description( "user store description" ).
                 build();
 
             final UserStore userStoreCreated = securityService.createUserStore( createUserStore );
             assertNotNull( userStoreCreated );
             assertEquals( "enonic", userStoreCreated.getKey().toString() );
             assertEquals( "Enonic User Store", userStoreCreated.getDisplayName() );
+            assertEquals( "user store description", userStoreCreated.getDescription() );
 
             final UserStoreAccessControlList createdPermissions = securityService.getUserStorePermissions( UserStoreKey.from( "enonic" ) );
             assertNotNull( userStoreCreated );
@@ -784,6 +784,7 @@ public class SecurityServiceImplTest
                 key( UserStoreKey.from( "enonic" ) ).
                 displayName( "Enonic User Store" ).
                 permissions( permissions ).
+                description( "old user store description" ).
                 build();
             final UserStore userStoreCreated = securityService.createUserStore( createUserStore );
 
@@ -796,6 +797,7 @@ public class SecurityServiceImplTest
                 key( UserStoreKey.from( "enonic" ) ).
                 displayName( "Enonic User Store updated" ).
                 permissions( updatePermissions ).
+                description( "new user store description" ).
                 build();
             final UserStore userStoreUpdated = securityService.updateUserStore( updateUserStore );
 
@@ -803,6 +805,7 @@ public class SecurityServiceImplTest
             assertNotNull( userStoreUpdated );
             assertEquals( "enonic", userStoreUpdated.getKey().toString() );
             assertEquals( "Enonic User Store updated", userStoreUpdated.getDisplayName() );
+            assertEquals( "new user store description", userStoreUpdated.getDescription() );
 
             final UserStoreAccessControlList updatedPermissions = securityService.getUserStorePermissions( UserStoreKey.from( "enonic" ) );
             assertNotNull( userStoreCreated );

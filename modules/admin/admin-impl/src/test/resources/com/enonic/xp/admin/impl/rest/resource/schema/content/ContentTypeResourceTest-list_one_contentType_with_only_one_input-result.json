@@ -8,7 +8,7 @@
             "creator": null,
             "deletable": false,
             "description": null,
-            "displayName": null,
+            "displayName": "my_cty",
             "editable": false,
             "final": true,
             "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_cty?hash=f95b70fdc3088560732a5ac135644506",

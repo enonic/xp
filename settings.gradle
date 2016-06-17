@@ -15,6 +15,8 @@ include 'core:core-app'
 include 'core:core-service'
 include 'core:core-extractor'
 include 'core:core-blobstore'
+include 'core:core-auth'
+include 'core:core-macro'
 
 include 'server:server-shell'
 include 'server:server-status'
@@ -68,6 +70,8 @@ include 'launcher:launcher-ui'
 include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'
+
+include 'app:app-system'
 
 include 'distro'
 include 'docs'

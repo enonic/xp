@@ -51,6 +51,7 @@ module api.content {
                     this.addOption(optionToSelect);
                 }
                 this.selectOption(optionToSelect);
+
             }
         }
 

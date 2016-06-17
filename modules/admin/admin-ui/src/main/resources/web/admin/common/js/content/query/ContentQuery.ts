@@ -10,6 +10,8 @@ module api.content.query {
 
         private contentTypeNames: api.schema.content.ContentTypeName[] = [];
 
+        private mustBeReferencedById: api.content.ContentId;
+
         private aggregationQueries: api.query.aggregation.AggregationQuery[] = [];
 
         private queryFilters: api.query.filter.Filter[] = [];
@@ -34,6 +36,15 @@ module api.content.query {
 
         getContentTypes(): api.schema.content.ContentTypeName[] {
             return this.contentTypeNames;
+        }
+
+        setMustBeReferencedById(id: api.content.ContentId): ContentQuery {
+            this.mustBeReferencedById = id;
+            return this;
+        }
+
+        getMustBeReferencedById(): api.content.ContentId {
+            return this.mustBeReferencedById;
         }
 
         setFrom(from: number): ContentQuery {

@@ -47,10 +47,13 @@
   <bundle level="22">${group}:core-service:${version}</bundle>
   <bundle level="22">${group}:core-blobstore:${version}</bundle>
   <bundle level="22">${group}:core-extractor:${version}</bundle>
+  <bundle level="22">${group}:core-auth:${version}</bundle>
+  <bundle level="22">${group}:core-macro:${version}</bundle>
 
   <!-- Server bundles -->
   <bundle level="15">${group}:server-shell:${version}</bundle>
   <bundle level="15">${group}:server-status:${version}</bundle>
+  <bundle level="15">${group}:server-udc:${version}</bundle>
 
   <!-- Script app -->
   <bundle level="24">${group}:script-api:${version}</bundle>
@@ -80,5 +83,8 @@
 
   <!-- Blobstore providers -->
   <bundle level="22">${group}:blobstore-file:${version}</bundle>
+
+  <!-- Applications -->
+  <bundle level="32">${group}:app-system:${version}</bundle>
 
 </bundles>

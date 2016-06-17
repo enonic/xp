@@ -12,10 +12,13 @@ module api.util.htmlarea.dialog {
                 modalDialog = this.openAnchorDialog(event.getConfig());
                 break;
             case HtmlAreaDialogType.IMAGE:
-                modalDialog = this.openImageDialog(event.getConfig(), event.getContentId());
+                modalDialog = this.openImageDialog(event.getConfig(), event.getContent());
                 break;
             case HtmlAreaDialogType.LINK:
-                modalDialog = this.openLinkDialog(event.getConfig());
+                modalDialog = this.openLinkDialog(event.getConfig(), event.getContent());
+                break;
+            case HtmlAreaDialogType.MACRO:
+                modalDialog = this.openMacroDialog(event.getConfig(), event.getContentPath(), event.getApplicationKeys());
                 break;
             }
 
@@ -33,16 +36,21 @@ module api.util.htmlarea.dialog {
             return this.modalDialog;
         }
 
-        private static openLinkDialog(config: HtmlAreaAnchor): ModalDialog {
-            return this.openDialog(new LinkModalDialog(config));
+        private static openLinkDialog(config: HtmlAreaAnchor, content: api.content.ContentSummary): ModalDialog {
+            return this.openDialog(new LinkModalDialog(config, content));
         }
 
-        private static openImageDialog(config: HtmlAreaImage, contentId: api.content.ContentId): ModalDialog {
-            return this.openDialog(new ImageModalDialog(config, contentId));
+        private static openImageDialog(config: HtmlAreaImage, content: api.content.ContentSummary): ModalDialog {
+            return this.openDialog(new ImageModalDialog(config, content));
         }
 
         private static openAnchorDialog(editor: HtmlAreaEditor): ModalDialog {
             return this.openDialog(new AnchorModalDialog(editor));
+        }
+
+        private static openMacroDialog(config: HtmlAreaMacro, contentPath: api.content.ContentPath,
+                                       applicationKeys: api.application.ApplicationKey[]): ModalDialog {
+            return this.openDialog(new MacroModalDialog(config, contentPath, applicationKeys));
         }
 
         private static openDialog(dialog: ModalDialog): ModalDialog {

@@ -38,6 +38,10 @@
 ///<reference path="DeleteUserStoreResultsJson.ts"/>
 ///<reference path="DeletePrincipalRequest.ts"/>
 ///<reference path="DeleteUserStoreRequest.ts"/>
+///<reference path="SyncUserStoreRequest.ts"/>
+///<reference path="SyncUserStoreResult.ts"/>
+///<reference path="SyncUserStoreResultJson.ts"/>
+///<reference path="SyncUserStoreResultsJson.ts"/>
 ///<reference path='PrincipalLoader.ts' />
 ///<reference path="PrincipalNamedEvent.ts"/>
 ///<reference path="CreateUserStoreRequest.ts"/>
@@ -46,3 +50,6 @@
 ///<reference path="UserItemCreatedEvent.ts"/>
 ///<reference path="UserItemUpdatedEvent.ts"/>
 ///<reference path="UserItemDeletedEvent.ts"/>
+///<reference path="AuthConfig.ts"/>
+///<reference path="AuthConfigJson.ts"/>
+///<reference path="IdProviderMode.ts"/>

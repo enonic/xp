@@ -9,7 +9,6 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.web.HttpStatus;
 
 final class WidgetHandlerWorker
     extends ControllerHandlerWorker
@@ -25,7 +24,7 @@ final class WidgetHandlerWorker
 
         if ( this.request.getMode() != RenderMode.ADMIN )
         {
-            throw new PortalException( HttpStatus.FORBIDDEN, "Render mode must be ADMIN." );
+            throw PortalException.forbidden( "Render mode must be ADMIN." );
         }
 
         this.request.setApplicationKey( this.scriptDir.getApplicationKey() );

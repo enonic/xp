@@ -3,6 +3,7 @@ package com.enonic.xp.lib.thymeleaf;
 import org.junit.Test;
 
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.testing.script.ScriptBeanTestSupport;
 
 public class ThymeleafServiceTest
@@ -24,6 +25,15 @@ public class ThymeleafServiceTest
     {
         final ThymeleafProcessor processor = this.service.newProcessor();
         processor.setView( ResourceKey.from( "myapp:/site/view/test.html" ) );
+        processor.setModel( null );
+        processor.process();
+    }
+
+    @Test(expected = ResourceProblemException.class)
+    public void testProcessError()
+    {
+        final ThymeleafProcessor processor = this.service.newProcessor();
+        processor.setView( ResourceKey.from( "myapp:/site/view/error.html" ) );
         processor.setModel( null );
         processor.process();
     }

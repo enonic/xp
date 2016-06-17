@@ -59,7 +59,7 @@ final class UpdateMediaCommand
             mimeType( params.getMimeType() ).
             label( "source" ).
             byteSource( params.getByteSource() ).
-            text( mediaInfo.getTextContent() ).
+            text( type.isTextualMedia() ? mediaInfo.getTextContent() : null ).
             build();
 
         final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().

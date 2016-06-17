@@ -9,6 +9,8 @@
 ///<reference path='ContentSummaryRequest.ts' />
 ///<reference path='ContentSummaryPreLoader.ts' />
 ///<reference path='ContentSummaryLoader.ts' />
+///<reference path='FragmentContentSummaryRequest.ts' />
+///<reference path='FragmentContentSummaryLoader.ts' />
 ///<reference path='ContentIconUrlResolver.ts' />
 ///<reference path='ContentImageUrlResolver.ts' />
 ///<reference path='ContentMetadata.ts' />
@@ -32,6 +34,7 @@
 ///<reference path='GetContentSummaryByIds' />
 ///<reference path='GetContentByPathRequest.ts' />
 ///<reference path='GetContentPermissionsByIdRequest.ts' />
+///<reference path='GetContentPermissionsByIdsRequest.ts' />
 ///<reference path='GetContentRootPermissionsRequest.ts' />
 ///<reference path='GetContentAttachmentsRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
@@ -107,3 +110,4 @@
 ///<reference path='WidgetDescriptorResourceRequest.ts' />
 ///<reference path='GetWidgetsByInterfaceRequest.ts' />
 ///<reference path='GetEffectivePermissions.ts' />
+///<reference path='ResolveDependenciesRequest.ts' />

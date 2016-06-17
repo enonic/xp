@@ -18,8 +18,8 @@ module api.form {
                 return FormItemFactory.createFieldSetLayout(<api.form.json.FieldSetJson>formItemTypeWrapperJson.FieldSet);
             }
 
-            console.log("Unknown FormItem type: ", formItemTypeWrapperJson);
-            throw new Error("Unknown FormItem");
+            console.error("Unknown FormItem type: ", formItemTypeWrapperJson);
+            return null;
         }
 
         static createInput(inputJson: api.form.json.InputJson): Input {

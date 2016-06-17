@@ -12,18 +12,23 @@ import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
-import com.enonic.xp.util.Exceptions;
 
 @Component(immediate = true)
 public class BinaryExtractorImpl
     implements BinaryExtractor
 {
+    private final static Logger LOG = LoggerFactory.getLogger( BinaryExtractorImpl.class );
+
+    private final static int WRITE_LIMIT = 100 * 1000;
+
     private Detector detector;
 
     private Parser parser;
@@ -32,7 +37,7 @@ public class BinaryExtractorImpl
     public ExtractedData extract( final ByteSource source )
     {
         final ParseContext context = new ParseContext();
-        final BodyContentHandler handler = new BodyContentHandler();
+        final BodyContentHandler handler = new BodyContentHandler( WRITE_LIMIT );
         final Metadata metadata = new Metadata();
 
         try (final InputStream stream = source.openStream())
@@ -43,7 +48,7 @@ public class BinaryExtractorImpl
         }
         catch ( IOException | SAXException | TikaException e )
         {
-            throw Exceptions.unchecked( e );
+            LOG.error( "Error extracting binary", e );
         }
 
         return ExtractorResultFactory.create( metadata, handler );

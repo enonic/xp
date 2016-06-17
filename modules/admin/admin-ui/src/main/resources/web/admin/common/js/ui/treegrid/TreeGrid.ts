@@ -82,6 +82,14 @@ module api.ui.treegrid {
             this.gridData.setFilter((node: TreeNode<DATA>) => {
                 return node.isVisible();
             });
+            this.gridData.setItemMetadata((row) => {
+                const node = this.gridData.getItem(row);
+                if (this.isEmptyNode(node)) {
+                    return {cssClasses: 'empty-node'};
+                }
+
+                return null;
+            });
 
             this.columns = this.updateColumnsFormatter(builder.getColumns());
 
@@ -293,15 +301,6 @@ module api.ui.treegrid {
 
             this.onLoaded(() => this.unmask());
 
-            /* if (this.toolbar) {
-             this.gridData.onRowCountChanged(() => {
-             this.toolbar.refresh();
-             });
-
-             this.onSelectionChanged(() => {
-             this.toolbar.refresh();
-             });
-             }*/
         }
 
         public isInRenderingView(): boolean {
@@ -327,6 +326,10 @@ module api.ui.treegrid {
             }
 
             return columns;
+        }
+
+        isEmptyNode(node: TreeNode<DATA>): boolean {
+            return false;
         }
 
         getEmptyNodesCount(): number {
@@ -498,7 +501,7 @@ module api.ui.treegrid {
             const to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
 
             for (let i = from; i <= to; i++) {
-                if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
+                if (this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
                     this.loading = true;
                     this.loadEmptyNode(this.gridData.getItem(i));
                     break;
@@ -633,18 +636,21 @@ module api.ui.treegrid {
         }
 
         deselectNodes(dataIds: string[]) {
-            var oldSelected = this.grid.getSelectedRows(),
-                newSelected = [];
+            var oldSelected = this.root.getFullSelection(),
+                newSelected = [],
+                newSelectedRows = [];
+
             for (var i = 0; i < oldSelected.length; i++) {
-                if (dataIds.indexOf(this.gridData.getItem(oldSelected[i]).getDataId()) < 0) {
+                if (dataIds.indexOf(oldSelected[i].getDataId()) < 0) {
                     newSelected.push(oldSelected[i]);
+                    newSelectedRows.push(this.grid.getDataView().getRowById(oldSelected[i].getId()));
                 }
             }
 
             this.root.removeSelections(dataIds);
 
             if (oldSelected.length !== newSelected.length) {
-                this.grid.setSelectedRows(newSelected);
+                this.grid.setSelectedRows(newSelectedRows);
             }
         }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -12,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +37,9 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoreJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoreResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateRoleJson;
@@ -43,8 +48,15 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoresJson;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorMode;
+import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
+import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
@@ -78,6 +90,10 @@ public final class SecurityResource
 {
     private SecurityService securityService;
 
+    private AuthDescriptorService authDescriptorService;
+
+    private AuthControllerService authControllerService;
+
     @GET
     @Path("userstore/list")
     public UserStoresJson getUserStores()
@@ -102,10 +118,11 @@ public final class SecurityResource
             throw JaxRsExceptions.notFound( String.format( "User Store [%s] not found", keyParam ) );
         }
 
+        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( userStoreKey );
 
         final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, userStorePermissions, principals );
+        return new UserStoreJson( userStore, idProviderMode, userStorePermissions, principals );
     }
 
     @GET
@@ -116,8 +133,9 @@ public final class SecurityResource
 
         final UserStoreAccessControlList userStorePermissions = securityService.getDefaultUserStorePermissions();
 
+        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, userStorePermissions, principals );
+        return new UserStoreJson( userStore, idProviderMode, userStorePermissions, principals );
     }
 
     @POST
@@ -127,8 +145,9 @@ public final class SecurityResource
         final UserStore userStore = securityService.createUserStore( params.getCreateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
 
+        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, permissions, principals );
+        return new UserStoreJson( userStore, idProviderMode, permissions, principals );
     }
 
     @POST
@@ -138,8 +157,9 @@ public final class SecurityResource
         final UserStore userStore = securityService.updateUserStore( params.getUpdateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
 
+        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, permissions, principals );
+        return new UserStoreJson( userStore, idProviderMode, permissions, principals );
     }
 
     @POST
@@ -156,6 +176,30 @@ public final class SecurityResource
             catch ( Exception e )
             {
                 resultsJson.add( DeleteUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
+            }
+        } );
+        return resultsJson;
+    }
+
+    @POST
+    @Path("userstore/sync")
+    public SyncUserStoresResultJson synchUserStore( final SyncUserStoreJson params, @Context HttpServletRequest httpRequest )
+    {
+        final SyncUserStoresResultJson resultsJson = new SyncUserStoresResultJson();
+        params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
+            try
+            {
+                final AuthControllerExecutionParams syncParams = AuthControllerExecutionParams.create().
+                    userStoreKey( userStoreKey ).
+                    functionName( "sync" ).
+                    servletRequest( httpRequest ).
+                    build();
+                authControllerService.execute( syncParams );
+                resultsJson.add( SyncUserStoreResultJson.success( userStoreKey ) );
+            }
+            catch ( Exception e )
+            {
+                resultsJson.add( SyncUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
             }
         } );
         return resultsJson;
@@ -423,10 +467,30 @@ public final class SecurityResource
         return PrincipalKeys.from( members.stream().filter( PrincipalKey::isUser ).collect( toList() ) );
     }
 
+    private AuthDescriptorMode retrieveIdProviderMode( UserStore userStore )
+    {
+        final AuthConfig authConfig = userStore.getAuthConfig();
+        final ApplicationKey idProviderKey = authConfig == null ? null : authConfig.getApplicationKey();
+        final AuthDescriptor idProvider = idProviderKey == null ? null : authDescriptorService.getDescriptor( idProviderKey );
+        return idProvider == null ? null : idProvider.getMode();
+    }
+
 
     @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
+    }
+
+    @Reference
+    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    {
+        this.authDescriptorService = authDescriptorService;
+    }
+
+    @Reference
+    public void setAuthControllerService( final AuthControllerService authControllerService )
+    {
+        this.authControllerService = authControllerService;
     }
 }

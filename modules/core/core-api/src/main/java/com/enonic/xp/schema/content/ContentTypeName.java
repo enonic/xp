@@ -244,6 +244,16 @@ public final class ContentTypeName
         return MEDIA_TEXT.equals( this );
     }
 
+    public boolean isTextualMedia()
+    {
+        return MEDIA_TEXT.equals( this ) ||
+            MEDIA_CODE.equals( this ) ||
+            MEDIA_DATA.equals( this ) ||
+            MEDIA_SPREADSHEET.equals( this ) ||
+            MEDIA_PRESENTATION.equals( this ) ||
+            MEDIA_DOCUMENT.equals( this );
+    }
+
     public boolean isDataMedia()
     {
         return MEDIA_DATA.equals( this );

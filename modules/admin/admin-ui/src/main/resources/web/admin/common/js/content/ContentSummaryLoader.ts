@@ -1,31 +1,21 @@
 module api.content {
 
-    import OrderExpr = api.query.expr.OrderExpr;
-    import FieldOrderExpr = api.query.expr.FieldOrderExpr;
-    import OrderDirection = api.query.expr.OrderDirection;
-    import FieldExpr = api.query.expr.FieldExpr;
     import QueryExpr = api.query.expr.QueryExpr;
 
     export class ContentSummaryLoader extends ContentSummaryPreLoader {
 
-        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("_modifiedTime"), OrderDirection.DESC);
-
-        public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSummaryLoader.MODIFIED_TIME_DESC];
-
         private contentSummaryRequest: ContentSummaryRequest;
 
-        private order: OrderExpr[];
-
         constructor() {
-            this.contentSummaryRequest = new ContentSummaryRequest();
+            this.contentSummaryRequest = this.initContentSummaryRequest();
 
-            // Setting default order
-            this.order = ContentSummaryLoader.ORDER_BY_MODIFIED_TIME_DESC;
             super(this.contentSummaryRequest);
+
+            this.setSearchQueryExpr();
         }
 
-        setOrder(orderList: OrderExpr[]) {
-            this.order = orderList;
+        protected initContentSummaryRequest(): ContentSummaryRequest {
+            return new ContentSummaryRequest();
         }
 
         setAllowedContentTypes(contentTypes: string[]) {
@@ -40,13 +30,16 @@ module api.content {
             this.contentSummaryRequest.setSize(size);
         }
 
-        setQueryExpr(queryExpr: QueryExpr) {
-            this.contentSummaryRequest.setQueryExpr(queryExpr);
+        setContentPath(path: ContentPath) {
+            this.contentSummaryRequest.setContentPath(path);
+        }
+
+        private setSearchQueryExpr(searchString: string = "") {
+            this.contentSummaryRequest.setSearchString(searchString);
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
-
-            this.contentSummaryRequest.setSearchQueryExpr(searchString, this.order);
+            this.setSearchQueryExpr(searchString);
 
             return this.load();
         }

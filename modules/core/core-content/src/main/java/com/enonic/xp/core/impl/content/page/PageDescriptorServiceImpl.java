@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -28,6 +30,8 @@ import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 public final class PageDescriptorServiceImpl
     implements PageDescriptorService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( PageDescriptorServiceImpl.class );
+
     private final static String PATH = "/site/pages";
 
     private MixinService mixinService;
@@ -39,12 +43,14 @@ public final class PageDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, PageDescriptor> processor = newProcessor( key );
         final PageDescriptor descriptor = this.resourceService.processResource( processor );
-        if ( descriptor != null )
+        if ( descriptor == null )
         {
-            return descriptor;
+            return createDefaultDescriptor( key );
         }
 
-        return createDefaultDescriptor( key );
+        return PageDescriptor.copyOf( descriptor ).
+            config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).
+            build();
     }
 
     private ResourceProcessor<DescriptorKey, PageDescriptor> newProcessor( final DescriptorKey key )
@@ -63,12 +69,18 @@ public final class PageDescriptorServiceImpl
         final List<PageDescriptor> list = Lists.newArrayList();
         for ( final DescriptorKey descriptorKey : findDescriptorKeys( key ) )
         {
-            final PageDescriptor descriptor = getByKey( descriptorKey );
-            if ( descriptor != null )
+            try
             {
-                list.add( descriptor );
+                final PageDescriptor descriptor = getByKey( descriptorKey );
+                if ( descriptor != null )
+                {
+                    list.add( descriptor );
+                }
             }
-
+            catch ( IllegalArgumentException e )
+            {
+                LOG.error( "Error in page descriptor: " + descriptorKey.toString(), e );
+            }
         }
 
         return PageDescriptors.from( list );
@@ -124,12 +136,7 @@ public final class PageDescriptorServiceImpl
         final PageDescriptor.Builder builder = PageDescriptor.create();
         parseXml( resource, builder );
         builder.key( key );
-
-        final PageDescriptor pageDescriptor = builder.build();
-
-        return PageDescriptor.copyOf( pageDescriptor ).
-            config( mixinService.inlineFormItems( pageDescriptor.getConfig() ) ).
-            build();
+        return builder.build();
     }
 
     private PageDescriptor createDefaultDescriptor( final DescriptorKey key )

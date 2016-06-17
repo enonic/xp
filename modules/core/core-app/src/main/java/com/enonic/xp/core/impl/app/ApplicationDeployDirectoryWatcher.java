@@ -15,6 +15,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -30,6 +32,8 @@ import com.enonic.xp.config.Configuration;
 public class ApplicationDeployDirectoryWatcher
     implements FileAlterationListener
 {
+    private final static Logger LOGGER = LoggerFactory.getLogger( ApplicationDeployDirectoryWatcher.class );
+
     private static final String DEPLOY_PATH_PROPERTY_KEY = "deploy.path";
 
     private static final String DEPLOY_INTERVAL_PROPERTY_KEY = "deploy.interval";
@@ -108,19 +112,40 @@ public class ApplicationDeployDirectoryWatcher
     @Override
     public void onFileCreate( final File file )
     {
-        installApplication( file );
+        try
+        {
+            installApplication( file );
+        }
+        catch ( Exception e )
+        {
+            LOGGER.error( "Failed to install local application", e );
+        }
     }
 
     @Override
     public void onFileChange( final File file )
     {
-        installApplication( file );
+        try
+        {
+            installApplication( file );
+        }
+        catch ( Exception e )
+        {
+            LOGGER.error( "Failed to install local application", e );
+        }
     }
 
     @Override
     public void onFileDelete( final File file )
     {
-        uninstallApplication( file );
+        try
+        {
+            uninstallApplication( file );
+        }
+        catch ( Exception e )
+        {
+            LOGGER.error( "Failed to uninstall local application", e );
+        }
     }
 
     @Override

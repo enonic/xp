@@ -51,20 +51,37 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.updateSubTitle();
 
         var items = this.getItemList().getItems();
+
+        this.manageDescendants(items);
+
+        this.countItemsToDeleteAndUpdateButtonCounter();
+    }
+
+    protected manageDescendants(items: ContentSummaryAndCompareStatus[]) {
+        this.loadMask.show();
+        this.deleteButton.setEnabled(false);
         this.loadDescendants(items)
             .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
                 this.setDependantItems(descendants);
 
-                if (!this.isAnyOnline(items) && !this.isAnyOnline(descendants)) {
-                    this.instantDeleteCheckbox.hide();
+                if (!this.isAnyOnline(items)) {
+                    this.verifyInstantDeleteVisibility(descendants);
                 }
 
                 this.centerMyself();
+            }).finally(() => {
+                this.loadMask.hide();
+                this.deleteButton.setEnabled(true);
             });
+    }
 
-
-        this.countItemsToDeleteAndUpdateButtonCounter();
+    private verifyInstantDeleteVisibility(items: ContentSummaryAndCompareStatus[]) {
+        if (this.isAnyOnline(items)) {
+            this.instantDeleteCheckbox.show();
+        } else {
+            this.instantDeleteCheckbox.hide();
+        }
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
@@ -73,26 +90,11 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.setIgnoreItemsChanged(false);
         this.updateSubTitle();
 
-        if (this.isAnyOnline(contents)) {
-            this.instantDeleteCheckbox.show();
-        } else {
-            this.instantDeleteCheckbox.hide();
-        }
+        this.verifyInstantDeleteVisibility(contents);
+
         this.instantDeleteCheckbox.setChecked(false, true);
 
-        if (contents) {
-            this.loadDescendants(contents)
-                .then((descendants: ContentSummaryAndCompareStatus[]) => {
-
-                    this.setDependantItems(descendants);
-
-                    if (!this.isAnyOnline(contents) && this.isAnyOnline(descendants)) {
-                        this.instantDeleteCheckbox.show();
-                    }
-
-                    this.centerMyself();
-                });
-        }
+        this.manageDescendants(contents);
 
         this.countItemsToDeleteAndUpdateButtonCounter();
 
@@ -113,12 +115,18 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     private addDeleteActionHandler(deleteAction: api.ui.Action) {
         deleteAction.onExecuted(() => {
             if (this.isAnySiteToBeDeleted()) {
+                let totalItemsToDelete = this.totalItemsToDelete,
+                    deleteRequest = this.createDeleteRequest(),
+                    yesCallback = this.yesCallback;
+
                 this.close();
+                
                 new ConfirmContentDeleteDialog({
-                    totalItemsToDelete: this.totalItemsToDelete,
-                    deleteRequest: this.createDeleteRequest(),
-                    yesCallback: this.yesCallback
+                    totalItemsToDelete: totalItemsToDelete,
+                    deleteRequest: deleteRequest,
+                    yesCallback: yesCallback
                 }).open();
+
                 return;
             }
 
@@ -230,18 +238,17 @@ export class ContentDeleteDialog extends DependantItemsDialog {
 
     private isAnySiteToBeDeleted(): boolean {
         var result = this.getItemList().getItems().some((item: ContentSummaryAndCompareStatus) => {
-            return item.getContentSummary().isSite() &&
-                   (!this.isStatusOnline(item.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
+            return item.getContentSummary().isSite();
         });
 
         if (result) {
             return true;
         }
+
         var dependantList = this.getDependantList();
         if (dependantList.getItemCount() > 0) {
             return dependantList.getItems().some((descendant: ContentSummaryAndCompareStatus) => {
-                return descendant.getContentSummary().isSite() &&
-                       (!this.isStatusOnline(descendant.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
+                return descendant.getContentSummary().isSite();
             });
         } else {
             return false;

@@ -25,7 +25,12 @@
       width: @size;
       margin-right: @icon-names-gap;
       float: left;
-      line-height: @size - 2px;
+      & when (@size > 32) {
+        line-height: @size - 2px;
+      }
+      & when (@size <= 32) {
+        line-height: @size;
+      }
       vertical-align: middle;
       text-align: center;
 

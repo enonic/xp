@@ -553,6 +553,7 @@ export class PageComponentsView extends api.dom.DivEl {
         return cellNumber == 1;
     }
 
+    //
     private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
         var node = this.tree.getGrid().getDataView().getItem(row);
         if (node) {
@@ -570,7 +571,7 @@ export class PageComponentsView extends api.dom.DivEl {
         }
 
         if (!this.contextMenu) {
-            this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions, false);
+            this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions, false, false);
             this.contextMenu.onHidden(this.removeMenuOpenStyleFromMenuIcon.bind(this));
         } else {
             this.contextMenu.setActions(contextMenuActions);

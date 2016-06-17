@@ -9,7 +9,7 @@ public class ContentPropertyNames
 {
     public static final String PAGE = "page";
 
-    public static final String PAGE_TEXT_COMPONENT = "page.region.component.textcomponent.text";
+    public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = "page.region.**.text";
 
     public static final String ATTACHMENT_TEXT_COMPONENT = "attachment.text";
 
@@ -20,6 +20,8 @@ public class ContentPropertyNames
     public static final String DATA = "data";
 
     public static final String TYPE = "type";
+
+    public static final String ID = "_id";
 
     public static final String DISPLAY_NAME = "displayName";
 

@@ -1,0 +1,3 @@
+<!--#MACRO _name="correct_macro" _body=""-->
+[unclosed_macro]
+<!--#MACRO _name="correct_macro2" _body=""-->

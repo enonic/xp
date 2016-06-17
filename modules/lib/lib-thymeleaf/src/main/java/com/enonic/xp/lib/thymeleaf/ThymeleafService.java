@@ -5,7 +5,6 @@ import java.util.Set;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.standard.StandardDialect;
-import org.thymeleaf.templateresolver.TemplateResolver;
 
 import com.google.common.collect.Sets;
 
@@ -19,8 +18,6 @@ public final class ThymeleafService
 {
     private final TemplateEngine engine;
 
-    private ThymeleafResourceResolver thymeleafResourceResolver;
-
     private BeanContext context;
 
     public ThymeleafService()
@@ -32,14 +29,6 @@ public final class ThymeleafService
         dialects.add( new StandardDialect() );
 
         this.engine.setDialects( dialects );
-
-        final TemplateResolver templateResolver = new TemplateResolver();
-        templateResolver.setCacheable( false );
-        this.thymeleafResourceResolver = new ThymeleafResourceResolver();
-        templateResolver.setResourceResolver( this.thymeleafResourceResolver );
-        this.engine.setTemplateResolver( templateResolver );
-
-        this.engine.initialize();
     }
 
     public ThymeleafProcessor newProcessor()
@@ -59,6 +48,6 @@ public final class ThymeleafService
     public void initialize( final BeanContext context )
     {
         this.context = context;
-        this.thymeleafResourceResolver.initialize( context );
+        this.engine.setTemplateResolver( new TemplateResolverImpl( this.context ) );
     }
 }

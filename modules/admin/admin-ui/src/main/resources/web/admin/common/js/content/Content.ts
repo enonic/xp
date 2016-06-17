@@ -223,7 +223,7 @@ module api.content {
                 this.page = true;
             }
             if (json.permissions) {
-                this.permissions = AccessControlList.fromJson(json.permissions);
+                this.permissions = AccessControlList.fromJson(json);
             }
             if (typeof json.inheritPermissions !== "undefined") {
                 this.inheritPermissions = json.inheritPermissions;

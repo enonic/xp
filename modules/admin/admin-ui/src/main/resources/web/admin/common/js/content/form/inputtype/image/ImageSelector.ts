@@ -78,19 +78,30 @@ module api.content.form.inputtype.image {
                 this.updateSelectedItemsIcons();
             });
 
-            if (!this.contentDeletedListener) {
-                this.contentDeletedListener = (event) => {
-                    event.getDeletedItems().filter((deletedItem) => {
-                        return !!deletedItem;
-                    }).forEach((deletedItem) => {
+            this.handleContentDeletedEvent();
+        }
 
+        private handleContentDeletedEvent() {
+            this.contentDeletedListener = (event) => {
+                if (this.selectedOptionsView.count() == 0) {
+                    return;
+                }
+
+                var selectedContentIdsMap: {} = {};
+                this.selectedOptionsView.getSelectedOptions().forEach(
+                    (selectedOption: any) => selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "");
+
+                event.getDeletedItems().
+                    filter(deletedItem => !deletedItem.isPending() &&
+                                          selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
+                    forEach((deletedItem) => {
                         var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
                         if (option != null) {
                             this.selectedOptionsView.removeSelectedOptions([option]);
                         }
                     });
-                }
             }
+
             ContentDeletedEvent.on(this.contentDeletedListener);
 
             this.onRemoved((event) => {
@@ -191,7 +202,7 @@ module api.content.form.inputtype.image {
                                    [ContentTypeName.IMAGE.toString()];
 
             var contentSelectorLoader = ContentSelectorLoader.create().
-                setId(this.config.contentId).
+                setContent(this.config.content).
                 setInputName(inputName).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(contentTypes).
@@ -270,7 +281,7 @@ module api.content.form.inputtype.image {
 
                         this.contentRequestsAllowed = true;
 
-                        if (this.config.contentId) {
+                        if (this.config.content) {
                             comboBoxWrapper.appendChild(this.createUploader());
                         }
 
@@ -295,7 +306,7 @@ module api.content.form.inputtype.image {
 
             this.uploader = new api.content.ImageUploaderEl({
                 params: {
-                    parent: this.config.contentId.toString()
+                    parent: this.config.content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',

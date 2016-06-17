@@ -7,7 +7,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
-import com.enonic.xp.web.HttpStatus;
 
 public abstract class PortalHandlerWorker
 {
@@ -31,7 +30,7 @@ public abstract class PortalHandlerWorker
 
     protected final PortalException forbidden( final String message, final Object... args )
     {
-        return new PortalException( HttpStatus.FORBIDDEN, String.format( message, args ) );
+        return PortalException.forbidden( String.format( message, args ) );
     }
 
     protected void setResponseCacheable( final boolean isPublic )

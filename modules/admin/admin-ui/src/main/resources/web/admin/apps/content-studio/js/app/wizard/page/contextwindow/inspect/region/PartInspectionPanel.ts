@@ -1,4 +1,9 @@
 import "../../../../../../api.ts";
+import {
+    DescriptorBasedComponentInspectionPanel,
+    DescriptorBasedComponentInspectionPanelConfig
+} from "./DescriptorBasedComponentInspectionPanel";
+import {DescriptorBasedDropdownForm} from "./DescriptorBasedDropdownForm";
 
 import SiteModel = api.content.site.SiteModel;
 import PartDescriptor = api.content.page.region.PartDescriptor;
@@ -16,9 +21,6 @@ import LiveEditModel = api.liveedit.LiveEditModel;
 import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-import {DescriptorBasedComponentInspectionPanel} from "./DescriptorBasedComponentInspectionPanel";
-import {DescriptorBasedDropdownForm} from "./DescriptorBasedDropdownForm";
-import {DescriptorBasedComponentInspectionPanelConfig} from "./DescriptorBasedComponentInspectionPanel";
 
 export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel<PartComponent, PartDescriptor> {
 
@@ -59,8 +61,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
             // Ensure displayed config form and selector option are removed when descriptor is removed
             if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
                 if (!this.partComponent.hasDescriptor()) {
-                    this.setupComponentForm(this.partComponent, null);
-                    this.partSelector.setDescriptor(null);
+                    this.setSelectorValue(null, false);
                 }
             }
         };
@@ -68,6 +69,14 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.initSelectorListeners();
         this.appendChild(this.partForm);
 
+        liveEditModel.getSiteModel().onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(liveEditModel, descriptorsRequest));
+        liveEditModel.getSiteModel().onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(liveEditModel, descriptorsRequest));
+
+    }
+
+    private reloadDescriptorsOnApplicationChange(liveEditModel: LiveEditModel, request: GetPartDescriptorsByApplicationsRequest) {
+        request.setApplicationKeys(liveEditModel.getSiteModel().getApplicationKeys());
+        this.partSelector.getLoader().load();
     }
 
     setComponent(component: PartComponent, descriptor?: PartDescriptor) {
@@ -76,9 +85,14 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.partSelector.setDescriptor(descriptor);
     }
 
-    private setSelectorValue(descriptor: PartDescriptor) {
-        this.handleSelectorEvents = false;
+    private setSelectorValue(descriptor: PartDescriptor, silent: boolean = true) {
+        if (silent) {
+            this.handleSelectorEvents = false;
+        }
+
         this.partSelector.setDescriptor(descriptor);
+        this.setupComponentForm(this.partComponent, descriptor);
+
         this.handleSelectorEvents = true;
     }
 
@@ -105,18 +119,19 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
             var descriptor: PartDescriptor = this.partSelector.getDescriptor(key);
             if (descriptor) {
                 this.setSelectorValue(descriptor);
-                this.setupComponentForm(this.partComponent, descriptor);
             } else {
                 new GetPartDescriptorByKeyRequest(key).sendAndParse().then((descriptor: PartDescriptor) => {
                     this.setSelectorValue(descriptor);
-                    this.setupComponentForm(this.partComponent, descriptor);
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    if (this.isNotFoundError(reason)) {
+                        this.setSelectorValue(null);
+                    } else {
+                        api.DefaultErrorHandler.handle(reason);
+                    }
                 }).done();
             }
         } else {
             this.setSelectorValue(null);
-            this.setupComponentForm(this.partComponent, null);
         }
 
         this.registerComponentListeners(this.partComponent);

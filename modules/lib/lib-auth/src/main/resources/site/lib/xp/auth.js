@@ -32,14 +32,20 @@ function nullOrValue(value) {
  * @param {object} params JSON parameters.
  * @param {string} params.user Name of user to log in.
  * @param {string} [params.userStore] Name of user-store where the user is stored. If not specified it will try all available user-stores in order.
- * @param {string} params.password Password for the user.
+ * @param {string} [params.password] Password for the user. Ignored if skipAuth is set to true, mandatory otherwise.
+ * @param {boolean} [params.skipAuth=false] Skip authentication.
  * @returns {object} Information for logged-in user.
  */
 exports.login = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.LoginHandler');
 
     bean.user = required(params, 'user');
-    bean.password = required(params, 'password');
+
+    if (params.skipAuth) {
+        bean.skipAuth = params.skipAuth;
+    } else {
+        bean.password = required(params, 'password');
+    }
 
     if (params['userStore']) {
         bean.userStore = [].concat(params['userStore']);
@@ -177,7 +183,7 @@ exports.getMembers = function (principalKey) {
  * @param {string} params.userStore Key for user store where user has to be created.
  * @param {string} params.name User login name to set.
  * @param {string} params.displayName User display name.
- * @param {string} params.email User email.
+ * @param {string} [params.email] User email.
  */
 exports.createUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateUserHandler');
@@ -309,4 +315,30 @@ exports.findPrincipals = function (params) {
     bean.searchText = __.nullOrValue(params.searchText);
 
     return __.toNativeObject(bean.findPrincipals());
+};
+
+/**
+ * This function returns the ID provider configuration for the current user store.
+ * It is meant to be called from an ID provider controller.
+ *
+ * @example-ref examples/auth/getIdProviderConfig.js
+ *
+ * @returns {object} The ID provider configuration for current user store as JSON.
+ */
+exports.getIdProviderConfig = function () {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function returns the current user store.
+ * It is meant to be called from an ID provider controller.
+ *
+ * @example-ref examples/auth/getUserStore.js
+ *
+ * @returns {object} The current user store as JSON.
+ */
+exports.getUserStore = function () {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetUserStoreHandler');
+    return __.toNativeObject(bean.execute());
 };

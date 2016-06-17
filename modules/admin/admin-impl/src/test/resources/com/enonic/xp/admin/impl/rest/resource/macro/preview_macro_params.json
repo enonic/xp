@@ -1,0 +1,24 @@
+{
+  "macroKey": "test:uppercase",
+  "contentPath": "/mysite/mypage",
+  "form": [
+    {
+      "name": "body",
+      "type": "String",
+      "values": [
+        {
+          "v": "some text in body"
+        }
+      ]
+    },
+    {
+      "name": "param1",
+      "type": "String",
+      "values": [
+        {
+          "v": "Param1"
+        }
+      ]
+    }
+  ]
+}

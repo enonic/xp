@@ -63,7 +63,7 @@ module api.content.form {
                 inputConfig: inputTypeConfig,
                 parentDataPath: parentPropertyPath,
                 site: this.getSite(),
-                contentId: this.getContentId(),
+                content: this.getPersistedContent(),
                 contentPath: this.getContentPath(),
                 parentContentPath: this.getParentContentPath()
             };

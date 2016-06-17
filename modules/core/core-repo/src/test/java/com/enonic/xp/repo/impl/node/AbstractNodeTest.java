@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -45,6 +44,7 @@ import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -111,7 +111,6 @@ public abstract class AbstractNodeTest
         super.setUp();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
@@ -162,9 +161,11 @@ public abstract class AbstractNodeTest
         this.snapshotService = new ElasticsearchSnapshotService();
         this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
 
-        createContentRepository();
+        createRepository( TEST_REPO );
+        createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
     }
+
 
     void createRepository( final Repository repository )
     {
@@ -206,12 +207,6 @@ public abstract class AbstractNodeTest
             build().
             execute();
     }
-
-    void createContentRepository()
-    {
-        createRepository( TEST_REPO );
-    }
-
 
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
@@ -351,6 +346,18 @@ public abstract class AbstractNodeTest
             build();
 
         return doFindByQuery( query );
+    }
+
+    protected void assertOrder( final FindNodesByQueryResult result, Node... nodes )
+    {
+        assertEquals( nodes.length, result.getHits() );
+
+        final Iterator<Node> iterator = result.getNodes().iterator();
+
+        for ( final Node node : nodes )
+        {
+            assertEquals( node.id(), iterator.next().id() );
+        }
     }
 
     protected void assertOrder( final FindNodesByQueryResult result, String... ids )

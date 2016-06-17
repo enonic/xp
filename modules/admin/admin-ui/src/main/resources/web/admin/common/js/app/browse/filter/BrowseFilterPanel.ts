@@ -71,6 +71,7 @@ module api.app.browse.filter {
 
             this.onRendered((event) => {
                 this.appendChild(this.hideFilterPanelButton);
+                this.appendExtraSection();
                 this.appendChild(this.searchField);
                 this.appendChild(hitsCounterAndClearButtonWrapper);
                 this.appendChild(this.aggregationContainer);
@@ -84,12 +85,11 @@ module api.app.browse.filter {
             })
         }
 
-        setRefreshOfFilterRequired() {
-            this.filterPanelRefreshNeeded = true;
+        protected appendExtraSection() {
         }
 
-        isFilterPanelRefreshNeeded(): boolean {
-            return this.filterPanelRefreshNeeded;
+        setRefreshOfFilterRequired() {
+            this.filterPanelRefreshNeeded = true;
         }
 
         giveFocusToSearch() {
@@ -145,11 +145,13 @@ module api.app.browse.filter {
             return;
         }
 
-        reset() {
+        reset(silent: boolean = false) {
             this.searchField.clear(true);
             this.aggregationContainer.deselectAll(true);
             this.clearFilter.hide();
-            this.notifyReset();
+            if (!silent) {
+                this.notifyReset();
+            }
         }
 
         deselectAll() {

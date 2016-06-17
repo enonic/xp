@@ -25,10 +25,9 @@ module api.liveedit.fragment {
 
             this.comboboxWrapper = new api.dom.DivEl('rich-combobox-wrapper');
 
-            var loader = new api.content.ContentSummaryLoader();
-            loader.setAllowedContentTypeNames([ContentTypeName.FRAGMENT]);
-            loader.setQueryExpr(this.createParentSiteFragmentsOnlyQuery());
-
+            var sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
+            var loader = new api.content.FragmentContentSummaryLoader().setParentSitePath(sitePath);
+            
             this.comboBox = api.content.ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).setMinWidth(270).build();
 
             this.comboboxWrapper.appendChildren(this.comboBox);
@@ -69,12 +68,6 @@ module api.liveedit.fragment {
                 return false;
             }
             return api.ObjectHelper.iFrameSafeInstanceOf(parent.getType(), api.liveedit.layout.LayoutItemType);
-        }
-
-        private createParentSiteFragmentsOnlyQuery(): QueryExpr {
-            var sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
-            var compareExpr: CompareExpr = CompareExpr.like(new FieldExpr("_path"), ValueExpr.string("/content" + sitePath + "/*"));
-            return new QueryExpr(compareExpr);
         }
 
         select() {

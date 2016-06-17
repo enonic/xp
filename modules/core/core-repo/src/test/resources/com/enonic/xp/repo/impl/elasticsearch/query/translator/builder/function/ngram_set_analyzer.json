@@ -1,0 +1,10 @@
+{
+  "simple_query_string": {
+    "query": "Her er teksten min",
+    "fields": [
+      "fiskebolle._ngram"
+    ],
+    "analyzer": "MyNewAnalyzer",
+    "default_operator": "and"
+  }
+}

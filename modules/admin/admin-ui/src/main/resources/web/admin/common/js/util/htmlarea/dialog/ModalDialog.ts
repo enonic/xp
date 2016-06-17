@@ -1,6 +1,5 @@
 module api.util.htmlarea.dialog {
 
-    import FormView = api.form.FormView;
     import Form = api.ui.form.Form;
     import Fieldset = api.ui.form.Fieldset;
     import FormItem = api.ui.form.FormItem;
@@ -13,6 +12,8 @@ module api.util.htmlarea.dialog {
         private mainForm: Form;
         private firstFocusField: api.dom.Element;
         private submitAction: api.ui.Action;
+
+        protected static VALIDATION_CLASS: string = "display-validation-errors";
 
         public static CLASS_NAME = "html-area-modal-dialog";
 
@@ -82,7 +83,7 @@ module api.util.htmlarea.dialog {
 
         protected createForm(formItems:FormItem[]):Form {
             var form = new Form(),
-                validationCls = "display-validation-errors";
+                validationCls = ModalDialog.VALIDATION_CLASS;
 
             formItems.forEach((formItem:FormItem) => {
                 form.add(this.createFieldSet(formItem));
@@ -93,6 +94,14 @@ module api.util.htmlarea.dialog {
             });
 
             return form;
+        }
+
+        protected displayValidationErrors(value: boolean) {
+            if (value) {
+                this.mainForm.addClass(ModalDialog.VALIDATION_CLASS);
+            } else {
+                this.mainForm.removeClass(ModalDialog.VALIDATION_CLASS);
+            }
         }
 
         protected createFormPanel(formItems:FormItem[]):api.ui.panel.Panel {
@@ -196,6 +205,11 @@ module api.util.htmlarea.dialog {
         editor: HtmlAreaEditor
         element: HTMLElement
         container: HTMLElement
+        callback: Function
+    }
+
+    export interface HtmlAreaMacro {
+        editor: HtmlAreaEditor
         callback: Function
     }
 }

@@ -18,7 +18,10 @@ module api.form {
 
         fromJson(json: json.FormJson): FormBuilder {
             json.formItems.forEach((formItemJson: api.form.json.FormItemJson) => {
-                this.addFormItem(FormItemFactory.createFormItem(formItemJson));
+                var formItem = FormItemFactory.createFormItem(formItemJson);
+                if (formItem) {
+                    this.addFormItem(formItem);
+                }
             });
             return this;
         }

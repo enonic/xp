@@ -35,12 +35,14 @@ module api.liveedit.layout {
                 layoutComponent.setDescriptor(descriptor.getKey(), descriptor);
             });
 
-            layoutView.getLiveEditModel().getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    request.setApplicationKeys(layoutView.getLiveEditModel().getSiteModel().getApplicationKeys());
-                    loader.load();
-                }
-            });
+            var siteModel = layoutView.getLiveEditModel().getSiteModel();
+            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
+            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
+        }
+
+        private reloadDescriptorsOnApplicationChange(siteModel: SiteModel, request: GetLayoutDescriptorsByApplicationsRequest) {
+            request.setApplicationKeys(siteModel.getApplicationKeys());
+            this.comboBox.getLoader().load();
         }
 
         select() {

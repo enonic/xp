@@ -1,6 +1,7 @@
 module api.ui.security.acl {
 
     import UserStoreAccessControlEntry = api.security.acl.UserStoreAccessControlEntry;
+    import PrincipalType = api.security.PrincipalType;
 
     export class UserStoreAccessControlEntryViewer extends api.ui.NamesAndIconViewer<UserStoreAccessControlEntry> {
 
@@ -21,7 +22,16 @@ module api.ui.security.acl {
         }
 
         resolveIconClass(object: UserStoreAccessControlEntry): string {
-            return "icon-users";
+            switch (object.getPrincipal().getKey().getType()) {
+            case PrincipalType.USER:
+                return "icon-user";
+            case PrincipalType.GROUP:
+                return "icon-users";
+            case PrincipalType.ROLE:
+                return "icon-masks";
+            }
+
+            return "";
         }
     }
 

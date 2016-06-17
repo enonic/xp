@@ -329,10 +329,10 @@ module api.liveedit {
         }
 
         private createFragment(): wemQ.Promise<Content> {
-            var contentPath = this.getPageView().getLiveEditModel().getContent().getPath();
+            var contentId = this.getPageView().getLiveEditModel().getContent().getContentId();
             var config = this.getPageView().getLiveEditModel().getPageModel().getConfig();
 
-            var request = new api.content.page.region.CreateFragmentRequest(contentPath).setConfig(config).setComponent(
+            var request = new api.content.page.region.CreateFragmentRequest(contentId).setConfig(config).setComponent(
                 this.getComponent());
 
             return request.sendAndParse();
@@ -356,6 +356,7 @@ module api.liveedit {
             if (parentIsPage) {
                 // unbind the old view from the component and bind the new one
                 this.unregisterComponentListeners(this.component);
+                this.unbindMouseListeners();
 
                 this.getPageView().registerFragmentComponentView(replacement);
 
@@ -364,6 +365,7 @@ module api.liveedit {
 
                 // unbind the old view from the component and bind the new one
                 this.unregisterComponentListeners(this.component);
+                this.unbindMouseListeners();
 
                 var parentRegionView = this.parentRegionView;
                 this.parentRegionView.unregisterComponentView(this);

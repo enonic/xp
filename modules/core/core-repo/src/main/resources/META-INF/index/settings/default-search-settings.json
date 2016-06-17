@@ -9,8 +9,7 @@
         "side": "front",
         "max_gram": 12,
         "min_gram": 1,
-        "type": "edgeNGram",
-        "side": "front"
+        "type": "edgeNGram"
       },
       "ngram": {
         "type": "nGram",
@@ -20,6 +19,12 @@
           "letter",
           "digit"
         ]
+      }
+    },
+    "tokenizer": {
+      "path-tokenizer": {
+        "type": "path_hierarchy",
+        "delimiter": "/"
       }
     },
     "analyzer": {
@@ -33,7 +38,9 @@
       "keywordlowercase": {
         "type": "custom",
         "tokenizer": "keyword",
-        "filter": ["lowercase"]
+        "filter": [
+          "lowercase"
+        ]
       },
       "keywordasciilowercase": {
         "type": "custom",
@@ -52,7 +59,6 @@
           "word_delimiter",
           "front_ngram"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "ngram_index": {
@@ -64,7 +70,6 @@
           "word_delimiter",
           "ngram"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "ngram_search_default": {
@@ -75,7 +80,6 @@
           "asciifolding",
           "word_delimiter"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "fulltext_search_default": {
@@ -86,7 +90,6 @@
           "asciifolding",
           "word_delimiter"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "document_index_default": {
@@ -97,7 +100,6 @@
           "asciifolding",
           "word_delimiter"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "all_field_analyzer": {
@@ -108,8 +110,16 @@
           "asciifolding",
           "front_ngram"
         ],
-        "type": "custom",
         "tokenizer": "standard"
+      },
+      "path_analyzer": {
+        "type": "custom",
+        "tokenizer": "path-tokenizer",
+        "filter": [
+          "standard",
+          "lowercase",
+          "asciifolding"
+        ]
       }
     }
 

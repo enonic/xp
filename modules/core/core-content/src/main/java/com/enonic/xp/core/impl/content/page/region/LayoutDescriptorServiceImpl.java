@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -27,6 +29,8 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 public final class LayoutDescriptorServiceImpl
     implements LayoutDescriptorService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( LayoutDescriptorServiceImpl.class );
+
     private final static String PATH = "/site/layouts";
 
     private MixinService mixinService;
@@ -38,12 +42,14 @@ public final class LayoutDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, LayoutDescriptor> processor = newProcessor( key );
         final LayoutDescriptor descriptor = this.resourceService.processResource( processor );
-        if ( descriptor != null )
+        if ( descriptor == null )
         {
-            return descriptor;
+            return null;
         }
 
-        return null;
+        return LayoutDescriptor.copyOf( descriptor ).
+            config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).
+            build();
     }
 
     private ResourceProcessor<DescriptorKey, LayoutDescriptor> newProcessor( final DescriptorKey key )
@@ -62,12 +68,18 @@ public final class LayoutDescriptorServiceImpl
         final List<LayoutDescriptor> list = Lists.newArrayList();
         for ( final DescriptorKey descriptorKey : findDescriptorKeys( key ) )
         {
-            final LayoutDescriptor descriptor = getByKey( descriptorKey );
-            if ( descriptor != null )
+            try
             {
-                list.add( descriptor );
+                final LayoutDescriptor descriptor = getByKey( descriptorKey );
+                if ( descriptor != null )
+                {
+                    list.add( descriptor );
+                }
             }
-
+            catch ( IllegalArgumentException e )
+            {
+                LOG.error( "Error in layout descriptor: " + descriptorKey.toString(), e );
+            }
         }
 
         return LayoutDescriptors.from( list );
@@ -102,11 +114,7 @@ public final class LayoutDescriptorServiceImpl
         final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
         parseXml( resource, builder );
         builder.name( key.getName() ).key( key );
-        final LayoutDescriptor layoutDescriptor = builder.build();
-
-        return LayoutDescriptor.copyOf( layoutDescriptor ).
-            config( this.mixinService.inlineFormItems( layoutDescriptor.getConfig() ) ).
-            build();
+        return builder.build();
     }
 
     private void parseXml( final Resource resource, final LayoutDescriptor.Builder builder )

@@ -18,7 +18,7 @@ module api.liveedit.text {
         }
 
         resolveSubName(object: api.content.page.region.TextComponent, relativePath: boolean = false): string {
-            return object.getPath().toString();
+            return object.getPath() ? object.getPath().toString() : '';
         }
 
         resolveIconClass(object: api.content.page.region.TextComponent): string {

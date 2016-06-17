@@ -13,7 +13,9 @@
   <xs:element name="service" type="serviceDescriptor"/>
   <xs:element name="widget" type="widgetDescriptor"/>
   <xs:element name="tool" type="adminToolDescriptor"/>
+  <xs:element name="id-provider" type="idProviderDescriptor"/>
   <xs:element name="relationship-type" type="relationshipType"/>
+  <xs:element name="macro" type="macroType"/>
 
   <xs:complexType name="site">
     <xs:sequence>
@@ -64,6 +66,7 @@
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
           <xs:element minOccurs="0" name="config" type="config"/>
           <xs:element minOccurs="0" name="maximize" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="default" type="default"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="required"/>
         <xs:attribute name="name" type="xs:string" use="required"/>
@@ -72,6 +75,12 @@
   </xs:complexType>
 
   <xs:complexType name="config">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="default" mixed="true">
     <xs:sequence>
       <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
     </xs:sequence>
@@ -225,6 +234,21 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="idProviderDescriptor">
+    <xs:sequence>
+      <xs:element minOccurs="1" name="mode">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="LOCAL"/>
+            <xs:enumeration value="EXTERNAL"/>
+            <xs:enumeration value="MIXED"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="config" type="form"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="relationshipType">
     <xs:sequence>
       <xs:element minOccurs="0" name="description" type="xs:string"/>
@@ -278,6 +302,14 @@
   <xs:complexType name="mappings">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="mapping" type="mapping"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="macroType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+      <xs:element minOccurs="0" name="description" type="xs:string"/>
+      <xs:element minOccurs="0" name="form" type="formItems"/>
     </xs:sequence>
   </xs:complexType>
 

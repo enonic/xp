@@ -42,7 +42,7 @@ module api.data {
         }
 
         valueEquals(a: number, b: number): boolean {
-            return api.ObjectHelper.numberEquals(a, b);
+            return api.ObjectHelper.numberEquals(a, b) || (a == null && b == null);
         }
     }
 }

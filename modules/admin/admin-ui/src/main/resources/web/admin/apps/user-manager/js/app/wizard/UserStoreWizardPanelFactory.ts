@@ -1,9 +1,9 @@
 import "../../api.ts";
+import {UserStoreWizardPanel} from "./UserStoreWizardPanel";
+import {UserStoreWizardPanelParams} from "./UserStoreWizardPanelParams";
 
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
-import {UserStoreWizardPanel} from "./UserstoreWizardPanel";
-import {UserStoreWizardPanelParams} from "./UserStoreWizardPanelParams";
 
 export class UserStoreWizardPanelFactory {
 
@@ -13,16 +13,9 @@ export class UserStoreWizardPanelFactory {
 
     private appBarTabId: api.app.bar.AppBarTabId;
 
-    private userStore: UserStore;
-
     private userStoreToEdit: UserStore;
 
     private defaultUserStore: UserStore;
-
-    setUserStore(value: UserStore): UserStoreWizardPanelFactory {
-        this.userStore = value;
-        return this;
-    }
 
     setUserStoreKey(value: UserStoreKey): UserStoreWizardPanelFactory {
         this.userStoreKey = value;

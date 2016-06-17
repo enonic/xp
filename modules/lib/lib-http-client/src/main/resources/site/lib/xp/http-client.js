@@ -30,6 +30,7 @@ function checkRequired(params, name) {
  *
  * @example-ref examples/http-client/request.js
  * @example-ref examples/http-client/multipart.js
+ * @example-ref examples/http-client/proxy.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.url URL to which the request is sent.
@@ -42,6 +43,11 @@ function checkRequired(params, name) {
  * @param {string} [params.contentType] Content type of the request.
  * @param {object[]} [params.multipart] Multipart form data to send with the request, an array of part objects. Each part object contains
  * 'name', 'value', and optionally 'fileName' and 'contentType' properties. Where 'value' can be either a string or a Stream object.
+ * @param {object} [params.proxy] Proxy settings.
+ * @param {string} [params.proxy.host] Proxy host name to use.
+ * @param {number} [params.proxy.port] Proxy port to use.
+ * @param {string} [params.proxy.user] User name for proxy authentication.
+ * @param {string} [params.proxy.password] Password for proxy authentication.
  *
  * @return {Response} response HTTP response received.
  */
@@ -60,6 +66,12 @@ exports.request = function (params) {
     bean.body = __.nullOrValue(params.body);
     bean.contentType = __.nullOrValue(params.contentType);
     bean.multipart = __.nullOrValue(params.multipart);
+    if (params.proxy) {
+        bean.proxyHost = __.nullOrValue(params.proxy.host);
+        bean.proxyPort = __.nullOrValue(params.proxy.port);
+        bean.proxyUser = __.nullOrValue(params.proxy.user);
+        bean.proxyPassword = __.nullOrValue(params.proxy.password);
+    }
 
     return __.toNativeObject(bean.request());
 

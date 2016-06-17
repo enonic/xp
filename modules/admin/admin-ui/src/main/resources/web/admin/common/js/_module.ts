@@ -86,6 +86,7 @@
 ///<reference path='ui/image/_module.ts' />
 ///<reference path='ui/security/_module.ts' />
 ///<reference path='ui/security/acl/_module.ts' />
+///<reference path='ui/security/auth/_module.ts' />
 
 ///<reference path='ui/locale/_module.ts' />
 
@@ -117,6 +118,8 @@
 ///<reference path='application/_module.ts' />
 ///<reference path='application/json/_module.ts' />
 
+///<reference path='macro/_module.ts' />
+
 ///<reference path='schema/_module.ts' />
 ///<reference path='schema/mixin/_module.ts'/>
 ///<reference path='schema/content/_module.ts' />
@@ -137,10 +140,12 @@
 ///<reference path='content/form/inputtype/_module.ts' />
 ///<reference path='content/form/inputtype/upload/_module.ts' />
 ///<reference path='content/form/inputtype/contentselector/_module.ts' />
+///<reference path='content/form/inputtype/principalselector/_module.ts' />
 ///<reference path='content/form/inputtype/image/_module.ts' />
 ///<reference path='content/form/inputtype/tag/_module.ts' />
 ///<reference path='content/form/inputtype/geo/_module.ts' />
 ///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
+///<reference path='content/form/inputtype/authappselector/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 

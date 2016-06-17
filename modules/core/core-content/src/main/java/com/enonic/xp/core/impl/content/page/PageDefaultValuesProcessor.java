@@ -91,10 +91,13 @@ final class PageDefaultValuesProcessor
                 continue; // skip if component data already modified
             }
 
-            final Component sourceCmp = sourceRegion != null ? sourceRegion.getComponent( region.getIndex( cmp ) ) : null;
-            if ( sourceCmp == null || !sourceCmp.getName().equals( cmp.getName() ) || !sourceCmp.getType().equals( cmp.getType() ) )
+            final Component sourceCmp = sourceRegion != null
+                ? sourceRegion.getComponents().stream().filter( c -> c.equals( cmp ) ).findFirst().orElse( null )
+                : null;
+            if ( sourceCmp == null )
             {
                 applyComponentDefaultValues( layoutOrPart );
+                continue; // skip further processing if no valid source found
             }
 
             // layout regions
@@ -113,7 +116,10 @@ final class PageDefaultValuesProcessor
 
     private void applyComponentDefaultValues( final DescriptorBasedComponent cmp )
     {
-        final PropertyTree cmpData = cmp.getConfig();
+        if ( cmp.getDescriptor() == null )
+        {
+            return;
+        }
         final Form cmpForm;
         if ( cmp instanceof PartComponent )
         {
@@ -128,6 +134,7 @@ final class PageDefaultValuesProcessor
 
         if ( cmpForm != null )
         {
+            final PropertyTree cmpData = cmp.getConfig();
             formDefaultValuesProcessor.setDefaultValues( cmpForm, cmpData );
         }
     }

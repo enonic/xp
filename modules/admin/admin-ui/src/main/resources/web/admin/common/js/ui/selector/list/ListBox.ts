@@ -42,6 +42,7 @@ module api.ui.selector.list {
                 let removedItems = this.items.slice();
                 // correct way to empty array
                 this.items.length = 0;
+                this.itemViews = {};
                 this.notifyItemsRemoved(removedItems);
                 this.layoutList(this.items);
             }
@@ -90,11 +91,11 @@ module api.ui.selector.list {
             return this.items.length;
         }
 
-        createItemView(item: I, readOnly: boolean): api.dom.Element {
+        protected createItemView(item: I, readOnly: boolean): api.dom.Element {
             throw new Error("You must override createListItem to create views for list items");
         }
 
-        getItemId(item: I): string {
+        protected getItemId(item: I): string {
             throw new Error("You must override getItemId to find item views by items");
         }
 
@@ -121,6 +122,7 @@ module api.ui.selector.list {
             var itemView = this.itemViews[this.getItemId(item)];
             if (itemView) {
                 this.removeChild(itemView);
+                delete this.itemViews[this.getItemId(item)];
             }
         }
 

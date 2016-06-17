@@ -9,8 +9,6 @@ module api.content {
 
     export class MoveContentSummaryLoader extends ContentSummaryPreLoader {
 
-        private preservedSearchString: string;
-
         private contentSummaryRequest: ContentSummaryRequest;
 
         private filterContentPath: ContentPath;
@@ -28,6 +26,7 @@ module api.content {
 
         setFilterContentPath(filterContentPath: ContentPath) {
             this.filterContentPath = filterContentPath;
+            this.contentSummaryRequest.setContentPath(this.filterContentPath);
         }
 
         setFilterSourceContentType(filterSourceContentType: ContentType) {
@@ -35,10 +34,12 @@ module api.content {
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
-
-            this.contentSummaryRequest.setSearchQueryExpr(searchString);
-
+            this.contentSummaryRequest.setSearchString(searchString);
             return this.load();
+        }
+
+        resetSearchString() {
+            this.contentSummaryRequest.setSearchString("");
         }
 
 
@@ -64,11 +65,8 @@ module api.content {
                         } else {
                             this.notifyLoadedData([]);
                         }
-                        if (this.preservedSearchString) {
-                            this.search(this.preservedSearchString);
-                            this.preservedSearchString = null;
-                        }
-                        deferred.resolve(contents);
+
+                    deferred.resolve(contents);
                     }).
                     catch((reason: any) => deferred.reject(reason)).
                     done();

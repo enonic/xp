@@ -3,11 +3,17 @@ module api.security {
     export class UserStore implements api.Equitable {
         private displayName: string;
         private key: UserStoreKey;
+        private description: string;
+        private authConfig: AuthConfig;
+        private idProviderMode: IdProviderMode;
         private permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor(builder: UserStoreBuilder) {
             this.displayName = builder.displayName;
             this.key = builder.key;
+            this.description = builder.description;
+            this.authConfig = builder.authConfig;
+            this.idProviderMode = builder.idProviderMode;
             this.permissions = builder.permissions || new api.security.acl.UserStoreAccessControlList();
         }
 
@@ -17,6 +23,18 @@ module api.security {
 
         getKey(): UserStoreKey {
             return this.key;
+        }
+
+        getDescription(): string {
+            return this.description;
+        }
+
+        getAuthConfig(): AuthConfig {
+            return this.authConfig;
+        }
+
+        getIdProviderMode(): IdProviderMode {
+            return this.idProviderMode;
         }
 
         getPermissions(): api.security.acl.UserStoreAccessControlList {
@@ -54,13 +72,18 @@ module api.security {
 
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&
-                   this.permissions.equals(other.permissions)
+                   this.description === other.description &&
+                   ((!this.authConfig && !other.authConfig) || (this.authConfig && this.authConfig.equals(other.authConfig))) &&
+                   this.permissions.equals(other.permissions);
         }
 
         clone(): UserStore {
             return UserStore.create().
                 setDisplayName(this.displayName).
                 setKey(this.key.toString()).
+                setDescription(this.description).
+                setAuthConfig(this.authConfig ? this.authConfig.clone() : this.authConfig).
+                setIdProviderMode(this.idProviderMode).
                 setPermissions(this.permissions.clone()).
                 build();
         }
@@ -77,6 +100,9 @@ module api.security {
     export class UserStoreBuilder {
         displayName: string;
         key: UserStoreKey;
+        description: string;
+        authConfig: AuthConfig;
+        idProviderMode: IdProviderMode;
         permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor() {
@@ -85,6 +111,9 @@ module api.security {
         fromJson(json: api.security.UserStoreJson): UserStoreBuilder {
             this.key = new UserStoreKey(json.key);
             this.displayName = json.displayName;
+            this.description = json.description;
+            this.authConfig = json.authConfig ? AuthConfig.fromJson(json.authConfig) : null;
+            this.idProviderMode = json.idProviderMode ? IdProviderMode[json.idProviderMode] : null;
             this.permissions = json.permissions ? api.security.acl.UserStoreAccessControlList.fromJson(json.permissions) : null;
             return this;
         }
@@ -96,6 +125,21 @@ module api.security {
 
         setDisplayName(displayName: string): UserStoreBuilder {
             this.displayName = displayName;
+            return this;
+        }
+
+        setDescription(description: string): UserStoreBuilder {
+            this.description = description;
+            return this;
+        }
+
+        setAuthConfig(authConfig: AuthConfig): UserStoreBuilder {
+            this.authConfig = authConfig;
+            return this;
+        }
+
+        setIdProviderMode(idProviderMode: IdProviderMode): UserStoreBuilder {
+            this.idProviderMode = idProviderMode;
             return this;
         }
 

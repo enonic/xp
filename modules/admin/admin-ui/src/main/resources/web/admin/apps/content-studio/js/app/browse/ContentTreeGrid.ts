@@ -216,18 +216,23 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     }
 
     private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        var data = node.getData();
-        if (!!data.getContentSummary() || !!data.getUploadItem()) {  // default node or upload node
-
-            var viewer = <ContentSummaryAndCompareStatusViewer> node.getViewer("name");
+        const data = node.getData();
+        if (data.getContentSummary() || data.getUploadItem()) {
+            let viewer = <ContentSummaryAndCompareStatusViewer> node.getViewer("name");
             if (!viewer) {
                 viewer = new ContentSummaryAndCompareStatusViewer();
                 node.setViewer("name", viewer);
             }
             viewer.setObject(node.getData(), node.calcLevel() > 1);
-            return viewer.toString();
-
+            return viewer ? viewer.toString() : "";
         }
+
+        return "";
+    }
+
+    isEmptyNode(node: TreeNode<ContentSummaryAndCompareStatus>): boolean {
+        const data = node.getData();
+        return !data.getContentSummary() && !data.getUploadItem();
     }
 
 
@@ -638,6 +643,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     xDeleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[],
                         update: boolean = true) {
 
+        this.deselectDeletedNodes(nodes);
+        
         nodes.forEach((node) => {
             this.xDeleteContentNode(node, false);
         });
@@ -645,6 +652,23 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         if (update) {
             this.initAndRender();
         }
+    }
+
+    private deselectDeletedNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[]) {
+        var deselected = [];
+        this.getSelectedDataList().forEach((content: ContentSummaryAndCompareStatus) => {
+
+            let wasDeleted = nodes.some((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+                return content.getContentId().equals(node.getData().getContentId()) ||
+                       content.getPath().isDescendantOf(node.getData().getPath());
+            });
+
+            if (wasDeleted) {
+                deselected.push(content.getId());
+            }
+
+        });
+        this.deselectNodes(deselected);
     }
 
     xPopulateWithChildren(source: TreeNode<ContentSummaryAndCompareStatus>, dest: TreeNode<ContentSummaryAndCompareStatus>) {

@@ -85,7 +85,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
 
         case UserTreeGridItemType.PRINCIPAL:
             if (item.getPrincipal().isRole()) {
-                return "icon-shield icon-large";
+                return "icon-masks icon-large";
 
             } else if (item.getPrincipal().isUser()) {
                 return "icon-user icon-large";

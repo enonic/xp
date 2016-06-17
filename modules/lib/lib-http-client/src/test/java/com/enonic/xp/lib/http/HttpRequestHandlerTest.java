@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -180,9 +182,70 @@ public class HttpRequestHandlerTest
         assertEquals( "GET", request.getMethod() );
     }
 
+    @Test
+    public void testRequestWithProxy()
+        throws Exception
+    {
+        final MockWebServer proxy = new MockWebServer();
+        try
+        {
+            proxy.start();
+
+            final MockResponse response = new MockResponse();
+            response.setBody( "POST request" );
+            response.setHeader( "content-type", "text/plain" );
+            proxy.enqueue( response );
+
+            runFunction( "/site/test/request-test.js", "requestWithProxy", getServerHost(), proxy.getHostName(), proxy.getPort() );
+
+            final RecordedRequest proxyRequest = proxy.takeRequest();
+            assertEquals( "POST", proxyRequest.getMethod() );
+            assertEquals( "http://" + server.getHostName() + ":" + server.getPort() + "/my/url", proxyRequest.getPath() );
+        }
+        finally
+        {
+            proxy.shutdown();
+        }
+    }
+
+    @Test
+    public void testRequestWithProxyWithAuth()
+        throws Exception
+    {
+        final MockWebServer proxy = new MockWebServer();
+        try
+        {
+            proxy.start();
+
+            final MockResponse proxyAuthResponse = new MockResponse();
+            proxyAuthResponse.setResponseCode( 407 );
+            proxy.enqueue( proxyAuthResponse );
+
+            final MockResponse response = new MockResponse();
+            response.setBody( "POST request authenticated" );
+            response.setHeader( "content-type", "text/plain" );
+            proxy.enqueue( response );
+
+            runFunction( "/site/test/request-test.js", "requestWithProxyAuth", getServerHost(), proxy.getHostName(), proxy.getPort() );
+
+            final RecordedRequest proxyRequest = proxy.takeRequest();
+            assertEquals( "POST", proxyRequest.getMethod() );
+            assertEquals( "http://" + server.getHostName() + ":" + server.getPort() + "/my/url", proxyRequest.getPath() );
+        }
+        finally
+        {
+            proxy.shutdown();
+        }
+    }
+
     public String getServerHost()
     {
         return server.getHostName() + ":" + server.getPort();
+    }
+
+    public ByteSource getImageStream()
+    {
+        return ByteSource.wrap( "image_data".getBytes() );
     }
 
     @Test
@@ -191,5 +254,22 @@ public class HttpRequestHandlerTest
     {
         this.server.enqueue( addResponse( "POST request" ) );
         runScript( "/site/lib/xp/examples/http-client/request.js" );
+    }
+
+    @Test
+    public void testExampleMultipart()
+        throws Exception
+    {
+        this.server.enqueue( addResponse( "POST request" ) );
+        runScript( "/site/lib/xp/examples/http-client/multipart.js" );
+    }
+
+    @Ignore
+    @Test
+    public void testExampleProxy()
+        throws Exception
+    {
+        this.server.enqueue( addResponse( "POST request" ) );
+        runScript( "/site/lib/xp/examples/http-client/proxy.js" );
     }
 }

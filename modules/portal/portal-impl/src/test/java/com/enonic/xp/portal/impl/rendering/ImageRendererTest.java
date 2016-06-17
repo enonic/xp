@@ -61,6 +61,7 @@ public class ImageRendererTest
     {
         // setup
         this.portalRequest.setContent( createContent() );
+        Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( true );
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
@@ -71,6 +72,7 @@ public class ImageRendererTest
             build();
         renderer = new ImageRenderer();
         renderer.setUrlService( this.service );
+        renderer.setContentService( contentService );
 
         // exercise
         portalResponse = renderer.render( imageComponent, portalRequest );
@@ -95,6 +97,60 @@ public class ImageRendererTest
 
         // verify
         String result = "<figure data-portal-component-type=\"image\"></figure>";
+        assertEquals( result, portalResponse.getAsString() );
+    }
+
+    @Test
+    public void imageComponentMissingImageModeLive()
+    {
+        // setup
+        this.portalRequest.setContent( createContent() );
+        Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( false );
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "caption", "Image Title" );
+        imageComponent = ImageComponent.create().
+            name( "myImageComponent" ).
+            image( ContentId.from( "abcdef1234567890" ) ).
+            config( config ).
+            build();
+        renderer = new ImageRenderer();
+        renderer.setUrlService( this.service );
+        renderer.setContentService( contentService );
+
+        // exercise
+        portalResponse = renderer.render( imageComponent, portalRequest );
+
+        // verify
+        String result = "<figure data-portal-component-type=\"image\"></figure>";
+        assertEquals( result, portalResponse.getAsString() );
+    }
+
+    @Test
+    public void imageComponentMissingImageModeEdit()
+    {
+        // setup
+        portalRequest.setMode( RenderMode.EDIT );
+        this.portalRequest.setContent( createContent() );
+        Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( false );
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "caption", "Image Title" );
+        imageComponent = ImageComponent.create().
+            name( "myImageComponent" ).
+            image( ContentId.from( "abcdef1234567890" ) ).
+            config( config ).
+            build();
+        renderer = new ImageRenderer();
+        renderer.setUrlService( this.service );
+        renderer.setContentService( contentService );
+
+        // exercise
+        portalResponse = renderer.render( imageComponent, portalRequest );
+
+        // verify
+        String result =
+            "<div data-portal-component-type=\"image\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">Image could not be found</span></div>";
         assertEquals( result, portalResponse.getAsString() );
     }
 }
