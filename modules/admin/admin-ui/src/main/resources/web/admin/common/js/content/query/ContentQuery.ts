@@ -1,6 +1,6 @@
 module api.content.query {
 
-    export class ContentQuery{
+    export class ContentQuery implements api.Equitable {
 
         static POSTLOAD_SIZE = 10;
 
@@ -93,5 +93,41 @@ module api.content.query {
             return this.queryFilters;
         }
 
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentQuery)) {
+                return false;
+            }
+
+            var other = <ContentQuery>o;
+
+            if (!api.ObjectHelper.numberEquals(this.from, other.from)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.numberEquals(this.size, other.size)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.arrayEquals(this.contentTypeNames, other.contentTypeNames)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.anyArrayEquals(this.aggregationQueries, other.aggregationQueries)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.anyArrayEquals(this.queryFilters, other.queryFilters)) {
+                return false;
+            }
+
+            if ((!this.queryExpr && other.queryExpr) ||
+                (this.queryExpr && !other.queryExpr) ||
+                (this.queryExpr && other.queryExpr &&
+                 !api.ObjectHelper.stringEquals(this.queryExpr.toString(), other.queryExpr.toString()))) {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

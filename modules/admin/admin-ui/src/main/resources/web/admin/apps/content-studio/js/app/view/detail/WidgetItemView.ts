@@ -27,7 +27,7 @@ export class WidgetItemView extends api.dom.DivEl {
     public setUrl(url: string, contentId: string, keepId: boolean = false): wemQ.Promise<void> {
         var deferred = wemQ.defer<void>(),
             uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid,
-            linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)),
+            linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync(),
             el = this.getEl(),
             onLinkLoaded = ((event: UIEvent) => {
                 var mainContainer = wemjq(event.target["import"]).find("div")[0];

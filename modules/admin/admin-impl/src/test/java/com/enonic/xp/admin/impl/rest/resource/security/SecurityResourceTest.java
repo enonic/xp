@@ -4,8 +4,6 @@ import java.net.URLEncoder;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.WebApplicationException;
@@ -34,7 +32,6 @@ import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
-import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.SecurityService;
@@ -238,26 +235,6 @@ public class SecurityResourceTest
     {
         final Principals principals = createPrincipalsFromGroups();
         assertArrayEquals( principals.getList().toArray(), Iterables.toArray( principals.getGroups(), Group.class ) );
-    }
-
-    @Test
-    public void getPrincipals()
-        throws Exception
-    {
-        final UserStores userStores = createUserStores();
-        final Principals principals = createPrincipalsFromUsers();
-        final List<PrincipalType> userTypes = new ArrayList<>();
-        userTypes.add( PrincipalType.USER );
-        Mockito.when( securityService.findPrincipals( userStores.get( 0 ).getKey(), userTypes, null ) ).
-            thenReturn( principals );
-
-        String jsonString = request().
-            path( "security/principals" ).
-            queryParam( "types", "user" ).
-            queryParam( "userStoreKey", "local" ).
-            get().getAsString();
-
-        assertJson( "getPrincipals.json", jsonString );
     }
 
     @Test

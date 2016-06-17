@@ -599,6 +599,22 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
     }
 
+    private updateWizard(content: Content, unchangedOnly: boolean = true, areasContainId?: boolean) {
+        this.setPersistedItem(content);
+        this.updateWizardHeader(content);
+        this.updateWizardStepForms(content, unchangedOnly);
+        this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
+
+        if (!unchangedOnly) {
+            this.updateLiveFormOnVersionChange();
+        } else if (this.isContentRenderable() && areasContainId) {
+            // also update live form panel for renderable content without asking
+            this.liveFormPanel.skipNextReloadConfirmation(true);
+            this.liveFormPanel.loadPage();
+        }
+        this.resetLastFocusedElement();
+    }
+
     private listenToContentEvents() {
 
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
@@ -644,19 +660,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             if (isCurrent || areasContainId) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
-                    this.setPersistedItem(content);
-                    this.updateWizardHeader(content);
-                    this.updateWizardStepForms(content, unchangedOnly);
-                    this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
-
-                    if (!unchangedOnly) {
-                        this.updateLiveFormOnVersionChange();
-                    } else if (this.isContentRenderable() && areasContainId) {
-                        // also update live form panel for renderable content without asking
-                        this.liveFormPanel.skipNextReloadConfirmation(true);
-                        this.liveFormPanel.loadPage();
-                    }
-                    this.resetLastFocusedElement();
+                    this.updateWizard(content, unchangedOnly, areasContainId);
                 });
             }
         };
@@ -683,7 +687,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (wasMoved) {
                 updateHandler(this.getPersistedItem().getContentId());
             }
-        }
+        };
 
         ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
         ContentUpdatedEvent.on(contentUpdatedHanlder);
@@ -787,6 +791,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
             if (viewedContent.equals(persistedContent) || this.skipValidation) {
+
+                // force update wizard with server bounced values to erase incorrect ones
+                this.updateWizard(persistedContent, false);
 
                 if (this.liveFormPanel) {
                     this.liveFormPanel.loadPage();

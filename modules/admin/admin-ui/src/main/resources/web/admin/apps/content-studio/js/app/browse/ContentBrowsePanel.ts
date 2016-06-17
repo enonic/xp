@@ -64,7 +64,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.contentTreeGrid = new ContentTreeGrid();
 
         // this.contentBrowseItemPanel = components.detailPanel = new ContentBrowseItemPanel();
-        this.contentBrowseItemPanel = new ContentBrowseItemPanel();
+        this.contentBrowseItemPanel = new ContentBrowseItemPanel(this.contentTreeGrid);
 
         this.contentFilterPanel = new ContentBrowseFilterPanel();
 

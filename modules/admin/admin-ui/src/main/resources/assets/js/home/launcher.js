@@ -54,6 +54,9 @@ function createLauncherLink(container) {
     link.onload = function () {
         launcherMainContainer = link.import.querySelector('.launcher-main-container');
         launcherMainContainer.setAttribute("hidden", "true");
+        if (window.CONFIG.appId == "home") {
+            launcherMainContainer.classList.add("home");
+        }
         container.appendChild(launcherMainContainer);
         addLongClickHandler(container);
 
@@ -76,16 +79,37 @@ function createLauncherLink(container) {
     return link;
 }
 
+function openWindow(windowArr, anchorEl) {
+    var windowId = anchorEl.getAttribute("data-id");
+    
+    if (windowArr[windowId] && !windowArr[windowId].closed) {
+        windowArr[windowId].focus();
+    }
+    else {
+        windowArr[windowId] = window.open(anchorEl.href);
+    }
+}
+
 function addLongClickHandler(container) {
     var longpress = false;
     var startTime, endTime;
-
+    var toolWindows = [];
+    
     var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
-    for (var i = 0; i < appTiles.length; i++) {
+    for (let i = 0; i < appTiles.length; i++) {
         appTiles[i].addEventListener("click", function (e) {
+            if (window.CONFIG.appId == e.currentTarget.getAttribute("data-id") && window.CONFIG.appId == "home") {
+                e.preventDefault();
+                return;
+            }
+                
             if (longpress) {
                 e.preventDefault();
                 document.location.href = this.href;
+            }
+            else if (navigator.userAgent.search("Chrome") > -1 ) {
+                e.preventDefault();
+                openWindow(toolWindows, e.currentTarget);
             }
         });
         appTiles[i].addEventListener("mousedown", function () {
