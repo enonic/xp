@@ -54,20 +54,22 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     protected manageDescendants() {
         this.loadMask.show();
         this.actionButton.setEnabled(false);
-        this.loadDescendants()
-            .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
-                this.setDependantItems(descendants);
+        return this.loadDescendantIds().then(() => {
+            this.loadDescendants(0, 20).
+                then((descendants: ContentSummaryAndCompareStatus[]) => {
+                    this.setDependantItems(descendants);
 
-                if (!this.isAnyOnline(this.getItemList().getItems())) {
-                    this.verifyInstantDeleteVisibility(descendants);
-                }
-                this.countItemsToDeleteAndUpdateButtonCounter();
-                this.centerMyself();
-            }).finally(() => {
-                this.loadMask.hide();
-                this.actionButton.setEnabled(true);
-            });
+                    if (!this.isAnyOnline(this.getItemList().getItems())) {
+                        this.verifyInstantDeleteVisibility(descendants);
+                    }
+                    this.countItemsToDeleteAndUpdateButtonCounter();
+                    this.centerMyself();
+                }).finally(() => {
+                    this.loadMask.hide();
+                    this.actionButton.setEnabled(true);
+                });
+        });
     }
 
     private verifyInstantDeleteVisibility(items: ContentSummaryAndCompareStatus[]) {

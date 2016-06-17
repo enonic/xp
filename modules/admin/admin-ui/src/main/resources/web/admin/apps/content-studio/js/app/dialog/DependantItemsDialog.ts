@@ -4,6 +4,8 @@ import {DependantItemViewer} from "./DependantItemViewer";
 
 import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentSummary = api.content.ContentSummary;
+import ContentIds = api.content.ContentIds;
+import ContentId = api.content.ContentId;
 import GetDescendantsOfContents = api.content.GetDescendantsOfContents;
 import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -43,6 +45,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     protected previousScrollTop: number;
 
     protected fullDependantSize: number;
+
+    protected dependantIds: ContentIds;
 
     constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
         super({
@@ -120,10 +124,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         return this.dependantList;
     }
 
-    protected getDependantSize(): number {
-        return this.fullDependantSize;
-    }
-
     protected isIgnoreItemsChanged(): boolean {
         return this.ignoreItemsChanged;
     }
@@ -173,29 +173,27 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.actionButton.setLabel(count > 1 ? actionString + "(" + count + ")" : actionString);
     }
 
-    protected loadDescendants(from?: number,
-                              size?: number, filterStatuses?: CompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-
+    protected loadDescendantIds(filterStatuses?: CompareStatus[]) {
         let contents = this.getItemList().getItems();
 
-        return new api.content.GetDescendantsOfContents().setFrom(from).setSize(size).
+        return new api.content.GetDescendantsOfContents().
             setContentPaths(contents.map(content => content.getContentSummary().getPath())).
             setFilterStatuses(filterStatuses).sendAndParse()
-            .then((result: api.content.ContentResponse<ContentSummary>) => {
-
-                this.fullDependantSize = result.getMetadata().getTotalHits();
-
-                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
-                    .then((compareContentResults: api.content.CompareContentResults) => {
-                        return ContentSummaryAndCompareStatusFetcher
-                            .updateCompareStatus(result.getContents(), compareContentResults);
-                    });
+            .then((result: ContentId[]) => {
+                this.dependantIds = ContentIds.from(result);
             });
+    }
+
+    protected loadDescendants(from: number,
+                              size: number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+
+        let ids = this.dependantIds.slice(from, from+size);
+        return api.content.ContentSummaryAndCompareStatusFetcher.fetchByIds(ids);
     }
 
     protected countTotal(): number {
         return this.getItemList().getItemCount()
-               + this.getDependantSize();
+               + this.dependantIds.length();
     }
 
     private doPostLoad() {
@@ -228,7 +226,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         let size = this.getDependantList().getItemCount();
 
         if (!this.loading) {
-            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.fullDependantSize) {
+            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.dependantIds.length()) {
 
                 this.loading = true;
 

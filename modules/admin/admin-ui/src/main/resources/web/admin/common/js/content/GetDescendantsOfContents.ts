@@ -1,14 +1,10 @@
 module api.content {
 
-    export class GetDescendantsOfContents extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
+    export class GetDescendantsOfContents extends ContentResourceRequest<api.content.json.ContentIdBaseItemJson[], ContentId[]> {
 
         private contentPaths: ContentPath[] = [];
 
         private filterStatuses: CompareStatus[] = [];
-
-        private from: number;
-
-        private size: number;
 
         public static LOAD_SIZE: number = 20;
 
@@ -35,25 +31,13 @@ module api.content {
             return this;
         }
 
-        setFrom(value: number): GetDescendantsOfContents {
-            this.from = value;
-            return this;
-        }
-
-        setSize(value: number): GetDescendantsOfContents {
-            this.size = value;
-            return this;
-        }
-
         getParams(): Object {
             var fn = (contentPath: ContentPath) => {
                 return contentPath.toString();
             };
             return {
                 contentPaths: this.contentPaths.map(fn),
-                filterStatuses: this.filterStatuses,
-                from: this.from || 0,
-                size: this.size || GetDescendantsOfContents.LOAD_SIZE
+                filterStatuses: this.filterStatuses
             };
         }
 
@@ -61,13 +45,10 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "getDescendantsOfContents");
         }
 
-        sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
+        sendAndParse(): wemQ.Promise<ContentId[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
-                return new ContentResponse(
-                    ContentSummary.fromJsonArray(response.getResult().contents),
-                    new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
-                );
+            return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentIdBaseItemJson[]>) => {
+                return response.getResult().map((item => new ContentId(item.id)))
             });
         }
     }

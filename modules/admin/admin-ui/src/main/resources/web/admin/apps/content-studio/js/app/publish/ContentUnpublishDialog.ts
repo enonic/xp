@@ -41,27 +41,24 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
         super.open();
     }
 
-    protected loadDescendants(from?: number,
-                              size?: number, filterStatuses?:CompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        return super.loadDescendants(from, size, [CompareStatus.EQUAL,CompareStatus.NEWER,CompareStatus.PENDING_DELETE]);
-    }
-
-
     private refreshUnpublishDependencies(): wemQ.Promise<void> {
 
         this.getDependantList().clearItems();
         this.showLoadingSpinner();
         this.actionButton.setEnabled(false);
 
-        return this.loadDescendants().then((summaries: ContentSummaryAndCompareStatus[]) => {
-            this.setDependantItems(this.filterUnpublishableItems(summaries));
+        return this.loadDescendantIds([CompareStatus.EQUAL,CompareStatus.NEWER,CompareStatus.PENDING_DELETE]).then(() => {
+            this.loadDescendants(0, 20).
+                then((items: ContentSummaryAndCompareStatus[]) => {
+                    this.setDependantItems(items);
 
-            // do not set requested contents as they are never going to change
+                    // do not set requested contents as they are never going to change
 
-            this.hideLoadingSpinner();
-            this.actionButton.setEnabled(true);
-        }).finally(() => {
-            this.loadMask.hide();
+                    this.hideLoadingSpinner();
+                    this.actionButton.setEnabled(true);
+                }).finally(() => {
+                    this.loadMask.hide();
+                });
         });
 
     }

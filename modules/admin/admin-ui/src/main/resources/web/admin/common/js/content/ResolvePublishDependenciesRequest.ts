@@ -10,18 +10,12 @@ module api.content {
 
         private includeChildren: boolean;
 
-        private from: number;
-
-        private size: number;
-
         constructor(builder: ResolvePublishDependenciesRequestBuilder) {
             super();
             super.setMethod("POST");
             this.ids = builder.ids;
             this.excludedIds = builder.excludedIds;
             this.includeChildren = builder.includeChildren;
-            this.from = builder.from;
-            this.size = builder.size;
         }
 
         getParams(): Object {
@@ -32,8 +26,6 @@ module api.content {
                 excludedIds: this.excludedIds.map((el) => {
                     return el.toString();
                 }),
-                from: this.from || 0,
-                size: this.size || 20,
                 includeChildren: this.includeChildren
             };
         }
@@ -62,11 +54,6 @@ module api.content {
 
         includeChildren: boolean;
 
-        from: number;
-
-        size: number;
-
-
         public setIds(value: ContentId[]): ResolvePublishDependenciesRequestBuilder {
             this.ids = value;
             return this;
@@ -79,16 +66,6 @@ module api.content {
 
         public setIncludeChildren(value: boolean): ResolvePublishDependenciesRequestBuilder {
             this.includeChildren = value;
-            return this;
-        }
-
-        public setFrom(value: number): ResolvePublishDependenciesRequestBuilder {
-            this.from = value;
-            return this;
-        }
-
-        public setSize(value: number): ResolvePublishDependenciesRequestBuilder {
-            this.size = value;
             return this;
         }
 

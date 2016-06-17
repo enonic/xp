@@ -10,10 +10,6 @@ public class GetDescendantsOfContents
 
     private Set<CompareStatus> filterStatuses;
 
-    private Integer from;
-
-    private Integer size;
-
     public Set<String> getContentPaths()
     {
         return contentPaths;
@@ -33,26 +29,5 @@ public class GetDescendantsOfContents
     {
         this.filterStatuses = filterStatuses;
     }
-
-    public Integer getFrom()
-    {
-        return from;
-    }
-
-    public void setFrom( final Integer from )
-    {
-        this.from = from;
-    }
-
-    public Integer getSize()
-    {
-        return size;
-    }
-
-    public void setSize( final Integer size )
-    {
-        this.size = size;
-    }
-
 
 }

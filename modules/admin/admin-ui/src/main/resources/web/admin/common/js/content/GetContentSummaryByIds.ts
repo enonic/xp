@@ -1,35 +1,31 @@
 module api.content {
 
-    export class GetContentSummaryByIds {
+    export class GetContentSummaryByIds extends ContentResourceRequest<BatchContentResult<api.content.json.ContentSummaryJson>, ContentSummary[]>{
 
         private ids: ContentId[];
 
         constructor(ids: ContentId[]) {
+            super();
+            super.setMethod("GET");
             this.ids = ids;
         }
 
-        get(): wemQ.Promise<api.content.ContentSummary[]> {
-            var deferred = wemQ.defer<api.content.ContentSummary[]>();
+        getParams(): Object {
+            return {
+                ids: this.ids.map(id => id.toString()).join(",")
+            };
+        }
 
-            var allPromises = (this.ids || []).map((contentId: ContentId) => {
-                return new api.content.GetContentSummaryByIdRequest(contentId).sendAndParse();
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), 'resolveByIds');
+        }
+
+        sendAndParse(): wemQ.Promise<ContentSummary[]> {
+
+            return this.send().then((response: api.rest.JsonResponse<BatchContentResult<api.content.json.ContentSummaryJson>>) => {
+                return ContentSummary.fromJsonArray(response.getResult().contents);
+
             });
-            var settledPromises: wemQ.Promise<wemQ.PromiseState<api.content.ContentSummary>[]> = wemQ.allSettled(allPromises);
-
-            settledPromises.spread((...contentResults: wemQ.PromiseState<api.content.ContentSummary>[])=> {
-                if (!contentResults) {
-                    deferred.resolve([]);
-                    return;
-                }
-
-                var contents: api.content.ContentSummary[] = contentResults.
-                    filter(contentResult => contentResult.state === 'fulfilled').
-                    map(contentResult => contentResult.value);
-
-                deferred.resolve(contents);
-            }).done();
-
-            return deferred.promise;
         }
 
     }

@@ -5,29 +5,23 @@ module api.content {
 
     export class ResolvePublishDependenciesResult {
 
-        dependentContents: ContentPublishItem[];
-        requestedContents: ContentPublishItem[];
-        metadata: ContentMetadata;
+        dependentContents: ContentIds;
+        requestedContents: ContentIds;
         containsRemovable: boolean;
 
 
-        constructor(dependants: ContentPublishItem[], requested: ContentPublishItem[], metadata: ContentMetadata, containsRemovable: boolean) {
+        constructor(dependants: ContentIds, requested: ContentIds, containsRemovable: boolean) {
             this.dependentContents = dependants;
             this.requestedContents = requested;
-            this.metadata = metadata;
             this.containsRemovable = containsRemovable;
         }
 
-        getDependants(): ContentPublishItem[] {
+        getDependants(): ContentIds {
             return this.dependentContents;
         }
 
-        getRequested(): ContentPublishItem[] {
+        getRequested(): ContentIds {
             return this.requestedContents;
-        }
-
-        getMetadata(): ContentMetadata {
-            return this.metadata;
         }
 
         isContainsRemovable(): boolean {
@@ -36,12 +30,11 @@ module api.content {
 
         static fromJson(json: ResolvePublishContentResultJson): ResolvePublishDependenciesResult {
 
-            let dependants: ContentPublishItem[] = json.dependentContents.map(dependant => ContentPublishItem.fromJson(dependant));
-            let requested: ContentPublishItem[] = json.requestedContents.map(requested => ContentPublishItem.fromJson(requested));
-            let metadata: ContentMetadata = new ContentMetadata(json.metadata["hits"], json.metadata["totalHits"]);
+            let dependants: ContentIds = ContentIds.from(json.dependentContents.map(dependant => new ContentId(dependant.id)));
+            let requested: ContentIds = ContentIds.from(json.requestedContents.map(dependant => new ContentId(dependant.id)));
             let containsRemovable: boolean = json.containsRemovable;
 
-            return new ResolvePublishDependenciesResult(dependants, requested, metadata, containsRemovable);
+            return new ResolvePublishDependenciesResult(dependants, requested, containsRemovable);
         }
     }
 }

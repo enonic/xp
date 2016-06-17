@@ -2,8 +2,10 @@ import "../../api.ts";
 import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import CompareContentResults = api.content.CompareContentResults;
 import DialogButton = api.ui.dialog.DialogButton;
 import PublishContentRequest = api.content.PublishContentRequest;
+import ContentIds = api.content.ContentIds;
 import ResolvePublishDependenciesResult = api.content.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
@@ -127,52 +129,45 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         this.setSubTitle("Resolving items...");
 
-        return this.loadDescendants().then((dependants: ContentSummaryAndCompareStatus[]) => {
-
-            if (resetDependantItems) { // just opened or first time loading children
-                this.setDependantItems(dependants);
-            }
-            else {
-                this.filterDependantItems(dependants);
-            }
-
-            this.loadMask.hide();
-            this.enableCheckbox();
-
-            this.setStashedItems(dependants.slice());
-
-            if (this.childrenCheckbox.isChecked()) {
-                this.childrenLoaded = true;
-            }
-
-            // do not set requested contents as they are never going to change,
-            // but returned data contains less info than original summaries
-            this.childrenCheckbox.setVisible(this.doAnyHaveChildren(this.getItemList().getItems()));
-
-            this.centerMyself();
-        });
-    }
-
-    protected loadDescendants(from?: number, size?: number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
         let ids = this.getContentToPublishIds(),
-            loadChildren = this.childrenCheckbox.isChecked(),
-            resolveDependenciesRequest = api.content.ResolvePublishDependenciesRequest.
-                create().
-                setIds(ids).
-                setExcludedIds(this.excludedIds).
-                setIncludeChildren(loadChildren).
-                setFrom(from).
-                setSize(size).
-                build();
+            loadChildren = this.childrenCheckbox.isChecked();
+
+        let resolveDependenciesRequest = api.content.ResolvePublishDependenciesRequest.
+            create().
+            setIds(ids).
+            setExcludedIds(this.excludedIds).
+            setIncludeChildren(loadChildren).
+            build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
-            this.fullDependantSize = result.getMetadata().getTotalHits();
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
-            return result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
+            this.dependantIds = result.getDependants();
+            return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
+                if (resetDependantItems) { // just opened or first time loading children
+                    this.setDependantItems(dependants);
+                }
+                else {
+                    this.filterDependantItems(dependants);
+                }
+
+                this.loadMask.hide();
+                this.enableCheckbox();
+
+                this.setStashedItems(dependants.slice());
+
+                if (this.childrenCheckbox.isChecked()) {
+                    this.childrenLoaded = true;
+                }
+
+                // do not set requested contents as they are never going to change,
+                // but returned data contains less info than original summaries
+                this.childrenCheckbox.setVisible(this.doAnyHaveChildren(this.getItemList().getItems()));
+
+                this.centerMyself();
+            });
         });
     }
-
 
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
         var itemsToRemove = this.getDependantList().getItems().filter(
@@ -268,7 +263,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     protected countTotal(): number {
         return this.countToPublish(this.getItemList().getItems())
-               + this.getDependantSize();
+               + this.dependantIds.length();
     }
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
