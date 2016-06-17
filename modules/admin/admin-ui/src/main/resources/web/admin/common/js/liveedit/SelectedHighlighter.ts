@@ -20,7 +20,7 @@ module api.liveedit {
             return {
                 stroke: 'rgba(90, 148, 238, 1)',
                 strokeDasharray: style.strokeDasharray,
-                fill: isEmptyView ? 'transparent' : 'rgba(90, 148, 238, .1)' // Don't use fill on empty components
+                fill: isEmptyView ? 'transparent' : 'rgba(90, 148, 238, .2)' // Don't use fill on empty components
             };
         }
     }

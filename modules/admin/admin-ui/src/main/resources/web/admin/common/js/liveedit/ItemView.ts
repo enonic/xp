@@ -489,28 +489,32 @@ module api.liveedit {
         }
 
         handleClick(event: MouseEvent) {
+            let rightClicked = event.which === 3;
             event.stopPropagation();
 
-            if (event.which == 3) { // right click
+            if (rightClicked) { // right click
                 event.preventDefault();
             }
 
-            if (!this.isSelected() || event.which == 3) {
+            if (!this.isSelected() || rightClicked) {
                 var selectedView = this.getPageView().getSelectedView(),
                     isViewInsideSelectedContainer = this.isViewInsideSelectedContainer();
+                let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
 
-                if (selectedView) {
+                if (selectedView && isViewInsideSelectedContainer && !rightClicked) {
                     selectedView.deselect();
                 }
+
                 // Allow selecting only component types if something is selected
                 // The rest will only deselect current selection
                 // Also allow selecting the same component again (i.e. to show context menu)
                 if (!selectedView || selectedView == this || !isViewInsideSelectedContainer) {
-                    let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
-                    let rightClicked = event.which === 3;
                     let menuPosition = rightClicked ? null : ItemViewContextMenuPosition.NONE;
                     //
                     this.select(clickPosition, menuPosition, false, rightClicked);
+                }
+                else if (isViewInsideSelectedContainer && rightClicked) {
+                    SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);
                 }
             } else {
                 this.deselect();
