@@ -238,10 +238,22 @@ public final class SecurityResource
         final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
             getAll().
             includeTypes( principalTypes ).
-            searchText( query ).
-            userStore( StringUtils.isNotEmpty( storeKey ) ? UserStoreKey.from( storeKey ) : null ).
-            from( from ).
-            size( size );
+            searchText( query );
+
+        if ( StringUtils.isNotEmpty( storeKey ) )
+        {
+            principalQuery.userStore( UserStoreKey.from( storeKey ) );
+        }
+
+        if ( from != null )
+        {
+            principalQuery.from( from );
+        }
+
+        if ( size != null )
+        {
+            principalQuery.size( size );
+        }
 
         final PrincipalQueryResult result = securityService.query( principalQuery.build() );
         return new FindPrincipalsResultJson( result.getPrincipals(), result.getTotalSize() );
