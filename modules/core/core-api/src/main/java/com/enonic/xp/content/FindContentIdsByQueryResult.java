@@ -5,19 +5,19 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.aggregation.Aggregations;
 
 @Beta
-public final class FindContentByQueryResult
+public final class FindContentIdsByQueryResult
 {
     private final Aggregations aggregations;
 
-    private Contents contents;
+    private final ContentIds contentIds;
 
-    private long totalHits;
+    private final long totalHits;
 
-    private long hits;
+    private final long hits;
 
-    private FindContentByQueryResult( final Builder builder )
+    private FindContentIdsByQueryResult( final Builder builder )
     {
-        this.contents = builder.contents;
+        this.contentIds = builder.contentIds;
         this.totalHits = builder.totalHits;
         this.hits = builder.hits;
         this.aggregations = builder.aggregations;
@@ -28,9 +28,9 @@ public final class FindContentByQueryResult
         return new Builder();
     }
 
-    public Contents getContents()
+    public ContentIds getContentIds()
     {
-        return contents;
+        return contentIds;
     }
 
     public Aggregations getAggregations()
@@ -50,7 +50,7 @@ public final class FindContentByQueryResult
 
     public static final class Builder
     {
-        private Contents contents;
+        private ContentIds contentIds;
 
         private Aggregations aggregations;
 
@@ -68,9 +68,9 @@ public final class FindContentByQueryResult
             return this;
         }
 
-        public Builder contents( Contents contents )
+        public Builder contents( ContentIds contentIds )
         {
-            this.contents = contents;
+            this.contentIds = contentIds;
             return this;
         }
 
@@ -86,9 +86,9 @@ public final class FindContentByQueryResult
             return this;
         }
 
-        public FindContentByQueryResult build()
+        public FindContentIdsByQueryResult build()
         {
-            return new FindContentByQueryResult( this );
+            return new FindContentIdsByQueryResult( this );
         }
     }
 }

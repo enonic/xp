@@ -63,6 +63,15 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
+    public void fuzzy()
+        throws Exception
+    {
+        final Node node = createNodes();
+
+        queryAndAssert( node, "ngram('title', 'levneshtein~2 lvier~2', 'OR')", 2 );
+    }
+
+    @Test
     public void word_delimiter_underscore()
         throws Exception
     {

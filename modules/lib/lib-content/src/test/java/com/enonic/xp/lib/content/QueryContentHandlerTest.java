@@ -13,9 +13,9 @@ import com.enonic.xp.aggregation.DateRangeBucket;
 import com.enonic.xp.aggregation.NumericRangeBucket;
 import com.enonic.xp.aggregation.StatsAggregation;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 
 public class QueryContentHandlerTest
@@ -70,13 +70,13 @@ public class QueryContentHandlerTest
         final StatsAggregation aggr5 = StatsAggregation.create( "item_count" ).avg( 3 ).max( 5 ).min( 1 ).sum( 15 ).count( 5 ).build();
 
         final Aggregations aggregations = Aggregations.from( aggr1, aggr2, aggr3, aggr4, aggr5 );
-        final FindContentByQueryResult findResult = FindContentByQueryResult.create().
+        final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
             hits( contents.getSize() ).
             totalHits( 20 ).
             contents( contents.getIds() ).
             aggregations( aggregations ).
             build();
-        Mockito.when( this.contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findResult );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findResult );
         Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( contents );
     }
 
@@ -84,13 +84,13 @@ public class QueryContentHandlerTest
     public void queryEmpty()
         throws Exception
     {
-        final FindContentByQueryResult findResult = FindContentByQueryResult.create().
+        final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
             hits( 0 ).
             totalHits( 0 ).
             contents( ContentIds.empty() ).
             aggregations( Aggregations.empty() ).
             build();
-        Mockito.when( this.contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findResult );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findResult );
         Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
 
         runFunction( "/site/test/QueryContentHandlerTest.js", "queryEmpty" );

@@ -25,6 +25,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
@@ -33,7 +34,7 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.RenameContentParams;
@@ -86,6 +87,8 @@ public class ContentResourceTest
     extends AdminResourceTestSupport
 {
 
+    private static final UserStoreKey SYSTEM = UserStoreKey.system();
+
     private final LocalDate currentDate = LocalDate.of( 2013, 8, 23 );
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
@@ -95,8 +98,6 @@ public class ContentResourceTest
     private ContentService contentService;
 
     private SecurityService securityService;
-
-    private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
     @Override
     protected Object getResourceInstance()
@@ -861,7 +862,8 @@ public class ContentResourceTest
         json.setContentPaths( contentPaths );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
-        Mockito.when( this.contentService.find( Mockito.any() ) ).thenReturn( FindContentByQueryResult.create().totalHits( 0L ).build() );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().totalHits( 0L ).build() );
 
         assertEquals( 2L, contentResource.countContentsWithDescendants( json ) );
     }
@@ -886,7 +888,8 @@ public class ContentResourceTest
         json.setContentPaths( contentPaths );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
-        Mockito.when( this.contentService.find( Mockito.any() ) ).thenReturn( FindContentByQueryResult.create().totalHits( 0L ).build() );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().totalHits( 0L ).build() );
 
         assertEquals( 3L, contentResource.countContentsWithDescendants( json ) );
     }
