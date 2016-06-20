@@ -865,10 +865,9 @@ public final class ContentResource
     {
         final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
 
-        FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-            contentQuery(
-                ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
-            build() );
+        FindContentIdsByQueryResult result = this.contentService.find(
+            ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).
+                build() );
 
         final Boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
 

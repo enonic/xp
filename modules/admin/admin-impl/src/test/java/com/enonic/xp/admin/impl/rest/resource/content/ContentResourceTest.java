@@ -2,8 +2,10 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
@@ -12,6 +14,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
@@ -853,9 +856,9 @@ public class ContentResourceTest
     @Test
     public void countContentsWithDescendants_check_children_filtered()
     {
-        Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
+        Set<String> contentPaths = new HashSet<>( asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
 
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( contentPaths );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
@@ -868,7 +871,7 @@ public class ContentResourceTest
     @Test
     public void countContentsWithDescendants_empty_json()
     {
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( new HashSet<String>() );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
@@ -881,7 +884,7 @@ public class ContentResourceTest
     {
         Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/b", "/root/c" ) );
 
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( contentPaths );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
