@@ -10,6 +10,8 @@ module api.content.form.inputtype.image {
 
         private content: ContentSummary;
 
+        private empty: boolean;
+
         constructor() {
         }
 
@@ -19,6 +21,19 @@ module api.content.form.inputtype.image {
 
         static fromContentSummary(content: ContentSummary) {
             return new ImageSelectorDisplayValue().setContentSummary(content);
+        }
+
+        static makeEmpty() {
+            return new ImageSelectorDisplayValue().setEmpty(true);
+        }
+
+        isEmptyContent(): boolean {
+            return this.empty;
+        }
+
+        setEmpty(value: boolean): ImageSelectorDisplayValue {
+            this.empty = value;
+            return this;
         }
 
         setUploadItem(item: UploadItem<ContentSummary>): ImageSelectorDisplayValue {
