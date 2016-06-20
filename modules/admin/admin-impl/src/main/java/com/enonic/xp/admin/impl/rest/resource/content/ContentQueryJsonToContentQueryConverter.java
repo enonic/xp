@@ -56,8 +56,14 @@ public class ContentQueryJsonToContentQueryConverter
             {
                 final List<ContentId> ids = Lists.arrayList();
 
-                content.getData().getProperties( ValueTypes.REFERENCE ).forEach(
-                    property -> ids.add( ContentId.from( property.getValue().toString() ) ) );
+                content.getData().getProperties( ValueTypes.REFERENCE ).forEach( property -> {
+                                                                                     if ( !content.getId().toString().equals(
+                                                                                         property.getValue().toString() ) )
+                                                                                     {
+                                                                                         ids.add( ContentId.from(
+                                                                                             property.getValue().toString() ) );
+                                                                                     }
+                                                                                 } );
 
                 //TODO: no need to filter when we fix that removed content will be removed from references
                 builder.filterContentIds( getExistingContentIds( ContentIds.from( ids ) ) );

@@ -6,7 +6,6 @@ module api.liveedit.fragment {
     import Content = api.content.Content;
     import LayoutComponentType = api.content.page.region.LayoutComponentType;
     import QueryExpr = api.query.expr.QueryExpr;
-    import CompareExpr = api.query.expr.CompareExpr;
     import FieldExpr = api.query.expr.FieldExpr;
     import ValueExpr = api.query.expr.ValueExpr;
 
