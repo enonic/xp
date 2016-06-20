@@ -99,7 +99,7 @@ module api.ui.selector.combobox {
             return new SelectedOption<T>(new BaseSelectedOptionView(option), this.count());
         }
 
-        addOption(option: api.ui.selector.Option<T>, silent: boolean = false): boolean {
+        addOption(option: api.ui.selector.Option<T>, silent: boolean = false, keyCode: number): boolean {
 
             if (this.isSelected(option) || this.maximumOccurrencesReached()) {
                 return false;
@@ -114,7 +114,7 @@ module api.ui.selector.combobox {
             this.appendChild(selectedOption.getOptionView());
 
             if (!silent) {
-                this.notifyOptionSelected(new SelectedOptionEvent(selectedOption));
+                this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
             }
 
             return true;

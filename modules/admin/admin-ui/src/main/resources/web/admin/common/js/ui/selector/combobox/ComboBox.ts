@@ -395,7 +395,7 @@ module api.ui.selector.combobox {
                 this.input.setValue("");
                 this.hideDropdown();
             } else {
-                this.handleRowSelected(index);
+                this.handleRowSelected(index, keyCode);
                 this.input.setValue("");
             }
         }
@@ -573,6 +573,10 @@ module api.ui.selector.combobox {
                 event.stopPropagation();
             });
 
+            this.getComboBoxDropdownGrid().onClick(() => {
+                this.giveInputFocus();
+            });
+
             this.input.onClicked((event: MouseEvent) => {
                 this.giveInputFocus();
                 event.stopPropagation();
@@ -743,7 +747,9 @@ module api.ui.selector.combobox {
                 break;
             }
 
-            this.input.giveFocus()
+            if (event.which !== 13) {
+                this.input.giveFocus();
+            }
         }
 
         private isSelectedRowReadOnly(): boolean {
@@ -781,7 +787,6 @@ module api.ui.selector.combobox {
         }
 
         private handleMultipleSelectionChanged(event: DropdownGridMultipleSelectionEvent) {
-            this.input.giveFocus();
             if (this.isSelectionChanged()) {
                 this.applySelectionsButton.show();
                 this.updateSelectionDelta();
