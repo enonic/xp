@@ -638,6 +638,7 @@ module api.liveedit {
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
                rightClicked: boolean = false) {
+            Highlighter.get().hide();
             this.selectItem();
             this.showContextMenu(clickPosition, menuPosition);
             new ItemViewSelectedEvent(this, clickPosition, isNew, rightClicked).fire();
