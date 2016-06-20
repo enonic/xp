@@ -7,10 +7,15 @@ module api.content {
 
         dependentContents: ContentPublishItem[];
         requestedContents: ContentPublishItem[];
+        metadata: ContentMetadata;
+        containsRemovable: boolean;
 
-        constructor(dependants: ContentPublishItem[], requested: ContentPublishItem[]) {
+
+        constructor(dependants: ContentPublishItem[], requested: ContentPublishItem[], metadata: ContentMetadata, containsRemovable: boolean) {
             this.dependentContents = dependants;
             this.requestedContents = requested;
+            this.metadata = metadata;
+            this.containsRemovable = containsRemovable;
         }
 
         getDependants(): ContentPublishItem[] {
@@ -21,12 +26,22 @@ module api.content {
             return this.requestedContents;
         }
 
+        getMetadata(): ContentMetadata {
+            return this.metadata;
+        }
+
+        isContainsRemovable(): boolean {
+            return this.containsRemovable;
+        }
+
         static fromJson(json: ResolvePublishContentResultJson): ResolvePublishDependenciesResult {
 
-            let dependats: ContentPublishItem[] = json.dependentContents.map(dependant => ContentPublishItem.fromJson(dependant));
+            let dependants: ContentPublishItem[] = json.dependentContents.map(dependant => ContentPublishItem.fromJson(dependant));
             let requested: ContentPublishItem[] = json.requestedContents.map(requested => ContentPublishItem.fromJson(requested));
+            let metadata: ContentMetadata = new ContentMetadata(json.metadata["hits"], json.metadata["totalHits"]);
+            let containsRemovable: boolean = json.containsRemovable;
 
-            return new ResolvePublishDependenciesResult(dependats, requested);
+            return new ResolvePublishDependenciesResult(dependants, requested, metadata, containsRemovable);
         }
     }
 }

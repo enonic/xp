@@ -2,10 +2,8 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
@@ -14,7 +12,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
@@ -33,7 +30,6 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.RenameContentParams;
@@ -858,45 +854,6 @@ public class ContentResourceTest
         Mockito.verify( contentService, Mockito.times( 1 ) ).reorderChildren( Mockito.isA( ReorderChildContentsParams.class ) );
 
         assertJson( "reorder_children_success.json", jsonString );
-    }
-
-    @Test
-    public void countContentsWithDescendants_check_children_filtered()
-    {
-        Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
-
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
-        json.setContentPaths( contentPaths );
-
-        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
-        Mockito.when( this.contentService.find( Mockito.any() ) ).thenReturn( FindContentByQueryResult.create().totalHits( 0L ).build() );
-
-        assertEquals( 2L, contentResource.countContentsWithDescendants( json ) );
-    }
-
-    @Test
-    public void countContentsWithDescendants_empty_json()
-    {
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
-        json.setContentPaths( new HashSet<String>() );
-
-        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
-
-        assertEquals( 0L, contentResource.countContentsWithDescendants( json ) );
-    }
-
-    @Test
-    public void countContentsWithDescendants_no_children()
-    {
-        Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/b", "/root/c" ) );
-
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
-        json.setContentPaths( contentPaths );
-
-        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
-        Mockito.when( this.contentService.find( Mockito.any() ) ).thenReturn( FindContentByQueryResult.create().totalHits( 0L ).build() );
-
-        assertEquals( 3L, contentResource.countContentsWithDescendants( json ) );
     }
 
     @Test

@@ -4,6 +4,7 @@ import {DependantItemViewer} from "./DependantItemViewer";
 
 import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentSummary = api.content.ContentSummary;
+import GetDescendantsOfContents = api.content.GetDescendantsOfContents;
 import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -11,8 +12,11 @@ import BrowseItem = api.app.browse.BrowseItem;
 import SelectionItem = api.app.browse.SelectionItem;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
+import DialogButton = api.ui.dialog.DialogButton;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
+
+    protected actionButton: DialogButton;
 
     private dialogName: string;
 
@@ -31,6 +35,14 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     private dependantList: ListBox<ContentSummaryAndCompareStatus>;
 
     protected loadMask: LoadMask;
+
+    protected loading: boolean = false;
+
+    protected loadingRequested: boolean = false;
+
+    protected previousScrollTop: number;
+
+    protected fullDependantSize: number;
 
     constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
         super({
@@ -77,6 +89,15 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.appendChildToContentPanel(this.dependantsContainer);
 
         this.initLoadMask();
+
+        this.getContentPanel().onScrolled(() => {
+            this.doPostLoad();
+        });
+
+        this.getContentPanel().onScroll(() => {
+            this.doPostLoad();
+        });
+
     }
 
     private initLoadMask() {
@@ -99,6 +120,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         return this.dependantList;
     }
 
+    protected getDependantSize(): number {
+        return this.fullDependantSize;
+    }
+
     protected isIgnoreItemsChanged(): boolean {
         return this.ignoreItemsChanged;
     }
@@ -117,8 +142,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     close() {
         super.close();
         this.remove();
-        this.itemList.clearItems();
-        this.dependantList.clearItems();
+        this.itemList.clearItems(true);
+        this.dependantList.clearItems(true);
     }
 
     setAutoUpdateTitle(value: boolean) {
@@ -136,26 +161,98 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dependantList.setItems(items);
     }
 
+    addDependantItems(items: ContentSummaryAndCompareStatus[]) {
+        this.dependantList.addItems(items);
+    }
+
     setSubTitle(text: string) {
         this.subTitle.setHtml(text);
     }
 
-    protected loadDescendants(summaries: ContentSummaryAndCompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        return new api.content.GetDescendantsOfContents()
-            .setContentPaths(summaries.map(summary => summary.getContentSummary().getPath())).sendAndParse()
+    protected updateButtonCount(actionString: string, count: number) {
+        this.actionButton.setLabel(count > 1 ? actionString + "(" + count + ")" : actionString);
+    }
+
+    protected loadDescendants(from?: number,
+                              size?: number, filterStatuses?: CompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+
+        let contents = this.getItemList().getItems();
+
+        return new api.content.GetDescendantsOfContents().setFrom(from).setSize(size).
+            setContentPaths(contents.map(content => content.getContentSummary().getPath())).
+            setFilterStatuses(filterStatuses).sendAndParse()
             .then((result: api.content.ContentResponse<ContentSummary>) => {
 
-                let ids = summaries.map(contentAndStatus => contentAndStatus.getContentId().toString()),
-                    contents = result.getContents().filter((item) => {
-                        return ids.indexOf(item.getContentId().toString()) < 0;
-                    });
+                this.fullDependantSize = result.getMetadata().getTotalHits();
 
-                return api.content.CompareContentRequest.fromContentSummaries(contents).sendAndParse()
+                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
                     .then((compareContentResults: api.content.CompareContentResults) => {
                         return ContentSummaryAndCompareStatusFetcher
-                            .updateCompareStatus(contents, compareContentResults);
+                            .updateCompareStatus(result.getContents(), compareContentResults);
                     });
             });
+    }
+
+    protected countTotal(): number {
+        return this.getItemList().getItemCount()
+               + this.getDependantSize();
+    }
+
+    private doPostLoad() {
+        if (this.previousScrollTop != this.getContentPanel().getEl().getScrollTop()) {
+            setTimeout(this.postLoad.bind(this), 100);
+        }
+    }
+
+    protected postLoad() {
+        let lastVisible;
+
+        this.previousScrollTop = this.getContentPanel().getEl().getScrollTop();
+
+        let start = this.getContentPanel().getEl().getOffsetTop();
+        let end = this.getContentPanel().getEl().getHeight() + start;
+
+        let items = this.getDependantList().getItemViews();
+
+        let visibleItems = [];
+
+        for (let key in items) {
+            let position = items[key].getEl().getOffsetTop();
+            if (position >= start && position <= end) {
+                visibleItems.push(items[key]);
+            }
+        }
+
+        lastVisible = items.indexOf(visibleItems[visibleItems.length - 1]);
+
+        let size = this.getDependantList().getItemCount();
+
+        if (!this.loading) {
+            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.fullDependantSize) {
+
+                this.loading = true;
+
+                this.loadDescendants(size, GetDescendantsOfContents.LOAD_SIZE).then((newItems) => {
+
+                    this.addDependantItems(newItems);
+                    this.loading = false;
+                    if (this.loadingRequested) {
+                        this.loadingRequested = false;
+                        this.postLoad();
+                    }
+                });
+            }
+        } else {
+            this.loadingRequested = true;
+        }
+    }
+
+    protected showLoadingSpinner() {
+        this.actionButton.addClass("spinner");
+    }
+
+    protected hideLoadingSpinner() {
+        this.actionButton.removeClass("spinner");
     }
 
 }
