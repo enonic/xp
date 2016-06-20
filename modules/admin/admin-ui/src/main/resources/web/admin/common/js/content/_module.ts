@@ -90,6 +90,8 @@
 ///<reference path='CreateContentFilter.ts' />
 ///<reference path='CountContentsWithDescendantsRequest.ts' />
 ///<reference path='GetDescendantsOfContents.ts' />
+///<reference path='ContentsExistRequest.ts' />
+///<reference path='ContentsExistResult.ts' />
 
 ///<reference path='OrderExpr.ts' />
 ///<reference path='DynamicOrderExpr.ts' />

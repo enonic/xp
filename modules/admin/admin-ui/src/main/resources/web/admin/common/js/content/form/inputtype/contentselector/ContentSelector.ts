@@ -47,7 +47,11 @@ module api.content.form.inputtype.contentselector {
 
                 var selectedContentIdsMap: {} = {};
                 this.contentComboBox.getSelectedOptionView().getSelectedOptions().forEach(
-                    (selectedOption: any) => selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "");
+                    (selectedOption: any) => {
+                        if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = ""
+                        }
+                    });
 
                 event.getDeletedItems().
                     filter(deletedItem => !deletedItem.isPending() &&
@@ -118,7 +122,14 @@ module api.content.form.inputtype.contentselector {
                 .setLoader(contentSelectorLoader)
                 .setValue(value)
                 .setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader))
+                .setDisplayMissingSelectedOptions(true)
+                .setRemoveMissingSelectedOptions(true)
                 .build();
+
+            this.contentComboBox.getComboBox().onContentMissing((ids: string[]) => {
+                ids.forEach(id => this.removePropertyWithId(id));
+                this.validate(false);
+            });
 
             return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).
                 sendAndParse().
@@ -167,6 +178,16 @@ module api.content.form.inputtype.contentselector {
                 });
         }
 
+        private removePropertyWithId(id: string) {
+            var length = this.getPropertyArray().getSize();
+            for (let i = 0; i < length; i++) {
+                if (this.getPropertyArray().get(i).getValue().getString() == id) {
+                    this.getPropertyArray().remove(i);
+                    api.notify.NotifyManager.get().showWarning('Removed missing reference with id=' + id);
+                    break;
+                }
+            }
+        }
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
             return super.update(propertyArray, unchangedOnly).then(() => {

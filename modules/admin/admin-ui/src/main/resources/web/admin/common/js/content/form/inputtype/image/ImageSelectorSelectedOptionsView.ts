@@ -75,7 +75,12 @@ module api.content.form.inputtype.image {
             var selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
             this.getSelectedOptions().push(selectedOption);
 
-            var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
+            var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView(),
+                isMissingContent = option.displayValue.isEmptyContent();
+
+            if (isMissingContent) {
+                optionView.showError("No access to image.");
+            }
 
             optionView.onClicked((event: MouseEvent) => {
 
@@ -157,7 +162,7 @@ module api.content.form.inputtype.image {
                 this.notifyOptionSelected(selectedOption);
             }
 
-            new Tooltip(optionView, option.displayValue.getPath(), 1000);
+            new Tooltip(optionView, isMissingContent ? option.value : option.displayValue.getPath(), 1000);
         }
 
         updateUploadedOption(option: Option<ImageSelectorDisplayValue>) {
@@ -170,6 +175,13 @@ module api.content.form.inputtype.image {
             };
 
             selectedOption.getOptionView().setOption(newOption);
+        }
+
+        makeEmptyOption(id: string): Option<ImageSelectorDisplayValue> {
+            return <Option<ImageSelectorDisplayValue>>{
+                value: id,
+                displayValue: ImageSelectorDisplayValue.makeEmpty()
+            };
         }
 
         private uncheckOthers(option: SelectedOption<ImageSelectorDisplayValue>) {
@@ -212,8 +224,18 @@ module api.content.form.inputtype.image {
             var showToolbar = this.selection.length > 0;
             this.toolbar.setVisible(showToolbar);
             if (showToolbar) {
-                this.toolbar.setSelectionCount(this.selection.length);
+                this.toolbar.setSelectionCount(this.selection.length, this.getNumberOfEditableOptions());
             }
+        }
+
+        private getNumberOfEditableOptions(): number {
+            var count = 0;
+            this.selection.forEach(selectedOption => {
+                if (!selectedOption.getOption().displayValue.isEmptyContent()) {
+                    count++;
+                }
+            });
+            return count;
         }
 
         private hideImageSelectorDialog() {
