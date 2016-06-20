@@ -3,6 +3,15 @@ svg.@{_CLS_PREFIX}highlighter {
   pointer-events: none;
   position: absolute;
 
+  &.crosshair {
+    rect {
+      stroke-width: 0.5;
+    }
+    path {
+      opacity: 0.2;
+    }
+  }
+
   rect {
     stroke-width: 2;
 

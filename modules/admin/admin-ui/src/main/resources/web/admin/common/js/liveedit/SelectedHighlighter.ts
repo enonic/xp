@@ -18,7 +18,7 @@ module api.liveedit {
 
         protected preProcessStyle(style: api.liveedit.HighlighterStyle, isEmptyView: boolean): api.liveedit.HighlighterStyle {
             return {
-                stroke: 'rgba(90, 148, 238, 1)',
+                stroke: 'rgba(11, 104, 249, 1)',
                 strokeDasharray: style.strokeDasharray,
                 fill: isEmptyView ? 'transparent' : 'rgba(90, 148, 238, .2)' // Don't use fill on empty components
             };

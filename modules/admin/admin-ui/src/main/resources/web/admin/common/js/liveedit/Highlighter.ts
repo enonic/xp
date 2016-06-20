@@ -27,8 +27,8 @@ module api.liveedit {
                        </svg>`;
 
             super(new api.dom.ElementFromHelperBuilder().
-                setHelper(api.dom.Element.fromString(html).getEl()).
-                setLoadExistingChildren(true));
+            setHelper(api.dom.Element.fromString(html).getEl()).
+            setLoadExistingChildren(true));
 
             this.setMode(type || HighlighterMode.RECTANGLE);
 
@@ -148,6 +148,7 @@ module api.liveedit {
                     .setAttribute('height', h + '')
                     .setAttribute('x', left + '')
                     .setAttribute('y', top + '')
+                    .setStroke(style.stroke)
                     .setFill(style.fill);
                 
                 this.getEl().setWidthPx(screenW).setHeightPx(screenH).setTopPx(0).setLeftPx(0);
