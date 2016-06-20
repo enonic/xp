@@ -6,8 +6,7 @@ import java.util.Set;
 
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.query.aggregation.AggregationQuery;
@@ -56,10 +55,7 @@ public final class QueryContentHandler
             queryExpr( queryExpr ).
             build();
 
-        final FindContentByQueryParams queryParams = FindContentByQueryParams.create().
-            contentQuery( contentQuery ).build();
-
-        final FindContentByQueryResult queryResult = contentService.find( queryParams );
+        final FindContentIdsByQueryResult queryResult = contentService.find( contentQuery );
 
         return convert( queryResult );
     }
@@ -73,7 +69,7 @@ public final class QueryContentHandler
         return ContentTypeNames.from( this.contentTypes );
     }
 
-    private ContentsResultMapper convert( final FindContentByQueryResult findQueryResult )
+    private ContentsResultMapper convert( final FindContentIdsByQueryResult findQueryResult )
     {
         final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( findQueryResult.getContentIds() ) );
 

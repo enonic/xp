@@ -26,6 +26,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByQueryResult;
@@ -461,9 +462,21 @@ public class AbstractContentServiceTest
 
     protected void assertOrder( final FindContentByQueryResult result, final Content... expectedOrder )
     {
-        assertEquals( "Expected [" + expectedOrder.length + "] number of hits in result", expectedOrder.length, result.getHits() );
+        final ContentIds contentIds = result.getContents().getIds();
 
-        final Iterator<ContentId> iterator = result.getContentIds().iterator();
+        doAssertOrder( contentIds, expectedOrder );
+    }
+
+    protected void assertOrder( final ContentIds contentIds, final Content... expectedOrder )
+    {
+        doAssertOrder( contentIds, expectedOrder );
+    }
+
+    private void doAssertOrder( final ContentIds contentIds, final Content[] expectedOrder )
+    {
+        assertEquals( "Expected [" + expectedOrder.length + "] number of hits in result", expectedOrder.length, contentIds.getSize() );
+
+        final Iterator<ContentId> iterator = contentIds.iterator();
 
         for ( final Content content : expectedOrder )
         {

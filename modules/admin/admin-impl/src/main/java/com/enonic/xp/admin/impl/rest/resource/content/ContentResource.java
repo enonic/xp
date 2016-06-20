@@ -115,8 +115,7 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
@@ -914,10 +913,7 @@ public final class ContentResource
             build();
 
         final ContentIconUrlResolver iconUrlResolver = contentIconUrlResolver;
-        final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
-            populateChildren( getChildrenIds ).
-            contentQuery( selectorQueryProcessor.createQuery() ).
-            build() );
+        final FindContentIdsByQueryResult findResult = contentService.find( selectorQueryProcessor.createQuery() );
 
         return FindContentByQuertResultJsonFactory.create().
             contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).
@@ -945,9 +941,7 @@ public final class ContentResource
                 relationshipTypeService( this.relationshipTypeService ).
                 build();
 
-        final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
-            contentQuery( selectorQueryProcessor.createQuery() ).
-            build() );
+        final FindContentIdsByQueryResult findResult = contentService.find( selectorQueryProcessor.createQuery() );
 
         return FindContentByQuertResultJsonFactory.create().
             contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).
@@ -1284,9 +1278,8 @@ public final class ContentResource
 
     private long countChildren( final ContentPaths contentsPaths )
     {
-        FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-            contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
-            build() );
+        FindContentIdsByQueryResult result =
+            this.contentService.find( ContentQuery.create().size( 0 ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() );
 
         return result.getTotalHits();
     }

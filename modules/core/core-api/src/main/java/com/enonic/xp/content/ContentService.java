@@ -57,7 +57,10 @@ public interface ContentService
 
     FindContentByParentResult findByParent( FindContentByParentParams params );
 
+    @Deprecated
     FindContentByQueryResult find( FindContentByQueryParams params );
+
+    FindContentIdsByQueryResult find( final ContentQuery query );
 
     CompareContentResult compare( CompareContentParams params );
 
