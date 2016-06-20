@@ -44,6 +44,7 @@ import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
+import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
@@ -704,10 +705,23 @@ public final class ContentResource
     public List<ContentPermissionsJson> getPermissionsByIds( final ContentIdsJson params )
     {
         final List<ContentPermissionsJson> result = new ArrayList<>();
-        for ( String contentId : params.getContentIds() )
+        for ( final ContentId contentId : params.getContentIds() )
         {
-            final AccessControlList permissions = contentService.getPermissionsById( ContentId.from( contentId ) );
-            result.add( new ContentPermissionsJson( contentId, permissions, principalsResolver ) );
+            final AccessControlList permissions = contentService.getPermissionsById( contentId );
+            result.add( new ContentPermissionsJson( contentId.toString(), permissions, principalsResolver ) );
+        }
+
+        return result;
+    }
+
+    @POST
+    @Path("contentsExist")
+    public ContentsExistJson contentsExist( final ContentIdsJson params )
+    {
+        final ContentsExistJson result = new ContentsExistJson();
+        for ( final ContentId contentId : params.getContentIds() )
+        {
+            result.add( contentId, contentService.contentExists( contentId ) );
         }
 
         return result;

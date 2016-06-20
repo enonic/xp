@@ -180,6 +180,13 @@ module api.ui.selector.combobox {
             this.list.forEach((selectedOption: SelectedOption<T>, index: number) => selectedOption.setIndex(index));
         }
 
+        makeEmptyOption(id: string): Option<T> {
+            return <Option<T>>{
+                value: id,
+                displayValue: null
+            };
+        }
+
         protected notifyOptionDeselected(removed: SelectedOption<T>) {
             this.optionRemovedListeners.forEach((listener) => {
                 listener(removed);

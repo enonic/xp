@@ -2,17 +2,21 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.enonic.xp.content.ContentIds;
+
 public class ContentIdsJson
 {
-    private List<String> contentIds;
+    private ContentIds contentIds;
 
-    public List<String> getContentIds()
+    public ContentIdsJson( @JsonProperty("contentIds") final List<String> contentIds )
     {
-        return contentIds;
+        this.contentIds = ContentIds.from( contentIds );
     }
 
-    public void setContentIds( final List<String> contentIds )
+    public ContentIds getContentIds()
     {
-        this.contentIds = contentIds;
+        return contentIds;
     }
 }

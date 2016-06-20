@@ -23,7 +23,9 @@ module api.content.form.inputtype.image {
                 setOptionDisplayValueViewer(new ImageSelectorViewer()).
                 setDelayedInputValueChangedHandling(750).
                 setValue(builder.value).
-                setMinWidth(builder.minWidth);
+                setMinWidth(builder.minWidth).
+                setRemoveMissingSelectedOptions(true).
+                setDisplayMissingSelectedOptions(true);
 
             // Actually the hack.
             // ImageSelectorSelectedOptionsView and BaseSelectedOptionsView<ContentSummary> are incompatible in loaders.
