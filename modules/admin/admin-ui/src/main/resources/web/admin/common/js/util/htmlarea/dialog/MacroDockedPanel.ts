@@ -19,7 +19,7 @@ module api.util.htmlarea.dialog {
         private static CONFIGURATION_TAB_NAME: string = "Configuration";
         private static PREVIEW_TAB_NAME: string = "Preview";
         private static MACRO_FORM_INCOMPLETE_MES: string = "Macro configuration is not complete";
-        private static PREVIEW_LOAD_ERROR_MESSAGE: string = "An error occured while loading preview";
+        private static PREVIEW_LOAD_ERROR_MESSAGE: string = "An error occurred while loading preview";
 
         private configPanel: Panel;
         private previewPanel: Panel;
@@ -33,6 +33,8 @@ module api.util.htmlarea.dialog {
 
         private formValueChangedHandler: () => void;
 
+        private panelRenderedListeners: {():void}[] = [];
+
         constructor(contentPath: api.content.ContentPath) {
             super();
             this.contentPath = contentPath;
@@ -43,6 +45,7 @@ module api.util.htmlarea.dialog {
             this.macroLoadMask = new api.ui.mask.LoadMask(this.previewPanel);
             this.appendChild(this.macroLoadMask);
 
+            this.handleConfigPanelShowEvent();
             this.handlePreviewPanelShowEvent();
 
             this.formValueChangedHandler = () => {
@@ -73,10 +76,18 @@ module api.util.htmlarea.dialog {
                         }).finally(() => {
                             this.macroLoadMask.hide();
                         });
+                    } else {
+                        this.notifyPanelRendered();
                     }
                 } else {
                     this.renderPreviewWithMessage(MacroDockedPanel.MACRO_FORM_INCOMPLETE_MES);
                 }
+            });
+        }
+
+        private handleConfigPanelShowEvent() {
+            this.configPanel.onShown(() => {
+                this.notifyPanelRendered();
             });
         }
 
@@ -93,7 +104,8 @@ module api.util.htmlarea.dialog {
         private fetchMacroString(): wemQ.Promise<string> {
             this.macroLoadMask.show();
 
-            return new api.macro.resource.GetPreviewStringRequest(new api.data.PropertyTree(this.data), this.macroDescriptor.getKey()).sendAndParse();
+            return new api.macro.resource.GetPreviewStringRequest(new api.data.PropertyTree(this.data),
+                this.macroDescriptor.getKey()).sendAndParse();
         }
 
         public getMacroPreviewString(): wemQ.Promise<string> {
@@ -122,12 +134,27 @@ module api.util.htmlarea.dialog {
 
         private renderPreview(macroPreview: MacroPreview) {
             if (macroPreview.getPageContributions().hasAtLeastOneScript()) { // render in iframe if there are scripts to be included for preview rendering
-                this.previewPanel.appendChild(new MacroPreviewFrame(macroPreview));
+                this.previewPanel.appendChild(this.makePreviewFrame(macroPreview));
             } else {
                 var appendMe = new api.dom.DivEl("preview-content");
                 appendMe.setHtml(macroPreview.getHtml(), false);
                 this.previewPanel.appendChild(appendMe)
+                this.notifyPanelRendered();
             }
+        }
+
+        private makePreviewFrame(macroPreview: MacroPreview): MacroPreviewFrame {
+            var previewFrame = new MacroPreviewFrame(macroPreview),
+                previewFrameRenderedHandler: () => void = () => {
+                    this.notifyPanelRendered();
+                };
+
+            previewFrame.onPreviewRendered(previewFrameRenderedHandler);
+            previewFrame.onRemoved(() => {
+                previewFrame.unPreviewRendered(previewFrameRenderedHandler);
+            });
+
+            return previewFrame;
         }
 
         public validateMacroForm(): boolean {
@@ -173,6 +200,22 @@ module api.util.htmlarea.dialog {
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
         }
+
+        onPanelRendered(listener: () => void) {
+            this.panelRenderedListeners.push(listener);
+        }
+
+        unPanelRendered(listener: () => void) {
+            this.panelRenderedListeners = this.panelRenderedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyPanelRendered() {
+            this.panelRenderedListeners.forEach((listener) => {
+                listener();
+            })
+        }
     }
 
     export class MacroPreviewFrame extends api.dom.IFrameEl {
@@ -182,6 +225,8 @@ module api.util.htmlarea.dialog {
         private debouncedResizeHandler: () => void = api.util.AppHelper.debounce(() => {
             this.adjustFrameHeight();
         }, 300, false);
+
+        private previewRenderedListeners: {():void}[] = [];
 
         constructor(macroPreview: MacroPreview) {
             super("preview-iframe");
@@ -223,6 +268,7 @@ module api.util.htmlarea.dialog {
                 this.getEl().setHeightPx(scrollHeight > 150
                     ? frameWindow.document.body.scrollHeight
                     : wemjq("#" + this.id).contents().find('body').outerHeight());
+                this.notifyPreviewRendered();
             } catch (error) {
             }
         }
@@ -235,6 +281,22 @@ module api.util.htmlarea.dialog {
             result += macroPreview.getHtml();
             macroPreview.getPageContributions().getBodyEnd().forEach(script => result += script);
             return result;
+        }
+
+        onPreviewRendered(listener: () => void) {
+            this.previewRenderedListeners.push(listener);
+        }
+
+        unPreviewRendered(listener: () => void) {
+            this.previewRenderedListeners = this.previewRenderedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyPreviewRendered() {
+            this.previewRenderedListeners.forEach((listener) => {
+                listener();
+            })
         }
     }
 }
