@@ -5,6 +5,7 @@ module api.app.bar {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
     import TabMenuItem = api.ui.tab.TabMenuItem;
+    import HideTabMenuEvent = api.ui.tab.HideTabMenuEvent;
 
     export class AppBarTabMenu extends api.ui.tab.TabMenu {
 
@@ -89,15 +90,20 @@ module api.app.bar {
             this.updateTabMenuButtonVisibility();
         }
 
-        createTabMenuButton(): AppBarTabMenuButton {
+        protected createTabMenuButton(): AppBarTabMenuButton {
             this.appBarTabMenuButton = new AppBarTabMenuButton();
             return this.appBarTabMenuButton;
         }
 
-        setButtonLabel(value: string): AppBarTabMenu {
+        protected setButtonLabel(value: string): AppBarTabMenu {
             super.setButtonLabel(value);
             this.notifyButtonLabelChanged();
             return this;
+        }
+
+        protected handleClick(e: MouseEvent) {
+            e.preventDefault();
+            new HideTabMenuEvent(this).fire();
         }
 
         addNavigationItem(tab: AppBarTabMenuItem) {
