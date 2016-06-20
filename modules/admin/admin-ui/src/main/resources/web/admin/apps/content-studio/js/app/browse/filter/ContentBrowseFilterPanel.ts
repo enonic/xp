@@ -1,4 +1,7 @@
 import "../../../api.ts";
+import {ContentBrowseResetEvent} from "./ContentBrowseResetEvent";
+import {ContentBrowseSearchEvent} from "./ContentBrowseSearchEvent";
+import {ContentBrowseRefreshEvent} from "./ContentBrowseRefreshEvent";
 
 import ContentQueryRequest = api.content.ContentQueryRequest;
 import ContentTypeName = api.schema.content.ContentTypeName;
@@ -29,9 +32,6 @@ import QueryField = api.query.QueryField;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 import ActionButton = api.ui.button.ActionButton;
 import Action = api.ui.Action;
-import {ContentBrowseResetEvent} from "./ContentBrowseResetEvent";
-import {ContentBrowseSearchEvent} from "./ContentBrowseSearchEvent";
-import {ContentBrowseRefreshEvent} from "./ContentBrowseRefreshEvent";
 
 export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
@@ -385,7 +385,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private appendContentTypesAggregationQuery(contentQuery) {
         contentQuery.addAggregationQuery(this.createTermsAggregation((ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME),
-            QueryField.CONTENT_TYPE, 30));
+            QueryField.CONTENT_TYPE, 0));
     }
 
     private createTermsAggregation(name: string, fieldName: string, size: number): TermsAggregationQuery {

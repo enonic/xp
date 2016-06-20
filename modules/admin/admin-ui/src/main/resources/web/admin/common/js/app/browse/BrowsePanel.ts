@@ -46,6 +46,8 @@ module api.app.browse {
 
         private toggleFilterPanelAction: api.ui.Action;
 
+        private toggleFilterPanelButton: api.ui.button.ActionButton;
+
         constructor(params: BrowsePanelParams<M>) {
             super();
 
@@ -178,6 +180,7 @@ module api.app.browse {
             this.filterAndGridSplitPanel.showFirstPanel();
             this.filterPanel.giveFocusToSearch();
             this.toggleFilterPanelAction.setVisible(false);
+            this.toggleFilterPanelButton.removeClass("filtered");
         }
 
         private hideFilterPanel() {
@@ -187,6 +190,10 @@ module api.app.browse {
             this.filterAndGridSplitPanel.hideFirstPanel();
 
             this.toggleFilterPanelAction.setVisible(true);
+            if (this.filterPanel.hasFilterSet()) {
+                this.toggleFilterPanelButton.addClass("filtered");
+            }
+
         }
 
         private setupFilterPanel() {
@@ -207,7 +214,7 @@ module api.app.browse {
             this.toggleFilterPanelAction = new api.app.browse.action.ToggleFilterPanelAction(this);
             var existingActions: api.ui.Action[] = this.browseToolbar.getActions();
             this.browseToolbar.removeActions();
-            this.browseToolbar.addAction(this.toggleFilterPanelAction);
+            this.toggleFilterPanelButton = this.browseToolbar.addAction(this.toggleFilterPanelAction);
             this.browseToolbar.addActions(existingActions);
             this.toggleFilterPanelAction.setVisible(false);
         }

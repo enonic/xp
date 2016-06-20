@@ -35,6 +35,9 @@ module api.ui.selector.combobox {
 
         noOptionsText?: string;
 
+        displayMissingSelectedOptions?: boolean
+
+        removeMissingSelectedOptions?: boolean
     }
 
     export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -69,9 +72,15 @@ module api.ui.selector.combobox {
 
         private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
 
+        private contentMissingListeners: {(ids: string[]): void}[] = [];
+
         private selectiondDelta = [];
 
         private noOptionsText: string;
+
+        private displayMissingSelectedOptions: boolean = false;
+
+        private removeMissingSelectedOptions: boolean = false;
 
         public static debug: boolean = false;
 
@@ -100,6 +109,14 @@ module api.ui.selector.combobox {
 
             if (config.minWidth) {
                 this.minWidth = config.minWidth;
+            }
+
+            if (config.displayMissingSelectedOptions) {
+                this.displayMissingSelectedOptions = config.displayMissingSelectedOptions;
+            }
+
+            if (config.removeMissingSelectedOptions) {
+                this.removeMissingSelectedOptions = config.removeMissingSelectedOptions;
             }
 
             this.noOptionsText = config.noOptionsText;
@@ -263,12 +280,72 @@ module api.ui.selector.combobox {
                 this.clearSelection(false, false, true);
             }
 
+            if (this.displayMissingSelectedOptions || this.removeMissingSelectedOptions) {
+                this.selectExistingAndHandleMissing(value);
+            } else {
+                this.selectExistingOptions(value);
+            }
+        }
+
+        private selectExistingOptions(value: string) {
             this.splitValues(value).forEach((val) => {
                 var option = this.getOptionByValue(val);
                 if (option != null) {
                     this.selectOption(option, true);
                 }
             });
+        }
+
+        private selectExistingAndHandleMissing(value: string) {
+            var optionIds = this.splitValues(value),
+                missingOptionIds = this.getMissingOptionsIds(optionIds),
+                nonExistingIds: string[] = [];
+
+            if (missingOptionIds.length == 0) {
+                this.selectOptions(optionIds);
+                return;
+            }
+
+            new api.content.ContentsExistRequest(missingOptionIds).sendAndParse().then((result: api.content.ContentsExistResult) => {
+                optionIds.forEach((val) => {
+                    var option = this.getOptionByValue(val);
+                    if (option != null) {
+                        this.selectOption(option, true);
+                    } else {
+                        var contentExists = result.contentExists(val);
+                        if (this.displayMissingSelectedOptions && (contentExists || !this.removeMissingSelectedOptions)) {
+                            var option = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView).makeEmptyOption(val);
+                            this.selectOption(option, true);
+                        }
+                        if (!contentExists) {
+                            nonExistingIds.push(val);
+                        }
+                    }
+                });
+
+                if (this.removeMissingSelectedOptions) {
+                    this.notifyContentMissing(nonExistingIds);
+                }
+            });
+
+        }
+
+        private selectOptions(values: string[]) {
+            values.forEach((val) => {
+                var option = this.getOptionByValue(val);
+                this.selectOption(option, true);
+            });
+        }
+
+        private getMissingOptionsIds(values: string[]): string[] {
+            var result: string[] = [];
+            values.forEach((val) => {
+                var option = this.getOptionByValue(val);
+                if (option == null) {
+                    result.push(val);
+                }
+            });
+            return result;
         }
 
         protected splitValues(value: string): string[] {
@@ -487,7 +564,7 @@ module api.ui.selector.combobox {
         }
 
         private setupListeners() {
-            
+
             api.util.AppHelper.focusInOut(this, () => {
                 this.hideDropdown();
                 this.active = false;
@@ -766,6 +843,22 @@ module api.ui.selector.combobox {
             var event = new api.ui.selector.DropdownExpandedEvent(this.comboBoxDropdown.getDropdownGrid().getElement(), expanded);
             this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
                 listener(event);
+            });
+        }
+
+        onContentMissing(listener: (ids: string[])=>void) {
+            this.contentMissingListeners.push(listener);
+        }
+
+        unContentMissing(listener: (ids: string[])=>void) {
+            this.contentMissingListeners = this.contentMissingListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyContentMissing(ids: string[]) {
+            this.contentMissingListeners.forEach((listener: (ids: string[])=>void) => {
+                listener(ids);
             });
         }
 

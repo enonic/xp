@@ -1,8 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.macro;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -54,6 +56,7 @@ import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
@@ -169,15 +172,28 @@ public final class MacroResource
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setRawRequest( req );
         portalRequest.setMethod( HttpMethod.GET );
-        portalRequest.setBaseUri( "/portal" );
+        portalRequest.setContentType( req.getContentType() );
+        portalRequest.setBaseUri( "/admin" );
         portalRequest.setMode( RenderMode.EDIT );
         portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
         portalRequest.setScheme( ServletRequestUrlHelper.getScheme( req ) );
         portalRequest.setHost( ServletRequestUrlHelper.getHost( req ) );
         portalRequest.setPort( ServletRequestUrlHelper.getPort( req ) );
         portalRequest.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
-        final PageUrlParams pageUrlParams = new PageUrlParams().portalRequest( portalRequest ).path( contentPath.toString() );
+        setHeaders( req, portalRequest );
+        setCookies( req, portalRequest );
+
+        final PageUrlParams pageFullUrlParams = new PageUrlParams().
+            portalRequest( portalRequest ).
+            path( contentPath.toString() ).
+            type( UrlTypeConstants.ABSOLUTE );
+        portalRequest.setUrl( portalUrlService.pageUrl( pageFullUrlParams ) );
+
+        final PageUrlParams pageUrlParams = new PageUrlParams().
+            portalRequest( portalRequest ).
+            path( contentPath.toString() );
         portalRequest.setPath( portalUrlService.pageUrl( pageUrlParams ) );
+
         portalRequest.setApplicationKey( appKey );
         final Content content = getContent( contentPath );
         portalRequest.setContent( content );
@@ -252,6 +268,28 @@ public final class MacroResource
         catch ( ContentNotFoundException e )
         {
             return null;
+        }
+    }
+
+    private void setHeaders( final HttpServletRequest from, final PortalRequest to )
+    {
+        for ( final String key : Collections.list( from.getHeaderNames() ) )
+        {
+            to.getHeaders().put( key, from.getHeader( key ) );
+        }
+    }
+
+    private void setCookies( final HttpServletRequest from, final PortalRequest to )
+    {
+        final Cookie[] cookies = from.getCookies();
+        if ( cookies == null )
+        {
+            return;
+        }
+
+        for ( final Cookie cookie : cookies )
+        {
+            to.getCookies().put( cookie.getName(), cookie.getValue() );
         }
     }
 

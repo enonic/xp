@@ -235,15 +235,15 @@ abstract class UserStoreNodeTranslator
                 final AuthConfig authConfig = updateUserStoreParams.getAuthConfig();
                 if ( authConfig == null )
                 {
-                    if ( nodeData.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
+                    if ( nodeData.hasProperty( UserStorePropertyNames.ID_PROVIDER_KEY ) )
                     {
-                        nodeData.removeProperty( UserStorePropertyNames.AUTH_CONFIG_KEY );
+                        nodeData.removeProperty( UserStorePropertyNames.ID_PROVIDER_KEY );
                     }
                 }
                 else
                 {
-                    nodeData.setString( UserStorePropertyNames.AUTH_CONFIG_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
-                    nodeData.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
+                    nodeData.setString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
+                    nodeData.setSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
                 }
             } ).
             build();
@@ -275,10 +275,10 @@ abstract class UserStoreNodeTranslator
             key( UserStoreNodeTranslator.toKey( node ) ).
             description( nodeAsSet.getString( UserStorePropertyNames.DESCRIPTION_KEY ) );
 
-        if ( nodeAsSet.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
+        if ( nodeAsSet.hasProperty( UserStorePropertyNames.ID_PROVIDER_KEY ) )
         {
-            final String applicationKey = nodeAsSet.getString( UserStorePropertyNames.AUTH_CONFIG_APPLICATION_KEY );
-            final PropertySet config = nodeAsSet.getSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY );
+            final String applicationKey = nodeAsSet.getString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY );
+            final PropertySet config = nodeAsSet.getSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY );
             final AuthConfig authConfig = AuthConfig.create().
                 applicationKey( ApplicationKey.from( applicationKey ) ).
                 config( config.toTree() ).
