@@ -11,6 +11,7 @@ module api.content.site.inputtype.siteconfigurator {
     import PrincipalSelector = api.content.form.inputtype.principalselector.PrincipalSelector;
     import ImageSelector = api.content.form.inputtype.image.ImageSelector;
     import ComboBox = api.ui.selector.combobox.ComboBox;
+    import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -36,6 +37,15 @@ module api.content.site.inputtype.siteconfigurator {
             this.getCancelAction().onExecuted(() => cancelCallback());
 
             this.addCancelButtonToBottom();
+
+            CreateHtmlAreaDialogEvent.on((event: CreateHtmlAreaDialogEvent) => {
+                this.addClass("masked");
+
+                api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog().onRemoved(() => {
+                    this.removeClass("masked");
+                })
+            });
+
 
         }
 

@@ -33,9 +33,9 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.FindPrincipalsResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoreResultJson;
@@ -207,15 +207,17 @@ public final class SecurityResource
 
     @GET
     @Path("principals")
-    public PrincipalsJson findPrincipals( @QueryParam("userStoreKey") final String storeKey, @QueryParam("types") final String types,
-                                          @QueryParam("query") final String query )
+    public FindPrincipalsResultJson findPrincipals( @QueryParam("types") final String types,
+
+                                                    @QueryParam("query") final String query,
+
+                                                    @QueryParam("userStoreKey") final String storeKey,
+
+                                                    @QueryParam("from") final Integer from,
+
+                                                    @QueryParam("size") final Integer size )
     {
 
-        UserStoreKey userStoreKey = null;
-        if ( StringUtils.isNotEmpty( storeKey ) )
-        {
-            userStoreKey = UserStoreKey.from( storeKey );
-        }
         final List<PrincipalType> principalTypes = new ArrayList<>();
         if ( StringUtils.isNotBlank( types ) )
         {
@@ -232,8 +234,29 @@ public final class SecurityResource
                 }
             }
         }
-        final Principals principals = securityService.findPrincipals( userStoreKey, principalTypes, query );
-        return new PrincipalsJson( principals );
+
+        final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
+            getAll().
+            includeTypes( principalTypes ).
+            searchText( query );
+
+        if ( StringUtils.isNotEmpty( storeKey ) )
+        {
+            principalQuery.userStore( UserStoreKey.from( storeKey ) );
+        }
+
+        if ( from != null )
+        {
+            principalQuery.from( from );
+        }
+
+        if ( size != null )
+        {
+            principalQuery.size( size );
+        }
+
+        final PrincipalQueryResult result = securityService.query( principalQuery.build() );
+        return new FindPrincipalsResultJson( result.getPrincipals(), result.getTotalSize() );
     }
 
     @GET

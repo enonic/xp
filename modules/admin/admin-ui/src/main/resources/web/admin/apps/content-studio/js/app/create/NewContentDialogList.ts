@@ -1,15 +1,19 @@
 import "../../api.ts";
-
-import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import {NewContentDialogItemSelectedEvent} from "./NewContentDialogItemSelectedEvent";
 import {NewContentDialogListItem} from "./NewContentDialogListItem";
+
+import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 
 export class NewContentDialogList extends api.ui.selector.list.ListBox<NewContentDialogListItem> {
 
     private selectedListeners: {(event: NewContentDialogItemSelectedEvent):void}[] = [];
 
+    private loadingMask: api.ui.mask.LoadMask;
+
     constructor(className = 'content-types-list') {
         super(className);
+
+        this.loadingMask = new api.ui.mask.LoadMask(this);
     }
 
     onSelected(listener: (event: NewContentDialogItemSelectedEvent)=>void) {
@@ -50,5 +54,14 @@ export class NewContentDialogList extends api.ui.selector.list.ListBox<NewConten
 
     getItemId(item: NewContentDialogListItem): string {
         return item.getName();
+    }
+
+    showLoadingMask() {
+        this.insertChild(this.loadingMask, 0); //need to insert mask element each time because it gets removed on items set/cleaned
+        this.loadingMask.show();
+    }
+
+    hideLoadingMask() {
+        this.loadingMask.hide();
     }
 }

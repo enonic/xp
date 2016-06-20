@@ -265,7 +265,7 @@ module api.form.inputtype.support {
                     picker = <api.ui.time.TimePicker>(occurrenceView.getInputElement());
                 }
 
-                if (picker && !picker.hasValidUserInput()) {
+                if (picker && !picker.isValid()) {
                     result = api.form.AdditionalValidationRecord.create().
                         setOverwriteDefault(true).
                         setMessage("Incorrect value entered").

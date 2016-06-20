@@ -56,7 +56,7 @@ module api.content.form.inputtype.geo {
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
             var geoPoint = <api.ui.geo.GeoPoint>inputElement;
-            return geoPoint.hasValidUserInput();
+            return geoPoint.isValid();
         }
     }
 

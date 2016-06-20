@@ -18,15 +18,18 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
 
     resolveSubName(object: UserTreeGridItem, relativePath: boolean = false): string {
 
-        switch (object.getType()) {
-        case UserTreeGridItemType.USER_STORE:
-            return ('/' + object.getUserStore().getKey().toString());
-        case UserTreeGridItemType.PRINCIPAL:
-            return relativePath ? object.getPrincipal().getKey().getId() :
-                   object.getPrincipal().getKey().toPath();
-        default:
-            return object.getItemDisplayName().toLocaleLowerCase();
+        if(object.getType()) {
+            switch (object.getType()) {
+            case UserTreeGridItemType.USER_STORE:
+                return ('/' + object.getUserStore().getKey().toString());
+            case UserTreeGridItemType.PRINCIPAL:
+                return relativePath ? object.getPrincipal().getKey().getId() :
+                       object.getPrincipal().getKey().toPath();
+            default:
+                return object.getItemDisplayName().toLocaleLowerCase();
+            }
         }
+        return "";
     }
 
     resolveIconClass(object: UserTreeGridItem): string {

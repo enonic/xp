@@ -4,8 +4,8 @@ module api.dom {
 
         constructor(href: string, rel: string = "import", className?: string) {
             super(new NewElementBuilder().
-                setTagName("link").
-                setClassName(className));
+            setTagName("link").
+            setClassName(className));
 
             this.setHref(href).setRel(rel);
         }
@@ -17,6 +17,11 @@ module api.dom {
 
         private setRel(rel: string): api.dom.LinkEl {
             this.getEl().setAttribute("rel", rel);
+            return this;
+        }
+
+        setAsync(): api.dom.LinkEl {
+            this.getEl().setAttribute("async", "");
             return this;
         }
 

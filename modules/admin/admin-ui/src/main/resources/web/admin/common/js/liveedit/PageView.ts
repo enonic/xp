@@ -262,7 +262,7 @@ module api.liveedit {
         private setIgnorePropertyChanges(value: boolean) {
             this.ignorePropertyChanges = value;
         }
-
+/*
         highlight() {
             // Don't highlight page
         }
@@ -270,7 +270,7 @@ module api.liveedit {
         unhighlight() {
             // Don't highlight page on hover
         }
-
+*/
         highlightSelected() {
             var isDragging = DragAndDrop.get().isDragging();
             if (!this.isTextEditMode() && !this.isLocked() && !isDragging) {

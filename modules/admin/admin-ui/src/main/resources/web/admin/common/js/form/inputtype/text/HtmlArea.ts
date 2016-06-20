@@ -369,25 +369,10 @@ module api.form.inputtype.text {
         }
 
         private reInitEditor(id: string) {
-            var savedEditor: HtmlAreaOccurrenceInfo = this.findElementByFieldValue(this.editors, "id", id);
+            var savedEditor: HtmlAreaOccurrenceInfo = api.util.ArrayHelper.findElementByFieldValue(this.editors, "id", id);
 
             this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);
         }
-
-        private findElementByFieldValue<T>(array: Array<T>, field: string, value: any): T {
-            var result: T;
-
-            array.every((element: T) => {
-                if (element[field] == value) {
-                    result = element;
-                    return false;
-                }
-                return true;
-            });
-
-            return result;
-        }
-
 
     }
 
