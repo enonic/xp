@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 
 import static org.junit.Assert.*;
@@ -49,7 +49,7 @@ public class FindNodeIdsByParentCommandTest
 
         refresh();
 
-        final NodeIds children = FindNodeIdsByParentCommand.create().
+        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create().
             parentPath( root.path() ).
             recursive( true ).
             searchService( this.searchService ).
@@ -58,7 +58,7 @@ public class FindNodeIdsByParentCommandTest
             build().
             execute();
 
-        assertEquals( 2, children.getSize() );
+        assertEquals( 2, result.getNodeIds().getSize() );
     }
 
 }

@@ -30,7 +30,7 @@ import com.enonic.xp.node.SetNodeStateResult;
 
 import static org.junit.Assert.*;
 
-public class DeleteContentCommandTest
+public class DeleteAndFetchContentCommandTest
 {
     private NodeService nodeService;
 
@@ -90,7 +90,7 @@ public class DeleteContentCommandTest
                 build() ).
             build() );
 
-        final Contents myContent = DeleteContentCommand.create().
+        final Contents myContent = DeleteAndFetchContentCommand.create().
             params( DeleteContentParams.create().
                 contentPath( ContentPath.from( "myContent" ) ).
                 build() ).
@@ -149,7 +149,7 @@ public class DeleteContentCommandTest
                 build() ).
             build() );
 
-        final Contents myContent = DeleteContentCommand.create().
+        final Contents myContent = DeleteAndFetchContentCommand.create().
             params( DeleteContentParams.create().
                 contentPath( ContentPath.from( "myContent" ) ).
                 build() ).
@@ -209,7 +209,7 @@ public class DeleteContentCommandTest
                 build() ).
             build() );
 
-        final Contents myContent = DeleteContentCommand.create().
+        final Contents myContent = DeleteAndFetchContentCommand.create().
             params( DeleteContentParams.create().
                 contentPath( ContentPath.from( "myContent" ) ).
                 deleteOnline( true ).

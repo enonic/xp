@@ -2,9 +2,9 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -56,13 +56,13 @@ public class FindNodeIdsByParentCommand
         return new Builder( source );
     }
 
-    public NodeIds execute()
+    public FindNodesByParentResult execute()
     {
         NodePath parentPath = getParentPath();
 
         if ( parentPath == null )
         {
-            return NodeIds.empty();
+            return FindNodesByParentResult.empty();
         }
 
         final ChildOrder order = NodeChildOrderResolver.create( this ).
@@ -76,10 +76,14 @@ public class FindNodeIdsByParentCommand
 
         if ( nodeQueryResult.getHits() == 0 )
         {
-            return NodeIds.empty();
+            return FindNodesByParentResult.empty();
         }
 
-        return nodeQueryResult.getNodeIds();
+        return FindNodesByParentResult.create().
+            nodeIds( nodeQueryResult.getNodeIds() ).
+            totalHits( nodeQueryResult.getTotalHits() ).
+            hits( nodeQueryResult.getHits() ).
+            build();
     }
 
     private NodeQuery createFindChildrenQuery( final NodePath parentPath, final ChildOrder order )

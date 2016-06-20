@@ -29,6 +29,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
@@ -284,6 +285,20 @@ public class ContentServiceImpl
     @Override
     public Contents delete( final DeleteContentParams params )
     {
+        return DeleteAndFetchContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            params( params ).
+            build().
+            execute();
+    }
+
+
+    @Override
+    public ContentIds deleteWithoutFetch( final DeleteContentParams params )
+    {
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -293,6 +308,7 @@ public class ContentServiceImpl
             build().
             execute();
     }
+
 
     @Override
     public PushContentsResult push( final PushContentParams params )

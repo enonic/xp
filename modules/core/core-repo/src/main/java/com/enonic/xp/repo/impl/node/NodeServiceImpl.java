@@ -164,6 +164,23 @@ public class NodeServiceImpl
     @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
+        if ( params.isRecursive() )
+        {
+            return FindNodeIdsByParentCommand.create().
+                parentId( params.getParentId() ).
+                parentPath( params.getParentPath() ).
+                recursive( true ).
+                from( params.getFrom() ).
+                size( params.getSize() ).
+                countOnly( params.isCountOnly() ).
+                childOrder( params.getChildOrder() ).
+                indexServiceInternal( this.indexServiceInternal ).
+                searchService( this.searchService ).
+                storageService( this.storageService ).
+                build().
+                execute();
+        }
+
         return FindNodesByParentCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).

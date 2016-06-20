@@ -3,7 +3,6 @@ package com.enonic.xp.core.content;
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentState;
@@ -14,13 +13,11 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.Assert.*;
 
-public class ContentServiceImplTest_delete
+public class ContentServiceImplTest_deleteAndFetch
     extends AbstractContentServiceTest
 {
     @Override
@@ -47,10 +44,9 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final ContentIds deletedContents = this.contentService.deleteWithoutFetch( deleteContentParams );
+        final Contents deletedContents = this.contentService.delete( deleteContentParams );
         assertNotNull( deletedContents );
-        assertEquals( 1, deletedContents.getSize() );
-        assertEquals( content.getId(), deletedContents.first() );
+        assertEquals( Contents.from( content ), deletedContents );
 
         //Checks that the content is deleted
         final ContentIds contentIds = ContentIds.from( content.getId() );
@@ -104,10 +100,10 @@ public class ContentServiceImplTest_delete
         refresh();
 
         //Deletes the content
-        final ContentIds deletedContents =
-            this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+        final Contents deletedContents =
+            this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
         assertNotNull( deletedContents );
-        assertEquals( 4, deletedContents.getSize() );
+        assertEquals( Contents.from( child2Content, subChildContent, child1Content, content ), deletedContents );
 
         //Checks that the content and the children are deleted
         final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams(
@@ -141,12 +137,12 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final ContentIds deletedContents = this.contentService.deleteWithoutFetch( deleteContentParams );
+        final Contents deletedContents = this.contentService.delete( deleteContentParams );
         assertNotNull( deletedContents );
         assertEquals( 1, deletedContents.getSize() );
-        for ( ContentId deletedContent : deletedContents )
+        for ( Content deletedContent : deletedContents )
         {
-            assertTrue( NodeState.PENDING_DELETE == this.nodeService.getById( NodeId.from( deletedContent ) ).getNodeState() );
+            assertTrue( ContentState.PENDING_DELETE == deletedContent.getContentState() );
         }
 
         //Checks that the content is marked for deletion

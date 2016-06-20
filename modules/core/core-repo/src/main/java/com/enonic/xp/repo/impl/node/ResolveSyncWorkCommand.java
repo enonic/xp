@@ -12,6 +12,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeComparison;
@@ -234,7 +235,7 @@ public class ResolveSyncWorkCommand
 
     private void markChildrenForDeletion( final NodeComparison comparison )
     {
-        final NodeIds childrenToBeDeleted = FindNodeIdsByParentCommand.create( this ).
+        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).
             size( SearchService.GET_ALL_SIZE_FLAG ).
             parentId( comparison.getNodeId() ).
             childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
@@ -243,7 +244,7 @@ public class ResolveSyncWorkCommand
             execute();
 
         final NodeBranchEntries brancEntries =
-            this.storageService.getBranchNodeVersions( childrenToBeDeleted, false, InternalContext.from( ContextAccessor.current() ) );
+            this.storageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
 
         addToResult( NodeComparisons.create().
             addAll( brancEntries.stream().

@@ -1,9 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Stopwatch;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeIds;
@@ -24,17 +23,13 @@ abstract class AbstractDeleteNodeCommand
     {
         doRefresh();
 
-        final Stopwatch timer2 = Stopwatch.createStarted();
         final NodeIds nodesToBeDeleted = newResolveNodesToDelete( node );
-        System.out.println( "resolveNodesToDelete: " + timer2.stop() );
 
-        final Stopwatch timer = Stopwatch.createStarted();
         final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).
             nodeIds( nodesToBeDeleted ).
             permission( Permission.DELETE ).
             build().
             execute();
-        System.out.println( "Resolve permissions: " + timer.stop() );
 
         if ( !allHasPermissions )
         {
@@ -58,7 +53,7 @@ abstract class AbstractDeleteNodeCommand
 
     private NodeIds newResolveNodesToDelete( final Node node )
     {
-        final NodeIds allChildren = FindNodeIdsByParentCommand.create( this ).
+        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).
             parentPath( node.path() ).
             recursive( true ).
             childOrder( ChildOrder.path() ).
@@ -68,7 +63,7 @@ abstract class AbstractDeleteNodeCommand
 
         return NodeIds.create().
             add( node.id() ).
-            addAll( allChildren ).
+            addAll( result.getNodeIds() ).
             build();
     }
 

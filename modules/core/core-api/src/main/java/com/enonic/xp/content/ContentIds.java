@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,6 +66,11 @@ public final class ContentIds
         return this.set.stream().map( ContentId::toString ).collect( Collectors.toSet() );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     private final static class ParseFunction
         implements Function<String, ContentId>
     {
@@ -72,6 +78,29 @@ public final class ContentIds
         public ContentId apply( final String value )
         {
             return ContentId.from( value );
+        }
+    }
+
+    public static class Builder
+    {
+        private List<ContentId> contents = Lists.newArrayList();
+
+        public Builder add( final ContentId contentId )
+        {
+            this.contents.add( contentId );
+            return this;
+        }
+
+        public Builder addAll( final ContentIds contentIds )
+        {
+            this.contents.addAll( contentIds.getSet() );
+            return this;
+        }
+
+
+        public ContentIds build()
+        {
+            return ContentIds.from( contents );
         }
     }
 }
