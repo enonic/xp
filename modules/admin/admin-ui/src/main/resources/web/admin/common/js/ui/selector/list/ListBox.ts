@@ -37,18 +37,24 @@ module api.ui.selector.list {
             return undefined;
         }
 
-        clearItems() {
+        clearItems(silent?: boolean) {
             if (this.items.length > 0) {
                 let removedItems = this.items.slice();
                 // correct way to empty array
                 this.items.length = 0;
                 this.itemViews = {};
-                this.notifyItemsRemoved(removedItems);
+                if (!silent) {
+                    this.notifyItemsRemoved(removedItems);
+                }
                 this.layoutList(this.items);
             }
         }
 
         addItem(...items: I[]) {
+            this.doAddItem(false, items);
+        }
+
+        addItems(items: I[]) {
             this.doAddItem(false, items);
         }
 

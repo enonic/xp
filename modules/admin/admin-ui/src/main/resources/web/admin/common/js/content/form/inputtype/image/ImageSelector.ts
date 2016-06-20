@@ -412,7 +412,7 @@ module api.content.form.inputtype.image {
                     contentIds.push(ContentId.fromReference(property.getReference()));
                 }
             });
-            return new api.content.GetContentSummaryByIds(contentIds).get();
+            return new api.content.GetContentSummaryByIds(contentIds).sendAndParse();
         }
 
         protected getNumberOfValids(): number {

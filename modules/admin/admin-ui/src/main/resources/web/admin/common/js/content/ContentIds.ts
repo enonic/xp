@@ -21,10 +21,18 @@ module api.content {
             });
         }
 
+        length(): number {
+            return this.array.length;
+        }
+
         map<U>(callbackfn: (value: ContentId, index?: number) => U): U[] {
             return this.array.map((value: ContentId, index: number) => {
                 return callbackfn(value, index);
             });
+        }
+
+        slice(from: number, to: number): ContentId[] {
+            return this.array.slice(from, to);
         }
 
         static from(contentIds: ContentId[]) : ContentIds {
