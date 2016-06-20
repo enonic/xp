@@ -18,6 +18,8 @@ module api.query {
 
         static REFERENCES: string = "_references";
 
+        static ID: string = "_id";
+
         weight: number;
 
         name: string;

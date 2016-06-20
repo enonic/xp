@@ -26,10 +26,6 @@ public class FunctionExpressionBuilder
         {
             return PathMatchFunction.create( function );
         }
-        else if ( "inboundDependencies".equals( functionName ) )
-        {
-            return InboundDependenciesFunction.create( function );
-        }
 
         throw new UnsupportedOperationException( "Function '" + functionName + "' is not supported" );
     }

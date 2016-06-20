@@ -60,7 +60,7 @@ public class ResolveDependenciesAggregationFactory
 
         final FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
             contentQuery( ContentQuery.create().
-                queryExpr( QueryParser.parse( "_references = '" + contentId.toString() + "'" ) ).
+                queryExpr( QueryParser.parse( "_references = '" + contentId.toString() + "' and _id != '" + contentId.toString() + "'" ) ).
                 aggregationQuery( TermsAggregationQuery.create( "type" ).
                     fieldName( "type" ).
                     orderDirection( TermsAggregationQuery.Direction.DESC ).
@@ -83,8 +83,12 @@ public class ResolveDependenciesAggregationFactory
 
         final List<ContentId> contentIds = Lists.arrayList();
 
-        content.getData().getProperties( ValueTypes.REFERENCE ).forEach(
-            property -> contentIds.add( ContentId.from( property.getValue().toString() ) ) );
+        content.getData().getProperties( ValueTypes.REFERENCE ).forEach( property -> {
+            if ( !contentId.toString().equals( property.getValue().toString() ) )
+            {
+                contentIds.add( ContentId.from( property.getValue().toString() ) );
+            }
+        } );
 
         final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( contentIds ) ) );
 
