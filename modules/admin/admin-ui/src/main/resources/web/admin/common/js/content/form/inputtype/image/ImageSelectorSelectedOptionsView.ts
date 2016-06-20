@@ -32,6 +32,12 @@ module api.content.form.inputtype.image {
 
             this.setOccurrencesSortable(true);
 
+            this.initAndAppendSelectionToolbar();
+
+            this.addOptionMovedEventHandler();
+        }
+
+        private initAndAppendSelectionToolbar() {
             this.toolbar = new SelectionToolbar();
             this.toolbar.hide();
             this.toolbar.onEditClicked(() => {
@@ -43,12 +49,23 @@ module api.content.form.inputtype.image {
             this.appendChild(this.toolbar);
         }
 
+        private addOptionMovedEventHandler() {
+            //when dragging selected image in chrome it looses focus; bringing focus back
+            this.onOptionMoved((moved: SelectedOption<ImageSelectorDisplayValue>) => {
+                let selectedOptionMoved: boolean = moved.getOptionView().hasClass("editing");
+
+                if (selectedOptionMoved) {
+                    (<ImageSelectorSelectedOptionView>moved.getOptionView()).getCheckbox().giveFocus();
+                }
+            });
+        }
+
         removeSelectedOptions(options: SelectedOption<ImageSelectorDisplayValue>[]) {
             this.notifyRemoveSelectedOptions(options);
             // clear the selection;
             this.selection.length = 0;
             this.updateSelectionToolbarLayout();
-            this.hideImageSelectorDialog();
+            this.resetActiveOption();
         }
 
         createSelectedOption(option: Option<ImageSelectorDisplayValue>): SelectedOption<ImageSelectorDisplayValue> {
@@ -115,13 +132,13 @@ module api.content.form.inputtype.image {
                     this.notifyEditSelectedOptions([selectedOption]);
                     break;
                 case 9: // tab
-                    this.hideImageSelectorDialog();
+                    this.resetActiveOption();
                     break;
                 }
                 event.stopPropagation();
             });
 
-            optionView.getCheckbox().onFocus((event: FocusEvent) => this.showImageSelectorDialog(selectedOption));
+            optionView.getCheckbox().onFocus((event: FocusEvent) => this.setActiveOption(selectedOption));
 
             optionView.onChecked((view: ImageSelectorSelectedOptionView, checked: boolean) => {
                 if (checked) {
@@ -200,14 +217,14 @@ module api.content.form.inputtype.image {
                         option.getIndex();
 
             this.notifyRemoveSelectedOptions([option]);
-            this.hideImageSelectorDialog();
+            this.resetActiveOption();
 
             if (index > -1) {
                 (<ImageSelectorSelectedOptionView>this.getByIndex(index).getOptionView()).getCheckbox().giveFocus();
             }
         }
 
-        private showImageSelectorDialog(option: SelectedOption<ImageSelectorDisplayValue>) {
+        private setActiveOption(option: SelectedOption<ImageSelectorDisplayValue>) {
 
             if (this.activeOption) {
                 this.activeOption.getOptionView().removeClass("editing");
@@ -216,8 +233,6 @@ module api.content.form.inputtype.image {
             option.getOptionView().addClass("editing");
 
             this.setOutsideClickListener();
-
-            wemjq(this.getHTMLElement()).sortable("disable");
         }
 
         private updateSelectionToolbarLayout() {
@@ -238,12 +253,11 @@ module api.content.form.inputtype.image {
             return count;
         }
 
-        private hideImageSelectorDialog() {
+        private resetActiveOption() {
             if (this.activeOption) {
                 this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
                 this.activeOption = null;
             }
-            wemjq(this.getHTMLElement()).sortable("enable");
 
             api.dom.Body.get().unClicked(this.mouseClickListener);
         }
@@ -255,7 +269,7 @@ module api.content.form.inputtype.image {
                         return;
                     }
                 }
-                this.hideImageSelectorDialog();
+                this.resetActiveOption();
             };
 
             api.dom.Body.get().onClicked(this.mouseClickListener);
