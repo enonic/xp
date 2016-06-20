@@ -1,15 +1,21 @@
-body {
-    margin: 0;
-}
+html {
+  height: 100%;
 
-/*
+  body {
+    // for crosshair highlighter to be drawn properly when content is shorter than window
+    min-height: 100%;
+    margin: 0;
+
+    /*
     Disable pointer events for A elements
     disables CSS hover selectors and clicks on links
-*/
-a {
-    pointer-events: none;
-}
+    */
+    a {
+      pointer-events: none;
 
-a[disabled] {
-    cursor: move; //IE fix XP-2100
+      &[disabled] {
+        cursor: move; //IE fix XP-2100
+      }
+    }
+  }
 }

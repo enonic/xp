@@ -279,10 +279,13 @@ module api.liveedit {
         }
 
         highlight() {
+            if (this.isViewInsideSelectedContainer()) {
+                return;
+            }
             Highlighter.get().highlightItemView(this);
             if (this.isSelected()) {
                 // Remove selected hilighter to see the hover hilight
-                this.unhighlightSelected();
+                // this.unhighlightSelected();
             }
         }
 
@@ -290,7 +293,7 @@ module api.liveedit {
             Highlighter.get().hide();
             if (this.isSelected()) {
                 // Restore selected highlight after leaving
-                this.highlightSelected();
+                // this.highlightSelected();
             }
         }
 
@@ -299,7 +302,7 @@ module api.liveedit {
         }
 
         unhighlightSelected() {
-            SelectedHighlighter.get().hide();
+            SelectedHighlighter.get().unselect();
         }
 
         shade() {
@@ -313,7 +316,8 @@ module api.liveedit {
         }
 
         showCursor() {
-            Cursor.get().displayItemViewCursor(this);
+            var itemView = this.isViewInsideSelectedContainer() ? SelectedHighlighter.get().getSelectedView() : this;
+            Cursor.get().displayItemViewCursor(itemView);
         }
 
         resetCursor() {
@@ -485,26 +489,32 @@ module api.liveedit {
         }
 
         handleClick(event: MouseEvent) {
+            let rightClicked = event.which === 3;
             event.stopPropagation();
 
-            if (event.which == 3) { // right click
+            if (rightClicked) { // right click
                 event.preventDefault();
             }
 
-            if (!this.isSelected() || event.which == 3) {
-                var selectedView = this.getPageView().getSelectedView();
-                if (selectedView) {
+            if (!this.isSelected() || rightClicked) {
+                var selectedView = this.getPageView().getSelectedView(),
+                    isViewInsideSelectedContainer = this.isViewInsideSelectedContainer();
+                let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
+
+                if (selectedView && isViewInsideSelectedContainer && !rightClicked) {
                     selectedView.deselect();
                 }
+
                 // Allow selecting only component types if something is selected
                 // The rest will only deselect current selection
                 // Also allow selecting the same component again (i.e. to show context menu)
-                if (!selectedView || selectedView == this || this.getType().isComponentType()) {
-                    let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
-                    let rightClicked = event.which === 3;
+                if (!selectedView || selectedView == this || !isViewInsideSelectedContainer) {
                     let menuPosition = rightClicked ? null : ItemViewContextMenuPosition.NONE;
                     //
                     this.select(clickPosition, menuPosition, false, rightClicked);
+                }
+                else if (isViewInsideSelectedContainer && rightClicked) {
+                    SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);
                 }
             } else {
                 this.deselect();
@@ -626,7 +636,9 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, rightClicked: boolean = false) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
+               rightClicked: boolean = false) {
+            Highlighter.get().hide();
             this.selectItem();
             this.showContextMenu(clickPosition, menuPosition);
             new ItemViewSelectedEvent(this, clickPosition, isNew, rightClicked).fire();
@@ -658,7 +670,7 @@ module api.liveedit {
             //this.shade();
             this.showCursor();
 
-            if(!pageView.isLocked()) {
+            if (!pageView.isLocked()) {
                 this.highlightSelected();
             }
 
@@ -900,6 +912,30 @@ module api.liveedit {
             action.setIconClass(api.StyleHelper.getCommonIconCls(label.toLowerCase()));
 
             return action;
+        }
+
+        isChildOfItemView(itemView: ItemView) {
+            if (this == itemView) {
+                return false;
+            }
+            var parentItemView = this.getParentItemView(),
+                result = false;
+            while (!!parentItemView && !result) {
+                result = (parentItemView == itemView);
+                parentItemView = parentItemView.getParentItemView();
+            }
+            
+            return result;
+        }
+        
+        isContainer(): boolean {
+            return api.ObjectHelper.iFrameSafeInstanceOf(this, PageView) ||
+                   api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView) ||
+                   api.ObjectHelper.iFrameSafeInstanceOf(this, api.liveedit.layout.LayoutComponentView);
+        }
+
+        private isViewInsideSelectedContainer() {
+            return SelectedHighlighter.get().isViewInsideSelectedContainer(this);
         }
     }
 }
