@@ -19,8 +19,8 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PublishNodeEntries;
-import com.enonic.xp.node.PublishNodeEntry;
+import com.enonic.xp.node.PushNodeEntries;
+import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -155,9 +155,9 @@ public class StorageServiceImpl
     }
 
     @Override
-    public void publish( final PublishNodeEntries entries, final InternalContext context )
+    public void publish( final PushNodeEntries entries, final InternalContext context )
     {
-        for ( final PublishNodeEntry entry : entries )
+        for ( final PushNodeEntry entry : entries )
         {
             final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
 

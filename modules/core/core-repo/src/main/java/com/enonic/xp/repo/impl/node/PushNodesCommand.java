@@ -23,8 +23,8 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.PublishNodeEntries;
-import com.enonic.xp.node.PublishNodeEntry;
+import com.enonic.xp.node.PushNodeEntries;
+import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -73,7 +73,7 @@ public class PushNodesCommand
     private PushNodesResult.Builder pushNodes( final Context context, final NodeBranchEntries nodeBranchEntries,
                                                final NodeComparisons comparisons )
     {
-        final PublishNodeEntries.Builder publishBuilder = PublishNodeEntries.create().
+        final PushNodeEntries.Builder publishBuilder = PushNodeEntries.create().
             targetBranch( this.target ).
             targetRepo( context.getRepositoryId() );
 
@@ -112,7 +112,7 @@ public class PushNodesCommand
             //    else
             //    {
 
-            publishBuilder.add( PublishNodeEntry.create().
+            publishBuilder.add( PushNodeEntry.create().
                 nodeBranchEntry( nodeBranchEntry ).
                 nodeVersionId( nodeBranchEntry.getVersionId() ).
                 build() );

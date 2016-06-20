@@ -11,14 +11,14 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-public class PublishNodeEntries
-    extends AbstractImmutableEntitySet<PublishNodeEntry>
+public class PushNodeEntries
+    extends AbstractImmutableEntitySet<PushNodeEntry>
 {
     private Branch targetBranch;
 
     private RepositoryId targetRepo;
 
-    private PublishNodeEntries( final Builder builder )
+    private PushNodeEntries( final Builder builder )
     {
         super( ImmutableSet.copyOf( builder.entries ) );
         targetBranch = builder.targetBranch;
@@ -49,7 +49,7 @@ public class PublishNodeEntries
 
     public static final class Builder
     {
-        private Set<PublishNodeEntry> entries = Sets.newHashSet();
+        private Set<PushNodeEntry> entries = Sets.newHashSet();
 
         private Branch targetBranch;
 
@@ -59,22 +59,22 @@ public class PublishNodeEntries
         {
         }
 
-        public Builder add( final PublishNodeEntry val )
+        public Builder add( final PushNodeEntry val )
         {
             this.entries.add( val );
             return this;
         }
 
-        public Builder addAll( final Collection<PublishNodeEntry> values )
+        public Builder addAll( final Collection<PushNodeEntry> values )
         {
             this.entries.addAll( values );
             return this;
         }
 
 
-        public PublishNodeEntries build()
+        public PushNodeEntries build()
         {
-            return new PublishNodeEntries( this );
+            return new PushNodeEntries( this );
         }
 
         public Builder targetBranch( final Branch val )

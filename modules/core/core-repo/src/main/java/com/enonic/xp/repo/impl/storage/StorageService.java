@@ -13,7 +13,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PublishNodeEntries;
+import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -36,7 +36,7 @@ public interface StorageService
     void publish( final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId, final InternalContext context,
                   final Branch target );
 
-    void publish( final PublishNodeEntries entries, final InternalContext context );
+    void publish( final PushNodeEntries entries, final InternalContext context );
 
     Node get( final NodeId nodeId, final InternalContext context );
 
