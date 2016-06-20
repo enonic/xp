@@ -21,6 +21,7 @@ import ApplicationKey = api.application.ApplicationKey;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import UploadItem = api.ui.uploader.UploadItem;
 import ListContentByPathRequest = api.content.ListContentByPathRequest;
+import LoadMask = api.ui.mask.LoadMask;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -37,6 +38,8 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     private mostPopularContentTypes: MostPopularItemsBlock;
 
     private recentContentTypes: RecentItemsBlock;
+
+    protected loadMask: LoadMask;
 
     constructor() {
         this.contentDialogTitle = new NewContentDialogTitle("Create Content", "");
@@ -58,6 +61,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.initContentTypesLists();
         this.initFileInput();
         this.initMediaUploader();
+        this.initLoadMask();
     }
 
     private initContentTypesLists() {
@@ -108,6 +112,10 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.uploader.onUploadStarted(this.closeAndFireEventFromMediaUpload.bind(this));
 
         this.initDragAndDropUploaderEvents();
+    }
+
+    private initLoadMask() {
+        this.loadMask = new LoadMask(this);
     }
 
     private initDragAndDropUploaderEvents() {
@@ -170,6 +178,8 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.appendChildToContentPanel(this.recentContentTypes);
 
         this.appendChild(this.uploader);
+
+        this.getContentPanel().getParentElement().appendChild(this.loadMask);
     }
 
     setParentContent(parent: api.content.Content) {
@@ -226,7 +236,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private loadContentTypes() {
 
-        this.showLoadingMasks();
+        this.loadMask.show();
 
         wemQ.all(this.sendRequestsToFetchContentData())
             .spread((contentTypes: ContentTypeSummary[], directChilds: api.content.ContentResponse<api.content.ContentSummary>,
@@ -241,20 +251,10 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
             api.DefaultErrorHandler.handle(reason);
 
         }).finally(() => {
-            this.hideLoadingMasks();
+            this.loadMask.hide();
             this.mostPopularContentTypes.showIfNotEmpty();
             this.centerMyself();
         }).done();
-    }
-
-    private showLoadingMasks() {
-        this.allContentTypes.showLoadingMask();
-        this.recentContentTypes.getItemsList().showLoadingMask();
-    }
-
-    private hideLoadingMasks() {
-        this.allContentTypes.hideLoadingMask();
-        this.recentContentTypes.getItemsList().hideLoadingMask();
     }
 
     private sendRequestsToFetchContentData(): wemQ.Promise<any>[] {
