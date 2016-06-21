@@ -494,7 +494,7 @@ public final class ContentResource
 
             if ( failedContents.getSize() == 1 )
             {
-                json.contentName( contentService.getById( pushedContents.first() ).getDisplayName());
+                json.contentName( contentService.getById( failedContents.first() ).getDisplayName());
             }
         }
 
