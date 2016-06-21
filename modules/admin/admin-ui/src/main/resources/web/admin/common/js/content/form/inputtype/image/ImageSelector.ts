@@ -254,6 +254,10 @@ module api.content.form.inputtype.image {
             });
 
             comboBox.onOptionSelected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
+                if (event.getKeyCode() === 13) {
+                    new FocusSwitchEvent(this).fire();
+                }
+
                 if (!this.isLayoutInProgress()) {
                     var contentId = event.getSelectedOption().getOption().displayValue.getContentId();
                     if (!contentId) {
@@ -269,12 +273,6 @@ module api.content.form.inputtype.image {
 
                 this.getPropertyArray().set(moved.getIndex(), ValueTypes.REFERENCE.newValue(moved.getOption().value));
                 this.validate(false);
-            });
-
-            comboBox.onOptionSelected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
-                if (event.getKeyCode() === 13) {
-                    new FocusSwitchEvent(this).fire();
-                }
             });
 
             return contentComboBox;
