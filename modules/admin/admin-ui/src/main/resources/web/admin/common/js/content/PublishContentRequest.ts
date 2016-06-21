@@ -56,9 +56,9 @@ module api.content {
         static feedback(jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) {
 
             var result = jsonResponse.getResult(),
-                succeeded = result.successes.length,
-                failed = result.failures.length,
-                deleted = result.deleted.length,
+                succeeded = result.successes,
+                failed = result.failures,
+                deleted = result.deleted,
                 total = succeeded + failed + deleted;
 
             switch (total) {
@@ -67,11 +67,12 @@ module api.content {
                 break;
             case 1:
                 if (succeeded === 1) {
-                    api.notify.showSuccess('\"' + result.successes[0].name + '\" published');
+                    api.notify.showSuccess('\"' + result.contentName + '\" published');
                 } else if (failed === 1) {
-                    api.notify.showError('\"' + result.failures[0].name + '\" failed, reason: ' + result.failures[0].reason);
+                    api.notify.showError('\"' + result.contentName + '\" failed, reason: ' + result.failures[0].reason);
                 } else {
-                    api.notify.showSuccess('\"' + result.deleted[0].name + '\" deleted');
+                    api.notify.showSuccess('pending item was deleted');
+                    //api.notify.showSuccess('\"' + result.contentName + '\" deleted'); //restore when it's possible to get display name of deleted content
                 }
                 break;
             default: // > 1
