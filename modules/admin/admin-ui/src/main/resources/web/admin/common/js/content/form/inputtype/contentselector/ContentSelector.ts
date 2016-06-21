@@ -9,6 +9,7 @@ module api.content.form.inputtype.contentselector {
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
     import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class ContentSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
 
@@ -63,7 +64,7 @@ module api.content.form.inputtype.contentselector {
                             this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
                         }
                     });
-            }
+            };
 
             ContentDeletedEvent.on(this.contentDeletedListener);
 
@@ -170,6 +171,12 @@ module api.content.form.inputtype.contentselector {
                             this.getPropertyArray().remove(event.getSelectedOption().getIndex());
                                 this.updateSelectedOptionStyle();
                                 this.validate(false);
+                        });
+
+                        this.contentComboBox.onOptionSelected((event: SelectedOptionEvent<any>) => {
+                            if (event.getKeyCode() === 13) {
+                                new FocusSwitchEvent(this).fire();
+                            }
                             });
 
                             this.setupSortable();

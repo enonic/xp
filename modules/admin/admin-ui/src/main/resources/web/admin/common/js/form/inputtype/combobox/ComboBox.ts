@@ -8,6 +8,7 @@ module api.form.inputtype.combobox {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class ComboBox extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 

@@ -30,6 +30,8 @@ module api.content.form.inputtype.image {
     import ContentSelectorLoader = api.content.form.inputtype.contentselector.ContentSelectorLoader;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
+
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext;
@@ -104,7 +106,7 @@ module api.content.form.inputtype.image {
                             this.selectedOptionsView.removeSelectedOptions([option]);
                         }
                     });
-            }
+            };
 
             ContentDeletedEvent.on(this.contentDeletedListener);
 
@@ -267,6 +269,12 @@ module api.content.form.inputtype.image {
 
                 this.getPropertyArray().set(moved.getIndex(), ValueTypes.REFERENCE.newValue(moved.getOption().value));
                 this.validate(false);
+            });
+
+            comboBox.onOptionSelected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
+                if (event.getKeyCode() === 13) {
+                    new FocusSwitchEvent(this).fire();
+                }
             });
 
             return contentComboBox;
