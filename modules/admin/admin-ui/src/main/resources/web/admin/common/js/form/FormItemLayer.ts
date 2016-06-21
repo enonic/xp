@@ -2,6 +2,7 @@ module api.form {
 
     import PropertySet = api.data.PropertySet;
     import PropertyArray = api.data.PropertyArray;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class FormItemLayer {
 

@@ -1,4 +1,4 @@
-module api.form {
+module api.ui {
 
     import InputTypeView = api.form.inputtype.InputTypeView;
 
