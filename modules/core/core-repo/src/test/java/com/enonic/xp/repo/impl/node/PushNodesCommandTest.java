@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
@@ -265,43 +264,6 @@ public class PushNodesCommandTest
 
         assertEquals( 2, result.getSuccessful().getSize() );
     }
-
-    @Ignore
-    @Test
-    public void push_deleted()
-        throws Exception
-    {
-        final Node parent = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "parent" ).
-            setNodeId( NodeId.from( "parent" ) ).
-            build() );
-
-        final Node child1 = createNode( CreateNodeParams.create().
-            parent( parent.path() ).
-            name( "child1" ).
-            setNodeId( NodeId.from( "child1" ) ).
-            build() );
-
-        final Node child1_1 = createNode( CreateNodeParams.create().
-            parent( child1.path() ).
-            name( "child1_1" ).
-            setNodeId( NodeId.from( "child1_1" ) ).
-            build() );
-
-        refresh();
-
-        pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
-
-        doDeleteNode( parent.id() );
-
-        refresh();
-
-        final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
-
-        assertEquals( 3, result.getSuccessful().getSize() );
-    }
-
 
     @Test
     public void push_after_rename()
