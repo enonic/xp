@@ -44,7 +44,7 @@ public class SearchResult
     {
         private SearchHits results = SearchHits.create( 0L ).build();
 
-        private Aggregations aggregations;
+        private Aggregations aggregations = Aggregations.empty();
 
         public Builder hits( final SearchHits results )
         {

@@ -49,6 +49,11 @@ public class FindContentByQuertResultJsonFactory
 
     private static void addAggregations( final Aggregations aggregations, final AbstractContentQueryResultJson.Builder builder )
     {
+        if ( aggregations == null )
+        {
+            return;
+        }
+
         for ( final Aggregation aggregation : aggregations )
         {
             if ( aggregation instanceof BucketAggregation )

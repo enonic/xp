@@ -90,7 +90,7 @@ public final class NodeQueryResult
 
         private float maxScore;
 
-        private Aggregations aggregations;
+        private Aggregations aggregations = Aggregations.empty();
 
         public Builder totalHits( final long totalHits )
         {
