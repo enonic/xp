@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
@@ -98,8 +97,6 @@ public class PushNodesCommandTest
         assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailed().iterator().next().getReason() );
     }
 
-
-    @Ignore
     @Test
     public void push_child_fail_if_parent_does_not_exists()
         throws Exception
@@ -209,11 +206,9 @@ public class PushNodesCommandTest
             setNodeId( NodeId.from( "child2_1" ) ).
             build() );
 
-        pushNodes( NodeIds.from( node1.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
-                   WS_OTHER );
-
-        printContentRepoIndex();
-        printContentRepoIndex( TEST_REPO.getId(), WS_OTHER );
+        final PushNodesResult result =
+            pushNodes( NodeIds.from( node1.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
+                       WS_OTHER );
 
         assertNotNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
 
@@ -270,7 +265,6 @@ public class PushNodesCommandTest
         assertEquals( 2, result.getSuccessful().getSize() );
     }
 
-    @Ignore
     @Test
     public void push_deleted()
         throws Exception

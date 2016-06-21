@@ -91,8 +91,6 @@ public class PushNodesCommand
 
             final NodeBranchEntry nodeBranchEntry = nodeBranchEntries.get( comparison.getNodeId() );
 
-            // TODO: Add permission-stuff here
-
             final boolean hasPublishPermission = NodesHasPermissionResolver.create( this ).
                 nodeIds( NodeIds.from( nodeBranchEntry.getNodeId() ) ).
                 permission( Permission.PUBLISH ).
@@ -111,13 +109,11 @@ public class PushNodesCommand
                 continue;
             }
 
-            // TODO: Check parent stuff, maybe check collection of stuff to be published also?
-            //   if ( !targetParentExists( nodeBranchEntry.getNodePath(), context ) )
-            //    {
-            //        builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
-            //    }
-            //    else
-            //    {
+            if ( !targetParentExists( nodeBranchEntry.getNodePath(), builder, context ) )
+            {
+                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
+                continue;
+            }
 
             publishBuilder.add( PushNodeEntry.create().
                 nodeBranchEntry( nodeBranchEntry ).
@@ -160,10 +156,6 @@ public class PushNodesCommand
 
     private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, PushNodesResult.Builder resultBuilder )
     {
-        // So, we have moved a node, and the pushed it.
-        // The children of the pushed node are all changed, and every equal node on target must get updated meta-data.
-        // If the child node does not exist in target, just ignore it, no moving necessary
-
         final Context context = ContextAccessor.current();
 
         final Context targetContext = ContextBuilder.create().
@@ -214,9 +206,14 @@ public class PushNodesCommand
             build(), context.getBranch() );
     }
 
-    private boolean targetParentExists( final NodePath nodePath, final Context currentContext )
+    private boolean targetParentExists( final NodePath nodePath, final PushNodesResult.Builder builder, final Context currentContext )
     {
         if ( nodePath.isRoot() || nodePath.getParentPath().equals( NodePath.ROOT ) )
+        {
+            return true;
+        }
+
+        if ( builder.hasBeenAdded( nodePath.getParentPath() ) )
         {
             return true;
         }
