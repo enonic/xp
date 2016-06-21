@@ -8,7 +8,7 @@
   "remoteAddress": "10.0.0.1",
   "mode": "live",
   "webSocket": false,
-  "validTicket": false,
+  "validTicket": true,
   "branch": "draft",
   "params": {
     "param3": [
