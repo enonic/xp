@@ -83,6 +83,8 @@ public final class PortalRequest
 
     private boolean webSocket;
 
+    private Boolean validTicket;
+
     public PortalRequest()
     {
         this.baseUri = "";
@@ -358,5 +360,15 @@ public final class PortalRequest
     public void setControllerScript( final ControllerScript controllerScript )
     {
         this.controllerScript = controllerScript;
+    }
+
+    public Boolean isValidTicket()
+    {
+        return validTicket;
+    }
+
+    public void setValidTicket( final Boolean validTicket )
+    {
+        this.validTicket = validTicket;
     }
 }

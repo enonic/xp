@@ -29,7 +29,7 @@ exports.get = function (req) {
 };
 
 exports.login = function (req) {
-    var redirectUrl = req.params.redirect || generateRedirectUrl();
+    var redirectUrl = (req.validTicket && req.params.redirect) || generateRedirectUrl();
     var body = generateLoginPage(redirectUrl);
 
     return {
@@ -41,8 +41,8 @@ exports.login = function (req) {
 
 exports.logout = function (req) {
     authLib.logout();
-    var redirectUrl = req.params.redirect || generateRedirectUrl();
-    
+    var redirectUrl = (req.validTicket && req.params.redirect) || generateRedirectUrl();
+
     return {
         redirect: redirectUrl
     };
