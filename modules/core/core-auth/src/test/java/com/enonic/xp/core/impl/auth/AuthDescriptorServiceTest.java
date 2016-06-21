@@ -14,7 +14,6 @@ import com.enonic.xp.inputtype.InputTypeName;
 public class AuthDescriptorServiceTest
     extends ApplicationTestSupport
 {
-    private static final String DEFAULT_AUTH_DESCRIPTOR_KEY = "com.enonic.xp.app.system";
 
     protected AuthDescriptorServiceImpl service;
 
@@ -23,7 +22,7 @@ public class AuthDescriptorServiceTest
         throws Exception
     {
         addApplication( "myapp1", "/apps/myapp1" );
-        addApplication( DEFAULT_AUTH_DESCRIPTOR_KEY, "/apps/default" );
+        addApplication( AuthDescriptorServiceImpl.DEFAULT_AUTH_APPLICATION_KEY.toString(), "/apps/default" );
         this.service = new AuthDescriptorServiceImpl();
         this.service.setResourceService( this.resourceService );
     }
@@ -53,7 +52,7 @@ public class AuthDescriptorServiceTest
         final AuthDescriptor authDescriptor = this.service.getDefaultDescriptor();
 
         Assert.assertNotNull( authDescriptor );
-        Assert.assertEquals( ApplicationKey.from( DEFAULT_AUTH_DESCRIPTOR_KEY ), authDescriptor.getKey() );
+        Assert.assertEquals( AuthDescriptorServiceImpl.DEFAULT_AUTH_APPLICATION_KEY, authDescriptor.getKey() );
         Assert.assertEquals( AuthDescriptorMode.LOCAL, authDescriptor.getMode() );
         Assert.assertEquals( Form.create().build(), authDescriptor.getConfig() );
     }

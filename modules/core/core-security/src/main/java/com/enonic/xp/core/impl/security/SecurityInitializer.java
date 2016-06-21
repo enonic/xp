@@ -3,10 +3,12 @@ package com.enonic.xp.core.impl.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
@@ -15,7 +17,9 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
@@ -33,6 +37,8 @@ final class SecurityInitializer
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
 
     private static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
+
+    private static final ApplicationKey DEFAULT_AUTH_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
     private final SecurityService securityService;
 
@@ -53,6 +59,7 @@ final class SecurityInitializer
             if ( isInitialized() )
             {
                 LOG.info( "System-repo [security] layout already initialized" );
+                adaptSystemUserStore(); //TODO Remove after next dump upgrade
                 return;
             }
 
@@ -74,6 +81,30 @@ final class SecurityInitializer
     {
         return this.nodeService.getByPath( UserStoreNodeTranslator.getRolesNodePath() ) != null &&
             this.nodeService.getByPath( UserStoreNodeTranslator.getUserStoresParentPath() ) != null;
+    }
+
+    //TODO Remove after next dump upgrade
+    private void adaptSystemUserStore()
+    {
+        final UserStoreKey systemUserStoreKey = UserStoreKey.system();
+        final UserStore systemUserStore = this.securityService.getUserStore( systemUserStoreKey );
+
+        if ( systemUserStore.getAuthConfig() != null )
+        {
+            return;
+        }
+
+        LOG.info( "Adapting user store [" + UserStoreKey.system() + "]" );
+        final AuthConfig authConfig = AuthConfig.create().
+            applicationKey( DEFAULT_AUTH_APPLICATION_KEY ).
+            build();
+
+        final UpdateUserStoreParams updateParams = UpdateUserStoreParams.create().
+            key( systemUserStoreKey ).
+            displayName( systemUserStore.getDisplayName() ).
+            authConfig( authConfig ).
+            build();
+        this.securityService.updateUserStore( updateParams );
     }
 
     private void runAsAdmin( Runnable runnable )
@@ -112,6 +143,10 @@ final class SecurityInitializer
     {
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
+        final AuthConfig authConfig = AuthConfig.create().
+            applicationKey( DEFAULT_AUTH_APPLICATION_KEY ).
+            build();
+
         final UserStoreAccessControlList permissions =
             UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
                                            UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
@@ -120,8 +155,10 @@ final class SecurityInitializer
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
+            authConfig( authConfig ).
             permissions( permissions ).
             build();
+
         this.securityService.createUserStore( createParams );
     }
 
