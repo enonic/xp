@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.IndexPath;
@@ -123,8 +125,15 @@ public class NodesHasPermissionResolver
             return this;
         }
 
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.permission, "Permission must be set" );
+        }
+
         public NodesHasPermissionResolver build()
         {
+            validate();
             return new NodesHasPermissionResolver( this );
         }
     }

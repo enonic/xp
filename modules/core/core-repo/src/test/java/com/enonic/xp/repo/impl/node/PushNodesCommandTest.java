@@ -11,6 +11,9 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -66,6 +69,35 @@ public class PushNodesCommandTest
 
         assertTrue( prodNode != null );
     }
+
+
+    @Test
+    public void push_child_missing_permission()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+
+        final Node child = createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child" ).
+            permissions( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    allowAll().
+                    deny( Permission.PUBLISH ).
+                    principal( TEST_DEFAULT_USER.getKey() ).
+                    build() ).build() ).
+            build() );
+
+        final PushNodesResult result = pushNodes( NodeIds.from( node.id(), child.id() ), WS_OTHER );
+
+        assertEquals( 1, result.getSuccessful().getSize() );
+        assertEquals( 1, result.getFailed().size() );
+        assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailed().iterator().next().getReason() );
+    }
+
 
     @Ignore
     @Test

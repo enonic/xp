@@ -29,6 +29,7 @@ import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PushNodesCommand
@@ -92,11 +93,17 @@ public class PushNodesCommand
 
             // TODO: Add permission-stuff here
 
-            // if ( !NodePermissionsResolver.userHasPermission( authInfo, Permission.PUBLISH, node ) )
-            //  {
-            //      builder.addFailed( node, PushNodesResult.Reason.ACCESS_DENIED );
-            //      continue;
-            //  }
+            final boolean hasPublishPermission = NodesHasPermissionResolver.create( this ).
+                nodeIds( NodeIds.from( nodeBranchEntry.getNodeId() ) ).
+                permission( Permission.PUBLISH ).
+                build().
+                execute();
+
+            if ( !hasPublishPermission )
+            {
+                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ACCESS_DENIED );
+                continue;
+            }
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
