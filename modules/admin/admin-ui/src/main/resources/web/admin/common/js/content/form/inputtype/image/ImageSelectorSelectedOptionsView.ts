@@ -151,7 +151,7 @@ module api.content.form.inputtype.image {
                         this.selection.splice(index, 1);
                     }
                 }
-
+                optionView.getCheckbox().giveFocus();
                 this.updateSelectionToolbarLayout();
             });
 
