@@ -483,10 +483,25 @@ public final class ContentResource
         final ContentIds deletedContents = result.getDeletedContents();
         final ContentIds failedContents = result.getFailedContents();
 
-        return PublishContentResultJson.create().
-            success( Contents.empty() ).
-            deleted( Contents.empty() ).
-            failures( Contents.empty() ).
+        final PublishContentResultJson.Builder json = PublishContentResultJson.create();
+
+        if ( ( pushedContents.getSize() + deletedContents.getSize() + failedContents.getSize() ) == 1 )
+        {
+            if ( pushedContents.getSize() == 1 )
+            {
+                json.contentName( contentService.getById( pushedContents.first() ).getDisplayName() );
+            }
+
+            if ( failedContents.getSize() == 1 )
+            {
+                json.contentName( contentService.getById( pushedContents.first() ).getDisplayName());
+            }
+        }
+
+        return json.
+            successSize( pushedContents.getSize() ).
+            deletedSize( deletedContents.getSize() ).
+            failuresSize( failedContents.getSize() ).
             build();
     }
 
