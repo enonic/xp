@@ -8,6 +8,7 @@ module api.content.form.inputtype.principalselector {
     import GetRelationshipTypeByNameRequest = api.schema.relationshiptype.GetRelationshipTypeByNameRequest;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class PrincipalSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.security.Principal> {
 
@@ -82,6 +83,10 @@ module api.content.form.inputtype.principalselector {
             });
 
             comboBox.onOptionSelected((event: SelectedOptionEvent<api.security.Principal>) => {
+                if (event.getKeyCode() === 13) {
+                    new FocusSwitchEvent(this).fire();
+                }
+
                 const selectedOption = event.getSelectedOption();
                 var key = selectedOption.getOption().displayValue.getKey();
                 if (!key) {

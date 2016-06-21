@@ -20,6 +20,7 @@ module api.content.site.inputtype.siteconfigurator {
     import GetApplicationRequest = api.application.GetApplicationRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class AuthApplicationSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<Application> {
 
@@ -120,6 +121,10 @@ module api.content.site.inputtype.siteconfigurator {
             });
 
             comboBox.onOptionSelected((event: SelectedOptionEvent<Application>) => {
+                if (event.getKeyCode() === 13) {
+                    new FocusSwitchEvent(this).fire();
+                }
+
                 this.ignorePropertyChange = true;
 
                 const selectedOption = event.getSelectedOption();

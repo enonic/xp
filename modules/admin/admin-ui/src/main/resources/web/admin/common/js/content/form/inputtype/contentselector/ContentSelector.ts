@@ -66,7 +66,7 @@ module api.content.form.inputtype.contentselector {
 
             this.onRemoved((event) => {
                 ContentDeletedEvent.un(this.contentDeletedListener);
-            })
+            });
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
@@ -139,6 +139,9 @@ module api.content.form.inputtype.contentselector {
                             });
 
                         this.contentComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
+                            if (event.getKeyCode() === 13) {
+                                new FocusSwitchEvent(this).fire();
+                            }
 
                             var reference = api.util.Reference.from(event.getSelectedOption().getOption().displayValue.getContentId());
 
@@ -158,14 +161,8 @@ module api.content.form.inputtype.contentselector {
                         this.contentComboBox.onOptionDeselected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
                             this.getPropertyArray().remove(event.getSelectedOption().getIndex());
-                                this.updateSelectedOptionStyle();
-                                this.validate(false);
-                        });
-
-                        this.contentComboBox.onOptionSelected((event: SelectedOptionEvent<any>) => {
-                            if (event.getKeyCode() === 13) {
-                                new FocusSwitchEvent(this).fire();
-                            }
+                            this.updateSelectedOptionStyle();
+                            this.validate(false);
                             });
 
                             this.setupSortable();
