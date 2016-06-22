@@ -73,6 +73,12 @@ include 'blobstore:blobstore-file'
 
 include 'app:app-system'
 
+include 'repack:repack-attoparser'
+include 'repack:repack-elasticsearch'
+include 'repack:repack-jparsec'
+include 'repack:repack-okhttp'
+include 'repack:repack-resteasy'
+
 include 'distro'
 include 'docs'
 
