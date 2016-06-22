@@ -29,6 +29,11 @@ public final class PortalRequestMapper
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
         gen.value( "webSocket", this.request.isWebSocket() );
 
+        if ( this.request.isValidTicket() != null )
+        {
+            gen.value( "validTicket", this.request.isValidTicket() );
+        }
+
         if ( this.request.getBranch() != null )
         {
             gen.value( "branch", this.request.getBranch().getName() );

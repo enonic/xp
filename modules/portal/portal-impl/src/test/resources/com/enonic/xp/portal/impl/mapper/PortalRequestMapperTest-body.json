@@ -8,6 +8,7 @@
   "remoteAddress": "10.0.0.1",
   "mode": "live",
   "webSocket": false,
+  "validTicket": true,
   "branch": "draft",
   "contentType": "text/plain",
   "body": "Hello World",

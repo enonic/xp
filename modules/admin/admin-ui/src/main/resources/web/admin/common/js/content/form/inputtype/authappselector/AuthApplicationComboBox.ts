@@ -17,9 +17,9 @@ module api.content.site.inputtype.siteconfigurator {
         private authApplicationSelectedOptionsView: AuthApplicationSelectedOptionsView;
 
         constructor(maxOccurrences: number, siteConfigProvider: SiteConfigProvider,
-                    formContext: api.content.form.ContentFormContext, value?: string) {
+                    formContext: api.content.form.ContentFormContext, value: string, readOnly: boolean) {
 
-            this.authApplicationSelectedOptionsView = new AuthApplicationSelectedOptionsView(siteConfigProvider, formContext);
+            this.authApplicationSelectedOptionsView = new AuthApplicationSelectedOptionsView(siteConfigProvider, formContext, readOnly);
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
             builder.
                 setMaximumOccurrences(maxOccurrences).

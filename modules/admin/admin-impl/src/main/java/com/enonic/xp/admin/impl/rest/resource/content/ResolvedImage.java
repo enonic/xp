@@ -9,10 +9,20 @@ final class ResolvedImage
 
     final String mimeType;
 
+    final boolean gzip;
+
     ResolvedImage( final Object image, final String mimeType )
     {
         this.image = image;
         this.mimeType = mimeType;
+        this.gzip = false;
+    }
+
+    ResolvedImage( final Object image, final String mimeType, final String fileName )
+    {
+        this.image = image;
+        this.mimeType = mimeType;
+        this.gzip = fileName != null && fileName.toLowerCase().endsWith( ".svgz" );
     }
 
     static ResolvedImage unresolved()
@@ -25,13 +35,23 @@ final class ResolvedImage
         return image != null && mimeType != null;
     }
 
+    private Response.ResponseBuilder newResponse()
+    {
+        final Response.ResponseBuilder r = Response.ok( image, mimeType );
+        if ( gzip )
+        {
+            r.encoding( "gzip" );
+        }
+        return r;
+    }
+
     Response toResponse()
     {
-        return Response.ok( image, mimeType ).build();
+        return newResponse().build();
     }
 
     Response toResponse( final CacheControl cc )
     {
-        return Response.ok( image, mimeType ).cacheControl( cc ).build();
+        return newResponse().cacheControl( cc ).build();
     }
 }

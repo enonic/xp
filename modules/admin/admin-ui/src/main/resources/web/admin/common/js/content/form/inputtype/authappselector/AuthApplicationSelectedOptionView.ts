@@ -28,9 +28,12 @@ module api.content.site.inputtype.siteconfigurator {
 
         private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent):void};
 
-        constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
+        private readOnly: boolean;
+
+        constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext, readOnly: boolean = false) {
             this.editClickedListeners = [];
             this.siteConfigFormDisplayedListeners = [];
+            this.readOnly = readOnly;
 
             this.application = option.displayValue;
             this.siteConfig = siteConfig;
@@ -50,20 +53,20 @@ module api.content.site.inputtype.siteconfigurator {
 
             header.appendChild(namesAndIconView);
 
-            var removeButton = new api.dom.AEl("remove-button icon-close");
-            removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveClicked();
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-            header.appendChild(removeButton);
-
+            if (!this.readOnly) {
+                var removeButton = new api.dom.AEl("remove-button icon-close");
+                removeButton.onClicked((event: MouseEvent) => {
+                    this.notifyRemoveClicked();
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                });
+                header.appendChild(removeButton);
+            }
             this.appendChild(header);
 
             this.initFormView();
-
-            if (this.application.getAuthForm().getFormItems().length > 0) {
+            if (!this.readOnly && this.application.getAuthForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
             }
         }
