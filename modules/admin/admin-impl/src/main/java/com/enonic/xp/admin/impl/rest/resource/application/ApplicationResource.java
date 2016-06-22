@@ -95,7 +95,8 @@ public final class ApplicationResource
             }
             final ApplicationKey applicationKey = application.getKey();
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
-                !ApplicationKey.from( "com.enonic.xp.app.system" ).equals( applicationKey ) )//TODO Remove after 7.0.0 refactoring
+                !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
+                    applicationKey ) )//TODO Remove after 7.0.0 refactoring
             {
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
                 final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );

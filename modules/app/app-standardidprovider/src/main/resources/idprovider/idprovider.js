@@ -59,7 +59,7 @@ function generateRedirectUrl() {
 function generateLoginPage(redirectUrl) {
     var userStoreKey = authLib.getUserStore().key;
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
-    var appLoginJsUrl = portalLib.assetUrl({path: "js/app-system.js"});
+    var appLoginJsUrl = portalLib.assetUrl({path: "js/login.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
     var appLoginBackgroundUrl = portalLib.assetUrl({path: "common/images/background-1920.jpg"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});

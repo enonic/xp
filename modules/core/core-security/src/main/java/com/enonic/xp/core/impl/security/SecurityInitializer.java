@@ -38,7 +38,7 @@ final class SecurityInitializer
 
     private static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
-    private static final ApplicationKey DEFAULT_AUTH_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
+    private static final ApplicationKey DEFAULT_AUTH_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
     private final SecurityService securityService;
 
