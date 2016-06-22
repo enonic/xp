@@ -944,20 +944,27 @@ module api.dom {
             this.getEl().removeEventListener("blur", listener);
         }
 
-        onFocusIn(listener: (event: FocusEvent) => void) {
-            this.getEl().addEventListener("focusin", listener);
+        // No native support of focusin/focusout events in Firefox yet.
+
+        onFocusIn(listener: (event: any) => void) {
+            // this.getEl().addEventListener("focusin", listener);
+            wemjq(this.el.getHTMLElement()).on("focusin", listener);
+
         }
 
-        unFocusIn(listener: (event: FocusEvent) => void) {
-            this.getEl().removeEventListener("focusin", listener);
+        unFocusIn(listener: (event: any) => void) {
+            // this.getEl().removeEventListener("focusin", listener);
+            wemjq(this.el.getHTMLElement()).off("focusin", listener);
         }
 
-        onFocusOut(listener: (event: FocusEvent) => void) {
-            this.getEl().addEventListener("focusout", listener);
+        onFocusOut(listener: (event: any) => void) {
+            // this.getEl().addEventListener("focusout", listener);
+            wemjq(this.el.getHTMLElement()).on("focusout", listener);
         }
 
-        unFocusOut(listener: (event: FocusEvent) => void) {
-            this.getEl().removeEventListener("focusout", listener);
+        unFocusOut(listener: (event: any) => void) {
+            // this.getEl().removeEventListener("focusout", listener);
+            wemjq(this.el.getHTMLElement()).off("focusout", listener);
         }
 
         onScroll(listener: (event: Event) => void) {
