@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.repo;
+package com.enonic.xp.impl.server.rest;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.IndexService;
@@ -21,7 +20,7 @@ import com.enonic.xp.repository.RepositoryId;
 import static org.mockito.Matchers.isA;
 
 public class IndexResourceTest
-    extends AdminResourceTestSupport
+    extends ServerRestTestSupport
 {
     private IndexService indexService;
 
@@ -39,7 +38,7 @@ public class IndexResourceTest
 
         Mockito.when( this.indexService.reindex( isA( ReindexParams.class ) ) ).thenReturn( reindexResult );
 
-        final String result = request().path( "repo/reindex" ).
+        final String result = request().path( "/repo/index/reindex" ).
             entity( readFromFile( "reindex_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
@@ -47,7 +46,7 @@ public class IndexResourceTest
     }
 
     @Test
-    public void updateIndexSettings()
+    public void updateSettings()
         throws Exception
     {
         final UpdateIndexSettingsResult indexSettingsResult = UpdateIndexSettingsResult.create().
@@ -59,7 +58,7 @@ public class IndexResourceTest
             thenReturn( indexSettingsResult );
 
         final String result = request().
-            path( "repo/updateIndexSettings" ).
+            path( "/repo/index/updateSettings" ).
             entity( readFromFile( "update_index_settings_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
