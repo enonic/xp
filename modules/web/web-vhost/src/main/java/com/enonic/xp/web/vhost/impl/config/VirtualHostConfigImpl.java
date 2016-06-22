@@ -15,20 +15,11 @@ public final class VirtualHostConfigImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( VirtualHostConfigImpl.class );
 
-    private boolean enabled;
-
     private VirtualHostMappings mappings;
 
     public VirtualHostConfigImpl()
     {
-        this.enabled = false;
         this.mappings = new VirtualHostMappings();
-    }
-
-    @Override
-    public boolean isEnabled()
-    {
-        return this.enabled;
     }
 
     @Override
@@ -41,12 +32,17 @@ public final class VirtualHostConfigImpl
     public void configure( final Map<String, String> config )
     {
         final VirtualHostConfigMap configMap = new VirtualHostConfigMap( config );
-        this.enabled = configMap.isEnabled();
-        this.mappings = configMap.buildMappings();
+        final boolean enabled = configMap.isEnabled();
 
-        if ( this.enabled )
+        if ( enabled )
         {
             LOG.info( "Virtual host is enabled and mappings updated." );
+            this.mappings = configMap.buildMappings();
+        }
+        else
+        {
+            LOG.info( "Virtual host is disabled." );
+            this.mappings = new VirtualHostMappings();
         }
     }
 }

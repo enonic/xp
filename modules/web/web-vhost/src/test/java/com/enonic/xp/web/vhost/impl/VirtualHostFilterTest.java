@@ -45,20 +45,9 @@ public class VirtualHostFilterTest
     }
 
     @Test
-    public void testNotEnabled()
-        throws Exception
-    {
-        Mockito.when( this.config.isEnabled() ).thenReturn( false );
-        this.filter.doFilter( this.req, this.res, this.chain );
-
-        Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
-    }
-
-    @Test
     public void testNoMapping()
         throws Exception
     {
-        Mockito.when( this.config.isEnabled() ).thenReturn( true );
         this.filter.doFilter( this.req, this.res, this.chain );
 
         Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
@@ -70,7 +59,6 @@ public class VirtualHostFilterTest
     {
         addMapping();
 
-        Mockito.when( this.config.isEnabled() ).thenReturn( true );
         this.filter.doFilter( this.req, this.res, this.chain );
 
         Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
@@ -82,7 +70,6 @@ public class VirtualHostFilterTest
         throws Exception
     {
         addMapping();
-        Mockito.when( this.config.isEnabled() ).thenReturn( true );
 
         this.req.setServerName( "enonic.com" );
         this.req.setRequestURI( "/rest/status" );
