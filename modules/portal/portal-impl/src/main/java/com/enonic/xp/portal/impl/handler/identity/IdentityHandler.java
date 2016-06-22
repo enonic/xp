@@ -81,9 +81,13 @@ public class IdentityHandler
 
             final String jSessionId = getJSessionId();
             final String expectedTicket = generateTicket( jSessionId );
-            if ( !expectedTicket.equals( ticket ) )
+            if ( expectedTicket.equals( ticket ) )
             {
-                throw badRequest( "Session expired" );
+                req.setValidTicket( Boolean.TRUE );
+            }
+            else
+            {
+                req.setValidTicket( Boolean.FALSE );
             }
         }
     }

@@ -24,8 +24,11 @@ module api.content.site.inputtype.siteconfigurator {
 
         private items: AuthApplicationSelectedOptionView[] = [];
 
-        constructor(siteConfigProvider: SiteConfigProvider, formContext: api.content.form.ContentFormContext) {
+        private readOnly: boolean;
+
+        constructor(siteConfigProvider: SiteConfigProvider, formContext: api.content.form.ContentFormContext, readOnly: boolean) {
             super();
+            this.readOnly = readOnly;
             this.siteConfigProvider = siteConfigProvider;
             this.formContext = formContext;
 
@@ -45,7 +48,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.notifyBeforeOptionCreated();
 
             let siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());
-            let optionView = new AuthApplicationSelectedOptionView(option, siteConfig, this.formContext);
+            let optionView = new AuthApplicationSelectedOptionView(option, siteConfig, this.formContext, this.readOnly);
 
             optionView.onSiteConfigFormDisplayed((applicationKey: ApplicationKey) => {
                 this.notifySiteConfigFormDisplayed(applicationKey, optionView.getFormView());

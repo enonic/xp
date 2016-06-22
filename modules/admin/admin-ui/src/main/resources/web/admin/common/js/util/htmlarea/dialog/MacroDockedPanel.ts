@@ -222,15 +222,18 @@ module api.util.htmlarea.dialog {
 
         private id: string = "macro-preview-frame-id";
 
+        private macroPreview: MacroPreview;
+
         private debouncedResizeHandler: () => void = api.util.AppHelper.debounce(() => {
             this.adjustFrameHeight();
-        }, 300, false);
+        }, 500, false);
 
         private previewRenderedListeners: {():void}[] = [];
 
         constructor(macroPreview: MacroPreview) {
             super("preview-iframe");
             this.setId(this.id);
+            this.macroPreview = macroPreview;
 
             this.initFrameContent(macroPreview)
         }
@@ -242,13 +245,26 @@ module api.util.htmlarea.dialog {
                 if (doc.document) {
                     doc = doc.document;
                 }
+
                 doc.open();
                 doc.write(this.makeContentForPreviewFrame(macroPreview));
                 doc.close();
 
+                if (this.isYoutubePreview()) {
+                    doc.body.style.marginRight = 4;
+                }
+
                 this.debouncedResizeHandler();
                 this.adjustFrameHeightOnContentsUpdate();
             });
+        }
+
+        private isYoutubePreview(): boolean {
+            return this.macroPreview.getMacroString().indexOf("[youtube") == 0;
+        }
+
+        private isInstagramPreview(): boolean {
+            return this.macroPreview.getMacroString().indexOf("[instagram") == 0;
         }
 
         private adjustFrameHeightOnContentsUpdate() {
@@ -263,14 +279,19 @@ module api.util.htmlarea.dialog {
 
         private adjustFrameHeight() {
             try {
-                var frameWindow = this.getHTMLElement()["contentWindow"],
-                    scrollHeight = frameWindow.document.body.scrollHeight;
+                var frameWindow = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"],
+                    scrollHeight = frameWindow.document.body.scrollHeight,
+                    maxFrameHeight = this.getMaxFrameHeight();
                 this.getEl().setHeightPx(scrollHeight > 150
-                    ? frameWindow.document.body.scrollHeight
+                    ? scrollHeight > maxFrameHeight ? maxFrameHeight : scrollHeight + (this.isInstagramPreview() ? 18 : 0)
                     : wemjq("#" + this.id).contents().find('body').outerHeight());
                 this.notifyPreviewRendered();
             } catch (error) {
             }
+        }
+
+        private getMaxFrameHeight(): number {
+            return wemjq(window).height() - 250;
         }
 
         private makeContentForPreviewFrame(macroPreview: MacroPreview): string {

@@ -30,9 +30,12 @@ module api.content.site.inputtype.siteconfigurator {
 
         private formContext: api.content.form.ContentFormContext;
 
+        private readOnly: boolean;
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("site-configurator");
             this.context = config;
+            this.readConfig(config.inputConfig);
             this.formContext = config.formContext;
         }
 
@@ -42,6 +45,12 @@ module api.content.site.inputtype.siteconfigurator {
 
         newInitialValue(): Value {
             return null;
+        }
+
+        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+            var readOnlyConfig = inputConfig['readOnly'] && inputConfig['readOnly'][0];
+            var readOnlyValue = readOnlyConfig && readOnlyConfig['value'];
+            this.readOnly = readOnlyValue === "true";
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
@@ -102,8 +111,8 @@ module api.content.site.inputtype.siteconfigurator {
 
             var value = this.getValueFromPropertyArray(this.getPropertyArray());
             var siteConfigFormsToDisplay = value.split(';');
-            var comboBox = new AuthApplicationComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider, this.formContext,
-                value);
+            var comboBox = new AuthApplicationComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider, 
+                this.formContext, value, this.readOnly);
 
             // creating selected option might involve property changes
             comboBox.onBeforeOptionCreated(() => this.ignorePropertyChange = true);
