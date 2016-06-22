@@ -101,10 +101,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
                 this.getCancelAction().execute();
             }
         });
-
-        this.fileInput.onShown(() => {
-            this.fileInput.giveFocus();
-        });
     }
 
     private initMediaUploader() {
@@ -212,7 +208,8 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     show() {
         this.updateDialogTitlePath();
 
-        this.toggleUploaderEnabled();
+        this.fileInput.disable();
+        this.uploader.setEnabled(false);
         this.resetFileInputWithUploader();
 
         super.show();
@@ -251,6 +248,9 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
             api.DefaultErrorHandler.handle(reason);
 
         }).finally(() => {
+            this.fileInput.enable();
+            this.fileInput.giveFocus();
+            this.toggleUploadersEnabled();
             this.loadMask.hide();
             this.mostPopularContentTypes.showIfNotEmpty();
             this.centerMyself();
@@ -284,10 +284,11 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.recentContentTypes.getItemsList().clearItems();
     }
 
-    private toggleUploaderEnabled() {
+    private toggleUploadersEnabled() {
         var uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
         this.uploader.setEnabled(uploaderEnabled);
         this.toggleClass("no-uploader-el", !uploaderEnabled);
+        this.fileInput.getUploader().setEnabled(uploaderEnabled);
     }
 
     private resetFileInputWithUploader() {
