@@ -9,7 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ext.RuntimeDelegate;
 
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.UnhandledException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -35,6 +37,8 @@ public final class JaxRsServlet
 
     public JaxRsServlet()
     {
+        RuntimeDelegate.setInstance( new ResteasyProviderFactory() );
+
         this.needsRefresh = true;
         this.app = new JaxRsApplication();
     }
