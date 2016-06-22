@@ -121,7 +121,7 @@ public final class ContentImageResource
             {
                 try
                 {
-                    return new ResolvedImage( binary.read(), attachment.getMimeType() );
+                    return new ResolvedImage( binary.read(), attachment.getMimeType(), attachment.getName() );
                 }
                 catch ( final IOException e )
                 {
