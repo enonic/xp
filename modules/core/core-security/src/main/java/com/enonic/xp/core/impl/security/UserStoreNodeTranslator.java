@@ -46,6 +46,8 @@ abstract class UserStoreNodeTranslator
 
     final static String GROUP_FOLDER_NODE_NAME = "groups";
 
+    private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
+
     protected final static NodePath USER_STORE_PARENT_PATH = NodePath.create( NodePath.ROOT ).
         addElement( PrincipalKey.IDENTITY_NODE_NAME ).
         build();
@@ -270,9 +272,11 @@ abstract class UserStoreNodeTranslator
         }
         final PropertySet nodeAsSet = node.data().getRoot();
 
+        final UserStoreKey userStoreKey = UserStoreNodeTranslator.toKey( node );
+
         final UserStore.Builder userStore = UserStore.create().
             displayName( nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY ) ).
-            key( UserStoreNodeTranslator.toKey( node ) ).
+            key( userStoreKey ).
             description( nodeAsSet.getString( UserStorePropertyNames.DESCRIPTION_KEY ) );
 
         if ( nodeAsSet.hasProperty( UserStorePropertyNames.ID_PROVIDER_KEY ) )
@@ -282,6 +286,14 @@ abstract class UserStoreNodeTranslator
             final AuthConfig authConfig = AuthConfig.create().
                 applicationKey( ApplicationKey.from( applicationKey ) ).
                 config( config.toTree() ).
+                build();
+            userStore.authConfig( authConfig );
+        }
+        else if ( UserStoreKey.system().equals( userStoreKey ) )
+        {
+            //TODO Remove after next dump upgrade
+            final AuthConfig authConfig = AuthConfig.create().
+                applicationKey( SYSTEM_ID_PROVIDER_KEY ).
                 build();
             userStore.authConfig( authConfig );
         }
