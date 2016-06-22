@@ -57,6 +57,7 @@ function generateRedirectUrl() {
 }
 
 function generateLoginPage(redirectUrl) {
+    var userStoreKey = authLib.getUserStore().key;
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
     var appLoginJsUrl = portalLib.assetUrl({path: "js/app-system.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
@@ -66,6 +67,7 @@ function generateLoginPage(redirectUrl) {
     var configView = resolve('idprovider-config.txt');
     var config = mustacheLib.render(configView, {
         appLoginServiceUrl: appLoginServiceUrl,
+        userStoreKey: userStoreKey,
         redirectUrl: redirectUrl
     });
 

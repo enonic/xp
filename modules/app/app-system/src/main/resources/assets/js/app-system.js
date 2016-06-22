@@ -21,7 +21,8 @@ function loginButtonClick() {
 
     var data = {
         user: $("#username-input").val(),
-        password: $("#password-input").val()
+        password: $("#password-input").val(),
+        userStore: CONFIG.userStoreKey
     }
     $.ajax({
         url: CONFIG.appLoginServiceUrl,
