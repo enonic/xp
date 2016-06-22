@@ -28,7 +28,7 @@ public class RestoreCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/admin/rest/repo/restore", request.getPath() );
+        assertEquals( "/api/repo/snapshot/restore", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 

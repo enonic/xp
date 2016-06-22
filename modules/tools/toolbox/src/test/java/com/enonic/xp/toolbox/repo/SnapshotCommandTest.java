@@ -27,7 +27,7 @@ public class SnapshotCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/admin/rest/repo/snapshot", request.getPath() );
+        assertEquals( "/api/repo/snapshot/snapshot", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 

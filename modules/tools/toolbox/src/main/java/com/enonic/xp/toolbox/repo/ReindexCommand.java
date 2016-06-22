@@ -14,7 +14,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class ReindexCommand
     extends RepoCommand
 {
-    public static final String REINDEX_REST_PATH = "/admin/rest/repo/reindex";
+    public static final String REINDEX_REST_PATH = "/api/repo/index/reindex";
 
     @Option(name = "-b", description = "A comma-separated list of branches to be reindexed.", required = true)
     public List<String> branches;
