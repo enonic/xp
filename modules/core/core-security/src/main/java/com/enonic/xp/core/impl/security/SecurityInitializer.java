@@ -17,9 +17,7 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
@@ -38,7 +36,7 @@ final class SecurityInitializer
 
     private static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
-    private static final ApplicationKey DEFAULT_AUTH_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
+    private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
     private final SecurityService securityService;
 
@@ -59,7 +57,6 @@ final class SecurityInitializer
             if ( isInitialized() )
             {
                 LOG.info( "System-repo [security] layout already initialized" );
-                adaptSystemUserStore(); //TODO Remove after next dump upgrade
                 return;
             }
 
@@ -81,30 +78,6 @@ final class SecurityInitializer
     {
         return this.nodeService.getByPath( UserStoreNodeTranslator.getRolesNodePath() ) != null &&
             this.nodeService.getByPath( UserStoreNodeTranslator.getUserStoresParentPath() ) != null;
-    }
-
-    //TODO Remove after next dump upgrade
-    private void adaptSystemUserStore()
-    {
-        final UserStoreKey systemUserStoreKey = UserStoreKey.system();
-        final UserStore systemUserStore = this.securityService.getUserStore( systemUserStoreKey );
-
-        if ( systemUserStore.getAuthConfig() != null )
-        {
-            return;
-        }
-
-        LOG.info( "Adapting user store [" + UserStoreKey.system() + "]" );
-        final AuthConfig authConfig = AuthConfig.create().
-            applicationKey( DEFAULT_AUTH_APPLICATION_KEY ).
-            build();
-
-        final UpdateUserStoreParams updateParams = UpdateUserStoreParams.create().
-            key( systemUserStoreKey ).
-            displayName( systemUserStore.getDisplayName() ).
-            authConfig( authConfig ).
-            build();
-        this.securityService.updateUserStore( updateParams );
     }
 
     private void runAsAdmin( Runnable runnable )
@@ -144,7 +117,7 @@ final class SecurityInitializer
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
         final AuthConfig authConfig = AuthConfig.create().
-            applicationKey( DEFAULT_AUTH_APPLICATION_KEY ).
+            applicationKey( SYSTEM_ID_PROVIDER_KEY ).
             build();
 
         final UserStoreAccessControlList permissions =
