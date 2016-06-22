@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 
-@Path("/api/repo")
+@Path("/api/app")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
