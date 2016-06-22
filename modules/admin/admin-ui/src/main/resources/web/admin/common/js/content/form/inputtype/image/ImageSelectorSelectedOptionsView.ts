@@ -27,6 +27,8 @@ module api.content.form.inputtype.image {
 
         private mouseClickListener: {(MouseEvent): void};
 
+        private clickDisabled: boolean = false;
+
         constructor() {
             super();
 
@@ -58,6 +60,16 @@ module api.content.form.inputtype.image {
                     (<ImageSelectorSelectedOptionView>moved.getOptionView()).getCheckbox().giveFocus();
                 }
             });
+        }
+
+        protected handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
+            super.handleDnDStop(event, ui);
+            this.temporarilyDisableClickEvent(); //FF triggers unwanted click event after dragging sortable
+        }
+
+        private temporarilyDisableClickEvent() {
+            this.clickDisabled = true;
+            setTimeout(()=> this.clickDisabled = false, 50);
         }
 
         removeSelectedOptions(options: SelectedOption<ImageSelectorDisplayValue>[]) {
@@ -100,6 +112,9 @@ module api.content.form.inputtype.image {
             }
 
             optionView.onClicked((event: MouseEvent) => {
+                if (this.clickDisabled) {
+                    return;
+                }
 
                 this.uncheckOthers(selectedOption);
 

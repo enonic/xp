@@ -44,7 +44,8 @@ module api.ui.selector.combobox {
                     tolerance: 'pointer',
                     placeholder: 'selected-option placeholder',
                     start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
-                    update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
+                    update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui),
+                    stop: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStop(event, ui)
                 });
             } else {
                 wemjq(this.getHtml()).sortable('destroy');
@@ -53,14 +54,14 @@ module api.ui.selector.combobox {
         }
 
 
-        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+        protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
             this.beforeDragStartedHeight = this.getEl().getHeight();
 
             var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
         }
 
-        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
+        protected handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
                 var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
@@ -69,6 +70,10 @@ module api.ui.selector.combobox {
             }
 
             this.draggingIndex = -1;
+        }
+
+        protected handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
+            
         }
 
         private handleMovedOccurrence(fromIndex: number, toIndex: number) {
