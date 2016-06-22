@@ -66,7 +66,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
                 this.setDependantItems(descendants);
 
                 if (!this.isAnyOnline(items)) {
-                    this.verifyInstantDeleteVisibility(descendants);
+                    this.manageInstantDeleteStatus(descendants);
                 }
 
                 this.centerMyself();
@@ -76,11 +76,16 @@ export class ContentDeleteDialog extends DependantItemsDialog {
             });
     }
 
-    private verifyInstantDeleteVisibility(items: ContentSummaryAndCompareStatus[]) {
-        if (this.isAnyOnline(items)) {
-            this.instantDeleteCheckbox.show();
+    private manageInstantDeleteStatus(items: ContentSummaryAndCompareStatus[]) {
+        const isVisible = this.isAnyOnline(items);
+        this.instantDeleteCheckbox.setVisible(isVisible);
+        if (isVisible) {
+            const isChecked = this.isEveryPendingDelete(items);
+            this.instantDeleteCheckbox.setChecked(isChecked, true);
+            // Disable to prevent uncheck, when every content is pending delete
+            this.instantDeleteCheckbox.setDisabled(isChecked);
         } else {
-            this.instantDeleteCheckbox.hide();
+            this.instantDeleteCheckbox.setChecked(false, true);
         }
     }
 
@@ -90,9 +95,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.setIgnoreItemsChanged(false);
         this.updateSubTitle();
 
-        this.verifyInstantDeleteVisibility(contents);
-
-        this.instantDeleteCheckbox.setChecked(false, true);
+        this.manageInstantDeleteStatus(contents);
 
         this.manageDescendants(contents);
 
@@ -217,11 +220,21 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         });
     }
 
+    private isEveryPendingDelete(items: ContentSummaryAndCompareStatus[]): boolean {
+        return items.every((item: ContentSummaryAndCompareStatus) => {
+            return this.isStatusPendingDelete(item.getCompareStatus());
+        });
+    }
+
     private isStatusOnline(status: CompareStatus): boolean {
         return status === CompareStatus.EQUAL ||
                status === CompareStatus.MOVED ||
                status === CompareStatus.NEWER ||
                status === CompareStatus.PENDING_DELETE;
+    }
+
+    private isStatusPendingDelete(status: CompareStatus): boolean {
+        return status === CompareStatus.PENDING_DELETE;
     }
 
     private updateSubTitle() {
