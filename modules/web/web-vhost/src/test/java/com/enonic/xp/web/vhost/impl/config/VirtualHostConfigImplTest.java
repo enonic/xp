@@ -28,6 +28,7 @@ public class VirtualHostConfigImplTest
     @Test
     public void testNoConfig()
     {
+        Assert.assertEquals( false, this.config.isEnabled() );
         Assert.assertNotNull( this.config.getMappings() );
 
         final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
@@ -40,6 +41,7 @@ public class VirtualHostConfigImplTest
     {
         loadConfig( "none" );
 
+        Assert.assertEquals( false, this.config.isEnabled() );
         Assert.assertNotNull( this.config.getMappings() );
 
         final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
@@ -51,6 +53,8 @@ public class VirtualHostConfigImplTest
         throws Exception
     {
         loadConfig( "simple" );
+
+        Assert.assertEquals( true, this.config.isEnabled() );
 
         final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
 
@@ -66,10 +70,7 @@ public class VirtualHostConfigImplTest
     {
         loadConfig( "disable" );
 
-        final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
-
-        Assert.assertNotNull( mappings );
-        Assert.assertEquals( 0, mappings.size() );
+        Assert.assertFalse( this.config.isEnabled() );
     }
 
     @Test
@@ -77,6 +78,8 @@ public class VirtualHostConfigImplTest
         throws Exception
     {
         loadConfig( "complete" );
+
+        Assert.assertEquals( true, this.config.isEnabled() );
 
         final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
 

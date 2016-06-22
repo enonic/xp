@@ -26,7 +26,7 @@ public final class VirtualHostFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        final VirtualHostMapping mapping = this.config.getMappings().resolve( req );
+        final VirtualHostMapping mapping = this.config.isEnabled() ? this.config.getMappings().resolve( req ) : null;
         if ( mapping == null )
         {
             chain.doFilter( req, res );
