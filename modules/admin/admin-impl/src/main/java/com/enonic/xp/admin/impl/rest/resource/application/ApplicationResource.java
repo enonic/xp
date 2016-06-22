@@ -95,10 +95,11 @@ public final class ApplicationResource
             }
             final ApplicationKey applicationKey = application.getKey();
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
-                !ApplicationKey.from( "com.enonic.xp.app.system" ).equals( applicationKey ) )//Remove after 7.0.0 refactoring
+                !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
+                    applicationKey ) )//TODO Remove after 7.0.0 refactoring
             {
-                final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
-                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
+                final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
 
                 json.add( application, localApplication, siteDescriptor, authDescriptor );
@@ -260,6 +261,29 @@ public final class ApplicationResource
         final int count = parseInt( params.getCount(), 10 );
 
         return this.marketService.get( version, start, count );
+    }
+
+    @GET
+    @Path("getIdProviderApplications")
+    public ListApplicationJson getIdProviderApplications()
+    {
+        final ListApplicationJson json = new ListApplicationJson();
+
+        Applications applications = this.applicationService.getInstalledApplications();
+        for ( final Application application : applications )
+        {
+            final ApplicationKey applicationKey = application.getKey();
+            final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+
+            if ( authDescriptor != null )
+            {
+                final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
+                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+                json.add( application, localApplication, siteDescriptor, authDescriptor );
+            }
+        }
+
+        return json;
     }
 
     private int parseInt( final String value, final int defaultValue )

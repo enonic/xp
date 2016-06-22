@@ -45,9 +45,7 @@ public class AuthControllerServiceImplTest
         throws Exception
     {
         //Mocks the AuthDescriptorService
-        final AuthDescriptor defaultAuthDescriptor = AuthDescriptor.create().key( ApplicationKey.from( "defaultapplication" ) ).build();
         final AuthDescriptorService authDescriptorService = Mockito.mock( AuthDescriptorService.class );
-        Mockito.when( authDescriptorService.getDefaultDescriptor() ).thenReturn( defaultAuthDescriptor );
         Mockito.when( authDescriptorService.getDescriptor( ApplicationKey.from( "myapplication" ) ) ).thenReturn(
             AuthDescriptor.create().key( ApplicationKey.from( "myapplication" ) ).build() );
 
@@ -143,9 +141,7 @@ public class AuthControllerServiceImplTest
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = authControllerService.execute( executionParams );
-        Assert.assertNotNull( portalResponse );
-        Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        Assert.assertEquals( "defaultapplication/myfunction", portalResponse.getBody() );
+        Assert.assertNull( portalResponse );
     }
 
     @Test
@@ -174,9 +170,7 @@ public class AuthControllerServiceImplTest
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = authControllerService.execute( executionParams );
-        Assert.assertNotNull( portalResponse );
-        Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        Assert.assertEquals( "defaultapplication/myfunction", portalResponse.getBody() );
+        Assert.assertNull( portalResponse );
     }
 
 

@@ -131,6 +131,22 @@ public class ApplicationResourceTest
         Mockito.verify( this.applicationService ).stopApplication( ApplicationKey.from( "testapplication" ), true );
     }
 
+    @Test
+    public void get_id_provider_applications()
+        throws Exception
+    {
+        final Application application = createApplication();
+        final Applications applications = Applications.from( application );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        final AuthDescriptor authDescriptor = createAuthDescriptor();
+        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+
+        String response = request().
+            path( "application/getIdProviderApplications" ).
+            get().getAsString();
+        assertJson( "get_id_provider_applications.json", response );
+    }
+
     private Application createApplication()
     {
         final Application application = Mockito.mock( Application.class );

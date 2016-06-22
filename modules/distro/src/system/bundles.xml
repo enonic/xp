@@ -83,6 +83,6 @@
   <bundle level="22">${group}:blobstore-file:${version}</bundle>
 
   <!-- Applications -->
-  <bundle level="32">${group}:app-system:${version}</bundle>
+  <bundle level="32">${group}:app-standardidprovider:${version}</bundle>
 
 </bundles>

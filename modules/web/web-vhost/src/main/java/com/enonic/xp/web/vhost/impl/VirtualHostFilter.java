@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
@@ -26,18 +27,41 @@ public final class VirtualHostFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        final VirtualHostMapping mapping = this.config.isEnabled() ? this.config.getMappings().resolve( req ) : null;
-        if ( mapping == null )
+        if ( config.isEnabled() )
         {
-            chain.doFilter( req, res );
-            return;
+            final VirtualHostMapping virtualHostMapping = this.config.getMappings().resolve( req );
+            if ( virtualHostMapping == null )
+            {
+                chain.doFilter( req, res );
+            }
+            else
+            {
+                VirtualHostHelper.setVirtualHost( req, virtualHostMapping );
+                final String targetPath = virtualHostMapping.getFullTargetPath( req );
+
+                final RequestDispatcher dispatcher = req.getRequestDispatcher( targetPath );
+                dispatcher.forward( req, res );
+            }
         }
+        else
+        {
+            final VirtualHostMapping defaultVirtualHostMapping = generateDefaultVirtualHostMapping( req );
+            VirtualHostHelper.setVirtualHost( req, defaultVirtualHostMapping );
+            chain.doFilter( req, res );
+        }
+    }
 
-        VirtualHostHelper.setVirtualHost( req, mapping );
-        final String targetPath = mapping.getFullTargetPath( req );
+    private VirtualHostMapping generateDefaultVirtualHostMapping( final HttpServletRequest req )
+    {
+        final String serverName = req.getServerName();
 
-        final RequestDispatcher dispatcher = req.getRequestDispatcher( targetPath );
-        dispatcher.forward( req, res );
+        final VirtualHostMapping virtualHostMapping = new VirtualHostMapping( serverName );
+        virtualHostMapping.setHost( serverName );
+        virtualHostMapping.setSource( "/" );
+        virtualHostMapping.setTarget( "/" );
+        virtualHostMapping.setUserStoreKey( UserStoreKey.system() );
+
+        return virtualHostMapping;
     }
 
     @Reference
