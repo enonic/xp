@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.repo;
+package com.enonic.xp.impl.server.rest;
 
 import java.util.Set;
 

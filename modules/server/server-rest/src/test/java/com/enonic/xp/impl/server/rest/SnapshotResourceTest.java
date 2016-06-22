@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.repo;
+package com.enonic.xp.impl.server.rest;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.NodeService;
@@ -22,7 +21,7 @@ import com.enonic.xp.repository.RepositoryId;
 import static org.mockito.Matchers.isA;
 
 public class SnapshotResourceTest
-    extends AdminResourceTestSupport
+    extends ServerRestTestSupport
 {
     private NodeService nodeService;
 
@@ -62,7 +61,7 @@ public class SnapshotResourceTest
 
         Mockito.when( this.nodeService.restore( isA( RestoreParams.class ) ) ).thenReturn( restoreResult );
 
-        final String result = request().path( "repo/restore" ).
+        final String result = request().path( "/repo/snapshot/restore" ).
             entity( readFromFile( "restore_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
@@ -79,7 +78,7 @@ public class SnapshotResourceTest
 
         Mockito.when( this.nodeService.deleteSnapshot( isA( DeleteSnapshotParams.class ) ) ).thenReturn( deleteResult );
 
-        final String result = request().path( "repo/delete" ).
+        final String result = request().path( "/repo/snapshot/delete" ).
             entity( readFromFile( "delete_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
@@ -104,7 +103,7 @@ public class SnapshotResourceTest
 
         Mockito.when( this.nodeService.listSnapshots() ).thenReturn( snapshotResults );
 
-        String result = request().path( "repo/list" ).get().getAsString();
+        String result = request().path( "/repo/snapshot/list" ).get().getAsString();
 
         assertJson( "list.json", result );
     }

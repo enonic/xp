@@ -6,7 +6,7 @@ import io.airlift.airline.Command;
 public final class ListSnapshotsCommand
     extends RepoCommand
 {
-    public static final String LIST_SNAPSHOTS_REST_PATH = "/admin/rest/repo/list";
+    public static final String LIST_SNAPSHOTS_REST_PATH = "/api/repo/snapshot/list";
 
     @Override
     protected void execute()

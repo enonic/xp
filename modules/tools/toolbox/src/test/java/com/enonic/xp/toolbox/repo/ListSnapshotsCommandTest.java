@@ -25,7 +25,7 @@ public class ListSnapshotsCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "GET", request.getMethod() );
-        assertEquals( "/admin/rest/repo/list", request.getPath() );
+        assertEquals( "/api/repo/snapshot/list", request.getPath() );
     }
 
     private ObjectNode createResponseJson()
