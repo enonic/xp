@@ -14,6 +14,13 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.impl.server.rest.model.DeleteSnapshotRequestJson;
+import com.enonic.xp.impl.server.rest.model.DeleteSnapshotsResultJson;
+import com.enonic.xp.impl.server.rest.model.RestoreRequestJson;
+import com.enonic.xp.impl.server.rest.model.RestoreResultJson;
+import com.enonic.xp.impl.server.rest.model.SnapshotRequestJson;
+import com.enonic.xp.impl.server.rest.model.SnapshotResultJson;
+import com.enonic.xp.impl.server.rest.model.SnapshotResultsJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;

@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.server.rest;
+package com.enonic.xp.impl.server.rest.model;
 
 public final class ReindexRequestJson
 {

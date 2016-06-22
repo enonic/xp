@@ -17,6 +17,10 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
+import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
+import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
+import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsResultJson;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;

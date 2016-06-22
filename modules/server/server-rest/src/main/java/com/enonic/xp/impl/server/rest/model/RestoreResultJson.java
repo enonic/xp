@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.server.rest;
+package com.enonic.xp.impl.server.rest.model;
 
 import java.util.Set;
 
@@ -18,7 +18,7 @@ public class RestoreResultJson
     {
     }
 
-    static RestoreResultJson from( final RestoreResult restoreResult )
+    public static RestoreResultJson from( final RestoreResult restoreResult )
     {
         final RestoreResultJson snapshotResultJson = new RestoreResultJson();
         snapshotResultJson.indices = restoreResult.getIndices();
