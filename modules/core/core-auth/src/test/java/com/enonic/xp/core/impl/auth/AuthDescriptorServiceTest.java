@@ -22,7 +22,6 @@ public class AuthDescriptorServiceTest
         throws Exception
     {
         addApplication( "myapp1", "/apps/myapp1" );
-        addApplication( AuthDescriptorServiceImpl.DEFAULT_AUTH_APPLICATION_KEY.toString(), "/apps/default" );
         this.service = new AuthDescriptorServiceImpl();
         this.service.setResourceService( this.resourceService );
     }
@@ -43,17 +42,5 @@ public class AuthDescriptorServiceTest
             inputType( InputTypeName.TEXT_LINE ).
             build();
         Assert.assertEquals( Form.create().addFormItem( titleInput ).build(), authDescriptor.getConfig() );
-    }
-
-    @Test
-    public void testDefaultDescriptor()
-        throws Exception
-    {
-        final AuthDescriptor authDescriptor = this.service.getDefaultDescriptor();
-
-        Assert.assertNotNull( authDescriptor );
-        Assert.assertEquals( AuthDescriptorServiceImpl.DEFAULT_AUTH_APPLICATION_KEY, authDescriptor.getKey() );
-        Assert.assertEquals( AuthDescriptorMode.LOCAL, authDescriptor.getMode() );
-        Assert.assertEquals( Form.create().build(), authDescriptor.getConfig() );
     }
 }
