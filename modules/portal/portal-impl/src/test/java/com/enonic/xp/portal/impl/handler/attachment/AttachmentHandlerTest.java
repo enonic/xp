@@ -15,7 +15,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -23,6 +22,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.Assert.*;
 
@@ -143,7 +143,7 @@ public class AttachmentHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Not a valid attachment url pattern", e.getMessage() );
@@ -189,7 +189,7 @@ public class AttachmentHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Content with id [1] not found", e.getMessage() );
@@ -207,7 +207,7 @@ public class AttachmentHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Attachment [other.png] not found for [/path/to/content]", e.getMessage() );

@@ -6,12 +6,12 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
 public abstract class BaseHandler
@@ -82,19 +82,19 @@ public abstract class BaseHandler
     protected abstract PortalHandlerWorker newWorker( PortalRequest req )
         throws Exception;
 
-    protected final PortalException badRequest( final String message, final Object... args )
+    protected final WebException badRequest( final String message, final Object... args )
     {
-        return PortalException.badRequest( String.format( message, args ) );
+        return WebException.badRequest( String.format( message, args ) );
     }
 
-    protected final PortalException notFound( final String message, final Object... args )
+    protected final WebException notFound( final String message, final Object... args )
     {
-        return PortalException.notFound( String.format( message, args ) );
+        return WebException.notFound( String.format( message, args ) );
     }
 
-    protected final PortalException methodNotAllowed( final String message, final Object... args )
+    protected final WebException methodNotAllowed( final String message, final Object... args )
     {
-        return new PortalException( HttpStatus.METHOD_NOT_ALLOWED, String.format( message, args ) );
+        return new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( message, args ) );
     }
 
     private void checkMethodAllowed( final HttpMethod method )

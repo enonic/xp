@@ -20,7 +20,6 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -28,6 +27,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.Assert.*;
 
@@ -157,7 +157,7 @@ public class ImageHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Not a valid image url pattern", e.getMessage() );
@@ -208,7 +208,7 @@ public class ImageHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Content with id [123456] not found", e.getMessage() );

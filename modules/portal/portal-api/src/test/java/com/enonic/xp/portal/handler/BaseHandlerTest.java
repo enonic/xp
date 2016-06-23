@@ -2,11 +2,11 @@ package com.enonic.xp.portal.handler;
 
 import org.junit.Before;
 
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.Assert.*;
 
@@ -34,7 +34,7 @@ public abstract class BaseHandlerTest
             this.request.setMethod( method );
             handler.handle( this.request );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( "Method " + method + " should not be allowed", e.getStatus(), HttpStatus.METHOD_NOT_ALLOWED );
             return;

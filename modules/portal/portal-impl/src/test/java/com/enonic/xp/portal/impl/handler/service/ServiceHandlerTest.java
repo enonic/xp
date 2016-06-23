@@ -15,7 +15,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -33,6 +32,7 @@ import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.Assert.*;
 
@@ -133,7 +133,7 @@ public class ServiceHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Not a valid service url pattern", e.getMessage() );
@@ -159,7 +159,7 @@ public class ServiceHandlerTest
         {
             this.handler.handle( this.request );
         }
-        catch ( PortalException e )
+        catch ( WebException e )
         {
             if ( HttpStatus.UNAUTHORIZED == e.getStatus() )
             {

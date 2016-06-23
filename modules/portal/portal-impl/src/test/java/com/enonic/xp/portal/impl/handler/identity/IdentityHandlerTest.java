@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
@@ -12,6 +11,7 @@ import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.Assert.*;
 
@@ -90,7 +90,7 @@ public class IdentityHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Not a valid idprovider url pattern", e.getMessage() );

@@ -1,39 +1,39 @@
 package com.enonic.xp.portal.impl.exception;
 
 import com.enonic.xp.exception.NotFoundException;
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 public final class ExceptionMapper
 {
-    public PortalException map( final Throwable cause )
+    public WebException map( final Throwable cause )
     {
-        if ( cause instanceof PortalException )
+        if ( cause instanceof WebException )
         {
-            return (PortalException) cause;
+            return (WebException) cause;
         }
 
         if ( cause instanceof NotFoundException )
         {
-            return new PortalException( HttpStatus.NOT_FOUND, cause );
+            return new WebException( HttpStatus.NOT_FOUND, cause );
         }
 
         if ( cause instanceof IllegalArgumentException )
         {
-            return new PortalException( HttpStatus.BAD_REQUEST, cause );
+            return new WebException( HttpStatus.BAD_REQUEST, cause );
         }
 
-        return new PortalException( HttpStatus.INTERNAL_SERVER_ERROR, cause );
+        return new WebException( HttpStatus.INTERNAL_SERVER_ERROR, cause );
     }
 
     public void throwIfNeeded( final PortalResponse res )
-        throws PortalException
+        throws WebException
     {
         final HttpStatus status = res.getStatus();
         if ( isError( status ) )
         {
-            throw new PortalException( status, status.getReasonPhrase() );
+            throw new WebException( status, status.getReasonPhrase() );
         }
     }
 

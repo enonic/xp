@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.handler.PortalHandler;
+import com.enonic.xp.web.WebException;
 
 final class PortalHandlerRegistry
 {
@@ -60,6 +60,6 @@ final class PortalHandlerRegistry
             }
         }
 
-        throw PortalException.notFound( "Handler not found" );
+        throw WebException.notFound( "Handler not found" );
     }
 }

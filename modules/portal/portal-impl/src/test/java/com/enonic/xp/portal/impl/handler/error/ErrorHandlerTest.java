@@ -2,11 +2,11 @@ package com.enonic.xp.portal.impl.handler.error;
 
 import org.junit.Test;
 
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.Assert.*;
 
@@ -70,7 +70,7 @@ public class ErrorHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( HttpStatus.NOT_FOUND.getReasonPhrase(), e.getMessage() );
@@ -88,7 +88,7 @@ public class ErrorHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
             assertEquals( HttpStatus.UNAUTHORIZED.getReasonPhrase(), e.getMessage() );
@@ -107,7 +107,7 @@ public class ErrorHandlerTest
             this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
             assertEquals( "Some error message", e.getMessage() );

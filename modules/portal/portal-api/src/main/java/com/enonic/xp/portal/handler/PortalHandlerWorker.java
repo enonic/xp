@@ -2,10 +2,10 @@ package com.enonic.xp.portal.handler;
 
 import com.google.common.net.HttpHeaders;
 
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
 public abstract class PortalHandlerWorker
@@ -23,14 +23,14 @@ public abstract class PortalHandlerWorker
         return null;
     }
 
-    protected final PortalException notFound( final String message, final Object... args )
+    protected final WebException notFound( final String message, final Object... args )
     {
-        return PortalException.notFound( String.format( message, args ) );
+        return WebException.notFound( String.format( message, args ) );
     }
 
-    protected final PortalException forbidden( final String message, final Object... args )
+    protected final WebException forbidden( final String message, final Object... args )
     {
-        return PortalException.forbidden( String.format( message, args ) );
+        return WebException.forbidden( String.format( message, args ) );
     }
 
     protected void setResponseCacheable( final boolean isPublic )

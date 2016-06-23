@@ -26,7 +26,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalAttributes;
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
@@ -39,6 +38,7 @@ import com.enonic.xp.portal.impl.websocket.WebSocketContext;
 import com.enonic.xp.portal.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
@@ -92,7 +92,7 @@ public final class PortalServlet
         {
             if ( req.getBranch() == null )
             {
-                throw PortalException.notFound( "Branch needs to be specified" );
+                throw WebException.notFound( "Branch needs to be specified" );
             }
 
             final PortalHandler handler = this.registry.find( req );
@@ -197,7 +197,7 @@ public final class PortalServlet
         {
             if ( req.getBranch() == null )
             {
-                throw PortalException.notFound( "Branch needs to be specified" );
+                throw WebException.notFound( "Branch needs to be specified" );
             }
 
             final PortalHandler handler = this.registry.find( req );
@@ -213,7 +213,7 @@ public final class PortalServlet
 
     private PortalResponse handleError( final PortalRequest req, final Exception cause )
     {
-        final PortalException exception = this.exceptionMapper.map( cause );
+        final WebException exception = this.exceptionMapper.map( cause );
         return this.exceptionRenderer.render( req, exception );
     }
 
@@ -271,7 +271,7 @@ public final class PortalServlet
         }
         catch ( UnsupportedEncodingException e )
         {
-            throw PortalException.internalServerError( "Error while decoding URL: " + url );
+            throw WebException.internalServerError( "Error while decoding URL: " + url );
         }
     }
 

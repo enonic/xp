@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.handler.error;
 
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 final class ErrorHandlerWorker
     extends PortalHandlerWorker
@@ -25,6 +25,6 @@ final class ErrorHandlerWorker
             this.message = this.code.getReasonPhrase();
         }
 
-        throw new PortalException( this.code, this.message );
+        throw new WebException( this.code, this.message );
     }
 }
