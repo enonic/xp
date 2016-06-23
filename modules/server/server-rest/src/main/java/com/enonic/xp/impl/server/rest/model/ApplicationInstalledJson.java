@@ -1,6 +1,5 @@
-package com.enonic.xp.admin.impl.rest.resource.application.json;
+package com.enonic.xp.impl.server.rest.model;
 
-import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.app.Application;
 
 public class ApplicationInstalledJson
@@ -9,7 +8,7 @@ public class ApplicationInstalledJson
 
     public ApplicationInstalledJson( final Application application, final boolean local )
     {
-        this.application = new ApplicationJson( application, local, null, null );
+        this.application = new ApplicationJson( application, local );
     }
 
     @SuppressWarnings("unused")

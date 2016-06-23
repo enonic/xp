@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.application.json;
+package com.enonic.xp.impl.server.rest.model;
 
 public class ApplicationInstallResultJson
 {
