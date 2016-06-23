@@ -108,7 +108,7 @@ module api.ui.selector.dropdown {
 
             this.selectedOptionView.onOpenDropdown(() => {
                 this.showDropdown();
-                this.input.giveFocus();
+                this.giveFocus();
             });
 
             this.setupListeners();
@@ -172,7 +172,8 @@ module api.ui.selector.dropdown {
         }
 
         giveFocus(): boolean {
-            return this.input.giveFocus();
+            // If input is hidden or disabled, try dropdown handler.
+            return this.input.giveFocus() || this.dropdownHandle.giveFocus();
         }
 
         isDropdownShown(): boolean {
