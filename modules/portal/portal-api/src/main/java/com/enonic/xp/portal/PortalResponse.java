@@ -58,7 +58,7 @@ public final class PortalResponse
     }
 
     public static class Builder
-        extends WebResponse.Builder
+        extends WebResponse.Builder<Builder>
     {
         private boolean postProcess = true;
 

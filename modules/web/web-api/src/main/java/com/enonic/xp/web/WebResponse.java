@@ -90,7 +90,7 @@ public class WebResponse
         return this.webSocket;
     }
 
-    public static class Builder
+    public static class Builder<T extends Builder>
     {
         private Object body;
 
@@ -120,80 +120,80 @@ public class WebResponse
             this.webSocket = source.webSocket;
         }
 
-        public Builder body( final Object body )
+        public T body( final Object body )
         {
             this.body = body;
-            return this;
+            return (T) this;
         }
 
-        public Builder headers( final Map<String, String> headers )
+        public T headers( final Map<String, String> headers )
         {
             if ( this.headers == null )
             {
                 clearHeaders();
             }
             this.headers.putAll( headers );
-            return this;
+            return (T) this;
         }
 
-        public Builder header( final String key, final String value )
+        public T header( final String key, final String value )
         {
             if ( this.headers == null )
             {
                 clearHeaders();
             }
             this.headers.put( key, value );
-            return this;
+            return (T) this;
         }
 
-        public Builder clearHeaders()
+        public T clearHeaders()
         {
             headers = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
-            return this;
+            return (T) this;
         }
 
-        public Builder cookies( final List<Cookie> cookies )
+        public T cookies( final List<Cookie> cookies )
         {
             if ( this.cookies == null )
             {
                 clearCookies();
             }
             this.cookies.addAll( cookies );
-            return this;
+            return (T) this;
         }
 
-        public Builder cookie( final Cookie cookie )
+        public T cookie( final Cookie cookie )
         {
             if ( this.cookies == null )
             {
                 clearCookies();
             }
             this.cookies.add( cookie );
-            return this;
+            return (T) this;
         }
 
-        public Builder clearCookies()
+        public T clearCookies()
         {
             this.cookies = ImmutableList.builder();
-            return this;
+            return (T) this;
         }
 
-        public Builder contentType( MediaType contentType )
+        public T contentType( MediaType contentType )
         {
             this.contentType = contentType;
-            return this;
+            return (T) this;
         }
 
-        public Builder status( final HttpStatus status )
+        public T status( final HttpStatus status )
         {
             this.status = status;
-            return this;
+            return (T) this;
         }
 
-        public Builder webSocket( final WebSocketConfig webSocket )
+        public T webSocket( final WebSocketConfig webSocket )
         {
             this.webSocket = webSocket;
-            return this;
+            return (T) this;
         }
 
         public WebResponse build()
