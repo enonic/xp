@@ -49,15 +49,14 @@ module api.content.form.inputtype.contentselector {
                 this.contentComboBox.getSelectedOptionView().getSelectedOptions().forEach(
                     (selectedOption: any) => selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "");
 
-                event.getDeletedItems().
-                    filter(deletedItem => !deletedItem.isPending() &&
-                                          selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
-                    forEach((deletedItem) => {
-                        var option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
-                        if (option != null) {
-                            this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
-                        }
-                    });
+                event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
+                                                              selectedContentIdsMap.hasOwnProperty(
+                                                                  deletedItem.getContentId().toString())).forEach((deletedItem) => {
+                    var option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
+                    if (option != null) {
+                        this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
+                    }
+                });
             }
 
             ContentDeletedEvent.on(this.contentDeletedListener);

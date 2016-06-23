@@ -33,7 +33,7 @@ module api.util.htmlarea.dialog {
 
         private formValueChangedHandler: () => void;
 
-        private panelRenderedListeners: {():void}[] = [];
+        private panelRenderedListeners: {(): void}[] = [];
 
         constructor(contentPath: api.content.ContentPath) {
             super();
@@ -228,7 +228,7 @@ module api.util.htmlarea.dialog {
             this.adjustFrameHeight();
         }, 500, false);
 
-        private previewRenderedListeners: {():void}[] = [];
+        private previewRenderedListeners: {(): void}[] = [];
 
         constructor(macroPreview: MacroPreview) {
             super("preview-iframe");

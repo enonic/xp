@@ -166,7 +166,7 @@ module api.util.htmlarea.editor {
                 menubar: false,
                 statusbar: false,
                 paste_as_text: true,
-                browser_spellcheck : true,
+                browser_spellcheck: true,
                 plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
                 external_plugins: {
                     "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
