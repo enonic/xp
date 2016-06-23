@@ -114,7 +114,7 @@ public class AuthControllerServiceImpl
             }
         }
 
-        return authDescriptorService.getDefaultDescriptor();
+        return null;
     }
 
     private <T> T runWithAdminRole( final Callable<T> callable )

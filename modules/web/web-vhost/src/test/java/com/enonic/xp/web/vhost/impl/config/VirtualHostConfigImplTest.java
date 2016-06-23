@@ -65,6 +65,15 @@ public class VirtualHostConfigImplTest
     }
 
     @Test
+    public void testLoadedConfig_disable()
+        throws Exception
+    {
+        loadConfig( "disable" );
+
+        Assert.assertFalse( this.config.isEnabled() );
+    }
+
+    @Test
     public void testLoadedConfig_complete()
         throws Exception
     {

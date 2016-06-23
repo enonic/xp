@@ -11,25 +11,28 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public final class LogoutUrlHandler
     extends AbstractUrlHandler
 {
-
     private Context context;
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
+        final IdentityUrlParams params = new IdentityUrlParams().
+            portalRequest( request ).
+            idProviderFunction( "logout" ).
+            userStoreKey( retrieveUserStoreKey() ).
+            setAsMap( map );
+
+        return this.urlService.identityUrl( params );
+    }
+
+    private UserStoreKey retrieveUserStoreKey()
+    {
         final AuthenticationInfo authInfo = this.context.getAuthInfo();
         if ( authInfo.isAuthenticated() )
         {
-            UserStoreKey userStoreKey = authInfo.getUser().
+            return authInfo.getUser().
                 getKey().
                 getUserStore();
-            final IdentityUrlParams params = new IdentityUrlParams().
-                portalRequest( request ).
-                idProviderFunction( "logout" ).
-                userStoreKey( userStoreKey ).
-                setAsMap( map );
-
-            return this.urlService.identityUrl( params );
         }
         return null;
     }

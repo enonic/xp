@@ -8,6 +8,4 @@ import com.enonic.xp.app.ApplicationKey;
 public interface AuthDescriptorService
 {
     AuthDescriptor getDescriptor( final ApplicationKey key );
-
-    AuthDescriptor getDefaultDescriptor();
 }

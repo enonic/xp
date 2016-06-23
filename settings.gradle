@@ -72,7 +72,7 @@ include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'
 
-include 'app:app-system'
+include 'app:app-standardidprovider'
 
 include 'repack:repack-attoparser'
 include 'repack:repack-elasticsearch'
