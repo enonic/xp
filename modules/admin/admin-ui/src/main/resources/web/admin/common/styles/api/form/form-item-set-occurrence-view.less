@@ -37,11 +37,12 @@
 
   & > .remove-button {
     &:extend(.icon);
-    .icon-close;
+    .icon-close();
+    .focusable();
 
-    margin-left: 8px;
-    margin-right: 10px;
-    line-height: 22px;
+    margin: 5px 10px 0 8px;
+    border: 1px solid transparent;
+    line-height: 12px;
     float: right;
     text-decoration: none;
     cursor: pointer;
