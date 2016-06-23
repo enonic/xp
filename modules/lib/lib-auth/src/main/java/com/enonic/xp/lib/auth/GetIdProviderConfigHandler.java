@@ -6,6 +6,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.UserStore;
 
 public final class GetIdProviderConfigHandler
     implements ScriptBean
@@ -14,7 +15,7 @@ public final class GetIdProviderConfigHandler
 
     public PropertyTreeMapper execute()
     {
-        final AuthConfig authConfig = this.request.getUserStore() == null ? null : this.request.getUserStore().getAuthConfig();
+        final AuthConfig authConfig = retrieveAuthConfig();
         if ( authConfig != null )
         {
             final PropertyTree configPropertyTree = authConfig.getConfig();
@@ -24,6 +25,16 @@ public final class GetIdProviderConfigHandler
             }
         }
 
+        return null;
+    }
+
+    private AuthConfig retrieveAuthConfig()
+    {
+        final UserStore userStore = this.request.getUserStore();
+        if ( userStore != null )
+        {
+            return userStore.getAuthConfig();
+        }
         return null;
     }
 
