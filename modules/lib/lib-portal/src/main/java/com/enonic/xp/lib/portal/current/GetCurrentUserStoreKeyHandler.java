@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -26,10 +27,12 @@ public final class GetCurrentUserStoreKeyHandler
 
     private UserStoreKey retrieveUserStoreKey( final HttpServletRequest req )
     {
-        if ( this.request.getUserStoreKey() != null )
+        final UserStore userStore = this.request.getUserStore();
+        if ( userStore != null )
         {
-            return this.request.getUserStoreKey();
+            return userStore.getKey();
         }
+        
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
         if ( virtualHost != null )
         {

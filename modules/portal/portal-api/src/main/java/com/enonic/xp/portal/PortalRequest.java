@@ -19,7 +19,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.UserStore;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -59,7 +59,7 @@ public final class PortalRequest
 
     private Site site;
 
-    private UserStoreKey userStoreKey;
+    private UserStore userStore;
 
     private Content content;
 
@@ -212,14 +212,14 @@ public final class PortalRequest
         this.site = site;
     }
 
-    public UserStoreKey getUserStoreKey()
+    public UserStore getUserStore()
     {
-        return userStoreKey;
+        return userStore;
     }
 
-    public void setUserStoreKey( final UserStoreKey userStoreKey )
+    public void setUserStore( final UserStore userStore )
     {
-        this.userStoreKey = userStoreKey;
+        this.userStore = userStore;
     }
 
     public Content getContent()
