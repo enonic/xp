@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.content;
+package com.enonic.xp.impl.server.rest.model;
 
 
 import java.util.regex.Pattern;
@@ -9,7 +9,7 @@ import com.google.common.base.Strings;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 
-class BranchContentPath
+public class BranchContentPath
 {
     private final static String SEPARATOR = ":";
 
@@ -31,7 +31,7 @@ class BranchContentPath
         return new BranchContentPath( Branch.from( branch ), ContentPath.from( contentPath ) );
     }
 
-    static BranchContentPath from( final String repoPath )
+    public static BranchContentPath from( final String repoPath )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( repoPath ) );
 
@@ -42,12 +42,12 @@ class BranchContentPath
         return BranchContentPath.from( elements[0], elements[1] );
     }
 
-    Branch getBranch()
+    public Branch getBranch()
     {
         return branch;
     }
 
-    ContentPath getContentPath()
+    public ContentPath getContentPath()
     {
         return contentPath;
     }
