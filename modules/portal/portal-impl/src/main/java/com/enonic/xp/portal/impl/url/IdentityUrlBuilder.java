@@ -18,6 +18,11 @@ final class IdentityUrlBuilder
         appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
         appendPart( url, "idprovider" );
+
+        if ( this.params.getUserStoreKey() == null )
+        {
+            throw new IllegalArgumentException( "Could not find user store" );
+        }
         appendPart( url, this.params.getUserStoreKey().toString() );
 
         final String idProviderFunction = this.params.getIdProviderFunction();
