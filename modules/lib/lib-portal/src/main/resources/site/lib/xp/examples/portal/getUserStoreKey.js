@@ -1,9 +1,9 @@
-var authLib = require('/lib/xp/auth');
+var portalLib = require('/lib/xp/portal');
 var assert = require('/lib/xp/assert');
 
 // BEGIN
 // Returns the current user store.
-var userStoreKey = authLib.getUserStoreKey();
+var userStoreKey = portalLib.getUserStoreKey();
 
 if (userStoreKey) {
     log.info('User store key: %s', userStoreKey);
@@ -12,7 +12,7 @@ if (userStoreKey) {
 
 // BEGIN
 // Information when retrieving a user.
-var expected = "system";
+var expected = "myuserstore";
 // END
 
-assert.assertJsonEquals(expected, userStore);
+assert.assertJsonEquals(expected, userStoreKey);
