@@ -166,7 +166,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node deleteById( final NodeId id )
+    public NodeIds deleteById( final NodeId id )
     {
         final Node toBeRemoved = this.nodeIdMap.get( id );
 
@@ -176,7 +176,7 @@ class NodeServiceMock
         this.nodePathMap.remove( toBeRemoved.path() );
         this.nodeIdMap.remove( toBeRemoved.id() );
 
-        return toBeRemoved;
+        return NodeIds.from( id );
     }
 
     @Override

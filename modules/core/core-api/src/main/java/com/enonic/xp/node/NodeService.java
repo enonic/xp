@@ -17,7 +17,7 @@ public interface NodeService
 
     PushNodesResult push( NodeIds ids, Branch target );
 
-    Node deleteById( NodeId id );
+    NodeIds deleteById( NodeId id );
 
     Node deleteByPath( NodePath path );
 

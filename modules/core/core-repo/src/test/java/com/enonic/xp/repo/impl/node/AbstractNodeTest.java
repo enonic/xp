@@ -337,7 +337,7 @@ public abstract class AbstractNodeTest
             execute();
     }
 
-    protected Node doDeleteNode( final NodeId nodeId )
+    protected NodeIds doDeleteNode( final NodeId nodeId )
     {
         return DeleteNodeByIdCommand.create().
             nodeId( nodeId ).

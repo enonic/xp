@@ -108,7 +108,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -415,8 +414,8 @@ public final class ContentResource
 
             try
             {
-                Contents contents = contentService.delete( deleteContentParams );
-                contents.forEach( ( content ) -> {
+                ContentIds contentIds = contentService.delete( deleteContentParams );
+                /*contentIds.forEach( ( contentIds ) -> {
                     if ( ContentState.PENDING_DELETE.equals( content.getContentState() ) )
                     {
                         jsonResult.addPending( content.getId().toString(), content.getDisplayName() );
@@ -426,7 +425,7 @@ public final class ContentResource
                         jsonResult.addSuccess( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName() );
                     }
 
-                } );
+                } );*/
 
             }
             catch ( final Exception e )
@@ -1051,13 +1050,13 @@ public final class ContentResource
     @Path("unpublish")
     public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
     {
-        final Contents contents = this.contentService.unpublishContent( UnpublishContentParams.create().
+        final ContentIds contentIds = this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( params.getIds() ) ).
             includeChildren( params.isIncludeChildren() ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        return new UnpublishContentResultJson( contents );
+        return new UnpublishContentResultJson( contentIds.getSize() );
     }
 
     @GET

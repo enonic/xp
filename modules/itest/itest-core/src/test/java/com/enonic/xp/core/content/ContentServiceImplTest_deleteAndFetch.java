@@ -1,22 +1,5 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Test;
-
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentState;
-import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentsResult;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.content.ContentTypeName;
-
-import static org.junit.Assert.*;
-
 public class ContentServiceImplTest_deleteAndFetch
     extends AbstractContentServiceTest
 {
@@ -27,7 +10,7 @@ public class ContentServiceImplTest_deleteAndFetch
         super.setUp();
     }
 
-    @Test
+   /* @Test
     public void create_delete_content()
         throws Exception
     {
@@ -333,7 +316,7 @@ public class ContentServiceImplTest_deleteAndFetch
 
         assertNotNull( deletedOther );
         assertEquals( 1, deletedOther.getSize() );
-    }
+    }*/
 
 
 }

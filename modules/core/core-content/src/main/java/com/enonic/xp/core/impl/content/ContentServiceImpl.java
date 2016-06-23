@@ -283,7 +283,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents delete( final DeleteContentParams params )
+    public ContentIds delete( final DeleteContentParams params )
     {
         return DeleteAndFetchContentCommand.create().
             nodeService( this.nodeService ).
@@ -717,7 +717,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents unpublishContent( final UnpublishContentParams params )
+    public ContentIds unpublishContent( final UnpublishContentParams params )
     {
         return UnpublishContentCommand.create().
             params( params ).

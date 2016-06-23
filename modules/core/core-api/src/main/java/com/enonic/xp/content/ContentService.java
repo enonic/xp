@@ -28,7 +28,7 @@ public interface ContentService
     Content rename( RenameContentParams params );
 
     @Deprecated
-    Contents delete( DeleteContentParams params );
+    ContentIds delete( DeleteContentParams params );
 
     ContentIds deleteWithoutFetch( DeleteContentParams params );
 
@@ -90,6 +90,6 @@ public interface ContentService
 
     Content reprocess( ContentId contentId );
 
-    Contents unpublishContent( final UnpublishContentParams params );
+    ContentIds unpublishContent( final UnpublishContentParams params );
 
 }

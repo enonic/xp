@@ -6,6 +6,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 
 public final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand
@@ -18,18 +19,13 @@ public final class DeleteNodeByIdCommand
         this.nodeId = builder.nodeId;
     }
 
-    public Node execute()
+    public NodeIds execute()
     {
         final Context context = ContextAccessor.current();
 
         final Node node = doGetById( nodeId );
 
-        if ( node != null )
-        {
-            deleteNodeWithChildren( node, context );
-        }
-
-        return node;
+        return node != null ? deleteNodeWithChildren( node, context ) : NodeIds.from( nodeId );
     }
 
     public static Builder create()

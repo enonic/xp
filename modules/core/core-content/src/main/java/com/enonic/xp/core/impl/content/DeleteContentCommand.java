@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -147,7 +146,7 @@ final class DeleteContentCommand
         return compare.getCompareStatus();
     }
 
-    private Node deleteNodeInContext( final NodeId nodeToDelete, final Context context )
+    private NodeIds deleteNodeInContext( final NodeId nodeToDelete, final Context context )
     {
         return context.callWith( () -> this.nodeService.deleteById( nodeToDelete ) );
     }

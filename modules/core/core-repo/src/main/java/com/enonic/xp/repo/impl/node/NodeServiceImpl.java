@@ -268,9 +268,11 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node deleteById( final NodeId id )
+    public NodeIds deleteById( final NodeId id )
     {
-        final Node deletedNode = DeleteNodeByIdCommand.create().
+        Node node = this.getById( id );
+
+        final NodeIds deletedNodes = DeleteNodeByIdCommand.create().
             nodeId( id ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -278,11 +280,12 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( deletedNode != null )
+        if ( deletedNodes.contains( id ) )
         {
-            this.eventPublisher.publish( NodeEvents.deleted( deletedNode ) );
+            this.eventPublisher.publish( NodeEvents.deleted( node ) );
         }
-        return deletedNode;
+
+        return deletedNodes;
     }
 
     @Override

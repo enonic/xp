@@ -22,6 +22,7 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -541,7 +542,7 @@ public class ContentResourceTest
             displayName( "one" ).
             type( ContentTypeName.folder() ).
             build();
-        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( Contents.from( content ) );
+        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( ContentIds.from( content.getId() ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
@@ -595,7 +596,7 @@ public class ContentResourceTest
         Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
-            thenReturn( Contents.from( aContent2 ) );
+            thenReturn( ContentIds.from( aContent2.getId() ) );
 
         final Content aContent3 = createContent( "aaa", "my_a_content2", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
