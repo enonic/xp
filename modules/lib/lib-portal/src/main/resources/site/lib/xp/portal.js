@@ -279,6 +279,18 @@ exports.getComponent = function () {
 };
 
 /**
+ * This function returns the user store key corresponding to the current execution context.
+ *
+ * @example-ref examples/portal/getUserStoreKey.js
+ *
+ * @returns {object} The current user store as JSON.
+ */
+exports.getUserStoreKey = function () {
+    var bean = __.newBean('com.enonic.xp.lib.portal.current.GetCurrentUserStoreKeyHandler');
+    return __.toNativeObject(bean.execute());
+};
+
+/**
  * This function returns a JSON containing multipart items. If not a multipart request, then this function returns `undefined`.
  *
  * @example-ref examples/portal/getMultipartForm.js

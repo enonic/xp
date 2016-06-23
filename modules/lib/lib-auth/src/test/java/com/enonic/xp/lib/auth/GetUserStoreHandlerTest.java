@@ -14,7 +14,7 @@ public class GetUserStoreHandlerTest
         final UserStore userStore = TestDataFixtures.getTestUserStore();
         this.portalRequest.setUserStore( userStore );
 
-        runScript( "/site/lib/xp/examples/auth/getUserStore.js" );
+        runScript( "/site/lib/xp/examples/portal/getUserStore.js" );
     }
 
 

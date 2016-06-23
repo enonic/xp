@@ -60,7 +60,7 @@ public class AuthControllerServiceImpl
                         adapt( params.getServletRequest() );
                 }
                 portalRequest.setApplicationKey( authDescriptor.getKey() );
-                portalRequest.setUserStore( userStore );
+                portalRequest.setUserStoreKey( userStoreKey );
 
                 final PortalResponse portalResponse = authControllerScript.execute( functionName, portalRequest );
 
