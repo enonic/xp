@@ -131,8 +131,7 @@ module api.content.form.inputtype.image {
 
                 switch (event.which) {
                 case 32: // Spacebar
-                    var isChecked = !checkbox.isChecked();
-                    checkbox.setChecked(isChecked, isChecked);
+                    checkbox.toggleChecked();
                     break;
                 case 8: // Backspace
                     checkbox.setChecked(false);
