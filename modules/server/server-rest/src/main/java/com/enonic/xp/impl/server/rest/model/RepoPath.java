@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.export;
+package com.enonic.xp.impl.server.rest.model;
 
 import java.util.regex.Pattern;
 
@@ -35,7 +35,7 @@ public class RepoPath
         return new RepoPath( Branch.from( branch ), RepositoryId.from( repositoryId ), NodePath.create( nodePath ).build() );
     }
 
-    static RepoPath from( final String repoPath )
+    public static RepoPath from( final String repoPath )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( repoPath ) );
 
@@ -46,17 +46,17 @@ public class RepoPath
         return RepoPath.from( elements[0], elements[1], elements[2] );
     }
 
-    Branch getBranch()
+    public Branch getBranch()
     {
         return branch;
     }
 
-    RepositoryId getRepositoryId()
+    public RepositoryId getRepositoryId()
     {
         return repositoryId;
     }
 
-    NodePath getNodePath()
+    public NodePath getNodePath()
     {
         return nodePath;
     }

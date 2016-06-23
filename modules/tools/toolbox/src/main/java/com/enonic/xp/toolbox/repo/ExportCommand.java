@@ -11,7 +11,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class ExportCommand
     extends RepoCommand
 {
-    public static final String EXPORT_REST_PATH = "/admin/rest/export/export";
+    public static final String EXPORT_REST_PATH = "/api/repo/export";
 
     @Option(name = "-t", description = "Target name to save export.", required = true)
     public String exportName;
