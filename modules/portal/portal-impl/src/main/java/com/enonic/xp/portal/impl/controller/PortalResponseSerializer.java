@@ -11,9 +11,9 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
-import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.websocket.WebSocketConfig;
 
 public final class PortalResponseSerializer
 {

@@ -5,8 +5,8 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
+import com.enonic.xp.web.websocket.WebSocketConfig;
 
 public abstract class PortalHandlerWorker
 {
