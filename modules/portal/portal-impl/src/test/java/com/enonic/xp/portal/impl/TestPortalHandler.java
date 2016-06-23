@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
+import com.enonic.xp.web.websocket.WebSocketConfig;
 
 public final class TestPortalHandler
     implements PortalHandler

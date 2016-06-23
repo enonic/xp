@@ -1,14 +1,6 @@
 package com.enonic.xp.portal;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
@@ -19,35 +11,15 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.security.UserStore;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta
 public final class PortalRequest
+    extends WebRequest
 {
     private final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
-
-    private HttpMethod method;
-
-    private final Multimap<String, String> params;
-
-    private final Map<String, String> headers;
-
-    private final Map<String, String> cookies;
-
-    private String scheme;
-
-    private String host;
-
-    private String remoteAddress;
-
-    private int port;
-
-    private String path;
-
-    private String url;
 
     private RenderMode mode;
 
@@ -58,8 +30,6 @@ public final class PortalRequest
     private String baseUri;
 
     private Site site;
-
-    private UserStore userStore;
 
     private Content content;
 
@@ -73,16 +43,6 @@ public final class PortalRequest
 
     private ControllerScript controllerScript;
 
-    private String endpointPath;
-
-    private String contentType;
-
-    private Object body;
-
-    private HttpServletRequest rawRequest;
-
-    private boolean webSocket;
-
     private Boolean validTicket;
 
     public PortalRequest()
@@ -91,15 +51,6 @@ public final class PortalRequest
         this.contentPath = ContentPath.from( "/" );
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
-        this.params = HashMultimap.create();
-        this.headers = Maps.newHashMap();
-        this.cookies = Maps.newHashMap();
-        this.webSocket = false;
-    }
-
-    public HttpMethod getMethod()
-    {
-        return this.method;
     }
 
     public Branch getBranch()
@@ -107,79 +58,9 @@ public final class PortalRequest
         return branch;
     }
 
-    public Multimap<String, String> getParams()
-    {
-        return this.params;
-    }
-
-    public String getScheme()
-    {
-        return scheme;
-    }
-
-    public String getHost()
-    {
-        return host;
-    }
-
-    public int getPort()
-    {
-        return port;
-    }
-
-    public String getRemoteAddress()
-    {
-        return remoteAddress;
-    }
-
-    public String getPath()
-    {
-        return path;
-    }
-
-    public String getUrl()
-    {
-        return url;
-    }
-
     public RenderMode getMode()
     {
         return this.mode;
-    }
-
-    public void setMethod( final HttpMethod method )
-    {
-        this.method = method;
-    }
-
-    public void setScheme( final String scheme )
-    {
-        this.scheme = scheme;
-    }
-
-    public void setHost( final String host )
-    {
-        this.host = host;
-    }
-
-    public void setPort( final int port )
-    {
-        this.port = port;
-    }
-
-    public void setRemoteAddress( final String remoteAddress )
-    {
-        this.remoteAddress = remoteAddress;
-    }
-
-    public void setPath( final String path )
-    {
-        this.path = path;
-    }
-
-    public void setUrl( final String url )
-    {
-        this.url = url;
     }
 
     public void setMode( final RenderMode mode )
@@ -190,11 +71,6 @@ public final class PortalRequest
     public void setBranch( final Branch branch )
     {
         this.branch = branch;
-    }
-
-    public Map<String, String> getHeaders()
-    {
-        return this.headers;
     }
 
     public String rewriteUri( final String uri )
@@ -210,16 +86,6 @@ public final class PortalRequest
     public void setSite( final Site site )
     {
         this.site = site;
-    }
-
-    public UserStore getUserStore()
-    {
-        return userStore;
-    }
-
-    public void setUserStore( final UserStore userStore )
-    {
-        this.userStore = userStore;
     }
 
     public Content getContent()
@@ -290,66 +156,6 @@ public final class PortalRequest
     public void setBaseUri( final String baseUri )
     {
         this.baseUri = baseUri;
-    }
-
-    public Map<String, String> getCookies()
-    {
-        return this.cookies;
-    }
-
-    public String getEndpointPath()
-    {
-        return this.endpointPath;
-    }
-
-    public void setEndpointPath( final String endpointPath )
-    {
-        this.endpointPath = Strings.emptyToNull( endpointPath );
-    }
-
-    public String getContentType()
-    {
-        return this.contentType;
-    }
-
-    public void setContentType( final String contentType )
-    {
-        this.contentType = contentType;
-    }
-
-    public Object getBody()
-    {
-        return this.body;
-    }
-
-    public void setBody( final Object body )
-    {
-        this.body = body;
-    }
-
-    public String getBodyAsString()
-    {
-        return this.body != null ? this.body.toString() : null;
-    }
-
-    public HttpServletRequest getRawRequest()
-    {
-        return rawRequest;
-    }
-
-    public void setRawRequest( final HttpServletRequest rawRequest )
-    {
-        this.rawRequest = rawRequest;
-    }
-
-    public boolean isWebSocket()
-    {
-        return this.webSocket;
-    }
-
-    public void setWebSocket( final boolean webSocket )
-    {
-        this.webSocket = webSocket;
     }
 
     public ControllerScript getControllerScript()
