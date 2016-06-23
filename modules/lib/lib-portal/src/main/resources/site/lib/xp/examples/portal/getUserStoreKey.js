@@ -11,7 +11,7 @@ if (userStoreKey) {
 // END
 
 // BEGIN
-// Information when retrieving a user.
+// User store key returned.
 var expected = "myuserstore";
 // END
 
