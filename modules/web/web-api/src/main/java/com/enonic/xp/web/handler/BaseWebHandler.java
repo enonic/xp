@@ -3,6 +3,7 @@ package com.enonic.xp.web.handler;
 import java.util.EnumSet;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Joiner;
 
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -81,17 +82,17 @@ public abstract class BaseWebHandler
         }
     }
 
-
     private WebResponse handleOptions( final WebResponse webResponse )
     {
-//        return WebResponse.create().
-//            status( HttpStatus.OK ).
-//            header( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) ).
-//            build();
-//        webResponse.setStatus( HttpStatus.OK );
-//        webResponse.setHeader( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) );
-//        return webResponse;
-        return null; //TODO
+        return WebResponse.create().
+            status( HttpStatus.OK ).
+            header( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) ).
+            build();
+    }
+
+    protected final WebException badRequest( final String message, final Object... args )
+    {
+        return WebException.badRequest( String.format( message, args ) );
     }
 
     protected final WebException notFound( final String message, final Object... args )
