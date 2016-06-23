@@ -852,8 +852,8 @@ public final class SecurityServiceImpl
         final AuthConfig authConfig = createUserStoreParams.getAuthConfig();
         if ( authConfig != null )
         {
-            data.setString( UserStorePropertyNames.AUTH_CONFIG_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
-            data.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
+            data.setString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
+            data.setSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
         }
 
         final Node node = callWithContext( () -> {

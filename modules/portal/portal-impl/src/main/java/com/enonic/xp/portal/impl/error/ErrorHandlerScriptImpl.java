@@ -6,16 +6,10 @@ import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.impl.mapper.PortalErrorMapper;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.web.HttpStatus;
 
 final class ErrorHandlerScriptImpl
     implements ErrorHandlerScript
 {
-
-    private static final String DEFAULT_HANDLER = "handleError";
-
-    private static final String STATUS_HANDLER = "handle%d";
-
     private final ScriptExports scriptExports;
 
     public ErrorHandlerScriptImpl( final ScriptExports scriptExports )
@@ -24,9 +18,9 @@ final class ErrorHandlerScriptImpl
     }
 
     @Override
-    public PortalResponse execute( final PortalError portalError )
+    public PortalResponse execute( final PortalError portalError, final String handlerMethod )
     {
-        if ( !canHandleError( portalError.getStatus() ) )
+        if ( !canHandleError( handlerMethod ) )
         {
             return null;
         }
@@ -34,7 +28,7 @@ final class ErrorHandlerScriptImpl
         PortalRequestAccessor.set( portalError.getRequest() );
         try
         {
-            return doExecute( portalError );
+            return doExecute( portalError, handlerMethod );
         }
         finally
         {
@@ -42,20 +36,10 @@ final class ErrorHandlerScriptImpl
         }
     }
 
-    private PortalResponse doExecute( final PortalError portalError )
+    private PortalResponse doExecute( final PortalError portalError, final String handlerMethod )
     {
-        String runMethod = handlerMethod( portalError.getStatus() );
-        if ( !this.scriptExports.hasMethod( runMethod ) )
-        {
-            runMethod = DEFAULT_HANDLER;
-            if ( !this.scriptExports.hasMethod( runMethod ) )
-            {
-                return null;
-            }
-        }
-
         final PortalErrorMapper portalErrorMapper = new PortalErrorMapper( portalError );
-        final ScriptValue result = this.scriptExports.executeMethod( runMethod, portalErrorMapper );
+        final ScriptValue result = this.scriptExports.executeMethod( handlerMethod, portalErrorMapper );
 
         if ( ( result == null ) || !result.isObject() )
         {
@@ -73,14 +57,9 @@ final class ErrorHandlerScriptImpl
         }
     }
 
-    private boolean canHandleError( final HttpStatus status )
+    private boolean canHandleError( final String handlerMethod )
     {
-        return scriptExports.hasMethod( handlerMethod( status ) ) || scriptExports.hasMethod( DEFAULT_HANDLER );
-    }
-
-    private String handlerMethod( final HttpStatus status )
-    {
-        return status == null ? DEFAULT_HANDLER : String.format( STATUS_HANDLER, status.value() );
+        return scriptExports.hasMethod( handlerMethod );
     }
 
 }

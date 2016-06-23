@@ -4,8 +4,8 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Creates a new cache.
 var cache = cacheLib.newCache({
-    size: 100,
-    expire: 60
+    size: 100, // max number of elements
+    expire: 60 // added elements expire in 1 minute
 });
 // END
 

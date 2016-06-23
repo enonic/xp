@@ -177,7 +177,8 @@ public class ResolveDependenciesAggregationFactoryTest
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.create().icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn( true ).build() );
+            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
+                true ).build() );
 
         final DependenciesJson result = factory.create( content.getId() );
 

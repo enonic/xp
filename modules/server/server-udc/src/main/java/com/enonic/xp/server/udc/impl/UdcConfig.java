@@ -4,5 +4,5 @@ public @interface UdcConfig
 {
     boolean enabled() default true;
 
-    String url() default "http://udc.enonic.com/collect";
+    String url() default "https://udc.enonic.com/collect";
 }

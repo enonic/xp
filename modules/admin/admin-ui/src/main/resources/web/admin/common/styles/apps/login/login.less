@@ -144,3 +144,29 @@
   }
 
 }
+
+.home-main-footer {
+  position: absolute;
+  display: table;
+  width: 100%;
+  bottom: 14px;
+  text-align: right;
+  z-index: calc(@z-index-launcher-panel - 1);
+  background-color: transparent;
+  font-family: @admin-font-family;
+  font-size: @admin-font-size;
+  font-weight: 700;
+
+  & > * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    display: table-cell;
+    color: @admin-white;
+    padding-right: 20px;
+    text-decoration: none;
+    opacity: 0.4;
+  }
+}

@@ -3,6 +3,8 @@ package com.enonic.xp.lib.thymeleaf;
 import java.util.Map;
 
 import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.cache.ICacheEntryValidity;
+import org.thymeleaf.cache.NonCacheableCacheEntryValidity;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 
@@ -10,6 +12,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.server.RunMode;
 
 final class TemplateResolverImpl
     extends AbstractConfigurableTemplateResolver
@@ -17,9 +20,12 @@ final class TemplateResolverImpl
 {
     private BeanContext context;
 
+    private boolean disableCache;
+
     TemplateResolverImpl( final BeanContext context )
     {
         this.context = context;
+        this.disableCache = RunMode.get() == RunMode.DEV;
     }
 
     @Override
@@ -30,10 +36,33 @@ final class TemplateResolverImpl
         return resolve( this.context.getResourceKey(), ownerTemplate, resourceName );
     }
 
+    @Override
+    protected ICacheEntryValidity computeValidity( final IEngineConfiguration configuration, final String ownerTemplate,
+                                                   final String template, final Map<String, Object> templateResolutionAttributes )
+    {
+        if ( disableCache )
+        {
+            return new NonCacheableCacheEntryValidity();
+        }
+        return super.computeValidity( configuration, ownerTemplate, template, templateResolutionAttributes );
+    }
+
     private ITemplateResource resolve( final ResourceKey base, final String ownerTempalte, final String location )
     {
-        final ResourceKey parent = ownerTempalte != null ? ResourceKey.from( ownerTempalte ) : base;
+        final ResourceKey parent = findParent( base, ownerTempalte );
         return resolve( parent, location );
+    }
+
+    private ResourceKey findParent( final ResourceKey base, final String ownerTempalte )
+    {
+        try
+        {
+            return ownerTempalte != null ? ResourceKey.from( ownerTempalte ) : base;
+        }
+        catch ( final Exception e )
+        {
+            return ResourceKey.from( base.getApplicationKey(), ownerTempalte );
+        }
     }
 
     @Override

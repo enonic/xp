@@ -9,8 +9,6 @@ module api.content {
 
     export class MoveContentSummaryLoader extends ContentSummaryPreLoader {
 
-        private preservedSearchString: string;
-
         private contentSummaryRequest: ContentSummaryRequest;
 
         private filterContentPath: ContentPath;
@@ -40,6 +38,10 @@ module api.content {
             return this.load();
         }
 
+        resetSearchString() {
+            this.contentSummaryRequest.setSearchString("");
+        }
+
 
         load(): wemQ.Promise<ContentSummary[]> {
 
@@ -63,11 +65,8 @@ module api.content {
                         } else {
                             this.notifyLoadedData([]);
                         }
-                        if (this.preservedSearchString) {
-                            this.search(this.preservedSearchString);
-                            this.preservedSearchString = null;
-                        }
-                        deferred.resolve(contents);
+
+                    deferred.resolve(contents);
                     }).
                     catch((reason: any) => deferred.reject(reason)).
                     done();

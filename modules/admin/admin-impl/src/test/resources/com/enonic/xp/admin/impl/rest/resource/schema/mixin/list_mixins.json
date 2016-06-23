@@ -5,7 +5,7 @@
             "creator": null,
             "deletable": false,
             "description": null,
-            "displayName": null,
+            "displayName": "input_text_1",
             "editable": false,
             "iconUrl": "/admin/rest/schema/mixin/icon/myapplication:input_text_1",
             "items": [
@@ -37,7 +37,7 @@
             "creator": null,
             "deletable": false,
             "description": null,
-            "displayName": null,
+            "displayName": "text_area_2",
             "editable": false,
             "iconUrl": "/admin/rest/schema/mixin/icon/myapplication:text_area_2",
             "items": [

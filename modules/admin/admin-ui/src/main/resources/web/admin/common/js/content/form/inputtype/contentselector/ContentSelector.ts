@@ -7,6 +7,7 @@ module api.content.form.inputtype.contentselector {
     import ValueTypes = api.data.ValueTypes;
     import GetRelationshipTypeByNameRequest = api.schema.relationshiptype.GetRelationshipTypeByNameRequest;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
+    import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 
     export class ContentSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
 
@@ -24,15 +25,46 @@ module api.content.form.inputtype.contentselector {
 
         private allowedContentPaths: string[];
 
+        private contentDeletedListener: (event: ContentDeletedEvent) => void;
+
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("relationship");
             this.addClass("input-type-view");
             this.config = config;
             this.readConfig(config.inputConfig);
+            this.handleContentDeletedEvent();
         }
 
         public getContentComboBox(): ContentComboBox {
             return this.contentComboBox;
+        }
+
+        private handleContentDeletedEvent() {
+            this.contentDeletedListener = (event) => {
+                if (this.contentComboBox.getSelectedOptionView().count() == 0) {
+                    return;
+                }
+
+                var selectedContentIdsMap: {} = {};
+                this.contentComboBox.getSelectedOptionView().getSelectedOptions().forEach(
+                    (selectedOption: any) => selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "");
+
+                event.getDeletedItems().
+                    filter(deletedItem => !deletedItem.isPending() &&
+                                          selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
+                    forEach((deletedItem) => {
+                        var option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
+                        if (option != null) {
+                            this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
+                        }
+                    });
+            }
+
+            ContentDeletedEvent.on(this.contentDeletedListener);
+
+            this.onRemoved((event) => {
+                ContentDeletedEvent.un(this.contentDeletedListener);
+            })
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {

@@ -46,6 +46,8 @@ abstract class UserStoreNodeTranslator
 
     final static String GROUP_FOLDER_NODE_NAME = "groups";
 
+    private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
+
     protected final static NodePath USER_STORE_PARENT_PATH = NodePath.create( NodePath.ROOT ).
         addElement( PrincipalKey.IDENTITY_NODE_NAME ).
         build();
@@ -235,15 +237,15 @@ abstract class UserStoreNodeTranslator
                 final AuthConfig authConfig = updateUserStoreParams.getAuthConfig();
                 if ( authConfig == null )
                 {
-                    if ( nodeData.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
+                    if ( nodeData.hasProperty( UserStorePropertyNames.ID_PROVIDER_KEY ) )
                     {
-                        nodeData.removeProperty( UserStorePropertyNames.AUTH_CONFIG_KEY );
+                        nodeData.removeProperty( UserStorePropertyNames.ID_PROVIDER_KEY );
                     }
                 }
                 else
                 {
-                    nodeData.setString( UserStorePropertyNames.AUTH_CONFIG_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
-                    nodeData.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
+                    nodeData.setString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
+                    nodeData.setSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
                 }
             } ).
             build();
@@ -270,18 +272,28 @@ abstract class UserStoreNodeTranslator
         }
         final PropertySet nodeAsSet = node.data().getRoot();
 
+        final UserStoreKey userStoreKey = UserStoreNodeTranslator.toKey( node );
+
         final UserStore.Builder userStore = UserStore.create().
             displayName( nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY ) ).
-            key( UserStoreNodeTranslator.toKey( node ) ).
+            key( userStoreKey ).
             description( nodeAsSet.getString( UserStorePropertyNames.DESCRIPTION_KEY ) );
 
-        if ( nodeAsSet.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
+        if ( nodeAsSet.hasProperty( UserStorePropertyNames.ID_PROVIDER_KEY ) )
         {
-            final String applicationKey = nodeAsSet.getString( UserStorePropertyNames.AUTH_CONFIG_APPLICATION_KEY );
-            final PropertySet config = nodeAsSet.getSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY );
+            final String applicationKey = nodeAsSet.getString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY );
+            final PropertySet config = nodeAsSet.getSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY );
             final AuthConfig authConfig = AuthConfig.create().
                 applicationKey( ApplicationKey.from( applicationKey ) ).
                 config( config.toTree() ).
+                build();
+            userStore.authConfig( authConfig );
+        }
+        else if ( UserStoreKey.system().equals( userStoreKey ) )
+        {
+            //TODO Remove after next dump upgrade
+            final AuthConfig authConfig = AuthConfig.create().
+                applicationKey( SYSTEM_ID_PROVIDER_KEY ).
                 build();
             userStore.authConfig( authConfig );
         }

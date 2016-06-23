@@ -240,6 +240,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             build();
 
         final RelationshipType relationshipType = RelationshipType.create().
+            name( "myrelationshiptype" ).
             addAllowedToType( ContentTypeName.media() ).
             addAllowedToType( ContentTypeName.dataMedia() ).
             build();
@@ -248,7 +249,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
         final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
 
-        final List<String> allowPaths = new ArrayList();
+        final List<String> allowPaths = new ArrayList<>();
         allowPaths.add( "/*" );
 
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).

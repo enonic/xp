@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.handler.identity;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
@@ -23,6 +24,7 @@ public class IdentityHandlerTest
     protected void configure()
         throws Exception
     {
+        final ContentService contentService = Mockito.mock( ContentService.class );
         final AuthControllerService authControllerService = Mockito.mock( AuthControllerService.class );
 
         Mockito.when( authControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
@@ -36,6 +38,7 @@ public class IdentityHandlerTest
         } );
 
         this.handler = new IdentityHandler();
+        this.handler.setContentService( contentService );
         this.handler.setAuthControllerService( authControllerService );
 
         this.request.setMethod( HttpMethod.GET );

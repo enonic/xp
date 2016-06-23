@@ -16,6 +16,13 @@ public final class UdcService
 
     private Timer timer;
 
+    private final UdcInfoGenerator generator;
+
+    public UdcService()
+    {
+        this.generator = new UdcInfoGenerator();
+    }
+
     @Activate
     public void activate( final UdcConfig config )
     {
@@ -25,8 +32,7 @@ public final class UdcService
             return;
         }
 
-        final UdcInfoGenerator generator = new UdcInfoGenerator();
-        final PingSenderImpl sender = new PingSenderImpl( generator, config.url() );
+        final PingSenderImpl sender = new PingSenderImpl( this.generator, config.url() );
 
         final PingTask task = new PingTask( sender );
         this.timer.schedule( task, this.delay, this.interval );

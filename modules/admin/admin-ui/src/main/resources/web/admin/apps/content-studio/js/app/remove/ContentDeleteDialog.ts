@@ -109,12 +109,18 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     private addDeleteActionHandler(deleteAction: api.ui.Action) {
         deleteAction.onExecuted(() => {
             if (this.isAnySiteToBeDeleted()) {
-                new ConfirmContentDeleteDialog({
-                    totalItemsToDelete: this.totalItemsToDelete,
-                    deleteRequest: this.createDeleteRequest(),
-                    yesCallback: this.yesCallback
-                }).open();
+                let totalItemsToDelete = this.totalItemsToDelete,
+                    deleteRequest = this.createDeleteRequest(),
+                    yesCallback = this.yesCallback;
+
                 this.close();
+                
+                new ConfirmContentDeleteDialog({
+                    totalItemsToDelete: totalItemsToDelete,
+                    deleteRequest: deleteRequest,
+                    yesCallback: yesCallback
+                }).open();
+
                 return;
             }
 

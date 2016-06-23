@@ -19,7 +19,7 @@ module api.util.htmlarea.dialog {
         private static CONFIGURATION_TAB_NAME: string = "Configuration";
         private static PREVIEW_TAB_NAME: string = "Preview";
         private static MACRO_FORM_INCOMPLETE_MES: string = "Macro configuration is not complete";
-        private static PREVIEW_LOAD_ERROR_MESSAGE: string = "An error occured while loading preview";
+        private static PREVIEW_LOAD_ERROR_MESSAGE: string = "An error occurred while loading preview";
 
         private configPanel: Panel;
         private previewPanel: Panel;
@@ -33,6 +33,8 @@ module api.util.htmlarea.dialog {
 
         private formValueChangedHandler: () => void;
 
+        private panelRenderedListeners: {():void}[] = [];
+
         constructor(contentPath: api.content.ContentPath) {
             super();
             this.contentPath = contentPath;
@@ -43,6 +45,7 @@ module api.util.htmlarea.dialog {
             this.macroLoadMask = new api.ui.mask.LoadMask(this.previewPanel);
             this.appendChild(this.macroLoadMask);
 
+            this.handleConfigPanelShowEvent();
             this.handlePreviewPanelShowEvent();
 
             this.formValueChangedHandler = () => {
@@ -73,10 +76,18 @@ module api.util.htmlarea.dialog {
                         }).finally(() => {
                             this.macroLoadMask.hide();
                         });
+                    } else {
+                        this.notifyPanelRendered();
                     }
                 } else {
                     this.renderPreviewWithMessage(MacroDockedPanel.MACRO_FORM_INCOMPLETE_MES);
                 }
+            });
+        }
+
+        private handleConfigPanelShowEvent() {
+            this.configPanel.onShown(() => {
+                this.notifyPanelRendered();
             });
         }
 
@@ -93,8 +104,8 @@ module api.util.htmlarea.dialog {
         private fetchMacroString(): wemQ.Promise<string> {
             this.macroLoadMask.show();
 
-            return new api.macro.resource.GetPreviewStringRequest(new api.data.PropertyTree(this.data), this.macroDescriptor.getKey()).
-                sendAndParse();
+            return new api.macro.resource.GetPreviewStringRequest(new api.data.PropertyTree(this.data),
+                this.macroDescriptor.getKey()).sendAndParse();
         }
 
         public getMacroPreviewString(): wemQ.Promise<string> {
@@ -123,12 +134,27 @@ module api.util.htmlarea.dialog {
 
         private renderPreview(macroPreview: MacroPreview) {
             if (macroPreview.getPageContributions().hasAtLeastOneScript()) { // render in iframe if there are scripts to be included for preview rendering
-                this.previewPanel.appendChild(new MacroPreviewFrame(macroPreview));
+                this.previewPanel.appendChild(this.makePreviewFrame(macroPreview));
             } else {
                 var appendMe = new api.dom.DivEl("preview-content");
                 appendMe.setHtml(macroPreview.getHtml(), false);
                 this.previewPanel.appendChild(appendMe)
+                this.notifyPanelRendered();
             }
+        }
+
+        private makePreviewFrame(macroPreview: MacroPreview): MacroPreviewFrame {
+            var previewFrame = new MacroPreviewFrame(macroPreview),
+                previewFrameRenderedHandler: () => void = () => {
+                    this.notifyPanelRendered();
+                };
+
+            previewFrame.onPreviewRendered(previewFrameRenderedHandler);
+            previewFrame.onRemoved(() => {
+                previewFrame.unPreviewRendered(previewFrameRenderedHandler);
+            });
+
+            return previewFrame;
         }
 
         public validateMacroForm(): boolean {
@@ -145,7 +171,7 @@ module api.util.htmlarea.dialog {
             this.macroDescriptor = macroDescriptor;
             this.previewResolved = false;
 
-            this.initPropertySetForDescriptor(macroDescriptor);
+            this.initPropertySetForDescriptor();
             this.showDescriptorConfigView(macroDescriptor);
         }
 
@@ -158,35 +184,12 @@ module api.util.htmlarea.dialog {
             }
         }
 
-        private initPropertySetForDescriptor(macroDescriptor: MacroDescriptor) {
+        private initPropertySetForDescriptor() {
             if (!!this.data) {
-                this.data.unPropertyValueChanged(this.formValueChangedHandler);
+                this.data.unChanged(this.formValueChangedHandler);
             }
-            this.data = this.generateBackingPropertySetForForm(macroDescriptor.getForm());
-            this.data.onPropertyValueChanged(this.formValueChangedHandler);
-        }
-
-        private generateBackingPropertySetForForm(form: Form): PropertySet {
-            var propertySet = new PropertySet();
-            this.populatePropertySetWithFormItems(form.getFormItems(), propertySet);
-            return propertySet;
-        }
-
-        private populatePropertySetWithFormItems(formItems: FormItem[], propertySet: PropertySet) {
-            formItems.forEach((formItem: FormItem) => {
-
-                if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormItemSet)) {
-                    this.populatePropertySetWithFormItems((<FormItemSet>formItem).getFormItems(), propertySet);
-                }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FieldSet)) {
-                    this.populatePropertySetWithFormItems((<FieldSet>formItem).getFormItems(), propertySet);
-                }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, Input)) {
-                    var input: Input = <Input>formItem;
-
-                    propertySet.addProperty(input.getName(), api.data.ValueTypes.STRING.newNullValue());
-                }
-            });
+            this.data = new PropertySet();
+            this.data.onChanged(this.formValueChangedHandler);
         }
 
         private renderConfigView(formView: FormView) {
@@ -197,19 +200,40 @@ module api.util.htmlarea.dialog {
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
         }
+
+        onPanelRendered(listener: () => void) {
+            this.panelRenderedListeners.push(listener);
+        }
+
+        unPanelRendered(listener: () => void) {
+            this.panelRenderedListeners = this.panelRenderedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyPanelRendered() {
+            this.panelRenderedListeners.forEach((listener) => {
+                listener();
+            })
+        }
     }
 
     export class MacroPreviewFrame extends api.dom.IFrameEl {
 
         private id: string = "macro-preview-frame-id";
 
+        private macroPreview: MacroPreview;
+
         private debouncedResizeHandler: () => void = api.util.AppHelper.debounce(() => {
             this.adjustFrameHeight();
-        }, 300, false);
+        }, 500, false);
+
+        private previewRenderedListeners: {():void}[] = [];
 
         constructor(macroPreview: MacroPreview) {
             super("preview-iframe");
             this.setId(this.id);
+            this.macroPreview = macroPreview;
 
             this.initFrameContent(macroPreview)
         }
@@ -221,13 +245,26 @@ module api.util.htmlarea.dialog {
                 if (doc.document) {
                     doc = doc.document;
                 }
+
                 doc.open();
                 doc.write(this.makeContentForPreviewFrame(macroPreview));
                 doc.close();
 
+                if (this.isYoutubePreview()) {
+                    doc.body.style.marginRight = 4;
+                }
+
                 this.debouncedResizeHandler();
                 this.adjustFrameHeightOnContentsUpdate();
             });
+        }
+
+        private isYoutubePreview(): boolean {
+            return this.macroPreview.getMacroString().indexOf("[youtube") == 0;
+        }
+
+        private isInstagramPreview(): boolean {
+            return this.macroPreview.getMacroString().indexOf("[instagram") == 0;
         }
 
         private adjustFrameHeightOnContentsUpdate() {
@@ -242,12 +279,19 @@ module api.util.htmlarea.dialog {
 
         private adjustFrameHeight() {
             try {
-                var frameWindow = this.getHTMLElement()["contentWindow"],
-                    scrollHeight = frameWindow.document.body.scrollHeight;
+                var frameWindow = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"],
+                    scrollHeight = frameWindow.document.body.scrollHeight,
+                    maxFrameHeight = this.getMaxFrameHeight();
                 this.getEl().setHeightPx(scrollHeight > 150
-                    ? frameWindow.document.body.scrollHeight
+                    ? scrollHeight > maxFrameHeight ? maxFrameHeight : scrollHeight + (this.isInstagramPreview() ? 18 : 0)
                     : wemjq("#" + this.id).contents().find('body').outerHeight());
-            } catch (error) {}
+                this.notifyPreviewRendered();
+            } catch (error) {
+            }
+        }
+
+        private getMaxFrameHeight(): number {
+            return wemjq(window).height() - 250;
         }
 
         private makeContentForPreviewFrame(macroPreview: MacroPreview): string {
@@ -258,6 +302,22 @@ module api.util.htmlarea.dialog {
             result += macroPreview.getHtml();
             macroPreview.getPageContributions().getBodyEnd().forEach(script => result += script);
             return result;
+        }
+
+        onPreviewRendered(listener: () => void) {
+            this.previewRenderedListeners.push(listener);
+        }
+
+        unPreviewRendered(listener: () => void) {
+            this.previewRenderedListeners = this.previewRenderedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyPreviewRendered() {
+            this.previewRenderedListeners.forEach((listener) => {
+                listener();
+            })
         }
     }
 }

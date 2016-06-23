@@ -82,6 +82,11 @@ public abstract class BaseHandler
     protected abstract PortalHandlerWorker newWorker( PortalRequest req )
         throws Exception;
 
+    protected final PortalException badRequest( final String message, final Object... args )
+    {
+        return PortalException.badRequest( String.format( message, args ) );
+    }
+
     protected final PortalException notFound( final String message, final Object... args )
     {
         return PortalException.notFound( String.format( message, args ) );

@@ -26,7 +26,22 @@ module api.util.htmlarea.dialog {
 
         protected layout() {
             super.layout();
-            this.appendChildToContentPanel(this.macroDockedPanel = new MacroDockedPanel(this.contentPath));
+            this.appendChildToContentPanel(this.macroDockedPanel = this.makeMacroDockedPanel());
+        }
+
+        private makeMacroDockedPanel(): MacroDockedPanel {
+            var macroDockedPanel = new MacroDockedPanel(this.contentPath);
+
+            var debouncedPreviewRenderedHandler: () => void = api.util.AppHelper.debounce(() => {
+                this.centerMyself();
+            }, 400, false);
+
+            macroDockedPanel.onPanelRendered(debouncedPreviewRenderedHandler);
+            this.onRemoved(() => {
+                macroDockedPanel.unPanelRendered(debouncedPreviewRenderedHandler);
+            });
+
+            return macroDockedPanel;
         }
 
         protected getMainFormItems(): FormItem[] {
@@ -95,7 +110,7 @@ module api.util.htmlarea.dialog {
 
         private insertMacroIntoTextArea(): void {
             this.macroDockedPanel.getMacroPreviewString().then((macroString: string) => {
-                var macro = this.callback(macroString);
+                var macro = this.callback(api.util.StringHelper.escapeHtml(macroString));
                 this.close();
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);

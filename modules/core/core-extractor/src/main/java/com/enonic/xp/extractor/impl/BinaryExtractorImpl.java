@@ -48,7 +48,7 @@ public class BinaryExtractorImpl
         }
         catch ( IOException | SAXException | TikaException e )
         {
-            LOG.error( "Error extracting binary", e );
+            LOG.warn( "Error extracting binary: " + e.getMessage() );
         }
 
         return ExtractorResultFactory.create( metadata, handler );

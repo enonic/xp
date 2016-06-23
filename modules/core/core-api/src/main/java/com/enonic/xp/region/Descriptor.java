@@ -26,7 +26,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         //noinspection unchecked
         this.key = (KEY) builder.key;
         this.name = builder.name;
-        this.displayName = builder.displayName;
+        this.displayName = builder.displayName == null || builder.displayName.trim().isEmpty() ? builder.name : builder.displayName;
         this.config = builder.config;
     }
 

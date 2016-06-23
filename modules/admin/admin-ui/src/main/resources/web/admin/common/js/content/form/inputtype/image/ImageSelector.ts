@@ -78,19 +78,30 @@ module api.content.form.inputtype.image {
                 this.updateSelectedItemsIcons();
             });
 
-            if (!this.contentDeletedListener) {
-                this.contentDeletedListener = (event) => {
-                    event.getDeletedItems().filter((deletedItem) => {
-                        return !!deletedItem;
-                    }).forEach((deletedItem) => {
+            this.handleContentDeletedEvent();
+        }
 
+        private handleContentDeletedEvent() {
+            this.contentDeletedListener = (event) => {
+                if (this.selectedOptionsView.count() == 0) {
+                    return;
+                }
+
+                var selectedContentIdsMap: {} = {};
+                this.selectedOptionsView.getSelectedOptions().forEach(
+                    (selectedOption: any) => selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "");
+
+                event.getDeletedItems().
+                    filter(deletedItem => !deletedItem.isPending() &&
+                                          selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
+                    forEach((deletedItem) => {
                         var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
                         if (option != null) {
                             this.selectedOptionsView.removeSelectedOptions([option]);
                         }
                     });
-                }
             }
+
             ContentDeletedEvent.on(this.contentDeletedListener);
 
             this.onRemoved((event) => {

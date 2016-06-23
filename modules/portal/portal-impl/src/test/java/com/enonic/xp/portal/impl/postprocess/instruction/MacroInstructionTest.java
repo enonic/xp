@@ -75,6 +75,68 @@ public class MacroInstructionTest
     }
 
     @Test
+    public void testNoMacroInstruction()
+        throws Exception
+    {
+        PortalResponse response =
+            macroInstruction.evaluate( portalRequest, "MY_INSTRUCTION _name=\"mymacro\" param1=\"value1\" _body=\"body\"" );
+        assertNull( response );
+    }
+
+    @Test
+    public void testInvalidMacroInstruction()
+        throws Exception
+    {
+        PortalResponse response =
+            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param.with.dot=\"value1\" _body=\"body\"" );
+        assertNull( response );
+    }
+
+    @Test
+    public void testMacroInstructionWithoutName()
+        throws Exception
+    {
+        PortalResponse response = macroInstruction.evaluate( portalRequest, "MACRO param1=\"value1\" _body=\"body\"" );
+        assertNull( response );
+    }
+
+    @Test
+    public void testMacroInstructionNotSiteContext()
+        throws Exception
+    {
+        portalRequest.setSite( null );
+        try
+        {
+            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" );
+            fail( "Expected exception" );
+        }
+        catch ( RenderException e )
+        {
+            assertEquals( "Macro controller script could not be resolved, context site could not be found.", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void testMacroInstructionMissingController()
+        throws Exception
+    {
+        MacroKey key = MacroKey.from( "myapp:mymacro" );
+        MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
+        when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
+
+        try
+        {
+            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" );
+
+            fail( "Expected exception" );
+        }
+        catch ( RenderException e )
+        {
+            assertEquals( "Macro controller not found: mymacro", e.getMessage() );
+        }
+    }
+
+    @Test
     public void testInstructionSystemMacro()
         throws Exception
     {
@@ -92,7 +154,7 @@ public class MacroInstructionTest
         assertEquals( "mymacro: param1=value1, body=body", outputHtml );
     }
 
-    @Test(expected = RenderException.class)
+    @Test
     public void testInstructionMissingMacro()
         throws Exception
     {
@@ -104,7 +166,7 @@ public class MacroInstructionTest
 
         String outputHtml =
             macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
-        assertEquals( "mymacro: param1=value1, body=body", outputHtml );
+        assertEquals( "[mymacro param1=\"value1\"]body[/mymacro]", outputHtml );
     }
 
     @Test

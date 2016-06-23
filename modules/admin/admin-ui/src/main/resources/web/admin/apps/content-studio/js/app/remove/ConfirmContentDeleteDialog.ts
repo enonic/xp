@@ -1,5 +1,4 @@
 import "../../api.ts";
-
 import {DeleteAction} from "../view/DeleteAction";
 
 export interface ConfirmContentDeleteDialogConfig {
@@ -108,6 +107,12 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
                 this.confirmDeleteAction.setEnabled(false);
             }
 
+        });
+
+        this.input.onKeyUp((event: KeyboardEvent) => {
+            if (event.keyCode === 27) {
+                this.getCancelAction().execute();
+            }
         });
     }
 
