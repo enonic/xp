@@ -133,6 +133,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -1053,13 +1054,13 @@ public final class ContentResource
     @Path("unpublish")
     public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
     {
-        final ContentIds contentIds = this.contentService.unpublishContent( UnpublishContentParams.create().
+        final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( params.getIds() ) ).
             includeChildren( params.isIncludeChildren() ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        return new UnpublishContentResultJson( contentIds.getSize() );
+        return new UnpublishContentResultJson( result.getUnpublishedContents().getSize(), result.getContentName() );
     }
 
     @GET

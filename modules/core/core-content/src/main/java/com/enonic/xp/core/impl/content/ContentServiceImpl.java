@@ -29,7 +29,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
@@ -64,6 +63,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
@@ -718,7 +718,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ContentIds unpublishContent( final UnpublishContentParams params )
+    public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
         return UnpublishContentCommand.create().
             params( params ).
