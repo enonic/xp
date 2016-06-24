@@ -93,11 +93,9 @@ module api.ui.selector {
 
             // Listen to click in grid and issue selection
             this.grid.subscribeOnClick((e, args) => {
-
                 this.notifyRowSelection(args.row);
 
                 e.preventDefault();
-                e.stopPropagation();
                 return false;
             });
 
@@ -348,6 +346,14 @@ module api.ui.selector {
             this.multipleSelectionListeners.forEach((listener: (event: DropdownGridMultipleSelectionEvent)=>void) => {
                 listener(event);
             });
+        }
+
+        onClick(callback: (e, args) => void) {
+            this.grid.subscribeOnClick(callback);
+        }
+
+        unClick(callback: (e, args) => void) {
+            this.grid.unsubscribeOnClick(callback);
         }
     }
 }

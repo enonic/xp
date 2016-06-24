@@ -6,6 +6,8 @@ module api.form.inputtype.support {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class BaseInputTypeManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
 
@@ -38,6 +40,12 @@ module api.form.inputtype.support {
                     this.update(this.propertyArray, true).done();
                 }
             };
+        }
+
+        protected fireFocusSwitchEvent(event: SelectedOptionEvent<any>) {
+            if (event.getKeyCode() === 13) {
+                new FocusSwitchEvent(this).fire();
+            }
         }
 
         protected getValueFromPropertyArray(propertyArray: api.data.PropertyArray): string {

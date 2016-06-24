@@ -20,3 +20,4 @@
 ///<reference path='DragHelper.ts' />
 ///<reference path='NamesAndIconViewer.ts' />
 ///<reference path='ActivatedEvent.ts' />
+///<reference path='FocusSwitchEvent.ts' />

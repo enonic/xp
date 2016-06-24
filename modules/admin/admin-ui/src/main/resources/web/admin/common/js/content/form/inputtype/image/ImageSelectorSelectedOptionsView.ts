@@ -10,6 +10,7 @@ module api.content.form.inputtype.image {
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import LoadMask = api.ui.mask.LoadMask;
     import Tooltip = api.ui.Tooltip;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class ImageSelectorSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ImageSelectorDisplayValue> {
 
@@ -96,11 +97,11 @@ module api.content.form.inputtype.image {
             return new SelectedOption<ImageSelectorDisplayValue>(new ImageSelectorSelectedOptionView(option), this.count());
         }
 
-        addOption(option: Option<ImageSelectorDisplayValue>, silent: boolean = false): boolean {
+        addOption(option: Option<ImageSelectorDisplayValue>, silent: boolean = false, keyCode: number = -1): boolean {
 
             var selectedOption = this.getByOption(option);
             if (!selectedOption) {
-                this.addNewOption(option, silent);
+                this.addNewOption(option, silent, keyCode);
                 return true;
             } else if (selectedOption) {
                 var displayValue = selectedOption.getOption().displayValue;
@@ -112,7 +113,7 @@ module api.content.form.inputtype.image {
             return false;
         }
 
-        private addNewOption(option: Option<ImageSelectorDisplayValue>, silent: boolean) {
+        private addNewOption(option: Option<ImageSelectorDisplayValue>, silent: boolean, keyCode: number = -1) {
             var selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
             this.getSelectedOptions().push(selectedOption);
 
@@ -203,7 +204,7 @@ module api.content.form.inputtype.image {
             optionView.insertBeforeEl(this.toolbar);
 
             if (!silent) {
-                this.notifyOptionSelected(selectedOption);
+                this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
             }
 
             new Tooltip(optionView, isMissingContent ? option.value : option.displayValue.getPath(), 1000);

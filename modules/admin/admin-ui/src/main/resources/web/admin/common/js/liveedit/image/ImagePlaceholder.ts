@@ -5,6 +5,7 @@ module api.liveedit.image {
     import PageItemType = api.liveedit.PageItemType;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ImageComponent = api.content.page.region.ImageComponent;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class ImagePlaceholder extends api.liveedit.ItemViewPlaceholder {
 
@@ -55,10 +56,10 @@ module api.liveedit.image {
             this.comboboxWrapper.appendChildren(this.comboBox, this.uploadButton);
             this.appendChild(this.comboboxWrapper);
 
-            this.comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+            this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
                 var component: ImageComponent = this.imageComponentView.getComponent();
-                var imageContent = selectedOption.getOption().displayValue;
+                var imageContent = event.getSelectedOption().getOption().displayValue;
 
                 component.setImage(imageContent.getContentId(), imageContent.getDisplayName());
                 

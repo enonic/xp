@@ -6,6 +6,7 @@ module api.ui.security.acl {
     import Permission = api.security.acl.Permission;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
     import AccessControlEntryLoader = api.security.acl.AccessControlEntryLoader;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class AccessControlComboBox extends api.ui.selector.combobox.RichComboBox<AccessControlEntry> {
 
@@ -71,8 +72,8 @@ module api.ui.security.acl {
         private maximumOccurrences: number;
         private list: SelectedOption<AccessControlEntry>[] = [];
 
-        private selectedOptionRemovedListeners: {(removed: SelectedOption<AccessControlEntry>): void;}[] = [];
-        private selectedOptionAddedListeners: {(added: SelectedOption<AccessControlEntry>): void;}[] = [];
+        private selectedOptionRemovedListeners: {(removed: SelectedOptionEvent<AccessControlEntry>): void;}[] = [];
+        private selectedOptionAddedListeners: {(added: SelectedOptionEvent<AccessControlEntry>): void;}[] = [];
 
         constructor(className?: string) {
             super(className);
@@ -115,12 +116,12 @@ module api.ui.security.acl {
         }
 
 
-        addOption(option: Option<AccessControlEntry>, silent: boolean = false): boolean {
+        addOption(option: Option<AccessControlEntry>, silent: boolean = false, keyCode: number = -1): boolean {
             this.addItem(option.displayValue);
 
             if (!silent) {
                 var selectedOption = this.getByOption(option);
-                this.notifySelectedOptionAdded(selectedOption);
+                this.notifySelectedOptionAdded(new SelectedOptionEvent(selectedOption, keyCode));
             }
             return true;
         }
@@ -145,7 +146,7 @@ module api.ui.security.acl {
             }
 
             if (!silent) {
-                this.notifySelectedOptionRemoved(selectedOption);
+                this.notifySelectedOptionRemoved(new SelectedOptionEvent(selectedOption));
             }
         }
 
@@ -189,33 +190,33 @@ module api.ui.security.acl {
             this.list.forEach((selectedOption: SelectedOption<AccessControlEntry>, index: number) => selectedOption.setIndex(index));
         }
 
-        private notifySelectedOptionRemoved(removed: SelectedOption<AccessControlEntry>) {
+        private notifySelectedOptionRemoved(removed: SelectedOptionEvent<AccessControlEntry>) {
             this.selectedOptionRemovedListeners.forEach((listener) => {
                 listener(removed);
             });
         }
 
-        onOptionDeselected(listener: {(removed: SelectedOption<AccessControlEntry>): void;}) {
+        onOptionDeselected(listener: {(removed: SelectedOptionEvent<AccessControlEntry>): void;}) {
             this.selectedOptionRemovedListeners.push(listener);
         }
 
-        unOptionDeselected(listener: {(removed: SelectedOption<AccessControlEntry>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOptionEvent<AccessControlEntry>): void;}) {
             this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        onOptionSelected(listener: {(added: SelectedOption<AccessControlEntry>): void;}) {
+        onOptionSelected(listener: {(added: SelectedOptionEvent<AccessControlEntry>): void;}) {
             this.selectedOptionAddedListeners.push(listener);
         }
 
-        unOptionSelected(listener: {(added: SelectedOption<AccessControlEntry>): void;}) {
+        unOptionSelected(listener: {(added: SelectedOptionEvent<AccessControlEntry>): void;}) {
             this.selectedOptionAddedListeners = this.selectedOptionAddedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifySelectedOptionAdded(added: SelectedOption<AccessControlEntry>) {
+        private notifySelectedOptionAdded(added: SelectedOptionEvent<AccessControlEntry>) {
             this.selectedOptionAddedListeners.forEach((listener) => {
                 listener(added);
             });
