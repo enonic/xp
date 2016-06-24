@@ -34,7 +34,7 @@ module api.content.form.inputtype.image {
             this.appendChild(this.removeButton);
         }
 
-        setSelectionCount(removableCount: number, editableCount) {
+        setSelectionCount(removableCount: number, editableCount: number) {
             this.editableCount = editableCount;
             this.removableCount = removableCount;
             this.refreshUI();
