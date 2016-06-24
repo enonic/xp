@@ -193,6 +193,8 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.renderDropdownGrid();
 
             this.input.setReadOnly(true);
+
+            this.addClass("expanded");
         }
 
         setEmptyDropdownText(label: string) {
@@ -207,6 +209,7 @@ module api.ui.selector.combobox {
             }
 
             this.input.setReadOnly(false);
+            this.removeClass("expanded");
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[], saveSelection?: boolean) {
