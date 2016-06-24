@@ -55,9 +55,7 @@ module api.schema.content.inputtype {
             comboBox.onLoaded(this.onContentTypesLoadedHandler);
 
             comboBox.onOptionSelected((event: SelectedOptionEvent<ContentTypeSummary>) => {
-                if (event.getKeyCode() === 13) {
-                    new FocusSwitchEvent(this).fire();
-                }
+                this.fireFocusSwitchEvent(event);
                 this.onContentTypeSelected(event.getSelectedOption());
             });
 

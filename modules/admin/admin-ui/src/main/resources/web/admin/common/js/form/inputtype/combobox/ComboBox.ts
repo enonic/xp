@@ -114,9 +114,7 @@ module api.form.inputtype.combobox {
                 this.ignorePropertyChange = false;
                 this.validate(false);
 
-                if (event.getKeyCode() === 13) {
-                    new FocusSwitchEvent(this).fire();
-                }
+                this.fireFocusSwitchEvent(event);
             });
             comboBox.onOptionDeselected((event: SelectedOptionEvent<string>) => {
                 this.ignorePropertyChange = true;

@@ -246,9 +246,7 @@ module api.content.form.inputtype.image {
             });
 
             comboBox.onOptionSelected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
-                if (event.getKeyCode() === 13) {
-                    new FocusSwitchEvent(this).fire();
-                }
+                this.fireFocusSwitchEvent(event);
 
                 if (!this.isLayoutInProgress()) {
                     var contentId = event.getSelectedOption().getOption().displayValue.getContentId();

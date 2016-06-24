@@ -121,9 +121,7 @@ module api.content.site.inputtype.siteconfigurator {
             });
 
             comboBox.onOptionSelected((event: SelectedOptionEvent<Application>) => {
-                if (event.getKeyCode() === 13) {
-                    new FocusSwitchEvent(this).fire();
-                }
+                this.fireFocusSwitchEvent(event);
 
                 this.ignorePropertyChange = true;
 
