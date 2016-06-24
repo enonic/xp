@@ -72,6 +72,18 @@ module api.content.form.inputtype.image {
             setTimeout(()=> this.clickDisabled = false, 50);
         }
 
+        removeOption(optionToRemove: Option<ImageSelectorDisplayValue>, silent: boolean = false) {
+            const selectedOption = this.getByOption(optionToRemove);
+
+            this.selection = this.selection.filter((option: SelectedOption<ImageSelectorDisplayValue>) => {
+                return option.getOption().value != selectedOption.getOption().value;
+            });
+
+            this.updateSelectionToolbarLayout();
+
+            super.removeOption(optionToRemove, silent);
+        }
+
         removeSelectedOptions(options: SelectedOption<ImageSelectorDisplayValue>[]) {
             this.notifyRemoveSelectedOptions(options);
             // clear the selection;
