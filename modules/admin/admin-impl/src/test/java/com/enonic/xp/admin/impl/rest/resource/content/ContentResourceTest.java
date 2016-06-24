@@ -22,7 +22,6 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -31,6 +30,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -542,7 +542,9 @@ public class ContentResourceTest
             displayName( "one" ).
             type( ContentTypeName.folder() ).
             build();
-        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( ContentIds.from( content.getId() ) );
+
+        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( content.getId()).build();
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( result );
 
         final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
@@ -559,7 +561,7 @@ public class ContentResourceTest
     public void delete_content_failure()
         throws Exception
     {
-        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
             thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.BRANCH_DRAFT ) );
@@ -567,7 +569,7 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent );
-        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/two" ) ).
             build() ) ) ).
             thenThrow( new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
@@ -593,16 +595,18 @@ public class ContentResourceTest
             name( "one" ).
             displayName( "one" ).
             build();
-        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+
+        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( aContent2.getId()).build();
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
-            thenReturn( ContentIds.from( aContent2.getId() ) );
+            thenReturn( result );
 
         final Content aContent3 = createContent( "aaa", "my_a_content2", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent3 );
 
-        Mockito.when( contentService.delete( DeleteContentParams.create().
+        Mockito.when( contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( ContentPath.from( "/two" ) ).
             build() ) ).
             thenThrow( new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );

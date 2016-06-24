@@ -82,7 +82,7 @@ public class UnpublishContentCommand
                 branch( ContentConstants.BRANCH_DRAFT ).
                 build();
             draftContext.callWith( () -> {
-                final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( (String[]) contentIds.asStrings().toArray() ) );
+                final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( contentIds.asStrings() ) );
                 for ( final Node draftNode : draftNodes )
                 {
                     if ( draftNode.getNodeState().value().equalsIgnoreCase( ContentState.PENDING_DELETE.toString() ) )

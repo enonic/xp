@@ -1,18 +1,6 @@
 {
-  "failures": [
-    {
-      "id": "aaa",
-      "name": "My Content",
-      "reason": "Not able to delete content with path [/two]: Some reason",
-      "type": "my_type"
-    }
-  ],
-  "pendings": [],
-  "successes": [
-    {
-      "id": "123",
-      "name": "one",
-      "type": "unstructured"
-    }
-  ]
+  "contentName" : null,
+  "failureReason" : "Not able to delete content with path [/two]: Some reason",
+  "pending" : 0,
+  "success" : 1
 }

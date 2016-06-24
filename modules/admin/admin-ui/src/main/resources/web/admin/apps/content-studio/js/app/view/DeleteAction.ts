@@ -20,34 +20,45 @@ export class DeleteAction extends api.ui.Action {
                         .then((result: api.content.DeleteContentResult) => {
                             DeleteAction.showDeleteResult(result);
                         }).catch((reason: any) => {
-                        if (reason && reason.message) {
-                            api.notify.showError(reason.message);
-                        } else {
-                            api.notify.showError('Content could not be deleted.');
-                        }
-                    }).done();
+                            if (reason && reason.message) {
+                                api.notify.showError(reason.message);
+                            } else {
+                                api.notify.showError('Content could not be deleted.');
+                            }
+                        }).done();
                 }).open();
         });
     }
 
     public static showDeleteResult(result: api.content.DeleteContentResult) {
-        if (result.getPendings().length == 1) {
-            api.notify.showFeedback(`"${result.getPendings()[0].getName()}" marked for deletion`);
-        } else if (result.getPendings().length > 1) {
-            api.notify.showFeedback(`${result.getPendings().length} items marked for deletion`);
-        }
+        debugger;
+        if(result.getPendings() + result.getDeleted() == 1) {
+            if (result.getPendings() == 1) {
+                api.notify.showFeedback(`"${result.getContentName()}" marked for deletion`);
+            } else if (result.getPendings() > 1) {
+                api.notify.showFeedback(`${result.getPendings()} items marked for deletion`);
+            }
 
-        if (result.getDeleted().length == 1) {
-            let deleted = result.getDeleted()[0];
-            let name = deleted.getName() ||
-                       `Unnamed ${api.util.StringHelper.capitalizeAll(deleted.getType().replace(/-/g, " ").trim())}`;
-            api.notify.showFeedback(`"${name}" deleted`);
-        } else if (result.getDeleted().length > 1) {
-            api.notify.showFeedback(result.getDeleted().length + ' items deleted');
-        }
+            else if (result.getDeleted() == 1) {
+                debugger;
+                let name = result.getContentName() ||
+                           `Unnamed ${api.util.StringHelper.capitalizeAll(result.getContentType().replace(/-/g, " ").trim())}`;
+                api.notify.showFeedback(name + " deleted");
+            } else if (result.getDeleted() > 1) {
+                api.notify.showFeedback(result.getDeleted() + ' items deleted');
+            }
 
-        if (result.getDeleteFailures().length > 0) {
-            api.notify.showWarning(`Content could not be deleted. ${result.getDeleteFailures()[0].getReason()}`);
+
+        } else {
+            if (result.getDeleted() > 0) {
+                api.notify.showSuccess(result.getDeleted() + ' items were deleted');
+            }
+            if (result.getPendings() > 0) {
+                api.notify.showSuccess(result.getPendings() + ' items were marked for deletion');
+            }
+        }
+        if (result.getFailureReason()) {
+            api.notify.showWarning(`Content could not be deleted. ${result.getFailureReason()}`);
         }
     }
 

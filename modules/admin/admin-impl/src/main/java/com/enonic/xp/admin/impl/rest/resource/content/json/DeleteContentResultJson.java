@@ -1,118 +1,84 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class DeleteContentResultJson
 {
-    private List<Success> successes = new ArrayList<>();
+    private Integer success = 0;
 
-    private List<Pending> pendings = new ArrayList<>();
+    private Integer pending = 0;
 
-    private List<Failure> failures = new ArrayList<>();
+    private String failureReason;
 
-    public List<Success> getSuccesses()
+    private String contentName;
+
+    private String contentType;
+
+    @SuppressWarnings("unused")
+    public Integer getSuccess()
     {
-        return successes;
+        return success;
     }
 
-    public List<Pending> getPendings()
+    public void setSuccess( final Integer success )
     {
-        return pendings;
-    }
-
-    public List<Failure> getFailures()
-    {
-        return failures;
-    }
-
-    public void addSuccess( final String id, final String contentName, final String type )
-    {
-        successes.add( new Success( id, contentName, type ) );
-    }
-
-    public void addPending( final String id, final String contentName )
-    {
-        pendings.add( new Pending( id, contentName ) );
-    }
-
-    public void addFailure( final String id, final String contentName, final String type, final String reason )
-    {
-        failures.add( new Failure( id, contentName, type, reason ) );
-    }
-
-    public class Success
-    {
-
-        private String id;
-
-        private String name;
-
-        private String type;
-
-        public Success( final String id, final String contentName, final String type )
+        if(success != null)
         {
-            this.id = id;
-            this.name = contentName;
-            this.type = type;
-        }
-
-        public String getId()
-        {
-            return id;
-        }
-
-        public String getName()
-        {
-            return name;
-        }
-
-        public String getType()
-        {
-            return type;
+            this.success = success;
         }
     }
 
-    public class Pending
+    public void addSuccess( final Integer success )
     {
-        private String id;
+        this.success += success;
+    }
 
-        private String name;
+    @SuppressWarnings("unused")
+    public Integer getPending()
+    {
+        return pending;
+    }
 
-        public Pending( final String id, final String contentName )
+    public void setPending( final Integer pending )
+    {
+        if(pending != null)
         {
-            this.id = id;
-            this.name = contentName;
-        }
-
-        public String getId()
-        {
-            return id;
-        }
-
-        public String getName()
-        {
-            return name;
+            this.pending = pending;
         }
     }
 
-    public class Failure
-        extends Success
+    public void addPending( final Integer pending )
     {
-
-        private String reason;
-
-        public Failure( final String id, final String contentName, final String type, final String reason )
-        {
-            super( id, contentName, type );
-            this.reason = reason;
-        }
-
-        public String getReason()
-        {
-            return reason;
-        }
+        this.pending += pending;
     }
 
+    @SuppressWarnings("unused")
+    public String getFailureReason()
+    {
+        return failureReason;
+    }
+
+    public void setFailureReason( final String failureReason )
+    {
+        this.failureReason = failureReason;
+    }
+
+    @SuppressWarnings("unused")
+    public String getContentName()
+    {
+        return contentName;
+    }
+
+    public void setContentName( final String contentName )
+    {
+        this.contentName = contentName;
+    }
+
+    public String getContentType()
+    {
+        return contentType;
+    }
+
+    public void setContentType( final String contentType )
+    {
+        this.contentType = contentType;
+    }
 }
