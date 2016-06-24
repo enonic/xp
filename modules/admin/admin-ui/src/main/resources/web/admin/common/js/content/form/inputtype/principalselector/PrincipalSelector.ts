@@ -83,9 +83,7 @@ module api.content.form.inputtype.principalselector {
             });
 
             comboBox.onOptionSelected((event: SelectedOptionEvent<api.security.Principal>) => {
-                if (event.getKeyCode() === 13) {
-                    new FocusSwitchEvent(this).fire();
-                }
+                this.fireFocusSwitchEvent(event);
 
                 const selectedOption = event.getSelectedOption();
                 var key = selectedOption.getOption().displayValue.getKey();

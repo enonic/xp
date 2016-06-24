@@ -150,9 +150,7 @@ module api.content.form.inputtype.contentselector {
                             });
 
                         this.contentComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
-                            if (event.getKeyCode() === 13) {
-                                new FocusSwitchEvent(this).fire();
-                            }
+                            this.fireFocusSwitchEvent(event);
 
                             var reference = api.util.Reference.from(event.getSelectedOption().getOption().displayValue.getContentId());
 
