@@ -27,7 +27,20 @@
 
   &.display-validation-errors {
     .validation-viewer {
+      font-size: 14px;
       display: block;
+    }
+
+    .input-view {
+      padding: 10px 10px 0px 10px;
+
+      &.invalid {
+        .input-view-error();
+      }
+
+      label + .input-wrapper {
+        margin-left: @form-label-width - 12px;
+      }
     }
   }
 
