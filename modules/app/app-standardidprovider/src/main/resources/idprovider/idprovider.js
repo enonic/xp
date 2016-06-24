@@ -3,11 +3,6 @@ var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
 
 exports.handle401 = function (req) {
-    var adminRestPath = portalLib.url({path: "/admin/rest"});
-    if (req.path.lastIndexOf(adminRestPath, 0) == 0) {
-        return null;
-    }
-
     var body = generateLoginPage();
 
     return {
