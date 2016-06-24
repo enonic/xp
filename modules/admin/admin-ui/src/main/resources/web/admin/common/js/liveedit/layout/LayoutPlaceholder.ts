@@ -7,6 +7,7 @@ module api.liveedit.layout {
     import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
     import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
     import LayoutDescriptorComboBox = api.content.page.region.LayoutDescriptorComboBox;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class LayoutPlaceholder extends ItemViewPlaceholder {
 
@@ -27,9 +28,9 @@ module api.liveedit.layout {
 
             this.appendChild(this.comboBox);
 
-            this.comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<LayoutDescriptor>) => {
+            this.comboBox.onOptionSelected((event: SelectedOptionEvent<LayoutDescriptor>) => {
                 this.layoutComponentView.showLoadingSpinner();
-                var descriptor = selectedOption.getOption().displayValue;
+                var descriptor = event.getSelectedOption().getOption().displayValue;
 
                 var layoutComponent: LayoutComponent = this.layoutComponentView.getComponent();
                 layoutComponent.setDescriptor(descriptor.getKey(), descriptor);

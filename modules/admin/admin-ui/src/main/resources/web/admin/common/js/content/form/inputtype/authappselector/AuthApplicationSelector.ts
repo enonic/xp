@@ -19,6 +19,8 @@ module api.content.site.inputtype.siteconfigurator {
     import SiteConfig = api.content.site.SiteConfig;
     import GetApplicationRequest = api.application.GetApplicationRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class AuthApplicationSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<Application> {
 
@@ -118,18 +120,21 @@ module api.content.site.inputtype.siteconfigurator {
             comboBox.onBeforeOptionCreated(() => this.ignorePropertyChange = true);
             comboBox.onAfterOptionCreated(() => this.ignorePropertyChange = false);
 
-            comboBox.onOptionDeselected((removed: SelectedOption<Application>) => {
+            comboBox.onOptionDeselected((event: SelectedOptionEvent<Application>) => {
                 this.ignorePropertyChange = true;
 
-                this.getPropertyArray().remove(removed.getIndex());
+                this.getPropertyArray().remove(event.getSelectedOption().getIndex());
 
                 this.ignorePropertyChange = false;
                 this.validate(false);
             });
 
-            comboBox.onOptionSelected((selectedOption: SelectedOption<Application>) => {
+            comboBox.onOptionSelected((event: SelectedOptionEvent<Application>) => {
+                this.fireFocusSwitchEvent(event);
+
                 this.ignorePropertyChange = true;
 
+                const selectedOption = event.getSelectedOption();
                 var key = selectedOption.getOption().displayValue.getApplicationKey();
                 if (!key) {
                     return;

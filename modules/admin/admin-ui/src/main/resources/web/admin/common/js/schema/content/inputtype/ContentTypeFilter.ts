@@ -14,6 +14,8 @@ module api.schema.content.inputtype {
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import ApplicationKey = api.application.ApplicationKey;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class ContentTypeFilter extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
@@ -51,8 +53,14 @@ module api.schema.content.inputtype {
                 comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
 
             comboBox.onLoaded(this.onContentTypesLoadedHandler);
-            comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<ContentTypeSummary>) => this.onContentTypeSelected(selectedOption));
-            comboBox.onOptionDeselected((option: SelectedOption<ContentTypeSummary>) => this.onContentTypeDeselected(option));
+
+            comboBox.onOptionSelected((event: SelectedOptionEvent<ContentTypeSummary>) => {
+                this.fireFocusSwitchEvent(event);
+                this.onContentTypeSelected(event.getSelectedOption());
+            });
+
+            comboBox.onOptionDeselected((event: SelectedOptionEvent<ContentTypeSummary>) =>
+                this.onContentTypeDeselected(event.getSelectedOption()));
 
             return comboBox;
         }
