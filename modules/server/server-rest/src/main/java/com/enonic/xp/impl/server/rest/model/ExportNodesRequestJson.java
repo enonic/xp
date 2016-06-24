@@ -1,9 +1,9 @@
-package com.enonic.xp.admin.impl.rest.resource.export;
+package com.enonic.xp.impl.server.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
-class ExportNodesRequestJson
+public class ExportNodesRequestJson
 {
     private final RepoPath sourceRepoPath;
 

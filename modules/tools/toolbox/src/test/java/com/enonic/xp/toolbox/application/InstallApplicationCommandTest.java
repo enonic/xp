@@ -37,7 +37,7 @@ public class InstallApplicationCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/admin/rest/application/install", request.getPath() );
+        assertEquals( "/api/app/install", request.getPath() );
     }
 
     @Test
@@ -54,7 +54,7 @@ public class InstallApplicationCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/admin/rest/application/installUrl", request.getPath() );
+        assertEquals( "/api/app/installUrl", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 
