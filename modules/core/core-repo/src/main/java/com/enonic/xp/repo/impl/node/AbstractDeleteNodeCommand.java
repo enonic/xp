@@ -19,7 +19,7 @@ abstract class AbstractDeleteNodeCommand
         super( builder );
     }
 
-    void deleteNodeWithChildren( final Node node, final Context context )
+    NodeIds deleteNodeWithChildren( final Node node, final Context context )
     {
         doRefresh();
 
@@ -39,6 +39,8 @@ abstract class AbstractDeleteNodeCommand
         this.storageService.delete( nodesToBeDeleted, InternalContext.from( context ) );
 
         doRefresh();
+
+        return nodesToBeDeleted;
     }
 
     private void doRefresh()

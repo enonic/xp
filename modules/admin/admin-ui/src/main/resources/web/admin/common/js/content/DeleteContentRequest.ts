@@ -52,40 +52,5 @@ module api.content {
 
                 });
         }
-
-        static feedback(result: api.content.DeleteContentResult) {
-            var successes = result.getDeleted().length,
-                pendings = result.getPendings().length,
-                failures = result.getDeleteFailures().length,
-                total = successes + failures + pendings;
-
-            switch (total) {
-            case 0:
-                api.notify.showFeedback('Nothing to delete.');
-                break;
-            case 1:
-                if (successes === 1) {
-                    api.notify.showSuccess('\"' + result.getDeleted()[0].getName() + '\" deleted');
-                } else if (pendings === 1) {
-                    api.notify.showSuccess('\"' + result.getPendings()[0].getName() + '\" marked for deletion');
-                } else if (failures === 1) {
-                    api.notify.showError('\"' + result.getDeleteFailures()[0].getName() + '\" deletion failed, reason: '
-                                         + result.getDeleteFailures()[0].getReason());
-                }
-                break;
-            default: // > 1
-                if (successes > 0) {
-                    api.notify.showSuccess(successes + ' items were deleted');
-                }
-                if (pendings > 0) {
-                    api.notify.showSuccess(pendings + ' items were marked for deletion');
-                }
-                if (failures > 0) {
-                    api.notify.showError(failures + ' items failed to delete');
-                }
-
-                break
-            }
-        }
     }
 }

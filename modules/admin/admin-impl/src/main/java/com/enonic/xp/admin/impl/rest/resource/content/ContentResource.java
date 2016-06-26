@@ -108,10 +108,10 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
@@ -149,6 +149,7 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -415,18 +416,17 @@ public final class ContentResource
 
             try
             {
-                Contents contents = contentService.delete( deleteContentParams );
-                contents.forEach( ( content ) -> {
-                    if ( ContentState.PENDING_DELETE.equals( content.getContentState() ) )
-                    {
-                        jsonResult.addPending( content.getId().toString(), content.getDisplayName() );
-                    }
-                    else
-                    {
-                        jsonResult.addSuccess( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName() );
-                    }
+                DeleteContentsResult result = contentService.deleteWithoutFetch( deleteContentParams );
 
-                } );
+                jsonResult.addPending( result.getPendingContents().getSize() );
+                jsonResult.addSuccess( result.getDeletedContents().getSize() );
+
+                jsonResult.setContentName( result.getContentName() );
+
+                if(StringUtils.isNotEmpty( result.getContentType() ))
+                {
+                    jsonResult.setContentType( ContentTypeName.from( result.getContentType()).getLocalName() );
+                }
 
             }
             catch ( final Exception e )
@@ -434,15 +434,17 @@ public final class ContentResource
                 try
                 {
                     Content content = contentService.getByPath( contentToDelete );
-                    if ( content != null )
+                    if ( content != null && StringUtils.isEmpty( jsonResult.getFailureReason() ) )
                     {
-                        jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName(),
-                                               e.getMessage() );
+                        jsonResult.setFailureReason( e.getMessage() );
                     }
                 }
                 catch ( final Exception e2 )
                 {
-                    jsonResult.addFailure( null, deleteContentParams.getContentPath().toString(), null, e2.getMessage() );
+                    if ( StringUtils.isEmpty( jsonResult.getFailureReason() ) )
+                    {
+                        jsonResult.setFailureReason( e2.getMessage() );
+                    }
                 }
 
             }
@@ -494,7 +496,7 @@ public final class ContentResource
 
             if ( failedContents.getSize() == 1 )
             {
-                json.contentName( contentService.getById( failedContents.first() ).getDisplayName());
+                json.contentName( contentService.getById( failedContents.first() ).getDisplayName() );
             }
         }
 
@@ -1051,13 +1053,13 @@ public final class ContentResource
     @Path("unpublish")
     public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
     {
-        final Contents contents = this.contentService.unpublishContent( UnpublishContentParams.create().
+        final ContentIds contentIds = this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( params.getIds() ) ).
             includeChildren( params.isIncludeChildren() ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        return new UnpublishContentResultJson( contents );
+        return new UnpublishContentResultJson( contentIds.getSize() );
     }
 
     @GET

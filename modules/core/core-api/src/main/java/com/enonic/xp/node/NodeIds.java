@@ -39,7 +39,7 @@ public class NodeIds
 
     public static NodeIds from( final String... ids )
     {
-        return new NodeIds( parseIds( ids ) );
+        return new NodeIds( parseIds( Lists.newArrayList( ids ) ) );
     }
 
     public static NodeIds from( final Iterable<NodeId> ids )
@@ -47,12 +47,18 @@ public class NodeIds
         return new NodeIds( ImmutableSet.copyOf( ids ) );
     }
 
+    public static NodeIds from( final Collection<String> ids )
+    {
+        return new NodeIds( parseIds( ids ) );
+    }
+
+
     public static Builder create()
     {
         return new Builder();
     }
 
-    private static ImmutableSet<NodeId> parseIds( final String... paths )
+    private static ImmutableSet<NodeId> parseIds( final Collection<String> paths )
     {
         final Collection<String> list = Lists.newArrayList( paths );
         final Collection<NodeId> pathList = Collections2.transform( list, new ParseFunction() );

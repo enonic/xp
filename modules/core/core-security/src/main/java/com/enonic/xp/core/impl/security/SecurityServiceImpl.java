@@ -34,6 +34,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -791,7 +792,7 @@ public final class SecurityServiceImpl
     public void deleteUserStore( final UserStoreKey userStoreKey )
     {
         removeRelationships( userStoreKey );
-        final Node deletedNode = callWithContext( () -> {
+        final NodeIds deletedNodes = callWithContext( () -> {
             final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStoreKey );
             final Node node = this.nodeService.getByPath( userStoreNodePath );
             if ( node == null )
@@ -800,7 +801,7 @@ public final class SecurityServiceImpl
             }
             return this.nodeService.deleteById( node.id() );
         } );
-        if ( deletedNode == null )
+        if ( deletedNodes == null )
         {
             throw new UserStoreNotFoundException( userStoreKey );
         }
@@ -809,15 +810,15 @@ public final class SecurityServiceImpl
     @Override
     public void deletePrincipal( final PrincipalKey principalKey )
     {
-        final Node deletedNode = callWithContext( () -> {
+        final NodeIds deletedNodes = callWithContext( () -> {
             doRemoveRelationships( principalKey );
             doRemoveMemberships( principalKey );
 
-            final Node node = this.nodeService.deleteById( toNodeId( principalKey ) );
+            final NodeIds nodes = this.nodeService.deleteById( toNodeId( principalKey ) );
             this.nodeService.refresh( RefreshMode.SEARCH );
-            return node;
+            return nodes;
         } );
-        if ( deletedNode == null )
+        if ( deletedNodes == null && deletedNodes.getSize() > 0  )
         {
             throw new PrincipalNotFoundException( principalKey );
         }

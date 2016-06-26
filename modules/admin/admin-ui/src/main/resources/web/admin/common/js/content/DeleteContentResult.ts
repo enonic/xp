@@ -3,101 +3,89 @@ module api.content {
 
     export class DeleteContentResult {
 
-        private deleteSuccess: DeleteContentResultSuccess[];
-        private deletePending: DeleteContentResultPending[];
-        private deleteFailures: DeleteContentResultFailure[];
+        private success: number;
+        private pending: number;
+        private contentName: string;
+        private contentType: string;
+        private failureReason: string;
 
-        constructor(success: DeleteContentResultSuccess[], pending: DeleteContentResultPending[], failures: DeleteContentResultFailure[]) {
-            this.deleteSuccess = !!success ? success : [];
-            this.deleteFailures = !!failures ? failures : [];
-            this.deletePending = !!pending ? pending : [];
+        constructor(builder: DeleteContentResultBuilder) {
+            this.success = builder.success;
+            this.pending = builder.pending;
+            this.contentName = builder.contentName;
+            this.contentType = builder.contentType;
+            this.failureReason = builder.failureReason;
         }
 
-        getDeleted(): DeleteContentResultSuccess[] {
-            return this.deleteSuccess;
+        getDeleted(): number {
+            return this.success;
         }
 
-        getPendings(): DeleteContentResultPending[] {
-            return this.deletePending;
+        getPendings(): number {
+            return this.pending;
         }
 
-        getDeleteFailures(): DeleteContentResultFailure[] {
-            return this.deleteFailures;
+        getContentName(): string {
+            return this.contentName;
+        }
+
+        getContentType(): string {
+            return this.contentType;
+        }
+
+        getFailureReason(): string {
+            return this.failureReason;
         }
 
         static fromJson(json: DeleteContentResultJson): DeleteContentResult {
-            if (json.successes) {
-                var success: DeleteContentResultSuccess[] = json.successes.
-                    map((success) => new DeleteContentResultSuccess(success.id, success.name, success.type));
-            }
-            if (json.pendings) {
-                var pending: DeleteContentResultPending[] = json.pendings.
-                    map((pending) => new DeleteContentResultPending(pending.id, pending.name));
-            }
-            if (json.failures) {
-                var failure: DeleteContentResultFailure[] = json.failures.
-                    map((failure) => new DeleteContentResultFailure(failure.id, failure.name, failure.type, failure.reason));
-            }
-            return new DeleteContentResult(success, pending, failure);
+            return DeleteContentResult.create().
+                setSuccess(json.success).
+                setPending(json.pending).
+                setContentName(json.contentName).
+                setContentType(json.contentType).
+                setFailureReason(json.failureReason).build();
+        }
+
+        static create(): DeleteContentResultBuilder {
+            return new DeleteContentResultBuilder();
         }
 
     }
 
-    export class DeleteContentResultSuccess {
+    export class DeleteContentResultBuilder {
+        success: number;
+        pending: number;
+        contentName: string;
+        contentType: string;
+        failureReason: string;
 
-        private id: string;
-        private name: string;
-        private type: string;
-
-        constructor(id: string, name: string, type: string) {
-            this.id = id;
-            this.name = name;
-            this.type = type;
+        setSuccess(value: number): DeleteContentResultBuilder {
+            this.success = value;
+            return this;
         }
 
-        getId(): string {
-            return this.id;
+        setPending(value: number): DeleteContentResultBuilder {
+            this.pending = value;
+            return this;
         }
 
-        getName(): string {
-            return this.name;
+        setContentName(value: string): DeleteContentResultBuilder {
+            this.contentName = value;
+            return this;
         }
 
-        getType(): string {
-            return this.type;
-        }
-    }
-
-    export class DeleteContentResultPending {
-
-        private id: string;
-        private name: string;
-
-        constructor(id: string, name: string) {
-            this.id = id;
-            this.name = name;
+        setContentType(value: string): DeleteContentResultBuilder {
+            this.contentType = value;
+            return this;
         }
 
-        getId(): string {
-            return this.id;
+        setFailureReason(value: string): DeleteContentResultBuilder {
+            this.failureReason = value;
+            return this;
         }
 
-        getName(): string {
-            return this.name;
-        }
-    }
-
-    export class DeleteContentResultFailure extends DeleteContentResultSuccess {
-
-        private reason: string;
-
-        constructor(id: string, name: string, type: string, reason: string) {
-            super(id, name, type);
-            this.reason = reason;
-        }
-
-        getReason(): string {
-            return this.reason;
+        build(): DeleteContentResult {
+            return new DeleteContentResult(this);
         }
     }
 }

@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -74,7 +75,7 @@ public class DeleteAndFetchContentCommandTest
             thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.NEW ) );
 
         Mockito.when( this.nodeService.deleteById( node.id() ) ).
-            thenReturn( node );
+            thenReturn( NodeIds.from( id ) );
 
         Mockito.when( this.nodeService.setNodeState( Mockito.isA( SetNodeStateParams.class ) ) ).
             thenReturn( SetNodeStateResult.
@@ -90,7 +91,7 @@ public class DeleteAndFetchContentCommandTest
                 build() ).
             build() );
 
-        final Contents myContent = DeleteAndFetchContentCommand.create().
+        final DeleteContentsResult result = DeleteAndFetchContentCommand.create().
             params( DeleteContentParams.create().
                 contentPath( ContentPath.from( "myContent" ) ).
                 build() ).
@@ -100,7 +101,7 @@ public class DeleteAndFetchContentCommandTest
             build().
             execute();
 
-        assertEquals( 1, myContent.getSize() );
+        assertEquals( 1, result.getDeletedContents().getSize() );
 
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).deleteById( node.id() );
     }
@@ -149,7 +150,7 @@ public class DeleteAndFetchContentCommandTest
                 build() ).
             build() );
 
-        final Contents myContent = DeleteAndFetchContentCommand.create().
+        final DeleteContentsResult result = DeleteAndFetchContentCommand.create().
             params( DeleteContentParams.create().
                 contentPath( ContentPath.from( "myContent" ) ).
                 build() ).
@@ -159,7 +160,7 @@ public class DeleteAndFetchContentCommandTest
             build().
             execute();
 
-        assertEquals( 1, myContent.getSize() );
+        assertEquals( 1, result.getPendingContents().getSize() );
 
         final SetNodeStateParams params = SetNodeStateParams.create().
             nodeId( node.id() ).
@@ -199,7 +200,7 @@ public class DeleteAndFetchContentCommandTest
             thenReturn( node );
 
         Mockito.when( this.nodeService.deleteById( node.id() ) ).
-            thenReturn( node );
+            thenReturn( NodeIds.from( id ));
 
         Mockito.when( this.translator.fromNodes( Nodes.from( node ), false ) ).thenReturn( Contents.create().
             add( Content.create().
@@ -209,7 +210,7 @@ public class DeleteAndFetchContentCommandTest
                 build() ).
             build() );
 
-        final Contents myContent = DeleteAndFetchContentCommand.create().
+        final DeleteContentsResult result = DeleteAndFetchContentCommand.create().
             params( DeleteContentParams.create().
                 contentPath( ContentPath.from( "myContent" ) ).
                 deleteOnline( true ).
@@ -220,7 +221,7 @@ public class DeleteAndFetchContentCommandTest
             build().
             execute();
 
-        assertEquals( 1, myContent.getSize() );
+        assertEquals( 1, result.getDeletedContents().getSize() );
         Mockito.verify( this.nodeService, Mockito.times( 2 ) ).deleteById( node.id() );
     }
 

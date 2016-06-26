@@ -39,6 +39,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
@@ -283,7 +284,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents delete( final DeleteContentParams params )
+    public DeleteContentsResult delete( final DeleteContentParams params )
     {
         return DeleteAndFetchContentCommand.create().
             nodeService( this.nodeService ).
@@ -297,7 +298,7 @@ public class ContentServiceImpl
 
 
     @Override
-    public ContentIds deleteWithoutFetch( final DeleteContentParams params )
+    public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).
@@ -717,7 +718,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents unpublishContent( final UnpublishContentParams params )
+    public ContentIds unpublishContent( final UnpublishContentParams params )
     {
         return UnpublishContentCommand.create().
             params( params ).
