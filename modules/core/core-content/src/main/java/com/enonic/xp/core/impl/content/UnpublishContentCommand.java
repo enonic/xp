@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -30,7 +31,7 @@ public class UnpublishContentCommand
         this.params = builder.params;
     }
 
-    public ContentIds execute()
+    public UnpublishContentsResult execute()
     {
         final Context context = ContextAccessor.current();
 
@@ -41,16 +42,31 @@ public class UnpublishContentCommand
         return unpublishContext.callWith( this::unpublish );
     }
 
-    private ContentIds unpublish()
+    private UnpublishContentsResult unpublish()
     {
-        final ContentIds.Builder contents = ContentIds.create();
+        final ContentIds.Builder contentBuilder = ContentIds.create();
 
         for ( final ContentId contentId : this.params.getContentIds() )
         {
-            recursiveUnpublish( NodeId.from( contentId ), this.params.isIncludeChildren(), contents );
+            recursiveUnpublish( NodeId.from( contentId ), this.params.isIncludeChildren(), contentBuilder );
         }
 
-        final ContentIds result = contents.build();
+        final ContentIds contentIds = contentBuilder.build();
+        final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().addUnpublished( contentIds );
+
+        if ( contentIds.getSize() == 1 )
+        {
+            final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
+                branch( ContentConstants.BRANCH_DRAFT ).
+                build();
+
+            draftContext.callWith( () -> {
+                resultBuilder.setContentName( this.getContent( contentIds.first() ).getDisplayName() );
+                return null;
+            } );
+        }
+
+        final UnpublishContentsResult result = resultBuilder.build();
 
         removePendingDeleteFromDraft( result );
 
@@ -73,7 +89,7 @@ public class UnpublishContentCommand
         }
     }
 
-    private void removePendingDeleteFromDraft( final ContentIds contentIds )
+    private void removePendingDeleteFromDraft( final UnpublishContentsResult result )
     {
         final Branch currentBranch = ContextAccessor.current().getBranch();
         if ( !currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
@@ -82,7 +98,7 @@ public class UnpublishContentCommand
                 branch( ContentConstants.BRANCH_DRAFT ).
                 build();
             draftContext.callWith( () -> {
-                final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( contentIds.asStrings() ) );
+                final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( result.getUnpublishedContents().asStrings() ) );
                 for ( final Node draftNode : draftNodes )
                 {
                     if ( draftNode.getNodeState().value().equalsIgnoreCase( ContentState.PENDING_DELETE.toString() ) )
