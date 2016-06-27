@@ -18,10 +18,10 @@ import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
-import com.enonic.xp.portal.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.filter.BaseWebFilter;
+import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.junit.Assert.*;

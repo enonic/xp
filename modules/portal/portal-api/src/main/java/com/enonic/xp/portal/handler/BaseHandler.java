@@ -8,11 +8,11 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 public abstract class BaseHandler
     implements PortalHandler

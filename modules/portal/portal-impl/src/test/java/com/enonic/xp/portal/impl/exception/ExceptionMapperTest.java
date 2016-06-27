@@ -7,17 +7,18 @@ import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 
 import static org.junit.Assert.*;
 
 public class ExceptionMapperTest
 {
-    private ExceptionMapper mapper;
+    private ExceptionMapperImpl mapper;
 
     @Before
     public void setup()
     {
-        this.mapper = new ExceptionMapper();
+        this.mapper = new ExceptionMapperImpl();
     }
 
     @Test

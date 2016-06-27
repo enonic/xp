@@ -55,6 +55,26 @@ public class WebRequest
         this.webSocket = false;
     }
 
+    public WebRequest( final WebRequest webRequest )
+    {
+        this.method = webRequest.method;
+        this.params = webRequest.params;
+        this.headers = webRequest.headers;
+        this.cookies = webRequest.cookies;
+        this.scheme = webRequest.scheme;
+        this.host = webRequest.host;
+        this.remoteAddress = webRequest.remoteAddress;
+        this.port = webRequest.port;
+        this.path = webRequest.path;
+        this.url = webRequest.url;
+        this.endpointPath = webRequest.endpointPath;
+        this.contentType = webRequest.contentType;
+        this.body = webRequest.body;
+        this.rawRequest = webRequest.rawRequest;
+        this.webSocket = webRequest.webSocket;
+        this.userStore = webRequest.userStore;
+    }
+
     public HttpMethod getMethod()
     {
         return this.method;

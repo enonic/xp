@@ -1,11 +1,14 @@
-package com.enonic.xp.portal.impl.exception;
+package com.enonic.xp.web.impl.exception;
+
+import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.exception.NotFoundException;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebResponse;
 
-public final class ExceptionMapper
+@Component
+public final class ExceptionMapperImpl
 {
     public WebException map( final Throwable cause )
     {
@@ -27,7 +30,7 @@ public final class ExceptionMapper
         return new WebException( HttpStatus.INTERNAL_SERVER_ERROR, cause );
     }
 
-    public void throwIfNeeded( final PortalResponse res )
+    public void throwIfNeeded( final WebResponse res )
         throws WebException
     {
         final HttpStatus status = res.getStatus();
