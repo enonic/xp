@@ -51,7 +51,11 @@ public final class CreateContentHandler
     @Override
     protected Object doExecute()
     {
-        if ( isBlank( this.name ) && isNotBlank( this.displayName ) && isNotBlank( this.parentPath ) )
+        if ( isBlank( this.parentPath ) )
+        {
+            this.parentPath = "/";
+        }
+        if ( isBlank( this.name ) && isNotBlank( this.displayName ) )
         {
             this.name = generateUniqueContentName( ContentPath.from( this.parentPath ), this.displayName );
         }
