@@ -25,9 +25,9 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
-import com.enonic.xp.web.impl.serializer.ResponseSerializer;
 import com.enonic.xp.web.impl.websocket.WebSocketContext;
 import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
+import com.enonic.xp.web.serializer.ResponseSerializationService;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
@@ -43,6 +43,8 @@ public final class WebDispatcherServlet
     private ExceptionRenderer exceptionRenderer;
 
     private WebSocketContextFactory webSocketContextFactory;
+
+    private ResponseSerializationService responseSerializationService;
 
     @Override
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
@@ -60,8 +62,7 @@ public final class WebDispatcherServlet
             return;
         }
 
-        final ResponseSerializer serializer = new ResponseSerializer( webRequest, webResponse );
-        serializer.serialize( res );
+        responseSerializationService.serialize( webRequest, webResponse, res );
     }
 
     private WebRequest newWebRequest( final HttpServletRequest req )
@@ -181,5 +182,11 @@ public final class WebDispatcherServlet
     public void setWebSocketContextFactory( final WebSocketContextFactory webSocketContextFactory )
     {
         this.webSocketContextFactory = webSocketContextFactory;
+    }
+
+    @Reference
+    public void setResponseSerializationService( final ResponseSerializationService responseSerializationService )
+    {
+        this.responseSerializationService = responseSerializationService;
     }
 }
