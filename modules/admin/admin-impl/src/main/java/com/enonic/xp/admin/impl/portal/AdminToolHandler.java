@@ -34,6 +34,10 @@ public final class AdminToolHandler
 
     private ControllerScriptFactory controllerScriptFactory;
 
+    public AdminToolHandler()
+    {
+        super( 50 );
+    }
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )

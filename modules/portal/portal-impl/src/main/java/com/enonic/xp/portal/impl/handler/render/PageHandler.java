@@ -32,7 +32,7 @@ public final class PageHandler
 
     public PageHandler()
     {
-        super( 100 );
+        super( 50 );
     }
 
     @Override
