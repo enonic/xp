@@ -1,4 +1,7 @@
-package com.enonic.xp.portal.impl.handler.portal;
+package com.enonic.xp.admin.impl.portal;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -6,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.BasePortalHandler;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -14,36 +18,41 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 
 @Component(immediate = true, service = WebHandler.class)
-public class PortalHandler
+public class AdminPortalHandler
     extends BasePortalHandler
 {
-    private final static String BASE_URI = "/portal";
+    private final static String BASE_URI_START = "/admin/portal";
 
-    private final static String BRANCH_PREFIX = BASE_URI + "/";
+    private final static Pattern BASE_URI_PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin)" );
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getPath().startsWith( BRANCH_PREFIX );
+        return BASE_URI_PATTERN.matcher( webRequest.getPath() ).find();
     }
 
     @Override
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
-        final String baseSubPath = webRequest.getPath().substring( BRANCH_PREFIX.length() );
+        final Matcher matcher = BASE_URI_PATTERN.matcher( webRequest.getPath() );
+        matcher.find();
+        final String baseUri = matcher.group( 0 );
+        final RenderMode mode = RenderMode.from( matcher.group( 1 ) );
+        final String baseSubPath = webRequest.getPath().substring( baseUri.length() + 1 );
         final Branch branch = findBranch( baseSubPath );
         final ContentPath contentPath = findContentPath( baseSubPath );
 
         final PortalRequest portalRequest = new PortalRequest( webRequest );
-        portalRequest.setBaseUri( BASE_URI );
+        portalRequest.setBaseUri( baseUri );
         portalRequest.setBranch( branch );
         portalRequest.setContentPath( contentPath );
+        portalRequest.setMode( mode );
 
         return portalRequest;
     }
 
     @Reference
-    public void setWebExceptionMapper( final ExceptionMapper exceptionMapper )
+    public void setExceptionMapper( final ExceptionMapper exceptionMapper )
     {
         this.exceptionMapper = exceptionMapper;
     }
