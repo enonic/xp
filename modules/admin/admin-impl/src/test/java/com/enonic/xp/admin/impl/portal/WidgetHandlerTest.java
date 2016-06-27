@@ -25,6 +25,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebResponse;
 
 import static org.junit.Assert.*;
 
@@ -88,10 +89,10 @@ public class WidgetHandlerTest
     {
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final PortalResponse res = this.handler.handle( this.request );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
+        final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
+        assertNotNull( response );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", response.getHeaders().get( "Allow" ) );
     }
 
     @Test
@@ -102,7 +103,7 @@ public class WidgetHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, WebResponse.create().build(), null );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -119,7 +120,7 @@ public class WidgetHandlerTest
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.EDIT );
 
-        final PortalResponse response = this.handler.handle( this.request );
+        final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
         Mockito.verify( this.controllerScript ).execute( this.request );
@@ -132,7 +133,7 @@ public class WidgetHandlerTest
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
 
-        final PortalResponse response = this.handler.handle( this.request );
+        final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
         Mockito.verify( this.controllerScript ).execute( this.request );
@@ -151,7 +152,7 @@ public class WidgetHandlerTest
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
 
-        final PortalResponse response = this.handler.handle( this.request );
+        final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
         Mockito.verify( this.controllerScript ).execute( this.request );
@@ -176,7 +177,7 @@ public class WidgetHandlerTest
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
 
-        final PortalResponse response = this.handler.handle( this.request );
+        final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
         Mockito.verify( this.controllerScript ).execute( this.request );
