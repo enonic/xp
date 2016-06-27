@@ -50,6 +50,7 @@ public abstract class BaseWebHandler
 
     @Override
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+        throws Exception
     {
         if ( canHandle( webRequest ) )
         {
@@ -72,7 +73,8 @@ public abstract class BaseWebHandler
 
     protected abstract boolean canHandle( WebRequest webRequest );
 
-    protected abstract WebResponse doHandle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain );
+    protected abstract WebResponse doHandle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain )
+        throws Exception;
 
     private void checkMethodAllowed( final HttpMethod method )
     {

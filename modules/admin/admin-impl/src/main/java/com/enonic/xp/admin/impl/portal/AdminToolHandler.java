@@ -10,15 +10,22 @@ import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.BaseWebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class AdminToolHandler
-    extends EndpointHandler
+    extends BaseWebHandler
 {
+    final static String ADMIN_TOOL_START = "/admin/tool";
+
+    final static String ADMIN_TOOL_PREFIX = ADMIN_TOOL_START + "/";
+
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
     private final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.admin.ui:home" );
@@ -27,17 +34,21 @@ public final class AdminToolHandler
 
     private ControllerScriptFactory controllerScriptFactory;
 
-    public AdminToolHandler()
+
+    @Override
+    protected boolean canHandle( final WebRequest webRequest )
     {
-        super( "tool" );
+        return webRequest.getPath().startsWith( ADMIN_TOOL_START );
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String restPath = findRestPath( req );
-        final Matcher matcher = PATTERN.matcher( restPath );
+        final String path = webRequest.getPath();
+
+        final String subPath = path.length() > ADMIN_TOOL_PREFIX.length() ? path.substring( ADMIN_TOOL_PREFIX.length() ) : "";
+        final Matcher matcher = PATTERN.matcher( subPath );
 
         final DescriptorKey descriptorKey;
         if ( matcher.find() )
@@ -51,11 +62,14 @@ public final class AdminToolHandler
             descriptorKey = DEFAULT_DESCRIPTOR_KEY;
         }
 
-        final AdminToolHandlerWorker worker = new AdminToolHandlerWorker();
+        final PortalRequest portalRequest =
+            webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+
+        final AdminToolHandlerWorker worker = new AdminToolHandlerWorker( portalRequest, PortalResponse.create( webResponse ) );
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.adminToolDescriptorService = adminToolDescriptorService;
         worker.descriptorKey = descriptorKey;
-        return worker;
+        return worker.execute();
     }
 
     @Reference

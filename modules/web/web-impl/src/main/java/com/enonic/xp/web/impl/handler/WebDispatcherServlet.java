@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Lists;
 
@@ -24,6 +26,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
+import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 import com.enonic.xp.web.impl.websocket.WebSocketContext;
 import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
@@ -32,7 +35,7 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
 @Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/portal/*"})
+    property = {"osgi.http.whiteboard.servlet.pattern=/portal/*", "osgi.http.whiteboard.servlet.pattern=/admin/*"})
 public final class WebDispatcherServlet
     extends HttpServlet
 {
@@ -125,7 +128,7 @@ public final class WebDispatcherServlet
     {
         try
         {
-            final WebResponse webResponse = webDispatcher.dispatch( webRequest, null );
+            final WebResponse webResponse = webDispatcher.dispatch( webRequest, WebResponse.create().build() );
             return filterResponse( webResponse );
         }
         catch ( Exception e )
@@ -188,5 +191,16 @@ public final class WebDispatcherServlet
     public void setResponseSerializationService( final ResponseSerializationService responseSerializationService )
     {
         this.responseSerializationService = responseSerializationService;
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addWebHandler( final WebHandler webHandler )
+    {
+        this.webDispatcher.add( webHandler );
+    }
+
+    public void removeWebHandler( final WebHandler webHandler )
+    {
+        this.webDispatcher.remove( webHandler );
     }
 }

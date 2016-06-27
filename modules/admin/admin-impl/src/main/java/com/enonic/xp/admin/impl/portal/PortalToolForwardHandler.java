@@ -3,20 +3,17 @@ package com.enonic.xp.admin.impl.portal;
 import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
 
-@Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/admin/tool", "osgi.http.whiteboard.servlet.pattern=/admin/tool/*"})
+//TODO GRI Remove
 public final class PortalToolForwardHandler
     extends HttpServlet
 {

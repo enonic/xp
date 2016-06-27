@@ -4,6 +4,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -35,8 +36,13 @@ final class ServiceHandlerWorker
 
     protected ControllerScriptFactory controllerScriptFactory;
 
+    public ServiceHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    {
+        super( request, response );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         //Retrieves the ServiceDescriptor
@@ -66,6 +72,8 @@ final class ServiceHandlerWorker
         //Executes the service
         final ControllerScript controllerScript = getScript();
         this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+
+        return this.response.build();
     }
 
     private ControllerScript getScript()

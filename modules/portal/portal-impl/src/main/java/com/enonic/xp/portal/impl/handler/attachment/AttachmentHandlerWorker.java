@@ -9,6 +9,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -16,7 +18,7 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.web.HttpStatus;
 
 final class AttachmentHandlerWorker
-    extends PortalHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     protected ContentService contentService;
 
@@ -28,8 +30,13 @@ final class AttachmentHandlerWorker
 
     protected boolean cacheable;
 
+    public AttachmentHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    {
+        super( request, response );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final Content content = getContent( this.id );
@@ -55,6 +62,8 @@ final class AttachmentHandlerWorker
             final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
             setResponseCacheable( everyoneCanRead && masterBranch );
         }
+
+        return this.response.build();
     }
 
     private Content getContent( final ContentId contentId )

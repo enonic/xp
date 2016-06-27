@@ -7,15 +7,18 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.handler.BaseHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.BaseWebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class PageHandler
-    extends BaseHandler
+    extends BaseWebHandler
 {
     private ContentService contentService;
 
@@ -33,23 +36,22 @@ public final class PageHandler
     }
 
     @Override
-    public boolean canHandle( final PortalRequest req )
+    public boolean canHandle( final WebRequest webRequest )
     {
-        return true;
+        return webRequest instanceof PortalRequest;
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final PageHandlerWorker worker = new PageHandlerWorker();
+        final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest, PortalResponse.create( webResponse ) );
         worker.setContentService( this.contentService );
         worker.rendererFactory = rendererFactory;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
         worker.portalUrlService = portalUrlService;
-
-        return worker;
+        return worker.execute();
     }
 
     @Reference

@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.portal;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
@@ -17,8 +18,13 @@ final class WidgetHandlerWorker
 
     protected ControllerScriptFactory controllerScriptFactory;
 
+    public WidgetHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    {
+        super( request, response );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
 
@@ -37,5 +43,7 @@ final class WidgetHandlerWorker
 
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( this.scriptDir );
         this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+
+        return this.response.build();
     }
 }

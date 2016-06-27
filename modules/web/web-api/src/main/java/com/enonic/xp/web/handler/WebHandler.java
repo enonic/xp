@@ -14,5 +14,6 @@ public interface WebHandler
 
     int getOrder();
 
-    WebResponse handle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain );
+    WebResponse handle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain )
+        throws Exception;
 }

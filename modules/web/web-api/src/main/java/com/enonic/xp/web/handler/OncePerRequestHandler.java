@@ -16,6 +16,7 @@ public abstract class OncePerRequestHandler
 
     @Override
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+        throws Exception
     {
         if ( isAlreadyHandled( webRequest ) )
         {

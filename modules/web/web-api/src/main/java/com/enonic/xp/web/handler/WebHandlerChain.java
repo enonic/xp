@@ -8,5 +8,6 @@ import com.enonic.xp.web.WebResponse;
 @Beta
 public interface WebHandlerChain
 {
-    WebResponse handle( WebRequest webRequest, WebResponse webResponse );
+    WebResponse handle( WebRequest webRequest, WebResponse webResponse )
+        throws Exception;
 }

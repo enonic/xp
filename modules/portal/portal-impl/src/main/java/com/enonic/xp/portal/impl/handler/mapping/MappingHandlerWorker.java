@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -12,7 +13,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 
 final class MappingHandlerWorker
-    extends PortalHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     protected ResourceService resourceService;
 
@@ -22,8 +23,13 @@ final class MappingHandlerWorker
 
     protected RendererFactory rendererFactory;
 
+    public MappingHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    {
+        super( request, response );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final ControllerScript controllerScript = getScript();
@@ -38,6 +44,7 @@ final class MappingHandlerWorker
         {
             renderController( controllerScript );
         }
+        return this.response.build();
     }
 
     private void renderPage( final ControllerScript controllerScript )

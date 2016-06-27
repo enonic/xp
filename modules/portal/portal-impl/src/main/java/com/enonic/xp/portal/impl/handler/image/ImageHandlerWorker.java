@@ -18,6 +18,8 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -28,7 +30,7 @@ import com.enonic.xp.web.HttpStatus;
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 final class ImageHandlerWorker
-    extends PortalHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
@@ -54,8 +56,13 @@ final class ImageHandlerWorker
 
     protected MediaInfoService mediaInfoService;
 
+    public ImageHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    {
+        super( request, response );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final Media imageContent = getImage( this.contentId );
@@ -106,6 +113,8 @@ final class ImageHandlerWorker
             final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
             setResponseCacheable( everyoneCanRead && masterBranch );
         }
+
+        return this.response.build();
     }
 
     private String getFormat( final String fileName, final String mimeType )

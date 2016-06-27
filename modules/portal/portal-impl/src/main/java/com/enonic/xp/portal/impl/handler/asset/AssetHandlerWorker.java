@@ -4,12 +4,14 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebRequest;
 
 final class AssetHandlerWorker
     extends PortalHandlerWorker
@@ -28,8 +30,13 @@ final class AssetHandlerWorker
 
     private Resource resource;
 
+    public AssetHandlerWorker( final WebRequest request, final PortalResponse.Builder response )
+    {
+        super( request, response );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         resolveResource();
@@ -45,6 +52,7 @@ final class AssetHandlerWorker
             final String cacheControlValue = "public, no-transform, max-age=31536000";
             this.response.header( HttpHeaders.CACHE_CONTROL, cacheControlValue );
         }
+        return this.response.build();
     }
 
     private void resolveResource()

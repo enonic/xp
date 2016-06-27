@@ -6,9 +6,11 @@ import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.exception.ExceptionMapper;
 
 @Component
 public final class ExceptionMapperImpl
+    implements ExceptionMapper
 {
     public WebException map( final Throwable cause )
     {

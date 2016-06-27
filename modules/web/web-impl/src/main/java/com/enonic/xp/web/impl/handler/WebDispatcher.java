@@ -37,6 +37,7 @@ final class WebDispatcher
     }
 
     public WebResponse dispatch( final WebRequest webRequest, final WebResponse webResponse )
+        throws Exception
     {
         ServletRequestHolder.setRequest( webRequest.getRawRequest() );
         return new WebHandlerChainImpl( webHandlerList ).

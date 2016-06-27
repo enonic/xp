@@ -9,6 +9,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
@@ -27,8 +28,13 @@ final class PageHandlerWorker
 
     protected PortalUrlService portalUrlService;
 
+    public PageHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    {
+        super( request, response );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final ContentPath contentPath = this.request.getContentPath();
@@ -41,7 +47,7 @@ final class PageHandlerWorker
         if ( content.getType().isShortcut() )
         {
             renderShortcut( content );
-            return;
+            return this.response.build();
         }
 
         final Site site = getSite( content );
@@ -100,6 +106,8 @@ final class PageHandlerWorker
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( effectiveContent );
         final PortalResponse response = renderer.render( effectiveContent, this.request );
         this.response = PortalResponse.create( response );
+
+        return this.response.build();
     }
 
     private void renderShortcut( final Content content )

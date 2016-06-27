@@ -22,6 +22,7 @@ final class WebHandlerChainImpl
 
     @Override
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse )
+        throws Exception
     {
         WebResponse result = webResponse;
 
