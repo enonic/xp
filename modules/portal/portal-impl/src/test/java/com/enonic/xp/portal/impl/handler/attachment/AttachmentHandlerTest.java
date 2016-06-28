@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler.attachment;
 
 import java.time.Instant;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -15,14 +16,15 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.handler.BaseHandlerTest;
 
 import static org.junit.Assert.*;
 
@@ -31,14 +33,17 @@ public class AttachmentHandlerTest
 {
     private AttachmentHandler handler;
 
+    private PortalRequest request;
+
     private ContentService contentService;
 
     private ByteSource mediaBytes;
 
-    @Override
-    protected void configure()
+    @Before
+    public final void setup()
         throws Exception
     {
+        this.request = new PortalRequest();
         this.contentService = Mockito.mock( ContentService.class );
         this.handler = new AttachmentHandler();
         this.handler.setContentService( this.contentService );
@@ -114,10 +119,10 @@ public class AttachmentHandlerTest
     public void testMethodNotAllowed()
         throws Exception
     {
-        assertMethodNotAllowed( this.handler, HttpMethod.POST );
-        assertMethodNotAllowed( this.handler, HttpMethod.DELETE );
-        assertMethodNotAllowed( this.handler, HttpMethod.PUT );
-        assertMethodNotAllowed( this.handler, HttpMethod.TRACE );
+        assertMethodNotAllowed( this.handler, HttpMethod.POST, this.request );
+        assertMethodNotAllowed( this.handler, HttpMethod.DELETE, this.request );
+        assertMethodNotAllowed( this.handler, HttpMethod.PUT, this.request );
+        assertMethodNotAllowed( this.handler, HttpMethod.TRACE, this.request );
     }
 
     @Test
@@ -126,7 +131,7 @@ public class AttachmentHandlerTest
     {
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,HEAD,OPTIONS", res.getHeaders().get( "Allow" ) );
@@ -140,7 +145,7 @@ public class AttachmentHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -156,7 +161,7 @@ public class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
@@ -170,7 +175,7 @@ public class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -186,7 +191,7 @@ public class AttachmentHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -204,7 +209,7 @@ public class AttachmentHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )

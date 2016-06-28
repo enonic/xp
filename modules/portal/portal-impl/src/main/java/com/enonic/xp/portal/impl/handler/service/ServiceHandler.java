@@ -39,7 +39,7 @@ public final class ServiceHandler
     }
 
     @Override
-    protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
         final String restPath = findRestPath( webRequest );

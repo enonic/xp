@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.portal;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -11,11 +12,11 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -26,6 +27,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.BaseHandlerTest;
 
 import static org.junit.Assert.*;
 
@@ -33,16 +35,19 @@ public class WidgetHandlerTest
     extends BaseHandlerTest
 {
 
+    private WidgetHandler handler;
+
+    private PortalRequest request;
+
     protected ContentService contentService;
 
     private ControllerScript controllerScript;
 
-    private WidgetHandler handler;
-
-    @Override
-    protected void configure()
+    @Before
+    public final void setup()
         throws Exception
     {
+        this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.controllerScript = Mockito.mock( ControllerScript.class );
         Mockito.when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
