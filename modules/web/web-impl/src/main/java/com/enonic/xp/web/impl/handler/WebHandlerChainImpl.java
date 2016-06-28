@@ -5,6 +5,7 @@ import java.util.Collection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.UnmodifiableIterator;
 
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
@@ -24,12 +25,10 @@ final class WebHandlerChainImpl
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse )
         throws Exception
     {
-        WebResponse result = webResponse;
-
         if ( webHandlerIterator.hasNext() )
         {
-            result = webHandlerIterator.next().handle( webRequest, result, this );
+            return webHandlerIterator.next().handle( webRequest, webResponse, this );
         }
-        return result;
+        throw WebException.notFound( "Handler not found" );
     }
 }

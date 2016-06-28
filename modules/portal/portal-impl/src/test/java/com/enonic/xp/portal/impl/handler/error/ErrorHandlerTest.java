@@ -28,7 +28,7 @@ public class ErrorHandlerTest
         this.handler = new ErrorHandler();
 
         this.request.setMethod( HttpMethod.GET );
-        this.request.setEndpointPath( "/_/asset/error/401" );
+        this.request.setEndpointPath( "/_/error/401" );
     }
 
     @Test

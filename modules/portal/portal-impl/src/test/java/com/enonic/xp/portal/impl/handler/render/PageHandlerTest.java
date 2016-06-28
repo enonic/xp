@@ -49,7 +49,7 @@ public class PageHandlerTest
     @Test
     public void testOrder()
     {
-        assertEquals( 100, this.handler.getOrder() );
+        assertEquals( 50, this.handler.getOrder() );
     }
 
     @Test
@@ -106,7 +106,7 @@ public class PageHandlerTest
 
         try
         {
-            this.handler.handle( this.request , PortalResponse.create().build(), null );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -172,7 +172,7 @@ public class PageHandlerTest
 
         try
         {
-            this.handler.handle( this.request , PortalResponse.create().build(), null );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )

@@ -24,6 +24,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
 import static org.junit.Assert.*;
@@ -131,7 +132,7 @@ public class AttachmentHandlerTest
     {
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,HEAD,OPTIONS", res.getHeaders().get( "Allow" ) );
