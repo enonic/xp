@@ -22,6 +22,8 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -182,5 +184,13 @@ public final class TestDataFixtures
         site.name( "my-content" );
         site.parentPath( ContentPath.ROOT );
         return site.build();
+    }
+
+    public static UserStore newUserStore()
+    {
+        return UserStore.create().
+            key( UserStoreKey.from( "myuserstore" ) ).
+            displayName( "My user store" ).
+            build();
     }
 }

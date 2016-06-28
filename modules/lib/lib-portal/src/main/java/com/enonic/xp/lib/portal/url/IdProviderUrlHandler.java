@@ -23,16 +23,11 @@ public final class IdProviderUrlHandler
 
     private UserStoreKey retrieveUserStoreKey()
     {
-        UserStoreKey userStoreKey = null;
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request.getRawRequest() );
         if ( virtualHost != null )
         {
-            userStoreKey = virtualHost.getUserStoreKey();
+            return virtualHost.getUserStoreKey();
         }
-        if ( userStoreKey == null )
-        {
-            userStoreKey = UserStoreKey.system();
-        }
-        return userStoreKey;
+        return null;
     }
 }

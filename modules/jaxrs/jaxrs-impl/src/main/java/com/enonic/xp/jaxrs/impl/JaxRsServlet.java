@@ -47,6 +47,7 @@ public final class JaxRsServlet
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
+        req.setAttribute( "error.handled", true );
         try
         {
             refreshIfNeeded( req.getServletContext() );
