@@ -930,6 +930,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
+                this.contentWizardStepForm.getFormView().addClass("may-display-validation-errors");
+                this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
+
                 if (this.liveFormPanel) {
 
                     if (!this.liveEditModel) {
