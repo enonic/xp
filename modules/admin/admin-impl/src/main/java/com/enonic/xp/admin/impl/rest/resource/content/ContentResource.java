@@ -424,9 +424,9 @@ public final class ContentResource
 
                 jsonResult.setContentName( result.getContentName() );
 
-                if(StringUtils.isNotEmpty( result.getContentType() ))
+                if ( StringUtils.isNotEmpty( result.getContentType() ) )
                 {
-                    jsonResult.setContentType( ContentTypeName.from( result.getContentType()).getLocalName() );
+                    jsonResult.setContentType( ContentTypeName.from( result.getContentType() ).getLocalName() );
                 }
 
             }
@@ -881,7 +881,7 @@ public final class ContentResource
     @Path("getDescendantsOfContents")
     public List<ContentIdJson> getDescendantsOfContents( final GetDescendantsOfContents json )
     {
-        final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
+        final ContentPaths contentsPaths = ContentPaths.from( json.getContentPaths() );
 
         FindContentIdsByQueryResult result = this.contentService.find(
             ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).
@@ -1315,6 +1315,9 @@ public final class ContentResource
                 expr = LogicalExpr.or( expr, likeExpr );
             }
         }
+
+        expr = LogicalExpr.and( expr, CompareExpr.notIn( fieldExpr, contentsPaths.stream().
+            map( contentPath -> ValueExpr.string( "/content" + contentPath ) ).collect( Collectors.toList() ) ) );
 
         return QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) );
     }
