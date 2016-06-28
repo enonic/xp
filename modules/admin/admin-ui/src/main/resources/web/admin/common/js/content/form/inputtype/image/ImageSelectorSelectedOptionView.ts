@@ -58,7 +58,7 @@ module api.content.form.inputtype.image {
         layout() {
             this.icon = new api.dom.ImgEl();
             this.label = new api.dom.DivEl("label");
-            this.check = new api.ui.Checkbox();
+            this.check = api.ui.Checkbox.create().build();
             this.progress = new api.ui.ProgressBar();
             this.error = new api.dom.DivEl("error");
             this.loadMask = new LoadMask(this);

@@ -5,6 +5,7 @@ module api.content.form.inputtype.checkbox {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import BaseInputTypeSingleOccurrence = api.form.inputtype.support.BaseInputTypeSingleOccurrence;
+    import LabelPosition = api.ui.LabelPosition;
 
     export class Checkbox extends BaseInputTypeSingleOccurrence<boolean> {
 
@@ -26,7 +27,8 @@ module api.content.form.inputtype.checkbox {
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
             var checked = property.hasNonNullValue() ? property.getBoolean() : false;
-            this.checkbox = new api.ui.Checkbox(undefined, checked);
+            this.checkbox =
+                api.ui.Checkbox.create().setLabelText(input.getLabel()).setChecked(checked).setLabelPosition(LabelPosition.TOP).build();
             this.appendChild(this.checkbox);
 
             if (!ValueTypes.BOOLEAN.equals(property.getType())) {

@@ -471,7 +471,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createKeepOriginalSizeCheckbox(): api.ui.Checkbox {
-            var keepOriginalSizeCheckbox = new api.ui.Checkbox();
+            var keepOriginalSizeCheckbox = api.ui.Checkbox.create().build();
             keepOriginalSizeCheckbox.addClass('keep-size-check');
             keepOriginalSizeCheckbox.onValueChanged(() => {
                 this.imageLoadMask.show();

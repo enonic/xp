@@ -8,6 +8,7 @@ module api.util.htmlarea.dialog {
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import Option = api.ui.selector.Option;
+    import LabelPosition = api.ui.LabelPosition;
 
     export class LinkModalDialog extends ModalDialog {
         private dockedPanel: DockedPanel;
@@ -168,9 +169,10 @@ module api.util.htmlarea.dialog {
         }
 
         private createTargetCheckbox(id: string, isTabSelected: boolean): FormItem {
-            var checkbox = new api.ui.Checkbox(null, this.getTarget(isTabSelected));
+            var checkbox = api.ui.Checkbox.create().setLabelText("Open in new tab").setChecked(
+                this.getTarget(isTabSelected)).setLabelPosition(LabelPosition.LEFT).build();
 
-            return this.createFormItem(id, "Open in new tab", null, null, checkbox);
+            return this.createFormItem(id, null, null, null, checkbox);
         }
 
         protected getMainFormItems(): FormItem [] {

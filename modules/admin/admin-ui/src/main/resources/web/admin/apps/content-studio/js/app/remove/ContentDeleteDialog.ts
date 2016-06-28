@@ -37,7 +37,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
 
         this.addCancelButtonToBottom();
 
-        this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published items");
+        this.instantDeleteCheckbox = api.ui.Checkbox.create().setLabelText("Instantly delete published items").build();
         this.instantDeleteCheckbox.addClass('instant-delete-check');
 
         this.appendChild(this.instantDeleteCheckbox);

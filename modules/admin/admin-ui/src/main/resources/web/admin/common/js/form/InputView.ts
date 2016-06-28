@@ -61,12 +61,15 @@ module api.form {
 
         public layout(): wemQ.Promise<void> {
 
-            if (this.input.getLabel()) {
-                var label = new InputLabel(this.input);
-                this.appendChild(label);
-            } else {
-                this.addClass("no-label");
+            if (this.input.getInputType().getName() !== "Checkbox") { //checkbox input type generates clickable label itself
+                if (this.input.getLabel()) {
+                    var label = new InputLabel(this.input);
+                    this.appendChild(label);
+                } else {
+                    this.addClass("no-label");
+                }
             }
+
 
             if (this.input.isMaximizeUIInputWidth()) {
                 this.addClass("label-over-input");
