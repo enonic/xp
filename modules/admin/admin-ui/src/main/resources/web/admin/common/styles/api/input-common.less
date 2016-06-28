@@ -7,29 +7,6 @@
   font-size: 15px;
 }
 
-.input-error(@color: @input-light-red) {
-  background-color: @color;
-
-  &:focus {
-    .box-shadow(0px 0px 5px @color);
-  }
-}
-
-.input-glow(@color: @admin-input-blue) {
-  &:hover {
-    &:not([disabled]) {
-      border: 1px solid @color;
-    }
-    &[disabled] {
-      border: 1px solid greyscale(@color);
-    }
-  }
-  &:focus {
-    .box-shadow(0px 0px 5px @color);
-    border: 1px solid @color;
-  }
-}
-
 ::-ms-clear {
   display: none;
 }
@@ -42,18 +19,11 @@
     margin-bottom: @form-field-spacing;
   }
 
-  //  padding: 10px 10px 0;
   border-bottom-width: 0;
 
   select, input, textarea {
     .input-glow();
   }
-
-  .display-validation-errors &.invalid {
-    .input-error();
-    padding: 10px;
-  }
-;
 
   .error {
     display: none;
@@ -137,7 +107,6 @@
       }
     }
   }
-
 
   .input-wrapper .form-input {
     width: 100%;
