@@ -213,9 +213,9 @@ module api.form {
         private handleInputValidationRecording(inputRecording: api.form.inputtype.InputValidationRecording,
                                                silent: boolean = true): ValidationRecording {
 
-            var recording = new ValidationRecording();
-            var validationRecordingPath = this.resolveValidationRecordingPath();
-            var hasValidInput = this.hasValidUserInput();
+            var recording = new ValidationRecording(),
+                validationRecordingPath = this.resolveValidationRecordingPath(),
+                hasValidInput = this.hasValidUserInput();
 
             if (inputRecording.isMinimumOccurrencesBreached()) {
                 recording.breaksMinimumOccurrences(validationRecordingPath);
@@ -224,16 +224,24 @@ module api.form {
                 recording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
+            if (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput)) {
+                if (!silent) {
+                    this.notifyValidityChanged(new RecordingValidityChangedEvent(recording,
+                        validationRecordingPath).setInputValueBroken(!hasValidInput));
+                }
+                this.toggleClass("highlight-validity-change", this.highlightOnValidityChange());
+            }
+
             if (!silent && (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput) )) {
-                this.notifyFormValidityChanged(new RecordingValidityChangedEvent(recording,
+                this.notifyValidityChanged(new RecordingValidityChangedEvent(recording,
                     validationRecordingPath).setInputValueBroken(!hasValidInput));
             }
-            this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
 
             this.previousValidityRecording = recording;
             this.userInputValid = hasValidInput;
-            return recording;
 
+            this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
+            return recording;
         }
 
         userInputValidityChanged(currentState: boolean): boolean {
@@ -254,16 +262,7 @@ module api.form {
             });
         }
 
-        private notifyFormValidityChanged(event: RecordingValidityChangedEvent) {
-
-            /*console.log("InputView[ " + event.getOrigin().toString() + " ] validity changed");
-             if (event.getRecording().isValid()) {
-             console.log(" valid!");
-             }
-             else {
-             console.log(" invalid:");
-             event.getRecording().print();
-             }*/
+        private notifyValidityChanged(event: RecordingValidityChangedEvent) {
 
             this.validityChangedListeners.forEach((listener: (event: RecordingValidityChangedEvent)=>void) => {
                 listener(event);
@@ -271,7 +270,7 @@ module api.form {
         }
 
         private renderValidationErrors(recording: ValidationRecording, additionalValidationRecord: AdditionalValidationRecord) {
-            if (recording.isValid()) {
+            if (recording.isValid() && this.hasValidUserInput()) {
                 this.removeClass("invalid");
                 this.addClass("valid");
             }
