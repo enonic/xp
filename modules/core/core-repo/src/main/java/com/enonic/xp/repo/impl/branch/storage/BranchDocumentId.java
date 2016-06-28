@@ -33,6 +33,11 @@ public class BranchDocumentId
         this.branch = Branch.from( branchName );
     }
 
+    public static BranchDocumentId from( final NodeId nodeId, final Branch branch )
+    {
+        return new BranchDocumentId( nodeId, branch );
+    }
+
     public static BranchDocumentId from( final String value )
     {
         if ( !value.contains( SEPARATOR ) )

@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 import org.elasticsearch.common.Strings;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -49,8 +47,6 @@ public class BranchServiceImpl
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
                            BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
 
-    private static final Logger LOG = LoggerFactory.getLogger( BranchServiceImpl.class );
-
     private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
     private final PathCache pathCache = new PathCacheImpl();
@@ -70,7 +66,7 @@ public class BranchServiceImpl
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( nodeBranchEntry, context );
         final String id = this.storageDao.store( storeRequest );
 
-        pathCache.cache( createPath( nodeBranchEntry.getNodePath(), context ), BranchDocumentId.from( id ) );
+        doCache( context, nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
 
         return id;
     }
@@ -134,8 +130,6 @@ public class BranchServiceImpl
 
         final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
-        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchEntry.getNodePath() ), BranchDocumentId.from( getResult.getId() ) );
-
         return nodeBranchEntry;
     }
 
@@ -148,55 +142,6 @@ public class BranchServiceImpl
         }
 
         return getIgnoreOrder( nodeIds, context );
-    }
-
-    private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
-    {
-        final NodeBranchEntries.Builder builder = NodeBranchEntries.create();
-
-        final GetBranchEntriesMethod getBranchEntriesMethod = GetBranchEntriesMethod.create().
-            context( context ).
-            pathCache( this.pathCache ).
-            returnFields( BRANCH_RETURN_FIELDS ).
-            storageDao( this.storageDao ).
-            build();
-
-        if ( nodeIds.getSize() > BATCHED_EXECUTOR_LIMIT )
-        {
-            builder.addAll( BatchedBranchEntryExecutor.create().
-                nodeIds( nodeIds ).
-                method( getBranchEntriesMethod ).
-                build().
-                execute() );
-        }
-        else
-        {
-            getBranchEntriesMethod.execute( nodeIds.getSet(), builder );
-        }
-
-        return builder.build();
-    }
-
-    private NodeBranchEntries getIgnoreOrder( final NodeIds nodeIds, final InternalContext context )
-    {
-        final SearchResult results = this.searchDao.search( SearchRequest.create().
-            query( NodeBranchQuery.create().
-                addQueryFilter( ValueFilter.create().
-                    fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
-                    addValue( ValueFactory.newString( context.getBranch().getName() ) ).
-                    build() ).
-                addQueryFilter( ValueFilter.create().
-                    fieldName( BranchIndexPath.NODE_ID.getPath() ).
-                    addValues( nodeIds.getAsStrings() ).
-                    build() ).
-                size( nodeIds.getSize() ).
-                build() ).
-            returnFields( BRANCH_RETURN_FIELDS ).
-            settings( createStorageSettings( context ) ).
-            build() );
-
-        final NodeBranchQueryResult nodeBranchEntries = NodeBranchQueryResultFactory.create( results );
-        return NodeBranchEntries.from( nodeBranchEntries.getList() );
     }
 
     @Override
@@ -226,7 +171,7 @@ public class BranchServiceImpl
     @Override
     public void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
-        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), new BranchDocumentId( nodeId, context.getBranch() ) );
+        doCache( context, nodePath, nodeId );
     }
 
     @Override
@@ -299,8 +244,68 @@ public class BranchServiceImpl
     {
         final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
-        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchEntry.getNodePath() ), BranchDocumentId.from( getResult.getId() ) );
+        doCache( context, nodeBranchEntry.getNodePath(), nodeBranchEntry.getNodeId() );
     }
+
+    private void doCache( final InternalContext context, final NodePath nodePath, final NodeId nodeId )
+    {
+        doCache( context, nodePath, new BranchDocumentId( nodeId, context.getBranch() ) );
+    }
+
+    private void doCache( final InternalContext context, final NodePath nodePath, final BranchDocumentId branchDocumentId )
+    {
+        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), branchDocumentId );
+    }
+
+    private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
+    {
+        final NodeBranchEntries.Builder builder = NodeBranchEntries.create();
+
+        final GetBranchEntriesMethod getBranchEntriesMethod = GetBranchEntriesMethod.create().
+            context( context ).
+            pathCache( this.pathCache ).
+            returnFields( BRANCH_RETURN_FIELDS ).
+            storageDao( this.storageDao ).
+            build();
+
+        if ( nodeIds.getSize() > BATCHED_EXECUTOR_LIMIT )
+        {
+            builder.addAll( BatchedBranchEntryExecutor.create().
+                nodeIds( nodeIds ).
+                method( getBranchEntriesMethod ).
+                build().
+                execute() );
+        }
+        else
+        {
+            getBranchEntriesMethod.execute( nodeIds.getSet(), builder );
+        }
+
+        return builder.build();
+    }
+
+    private NodeBranchEntries getIgnoreOrder( final NodeIds nodeIds, final InternalContext context )
+    {
+        final SearchResult results = this.searchDao.search( SearchRequest.create().
+            query( NodeBranchQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
+                    addValue( ValueFactory.newString( context.getBranch().getName() ) ).
+                    build() ).
+                addQueryFilter( ValueFilter.create().
+                    fieldName( BranchIndexPath.NODE_ID.getPath() ).
+                    addValues( nodeIds.getAsStrings() ).
+                    build() ).
+                size( nodeIds.getSize() ).
+                build() ).
+            returnFields( BRANCH_RETURN_FIELDS ).
+            settings( createStorageSettings( context ) ).
+            build() );
+
+        final NodeBranchQueryResult nodeBranchEntries = NodeBranchQueryResultFactory.create( results );
+        return NodeBranchEntries.from( nodeBranchEntries.getList() );
+    }
+
 
     private GetResult createGetResult( final SearchHit searchHit )
     {

@@ -8,7 +8,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSettings;
-import com.enonic.xp.repo.impl.cache.BranchPath;
 import com.enonic.xp.repo.impl.cache.PathCache;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
@@ -67,10 +66,6 @@ class GetBranchEntriesMethod
             if ( !getResult.isEmpty() )
             {
                 final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( getResult.getReturnValues() );
-
-                pathCache.cache( new BranchPath( context.getBranch(), nodeBranchEntry.getNodePath() ),
-                                 BranchDocumentId.from( getResult.getId() ) );
-
                 builder.add( nodeBranchEntry );
             }
         }
