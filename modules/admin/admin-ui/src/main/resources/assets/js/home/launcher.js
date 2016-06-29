@@ -63,9 +63,6 @@ function createLauncherLink(container) {
         if (autoOpenLauncher) {
             openLauncherPanel();
             launcherButton.focus();
-            if (getBodyWidth() > minWidthForTip) {
-                setTipVisibility("table");
-            }
         }
         else {
             var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
@@ -126,13 +123,6 @@ function getBodyWidth() {
     return document.getElementsByTagName("body")[0].clientWidth;
 }
 
-function setTipVisibility(display) {
-    var launcherTip = document.querySelector('.launcher-tip');
-    if (launcherTip) {
-        launcherTip.style.display = display;
-    }
-}
-
 function getBodyMask() {
     return document.querySelector('.xp-admin-common-mask.body-mask');
 }
@@ -175,7 +165,6 @@ function openLauncherPanel() {
 
 function closeLauncherPanel(skipTransition) {
     launcherMainContainer.setAttribute("hidden", "true");
-    setTipVisibility("none");
     unlistenToKeyboardEvents();
     launcherPanel.classList.remove("visible");
     launcherPanel.classList.add((skipTransition == true) ? "hidden" : "slideout");
@@ -234,13 +223,6 @@ function onKeyPressed(e) {
     case 27:
         // esc key pressed
         closeLauncherPanel();
-        break;
-    case 13:
-        // enter key pressed
-        var selectedApp = getSelectedApp();
-        if (selectedApp) {
-            setTipVisibility("none");
-        }
         break;
     }
 }
