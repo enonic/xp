@@ -43,7 +43,7 @@ public final class AssetHandler
             throw notFound( "Not a valid asset url pattern" );
         }
 
-        final AssetHandlerWorker worker = new AssetHandlerWorker( webRequest );
+        final AssetHandlerWorker worker = new AssetHandlerWorker( webRequest, PortalResponse.create( webResponse ) );
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         worker.cacheable = matcher.group( 2 ) != null;
         worker.applicationKey = applicationKey;
