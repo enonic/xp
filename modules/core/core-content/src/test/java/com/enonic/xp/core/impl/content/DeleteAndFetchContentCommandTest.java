@@ -137,7 +137,7 @@ public class DeleteAndFetchContentCommandTest
             thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.EQUAL ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
-            thenReturn( node );
+            thenReturn( NodeIds.from( id ) );
 
         Mockito.when( this.nodeService.setNodeState( Mockito.isA( SetNodeStateParams.class ) ) ).
             thenReturn( setNodeStateResult );
@@ -197,7 +197,7 @@ public class DeleteAndFetchContentCommandTest
             thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.EQUAL ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
-            thenReturn( node );
+            thenReturn( NodeIds.from( id ) );
 
         Mockito.when( this.nodeService.deleteById( node.id() ) ).
             thenReturn( NodeIds.from( id ));

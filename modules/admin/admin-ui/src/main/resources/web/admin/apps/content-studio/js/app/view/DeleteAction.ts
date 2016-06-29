@@ -31,7 +31,6 @@ export class DeleteAction extends api.ui.Action {
     }
 
     public static showDeleteResult(result: api.content.DeleteContentResult) {
-        debugger;
         if(result.getPendings() + result.getDeleted() == 1) {
             if (result.getPendings() == 1) {
                 api.notify.showFeedback(`"${result.getContentName()}" marked for deletion`);
@@ -40,7 +39,6 @@ export class DeleteAction extends api.ui.Action {
             }
 
             else if (result.getDeleted() == 1) {
-                debugger;
                 let name = result.getContentName() ||
                            `Unnamed ${api.util.StringHelper.capitalizeAll(result.getContentType().replace(/-/g, " ").trim())}`;
                 api.notify.showFeedback(name + " deleted");

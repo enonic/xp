@@ -29,6 +29,7 @@ import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -270,9 +271,7 @@ public class NodeServiceImpl
     @Override
     public NodeIds deleteById( final NodeId id )
     {
-        Node node = this.getById( id );
-
-        final NodeIds deletedNodes = DeleteNodeByIdCommand.create().
+        final NodeBranchEntries deletedNodes = DeleteNodeByIdCommand.create().
             nodeId( id ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -280,18 +279,18 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( deletedNodes.contains( id ) )
+        if ( deletedNodes.isNotEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.deleted( node ) );
+            this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
 
-        return deletedNodes;
+        return NodeIds.from( deletedNodes.getKeys() );
     }
 
     @Override
-    public Node deleteByPath( final NodePath path )
+    public NodeIds deleteByPath( final NodePath path )
     {
-        final Node deletedNode = DeleteNodeByPathCommand.create().
+        final NodeBranchEntries deletedNodes = DeleteNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -299,11 +298,11 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( deletedNode != null )
+        if ( deletedNodes.isNotEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.deleted( deletedNode ) );
+            this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
-        return deletedNode;
+        return NodeIds.from( deletedNodes.getKeys() );
     }
 
     @Override

@@ -67,9 +67,9 @@ public class NodeEvents
         return null;
     }
 
-    public static Event deleted( final Node deletedNode )
+    public static Event deleted( final NodeBranchEntries deletedNodes )
     {
-        return event( NODE_DELETED_EVENT, deletedNode );
+        return deletedNodes != null ? event( NODE_DELETED_EVENT, deletedNodes ).build() : null;
     }
 
     public static Event duplicated( final Node duplicatedNode )

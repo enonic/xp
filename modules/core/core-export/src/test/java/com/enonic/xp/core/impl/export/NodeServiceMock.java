@@ -180,7 +180,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node deleteByPath( final NodePath path )
+    public NodeIds deleteByPath( final NodePath path )
     {
         final MockNodeTree<NodePath> treeNode = nodeTree.find( path );
         treeNode.getParent().children.remove( treeNode );
@@ -190,7 +190,7 @@ class NodeServiceMock
         this.nodePathMap.remove( path );
         this.nodeIdMap.remove( toBeRemoved.id() );
 
-        return toBeRemoved;
+        return NodeIds.from( toBeRemoved.id() );
     }
 
     @Override

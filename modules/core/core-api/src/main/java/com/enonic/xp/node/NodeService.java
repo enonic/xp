@@ -19,7 +19,7 @@ public interface NodeService
 
     NodeIds deleteById( NodeId id );
 
-    Node deleteByPath( NodePath path );
+    NodeIds deleteByPath( NodePath path );
 
     Node getById( NodeId id );
 
