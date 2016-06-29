@@ -27,7 +27,7 @@ public final class ErrorHandler
     {
         final String restPath = findRestPath( webRequest );
 
-        final ErrorHandlerWorker worker = new ErrorHandlerWorker( webRequest, PortalResponse.create( webResponse ) );
+        final ErrorHandlerWorker worker = new ErrorHandlerWorker( webRequest );
         worker.code = parseStatus( restPath );
         worker.message = getParameter( webRequest, "message" );
 

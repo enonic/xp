@@ -37,9 +37,9 @@ final class ServiceHandlerWorker
 
     protected ControllerScriptFactory controllerScriptFactory;
 
-    public ServiceHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    public ServiceHandlerWorker( final PortalRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
@@ -82,7 +82,7 @@ final class ServiceHandlerWorker
             webSocketContext.apply( webSocketEndpoint );
         }
 
-        return this.response.build();
+        return portalResponse;
     }
 
     private ControllerScript getScript()

@@ -48,8 +48,7 @@ public final class ComponentHandler
     {
         final String restPath = findRestPath( webRequest );
 
-        final ComponentHandlerWorker worker =
-            new ComponentHandlerWorker( (PortalRequest) webRequest, PortalResponse.create( webResponse ) );
+        final ComponentHandlerWorker worker = new ComponentHandlerWorker( (PortalRequest) webRequest );
         worker.componentPath = ComponentPath.from( restPath );
         worker.setContentService( this.contentService );
         worker.rendererFactory = rendererFactory;

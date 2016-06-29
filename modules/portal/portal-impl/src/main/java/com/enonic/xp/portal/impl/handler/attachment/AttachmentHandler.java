@@ -49,8 +49,7 @@ public final class AttachmentHandler
             throw notFound( "Not a valid attachment url pattern" );
         }
 
-        final AttachmentHandlerWorker worker =
-            new AttachmentHandlerWorker( (PortalRequest) webRequest, PortalResponse.create( webResponse ) );
+        final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( (PortalRequest) webRequest );
         worker.contentService = this.contentService;
         worker.download = "download".equals( matcher.group( 1 ) );
         worker.id = ContentId.from( matcher.group( 2 ) );

@@ -18,9 +18,9 @@ final class WidgetHandlerWorker
 
     protected ControllerScriptFactory controllerScriptFactory;
 
-    public WidgetHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    public WidgetHandlerWorker( final PortalRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
@@ -42,8 +42,6 @@ final class WidgetHandlerWorker
         this.request.setSite( site );
 
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( this.scriptDir );
-        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
-
-        return this.response.build();
+        return controllerScript.execute( this.request );
     }
 }

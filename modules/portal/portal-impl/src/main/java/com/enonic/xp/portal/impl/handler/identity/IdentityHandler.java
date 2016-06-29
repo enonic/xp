@@ -67,7 +67,7 @@ public class IdentityHandler
                 toLowerCase();
         }
 
-        final IdentityHandlerWorker worker = new IdentityHandlerWorker( portalRequest, PortalResponse.create( webResponse ) );
+        final IdentityHandlerWorker worker = new IdentityHandlerWorker( portalRequest );
         worker.userStoreKey = userStoreKey;
         worker.idProviderFunction = idProviderFunction;
         worker.setContentService( this.contentService );

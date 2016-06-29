@@ -63,9 +63,7 @@ public abstract class BaseHandler
         }
 
         final PortalHandlerWorker worker = createWorker( req );
-        worker.execute();
-
-        return worker.response.build();
+        return worker.execute();
     }
 
     private PortalHandlerWorker createWorker( final PortalRequest req )
@@ -73,7 +71,6 @@ public abstract class BaseHandler
     {
         final PortalHandlerWorker worker = newWorker( req );
         worker.request = req;
-        worker.response = PortalResponse.create();
         return worker;
     }
 

@@ -10,7 +10,6 @@ import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -69,7 +68,7 @@ public final class AdminToolHandler
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
 
-        final AdminToolHandlerWorker worker = new AdminToolHandlerWorker( portalRequest, PortalResponse.create( webResponse ) );
+        final AdminToolHandlerWorker worker = new AdminToolHandlerWorker( portalRequest );
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.adminToolDescriptorService = adminToolDescriptorService;
         worker.descriptorKey = descriptorKey;

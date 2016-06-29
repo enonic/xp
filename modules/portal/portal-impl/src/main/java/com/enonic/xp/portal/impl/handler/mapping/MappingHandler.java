@@ -50,7 +50,7 @@ public final class MappingHandler
         PortalRequest portalRequest = (PortalRequest) webRequest;
         final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).resolve( portalRequest );
 
-        final MappingHandlerWorker worker = new MappingHandlerWorker( portalRequest, PortalResponse.create( webResponse ) );
+        final MappingHandlerWorker worker = new MappingHandlerWorker( portalRequest );
         worker.mappingDescriptor = mapping;
         worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;

@@ -23,9 +23,9 @@ final class ComponentHandlerWorker
 
     protected PostProcessor postProcessor;
 
-    public ComponentHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    public ComponentHandlerWorker( final PortalRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
@@ -102,11 +102,7 @@ final class ComponentHandlerWorker
         this.request.setPageDescriptor( null );
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
-        PortalResponse response = renderer.render( component, this.request );
-        response = this.postProcessor.processResponseInstructions( this.request, response );
-
-        this.response = PortalResponse.create( response );
-
-        return this.response.build();
+        final PortalResponse response = renderer.render( component, this.request );
+        return this.postProcessor.processResponseInstructions( this.request, response );
     }
 }

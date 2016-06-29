@@ -8,7 +8,6 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -21,9 +20,9 @@ abstract class RenderHandlerWorker
 
     protected PageDescriptorService pageDescriptorService;
 
-    public RenderHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    public RenderHandlerWorker( final PortalRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     protected final Page getPage( final Content content )

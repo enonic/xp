@@ -22,9 +22,9 @@ final class AdminToolHandlerWorker
 
     protected DescriptorKey descriptorKey;
 
-    public AdminToolHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    public AdminToolHandlerWorker( final PortalRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
@@ -52,8 +52,6 @@ final class AdminToolHandlerWorker
         this.request.setApplicationKey( descriptorKey.getApplicationKey() );
         final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/tools/" + descriptorKey.getName() );
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
-        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
-
-        return this.response.build();
+        return controllerScript.execute( this.request );
     }
 }

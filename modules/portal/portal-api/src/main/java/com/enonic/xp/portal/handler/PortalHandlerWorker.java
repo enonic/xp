@@ -10,12 +10,9 @@ public abstract class PortalHandlerWorker<WebRequestType extends WebRequest>
 {
     protected WebRequestType request;
 
-    protected PortalResponse.Builder response;
-
-    public PortalHandlerWorker( final WebRequestType request, final PortalResponse.Builder response )
+    public PortalHandlerWorker( final WebRequestType request )
     {
         this.request = request;
-        this.response = response;
     }
 
     public abstract PortalResponse execute()
@@ -31,9 +28,9 @@ public abstract class PortalHandlerWorker<WebRequestType extends WebRequest>
         return WebException.forbidden( String.format( message, args ) );
     }
 
-    protected void setResponseCacheable( final boolean isPublic )
+    protected void setResponseCacheable( final PortalResponse.Builder response, final boolean isPublic )
     {
         final String cacheControlValue = ( isPublic ? "public" : "private" ) + ", max-age=31536000";
-        this.response.header( HttpHeaders.CACHE_CONTROL, cacheControlValue );
+        response.header( HttpHeaders.CACHE_CONTROL, cacheControlValue );
     }
 }

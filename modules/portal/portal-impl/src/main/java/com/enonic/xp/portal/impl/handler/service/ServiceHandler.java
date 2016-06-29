@@ -53,7 +53,7 @@ public final class ServiceHandler
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
 
-        final ServiceHandlerWorker worker = new ServiceHandlerWorker( portalRequest, PortalResponse.create( webResponse ) );
+        final ServiceHandlerWorker worker = new ServiceHandlerWorker( portalRequest );
         worker.applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         worker.name = matcher.group( 2 );
         worker.setContentService( this.contentService );

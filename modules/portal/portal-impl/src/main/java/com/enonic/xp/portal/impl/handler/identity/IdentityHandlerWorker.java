@@ -18,9 +18,9 @@ final class IdentityHandlerWorker
 
     protected String idProviderFunction;
 
-    public IdentityHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    public IdentityHandlerWorker( final PortalRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
@@ -51,9 +51,7 @@ final class IdentityHandlerWorker
         }
         else
         {
-            this.response = PortalResponse.create( portalResponse );
+            return portalResponse;
         }
-
-        return this.response.build();
     }
 }

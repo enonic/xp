@@ -10,7 +10,6 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.util.MediaTypes;
-import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 
 final class AssetHandlerWorker
@@ -30,9 +29,9 @@ final class AssetHandlerWorker
 
     private Resource resource;
 
-    public AssetHandlerWorker( final WebRequest request, final PortalResponse.Builder response )
+    public AssetHandlerWorker( final WebRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
@@ -41,18 +40,17 @@ final class AssetHandlerWorker
     {
         resolveResource();
 
-        this.response.status( HttpStatus.OK );
-        this.response.body( resource );
-
         final String type = MediaTypes.instance().fromFile( this.resource.getKey().getName() ).toString();
-        this.response.contentType( MediaType.parse( type ) );
+        final PortalResponse.Builder portalResponse = PortalResponse.create().
+            body( resource ).
+            contentType( MediaType.parse( type ) );
 
         if ( cacheable )
         {
             final String cacheControlValue = "public, no-transform, max-age=31536000";
-            this.response.header( HttpHeaders.CACHE_CONTROL, cacheControlValue );
+            portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlValue );
         }
-        return this.response.build();
+        return portalResponse.build();
     }
 
     private void resolveResource()

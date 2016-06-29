@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.resource.ResourceKey;
@@ -51,7 +50,7 @@ public final class WidgetHandler
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
 
-        final WidgetHandlerWorker worker = new WidgetHandlerWorker( portalRequest, PortalResponse.create( webResponse ) );
+        final WidgetHandlerWorker worker = new WidgetHandlerWorker( portalRequest );
         worker.scriptDir = scriptDir;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.setContentService( this.contentService );

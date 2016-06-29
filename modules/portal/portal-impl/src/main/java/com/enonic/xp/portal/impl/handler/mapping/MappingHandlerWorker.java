@@ -23,9 +23,9 @@ final class MappingHandlerWorker
 
     protected RendererFactory rendererFactory;
 
-    public MappingHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    public MappingHandlerWorker( final PortalRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
@@ -38,28 +38,26 @@ final class MappingHandlerWorker
 
         if ( this.request.getContent().hasPage() )
         {
-            renderPage( controllerScript );
+            return renderPage( controllerScript );
         }
         else
         {
-            renderController( controllerScript );
+            return renderController( controllerScript );
         }
-        return this.response.build();
     }
 
-    private void renderPage( final ControllerScript controllerScript )
+    private PortalResponse renderPage( final ControllerScript controllerScript )
     {
         this.request.setControllerScript( controllerScript );
 
         final Content content = this.request.getContent();
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( content );
-        final PortalResponse response = renderer.render( content, this.request );
-        this.response = PortalResponse.create( response );
+        return renderer.render( content, this.request );
     }
 
-    private void renderController( final ControllerScript controllerScript )
+    private PortalResponse renderController( final ControllerScript controllerScript )
     {
-        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+        return controllerScript.execute( this.request );
     }
 
     private ControllerScript getScript()

@@ -28,9 +28,9 @@ final class PageHandlerWorker
 
     protected PortalUrlService portalUrlService;
 
-    public PageHandlerWorker( final PortalRequest request, final PortalResponse.Builder response )
+    public PageHandlerWorker( final PortalRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
@@ -46,8 +46,7 @@ final class PageHandlerWorker
         final Content content = getContent( getContentSelector() );
         if ( content.getType().isShortcut() )
         {
-            renderShortcut( content );
-            return this.response.build();
+            return renderShortcut( content );
         }
 
         final Site site = getSite( content );
@@ -104,13 +103,10 @@ final class PageHandlerWorker
         this.request.setPageDescriptor( pageDescriptor );
 
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( effectiveContent );
-        final PortalResponse response = renderer.render( effectiveContent, this.request );
-        this.response = PortalResponse.create( response );
-
-        return this.response.build();
+        return renderer.render( effectiveContent, this.request );
     }
 
-    private void renderShortcut( final Content content )
+    private PortalResponse renderShortcut( final Content content )
     {
         final Property shortcut = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY );
         final Reference target = shortcut == null ? null : shortcut.getReference();
@@ -124,8 +120,10 @@ final class PageHandlerWorker
 
         final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
 
-        this.response.status( HttpStatus.TEMPORARY_REDIRECT );
-        this.response.header( "Location", targetUrl );
+        return PortalResponse.create().
+            status( HttpStatus.TEMPORARY_REDIRECT ).
+            header( "Location", targetUrl ).
+            build();
     }
 
     private PageDescriptor getPageDescriptor( final DescriptorKey descriptorKey )

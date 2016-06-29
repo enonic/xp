@@ -45,7 +45,7 @@ public final class PageHandler
     protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest, PortalResponse.create( webResponse ) );
+        final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest );
         worker.setContentService( this.contentService );
         worker.rendererFactory = rendererFactory;
         worker.pageDescriptorService = pageDescriptorService;

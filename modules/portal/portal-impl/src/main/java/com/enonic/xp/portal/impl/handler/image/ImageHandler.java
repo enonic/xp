@@ -54,7 +54,7 @@ public final class ImageHandler
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
 
-        final ImageHandlerWorker worker = new ImageHandlerWorker( portalRequest, PortalResponse.create( webResponse ) );
+        final ImageHandlerWorker worker = new ImageHandlerWorker( portalRequest );
         worker.contentId = ContentId.from( matcher.group( 1 ) );
         worker.cacheable = matcher.group( 2 ) != null;
         worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 3 ) );

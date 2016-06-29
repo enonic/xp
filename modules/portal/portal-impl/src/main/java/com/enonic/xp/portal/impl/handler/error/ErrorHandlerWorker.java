@@ -13,9 +13,9 @@ final class ErrorHandlerWorker
 
     protected String message;
 
-    public ErrorHandlerWorker( final WebRequest request, final PortalResponse.Builder response )
+    public ErrorHandlerWorker( final WebRequest request )
     {
-        super( request, response );
+        super( request );
     }
 
     @Override
