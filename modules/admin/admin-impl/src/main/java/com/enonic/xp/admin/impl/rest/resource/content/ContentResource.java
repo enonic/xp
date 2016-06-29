@@ -194,6 +194,8 @@ public final class ContentResource
 
     private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
+    public static final int GET_ALL_SIZE_FLAG = -1;
+
     private ContentService contentService;
 
     private ContentPrincipalsResolver principalsResolver;
@@ -572,7 +574,7 @@ public final class ContentResource
                     iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
-            collect( Collectors.toList() );
+                collect( Collectors.toList() );
     }
 
     @POST
@@ -884,7 +886,7 @@ public final class ContentResource
         final ContentPaths contentsPaths = ContentPaths.from( json.getContentPaths() );
 
         FindContentIdsByQueryResult result = this.contentService.find(
-            ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).
+            ContentQuery.create().size( GET_ALL_SIZE_FLAG ).queryExpr( constructExprToFindChildren( contentsPaths ) ).
                 build() );
 
         final Boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
