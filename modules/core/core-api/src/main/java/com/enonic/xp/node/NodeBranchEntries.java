@@ -29,6 +29,11 @@ public class NodeBranchEntries
         return new NodeBranchEntries( nodeBranchEntries );
     }
 
+    public static NodeBranchEntries empty()
+    {
+        return NodeBranchEntries.create().build();
+    }
+
     public static Builder create()
     {
         return new Builder();

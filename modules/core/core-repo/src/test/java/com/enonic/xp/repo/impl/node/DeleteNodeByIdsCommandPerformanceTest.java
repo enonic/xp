@@ -11,7 +11,6 @@ import com.google.common.base.Stopwatch;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
@@ -55,7 +54,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        final NodeIds deleted = DeleteNodeByIdCommand.create().
+        DeleteNodeByIdCommand.create().
             nodeId( rootNode.id() ).
             searchService( this.searchService ).
             storageService( this.storageService ).

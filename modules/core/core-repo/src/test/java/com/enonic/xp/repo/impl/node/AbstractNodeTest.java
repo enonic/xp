@@ -22,6 +22,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -339,13 +340,15 @@ public abstract class AbstractNodeTest
 
     protected NodeIds doDeleteNode( final NodeId nodeId )
     {
-        return DeleteNodeByIdCommand.create().
+        final NodeBranchEntries result = DeleteNodeByIdCommand.create().
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
+
+        return NodeIds.from( result.getKeys() );
     }
 
     protected void queryAndAssert( final String queryString, final int expected )

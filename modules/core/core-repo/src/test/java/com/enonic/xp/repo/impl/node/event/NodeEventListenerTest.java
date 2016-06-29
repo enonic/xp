@@ -6,8 +6,11 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeState;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
@@ -101,11 +104,10 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
 
-        final Event localEvent = NodeEvents.deleted( Node.create().
-            id( nodeId ).
-            parentPath( nodePath.getParentPath() ).
-            name( nodePath.getLastElement().toString() ).
-            build() );
+        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().nodeId( nodeId ).nodePath( nodePath ).
+            nodeState( NodeState.DEFAULT ).build();
+
+        final Event localEvent = NodeEvents.deleted( NodeBranchEntries.create().add( nodeBranchEntry ).build() );
 
         nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).

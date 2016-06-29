@@ -5,6 +5,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -19,14 +20,16 @@ abstract class AbstractDeleteNodeCommand
         super( builder );
     }
 
-    NodeIds deleteNodeWithChildren( final Node node, final Context context )
+    NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context )
     {
         doRefresh();
 
-        final NodeIds nodesToBeDeleted = newResolveNodesToDelete( node );
+        final NodeBranchEntries nodesToBeDeleted = newResolveNodesToDelete( node );
+
+        final NodeIds nodeIds = NodeIds.from( nodesToBeDeleted.getKeys() );
 
         final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).
-            nodeIds( nodesToBeDeleted ).
+            nodeIds( nodeIds ).
             permission( Permission.DELETE ).
             build().
             execute();
@@ -36,7 +39,7 @@ abstract class AbstractDeleteNodeCommand
             throw new NodeAccessException( context.getAuthInfo().getUser(), node.path(), Permission.DELETE );
         }
 
-        this.storageService.delete( nodesToBeDeleted, InternalContext.from( context ) );
+        this.storageService.delete( nodeIds, InternalContext.from( context ) );
 
         doRefresh();
 
@@ -53,20 +56,27 @@ abstract class AbstractDeleteNodeCommand
     }
 
 
-    private NodeIds newResolveNodesToDelete( final Node node )
+    private NodeBranchEntries newResolveNodesToDelete( final Node node )
     {
-        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).
+        final FindNodeIdsByParentCommand command = FindNodeIdsByParentCommand.create( this ).
             parentPath( node.path() ).
             recursive( true ).
             childOrder( ChildOrder.path() ).
             size( SearchService.GET_ALL_SIZE_FLAG ).
-            build().
-            execute();
+            build();
 
-        return NodeIds.create().
+        final FindNodesByParentResult result = command.execute();
+
+        final NodeIds nodeIds = NodeIds.create().
             add( node.id() ).
             addAll( result.getNodeIds() ).
             build();
+
+        return FindNodeBranchEntriesByIdCommand.
+            create( command ).
+            ids( nodeIds ).
+            build().
+            execute();
     }
 
     public static class Builder<B extends Builder>
