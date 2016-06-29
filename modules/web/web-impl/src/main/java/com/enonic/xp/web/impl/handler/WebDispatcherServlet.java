@@ -28,11 +28,11 @@ import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
-import com.enonic.xp.web.impl.websocket.WebSocketContext;
 import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.serializer.ResponseSerializationService;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
 
 @Component(immediate = true, service = Servlet.class,
     property = {"osgi.http.whiteboard.servlet.pattern=/portal/*", "osgi.http.whiteboard.servlet.pattern=/admin/*"})
@@ -55,7 +55,7 @@ public final class WebDispatcherServlet
     {
         final WebRequest webRequest = newWebRequest( req );
         final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
-        webRequest.setWebSocket( webSocketContext != null );
+        webRequest.setWebSocketContext( webSocketContext );
 
         final WebResponse webResponse = doHandle( webRequest );
 

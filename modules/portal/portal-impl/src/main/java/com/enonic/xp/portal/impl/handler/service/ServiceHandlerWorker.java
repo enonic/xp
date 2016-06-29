@@ -17,6 +17,7 @@ import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 final class ServiceHandlerWorker
@@ -71,7 +72,15 @@ final class ServiceHandlerWorker
 
         //Executes the service
         final ControllerScript controllerScript = getScript();
-        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+        final PortalResponse portalResponse = controllerScript.execute( this.request );
+
+        final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
+        final WebSocketContext webSocketContext = this.request.getWebSocketContext();
+        if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
+        {
+            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig );
+            webSocketContext.apply( webSocketEndpoint );
+        }
 
         return this.response.build();
     }
@@ -89,8 +98,7 @@ final class ServiceHandlerWorker
         return this.controllerScriptFactory.fromDir( resource.getKey() );
     }
 
-    @Override
-    public WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
+    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
     {
         return new WebSocketEndpointImpl( config, this::getScript );
     }

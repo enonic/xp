@@ -5,8 +5,6 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
-import com.enonic.xp.web.websocket.WebSocketConfig;
-import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 public abstract class PortalHandlerWorker<WebRequestType extends WebRequest>
 {
@@ -22,12 +20,6 @@ public abstract class PortalHandlerWorker<WebRequestType extends WebRequest>
 
     public abstract PortalResponse execute()
         throws Exception;
-
-    public WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
-        throws Exception
-    {
-        return null;
-    }
 
     protected final WebException notFound( final String message, final Object... args )
     {

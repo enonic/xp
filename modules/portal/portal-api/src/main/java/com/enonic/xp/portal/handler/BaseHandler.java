@@ -11,8 +11,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
-import com.enonic.xp.web.websocket.WebSocketConfig;
-import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 public abstract class BaseHandler
     implements PortalHandler
@@ -113,13 +111,5 @@ public abstract class BaseHandler
             status( HttpStatus.OK ).
             header( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) ).
             build();
-    }
-
-    @Override
-    public WebSocketEndpoint newWebSocketEndpoint( final PortalRequest req, final WebSocketConfig config )
-        throws Exception
-    {
-        final PortalHandlerWorker worker = createWorker( req );
-        return worker.newWebSocketEndpoint( config );
     }
 }

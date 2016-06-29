@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.security.UserStore;
+import com.enonic.xp.web.websocket.WebSocketContext;
 
 @Beta
 public class WebRequest
@@ -43,7 +44,7 @@ public class WebRequest
 
     private HttpServletRequest rawRequest;
 
-    private boolean webSocket;
+    private WebSocketContext webSocketContext;
 
     private UserStore userStore;
 
@@ -52,7 +53,6 @@ public class WebRequest
         this.params = HashMultimap.create();
         this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
-        this.webSocket = false;
     }
 
     public WebRequest( final WebRequest webRequest )
@@ -71,7 +71,7 @@ public class WebRequest
         this.contentType = webRequest.contentType;
         this.body = webRequest.body;
         this.rawRequest = webRequest.rawRequest;
-        this.webSocket = webRequest.webSocket;
+        this.webSocketContext = webRequest.webSocketContext;
         this.userStore = webRequest.userStore;
     }
 
@@ -217,11 +217,16 @@ public class WebRequest
 
     public boolean isWebSocket()
     {
-        return this.webSocket;
+        return this.webSocketContext != null;
     }
 
-    public void setWebSocket( final boolean webSocket )
+    public WebSocketContext getWebSocketContext()
     {
-        this.webSocket = webSocket;
+        return webSocketContext;
+    }
+
+    public void setWebSocketContext( final WebSocketContext webSocketContext )
+    {
+        this.webSocketContext = webSocketContext;
     }
 }
