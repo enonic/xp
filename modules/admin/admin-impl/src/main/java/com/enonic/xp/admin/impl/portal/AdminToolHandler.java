@@ -41,14 +41,14 @@ public final class AdminToolHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getPath().startsWith( ADMIN_TOOL_START );
+        return webRequest.getRawPath().startsWith( ADMIN_TOOL_START );
     }
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String path = webRequest.getPath();
+        final String path = webRequest.getRawPath();
 
         final String subPath = path.length() > ADMIN_TOOL_PREFIX.length() ? path.substring( ADMIN_TOOL_PREFIX.length() ) : "";
         final Matcher matcher = PATTERN.matcher( subPath );

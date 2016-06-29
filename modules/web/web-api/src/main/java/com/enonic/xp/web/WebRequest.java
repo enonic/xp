@@ -34,6 +34,8 @@ public class WebRequest
 
     private String path;
 
+    private String rawPath;
+
     private String url;
 
     private String endpointPath;
@@ -66,6 +68,7 @@ public class WebRequest
         this.remoteAddress = webRequest.remoteAddress;
         this.port = webRequest.port;
         this.path = webRequest.path;
+        this.rawPath = webRequest.rawPath;
         this.url = webRequest.url;
         this.endpointPath = webRequest.endpointPath;
         this.contentType = webRequest.contentType;
@@ -110,6 +113,11 @@ public class WebRequest
         return path;
     }
 
+    public String getRawPath()
+    {
+        return rawPath;
+    }
+
     public String getUrl()
     {
         return url;
@@ -143,6 +151,11 @@ public class WebRequest
     public void setPath( final String path )
     {
         this.path = path;
+    }
+
+    public void setRawPath( final String rawPath )
+    {
+        this.rawPath = rawPath;
     }
 
     public void setUrl( final String url )

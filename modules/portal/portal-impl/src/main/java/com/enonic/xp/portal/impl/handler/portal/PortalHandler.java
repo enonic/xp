@@ -24,13 +24,13 @@ public class PortalHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getPath().startsWith( BRANCH_PREFIX );
+        return webRequest.getRawPath().startsWith( BRANCH_PREFIX );
     }
 
     @Override
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
-        final String baseSubPath = webRequest.getPath().substring( BRANCH_PREFIX.length() );
+        final String baseSubPath = webRequest.getRawPath().substring( BRANCH_PREFIX.length() );
         final Branch branch = findBranch( baseSubPath );
         final ContentPath contentPath = findContentPath( baseSubPath );
 

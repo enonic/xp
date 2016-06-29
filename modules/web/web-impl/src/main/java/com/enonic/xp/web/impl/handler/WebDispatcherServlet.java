@@ -85,6 +85,7 @@ public final class WebDispatcherServlet
         result.setPort( ServletRequestUrlHelper.getPort( req ) );
         result.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
         result.setPath( ServletRequestUrlHelper.getPath( req ) );
+        result.setRawPath( rawPath );
         result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
 
         setParameters( req, result );

@@ -28,17 +28,17 @@ public class AdminPortalHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return BASE_URI_PATTERN.matcher( webRequest.getPath() ).find();
+        return BASE_URI_PATTERN.matcher( webRequest.getRawPath() ).find();
     }
 
     @Override
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
-        final Matcher matcher = BASE_URI_PATTERN.matcher( webRequest.getPath() );
+        final Matcher matcher = BASE_URI_PATTERN.matcher( webRequest.getRawPath() );
         matcher.find();
         final String baseUri = matcher.group( 0 );
         final RenderMode mode = RenderMode.from( matcher.group( 1 ) );
-        final String baseSubPath = webRequest.getPath().substring( baseUri.length() + 1 );
+        final String baseSubPath = webRequest.getRawPath().substring( baseUri.length() + 1 );
         final Branch branch = findBranch( baseSubPath );
         final ContentPath contentPath = findContentPath( baseSubPath );
 

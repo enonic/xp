@@ -60,6 +60,16 @@ public class PortalRequestTest
     }
 
     @Test
+    public void setRawPath()
+    {
+        final PortalRequest request = new PortalRequest();
+        assertEquals( null, request.getRawPath() );
+
+        request.setRawPath( "/root" );
+        assertEquals( "/root", request.getRawPath() );
+    }
+
+    @Test
     public void setUrl()
     {
         final PortalRequest request = new PortalRequest();
