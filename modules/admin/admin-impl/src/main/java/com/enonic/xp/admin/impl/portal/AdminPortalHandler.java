@@ -11,6 +11,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.BasePortalHandler;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
@@ -28,14 +29,17 @@ public class AdminPortalHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return BASE_URI_PATTERN.matcher( webRequest.getRawPath() ).find();
+        return webRequest.getRawPath().startsWith( BASE_URI_START );
     }
 
     @Override
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
         final Matcher matcher = BASE_URI_PATTERN.matcher( webRequest.getRawPath() );
-        matcher.find();
+        if ( !matcher.find() )
+        {
+            throw WebException.notFound( "Mode needs to be specified" );
+        }
         final String baseUri = matcher.group( 0 );
         final RenderMode mode = RenderMode.from( matcher.group( 1 ) );
         final String baseSubPath = webRequest.getRawPath().substring( baseUri.length() + 1 );

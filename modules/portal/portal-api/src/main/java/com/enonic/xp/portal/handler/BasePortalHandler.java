@@ -62,7 +62,11 @@ public abstract class BasePortalHandler
     {
         final int index = baseSubPath.indexOf( '/' );
         final String result = baseSubPath.substring( 0, index > 0 ? index : baseSubPath.length() );
-        return Strings.isNullOrEmpty( result ) ? null : Branch.from( result );
+        if ( Strings.isNullOrEmpty( result ) )
+        {
+            throw WebException.notFound( "Branch needs to be specified" );
+        }
+        return Branch.from( result );
     }
 
     protected static ContentPath findContentPath( final String baseSubPath )
