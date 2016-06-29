@@ -28,7 +28,7 @@ export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
         var fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(emailFormItem);
 
-        var form = new api.ui.form.Form().add(fieldSet);
+        var form = new api.ui.form.Form(api.form.FormView.VALIDATION_CLASS).add(fieldSet);
 
         form.onFocus((event) => {
             this.notifyFocused(event);
@@ -39,6 +39,7 @@ export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
         form.onValidityChanged((event: api.ValidityChangedEvent) => {
             this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
+            emailFormItem.toggleClass("invalid", !event.isValid());
         });
 
         this.appendChild(form);
