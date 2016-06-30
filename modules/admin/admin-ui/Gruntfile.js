@@ -1,32 +1,26 @@
-/**
- * Common variables.
- */
-var baseDir = 'src/main/resources/web/admin';
-var targetDir = 'target/resources/main/web/admin';
-var assetsTargetDir = 'target/resources/main/assets';
+var DIR = {
+    src: 'src/main/resources/web/admin',
+    dest: 'target/resources/main/web/admin',
+    assets: 'target/resources/main/assets',
+};
 
-/**
- * Clean all build files.
- */
+
 var clean = {
     all: {
-        src: [baseDir + '/**/_all.*']
+        src: [DIR.src + '/**/_all.*']
     }
 };
 
-/**
- * Concat commons lib file.
- */
+
+// Concat commons lib file.
 var directives = {
     common: {
-        src: baseDir + '/common/lib/_module.js',
-        dest: baseDir + '/common/lib/_all.js'
+        src: DIR.src + '/common/lib/_module.js',
+        dest: DIR.src + '/common/lib/_all.js'
     }
 };
 
-/**
- * Less for all modules.
- */
+
 var less = {
     all: {
         options: {
@@ -37,39 +31,51 @@ var less = {
     }
 };
 
-/**
- * Add less file paths.
- */
-less.all.files[targetDir + '/common/styles/_all.css'] = baseDir + '/common/styles/_module.less';
-less.all.files[targetDir + '/live-edit/styles/_all.css'] = baseDir + '/live-edit/styles/_module.less';
-less.all.files[targetDir + '/common/styles/_home.css'] = baseDir + '/common/styles/apps/home/home.less';
-less.all.files[targetDir + '/common/styles/api/util/htmlarea/html-editor.css'] =
-    baseDir + '/common/styles/api/util/htmlarea/html-editor.module.less';
-less.all.files[assetsTargetDir + '/styles/_launcher.css'] = baseDir + '/common/styles/apps/launcher/launcher.less';
+var autoprefixer = {
+    all: {
+        options: {
+            browsers: ['last 2 versions', 'ie 11'],
+            map: {
+                inline: false,
+                sourcesContent: true
+            }
+        },
+        files: {}
+    }
+};
 
-/**
- * Typescript configuration.
- */
+
+less.all.files[DIR.dest + '/common/styles/_all.css'] = DIR.src + '/common/styles/_module.less';
+less.all.files[DIR.dest + '/live-edit/styles/_all.css'] = DIR.src + '/live-edit/styles/_module.less';
+less.all.files[DIR.dest + '/common/styles/_home.css'] = DIR.src + '/common/styles/apps/home/home.less';
+less.all.files[DIR.dest + '/common/styles/api/util/htmlarea/html-editor.css'] =
+    DIR.src + '/common/styles/api/util/htmlarea/html-editor.module.less';
+less.all.files[DIR.assets + '/styles/_launcher.css'] = DIR.src + '/common/styles/apps/launcher/launcher.less';
+
+for (var keys in less.all.files) {
+    autoprefixer.all.files[keys] = keys;
+}
+
+
+// Typescript
 var ts = {
     common: {
-        src: baseDir + '/common/js/_module.ts',
-        out: baseDir + '/common/js/_all.js',
+        src: DIR.src + '/common/js/_module.ts',
+        out: DIR.src + '/common/js/_all.js',
         options: {
             declaration: true
         }
     },
     live_edit: {
-        src: baseDir + '/live-edit/js/_module.ts',
-        out: baseDir + '/live-edit/js/_all.js',
+        src: DIR.src + '/live-edit/js/_module.ts',
+        out: DIR.src + '/live-edit/js/_all.js',
         options: {
             declaration: false
         }
     }
 };
 
-/**
- * Webpack configuration.
- */
+
 var webpack = {
     all: {
         entry: {
@@ -102,35 +108,31 @@ var webpack = {
     }
 };
 
-/**
- * Newer configuration to speed up build.
- */
+
 var newer = {
     common: {
-        src: [baseDir + '/common/js/**'],
-        dest: baseDir + '/common/js/_all.js',
+        src: [DIR.src + '/common/js/**'],
+        dest: DIR.src + '/common/js/_all.js',
         options: {
             tasks: ["ts:common"]
         }
     },
     live_edit: {
-        src: [baseDir + '/live-edit/js/**'],
-        dest: baseDir + '/live-edit/js/_all.js',
+        src: [DIR.src + '/live-edit/js/**'],
+        dest: DIR.src + '/live-edit/js/_all.js',
         options: {
             tasks: ["ts:live_edit"]
         }
     }
 };
 
-/**
- * Grunt configuration.
- */
-module.exports = function (grunt) {
 
+module.exports = function (grunt) {
     grunt.initConfig({
         clean: clean,
         directives: directives,
         less: less,
+        autoprefixer: autoprefixer,
         ts: ts,
         webpack: webpack,
         newer: newer
@@ -143,11 +145,12 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks("grunt-newer-explicit");
+    grunt.loadNpmTasks("grunt-autoprefixer");
     grunt.loadNpmTasks("grunt-webpack");
 
     // Register aliases
     grunt.registerTask('default', 'all');
-    grunt.registerTask('all', ['less', 'newer', 'directives', 'webpack']);
-    grunt.registerTask('all_no_ts', ['less', 'directives']);
-
+    grunt.registerTask('all', ['css', 'newer', 'directives', 'webpack']);
+    grunt.registerTask('all_no_ts', ['css', 'directives']);
+    grunt.registerTask('css', ['less', 'autoprefixer']);
 };
