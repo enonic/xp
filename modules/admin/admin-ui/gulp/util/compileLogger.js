@@ -16,7 +16,8 @@ export default (err, stats) => {
         });
     } else {
         const compileTime = prettifyTime(stats.endTime - stats.startTime);
-        gulpUtil.log(gulpUtil.colors[statColor](stats));
+        const options = {hash: false, timings: false, chunks: false};
+        gulpUtil.log(gulpUtil.colors[statColor](stats.toString(options)));
         gulpUtil.log('Compiled with', gulpUtil.colors.cyan('webpack'), 'in', gulpUtil.colors.magenta(compileTime));
     }
 };

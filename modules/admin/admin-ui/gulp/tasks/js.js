@@ -8,14 +8,16 @@ import gulp from "gulp";
 import gulpSequence from "gulp-sequence";
 import typescript from "typescript";
 import tsc from "gulp-typescript";
+import webpack from "webpack";
 import assign from "deep-assign";
 import path from "path";
 import nameResolver from "../util/nameResolver";
+import webpackConfig from "../util/webpackConfig";
+import logger from "../util/compileLogger";
 
 const subtasks = CONFIG.tasks.js.files;
 
 const tsResolver = nameResolver.bind(null, 'ts');
-const webpackResolver = nameResolver.bind(null, 'webpack');
 
 const filterTasks = (tasks, callback) => {
     const filtered = {};
@@ -70,7 +72,14 @@ gulp.task('ts', gulpSequence(...Object.keys(tsTasks).map(tsResolver)));
  */
 const webpackTasks = filterTasks(subtasks, task => !!task.name);
 
+gulp.task('webpack', (cb) => {
+    webpack(webpackConfig(webpackTasks), (err, stats) => {
+        logger(err, stats);
+        cb();
+    });
+});
+
 /*
  Main CSS task
  */
-gulp.task('js', ['ts', 'webpack']);
+gulp.task('js', gulpSequence('ts: common', ['ts: live', 'webpack']));
