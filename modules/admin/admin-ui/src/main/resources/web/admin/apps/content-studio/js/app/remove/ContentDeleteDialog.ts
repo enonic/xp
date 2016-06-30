@@ -63,7 +63,8 @@ export class ContentDeleteDialog extends DependantItemsDialog {
                     if (!this.isAnyOnline(this.getItemList().getItems())) {
                         this.manageInstantDeleteStatus(descendants);
                     }
-                    
+
+                    this.countItemsToDeleteAndUpdateButtonCounter();
                     this.centerMyself();
                 }).finally(() => {
                     this.loadMask.hide();
@@ -95,7 +96,9 @@ export class ContentDeleteDialog extends DependantItemsDialog {
 
         this.instantDeleteCheckbox.setChecked(false, true)
         
-        this.manageDescendants(contents);
+        this.manageDescendants();
+
+
 
         return this;
     }
