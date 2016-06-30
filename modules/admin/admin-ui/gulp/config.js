@@ -2,8 +2,11 @@ const CONFIG = {
     gulpTasks: 'gulp/tasks/',
     root: {
         src: 'src/main/resources/web/admin',
-        dest: 'target/resources/main/web/admin',
-        assets: 'target/resources/main/assets'
+        dest: 'target/resources/main/web/admin'
+    },
+    assets: {
+        src: 'src/main/resources/assets',
+        dest: 'target/resources/main/assets'
     },
     tasks: {
         css: {
@@ -29,6 +32,27 @@ const CONFIG = {
         clean: {
             pattern: '/**/_all.*',
             cleanDot: true
+        },
+        js: {
+            files: {
+                // still processed with gulp
+                common: {src: '/common/js/_module.ts', dest: '/common/js/_all.js'},
+                live: {src: '/live-edit/js/_module.ts', dest: '/live-edit/js/_all.js'},
+                // webpack
+                home: {src: '/js/home/main.js', name: 'home', assets: true},
+                launcher: {src: '/js/launcher/main.js', name: 'launcher', assets: true},
+                applications: {src: '/apps/applications/js/main.ts', name: 'applications'},
+                content: {src: '/apps/content-studio/js/main.ts', name: 'content-studio'},
+                user: {src: '/apps/user-manager/js/main.ts', name: 'user-manager'}
+            },
+            ts: {
+                target: 'ES5',
+                declaration: true,
+                noImplicitAny: false
+            },
+            webpack: {
+                dest: '/apps/[name]/js/_all.js'
+            }
         }
     }
 };

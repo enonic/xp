@@ -9,12 +9,13 @@ import autoprefixer from "less-plugin-autoprefix";
 import sourcemaps from "gulp-sourcemaps";
 import rename from "gulp-rename";
 import path from "path";
+import nameResolver from "../util/nameResolver";
 import {pipeError as error} from "../util/compileLogger";
 
 const subtasks = CONFIG.tasks.css.files;
 const autoprefix = new autoprefixer(CONFIG.tasks.css.autoprefixer);
 
-const nameResolver = name => `css: ${name}`;
+const cssResolver = nameResolver.bind(null, 'css');
 
 /*
  Generate a separate task for each dest of less file:
@@ -26,9 +27,9 @@ const nameResolver = name => `css: ${name}`;
  */
 for (const name in subtasks) {
     const task = subtasks[name];
-    const dest = task.assets ? CONFIG.root.assets : CONFIG.root.dest;
+    const dest = task.assets ? CONFIG.assets.dest : CONFIG.root.dest;
 
-    gulp.task(nameResolver(name), (cb) => {
+    gulp.task(cssResolver(name), (cb) => {
         return gulp.src(path.join(CONFIG.root.src, task.src))
             .pipe(sourcemaps.init())
             .pipe(less({
@@ -44,4 +45,4 @@ for (const name in subtasks) {
 /*
  Main CSS task
  */
-gulp.task('css', Object.keys(subtasks).map(nameResolver));
+gulp.task('css', Object.keys(subtasks).map(cssResolver));
