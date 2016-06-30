@@ -125,8 +125,9 @@ public class ResolveDependenciesAggregationFactoryTest
         data.addReference( "myRef1", Reference.from( folderRefContent1.getId().toString() ) );
         data.addReference( "myRef2", Reference.from( folderRefContent2.getId().toString() ) );
         data.addReference( "myRef3", Reference.from( siteRefContent1.getId().toString() ) );
+        data.addReference( "refToMyself", Reference.from( "contentId" ) );
 
-        final Content content = createContent( "content", data, ContentTypeName.site() );
+        final Content content = createContent( "contentId", data, ContentTypeName.site() );
 
         final FindContentIdsByQueryResult findContentByQueryResult =
             FindContentIdsByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).

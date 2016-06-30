@@ -15,6 +15,7 @@ import ComponentPropertyChangedEvent = api.content.page.region.ComponentProperty
 import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import PropertyTree = api.data.PropertyTree;
+import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
 export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
 
@@ -134,15 +135,15 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     private initSelectorListeners() {
 
-        this.imageSelector.onOptionSelected((selectedOption: SelectedOption<ContentSummary>) => {
+        this.imageSelector.onOptionSelected((event: SelectedOptionEvent<ContentSummary>) => {
             if (this.handleSelectorEvents) {
-                var option: Option<ContentSummary> = selectedOption.getOption();
+                var option: Option<ContentSummary> = event.getSelectedOption().getOption();
                 var imageContent = option.displayValue;
                 this.imageComponent.setImage(imageContent.getContentId(), imageContent.getDisplayName());
             }
         });
 
-        this.imageSelector.onOptionDeselected((option: SelectedOption<ContentSummary>) => {
+        this.imageSelector.onOptionDeselected((event: SelectedOptionEvent<ContentSummary>) => {
             if (this.handleSelectorEvents) {
                 this.imageComponent.reset();
             }

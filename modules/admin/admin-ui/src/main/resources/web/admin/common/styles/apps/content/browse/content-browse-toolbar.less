@@ -100,4 +100,25 @@ button.icon-toolbar-settings {
     }
 
   }
+
+  .icon-search.filtered {
+    border-radius: 17px;
+    background-color: @admin-input-blue;
+    padding: 3px 8px;
+    margin-top: 4px;
+    margin-left: 5px;
+
+    &:before, span {
+      color: @admin-white;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: @admin-input-blue;
+
+      &:before, span {
+        color: @admin-white;
+        font-weight: bold;
+      }
+    }
+  }
 }

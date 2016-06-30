@@ -33,12 +33,9 @@
   }
 
   .icon-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    cursor: pointer;
-    font-size: 12px;
-    text-decoration: none;
+    border: 1px solid transparent;
+    .close-mixin();
+    .focusable();
   }
 
   .permission-selector {

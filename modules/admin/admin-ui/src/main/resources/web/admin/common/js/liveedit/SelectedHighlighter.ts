@@ -5,7 +5,7 @@ module api.liveedit {
         private static SELECT_INSTANCE: SelectedHighlighter;
 
         constructor() {
-            super();
+            super(HighlighterMode.CROSSHAIR);
         }
 
         public static get(): SelectedHighlighter {
@@ -16,11 +16,11 @@ module api.liveedit {
         }
 
 
-        protected preProcessStyle(style: api.liveedit.HighlighterStyle): api.liveedit.HighlighterStyle {
+        protected preProcessStyle(style: api.liveedit.HighlighterStyle, isEmptyView: boolean): api.liveedit.HighlighterStyle {
             return {
-                stroke: 'rgba(0, 0, 0, 1)',     //'#4294de',
-                strokeDasharray: '',
-                fill: style.fill
+                stroke: 'rgba(11, 104, 249, 1)',
+                strokeDasharray: style.strokeDasharray,
+                fill: isEmptyView ? 'transparent' : 'rgba(90, 148, 238, .2)' // Don't use fill on empty components
             };
         }
     }

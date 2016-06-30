@@ -8,6 +8,8 @@ module api.content.form.inputtype.contentselector {
     import GetRelationshipTypeByNameRequest = api.schema.relationshiptype.GetRelationshipTypeByNameRequest;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
     import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class ContentSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
 
@@ -47,23 +49,28 @@ module api.content.form.inputtype.contentselector {
 
                 var selectedContentIdsMap: {} = {};
                 this.contentComboBox.getSelectedOptionView().getSelectedOptions().forEach(
-                    (selectedOption: any) => selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "");
+                    (selectedOption: any) => {
+                        if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = ""
+                        }
+                    });
 
-                event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
-                                                              selectedContentIdsMap.hasOwnProperty(
-                                                                  deletedItem.getContentId().toString())).forEach((deletedItem) => {
-                    var option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
-                    if (option != null) {
-                        this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
-                    }
-                });
-            }
+                event.getDeletedItems().
+                    filter(deletedItem => !deletedItem.isPending() &&
+                                          selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
+                    forEach((deletedItem) => {
+                        var option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
+                        if (option != null) {
+                            this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
+                        }
+                    });
+            };
 
             ContentDeletedEvent.on(this.contentDeletedListener);
 
             this.onRemoved((event) => {
                 ContentDeletedEvent.un(this.contentDeletedListener);
-            })
+            });
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
@@ -118,6 +125,11 @@ module api.content.form.inputtype.contentselector {
                 .setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader))
                 .build();
 
+            this.contentComboBox.getComboBox().onContentMissing((ids: string[]) => {
+                ids.forEach(id => this.removePropertyWithId(id));
+                this.validate(false);
+            });
+
             return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).
                 sendAndParse().
                 then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
@@ -134,9 +146,10 @@ module api.content.form.inputtype.contentselector {
                                 this.contentComboBox.select(content);
                             });
 
-                            this.contentComboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+                        this.contentComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
+                            this.fireFocusSwitchEvent(event);
 
-                                var reference = api.util.Reference.from(selectedOption.getOption().displayValue.getContentId());
+                            var reference = api.util.Reference.from(event.getSelectedOption().getOption().displayValue.getContentId());
 
                                 var value = new Value(reference, ValueTypes.REFERENCE);
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
@@ -151,11 +164,11 @@ module api.content.form.inputtype.contentselector {
                                 this.validate(false);
                             });
 
-                            this.contentComboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+                        this.contentComboBox.onOptionDeselected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
-                                this.getPropertyArray().remove(removed.getIndex());
-                                this.updateSelectedOptionStyle();
-                                this.validate(false);
+                            this.getPropertyArray().remove(event.getSelectedOption().getIndex());
+                            this.updateSelectedOptionStyle();
+                            this.validate(false);
                             });
 
                             this.setupSortable();
@@ -165,6 +178,16 @@ module api.content.form.inputtype.contentselector {
                 });
         }
 
+        private removePropertyWithId(id: string) {
+            var length = this.getPropertyArray().getSize();
+            for (let i = 0; i < length; i++) {
+                if (this.getPropertyArray().get(i).getValue().getString() == id) {
+                    this.getPropertyArray().remove(i);
+                    api.notify.NotifyManager.get().showWarning('Removed missing reference with id=' + id);
+                    break;
+                }
+            }
+        }
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
             return super.update(propertyArray, unchangedOnly).then(() => {

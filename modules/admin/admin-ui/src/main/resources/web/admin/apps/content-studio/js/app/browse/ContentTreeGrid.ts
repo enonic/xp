@@ -89,6 +89,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             } else {
                 this.getGrid().resizeCanvas();
             }
+            // re-set the selection to update selected rows presentation
+            this.getGrid().setSelectedRows(this.getGrid().getSelectedRows());
         };
 
         var onBecameActive = (active: boolean) => {

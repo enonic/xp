@@ -32,7 +32,7 @@ public class ImportCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/admin/rest/export/import", request.getPath() );
+        assertEquals( "/api/repo/import", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 

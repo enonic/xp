@@ -5,7 +5,6 @@ module api.content.form.inputtype.tag {
     import ContentQuery = api.content.query.ContentQuery;
     import ContentQueryRequest = api.content.ContentQueryRequest;
     import QueryExpr = api.query.expr.QueryExpr;
-    import CompareExpr = api.query.expr.CompareExpr;
     import FieldExpr = api.query.expr.FieldExpr;
     import CompareOperator = api.query.expr.CompareOperator;
     import FunctionExpr = api.query.expr.FunctionExpr;

@@ -45,6 +45,8 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.index.ChildOrder;
@@ -73,11 +75,17 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.session.SessionKey;
+import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.util.BinaryReferences;
 
+import static com.enonic.xp.security.acl.Permission.CREATE;
+import static com.enonic.xp.security.acl.Permission.DELETE;
+import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
@@ -991,6 +999,135 @@ public class ContentResourceTest
             post().getAsString();
 
         assertJson( "delete_attachments_success.json", jsonString );
+    }
+
+    @Test
+    public void get_permitted_actions_for_admin()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final LocalScope localScope = ContextAccessor.current().getLocalScope();
+
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN ).build();
+        localScope.setAttribute( authInfo );
+        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+
+        //checking that admin has all requested permissions
+        String jsonString = request().
+            path( "content/allowedActions" ).
+            entity( readFromFile( "get_permitted_actions_params_root.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "[\"CREATE\",\"PUBLISH\",\"DELETE\"]", jsonString );
+
+        //checking that admin has all permissions when no permissions set in request
+        jsonString = request().
+            path( "content/allowedActions" ).
+            entity( readFromFile( "get_permitted_actions_params_root_all_permissions.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "get_permitted_actions_admin_allowed_all.json", jsonString );
+
+    }
+
+    @Test
+    public void get_permitted_actions_single_content()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final LocalScope localScope = ContextAccessor.current().getLocalScope();
+
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( user ).principals( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED ).build();
+        localScope.setAttribute( authInfo );
+        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+
+        final AccessControlList nodePermissions = AccessControlList.create().
+            add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( CREATE ).build() ).
+            add( AccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).allow( DELETE ).build() ).
+            build();
+
+        Content content = Content.create().id( ContentId.from( "id" ) ).path( "/myroot/mysub" ).permissions( nodePermissions ).build();
+
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( content ) );
+
+        //["CREATE", "PUBLISH", "DELETE", "MODIFY"] permissions requested, checking  that only create and delete allowed on provided content
+        String jsonString = request().
+            path( "content/allowedActions" ).
+            entity( readFromFile( "get_permitted_actions_params_single_content.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "[\"CREATE\",\"DELETE\"]", jsonString );
+
+        //all root permissions requested for user, root allows only 'CREATE' and 'DELETE', checking that only 'CREATE' and 'DELETE' returned
+        final AccessControlList rootPermissions = AccessControlList.create().
+            add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( READ ).build() ).
+            add( AccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).allow( CREATE ).build() ).
+            build();
+
+        Mockito.when( contentService.getRootPermissions() ).thenReturn( rootPermissions );
+
+        jsonString = request().
+            path( "content/allowedActions" ).
+            entity( readFromFile( "get_permitted_actions_params_root_all_permissions.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "[\"READ\",\"CREATE\"]", jsonString );
+    }
+
+    @Test
+    public void get_permitted_actions_multiple_contents()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final LocalScope localScope = ContextAccessor.current().getLocalScope();
+
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( user ).principals( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED ).build();
+        localScope.setAttribute( authInfo );
+        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+
+        final AccessControlList nodePermissions1 = AccessControlList.create().
+            add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( READ ).build() ).
+            add( AccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).allow( READ ).build() ).
+            build();
+
+        final AccessControlList nodePermissions2 = AccessControlList.create().
+            add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( READ, CREATE ).build() ).
+            add( AccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).allow( READ, CREATE, MODIFY, DELETE ).build() ).
+            build();
+
+        Content content1 = Content.create().id( ContentId.from( "id0" ) ).path( "/myroot/mysub" ).permissions( nodePermissions1 ).build();
+        Content content2 = Content.create().id( ContentId.from( "id1" ) ).path( "/myroot/mysub2" ).permissions( nodePermissions2 ).build();
+
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn(
+            Contents.from( content1, content2 ) );
+
+        //requesting ["CREATE", "PUBLISH", "DELETE", "MODIFY"] on 2 contents, checking that nothing allowed because all contents must have required permissions
+        String jsonString = request().
+            path( "content/allowedActions" ).
+            entity( readFromFile( "get_permitted_actions_params_multiple_contents.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "[]", jsonString );
     }
 
     private User createUser( final String displayName )

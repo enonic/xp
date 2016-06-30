@@ -1,4 +1,7 @@
 import "../../../api.ts";
+import {ContentBrowseResetEvent} from "./ContentBrowseResetEvent";
+import {ContentBrowseSearchEvent} from "./ContentBrowseSearchEvent";
+import {ContentBrowseRefreshEvent} from "./ContentBrowseRefreshEvent";
 
 import ContentQueryRequest = api.content.ContentQueryRequest;
 import ContentTypeName = api.schema.content.ContentTypeName;
@@ -16,22 +19,18 @@ import TermsAggregationQuery = api.query.aggregation.TermsAggregationQuery;
 import DateRangeAggregationQuery = api.query.aggregation.DateRangeAggregationQuery;
 import DateRange = api.query.aggregation.DateRange;
 import QueryExpr = api.query.expr.QueryExpr;
+import CompareExpr = api.query.expr.CompareExpr;
 import LogicalExpr = api.query.expr.LogicalExpr;
 import ValueExpr = api.query.expr.ValueExpr;
-import FunctionExpr = api.query.expr.FunctionExpr;
 import LogicalOperator = api.query.expr.LogicalOperator;
-import CompareExpr = api.query.expr.CompareExpr;
 import LogicalExp = api.query.expr.LogicalExpr;
-import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
+import FieldExpr = api.query.expr.FieldExpr;
 import Value = api.data.Value;
 import ValueTypes = api.data.ValueTypes;
 import QueryField = api.query.QueryField;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 import ActionButton = api.ui.button.ActionButton;
 import Action = api.ui.Action;
-import {ContentBrowseResetEvent} from "./ContentBrowseResetEvent";
-import {ContentBrowseSearchEvent} from "./ContentBrowseSearchEvent";
-import {ContentBrowseRefreshEvent} from "./ContentBrowseRefreshEvent";
 
 export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
@@ -207,7 +206,14 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private getAggregations(contentQuery: ContentQuery,
                             contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): wemQ.Promise<api.aggregation.Aggregation[]> {
-        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.cloneContentQueryNoContentTypes(contentQuery)).setExpand(
+
+        var clonedContentQueryNoContentTypes: ContentQuery = this.cloneContentQueryNoContentTypes(contentQuery);
+
+        if (api.ObjectHelper.objectEquals(contentQuery, clonedContentQueryNoContentTypes)) {
+            return wemQ(this.combineAggregations(contentQueryResult, contentQueryResult));
+        }
+
+        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(clonedContentQueryNoContentTypes).setExpand(
             api.rest.Expand.SUMMARY).sendAndParse().then(
             (contentQueryResultNoContentTypesSelected: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 return this.combineAggregations(contentQueryResult, contentQueryResultNoContentTypesSelected);
@@ -288,7 +294,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             query: QueryExpr;
 
         if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
-            query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeDependenciesSearchExpr()));
+            query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeInboundDependenciesSearchExpr()));
         } else {
             query = new QueryExpr(fulltextSearchExpression);
         }
@@ -296,13 +302,15 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         contentQuery.setQueryExpr(query);
     }
 
-    private makeDependenciesSearchExpr(): api.query.expr.Expression {
-        var args: api.query.expr.ValueExpr[] = [];
+    private makeInboundDependenciesSearchExpr(): api.query.expr.Expression {
+        var dependencyId = this.dependenciesSection.getDependencyId().toString();
 
-        args.push(ValueExpr.stringValue(new QueryField(QueryField.REFERENCES).toString()));
-        args.push(ValueExpr.stringValue(this.dependenciesSection.getDependencyId().toString()));
+        var query: QueryExpr = new QueryExpr(new LogicalExpr(
+            CompareExpr.eq(new FieldExpr(QueryField.REFERENCES), ValueExpr.string(dependencyId)),
+            LogicalOperator.AND,
+            CompareExpr.neq(new FieldExpr(QueryField.ID), ValueExpr.string(dependencyId))));
 
-        return new DynamicConstraintExpr(new FunctionExpr("inboundDependencies", args));
+        return query;
     }
 
     private makeFulltextSearchExpr(searchInputValues: SearchInputValues): api.query.expr.Expression {
@@ -325,7 +333,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private appendInboundQueryExpr(contentQuery: ContentQuery): void {
         if (!!this.dependenciesSection && this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
-            contentQuery.setQueryExpr(new QueryExpr(this.makeDependenciesSearchExpr()));
+            contentQuery.setQueryExpr(new QueryExpr(this.makeInboundDependenciesSearchExpr()));
         }
     }
 
@@ -378,7 +386,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private appendContentTypesAggregationQuery(contentQuery) {
         contentQuery.addAggregationQuery(this.createTermsAggregation((ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME),
-            QueryField.CONTENT_TYPE, 30));
+            QueryField.CONTENT_TYPE, 0));
     }
 
     private createTermsAggregation(name: string, fieldName: string, size: number): TermsAggregationQuery {

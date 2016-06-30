@@ -1,6 +1,9 @@
 import "../../api.ts";
 import {MostPopularItem} from "./MostPopularItem";
 import {NewContentDialogList} from "./NewContentDialogList";
+import {NewContentDialogListItem} from "./NewContentDialogListItem";
+import {MostPopularItemsBlock} from "./MostPopularItemsBlock";
+import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 
 export class MostPopularItemsList extends NewContentDialogList {
 
@@ -28,4 +31,65 @@ export class MostPopularItemsList extends NewContentDialogList {
         return itemEl;
     }
 
+    createItems(listItems: NewContentDialogListItem[],
+                directChildContents: api.content.ContentSummary[]) {
+
+        var contentTypes = listItems.map((el) => el.getContentType());
+
+        var mostPopularItems: MostPopularItem[] = [],
+            allowedContentTypes: api.content.ContentSummary[] = directChildContents.filter((content: api.content.ContentSummary) => {
+                return this.isAllowedContentType(contentTypes, content);
+            }),
+            aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(allowedContentTypes);
+
+        for (var i = 0; i < aggregatedList.length && i < MostPopularItemsBlock.DEFAULT_MAX_ITEMS; i++) {
+            var contentType: ContentTypeSummary = api.util.ArrayHelper.findElementByFieldValue(contentTypes, "name",
+                aggregatedList[i].contentType);
+            mostPopularItems.push(new MostPopularItem(contentType, aggregatedList[i].count));
+        }
+
+        this.setItems(mostPopularItems);
+    }
+
+    private isAllowedContentType(allowedContentTypes: ContentTypeSummary[], content: api.content.ContentSummary) {
+        return !content.getType().isMedia() && !content.getType().isDescendantOfMedia() &&
+               Boolean(api.util.ArrayHelper.findElementByFieldValue(allowedContentTypes, "id", content.getType().toString()));
+    }
+
+    private getAggregatedItemList(contentTypes: api.content.ContentSummary[]) {
+        var aggregatedList: ContentTypeInfo[] = [];
+
+        contentTypes.forEach((content: api.content.ContentSummary) => {
+            var contentType = content.getType().toString();
+            var existingContent = api.util.ArrayHelper.findElementByFieldValue(aggregatedList, "contentType", contentType);
+
+            if (existingContent) {
+                existingContent.count++;
+                if (content.getModifiedTime() > existingContent.lastModified) {
+                    existingContent.lastModified = content.getModifiedTime();
+                }
+            }
+            else {
+                aggregatedList.push({contentType: contentType, count: 1, lastModified: content.getModifiedTime()});
+            }
+        });
+
+        aggregatedList.sort(this.sortByCountAndDate);
+
+        return aggregatedList;
+    }
+
+    private sortByCountAndDate(contentType1: ContentTypeInfo, contentType2: ContentTypeInfo) {
+        if (contentType2.count == contentType1.count) {
+            return contentType2.lastModified > contentType1.lastModified ? 1 : -1;
+        }
+        return contentType2.count - contentType1.count;
+    }
+
+}
+
+export interface ContentTypeInfo {
+    contentType: string;
+    count: number;
+    lastModified: Date;
 }

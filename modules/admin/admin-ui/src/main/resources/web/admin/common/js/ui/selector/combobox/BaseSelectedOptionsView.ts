@@ -13,9 +13,9 @@ module api.ui.selector.combobox {
 
         private maximumOccurrences: number;
 
-        private optionRemovedListeners: {(removed: SelectedOption<T>): void;}[] = [];
+        private optionRemovedListeners: {(removed: SelectedOptionEvent<T>): void;}[] = [];
 
-        private optionAddedListeners: {(added: SelectedOption<T>): void;}[] = [];
+        private optionAddedListeners: {(added: SelectedOptionEvent<T>): void;}[] = [];
 
         private optionMovedListeners: {(moved: SelectedOption<T>) : void}[] = [];
 
@@ -44,7 +44,8 @@ module api.ui.selector.combobox {
                     tolerance: 'pointer',
                     placeholder: 'selected-option placeholder',
                     start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
-                    update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
+                    update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui),
+                    stop: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStop(event, ui)
                 });
             } else {
                 wemjq(this.getHtml()).sortable('destroy');
@@ -53,14 +54,14 @@ module api.ui.selector.combobox {
         }
 
 
-        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+        protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
             this.beforeDragStartedHeight = this.getEl().getHeight();
 
             var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
         }
 
-        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
+        protected handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
                 var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
@@ -69,6 +70,10 @@ module api.ui.selector.combobox {
             }
 
             this.draggingIndex = -1;
+        }
+
+        protected handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
+            
         }
 
         private handleMovedOccurrence(fromIndex: number, toIndex: number) {
@@ -94,7 +99,7 @@ module api.ui.selector.combobox {
             return new SelectedOption<T>(new BaseSelectedOptionView(option), this.count());
         }
 
-        addOption(option: api.ui.selector.Option<T>, silent: boolean = false): boolean {
+        addOption(option: api.ui.selector.Option<T>, silent: boolean = false, keyCode: number): boolean {
 
             if (this.isSelected(option) || this.maximumOccurrencesReached()) {
                 return false;
@@ -109,7 +114,7 @@ module api.ui.selector.combobox {
             this.appendChild(selectedOption.getOptionView());
 
             if (!silent) {
-                this.notifyOptionSelected(selectedOption);
+                this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
             }
 
             return true;
@@ -180,34 +185,41 @@ module api.ui.selector.combobox {
             this.list.forEach((selectedOption: SelectedOption<T>, index: number) => selectedOption.setIndex(index));
         }
 
+        makeEmptyOption(id: string): Option<T> {
+            return <Option<T>>{
+                value: id,
+                displayValue: null
+            };
+        }
+
         protected notifyOptionDeselected(removed: SelectedOption<T>) {
             this.optionRemovedListeners.forEach((listener) => {
-                listener(removed);
+                listener(new SelectedOptionEvent(removed));
             });
         }
 
-        onOptionDeselected(listener: {(removed: SelectedOption<T>): void;}) {
+        onOptionDeselected(listener: {(removed: SelectedOptionEvent<T>): void;}) {
             this.optionRemovedListeners.push(listener);
         }
 
-        unOptionDeselected(listener: {(removed: SelectedOption<T>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOptionEvent<T>): void;}) {
             this.optionRemovedListeners = this.optionRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        onOptionSelected(listener: (added: SelectedOption<T>)=>void) {
+        onOptionSelected(listener: (added: SelectedOptionEvent<T>)=>void) {
             this.optionAddedListeners.push(listener);
         }
 
-        unOptionSelected(listener: (added: SelectedOption<T>)=>void) {
-            this.optionAddedListeners = this.optionAddedListeners.filter((current: (added: SelectedOption<T>)=>void) => {
+        unOptionSelected(listener: (added: SelectedOptionEvent<T>)=>void) {
+            this.optionAddedListeners = this.optionAddedListeners.filter((current: (added: SelectedOptionEvent<T>)=>void) => {
                 return listener != current;
             });
         }
 
-        protected notifyOptionSelected(added: SelectedOption<T>) {
-            this.optionAddedListeners.forEach((listener: (added: SelectedOption<T>)=>void) => {
+        protected notifyOptionSelected(added: SelectedOptionEvent<T>) {
+            this.optionAddedListeners.forEach((listener: (added: SelectedOptionEvent<T>)=>void) => {
                 listener(added);
             });
         }

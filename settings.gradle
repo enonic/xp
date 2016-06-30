@@ -21,6 +21,7 @@ include 'core:core-macro'
 include 'server:server-shell'
 include 'server:server-status'
 include 'server:server-udc'
+include 'server:server-rest'
 
 include 'script:script-api'
 include 'script:script-impl'
@@ -72,6 +73,12 @@ include 'launcher:launcher-main'
 include 'blobstore:blobstore-file'
 
 include 'app:app-standardidprovider'
+
+include 'repack:repack-attoparser'
+include 'repack:repack-elasticsearch'
+include 'repack:repack-jparsec'
+include 'repack:repack-okhttp'
+include 'repack:repack-resteasy'
 
 include 'distro'
 include 'docs'

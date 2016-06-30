@@ -217,7 +217,7 @@ module api.liveedit {
         getName(): string {
             return this.getRegionName() ? this.getRegionName().toString() : "[No Name]";
         }
-
+/*
         highlight() {
             // Don't highlight region on hover
         }
@@ -225,7 +225,7 @@ module api.liveedit {
         unhighlight() {
             // Don't highlight region on hover
         }
-
+*/
         highlightSelected() {
             var isDragging = DragAndDrop.get().isDragging();
             if (!this.getPageView().isTextEditMode() && !isDragging) {

@@ -43,7 +43,9 @@ module api.ui.selector.combobox {
                 minWidth: builder.minWidth,
                 value: builder.value,
                 noOptionsText: builder.noOptionsText,
-                maxHeight: builder.maxHeight
+                maxHeight: builder.maxHeight,
+                displayMissingSelectedOptions: builder.displayMissingSelectedOptions,
+                removeMissingSelectedOptions: builder.removeMissingSelectedOptions
             };
 
             this.loader = builder.loader;
@@ -264,19 +266,19 @@ module api.ui.selector.combobox {
             this.comboBox.setInputIconUrl(url);
         }
 
-        onOptionDeselected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>):void;}) {
+        onOptionDeselected(listener: {(option: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionDeselected(listener);
         }
 
-        unOptionDeselected(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.unOptionDeselected(listener);
         }
 
-        onOptionSelected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+        onOptionSelected(listener: {(option: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionSelected(listener);
         }
 
-        unOptionSelected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+        unOptionSelected(listener: {(option: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.unOptionSelected(listener);
         }
 
@@ -456,6 +458,10 @@ module api.ui.selector.combobox {
 
         noOptionsText: string;
 
+        displayMissingSelectedOptions: boolean;
+
+        removeMissingSelectedOptions: boolean;
+
         setComboBoxName(comboBoxName: string): RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
             return this;
@@ -521,6 +527,15 @@ module api.ui.selector.combobox {
             return this;
         }
 
+        setDisplayMissingSelectedOptions(value: boolean): RichComboBoxBuilder<T> {
+            this.displayMissingSelectedOptions = value;
+            return this;
+        }
+
+        setRemoveMissingSelectedOptions(value: boolean): RichComboBoxBuilder<T> {
+            this.removeMissingSelectedOptions = value;
+            return this;
+        }
 
         build(): RichComboBox<T> {
             return new RichComboBox(this);

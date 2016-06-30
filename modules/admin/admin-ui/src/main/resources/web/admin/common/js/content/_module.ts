@@ -35,6 +35,7 @@
 ///<reference path='GetContentByPathRequest.ts' />
 ///<reference path='GetContentPermissionsByIdRequest.ts' />
 ///<reference path='GetContentPermissionsByIdsRequest.ts' />
+///<reference path='GetPermittedActionsRequest.ts' />
 ///<reference path='GetContentRootPermissionsRequest.ts' />
 ///<reference path='GetContentAttachmentsRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
@@ -88,6 +89,8 @@
 ///<reference path='OrderChildMovements.ts' />
 ///<reference path='CreateContentFilter.ts' />
 ///<reference path='GetDescendantsOfContents.ts' />
+///<reference path='ContentsExistRequest.ts' />
+///<reference path='ContentsExistResult.ts' />
 
 ///<reference path='OrderExpr.ts' />
 ///<reference path='DynamicOrderExpr.ts' />

@@ -134,7 +134,7 @@ module api.app.browse.filter {
         }
 
         refresh() {
-            if (this.filterPanelRefreshNeeded && this.getEl().isVisible()) {
+            if (this.filterPanelRefreshNeeded) {
                 this.notifyRefreshStarted();
                 this.doRefresh();
                 this.filterPanelRefreshNeeded = false;

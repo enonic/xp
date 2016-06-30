@@ -10,7 +10,6 @@ module api.content.form.inputtype.image {
     import ContentSummaryLoader = api.content.ContentSummaryLoader;
     import ContentComboBox = api.content.form.inputtype.image.ImageContentComboBox;
     import ContentTypeName = api.schema.content.ContentTypeName;
-    import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -29,6 +28,9 @@ module api.content.form.inputtype.image {
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
     import ContentSelectorLoader = api.content.form.inputtype.contentselector.ContentSelectorLoader;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
@@ -89,7 +91,11 @@ module api.content.form.inputtype.image {
 
                 var selectedContentIdsMap: {} = {};
                 this.selectedOptionsView.getSelectedOptions().forEach(
-                    (selectedOption: any) => selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "");
+                    (selectedOption: any) => {
+                        if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = ""
+                        }
+                    });
 
                 event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
                                                               selectedContentIdsMap.hasOwnProperty(
@@ -99,7 +105,7 @@ module api.content.form.inputtype.image {
                             this.selectedOptionsView.removeSelectedOptions([option]);
                         }
                     });
-            }
+            };
 
             ContentDeletedEvent.on(this.contentDeletedListener);
 
@@ -231,17 +237,25 @@ module api.content.form.inputtype.image {
             });
             comboBox.setInputIconUrl(inputIconUrl);
 
-            comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
+            comboBox.onOptionDeselected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
                 // property not found.
-                if (!!removed.getOption().displayValue.getContentSummary()) {
-                    this.getPropertyArray().remove(removed.getIndex());
+                const option = event.getSelectedOption();
+                if (option.getOption().displayValue.getContentSummary()) {
+                    this.getPropertyArray().remove(option.getIndex());
                 }
                 this.validate(false);
             });
 
-            comboBox.onOptionSelected((added: SelectedOption<ImageSelectorDisplayValue>) => {
+            comboBox.onContentMissing((ids: string[]) => {
+                ids.forEach(id => this.removePropertyWithId(id));
+                this.validate(false);
+            });
+
+            comboBox.onOptionSelected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
+                this.fireFocusSwitchEvent(event);
+
                 if (!this.isLayoutInProgress()) {
-                    var contentId = added.getOption().displayValue.getContentId();
+                    var contentId = event.getSelectedOption().getOption().displayValue.getContentId();
                     if (!contentId) {
                         return;
                     }
@@ -289,6 +303,17 @@ module api.content.form.inputtype.image {
                         this.setLayoutInProgress(false);
                     });
             });
+        }
+
+        private removePropertyWithId(id: string) {
+            var length = this.getPropertyArray().getSize();
+            for (let i = 0; i < length; i++) {
+                if (this.getPropertyArray().get(i).getValue().getString() == id) {
+                    this.getPropertyArray().remove(i);
+                    api.notify.NotifyManager.get().showWarning('Removed reference with id=' + id);
+                    break;
+                }
+            }
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {

@@ -71,6 +71,18 @@ module api.ui.text {
             return this;
         }
 
+        enable() {
+            this.textInput.getEl().setDisabled(false);
+            this.mediaUploaderEl.getDropzone().getEl().removeAttribute("disabled");
+            this.mediaUploaderEl.getEl().removeAttribute("disabled");
+        }
+
+        disable() {
+            this.textInput.getEl().setDisabled(true);
+            this.mediaUploaderEl.getDropzone().getEl().setAttribute("disabled", "true");
+            this.mediaUploaderEl.getEl().setAttribute("disabled", "true");
+        }
+
         getUploader(): MediaUploaderEl {
             return this.mediaUploaderEl;
         }

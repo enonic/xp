@@ -6,9 +6,9 @@ module api.liveedit.fragment {
     import Content = api.content.Content;
     import LayoutComponentType = api.content.page.region.LayoutComponentType;
     import QueryExpr = api.query.expr.QueryExpr;
-    import CompareExpr = api.query.expr.CompareExpr;
     import FieldExpr = api.query.expr.FieldExpr;
     import ValueExpr = api.query.expr.ValueExpr;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class FragmentPlaceholder extends api.liveedit.ItemViewPlaceholder {
 
@@ -33,10 +33,10 @@ module api.liveedit.fragment {
             this.comboboxWrapper.appendChildren(this.comboBox);
             this.appendChild(this.comboboxWrapper);
 
-            this.comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+            this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
                 var component: FragmentComponent = this.fragmentComponentView.getComponent();
-                var fragmentContent = selectedOption.getOption().displayValue;
+                var fragmentContent = event.getSelectedOption().getOption().displayValue;
 
                 if (this.isInsideLayout()) {
                     new GetContentByIdRequest(fragmentContent.getContentId()).sendAndParse().done((content: Content) => {

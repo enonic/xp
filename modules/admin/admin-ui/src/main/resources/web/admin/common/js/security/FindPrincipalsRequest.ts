@@ -1,21 +1,26 @@
 module api.security {
 
-    export class FindPrincipalsRequest extends api.security.SecurityResourceRequest<PrincipalListJson, Principal[]> {
+    export class FindPrincipalsRequest extends api.security.SecurityResourceRequest<FindPrincipalsResultJson, FindPrincipalsResult> {
 
         private allowedTypes: PrincipalType[];
         private searchQuery: string;
         private userStoreKey: UserStoreKey;
         private filterPredicate: (principal: Principal) => boolean;
+        private from: number;
+        private size: number;
 
         constructor() {
             super();
+            super.setMethod("GET");
         }
 
         getParams(): Object {
             return {
-                "types": this.enumToStrings(this.allowedTypes).join(','),
-                "query": this.searchQuery,
-                "userStoreKey": this.userStoreKey ? this.userStoreKey.toString() : undefined
+                types: this.enumToStrings(this.allowedTypes).join(','),
+                query: this.searchQuery || null,
+                userStoreKey: this.userStoreKey ? this.userStoreKey.toString() : null,
+                from: this.from || null,
+                size: this.size || null
             }
         }
 
@@ -23,16 +28,16 @@ module api.security {
             return api.rest.Path.fromParent(super.getResourcePath(), 'principals');
         }
 
-        sendAndParse(): wemQ.Promise<Principal[]> {
+        sendAndParse(): wemQ.Promise<FindPrincipalsResult> {
             return this.send().
-                then((response: api.rest.JsonResponse<PrincipalListJson>) => {
+                then((response: api.rest.JsonResponse<FindPrincipalsResultJson>) => {
                     var principals: Principal[] = response.getResult().principals.map((principalJson: PrincipalJson) => {
                         return this.fromJsonToPrincipal(principalJson);
                     });
                     if (this.filterPredicate) {
                         principals = principals.filter(this.filterPredicate);
                     }
-                    return principals;
+                    return new FindPrincipalsResult(principals, response.getResult().totalSize);
                 });
         }
 
@@ -49,6 +54,16 @@ module api.security {
 
         setAllowedTypes(types: PrincipalType[]): FindPrincipalsRequest {
             this.allowedTypes = types;
+            return this;
+        }
+
+        setFrom(from: number): FindPrincipalsRequest {
+            this.from = from;
+            return this;
+        }
+
+        setSize(size: number): FindPrincipalsRequest {
+            this.size = size;
             return this;
         }
 

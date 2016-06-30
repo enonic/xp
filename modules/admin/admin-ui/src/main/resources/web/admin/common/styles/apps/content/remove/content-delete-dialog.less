@@ -8,6 +8,11 @@
     input[type="checkbox"] + label {
       color: @admin-blue !important;
     }
+
+    input:disabled, input:disabled + label {
+      opacity: 0.5;
+      cursor: default;
+    }
   }
 
   .dialog-buttons {

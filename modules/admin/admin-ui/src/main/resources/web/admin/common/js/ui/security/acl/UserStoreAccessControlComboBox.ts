@@ -6,6 +6,7 @@ module api.ui.security.acl {
     import Permission = api.security.acl.Permission;
     import UserStoreAccessControlEntry = api.security.acl.UserStoreAccessControlEntry;
     import UserStoreAccessControlEntryLoader = api.security.acl.UserStoreAccessControlEntryLoader;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class UserStoreAccessControlComboBox extends api.ui.selector.combobox.RichComboBox<UserStoreAccessControlEntry> {
 
@@ -65,8 +66,8 @@ module api.ui.security.acl {
         private maximumOccurrences: number;
         private list: SelectedOption<UserStoreAccessControlEntry>[] = [];
 
-        private selectedOptionRemovedListeners: {(removed: SelectedOption<UserStoreAccessControlEntry>): void;}[] = [];
-        private selectedOptionAddedListeners: {(added: SelectedOption<UserStoreAccessControlEntry>): void;}[] = [];
+        private selectedOptionRemovedListeners: {(removed: SelectedOptionEvent<UserStoreAccessControlEntry>): void;}[] = [];
+        private selectedOptionAddedListeners: {(added: SelectedOptionEvent<UserStoreAccessControlEntry>): void;}[] = [];
 
         constructor(className?: string) {
             super(className);
@@ -115,7 +116,7 @@ module api.ui.security.acl {
         }
 
 
-        addOption(option: Option<UserStoreAccessControlEntry>, silent: boolean = false): boolean {
+        addOption(option: Option<UserStoreAccessControlEntry>, silent: boolean = false, keyCode: number = -1): boolean {
             if(option.readOnly)
             {
                 this.addItemReadOnly(option.displayValue)
@@ -126,7 +127,7 @@ module api.ui.security.acl {
             }
             if (!silent) {
                 var selectedOption = this.getByOption(option);
-                this.notifySelectedOptionAdded(selectedOption);
+                this.notifySelectedOptionAdded(new SelectedOptionEvent(selectedOption, keyCode));
             }
             return true;
         }
@@ -151,7 +152,7 @@ module api.ui.security.acl {
             }
 
             if (!silent) {
-                this.notifySelectedOptionRemoved(selectedOption);
+                this.notifySelectedOptionRemoved(new SelectedOptionEvent(selectedOption));
             }
         }
 
@@ -196,33 +197,33 @@ module api.ui.security.acl {
                                index: number) => selectedOption.setIndex(index));
         }
 
-        private notifySelectedOptionRemoved(removed: SelectedOption<UserStoreAccessControlEntry>) {
+        private notifySelectedOptionRemoved(removed: SelectedOptionEvent<UserStoreAccessControlEntry>) {
             this.selectedOptionRemovedListeners.forEach((listener) => {
                 listener(removed);
             });
         }
 
-        onOptionDeselected(listener: {(removed: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+        onOptionDeselected(listener: {(removed: SelectedOptionEvent<UserStoreAccessControlEntry>): void;}) {
             this.selectedOptionRemovedListeners.push(listener);
         }
 
-        unOptionDeselected(listener: {(removed: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOptionEvent<UserStoreAccessControlEntry>): void;}) {
             this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        onOptionSelected(listener: {(added: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+        onOptionSelected(listener: {(added: SelectedOptionEvent<UserStoreAccessControlEntry>): void;}) {
             this.selectedOptionAddedListeners.push(listener);
         }
 
-        unOptionSelected(listener: {(added: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+        unOptionSelected(listener: {(added: SelectedOptionEvent<UserStoreAccessControlEntry>): void;}) {
             this.selectedOptionAddedListeners = this.selectedOptionAddedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifySelectedOptionAdded(added: SelectedOption<UserStoreAccessControlEntry>) {
+        private notifySelectedOptionAdded(added: SelectedOptionEvent<UserStoreAccessControlEntry>) {
             this.selectedOptionAddedListeners.forEach((listener) => {
                 listener(added);
             });

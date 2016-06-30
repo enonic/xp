@@ -27,20 +27,28 @@ module api.ui.tab {
         constructor(className?: string) {
             super("tab-menu" + (className ? " " + className : ""));
 
+            this.initTabMenuButton();
+            this.menuEl = new api.dom.UlEl("menu");
+
+            this.appendChild(this.tabMenuButton);
+            this.appendChild(this.menuEl);
+
+            this.initListeners();
+        }
+
+        private initTabMenuButton() {
             this.tabMenuButton = this.createTabMenuButton();
             this.tabMenuButton.hide();
             this.tabMenuButton.addClass("tab-menu-button");
+
             this.tabMenuButton.onClicked((event: MouseEvent) => {
                 if (this.enabled) {
                     this.toggleMenu();
                 }
             });
-            this.appendChild(this.tabMenuButton);
+        }
 
-            this.menuEl = new api.dom.UlEl("menu");
-            this.appendChild(this.menuEl);
-
-
+        private initListeners() {
             api.dom.Body.get().onClicked((event: MouseEvent) => {
                 if (!this.getEl().contains(<HTMLElement> event.target)) {
                     this.hideMenu();
@@ -49,10 +57,7 @@ module api.ui.tab {
 
             this.onClicked((e: MouseEvent) => {
                 if (this.enabled) {
-                    // menu itself was clicked so do nothing
-                    e.preventDefault();
-                    e.stopPropagation();
-                    new HideTabMenuEvent(this).fire();
+                    this.handleClick(e);
                 }
             });
         }
@@ -63,13 +68,20 @@ module api.ui.tab {
             return this;
         }
 
-        createTabMenuButton(): TabMenuButton {
+        protected createTabMenuButton(): TabMenuButton {
             return new TabMenuButton();
         }
 
-        setButtonLabel(value: string): TabMenu {
+        protected setButtonLabel(value: string): TabMenu {
             this.tabMenuButton.setLabel(value);
             return this;
+        }
+
+        protected handleClick(e: MouseEvent) {
+            // menu itself was clicked so do nothing
+            e.preventDefault();
+            e.stopPropagation();
+            new HideTabMenuEvent(this).fire();
         }
 
         setButtonClass(cls: string): TabMenu {
@@ -98,13 +110,13 @@ module api.ui.tab {
             }
         }
 
-        hideMenu() {
+        protected hideMenu() {
             this.menuEl.hide();
             this.menuVisible = false;
             this.removeClass('expanded');
         }
 
-        showMenu() {
+        protected showMenu() {
             this.menuEl.show();
             this.menuVisible = true;
             this.addClass('expanded');

@@ -30,6 +30,11 @@
         .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent);
         .box-sizing(border-box);
 
+        &[disabled] {
+          pointer-events: none;
+          opacity: 0.5;
+        }
+
         padding: 0;
         min-height: 0;
         height: 100%;

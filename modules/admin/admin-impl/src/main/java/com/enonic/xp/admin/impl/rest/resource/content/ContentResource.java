@@ -44,6 +44,7 @@ import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
+import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
@@ -59,6 +60,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissio
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -162,6 +164,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -753,13 +756,67 @@ public final class ContentResource
     public List<ContentPermissionsJson> getPermissionsByIds( final ContentIdsJson params )
     {
         final List<ContentPermissionsJson> result = new ArrayList<>();
-        for ( String contentId : params.getContentIds() )
+        for ( final ContentId contentId : params.getContentIds() )
         {
-            final AccessControlList permissions = contentService.getPermissionsById( ContentId.from( contentId ) );
-            result.add( new ContentPermissionsJson( contentId, permissions, principalsResolver ) );
+            final AccessControlList permissions = contentService.getPermissionsById( contentId );
+            result.add( new ContentPermissionsJson( contentId.toString(), permissions, principalsResolver ) );
         }
 
         return result;
+    }
+
+    @POST
+    @Path("contentsExist")
+    public ContentsExistJson contentsExist( final ContentIdsJson params )
+    {
+        final ContentsExistJson result = new ContentsExistJson();
+        for ( final ContentId contentId : params.getContentIds() )
+        {
+            result.add( contentId, contentService.contentExists( contentId ) );
+        }
+
+        return result;
+    }
+
+    @POST
+    @Path("allowedActions")
+    public List<String> getPermittedActions( final ContentIdsPermissionsJson params )
+    {
+        final List<Permission> permissions =
+            params.getPermissions().size() > 0 ? params.getPermissions() : Arrays.asList( Permission.values() );
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            return permissions.stream().map( p -> p.name() ).collect( Collectors.toList() );
+        }
+
+        final List<AccessControlList> contentsPermissions =
+            params.getContentIds().getSize() > 0
+                ? contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) ).
+                stream().map( content -> content.getPermissions() ).collect( Collectors.toList() )
+                : Arrays.asList( contentService.getRootPermissions() );
+
+        final List<String> result = new ArrayList<>();
+
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
+
+        return result;
+    }
+
+    private boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission,
+                                       final List<AccessControlList> contentsPermissions )
+    {
+        final PrincipalKeys authInfoPrincipals = authInfo.getPrincipals();
+
+        return contentsPermissions.stream().
+            allMatch( contentPermissions -> contentPermissions.isAllowedFor( authInfoPrincipals, permission ) );
     }
 
     @POST
@@ -1161,71 +1218,6 @@ public final class ContentResource
             permissionsJson.add( new EffectivePermissionJson( access.name(), accessJson ) );
         }
         return permissionsJson;
-    }
-
-    @POST
-    @Path("reprocess")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed(RoleKeys.ADMIN_ID)
-    public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
-    {
-        final List<ContentPath> updated = new ArrayList<>();
-        final List<String> errors = new ArrayList<>();
-
-        final Content content = this.contentService.getByPath( request.getSourceBranchPath().getContentPath() );
-        try
-        {
-            reprocessContent( content, request.isSkipChildren(), updated, errors );
-        }
-        catch ( Throwable t )
-        {
-            errors.add(
-                String.format( "Content '%s' - %s: %s", content.getPath().toString(), t.getClass().getCanonicalName(), t.getMessage() ) );
-            LOG.warn( "Error reprocessing content [" + content.getPath() + "]", t );
-        }
-
-        return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
-    }
-
-    private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
-                                   final List<String> errors )
-    {
-        final Content reprocessedContent = this.contentService.reprocess( content.getId() );
-        if ( !reprocessedContent.equals( content ) )
-        {
-            updated.add( content.getPath() );
-        }
-        if ( skipChildren )
-        {
-            return;
-        }
-
-        int from = 0;
-        int resultCount;
-        do
-        {
-            final FindContentByParentParams findParams = FindContentByParentParams.create().parentId( content.getId() ).
-                from( from ).size( 5 ).build();
-            final FindContentByParentResult results = this.contentService.findByParent( findParams );
-
-            for ( Content child : results.getContents() )
-            {
-                try
-                {
-                    reprocessContent( child, false, updated, errors );
-                }
-                catch ( Throwable t )
-                {
-                    errors.add( String.format( "Content '%s' - %s: %s", child.getPath().toString(), t.getClass().getCanonicalName(),
-                                               t.getMessage() ) );
-                    LOG.warn( "Error reprocessing content [" + child.getPath() + "]", t );
-                }
-            }
-            resultCount = Math.toIntExact( results.getHits() );
-            from = from + resultCount;
-        }
-        while ( resultCount > 0 );
     }
 
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )

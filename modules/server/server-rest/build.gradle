@@ -1,0 +1,12 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':jaxrs:jaxrs-api' )
+    testCompile project( ':jaxrs:jaxrs-impl' )
+    testCompile project( path: ':core:core-app', configuration: 'testOutput' )
+    testCompile project( path: ':jaxrs:jaxrs-impl', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Server - Rest'
+}

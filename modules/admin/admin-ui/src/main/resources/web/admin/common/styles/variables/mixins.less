@@ -286,6 +286,14 @@
   }
 }
 
+.focusable() {
+  &:focus:not(:disabled) {
+    box-sizing: border-box;
+    box-shadow: 0 0 5px @admin-input-blue;
+    border: 1px solid @admin-input-blue;
+  }
+}
+
 // Reset all possible attributes user might have added to a page element
 // Use for all styles present on live edit page in order to reset user styles
 // http://stackoverflow.com/a/15903168
@@ -704,4 +712,14 @@
     font-size: 14px;
     line-height: 16px;
   }
+}
+
+.close-mixin() {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+  font-size: 12px;
+  display: block;
+  text-decoration: none;
 }

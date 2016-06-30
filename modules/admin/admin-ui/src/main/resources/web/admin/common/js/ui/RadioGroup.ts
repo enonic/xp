@@ -54,6 +54,10 @@ module api.ui {
             return undefined;
         }
 
+        giveFocus(): boolean {
+            return this.options.length < 1 ? false : this.options[0].giveFocus();
+        }
+
     }
 
 
@@ -119,6 +123,10 @@ module api.ui {
         public setChecked(checked: boolean, silent?: boolean): RadioButton {
             super.setValue(String(checked), silent);
             return this;
+        }
+
+        giveFocus(): boolean {
+            return this.radio.giveFocus();
         }
 
     }

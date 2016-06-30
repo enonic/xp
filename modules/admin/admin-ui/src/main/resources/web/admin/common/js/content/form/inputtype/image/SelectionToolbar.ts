@@ -8,7 +8,9 @@ module api.content.form.inputtype.image {
 
         private removeButton: Button;
 
-        private selectionCount: number;
+        private removableCount: number;
+
+        private editableCount: number;
 
         private editClickListeners: {(): void;}[] = [];
 
@@ -32,14 +34,16 @@ module api.content.form.inputtype.image {
             this.appendChild(this.removeButton);
         }
 
-        setSelectionCount(count: number) {
-            this.selectionCount = count;
+        setSelectionCount(removableCount: number, editableCount: number) {
+            this.editableCount = editableCount;
+            this.removableCount = removableCount;
             this.refreshUI();
         }
 
         private refreshUI() {
-            this.editButton.setLabel("Edit" + (this.selectionCount > 0 ? " (" + this.selectionCount + ")" : ""));
-            this.removeButton.setLabel("Remove " + (this.selectionCount > 0 ? " (" + this.selectionCount + ")" : ""));
+            this.editButton.setLabel("Edit" + (this.editableCount > 0 ? " (" + this.editableCount + ")" : ""));
+            this.editButton.setEnabled(this.editableCount > 0);
+            this.removeButton.setLabel("Remove " + (this.removableCount > 0 ? " (" + this.removableCount + ")" : ""));
         }
 
         notifyEditClicked() {

@@ -7,6 +7,8 @@ module api.content.form.inputtype.principalselector {
     import ValueTypes = api.data.ValueTypes;
     import GetRelationshipTypeByNameRequest = api.schema.relationshiptype.GetRelationshipTypeByNameRequest;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import FocusSwitchEvent = api.ui.FocusSwitchEvent;
 
     export class PrincipalSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.security.Principal> {
 
@@ -75,12 +77,15 @@ module api.content.form.inputtype.principalselector {
                 setAllowedTypes(this.principalTypes);
             var comboBox = new api.ui.security.PrincipalComboBox(principalLoader, input.getOccurrences().getMaximum(), value);
 
-            comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.security.Principal>) => {
-                this.getPropertyArray().remove(removed.getIndex());
+            comboBox.onOptionDeselected((event: SelectedOptionEvent<api.security.Principal>) => {
+                this.getPropertyArray().remove(event.getSelectedOption().getIndex());
                 this.validate(false);
             });
 
-            comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.security.Principal>) => {
+            comboBox.onOptionSelected((event: SelectedOptionEvent<api.security.Principal>) => {
+                this.fireFocusSwitchEvent(event);
+
+                const selectedOption = event.getSelectedOption();
                 var key = selectedOption.getOption().displayValue.getKey();
                 if (!key) {
                     return;

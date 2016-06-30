@@ -188,7 +188,9 @@ module api.util.htmlarea.dialog {
 
         close() {
             super.close();
-            this.editor.focus();
+            if (!this.editor["destroyed"]) {
+                this.editor.focus();
+            }
             this.remove();
         }
     }

@@ -50,7 +50,7 @@ module api.ui.security.acl {
             return this;
         }
 
-        setButtonLabel(value: string): AccessSelector {
+        protected setButtonLabel(value: string): AccessSelector {
             this.getTabMenuButtonEl().setLabel(value, false);
             return this;
         }

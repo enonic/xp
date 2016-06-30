@@ -18,6 +18,7 @@ import TextComponentView = api.liveedit.text.TextComponentView;
 import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 
 import Mask = api.ui.mask.Mask;
+import Highlighter = api.liveedit.Highlighter;
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -272,7 +273,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
             this.tree.getGrid().selectRow(data.row);
 
-            api.liveedit.Highlighter.get().hide();
+            Highlighter.get().hide();
 
             if (this.isMenuIconClicked(data.cell)) {
                 this.showContextMenu(data.row, {x: event.pageX, y: event.pageY});
@@ -311,7 +312,7 @@ export class PageComponentsView extends api.dom.DivEl {
         });
 
         this.tree.getGrid().subscribeOnMouseLeave((event, data) => {
-            api.liveedit.Highlighter.get().hide();
+            Highlighter.get().hide();
         });
 
         this.tree.onSelectionChanged((data, nodes) => {
@@ -632,7 +633,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private highlightRow(rowElement: HTMLElement, selected: boolean): void {
         if (selected) {
-            api.liveedit.Highlighter.get().hide();
+            Highlighter.get().hide();
         }
         else {
             var elementHelper = new api.dom.ElementHelper(rowElement);
@@ -642,8 +643,9 @@ export class PageComponentsView extends api.dom.DivEl {
 
             if (hoveredNode) {
                 var data = hoveredNode.getData();
-                if (data.getType().isComponentType() && !api.BrowserHelper.isMobile()) {
-                    api.liveedit.Highlighter.get().highlightElement(dimensions, data.getType().getConfig().getHighlighterStyle());
+                if (/*data.getType().isComponentType() && */!api.BrowserHelper.isMobile()) {
+                    Highlighter.get().highlightElement(dimensions,
+                        data.getType().getConfig().getHighlighterStyle());
                 }
                 if (api.BrowserHelper.isIOS()) {
                     this.selectItem(hoveredNode);

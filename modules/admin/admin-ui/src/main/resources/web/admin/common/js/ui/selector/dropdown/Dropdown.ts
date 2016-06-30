@@ -108,7 +108,7 @@ module api.ui.selector.dropdown {
 
             this.selectedOptionView.onOpenDropdown(() => {
                 this.showDropdown();
-                this.input.giveFocus();
+                this.giveFocus();
             });
 
             this.setupListeners();
@@ -172,7 +172,8 @@ module api.ui.selector.dropdown {
         }
 
         giveFocus(): boolean {
-            return this.input.giveFocus();
+            // If input is hidden or disabled, try dropdown handler.
+            return this.input.giveFocus() || this.dropdownHandle.giveFocus();
         }
 
         isDropdownShown(): boolean {
@@ -255,22 +256,22 @@ module api.ui.selector.dropdown {
             return this;
         }
 
-        selectRow(index: number, silent: boolean = false) {
+        selectRow(index: number, silent: boolean = false, keyCode: number = -1) {
             var option = this.getOptionByRow(index);
             if (option != null) {
-                this.selectOption(option, silent);
+                this.selectOption(option, silent, keyCode);
                 api.dom.FormEl.moveFocusToNextFocusable(this.input);
             }
         }
 
-        selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
+        selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false, keyCode: number = -1) {
 
             this.dropdownList.markSelections([option]);
 
             this.selectedOptionView.setOption(option);
 
             if (!silent) {
-                this.notifyOptionSelected(option);
+                this.notifyOptionSelected(option, keyCode);
             }
 
             this.hideDropdown();
@@ -355,17 +356,14 @@ module api.ui.selector.dropdown {
 
                 if (event.which == 38) { // up
                     this.dropdownList.navigateToPreviousRow();
-                }
-                else if (event.which == 40) { // down
+                } else if (event.which == 40) { // down
                     this.dropdownList.navigateToNextRow();
-                }
-                else if (event.which == 13) { // enter
-                    this.selectRow(this.dropdownList.getActiveRow());
+                } else if (event.which == 13) { // enter
+                    this.selectRow(this.dropdownList.getActiveRow(), false, 13);
                     this.input.getEl().setValue("");
                     event.preventDefault();
                     event.stopPropagation();
-                }
-                else if (event.which == 27) { // esc
+                } else if (event.which == 27) { // esc
                     this.hideDropdown();
                 }
 
@@ -383,8 +381,8 @@ module api.ui.selector.dropdown {
             });
         }
 
-        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>) {
-            var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item);
+        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>, keyCode: number = -1) {
+            var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, -1, keyCode);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });
