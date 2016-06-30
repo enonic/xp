@@ -5,10 +5,11 @@
 import CONFIG from "../config";
 import gulp from "gulp";
 import del from "del";
+import path from "path";
 import {log, pipeError as error} from "../util/compileLogger";
 
 function resolveCleanPaths() {
-    return [`${ CONFIG.root.src }${ CONFIG.tasks.clean.pattern }`];
+    return [path.join(CONFIG.root.src, CONFIG.tasks.clean.pattern)];
 }
 
 gulp.task('clean', (cb) => {

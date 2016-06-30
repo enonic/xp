@@ -8,6 +8,7 @@ import less from "gulp-less";
 import autoprefixer from "less-plugin-autoprefix";
 import sourcemaps from "gulp-sourcemaps";
 import rename from "gulp-rename";
+import path from "path";
 import {pipeError as error} from "../util/compileLogger";
 
 const subtasks = CONFIG.tasks.css.files;
@@ -27,9 +28,8 @@ for (const name in subtasks) {
     const task = subtasks[name];
     const dest = task.assets ? CONFIG.root.assets : CONFIG.root.dest;
 
-
     gulp.task(nameResolver(name), (cb) => {
-        return gulp.src(`${CONFIG.root.src}${task.src}`)
+        return gulp.src(path.join(CONFIG.root.src, task.src))
             .pipe(sourcemaps.init())
             .pipe(less({
                 plugins: [autoprefix]
