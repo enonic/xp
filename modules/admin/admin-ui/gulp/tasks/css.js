@@ -33,7 +33,8 @@ for (const name in subtasks) {
         return gulp.src(path.join(CONFIG.root.src, task.src))
             .pipe(sourcemaps.init())
             .pipe(less({
-                plugins: [autoprefix]
+                plugins: [autoprefix],
+                relativeUrls: true
             }))
             .on('error', error.bind(null, cb))
             .pipe(sourcemaps.write())

@@ -9,6 +9,7 @@ import gulpSequence from "gulp-sequence";
 import typescript from "typescript";
 import tsc from "gulp-typescript";
 import webpack from "webpack";
+import sourcemaps from "gulp-sourcemaps";
 import assign from "deep-assign";
 import path from "path";
 import nameResolver from "../util/nameResolver";
@@ -45,13 +46,13 @@ for (const name in tsTasks) {
     const tsOptions = assign({typescript, out: task.dest}, CONFIG.tasks.js.ts);
 
     gulp.task(tsResolver(name), (cb) => {
-        tsOptions.out = task.dest;
-
         const tsResult = gulp.src(path.join(CONFIG.root.src, task.src))
+            .pipe(sourcemaps.init())
             .pipe(tsc(tsOptions));
 
         // generate *.js
         tsResult.js
+            .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest(tsDest));
 
         // generate *.d.js
