@@ -35,7 +35,8 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 
 @Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/portal/*", "osgi.http.whiteboard.servlet.pattern=/admin/*"})
+    property = {"osgi.http.whiteboard.servlet.pattern=/portal/*", "osgi.http.whiteboard.servlet.pattern=/admin/portal/*",
+        "osgi.http.whiteboard.servlet.pattern=/admin/tool"})
 public final class WebDispatcherServlet
     extends HttpServlet
 {
