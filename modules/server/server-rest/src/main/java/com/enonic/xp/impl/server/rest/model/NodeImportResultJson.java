@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.export;
+package com.enonic.xp.impl.server.rest.model;
 
 import java.util.List;
 

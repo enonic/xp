@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.content;
+package com.enonic.xp.impl.server.rest.model;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 
-final class ReprocessContentResultJson
+public final class ReprocessContentResultJson
 {
     public final List<String> updatedContent;
 

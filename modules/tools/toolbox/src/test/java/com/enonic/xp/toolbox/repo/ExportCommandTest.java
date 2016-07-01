@@ -28,7 +28,7 @@ public class ExportCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/admin/rest/export/export", request.getPath() );
+        assertEquals( "/api/repo/export", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 

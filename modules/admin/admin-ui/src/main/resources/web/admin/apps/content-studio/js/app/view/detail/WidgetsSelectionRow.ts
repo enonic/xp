@@ -1,12 +1,12 @@
 import "../../../api.ts";
+import {WidgetView} from "./WidgetView";
+import {DetailsPanel} from "./DetailsPanel";
+import {InfoWidgetToggleButton} from "./button/InfoWidgetToggleButton";
 
 import Dropdown = api.ui.selector.dropdown.Dropdown;
 import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
 import Option = api.ui.selector.Option;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-import {WidgetView} from "./WidgetView";
-import {DetailsPanel} from "./DetailsPanel";
-import {InfoWidgetToggleButton} from "./button/InfoWidgetToggleButton";
 
 export class WidgetsSelectionRow extends api.dom.DivEl {
 
@@ -103,6 +103,10 @@ export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
                     this.hideDropdown();
                 }
             }
+        });
+
+        api.util.AppHelper.focusInOut(this, () => {
+            this.hideDropdown();
         });
     }
 

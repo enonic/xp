@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.repo;
+package com.enonic.xp.impl.server.rest;
 
 import javax.ws.rs.core.MediaType;
 
@@ -8,7 +8,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
@@ -20,7 +19,7 @@ import com.enonic.xp.node.NodePath;
 import static org.mockito.Matchers.isA;
 
 public class SystemDumpResourceTest
-    extends AdminResourceTestSupport
+    extends ServerRestTestSupport
 {
     private ExportService exportService;
 

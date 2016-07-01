@@ -1,10 +1,10 @@
-package com.enonic.xp.admin.impl.rest.resource.content;
+package com.enonic.xp.impl.server.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 
-final class ReprocessContentRequestJson
+public final class ReprocessContentRequestJson
 {
     private final BranchContentPath sourceBranchPath;
 

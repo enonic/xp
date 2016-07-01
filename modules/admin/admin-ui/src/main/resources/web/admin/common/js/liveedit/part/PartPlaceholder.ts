@@ -9,6 +9,7 @@ module api.liveedit.part {
     import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPartDescriptorsByApplicationsRequest;
     import PartItemType = api.liveedit.part.PartItemType;
     import PageItemType = api.liveedit.PageItemType;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class PartPlaceholder extends ItemViewPlaceholder {
 
@@ -32,9 +33,9 @@ module api.liveedit.part {
 
             this.appendChild(this.comboBox);
 
-            this.comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<PartDescriptor>) => {
+            this.comboBox.onOptionSelected((event: SelectedOptionEvent<PartDescriptor>) => {
                 this.partComponentView.showLoadingSpinner();
-                var descriptor: Descriptor = selectedOption.getOption().displayValue;
+                var descriptor: Descriptor = event.getSelectedOption().getOption().displayValue;
                 var partComponent: PartComponent = this.partComponentView.getComponent();
                 partComponent.setDescriptor(descriptor.getKey(), descriptor);
             });

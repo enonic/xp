@@ -12,6 +12,7 @@ module api.util.htmlarea.dialog {
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import Content = api.content.Content;
     import Action = api.ui.Action;
+    import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class ImageModalDialog extends ModalDialog {
 
@@ -84,8 +85,8 @@ module api.util.htmlarea.dialog {
                 loader.load();
             }
 
-            imageSelectorComboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
-                var imageContent = selectedOption.getOption().displayValue;
+            imageSelectorComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
+                var imageContent = event.getSelectedOption().getOption().displayValue;
                 if (!imageContent.getContentId()) {
                     return;
                 }
