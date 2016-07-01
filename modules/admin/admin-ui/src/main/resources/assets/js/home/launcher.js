@@ -4,7 +4,6 @@ var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
 var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
 var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
 var appId = window.CONFIG ? window.CONFIG.appId : "";
-var minWidthForTip = 900;
 
 function appendLauncherButton() {
     launcherButton = document.createElement("button");

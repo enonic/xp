@@ -55,4 +55,101 @@
     }
   }
 
+  .xp-about-dialog-container {
+    display: none;
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    align-items: center;
+    justify-content: space-around;
+    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.4);
+
+    .xp-about-dialog {
+      position: relative;
+      max-width: 495px;
+      padding: 20px;
+      background-color: white;
+      box-sizing: border-box;
+      flex: 0 1 auto;
+
+      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1),
+      0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+
+      font-family: "Open Sans", sans-serif;
+      font-size: 14px;
+
+      .xp-about-dialog-corner-close {
+        position: absolute;
+        right: 10px;
+        top: 0px;
+        font-size: 27px;
+        transform: rotate(45deg);
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .xp-about-dialog-app-icon {
+        float: left;
+        margin-top: 10px;
+        margin-right: 15px;
+      }
+
+      a {
+        color: blue;
+      }
+
+      h1 {
+        margin: 10px 0 5px 0;
+      }
+
+      .xp-about-dialog-version-block {
+        margin-bottom: 15px;
+
+        .xp-about-dialog-version {
+          font-weight: bold;
+        }
+      }
+
+      .xp-about-dialog-text {
+        font-weight: bold;
+        text-align: justify;
+        margin-bottom: 30px;
+      }
+
+      .xp-about-dialog-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        button {
+          width: 100px;
+          height: 36px;
+          border: none;
+          text-transform: uppercase;
+          color: white;
+          cursor: pointer;
+          border-radius: 2px;
+          box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
+          0px 2px 3px 0px rgba(0, 0, 0, 0.5);
+
+          &.xp-about-dialog-button-close {
+            background-color: #DB4437;
+          }
+
+          &:active {
+            box-shadow: inset 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
+            inset 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+          }
+        }
+      }
+
+    }
+  }
+
+
 }
