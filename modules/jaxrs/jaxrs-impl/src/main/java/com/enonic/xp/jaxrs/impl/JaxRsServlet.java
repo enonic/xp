@@ -24,8 +24,7 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsService;
 
 @Component(immediate = true, service = {Servlet.class, JaxRsService.class},
-    property = {"osgi.http.whiteboard.servlet.pattern=/", "osgi.http.whiteboard.servlet.pattern=/admin/assets/*",
-        "osgi.http.whiteboard.servlet.pattern=/admin/common/*", "osgi.http.whiteboard.servlet.pattern=/admin/rest/*"})
+    property = {"osgi.http.whiteboard.servlet.pattern=/"})
 public final class JaxRsServlet
     extends HttpServlet
     implements JaxRsService
