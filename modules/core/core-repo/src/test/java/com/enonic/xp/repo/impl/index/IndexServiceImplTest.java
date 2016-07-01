@@ -99,7 +99,6 @@ public class IndexServiceImplTest
         assertNotNull( queryForNode( rootNode.id() ) );
     }
 
-
     @Test
     public void purge_then_reindex()
         throws Exception

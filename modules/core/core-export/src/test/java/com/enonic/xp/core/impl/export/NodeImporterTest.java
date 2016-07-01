@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -364,7 +365,7 @@ public class NodeImporterTest
         assertNotNull( attachedBinary.getBlobKey() );
     }
 
-    @org.junit.Ignore
+    @Ignore
     @Test
     public void import_special_characters()
         throws Exception
