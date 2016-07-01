@@ -4,7 +4,9 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -40,6 +42,9 @@ public abstract class BasePortalHandler
 
         try
         {
+            PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
+            ContextAccessor.current().getLocalScope().setAttribute( portalRequest.getBranch() );
+
             final WebResponse returnedWebResponse = webHandlerChain.handle( portalRequest, webResponse );
             exceptionMapper.throwIfNeeded( returnedWebResponse );
             return returnedWebResponse;
