@@ -19,6 +19,7 @@
     "gulp-babel": "^6.1.2",
     "gulp-include": "^2.3.0",
     "gulp-less": "^3.1.0",
+    "gulp-newer": "^1.2.0",
     "gulp-notify": "^2.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-sequence": "^0.4.5",
@@ -27,8 +28,10 @@
     "gulp-util": "^3.0.7",
     "less-plugin-autoprefix": "^1.5.1",
     "require-dir": "^0.3.0",
+    "through": "^2.3.8",
     "ts-loader": "^0.8.2",
     "typescript": "1.6.2",
+    "vinyl": "^1.1.1",
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1"
   },

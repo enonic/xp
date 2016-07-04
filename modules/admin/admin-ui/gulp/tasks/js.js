@@ -6,13 +6,18 @@
 import CONFIG from "../config";
 import gulp from "gulp";
 import gulpSequence from "gulp-sequence";
-import typescript from "typescript";
 import tsc from "gulp-typescript";
-import webpack from "webpack";
+import typescript from "typescript";
 import sourcemaps from "gulp-sourcemaps";
+import newer from "gulp-newer";
+import through from "through";
+import File from "vinyl";
+import fs from "fs";
+import webpack from "webpack";
 import assign from "deep-assign";
 import path from "path";
 import nameResolver from "../util/nameResolver";
+import pathResolver, {anyPath} from "../util/pathResolver";
 import webpackConfig from "../util/webpackConfig";
 import logger from "../util/compileLogger";
 
@@ -20,7 +25,7 @@ const subtasks = CONFIG.tasks.js.files;
 
 const tsResolver = nameResolver.bind(null, 'ts');
 
-const filterTasks = (tasks, callback) => {
+function filterTasks(tasks, callback) {
     const filtered = {};
 
     for (const name in tasks) {
@@ -30,7 +35,7 @@ const filterTasks = (tasks, callback) => {
     }
 
     return filtered;
-};
+}
 
 /*
  Modules processed with plain TS compiler and gulp.
@@ -39,25 +44,42 @@ const filterTasks = (tasks, callback) => {
  js: live
  */
 const tsTasks = filterTasks(subtasks, task => !task.name);
-const tsDest = CONFIG.root.src;
 
 for (const name in tsTasks) {
     const task = tsTasks[name];
     const tsOptions = assign({typescript, out: task.dest}, CONFIG.tasks.js.ts);
 
-    gulp.task(tsResolver(name), (cb) => {
-        const tsResult = gulp.src(path.join(CONFIG.root.src, task.src))
+    const taskPath = pathResolver(CONFIG.root.src, task.src, task.dest);
+    const newerPath = anyPath(taskPath.src.dir, 'ts');
+
+    gulp.task(tsResolver(name), () => {
+        const tsNewer = gulp.src(newerPath)
+            .pipe(newer(taskPath.dest.full))
+            .pipe(through(function () {
+                // If any files get through newer, just return the one entry
+                this.queue(new File({
+                    base: path.dirname(taskPath.src.full),
+                    path: taskPath.src.full,
+                    contents: new Buffer(fs.readFileSync(taskPath.src.full))
+                }));
+
+                // End stream by passing null to queue
+                // and ignore any other additional files
+                this.queue(null);
+            }));
+
+        const tsResult = tsNewer
             .pipe(sourcemaps.init())
             .pipe(tsc(tsOptions));
 
         // generate *.js
         tsResult.js
             .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest(tsDest));
+            .pipe(gulp.dest(taskPath.root));
 
         // generate *.d.js
         return tsResult.dts
-            .pipe(gulp.dest(tsDest))
+            .pipe(gulp.dest(taskPath.root));
     });
 }
 

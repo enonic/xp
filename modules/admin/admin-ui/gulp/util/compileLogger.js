@@ -10,10 +10,10 @@ export default (err, stats) => {
     let statColor = stats.compilation.warnings.length < 1 ? 'green' : 'yellow';
 
     if (stats.compilation.errors.length > 0) {
-        stats.compilation.errors.forEach(error => {
-            handleErrors(error);
-            statColor = 'red';
-        });
+        // stats.compilation.errors.forEach(error => {
+        //     handleErrors(error);
+        //     statColor = 'red';
+        // });
     } else {
         const compileTime = prettifyTime(stats.endTime - stats.startTime);
         const options = {hash: false, timings: false, chunks: false};
