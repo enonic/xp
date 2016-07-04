@@ -257,7 +257,9 @@ module api.util.htmlarea.editor {
 
         private notifyLinkDialog(config) {
             let event = CreateHtmlAreaDialogEvent.create().
-                setConfig(config).setType(api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).setContent(this.content).
+                setConfig(config).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).
+                setContent(this.content).
                 build();
             this.publishCreateDialogEvent(event);
         }
@@ -282,6 +284,9 @@ module api.util.htmlarea.editor {
                 setConfig(config).
                 setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContentPath(this.contentPath).setApplicationKeys(
                 this.applicationKeys).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).
+                setContent(this.content).
+                setApplicationKeys(this.applicationKeys).
                 build();
             this.publishCreateDialogEvent(event);
         }

@@ -5,7 +5,7 @@ module api.util.htmlarea.dialog {
     import FormView = api.form.FormView;
     import DockedPanel = api.ui.panel.DockedPanel;
     import Panel = api.ui.panel.Panel;
-    import FormContext = api.form.FormContext;
+    import ContentFormContext = api.content.form.ContentFormContext;
     import Form = api.form.Form;
 
     import Input = api.form.Input;
@@ -24,7 +24,7 @@ module api.util.htmlarea.dialog {
         private configPanel: Panel;
         private previewPanel: Panel;
 
-        private contentPath: api.content.ContentPath;
+        private content: api.content.ContentSummary;
         private macroDescriptor: MacroDescriptor;
         private previewResolved: boolean = false;
         private macroPreview: MacroPreview;
@@ -35,9 +35,9 @@ module api.util.htmlarea.dialog {
 
         private panelRenderedListeners: {(): void}[] = [];
 
-        constructor(contentPath: api.content.ContentPath) {
+        constructor(content: api.content.ContentSummary) {
             super();
-            this.contentPath = contentPath;
+            this.content = content;
 
             this.addItem(MacroDockedPanel.CONFIGURATION_TAB_NAME, true, this.createConfigurationPanel());
             this.addItem(MacroDockedPanel.PREVIEW_TAB_NAME, true, this.createPreviewPanel());
@@ -97,7 +97,7 @@ module api.util.htmlarea.dialog {
             return new api.macro.resource.GetPreviewRequest(
                 new api.data.PropertyTree(this.data),
                 this.macroDescriptor.getKey(),
-                this.contentPath).
+                this.content.getPath()).
                 sendAndParse();
         }
 
@@ -179,7 +179,12 @@ module api.util.htmlarea.dialog {
             this.selectPanel(this.configPanel);
 
             if (!!macroDescriptor) {
-                var formView: FormView = new FormView(FormContext.create().build(), macroDescriptor.getForm(), this.data);
+                var formView: FormView = new FormView(api.content.form.ContentFormContext.
+                        create().
+                        setPersistedContent(<api.content.Content>this.content).
+                        build(),
+                    macroDescriptor.getForm(), this.data);
+
                 this.renderConfigView(formView)
             }
         }
