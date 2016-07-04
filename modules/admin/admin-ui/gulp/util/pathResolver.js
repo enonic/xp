@@ -1,11 +1,14 @@
 import path from "path";
 
-export default (root, src, dest) => {
-    const fullSrc = path.join(root, src);
-    const fullDest = path.join(root, dest);
+export default (src, dest, root) => commonPaths(src, dest, root, root);
+
+export function commonPaths(src, dest, srcRoot, destRoot) {
+    const fullSrc = path.join(srcRoot, src);
+    const fullDest = path.join(destRoot, dest);
 
     return {
-        root,
+        srcRoot,
+        destRoot,
         src: {
             full: fullSrc,
             dir: path.dirname(fullSrc),
@@ -17,8 +20,8 @@ export default (root, src, dest) => {
             base: path.basename(fullDest)
         }
     }
-};
+}
 
-export const anyPath = (root, ext = '*') => {
+export function anyPath(root, ext = '*') {
     return `${root}${path.sep}**${path.sep}*.${ext}`;
-};
+}

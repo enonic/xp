@@ -49,10 +49,11 @@ for (const name in tsTasks) {
     const task = tsTasks[name];
     const tsOptions = assign({typescript, out: task.dest}, CONFIG.tasks.js.ts);
 
-    const taskPath = pathResolver(CONFIG.root.src, task.src, task.dest);
+    const taskPath = pathResolver(task.src, task.dest, CONFIG.root.src);
     const newerPath = anyPath(taskPath.src.dir, 'ts');
 
     gulp.task(tsResolver(name), () => {
+
         const tsNewer = gulp.src(newerPath)
             .pipe(newer(taskPath.dest.full))
             .pipe(through(function () {
@@ -75,11 +76,11 @@ for (const name in tsTasks) {
         // generate *.js
         tsResult.js
             .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest(taskPath.root));
+            .pipe(gulp.dest(taskPath.destRoot));
 
         // generate *.d.js
         return tsResult.dts
-            .pipe(gulp.dest(taskPath.root));
+            .pipe(gulp.dest(taskPath.destRoot));
     });
 }
 
