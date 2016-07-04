@@ -10,12 +10,9 @@ import tsc from "gulp-typescript";
 import typescript from "typescript";
 import sourcemaps from "gulp-sourcemaps";
 import newer from "gulp-newer";
-import through from "through";
-import File from "vinyl";
-import fs from "fs";
 import webpack from "webpack";
 import assign from "deep-assign";
-import path from "path";
+import newerStream from "../util/newerStream";
 import nameResolver from "../util/nameResolver";
 import pathResolver, {anyPath} from "../util/pathResolver";
 import webpackConfig from "../util/webpackConfig";
@@ -56,18 +53,7 @@ for (const name in tsTasks) {
 
         const tsNewer = gulp.src(newerPath)
             .pipe(newer(taskPath.dest.full))
-            .pipe(through(function () {
-                // If any files get through newer, just return the one entry
-                this.queue(new File({
-                    base: path.dirname(taskPath.src.full),
-                    path: taskPath.src.full,
-                    contents: new Buffer(fs.readFileSync(taskPath.src.full))
-                }));
-
-                // End stream by passing null to queue
-                // and ignore any other additional files
-                this.queue(null);
-            }));
+            .pipe(newerStream(taskPath.src.full));
 
         const tsResult = tsNewer
             .pipe(sourcemaps.init())
