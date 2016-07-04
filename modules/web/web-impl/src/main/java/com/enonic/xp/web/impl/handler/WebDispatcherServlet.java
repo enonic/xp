@@ -143,7 +143,6 @@ public final class WebDispatcherServlet
     {
         final WebException exception = this.exceptionMapper.map( cause );
         final WebResponse webResponse = this.exceptionRenderer.render( req, exception );
-        req.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
         return webResponse;
     }
 
