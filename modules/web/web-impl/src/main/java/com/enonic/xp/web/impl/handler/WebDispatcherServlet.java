@@ -131,7 +131,7 @@ public final class WebDispatcherServlet
         try
         {
             final WebResponse webResponse = webDispatcher.dispatch( webRequest, WebResponse.create().build() );
-            return filterResponse( webResponse );
+            return filterResponse( webRequest, webResponse );
         }
         catch ( Exception e )
         {
@@ -142,14 +142,19 @@ public final class WebDispatcherServlet
     private WebResponse handleError( final WebRequest req, final Exception cause )
     {
         final WebException exception = this.exceptionMapper.map( cause );
-        return this.exceptionRenderer.render( req, exception );
+        final WebResponse webResponse = this.exceptionRenderer.render( req, exception );
+        req.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
+        return webResponse;
     }
 
-    private WebResponse filterResponse( final WebResponse res )
+    private WebResponse filterResponse( final WebRequest webRequest, final WebResponse webResponse )
         throws Exception
     {
-        this.exceptionMapper.throwIfNeeded( res );
-        return res;
+        if ( webRequest.getRawRequest().getAttribute( "error.handled" ) != Boolean.TRUE )
+        {
+            this.exceptionMapper.throwIfNeeded( webResponse );
+        }
+        return webResponse;
     }
 
     private static String findEndpointPath( final String path )

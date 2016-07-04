@@ -67,7 +67,6 @@ public final class ExceptionRendererImpl
                 final PortalResponse statusCustomError = renderCustomError( portalRequest, cause, handlerMethod );
                 if ( statusCustomError != null )
                 {
-                    portalRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
                     return statusCustomError;
                 }
             }
@@ -75,14 +74,12 @@ public final class ExceptionRendererImpl
             final PortalResponse idProviderError = renderIdProviderError( portalRequest, cause );
             if ( idProviderError != null )
             {
-                portalRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
                 return idProviderError;
             }
 
             final PortalResponse defaultCustomError = renderCustomError( portalRequest, cause, DEFAULT_HANDLER );
             if ( defaultCustomError != null )
             {
-                portalRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
                 return defaultCustomError;
             }
         }

@@ -60,7 +60,10 @@ public abstract class BasePortalHandler
     private WebResponse handleError( final WebRequest webRequest, final Exception e )
     {
         final WebException webException = exceptionMapper.map( e );
-        return exceptionRenderer.render( webRequest, webException );
+        final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
+        webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
+
+        return webResponse;
     }
 
     protected static Branch findBranch( final String baseSubPath )
