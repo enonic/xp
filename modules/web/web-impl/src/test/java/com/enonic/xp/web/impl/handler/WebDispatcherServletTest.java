@@ -17,8 +17,8 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
-import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package com.enonic.xp.web.impl.websocket;
+package com.enonic.xp.portal.impl.websocket;
 
 interface WebSocketEntry
 {

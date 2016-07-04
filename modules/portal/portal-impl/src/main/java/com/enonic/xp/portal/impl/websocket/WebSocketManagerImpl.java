@@ -1,4 +1,4 @@
-package com.enonic.xp.web.impl.websocket;
+package com.enonic.xp.portal.impl.websocket;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -6,8 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.web.websocket.WebSocketContext;
-import com.enonic.xp.web.websocket.WebSocketManager;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
 @Component(service = {WebSocketManager.class, WebSocketContextFactory.class})

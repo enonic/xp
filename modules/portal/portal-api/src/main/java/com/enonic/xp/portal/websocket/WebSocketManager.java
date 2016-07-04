@@ -1,4 +1,4 @@
-package com.enonic.xp.web.websocket;
+package com.enonic.xp.portal.websocket;
 
 public interface WebSocketManager
 {
