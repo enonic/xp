@@ -21,11 +21,15 @@ module api.content {
         }
 
         sendAndParse(): wemQ.Promise<ContentSummary[]> {
-
-            return this.send().then((response: api.rest.JsonResponse<BatchContentResult<api.content.json.ContentSummaryJson>>) => {
-                return ContentSummary.fromJsonArray(response.getResult().contents);
-
-            });
+            if(this.ids && this.ids.length > 0) {
+                return this.send().then((response: api.rest.JsonResponse<BatchContentResult<api.content.json.ContentSummaryJson>>) => {
+                    return ContentSummary.fromJsonArray(response.getResult().contents);
+                });
+            } else {
+                var deferred = wemQ.defer<ContentSummary[]>();
+                deferred.resolve([]);
+                return deferred.promise;
+            }
         }
 
     }
