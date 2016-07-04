@@ -19,13 +19,13 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.impl.PortalRequestAdapter;
-import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.serializer.ResponseSerializationService;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -38,6 +38,8 @@ public class AuthControllerServiceImpl
     private AuthDescriptorService authDescriptorService;
 
     private SecurityService securityService;
+
+    private ResponseSerializationService responseSerializationService;
 
     @Override
     public PortalResponse execute( final AuthControllerExecutionParams params )
@@ -69,8 +71,7 @@ public class AuthControllerServiceImpl
                     final HttpServletResponse response = params.getResponse();
                     if ( response != null )
                     {
-                        final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
-                        serializer.serialize( response );
+                        responseSerializationService.serialize( portalRequest, portalResponse, response );
                     }
                 }
                 return portalResponse;
@@ -145,5 +146,11 @@ public class AuthControllerServiceImpl
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
+    }
+
+    @Reference
+    public void setResponseSerializationService( final ResponseSerializationService responseSerializationService )
+    {
+        this.responseSerializationService = responseSerializationService;
     }
 }

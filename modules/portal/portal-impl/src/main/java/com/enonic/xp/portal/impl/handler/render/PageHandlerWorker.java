@@ -9,6 +9,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
@@ -27,8 +28,13 @@ final class PageHandlerWorker
 
     protected PortalUrlService portalUrlService;
 
+    public PageHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final ContentPath contentPath = this.request.getContentPath();
@@ -40,8 +46,7 @@ final class PageHandlerWorker
         final Content content = getContent( getContentSelector() );
         if ( content.getType().isShortcut() )
         {
-            renderShortcut( content );
-            return;
+            return renderShortcut( content );
         }
 
         final Site site = getSite( content );
@@ -98,11 +103,10 @@ final class PageHandlerWorker
         this.request.setPageDescriptor( pageDescriptor );
 
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( effectiveContent );
-        final PortalResponse response = renderer.render( effectiveContent, this.request );
-        this.response = PortalResponse.create( response );
+        return renderer.render( effectiveContent, this.request );
     }
 
-    private void renderShortcut( final Content content )
+    private PortalResponse renderShortcut( final Content content )
     {
         final Property shortcut = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY );
         final Reference target = shortcut == null ? null : shortcut.getReference();
@@ -116,8 +120,10 @@ final class PageHandlerWorker
 
         final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
 
-        this.response.status( HttpStatus.TEMPORARY_REDIRECT );
-        this.response.header( "Location", targetUrl );
+        return PortalResponse.create().
+            status( HttpStatus.TEMPORARY_REDIRECT ).
+            header( "Location", targetUrl ).
+            build();
     }
 
     private PageDescriptor getPageDescriptor( final DescriptorKey descriptorKey )

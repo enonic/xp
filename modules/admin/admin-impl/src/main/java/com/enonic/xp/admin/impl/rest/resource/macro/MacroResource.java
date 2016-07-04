@@ -193,6 +193,8 @@ public final class MacroResource
             portalRequest( portalRequest ).
             path( contentPath.toString() );
         portalRequest.setPath( portalUrlService.pageUrl( pageUrlParams ) );
+        portalRequest.setRawPath(
+            "/admin/portal/" + RenderMode.EDIT.toString() + "/" + ContentConstants.BRANCH_DRAFT.toString() + contentPath.toString() );
 
         portalRequest.setApplicationKey( appKey );
         final Content content = getContent( contentPath );

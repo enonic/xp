@@ -1,8 +1,8 @@
 package com.enonic.xp.lib.websocket;
 
-import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.web.websocket.WebSocketManager;
 
 public abstract class AbstractWebSocketBean
     implements ScriptBean

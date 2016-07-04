@@ -4,6 +4,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
@@ -22,8 +23,13 @@ final class ComponentHandlerWorker
 
     protected PostProcessor postProcessor;
 
+    public ComponentHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final Content content = getContent( getContentSelector() );
@@ -96,9 +102,7 @@ final class ComponentHandlerWorker
         this.request.setPageDescriptor( null );
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
-        PortalResponse response = renderer.render( component, this.request );
-        response = this.postProcessor.processResponseInstructions( this.request, response );
-
-        this.response = PortalResponse.create( response );
+        final PortalResponse response = renderer.render( component, this.request );
+        return this.postProcessor.processResponseInstructions( this.request, response );
     }
 }
