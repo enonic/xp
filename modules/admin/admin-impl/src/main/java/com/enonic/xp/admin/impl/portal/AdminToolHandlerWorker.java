@@ -4,6 +4,7 @@ import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -21,8 +22,13 @@ final class AdminToolHandlerWorker
 
     protected DescriptorKey descriptorKey;
 
+    public AdminToolHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         //Retrieves the AdminToolDescriptor
@@ -42,9 +48,10 @@ final class AdminToolHandlerWorker
         }
 
         //Render the Admin application
+        this.request.setBaseUri( AdminToolHandler.ADMIN_TOOL_PREFIX + descriptorKey.getApplicationKey() + "/" + descriptorKey.getName() );
         this.request.setApplicationKey( descriptorKey.getApplicationKey() );
         final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/tools/" + descriptorKey.getName() );
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
-        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+        return controllerScript.execute( this.request );
     }
 }

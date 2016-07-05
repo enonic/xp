@@ -9,14 +9,17 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.service.ServiceDescriptorService;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class ServiceHandler
     extends EndpointHandler
 {
@@ -36,10 +39,10 @@ public final class ServiceHandler
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String restPath = findRestPath( req );
+        final String restPath = findRestPath( webRequest );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
@@ -47,14 +50,17 @@ public final class ServiceHandler
             throw notFound( "Not a valid service url pattern" );
         }
 
-        final ServiceHandlerWorker worker = new ServiceHandlerWorker();
+        final PortalRequest portalRequest =
+            webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+
+        final ServiceHandlerWorker worker = new ServiceHandlerWorker( portalRequest );
         worker.applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         worker.name = matcher.group( 2 );
         worker.setContentService( this.contentService );
         worker.resourceService = this.resourceService;
         worker.serviceDescriptorService = this.serviceDescriptorService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
-        return worker;
+        return worker.execute();
     }
 
     @Reference

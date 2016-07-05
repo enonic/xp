@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.serializer;
+package com.enonic.xp.web.impl.serializer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -11,21 +11,21 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
 
 public final class ResponseSerializer
 {
-    private final PortalRequest portalRequest;
+    private final WebRequest webRequest;
 
-    private final PortalResponse portalResponse;
+    private final WebResponse webResponse;
 
-    public ResponseSerializer( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    public ResponseSerializer( final WebRequest webRequest, final WebResponse webResponse )
     {
-        this.portalRequest = portalRequest;
-        this.portalResponse = portalResponse;
+        this.webRequest = webRequest;
+        this.webResponse = webResponse;
     }
 
     public void serialize( final HttpServletResponse response )
@@ -36,12 +36,12 @@ public final class ResponseSerializer
             return;
         }
 
-        response.setStatus( this.portalResponse.getStatus().value() );
-        response.setContentType( this.portalResponse.getContentType().toString() );
+        response.setStatus( this.webResponse.getStatus().value() );
+        response.setContentType( this.webResponse.getContentType().toString() );
 
-        serializeHeaders( response, this.portalResponse.getHeaders() );
-        serializeCookies( response, this.portalResponse.getCookies() );
-        serializeBody( response, this.portalResponse.getBody() );
+        serializeHeaders( response, this.webResponse.getHeaders() );
+        serializeCookies( response, this.webResponse.getCookies() );
+        serializeBody( response, this.webResponse.getBody() );
     }
 
     private void serializeCookies( final HttpServletResponse response, final ImmutableList<Cookie> cookies )
@@ -142,6 +142,6 @@ public final class ResponseSerializer
 
     private boolean isHeadRequest()
     {
-        return this.portalRequest.getMethod() == HttpMethod.HEAD;
+        return this.webRequest.getMethod() == HttpMethod.HEAD;
     }
 }

@@ -1,6 +1,4 @@
-package com.enonic.xp.portal.websocket;
-
-import com.enonic.xp.web.websocket.WebSocketConfig;
+package com.enonic.xp.web.websocket;
 
 public interface WebSocketEndpoint
 {

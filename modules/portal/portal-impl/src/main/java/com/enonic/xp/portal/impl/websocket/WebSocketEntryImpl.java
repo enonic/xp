@@ -10,9 +10,9 @@ import javax.websocket.Session;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.portal.websocket.WebSocketEndpoint;
-import com.enonic.xp.portal.websocket.WebSocketEvent;
-import com.enonic.xp.portal.websocket.WebSocketEventType;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
+import com.enonic.xp.web.websocket.WebSocketEvent;
+import com.enonic.xp.web.websocket.WebSocketEventType;
 
 final class WebSocketEntryImpl
     extends Endpoint

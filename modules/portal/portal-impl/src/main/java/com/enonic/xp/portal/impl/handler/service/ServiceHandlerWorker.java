@@ -4,11 +4,11 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
-import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -17,6 +17,8 @@ import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 final class ServiceHandlerWorker
     extends ControllerHandlerWorker
@@ -35,8 +37,13 @@ final class ServiceHandlerWorker
 
     protected ControllerScriptFactory controllerScriptFactory;
 
+    public ServiceHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         //Retrieves the ServiceDescriptor
@@ -65,7 +72,17 @@ final class ServiceHandlerWorker
 
         //Executes the service
         final ControllerScript controllerScript = getScript();
-        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+        final PortalResponse portalResponse = controllerScript.execute( this.request );
+
+        final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
+        final WebSocketContext webSocketContext = this.request.getWebSocketContext();
+        if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
+        {
+            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig );
+            webSocketContext.apply( webSocketEndpoint );
+        }
+
+        return portalResponse;
     }
 
     private ControllerScript getScript()
@@ -81,8 +98,7 @@ final class ServiceHandlerWorker
         return this.controllerScriptFactory.fromDir( resource.getKey() );
     }
 
-    @Override
-    public WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
+    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
     {
         return new WebSocketEndpointImpl( config, this::getScript );
     }

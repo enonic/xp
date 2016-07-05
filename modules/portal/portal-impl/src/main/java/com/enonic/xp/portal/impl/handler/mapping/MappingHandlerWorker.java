@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -12,7 +13,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 
 final class MappingHandlerWorker
-    extends PortalHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     protected ResourceService resourceService;
 
@@ -22,8 +23,13 @@ final class MappingHandlerWorker
 
     protected RendererFactory rendererFactory;
 
+    public MappingHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final ControllerScript controllerScript = getScript();
@@ -32,27 +38,26 @@ final class MappingHandlerWorker
 
         if ( this.request.getContent().hasPage() )
         {
-            renderPage( controllerScript );
+            return renderPage( controllerScript );
         }
         else
         {
-            renderController( controllerScript );
+            return renderController( controllerScript );
         }
     }
 
-    private void renderPage( final ControllerScript controllerScript )
+    private PortalResponse renderPage( final ControllerScript controllerScript )
     {
         this.request.setControllerScript( controllerScript );
 
         final Content content = this.request.getContent();
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( content );
-        final PortalResponse response = renderer.render( content, this.request );
-        this.response = PortalResponse.create( response );
+        return renderer.render( content, this.request );
     }
 
-    private void renderController( final ControllerScript controllerScript )
+    private PortalResponse renderController( final ControllerScript controllerScript )
     {
-        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+        return controllerScript.execute( this.request );
     }
 
     private ControllerScript getScript()

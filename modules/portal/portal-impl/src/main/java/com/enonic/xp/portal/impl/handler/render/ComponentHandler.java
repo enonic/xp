@@ -7,14 +7,17 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.ComponentPath;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class ComponentHandler
     extends EndpointHandler
 {
@@ -34,20 +37,25 @@ public final class ComponentHandler
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    public boolean canHandle( final WebRequest webRequest )
+    {
+        return super.canHandle( webRequest ) && webRequest instanceof PortalRequest;
+    }
+
+    @Override
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String restPath = findRestPath( req );
+        final String restPath = findRestPath( webRequest );
 
-        final ComponentHandlerWorker worker = new ComponentHandlerWorker();
+        final ComponentHandlerWorker worker = new ComponentHandlerWorker( (PortalRequest) webRequest );
         worker.componentPath = ComponentPath.from( restPath );
         worker.setContentService( this.contentService );
         worker.rendererFactory = rendererFactory;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
         worker.postProcessor = postProcessor;
-
-        return worker;
+        return worker.execute();
     }
 
     @Reference
