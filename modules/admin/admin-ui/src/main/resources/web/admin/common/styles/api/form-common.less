@@ -24,8 +24,14 @@
     display: none;
   }
 
-  &.may-display-validation-errors .input-view {
-    padding-top: 10px;
+  &.panel-may-display-validation-errors {
+    .input-view {
+      padding-top: 10px;
+    }
+    &.display-validation-errors .input-view {
+      padding: 10px 10px 10px 10px;
+      margin: 0px -10px 5px -10px;
+    }
   }
 
   &.display-validation-errors {
