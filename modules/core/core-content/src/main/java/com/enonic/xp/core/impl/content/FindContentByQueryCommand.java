@@ -6,6 +6,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 
@@ -31,7 +32,9 @@ final class FindContentByQueryCommand
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
-        final Nodes foundNodes = result.getNodes();
+        final NodeIds nodeIds = result.getNodeIds();
+
+        final Nodes foundNodes = this.nodeService.getByIds( nodeIds );
 
         Contents contents = this.translator.fromNodes( foundNodes, true );
 

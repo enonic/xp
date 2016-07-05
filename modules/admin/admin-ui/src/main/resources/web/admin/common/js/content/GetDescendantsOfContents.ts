@@ -1,8 +1,12 @@
 module api.content {
 
-    export class GetDescendantsOfContents extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
+    export class GetDescendantsOfContents extends ContentResourceRequest<api.content.json.ContentIdBaseItemJson[], ContentId[]> {
 
         private contentPaths: ContentPath[] = [];
+
+        private filterStatuses: CompareStatus[] = [];
+
+        public static LOAD_SIZE: number = 20;
 
         constructor(contentPath?: ContentPath) {
             super();
@@ -17,6 +21,11 @@ module api.content {
             return this;
         }
 
+        setFilterStatuses(filterStatuses: CompareStatus[]): GetDescendantsOfContents {
+            this.filterStatuses = filterStatuses;
+            return this;
+        }
+
         addContentPath(contentPath: ContentPath): GetDescendantsOfContents {
             this.contentPaths.push(contentPath);
             return this;
@@ -27,7 +36,8 @@ module api.content {
                 return contentPath.toString();
             };
             return {
-                contentPaths: this.contentPaths.map(fn)
+                contentPaths: this.contentPaths.map(fn),
+                filterStatuses: this.filterStatuses
             };
         }
 
@@ -35,13 +45,10 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "getDescendantsOfContents");
         }
 
-        sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
+        sendAndParse(): wemQ.Promise<ContentId[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
-                return new ContentResponse(
-                    ContentSummary.fromJsonArray(response.getResult().contents),
-                    new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
-                );
+            return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentIdBaseItemJson[]>) => {
+                return response.getResult().map((item => new ContentId(item.id)))
             });
         }
     }

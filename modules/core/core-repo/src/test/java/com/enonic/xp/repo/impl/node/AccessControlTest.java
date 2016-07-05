@@ -9,7 +9,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -106,17 +105,5 @@ public class AccessControlTest
 
         assertNotNull( anonContextWithAdminUserRole.callWith( () -> getNode( node.id() ) ) );
     }
-
-    private Node getNode( final NodeId nodeId )
-    {
-        return GetNodeByIdCommand.create().
-            id( nodeId ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
-    }
-
 
 }

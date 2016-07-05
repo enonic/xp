@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.image;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,12 +14,15 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class ImageHandler
     extends EndpointHandler
 {
@@ -32,15 +36,14 @@ public final class ImageHandler
 
     public ImageHandler()
     {
-        super( "image" );
-        setMethodsAllowed( HttpMethod.GET, HttpMethod.HEAD );
+        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String restPath = findRestPath( req );
+        final String restPath = findRestPath( webRequest );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
@@ -48,7 +51,10 @@ public final class ImageHandler
             throw notFound( "Not a valid image url pattern" );
         }
 
-        final ImageHandlerWorker worker = new ImageHandlerWorker();
+        final PortalRequest portalRequest =
+            webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+
+        final ImageHandlerWorker worker = new ImageHandlerWorker( portalRequest );
         worker.contentId = ContentId.from( matcher.group( 1 ) );
         worker.cacheable = matcher.group( 2 ) != null;
         worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 3 ) );
@@ -56,14 +62,14 @@ public final class ImageHandler
         worker.imageService = this.imageService;
         worker.contentService = this.contentService;
         worker.mediaInfoService = this.mediaInfoService;
-        worker.filterParam = getParameter( req, "filter" );
-        worker.qualityParam = getParameter( req, "quality" );
-        worker.backgroundParam = getParameter( req, "background" );
+        worker.filterParam = getParameter( webRequest, "filter" );
+        worker.qualityParam = getParameter( webRequest, "quality" );
+        worker.backgroundParam = getParameter( webRequest, "background" );
 
-        return worker;
+        return worker.execute();
     }
 
-    private String getParameter( final PortalRequest req, final String name )
+    private String getParameter( final WebRequest req, final String name )
     {
         final Collection<String> values = req.getParams().get( name );
         return values.isEmpty() ? null : values.iterator().next();

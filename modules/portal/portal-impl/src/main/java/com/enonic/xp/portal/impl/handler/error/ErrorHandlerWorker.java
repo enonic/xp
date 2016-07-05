@@ -1,8 +1,10 @@
 package com.enonic.xp.portal.impl.handler.error;
 
-import com.enonic.xp.portal.PortalException;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebRequest;
 
 final class ErrorHandlerWorker
     extends PortalHandlerWorker
@@ -11,8 +13,13 @@ final class ErrorHandlerWorker
 
     protected String message;
 
+    public ErrorHandlerWorker( final WebRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         if ( this.code == null )
@@ -25,6 +32,6 @@ final class ErrorHandlerWorker
             this.message = this.code.getReasonPhrase();
         }
 
-        throw new PortalException( this.code, this.message );
+        throw new WebException( this.code, this.message );
     }
 }

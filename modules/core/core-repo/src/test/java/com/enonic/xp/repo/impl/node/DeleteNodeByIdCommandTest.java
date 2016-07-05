@@ -5,7 +5,12 @@ import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -30,7 +35,13 @@ public class DeleteNodeByIdCommandTest
             build() );
         refresh();
 
+        refresh();
+
+        printContentRepoIndex();
+
         doDeleteNode( createdNode.id() );
+
+        printContentRepoIndex();
 
         assertNull( getNodeById( createdNode.id() ) );
     }
@@ -113,4 +124,36 @@ public class DeleteNodeByIdCommandTest
         assertNull( getNodeById( childChildNode2.id() ) );
     }
 
+    @Test(expected = NodeAccessException.class)
+    public void delete_with_children_require_permission()
+        throws Exception
+    {
+        final AccessControlList noDeletePermission = AccessControlList.create().
+            add( AccessControlEntry.create().
+                allowAll().
+                deny( Permission.DELETE ).
+                principal( TEST_DEFAULT_USER.getKey() ).
+                build() ).
+            add( AccessControlEntry.create().
+                allowAll().
+                deny( Permission.DELETE ).
+                principal( RoleKeys.AUTHENTICATED ).
+                build() ).
+            build();
+
+        final Node parentNode = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+        refresh();
+
+        createNode( CreateNodeParams.create().
+            parent( parentNode.path() ).
+            name( "my-node" ).
+            permissions( noDeletePermission ).
+            build() );
+        refresh();
+
+        doDeleteNode( parentNode.id() );
+    }
 }

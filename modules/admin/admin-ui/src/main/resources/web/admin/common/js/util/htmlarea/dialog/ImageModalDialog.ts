@@ -97,12 +97,6 @@ module api.util.htmlarea.dialog {
                 formItem.addClass("selected-item-preview");
             });
 
-            imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                if (event.isExpanded()) {
-                    this.adjustSelectorDropDown(imageSelectorComboBox.getInput(), event.getDropdownElement().getEl());
-                }
-            });
-
             imageSelectorComboBox.onOptionDeselected(() => {
                 formItem.removeClass("selected-item-preview");
                 this.displayValidationErrors(false);
@@ -157,14 +151,6 @@ module api.util.htmlarea.dialog {
             });
 
             return filteredImages.length > 0 ? filteredImages[0] : null;
-        }
-
-        private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
-            var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
-
-            dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder() - 2);
-            dropDownElement.setTopPx(inputPosition.top + inputElement.getEl().getHeightWithBorder() - 1);
-            dropDownElement.setLeftPx(inputPosition.left);
         }
 
         private createImgElForExistingImage(imageContent: api.content.ContentSummary) {

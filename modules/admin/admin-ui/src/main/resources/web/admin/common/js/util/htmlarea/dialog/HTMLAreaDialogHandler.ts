@@ -18,7 +18,7 @@ module api.util.htmlarea.dialog {
                 modalDialog = this.openLinkDialog(event.getConfig(), event.getContent());
                 break;
             case HtmlAreaDialogType.MACRO:
-                modalDialog = this.openMacroDialog(event.getConfig(), event.getContentPath(), event.getApplicationKeys());
+                modalDialog = this.openMacroDialog(event.getConfig(), event.getContent(), event.getApplicationKeys());
                 break;
             }
 
@@ -48,9 +48,9 @@ module api.util.htmlarea.dialog {
             return this.openDialog(new AnchorModalDialog(editor));
         }
 
-        private static openMacroDialog(config: HtmlAreaMacro, contentPath: api.content.ContentPath,
+        private static openMacroDialog(config: HtmlAreaMacro, content: api.content.ContentSummary,
                                        applicationKeys: api.application.ApplicationKey[]): ModalDialog {
-            return this.openDialog(new MacroModalDialog(config, contentPath, applicationKeys));
+            return this.openDialog(new MacroModalDialog(config, content, applicationKeys));
         }
 
         private static openDialog(dialog: ModalDialog): ModalDialog {

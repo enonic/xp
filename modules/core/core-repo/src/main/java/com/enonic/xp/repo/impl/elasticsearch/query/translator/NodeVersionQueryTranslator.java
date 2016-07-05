@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.ValueFactory;
@@ -25,6 +24,17 @@ public class NodeVersionQueryTranslator
     private final FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory( fieldNameResolver );
 
     private final AggregationQueryBuilderFactory aggregationsBuilder = new AggregationQueryBuilderFactory( fieldNameResolver );
+
+    private static void addNodeIdFilter( final NodeVersionQuery nodeVersionQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
+    {
+        if ( nodeVersionQuery.getNodeId() != null )
+        {
+            queryBuilderBuilder.addQueryFilter( ValueFilter.create().
+                fieldName( VersionIndexPath.NODE_ID.getPath() ).
+                addValue( ValueFactory.newString( nodeVersionQuery.getNodeId().toString() ) ).
+                build() );
+        }
+    }
 
     public ElasticsearchQuery translate( final SearchRequest searchRequest )
     {
@@ -59,21 +69,9 @@ public class NodeVersionQueryTranslator
             sortBuilders( sortBuilder.create( query.getOrderBys() ) ).
             filter( filterBuilderFactory.create( query.getPostFilters() ) ).
             setReturnFields( searchRequest.getReturnFields() ).
-            searchType( SearchType.valueOf( searchRequest.getSearchType().toString() ) ).
             from( query.getFrom() ).
             size( query.getSize() );
 
         return queryBuilder.build();
-    }
-
-    private static void addNodeIdFilter( final NodeVersionQuery nodeVersionQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
-    {
-        if ( nodeVersionQuery.getNodeId() != null )
-        {
-            queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( VersionIndexPath.NODE_ID.getPath() ).
-                addValue( ValueFactory.newString( nodeVersionQuery.getNodeId().toString() ) ).
-                build() );
-        }
     }
 }

@@ -13,7 +13,7 @@ module api.content {
                 return new api.content.ContentId(id);
             });
             return new GetContentSummaryByIds(contentIds).
-            get().
+            sendAndParse().
             then((results: ContentSummary[]) => {
                 if (this.getComparator()) {
                     this.setResults(results.sort(this.getComparator().compare));

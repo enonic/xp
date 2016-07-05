@@ -60,6 +60,14 @@ public class InternalContext
             repositoryId( context.getRepositoryId() );
     }
 
+    public static Builder create( final InternalContext context )
+    {
+        return create().
+            principalsKeys( context.getPrincipalsKeys() ).
+            branch( context.getBranch() ).
+            repositoryId( context.getRepositoryId() );
+    }
+
     @Override
     public boolean equals( final Object o )
     {

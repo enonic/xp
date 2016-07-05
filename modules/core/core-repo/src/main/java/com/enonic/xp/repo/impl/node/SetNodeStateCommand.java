@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 import com.enonic.xp.repo.impl.search.SearchService;
@@ -18,6 +19,16 @@ public class SetNodeStateCommand
     {
         super( builder );
         this.params = builder.params;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
     }
 
     public SetNodeStateResult execute()
@@ -55,7 +66,6 @@ public class SetNodeStateCommand
         return updatedNode;
     }
 
-
     private Node setNodeStateWithChildren( final Node node, final SetNodeStateResult.Builder setNodeStateResultBuilder )
     {
         final Node updatedNode = setNodeState( node, setNodeStateResultBuilder );
@@ -65,22 +75,17 @@ public class SetNodeStateCommand
             size( SearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
-        for ( final Node child : result.getNodes() )
+        final Nodes children = GetNodesByIdsCommand.create( this ).
+            ids( result.getNodeIds() ).
+            build().
+            execute();
+
+        for ( final Node child : children )
         {
             setNodeStateWithChildren( child, setNodeStateResultBuilder );
         }
 
         return updatedNode;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
     }
 
     public static class Builder

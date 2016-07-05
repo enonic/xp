@@ -35,14 +35,14 @@ public class CompareContentResults
         return compareContentResults.iterator();
     }
 
-    public ImmutableSet<CompareContentResult> getCompareContentResults()
-    {
-        return compareContentResults;
-    }
-
     public Map<ContentId, CompareContentResult> getCompareContentResultsMap()
     {
         return compareContentResultsMap;
+    }
+
+    public ContentIds contentIds()
+    {
+        return ContentIds.from( compareContentResultsMap.keySet() );
     }
 
     public static final class Builder
@@ -59,6 +59,18 @@ public class CompareContentResults
         {
             this.compareResults.add( result );
             this.compareResultsMap.put( result.getContentId(), result );
+            return this;
+        }
+
+        public Builder addAll( final CompareContentResults results )
+        {
+            this.compareResults.addAll( results.compareContentResults );
+
+            for ( final CompareContentResult result : results )
+            {
+                this.compareResultsMap.put( result.getContentId(), result );
+            }
+
             return this;
         }
 

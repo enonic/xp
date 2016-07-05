@@ -10,12 +10,12 @@ module api.content {
 
         private includeChildren: boolean;
 
-        constructor(contentIds: ContentId[],excludedIds: ContentId[], includeChildren: boolean) {
+        constructor(builder: ResolvePublishDependenciesRequestBuilder) {
             super();
             super.setMethod("POST");
-            this.ids = contentIds;
-            this.excludedIds = excludedIds;
-            this.includeChildren = includeChildren;
+            this.ids = builder.ids;
+            this.excludedIds = builder.excludedIds;
+            this.includeChildren = builder.includeChildren;
         }
 
         getParams(): Object {
@@ -39,6 +39,38 @@ module api.content {
             return this.send().then((response: api.rest.JsonResponse<ResolvePublishContentResultJson>) => {
                 return ResolvePublishDependenciesResult.fromJson(response.getResult());
             });
+        }
+
+        static create() {
+            return new ResolvePublishDependenciesRequestBuilder();
+        }
+    }
+
+    export class ResolvePublishDependenciesRequestBuilder {
+
+        ids: ContentId[] = [];
+
+        excludedIds: ContentId[] = [];
+
+        includeChildren: boolean;
+
+        public setIds(value: ContentId[]): ResolvePublishDependenciesRequestBuilder {
+            this.ids = value;
+            return this;
+        }
+
+        public setExcludedIds(value: ContentId[]): ResolvePublishDependenciesRequestBuilder {
+            this.excludedIds = value;
+            return this;
+        }
+
+        public setIncludeChildren(value: boolean): ResolvePublishDependenciesRequestBuilder {
+            this.includeChildren = value;
+            return this;
+        }
+
+        build() {
+            return new ResolvePublishDependenciesRequest(this);
         }
     }
 }

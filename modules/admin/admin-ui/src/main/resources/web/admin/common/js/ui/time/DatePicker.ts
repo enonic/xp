@@ -113,12 +113,12 @@ module api.ui.time {
                 this.togglePopupVisibility();
             });
             this.input.onFocus((e: FocusEvent) =>
-                    setTimeout(() => {
-                        if (!this.popup.isVisible()) {
-                            e.preventDefault();
-                            this.popup.show();
-                        }
-                    }, 150)
+                setTimeout(() => {
+                    if (!this.popup.isVisible()) {
+                        e.preventDefault();
+                        this.popup.show();
+                    }
+                }, 150)
             );
         }
 

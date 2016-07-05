@@ -214,7 +214,7 @@ public class FindNodesByQueryCommandTest_func_range
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( exptected, result.getNodes().getSize() );
+        assertEquals( exptected, result.getNodeIds().getSize() );
     }
 
 }

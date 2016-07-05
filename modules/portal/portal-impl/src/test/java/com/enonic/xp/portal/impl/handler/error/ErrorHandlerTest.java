@@ -1,12 +1,15 @@
 package com.enonic.xp.portal.impl.handler.error;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.portal.PortalException;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.BaseHandlerTest;
 
 import static org.junit.Assert.*;
 
@@ -15,14 +18,17 @@ public class ErrorHandlerTest
 {
     private ErrorHandler handler;
 
-    @Override
-    protected void configure()
+    private PortalRequest request;
+
+    @Before
+    public final void setup()
         throws Exception
     {
+        this.request = new PortalRequest();
         this.handler = new ErrorHandler();
 
         this.request.setMethod( HttpMethod.GET );
-        this.request.setEndpointPath( "/_/asset/error/401" );
+        this.request.setEndpointPath( "/_/error/401" );
     }
 
     @Test
@@ -53,7 +59,7 @@ public class ErrorHandlerTest
     {
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
@@ -67,10 +73,10 @@ public class ErrorHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( HttpStatus.NOT_FOUND.getReasonPhrase(), e.getMessage() );
@@ -85,10 +91,10 @@ public class ErrorHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
             assertEquals( HttpStatus.UNAUTHORIZED.getReasonPhrase(), e.getMessage() );
@@ -104,10 +110,10 @@ public class ErrorHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
             assertEquals( "Some error message", e.getMessage() );

@@ -7,9 +7,9 @@ import com.enonic.xp.aggregation.Aggregations;
 @Beta
 public final class FindContentByQueryResult
 {
-    private Contents contents;
-
     private final Aggregations aggregations;
+
+    private Contents contents;
 
     private long totalHits;
 

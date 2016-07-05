@@ -46,6 +46,8 @@ public class CompareNodesCommandTest
 
         doDeleteNode( node2.id() );
 
+        refresh();
+
         final NodeComparisons result = CompareNodesCommand.create().
             nodeIds( NodeIds.from( node.id(), node2.id(), node3.id() ) ).
             storageService( this.storageService ).

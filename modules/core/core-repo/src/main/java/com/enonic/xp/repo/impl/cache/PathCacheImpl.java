@@ -13,7 +13,7 @@ public class PathCacheImpl
     public PathCacheImpl()
     {
         pathCache = CacheBuilder.newBuilder().
-            maximumSize( 10000 ).
+            maximumSize( 100000 ).
             build();
     }
 

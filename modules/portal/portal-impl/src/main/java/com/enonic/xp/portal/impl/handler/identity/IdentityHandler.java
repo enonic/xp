@@ -13,13 +13,16 @@ import com.google.common.hash.Hashing;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public class IdentityHandler
     extends EndpointHandler
 {
@@ -35,10 +38,10 @@ public class IdentityHandler
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String restPath = findRestPath( req );
+        final String restPath = findRestPath( webRequest );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
@@ -49,24 +52,27 @@ public class IdentityHandler
         final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( 1 ) );
         String idProviderFunction = matcher.group( 2 );
 
+        final PortalRequest portalRequest =
+            webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+
         if ( idProviderFunction != null )
         {
-            checkTicket( req );
+            checkTicket( portalRequest );
         }
 
         if ( idProviderFunction == null )
         {
-            idProviderFunction = req.getMethod().
+            idProviderFunction = webRequest.getMethod().
                 toString().
                 toLowerCase();
         }
 
-        final IdentityHandlerWorker worker = new IdentityHandlerWorker();
+        final IdentityHandlerWorker worker = new IdentityHandlerWorker( portalRequest );
         worker.userStoreKey = userStoreKey;
         worker.idProviderFunction = idProviderFunction;
         worker.setContentService( this.contentService );
         worker.authControllerService = this.authControllerService;
-        return worker;
+        return worker.execute();
     }
 
     private void checkTicket( final PortalRequest req )

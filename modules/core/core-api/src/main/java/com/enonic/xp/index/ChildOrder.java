@@ -23,6 +23,8 @@ public class ChildOrder
 
     private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
+    private static final FieldOrderExpr PATH_ASC = FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC );
+
     private static final FieldOrderExpr MANUAL_ORDER_REVERSE =
         FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC );
 
@@ -53,6 +55,13 @@ public class ChildOrder
     {
         return ChildOrder.create().
             add( DEFAULT_ORDER ).
+            build();
+    }
+
+    public static ChildOrder path()
+    {
+        return ChildOrder.create().
+            add( PATH_ASC ).
             build();
     }
 

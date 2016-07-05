@@ -17,8 +17,8 @@ import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
@@ -30,11 +30,14 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.handler.BaseHandlerTest;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 public abstract class RenderBaseHandlerTest
     extends BaseHandlerTest
 {
+    protected PortalRequest request;
+
     protected ContentService contentService;
 
     protected PageTemplateService pageTemplateService;
@@ -51,11 +54,10 @@ public abstract class RenderBaseHandlerTest
 
     protected PostProcessor postProcessor;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void configure()
+    protected void setup()
         throws Exception
     {
+        this.request = new PortalRequest();
         this.contentService = Mockito.mock( ContentService.class );
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );

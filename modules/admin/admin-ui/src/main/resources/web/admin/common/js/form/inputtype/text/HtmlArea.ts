@@ -145,17 +145,9 @@ module api.form.inputtype.text {
 
             new HTMLAreaBuilder().
                 setSelector('textarea.' + id.replace(/\./g, '_')).
-                setAssetsUri(baseUrl).
-                setInline(false).
-                onCreateDialog(createDialogHandler).
-                setFocusHandler(focusHandler).
-                setBlurHandler(blurHandler).
-                setKeydownHandler(keydownHandler).
-                setKeyupHandler(notifyValueChanged).
-                setNodeChangeHandler(notifyValueChanged).
-                setContentPath(this.contentPath).
-                setContent(this.content).
-                setApplicationKeys(this.applicationKeys).
+                setAssetsUri(baseUrl).setInline(false).onCreateDialog(createDialogHandler).setFocusHandler(focusHandler).setBlurHandler(
+                blurHandler).setKeydownHandler(keydownHandler).setKeyupHandler(notifyValueChanged).setNodeChangeHandler(
+                notifyValueChanged).setContentPath(this.contentPath).setContent(this.content).setApplicationKeys(this.applicationKeys).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.setEditorContent(id, property);
@@ -164,14 +156,14 @@ module api.form.inputtype.text {
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
 
-                    var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
-                        ".remove-button")[0];
-                    removeButtonEL.addEventListener("mouseover", () => {
-                        isMouseOverRemoveOccurenceButton = true;
-                    });
-                    removeButtonEL.addEventListener("mouseleave", () => {
-                        isMouseOverRemoveOccurenceButton = false;
-                    });
+                var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
+                    ".remove-button")[0];
+                removeButtonEL.addEventListener("mouseover", () => {
+                    isMouseOverRemoveOccurenceButton = true;
+                });
+                removeButtonEL.addEventListener("mouseleave", () => {
+                    isMouseOverRemoveOccurenceButton = false;
+                });
 
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {

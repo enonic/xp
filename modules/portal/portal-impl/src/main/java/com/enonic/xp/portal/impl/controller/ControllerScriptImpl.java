@@ -6,11 +6,11 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.portal.impl.mapper.WebSocketEventMapper;
-import com.enonic.xp.portal.websocket.WebSocketEvent;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.websocket.WebSocketEvent;
 
 final class ControllerScriptImpl
     implements ControllerScript

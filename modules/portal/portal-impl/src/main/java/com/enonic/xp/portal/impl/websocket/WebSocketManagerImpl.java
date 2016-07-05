@@ -7,6 +7,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.portal.websocket.WebSocketManager;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
 @Component(service = {WebSocketManager.class, WebSocketContextFactory.class})

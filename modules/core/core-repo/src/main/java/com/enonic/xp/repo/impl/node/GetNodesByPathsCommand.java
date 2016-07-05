@@ -28,6 +28,12 @@ public class GetNodesByPathsCommand
         return new Builder();
     }
 
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
+
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
@@ -35,6 +41,11 @@ public class GetNodesByPathsCommand
 
         private Builder()
         {
+        }
+
+        private Builder( final AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder paths( NodePaths paths )

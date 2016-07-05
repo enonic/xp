@@ -14,7 +14,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
@@ -25,15 +25,17 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.RenameContentParams;
@@ -94,6 +96,8 @@ public class ContentResourceTest
     extends AdminResourceTestSupport
 {
 
+    private static final UserStoreKey SYSTEM = UserStoreKey.system();
+
     private final LocalDate currentDate = LocalDate.of( 2013, 8, 23 );
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
@@ -103,8 +107,6 @@ public class ContentResourceTest
     private ContentService contentService;
 
     private SecurityService securityService;
-
-    private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
     @Override
     protected Object getResourceInstance()
@@ -548,7 +550,9 @@ public class ContentResourceTest
             displayName( "one" ).
             type( ContentTypeName.folder() ).
             build();
-        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( Contents.from( content ) );
+
+        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( content.getId()).build();
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( result );
 
         final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
@@ -565,7 +569,7 @@ public class ContentResourceTest
     public void delete_content_failure()
         throws Exception
     {
-        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
             thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.BRANCH_DRAFT ) );
@@ -573,7 +577,7 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent );
-        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/two" ) ).
             build() ) ) ).
             thenThrow( new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
@@ -599,16 +603,18 @@ public class ContentResourceTest
             name( "one" ).
             displayName( "one" ).
             build();
-        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+
+        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( aContent2.getId()).build();
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
-            thenReturn( Contents.from( aContent2 ) );
+            thenReturn( result );
 
         final Content aContent3 = createContent( "aaa", "my_a_content2", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent3 );
 
-        Mockito.when( contentService.delete( DeleteContentParams.create().
+        Mockito.when( contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( ContentPath.from( "/two" ) ).
             build() ) ).
             thenThrow( new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
@@ -863,13 +869,14 @@ public class ContentResourceTest
     @Test
     public void countContentsWithDescendants_check_children_filtered()
     {
-        Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
+        Set<String> contentPaths = new HashSet<>( asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
 
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( contentPaths );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
-        Mockito.when( this.contentService.find( Mockito.any() ) ).thenReturn( FindContentByQueryResult.create().totalHits( 0L ).build() );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().totalHits( 0L ).build() );
 
         assertEquals( 2L, contentResource.countContentsWithDescendants( json ) );
     }
@@ -877,7 +884,7 @@ public class ContentResourceTest
     @Test
     public void countContentsWithDescendants_empty_json()
     {
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( new HashSet<String>() );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
@@ -890,11 +897,12 @@ public class ContentResourceTest
     {
         Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/b", "/root/c" ) );
 
-        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( contentPaths );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
-        Mockito.when( this.contentService.find( Mockito.any() ) ).thenReturn( FindContentByQueryResult.create().totalHits( 0L ).build() );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().totalHits( 0L ).build() );
 
         assertEquals( 3L, contentResource.countContentsWithDescendants( json ) );
     }

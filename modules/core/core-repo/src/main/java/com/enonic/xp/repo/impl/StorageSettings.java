@@ -54,4 +54,13 @@ public class StorageSettings
             return new StorageSettings( this );
         }
     }
+
+    @Override
+    public String toString()
+    {
+        return "StorageSettings{" +
+            "storageName=" + storageName +
+            ", storageType=" + storageType +
+            '}';
+    }
 }

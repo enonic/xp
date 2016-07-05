@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.identity;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
@@ -17,8 +18,13 @@ final class IdentityHandlerWorker
 
     protected String idProviderFunction;
 
+    public IdentityHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         //Prepares the request
@@ -45,7 +51,7 @@ final class IdentityHandlerWorker
         }
         else
         {
-            this.response = PortalResponse.create( portalResponse );
+            return portalResponse;
         }
     }
 }

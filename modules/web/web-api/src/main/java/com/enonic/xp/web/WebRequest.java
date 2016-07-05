@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.security.UserStore;
+import com.enonic.xp.web.websocket.WebSocketContext;
 
 @Beta
 public class WebRequest
@@ -33,6 +34,8 @@ public class WebRequest
 
     private String path;
 
+    private String rawPath;
+
     private String url;
 
     private String endpointPath;
@@ -43,7 +46,7 @@ public class WebRequest
 
     private HttpServletRequest rawRequest;
 
-    private boolean webSocket;
+    private WebSocketContext webSocketContext;
 
     private UserStore userStore;
 
@@ -52,7 +55,27 @@ public class WebRequest
         this.params = HashMultimap.create();
         this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
-        this.webSocket = false;
+    }
+
+    public WebRequest( final WebRequest webRequest )
+    {
+        this.method = webRequest.method;
+        this.params = webRequest.params;
+        this.headers = webRequest.headers;
+        this.cookies = webRequest.cookies;
+        this.scheme = webRequest.scheme;
+        this.host = webRequest.host;
+        this.remoteAddress = webRequest.remoteAddress;
+        this.port = webRequest.port;
+        this.path = webRequest.path;
+        this.rawPath = webRequest.rawPath;
+        this.url = webRequest.url;
+        this.endpointPath = webRequest.endpointPath;
+        this.contentType = webRequest.contentType;
+        this.body = webRequest.body;
+        this.rawRequest = webRequest.rawRequest;
+        this.webSocketContext = webRequest.webSocketContext;
+        this.userStore = webRequest.userStore;
     }
 
     public HttpMethod getMethod()
@@ -90,6 +113,11 @@ public class WebRequest
         return path;
     }
 
+    public String getRawPath()
+    {
+        return rawPath;
+    }
+
     public String getUrl()
     {
         return url;
@@ -123,6 +151,11 @@ public class WebRequest
     public void setPath( final String path )
     {
         this.path = path;
+    }
+
+    public void setRawPath( final String rawPath )
+    {
+        this.rawPath = rawPath;
     }
 
     public void setUrl( final String url )
@@ -197,11 +230,16 @@ public class WebRequest
 
     public boolean isWebSocket()
     {
-        return this.webSocket;
+        return this.webSocketContext != null;
     }
 
-    public void setWebSocket( final boolean webSocket )
+    public WebSocketContext getWebSocketContext()
     {
-        this.webSocket = webSocket;
+        return webSocketContext;
+    }
+
+    public void setWebSocketContext( final WebSocketContext webSocketContext )
+    {
+        this.webSocketContext = webSocketContext;
     }
 }

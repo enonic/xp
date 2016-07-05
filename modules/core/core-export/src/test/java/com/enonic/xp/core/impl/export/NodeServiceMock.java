@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.export;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
@@ -65,15 +67,20 @@ import com.enonic.xp.util.BinaryReference;
 class NodeServiceMock
     implements NodeService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( NodeServiceMock.class );
+
     private final Map<NodeId, Node> nodeIdMap = new HashMap<>();
 
     private final Map<NodePath, Node> nodePathMap = new HashMap<>();
 
     private final MockNodeTree<NodePath> nodeTree = new MockNodeTree<>( NodePath.ROOT );
 
-    private final static Logger LOG = LoggerFactory.getLogger( NodeServiceMock.class );
-
     private final Map<BinaryReference, ByteSource> blobStore = Maps.newHashMap();
+
+    public NodeServiceMock()
+    {
+        super();
+    }
 
     @Override
     public Node create( final CreateNodeParams params )
@@ -159,7 +166,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node deleteById( final NodeId id )
+    public NodeIds deleteById( final NodeId id )
     {
         final Node toBeRemoved = this.nodeIdMap.get( id );
 
@@ -169,11 +176,11 @@ class NodeServiceMock
         this.nodePathMap.remove( toBeRemoved.path() );
         this.nodeIdMap.remove( toBeRemoved.id() );
 
-        return toBeRemoved;
+        return NodeIds.from( id );
     }
 
     @Override
-    public Node deleteByPath( final NodePath path )
+    public NodeIds deleteByPath( final NodePath path )
     {
         final MockNodeTree<NodePath> treeNode = nodeTree.find( path );
         treeNode.getParent().children.remove( treeNode );
@@ -183,7 +190,7 @@ class NodeServiceMock
         this.nodePathMap.remove( path );
         this.nodeIdMap.remove( toBeRemoved.id() );
 
-        return toBeRemoved;
+        return NodeIds.from( toBeRemoved.id() );
     }
 
     @Override
@@ -195,7 +202,11 @@ class NodeServiceMock
     @Override
     public Nodes getByIds( final NodeIds ids )
     {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
+        final Nodes.Builder builder = Nodes.create();
+
+        ids.forEach( id -> builder.add( this.nodeIdMap.get( id ) ) );
+
+        return builder.build();
     }
 
     @Override
@@ -244,7 +255,9 @@ class NodeServiceMock
         final Nodes nodes = nodesBuilder.build();
 
         return resultBuilder.hits( nodes.getSize() ).
-            nodes( nodes ).
+            nodeIds( NodeIds.from( nodes.getSet().stream().
+                map( ( node ) -> node.id() ).
+                collect( Collectors.toList() ) ) ).
             totalHits( nodes.getSize() ).
             build();
     }
@@ -316,7 +329,7 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeIds resolveSyncWork( final SyncWorkResolverParams params )
+    public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -351,11 +364,6 @@ class NodeServiceMock
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
-    public NodeServiceMock()
-    {
-        super();
-    }
-
     @Override
     public SnapshotResult snapshot( final SnapshotParams params )
     {
@@ -376,12 +384,6 @@ class NodeServiceMock
 
     @Override
     public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param )
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
-    public void deleteSnapshotRespository()
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

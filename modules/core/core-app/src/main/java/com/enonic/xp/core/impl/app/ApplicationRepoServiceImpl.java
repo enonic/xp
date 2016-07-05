@@ -90,7 +90,7 @@ public class ApplicationRepoServiceImpl
                 parentPath( APPLICATION_PATH ).
                 build() ) );
 
-        return byParent.getNodes();
+        return this.nodeService.getByIds( byParent.getNodeIds() );
     }
 
     @Override

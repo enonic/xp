@@ -5,7 +5,7 @@ import com.google.common.annotations.Beta;
 @Beta
 public class FindNodesByParentResult
 {
-    private final Nodes nodes;
+    private final NodeIds nodeIds;
 
     private final long totalHits;
 
@@ -13,21 +13,21 @@ public class FindNodesByParentResult
 
     private FindNodesByParentResult( Builder builder )
     {
-        nodes = builder.nodes;
+        nodeIds = builder.nodeIds;
         totalHits = builder.totalHits;
         hits = builder.hits;
     }
 
-    private FindNodesByParentResult( final long hits, final long totalHits, final Nodes nodes )
+    private FindNodesByParentResult( final long hits, final long totalHits, final NodeIds nodeIds )
     {
         this.hits = hits;
         this.totalHits = totalHits;
-        this.nodes = nodes;
+        this.nodeIds = nodeIds;
     }
 
     public static FindNodesByParentResult empty()
     {
-        return new FindNodesByParentResult( 0, 0, Nodes.empty() );
+        return new FindNodesByParentResult( 0, 0, NodeIds.empty() );
     }
 
     public static Builder create()
@@ -35,9 +35,9 @@ public class FindNodesByParentResult
         return new Builder();
     }
 
-    public Nodes getNodes()
+    public NodeIds getNodeIds()
     {
-        return nodes;
+        return this.nodeIds;
     }
 
     public long getTotalHits()
@@ -52,12 +52,12 @@ public class FindNodesByParentResult
 
     public boolean isEmpty()
     {
-        return this.nodes.isEmpty();
+        return this.nodeIds.isEmpty();
     }
 
     public static final class Builder
     {
-        private Nodes nodes;
+        private NodeIds nodeIds;
 
         private long totalHits;
 
@@ -67,9 +67,9 @@ public class FindNodesByParentResult
         {
         }
 
-        public Builder nodes( Nodes nodes )
+        public Builder nodeIds( NodeIds nodeIds )
         {
-            this.nodes = nodes;
+            this.nodeIds = nodeIds;
             return this;
         }
 

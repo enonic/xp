@@ -18,17 +18,18 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.MediaTypes;
-import com.enonic.xp.web.HttpStatus;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 final class ImageHandlerWorker
-    extends PortalHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
@@ -54,8 +55,13 @@ final class ImageHandlerWorker
 
     protected MediaInfoService mediaInfoService;
 
+    public ImageHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final Media imageContent = getImage( this.contentId );
@@ -95,17 +101,19 @@ final class ImageHandlerWorker
 
         final ByteSource source = this.imageService.readImage( readImageParams );
 
-        this.response.status( HttpStatus.OK );
-        this.response.body( source );
-        this.response.contentType( MediaType.parse( mimeType ) );
+        final PortalResponse.Builder portalResponse = PortalResponse.create().
+            body( source ).
+            contentType( MediaType.parse( mimeType ) );
 
         if ( cacheable )
         {
             final AccessControlEntry publicAccessControlEntry = imageContent.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
             final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
-            setResponseCacheable( everyoneCanRead && masterBranch );
+            setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
         }
+
+        return portalResponse.build();
     }
 
     private String getFormat( final String fileName, final String mimeType )

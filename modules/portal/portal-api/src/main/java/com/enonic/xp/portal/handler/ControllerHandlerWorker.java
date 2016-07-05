@@ -5,13 +5,19 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.site.Site;
 
 public abstract class ControllerHandlerWorker
-    extends PortalHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     protected ContentService contentService;
+
+    public ControllerHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
 
     protected final String getContentSelector()
     {

@@ -7,9 +7,9 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 public class GetActiveNodeVersionsCommand
@@ -44,15 +44,15 @@ public class GetActiveNodeVersionsCommand
         {
             final Context context = ContextAccessor.current();
 
-            final NodeBranchMetadata nodeBranchMetadata =
+            final NodeBranchEntry nodeBranchEntry =
                 this.storageService.getBranchNodeVersion( this.nodeId, InternalContext.create( context ).
                     branch( branch ).
                     build() );
 
-            if ( nodeBranchMetadata != null )
+            if ( nodeBranchEntry != null )
             {
                 builder.add( branch, this.storageService.getVersion(
-                    new NodeVersionDocumentId( nodeBranchMetadata.getNodeId(), nodeBranchMetadata.getVersionId() ),
+                    new NodeVersionDocumentId( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId() ),
                     InternalContext.from( context ) ) );
             }
         }

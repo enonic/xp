@@ -64,15 +64,15 @@ public class FindNodesByQueryCommandTest_order_geoDistance
             "_parentPath = '/' ORDER BY geoDistance('myLocation', '" + ODD_GEOPOINT.getLatitude() + "," + ODD_GEOPOINT.getLongitude() +
                 "')" );
 
-        assertEquals( result.getNodes().getSize(), 8 );
+        assertEquals( result.getNodeIds().getSize(), 8 );
     }
 
 
     private void assertOrder( final FindNodesByQueryResult result )
     {
-        assertEquals( result.getNodes().getSize(), 8 );
+        assertEquals( result.getNodeIds().getSize(), 8 );
 
-        final Iterator<Node> iterator = result.getNodes().iterator();
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
         assertEquals( "oslo", iterator.next().name().toString() );
         assertEquals( "fredrikstad", iterator.next().name().toString() );
         assertEquals( "trondheim", iterator.next().name().toString() );

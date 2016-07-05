@@ -46,7 +46,7 @@ module api.content {
         static feedback(jsonResponse: api.rest.JsonResponse<UnpublishContentResult>) {
 
             var result = jsonResponse.getResult(),
-                total = result.successes.length;
+                total = result.successes;
 
             switch (total) {
             case 0:
@@ -54,7 +54,7 @@ module api.content {
                 break;
             case 1:
                 if (total === 1) {
-                    api.notify.showFeedback(`"${result.successes[0].name}" was unpublished`);
+                    api.notify.showFeedback(`"${result.contentName}" was unpublished`);
                 }
                 break;
             default: // > 1

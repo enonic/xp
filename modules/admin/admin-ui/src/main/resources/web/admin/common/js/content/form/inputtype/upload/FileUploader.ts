@@ -38,7 +38,7 @@ module api.content.form.inputtype.upload {
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
 
             var superPromise = super.update(propertyArray, unchangedOnly);
-                this.uploaderEl.setContentId(this.getContext().content.getContentId().toString());
+            this.uploaderEl.setContentId(this.getContext().content.getContentId().toString());
 
                 return superPromise.then(() => {
                     this.uploaderEl.resetValues(this.getValueFromPropertyArray(propertyArray));

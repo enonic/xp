@@ -63,6 +63,15 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
+    public void fuzzy()
+        throws Exception
+    {
+        final Node node = createNodes();
+
+        queryAndAssert( node, "ngram('title', 'levneshtein~2 lvier~2', 'OR')", 2 );
+    }
+
+    @Test
     public void word_delimiter_underscore()
         throws Exception
     {
@@ -142,7 +151,7 @@ public class FindNodesByQueryCommandTest_func_ngram
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( expected, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+        assertEquals( expected, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 }
