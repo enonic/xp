@@ -132,6 +132,12 @@ module api.form {
             return this.formItemLayer.update(propertySet, unchangedOnly);
         }
 
+        public highlightInputsOnValidityChange(highlight: boolean) {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.setHighlightOnValidityChange(highlight);
+            });
+        }
+
         private checkSizeChanges() {
             if (this.isVisible() && this.isSizeChanged()) {
                 this.preserveCurrentSize();
