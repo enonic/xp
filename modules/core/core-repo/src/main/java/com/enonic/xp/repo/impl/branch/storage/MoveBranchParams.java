@@ -1,22 +1,23 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
 
 public class MoveBranchParams
 {
-    private final NodeBranchMetadata nodeBranchMetadata;
+    private final NodeBranchEntry nodeBranchEntry;
 
     private final NodePath previousPath;
 
     private MoveBranchParams( Builder builder )
     {
-        nodeBranchMetadata = builder.nodeBranchMetadata;
+        nodeBranchEntry = builder.nodeBranchEntry;
         previousPath = builder.previousPath;
     }
 
-    public NodeBranchMetadata getNodeBranchMetadata()
+    public NodeBranchEntry getNodeBranchEntry()
     {
-        return nodeBranchMetadata;
+        return nodeBranchEntry;
     }
 
     public NodePath getPreviousPath()
@@ -31,7 +32,7 @@ public class MoveBranchParams
 
     public static final class Builder
     {
-        private NodeBranchMetadata nodeBranchMetadata;
+        private NodeBranchEntry nodeBranchEntry;
 
         private NodePath previousPath;
 
@@ -39,9 +40,9 @@ public class MoveBranchParams
         {
         }
 
-        public Builder branchNodeVersion( NodeBranchMetadata nodeBranchMetadata )
+        public Builder branchNodeVersion( NodeBranchEntry nodeBranchEntry )
         {
-            this.nodeBranchMetadata = nodeBranchMetadata;
+            this.nodeBranchEntry = nodeBranchEntry;
             return this;
         }
 

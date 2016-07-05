@@ -10,7 +10,7 @@ module api.util.htmlarea.dialog {
 
     export class MacroModalDialog extends ModalDialog {
 
-        private contentPath: api.content.ContentPath;
+        private content: api.content.ContentSummary;
 
         private applicationKeys: ApplicationKey[];
 
@@ -18,8 +18,8 @@ module api.util.htmlarea.dialog {
 
         private callback: Function;
 
-        constructor(config: HtmlAreaMacro, contentPath: api.content.ContentPath, applicationKeys: ApplicationKey[]) {
-            this.contentPath = contentPath;
+        constructor(config: HtmlAreaMacro, content: api.content.ContentSummary, applicationKeys: ApplicationKey[]) {
+            this.content = content;
             this.applicationKeys = applicationKeys;
             this.callback = config.callback;
             super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Macro"), "macro-modal-dialog");
@@ -31,7 +31,7 @@ module api.util.htmlarea.dialog {
         }
 
         private makeMacroDockedPanel(): MacroDockedPanel {
-            var macroDockedPanel = new MacroDockedPanel(this.contentPath);
+            var macroDockedPanel = new MacroDockedPanel(this.content);
 
             var debouncedPreviewRenderedHandler: () => void = api.util.AppHelper.debounce(() => {
                 this.centerMyself();
@@ -69,12 +69,6 @@ module api.util.htmlarea.dialog {
                 this.addClass("shows-preview");
 
                 this.macroDockedPanel.setMacroDescriptor(event.getSelectedOption().getOption().displayValue);
-            });
-
-            macroSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                if (event.isExpanded()) {
-                    this.adjustSelectorDropDown(macroSelectorComboBox.getInput(), event.getDropdownElement().getEl());
-                }
             });
 
             macroSelectorComboBox.onOptionDeselected(() => {
@@ -124,14 +118,6 @@ module api.util.htmlarea.dialog {
                 configPanelValid = this.macroDockedPanel.validateMacroForm();
 
             return mainFormValid && configPanelValid;
-        }
-
-        private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
-            var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
-
-            dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder() - 2);
-            dropDownElement.setTopPx(inputPosition.top + inputElement.getEl().getHeightWithBorder() - 1);
-            dropDownElement.setLeftPx(inputPosition.left);
         }
     }
 }

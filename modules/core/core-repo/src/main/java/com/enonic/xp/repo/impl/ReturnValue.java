@@ -2,22 +2,13 @@ package com.enonic.xp.repo.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.common.collect.Lists;
 
 public class ReturnValue
 {
-    private final Collection<Object> values = Lists.newArrayList();
-
-    public Object getSingleValue()
-    {
-        return values.iterator().next();
-    }
-
-    public Collection<Object> getValues()
-    {
-        return values;
-    }
+    private final List<Object> values = Lists.newArrayList();
 
     public static ReturnValue create( final Object values )
     {
@@ -25,6 +16,16 @@ public class ReturnValue
         returnValue.add( values );
 
         return returnValue;
+    }
+
+    public Object getSingleValue()
+    {
+        return values.iterator().next();
+    }
+
+    public List<Object> getValues()
+    {
+        return values;
     }
 
     public void add( final Object values )

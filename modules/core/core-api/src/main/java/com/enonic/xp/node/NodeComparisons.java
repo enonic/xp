@@ -1,11 +1,13 @@
 package com.enonic.xp.node;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.CompareStatus;
@@ -14,11 +16,11 @@ import com.enonic.xp.content.CompareStatus;
 public class NodeComparisons
     implements Iterable<NodeComparison>
 {
-    private final ImmutableSet<NodeComparison> nodeComparisons;
+    private final Map<NodeId, NodeComparison> comparisonMap;
 
-    private NodeComparisons( Builder builder )
+    private NodeComparisons( final Builder builder )
     {
-        nodeComparisons = ImmutableSet.copyOf( builder.nodeComparisons );
+        this.comparisonMap = builder.nodeIdNodeComparisonMap;
     }
 
     public static Builder create()
@@ -26,15 +28,49 @@ public class NodeComparisons
         return new Builder();
     }
 
+    public NodeComparison get( final NodeId nodeId )
+    {
+        return this.comparisonMap.get( nodeId );
+    }
+
     @Override
     public Iterator<NodeComparison> iterator()
     {
-        return nodeComparisons.iterator();
+        return this.comparisonMap.values().iterator();
+    }
+
+    public int getSize()
+    {
+        return this.comparisonMap.size();
+    }
+
+    public NodeIds getNodeIds()
+    {
+        return NodeIds.from( this.comparisonMap.values().stream().
+            map( NodeComparison::getNodeId ).
+            collect( Collectors.toSet() ) );
+    }
+
+    public Set<NodeComparison> getWithStatus( final CompareStatus status )
+    {
+        Set<NodeComparison> result = Sets.newHashSet();
+
+        result.addAll( this.comparisonMap.values().
+            stream().
+            filter( nodeComparison -> nodeComparison.getCompareStatus() == status ).
+            collect( Collectors.toList() ) );
+
+        return result;
+    }
+
+    public Collection<NodeComparison> getComparisons()
+    {
+        return this.comparisonMap.values();
     }
 
     public static final class Builder
     {
-        private final Set<NodeComparison> nodeComparisons = Sets.newHashSet();
+        private final Map<NodeId, NodeComparison> nodeIdNodeComparisonMap = Maps.newHashMap();
 
         private Builder()
         {
@@ -42,7 +78,15 @@ public class NodeComparisons
 
         public Builder add( final NodeComparison nodeComparison )
         {
-            nodeComparisons.add( nodeComparison );
+            this.nodeIdNodeComparisonMap.put( nodeComparison.getNodeId(), nodeComparison );
+            return this;
+        }
+
+        public Builder addAll( final Collection<NodeComparison> nodeComparisons )
+        {
+            nodeComparisons.stream().
+                forEach( comparison -> this.nodeIdNodeComparisonMap.put( comparison.getNodeId(), comparison ) );
+
             return this;
         }
 
@@ -50,33 +94,5 @@ public class NodeComparisons
         {
             return new NodeComparisons( this );
         }
-    }
-
-    public boolean hasConflict()
-    {
-        for ( final NodeComparison nodeComparison : this.nodeComparisons )
-        {
-            if ( nodeComparison.getCompareStatus().isConflict() )
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public Set<NodeComparison> getWithStatus( final CompareStatus status )
-    {
-        Set<NodeComparison> result = Sets.newHashSet();
-
-        result.addAll( this.nodeComparisons.stream().filter( nodeComparison -> nodeComparison.getCompareStatus() == status ).collect(
-            Collectors.toList() ) );
-
-        return result;
-    }
-
-    public ImmutableSet<NodeComparison> getNodeComparisons()
-    {
-        return nodeComparisons;
     }
 }

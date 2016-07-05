@@ -3,16 +3,17 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentState;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -30,7 +31,7 @@ public class UnpublishContentCommand
         this.params = builder.params;
     }
 
-    public Contents execute()
+    public UnpublishContentsResult execute()
     {
         final Context context = ContextAccessor.current();
 
@@ -38,40 +39,57 @@ public class UnpublishContentCommand
             branch( params.getUnpublishBranch() ).
             build();
 
-        return unpublishContext.callWith( () -> unpublish() );
+        return unpublishContext.callWith( this::unpublish );
     }
 
-    private Contents unpublish()
+    private UnpublishContentsResult unpublish()
     {
-        final Contents.Builder contents = Contents.create();
+        final ContentIds.Builder contentBuilder = ContentIds.create();
 
         for ( final ContentId contentId : this.params.getContentIds() )
         {
-            recursiveUnpublish( NodeId.from( contentId ), this.params.isIncludeChildren(), contents );
+            recursiveUnpublish( NodeId.from( contentId ), this.params.isIncludeChildren(), contentBuilder );
         }
 
-        final Contents result = contents.build();
+        final ContentIds contentIds = contentBuilder.build();
+        final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().addUnpublished( contentIds );
+
+        if ( contentIds.getSize() == 1 )
+        {
+            final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
+                branch( ContentConstants.BRANCH_DRAFT ).
+                build();
+
+            draftContext.callWith( () -> {
+                resultBuilder.setContentName( this.getContent( contentIds.first() ).getDisplayName() );
+                return null;
+            } );
+        }
+
+        final UnpublishContentsResult result = resultBuilder.build();
 
         removePendingDeleteFromDraft( result );
 
         return result;
     }
 
-    private void recursiveUnpublish( final NodeId nodeId, boolean includeChildren, final Contents.Builder contentsBuilder )
+    private void recursiveUnpublish( final NodeId nodeId, boolean includeChildren, final ContentIds.Builder contentsBuilder )
     {
         if ( includeChildren )
         {
-            this.nodeService.findByParent( FindNodesByParentParams.create().parentId( nodeId ).build() ).
-                getNodes().forEach( childNode -> recursiveUnpublish( childNode.id(), true, contentsBuilder ) );
+            final FindNodesByParentResult result =
+                this.nodeService.findByParent( FindNodesByParentParams.create().parentId( nodeId ).build() );
+
+            result.getNodeIds().forEach( ( id ) -> recursiveUnpublish( id, true, contentsBuilder ) );
         }
-        final Node node = this.nodeService.deleteById( nodeId );
-        if ( node != null )
+        final NodeIds nodes = this.nodeService.deleteById( nodeId );
+        if ( nodes != null )
         {
-            contentsBuilder.add( translator.fromNode( node, false ) );
+            contentsBuilder.add( ContentId.from( nodes.first().toString() ) );
         }
     }
 
-    private void removePendingDeleteFromDraft( final Contents contents )
+    private void removePendingDeleteFromDraft( final UnpublishContentsResult result )
     {
         final Branch currentBranch = ContextAccessor.current().getBranch();
         if ( !currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
@@ -80,7 +98,7 @@ public class UnpublishContentCommand
                 branch( ContentConstants.BRANCH_DRAFT ).
                 build();
             draftContext.callWith( () -> {
-                final Nodes draftNodes = this.nodeService.getByIds( makeNodeIds( contents ) );
+                final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( result.getUnpublishedContents().asStrings() ) );
                 for ( final Node draftNode : draftNodes )
                 {
                     if ( draftNode.getNodeState().value().equalsIgnoreCase( ContentState.PENDING_DELETE.toString() ) )
@@ -91,16 +109,6 @@ public class UnpublishContentCommand
                 return null;
             } );
         }
-    }
-
-    private NodeIds makeNodeIds( final Contents contents )
-    {
-        final NodeIds.Builder nodeIds = NodeIds.create();
-        for ( final Content content : contents )
-        {
-            nodeIds.add( NodeId.from( content.getId().toString() ) );
-        }
-        return nodeIds.build();
     }
 
     public static Builder create()

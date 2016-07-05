@@ -5,7 +5,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.enonic.xp.portal.websocket.WebSocketEndpoint;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.websocket.WebSocketService;
 
 final class WebSocketContextImpl

@@ -4,13 +4,15 @@ import java.util.Collection;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class ErrorHandler
     extends EndpointHandler
 {
@@ -20,16 +22,16 @@ public final class ErrorHandler
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String restPath = findRestPath( req );
+        final String restPath = findRestPath( webRequest );
 
-        final ErrorHandlerWorker worker = new ErrorHandlerWorker();
+        final ErrorHandlerWorker worker = new ErrorHandlerWorker( webRequest );
         worker.code = parseStatus( restPath );
-        worker.message = getParameter( req, "message" );
+        worker.message = getParameter( webRequest, "message" );
 
-        return worker;
+        return worker.execute();
     }
 
     private HttpStatus parseStatus( final String value )
@@ -44,7 +46,7 @@ public final class ErrorHandler
         }
     }
 
-    private String getParameter( final PortalRequest req, final String name )
+    private String getParameter( final WebRequest req, final String name )
     {
         final Collection<String> values = req.getParams().get( name );
         return values.isEmpty() ? null : values.iterator().next();

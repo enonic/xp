@@ -41,6 +41,8 @@ public final class CreateContentParams
 
     private final Locale language;
 
+    private final boolean refresh;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -56,6 +58,7 @@ public final class CreateContentParams
         this.createAttachments = builder.createAttachments;
         this.childOrder = builder.childOrder;
         this.language = builder.language;
+        this.refresh = builder.refresh;
     }
 
     public static Builder create()
@@ -133,6 +136,11 @@ public final class CreateContentParams
         return language;
     }
 
+    public boolean isRefresh()
+    {
+        return refresh;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -160,6 +168,8 @@ public final class CreateContentParams
         private ChildOrder childOrder;
 
         private Locale language;
+
+        private boolean refresh = true;
 
         private Builder()
         {
@@ -264,6 +274,12 @@ public final class CreateContentParams
         public Builder language( final Locale language )
         {
             this.language = language;
+            return this;
+        }
+
+        public Builder refresh( final boolean refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

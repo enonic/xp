@@ -8,12 +8,12 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 
 public class CompareNodesCommand
     extends AbstractCompareNodeCommand
@@ -39,8 +39,8 @@ public class CompareNodesCommand
 
         final NodeComparisons.Builder builder = NodeComparisons.create();
 
-        final NodesBranchMetadata sourceVersions = storageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) );
-        final NodesBranchMetadata targetVersions = storageService.getBranchNodeVersions( nodeIds, InternalContext.create( context ).
+        final NodeBranchEntries sourceVersions = storageService.getBranchNodeVersions( nodeIds, false, InternalContext.from( context ) );
+        final NodeBranchEntries targetVersions = storageService.getBranchNodeVersions( nodeIds, false, InternalContext.create( context ).
             branch( this.target ).
             build() );
 
@@ -56,7 +56,7 @@ public class CompareNodesCommand
                 build().
                 resolve();
 
-            builder.add( new NodeComparison( id, compareStatus ) );
+            builder.add( new NodeComparison( sourceVersions.get( id ), targetVersions.get( id ), compareStatus ) );
         }
 
         return builder.build();

@@ -113,7 +113,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             var value = this.getValueFromPropertyArray(this.getPropertyArray());
             var siteConfigFormsToDisplay = value.split(';');
-            var comboBox = new AuthApplicationComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider, 
+            var comboBox = new AuthApplicationComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider,
                 this.formContext, value, this.readOnly);
 
             // creating selected option might involve property changes

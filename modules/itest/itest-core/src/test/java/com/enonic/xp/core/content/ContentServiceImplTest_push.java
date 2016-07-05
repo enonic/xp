@@ -1,8 +1,11 @@
 package com.enonic.xp.core.content;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
@@ -10,7 +13,11 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
@@ -18,6 +25,11 @@ import static org.junit.Assert.*;
 public class ContentServiceImplTest_push
     extends AbstractContentServiceTest
 {
+
+    private Content content1, content2, content1_1, content2_1;
+
+    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
+
     @Override
     public void setUp()
         throws Exception
@@ -46,6 +58,41 @@ public class ContentServiceImplTest_push
             includeDependencies( false ).
             build() );
 
+        assertEquals( 0, push.getDeletedContents().getSize() );
+        assertEquals( 0, push.getFailedContents().getSize() );
+        assertEquals( 1, push.getPushedContents().getSize() );
+    }
+
+    @Ignore
+    @Test
+    public void push_one_content_not_valid()
+        throws Exception
+    {
+
+        ContentType contentType = ContentType.create().
+            superType( ContentTypeName.structured() ).
+            name( "myapplication:test" ).
+            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() ).
+            build();
+
+        Mockito.when( this.contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).
+            thenReturn( contentType );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( contentType.getName() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final PushContentsResult push = this.contentService.push( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            includeDependencies( false ).
+            build() );
+
         assertEquals( 1, push.getPushedContents().getSize() );
     }
 
@@ -62,7 +109,7 @@ public class ContentServiceImplTest_push
 
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             build();
 
         final PushContentsResult push = this.contentService.push( pushParams );
@@ -80,24 +127,30 @@ public class ContentServiceImplTest_push
     public void push_dependencies()
         throws Exception
     {
-        final PushContentsResult result = doPushWithDependencies();
+        createContentTree();
+
+        final PushContentParams pushParams = PushContentParams.create().
+            contentIds( ContentIds.from( content2.getId() ) ).
+            includeChildren( true ).
+            target( WS_OTHER ).
+            build();
+
+        final PushContentsResult result = this.contentService.push( pushParams );
 
         assertEquals( 4, result.getPushedContents().getSize() );
     }
 
-    private Content content1, content2, child1, child2;
-
-
+    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_empty()
         throws Exception
     {
+        createContentTree();
 
-        final PushContentParams.Builder builder = getPushParamsWithDependenciesBuilder();
-
-        final PushContentParams pushParams = builder.
+        final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             excludedContentIds( ContentIds.from( content1.getId() ) ).
+            target( WS_OTHER ).
             build();
 
         refresh();
@@ -111,13 +164,13 @@ public class ContentServiceImplTest_push
     public void push_exclude_without_children()
         throws Exception
     {
+        createContentTree();
 
-        final PushContentParams.Builder builder = getPushParamsWithDependenciesBuilder();
-
-        final PushContentParams pushParams = builder.
+        final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
-            excludedContentIds( ContentIds.from( child1.getId() ) ).
+            excludedContentIds( ContentIds.from( content1_1.getId() ) ).
             includeChildren( false ).
+            target( WS_OTHER ).
             build();
 
         refresh();
@@ -127,101 +180,146 @@ public class ContentServiceImplTest_push
         assertEquals( 1, result.getPushedContents().getSize() );
     }
 
+    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_with_children()
         throws Exception
     {
+        createContentTree();
 
-        final PushContentParams.Builder builder = getPushParamsWithDependenciesBuilder();
-
-        final Content child3 = this.contentService.create( CreateContentParams.create().
+        this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
-            displayName( "This is my child 3" ).
-            parent( child1.getPath() ).
+            displayName( "content1_1_1" ).
+            parent( content1_1.getPath() ).
             type( ContentTypeName.folder() ).
             build() );
 
         refresh();
 
-        final PushContentParams pushParams = builder.
+        final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
-            excludedContentIds( ContentIds.from( child1.getId() ) ).
+            excludedContentIds( ContentIds.from( content1_1.getId() ) ).
+            target( WS_OTHER ).
             build();
 
         final PushContentsResult result = this.contentService.push( pushParams );
 
-        assertEquals( 3, result.getPushedContents().getSize() );
-        assertFalse( result.getPushedContents().contains( child1 ) );
-        assertFalse( result.getPushedContents().contains( child3 ) );
+        assertPushed( result, ContentIds.from( content1.getId(), content2.getId(), content2_1.getId() ) );
     }
+
 
     @Test
     public void push_exclude_without_dependencies()
         throws Exception
     {
+        createContentTree();
 
-        final PushContentParams.Builder builder = getPushParamsWithDependenciesBuilder();
-
-        refresh();
-
-        final PushContentParams pushParams = builder.
+        final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
             includeDependencies( false ).
+            target( WS_OTHER ).
             build();
 
         final PushContentsResult result = this.contentService.push( pushParams );
 
         assertEquals( 2, result.getPushedContents().getSize() );
-        assertFalse( result.getPushedContents().contains( child1 ) );
-        assertFalse( result.getPushedContents().contains( child2 ) );
+        assertFalse( result.getPushedContents().contains( content1_1.getId() ) );
+        assertFalse( result.getPushedContents().contains( content2_1.getId() ) );
     }
 
 
-    private PushContentsResult doPushWithDependencies()
-    {
-        final PushContentParams pushParams = getPushParamsWithDependenciesBuilder().
-            contentIds( ContentIds.from( child2.getId() ) ).
-            build();
-
-        refresh();
-        return this.contentService.push( pushParams );
-    }
-
-
-    private PushContentParams.Builder getPushParamsWithDependenciesBuilder()
+    private void createContentTree()
     {
         this.content1 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
+            displayName( "content1" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build() );
 
         this.content2 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
-            displayName( "This is my content 2" ).
+            displayName( "content2" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build() );
 
-        this.child1 = this.contentService.create( CreateContentParams.create().
+        this.content1_1 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
-            displayName( "This is my child 1" ).
+            displayName( "content1_1" ).
             parent( content1.getPath() ).
             type( ContentTypeName.folder() ).
             build() );
 
         final PropertyTree data = new PropertyTree();
-        data.addReference( "myRef", Reference.from( child1.getId().toString() ) );
+        data.addReference( "myRef", Reference.from( content1_1.getId().toString() ) );
 
-        this.child2 = this.contentService.create( CreateContentParams.create().
+        this.content2_1 = this.contentService.create( CreateContentParams.create().
             contentData( data ).
-            displayName( "This is my child 2" ).
+            displayName( "content2_1" ).
             parent( content2.getPath() ).
             type( ContentTypeName.folder() ).
             build() );
 
-        return PushContentParams.create().
-            target( CTX_OTHER.getBranch() );
+        refresh();
     }
+
+    private void assertPushed( final PushContentsResult result, final ContentIds pushed )
+    {
+        assertContent( result, pushed, ContentIds.empty(), ContentIds.empty() );
+    }
+
+    private void assertContent( final PushContentsResult result, final ContentIds pushed, final ContentIds deleted,
+                                final ContentIds failed )
+    {
+
+        StringBuilder message = new StringBuilder();
+
+        boolean hasFailed = checkCollection( pushed, result.getPushedContents(), message ) ||
+            checkCollection( deleted, result.getDeletedContents(), message ) ||
+            checkCollection( failed, result.getFailedContents(), message );
+
+        if ( hasFailed )
+        {
+            fail( message.toString() );
+        }
+    }
+
+    private boolean checkCollection( final ContentIds currentExpected, final ContentIds currentResult, final StringBuilder message )
+    {
+        boolean hasFailed = false;
+
+        for ( final ContentId expectedEntry : currentExpected )
+        {
+            message.append( LINE_SEPARATOR + "Content: " + getName( expectedEntry ) + " expected: " );
+
+            if ( !currentResult.contains( expectedEntry ) )
+            {
+                message.append( "<FAIL>" );
+                hasFailed = true;
+            }
+            else
+            {
+                message.append( "OK" );
+            }
+        }
+
+        for ( final ContentId found : currentResult )
+        {
+
+            if ( !currentExpected.contains( found ) )
+            {
+                message.append( LINE_SEPARATOR + "Content: " + getName( found ) + " not expected" );
+                hasFailed = true;
+            }
+        }
+
+        return hasFailed;
+    }
+
+    private final String getName( final ContentId contentId )
+    {
+        return this.contentService.getById( contentId ).getPath().toString();
+    }
+
 }

@@ -59,14 +59,11 @@ public class FindNodesByQueryCommandTest
 
         final NodeQuery query = NodeQuery.create().parent( NodePath.ROOT ).build();
         FindNodesByQueryResult result = doFindByQuery( query );
-        assertEquals( 2, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node1.id() ) );
-        assertNotNull( result.getNodes().getNodeById( node2.id() ) );
+        assertEquals( 2, result.getNodeIds().getSize() );
 
         final NodeQuery childQuery = NodeQuery.create().parent( node1.path() ).build();
         result = doFindByQuery( childQuery );
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( childNode1.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
     }
 
 
@@ -75,10 +72,10 @@ public class FindNodesByQueryCommandTest
         throws Exception
     {
         final PropertyTree data13 = new PropertyTree();
-        data13.addLong( "myProperty", 10l );
+        data13.addLong( "myProperty", 10L );
 
         final PropertyTree data2 = new PropertyTree();
-        data2.addLong( "myProperty", 20l );
+        data2.addLong( "myProperty", 20L );
 
         final Node node1 = createNode( CreateNodeParams.create().
             name( "my-node-1" ).
@@ -99,10 +96,10 @@ public class FindNodesByQueryCommandTest
             build() );
 
         final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "MYProperty" ), ValueExpr.number( 10l ) ) ) ).
+            query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "MYProperty" ), ValueExpr.number( 10L ) ) ) ).
             addPostFilter( RangeFilter.create().
                 fieldName( "MYProperty" ).
-                from( ValueFactory.newLong( 0l ) ).to( ValueFactory.newLong( 15l ) ).
+                from( ValueFactory.newLong( 0L ) ).to( ValueFactory.newLong( 15L ) ).
                 build() ).
             addAggregationQuery( TermsAggregationQuery.create( "categories" ).
                 fieldName( "myCategory" ).
@@ -113,10 +110,10 @@ public class FindNodesByQueryCommandTest
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 2, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node1.id() ) );
-        assertNotNull( result.getNodes().getNodeById( node3.id() ) );
-        assertNull( result.getNodes().getNodeById( node2.id() ) );
+        assertEquals( 2, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node1.id() ) );
+        assertTrue( result.getNodeIds().contains( node3.id() ) );
+        assertFalse( result.getNodeIds().contains( node2.id() ) );
     }
 
     @Test
@@ -159,10 +156,10 @@ public class FindNodesByQueryCommandTest
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 2, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node1.id() ) );
-        assertNotNull( result.getNodes().getNodeById( node3.id() ) );
-        assertNull( result.getNodes().getNodeById( node2.id() ) );
+        assertEquals( 2, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node1.id() ) );
+        assertTrue( result.getNodeIds().contains( node3.id() ) );
+        assertFalse( result.getNodeIds().contains( node2.id() ) );
     }
 
     @Test
@@ -208,8 +205,8 @@ public class FindNodesByQueryCommandTest
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node1.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node1.id() ) );
     }
 
 }

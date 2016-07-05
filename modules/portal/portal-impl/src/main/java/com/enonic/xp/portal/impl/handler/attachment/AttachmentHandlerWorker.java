@@ -9,14 +9,15 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.web.HttpStatus;
 
 final class AttachmentHandlerWorker
-    extends PortalHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     protected ContentService contentService;
 
@@ -28,33 +29,40 @@ final class AttachmentHandlerWorker
 
     protected boolean cacheable;
 
+    public AttachmentHandlerWorker( final PortalRequest request )
+    {
+        super( request );
+    }
+
     @Override
-    public void execute()
+    public PortalResponse execute()
         throws Exception
     {
         final Content content = getContent( this.id );
         final Attachment attachment = resolveAttachment( content, this.name );
         final ByteSource binary = resolveBinary( this.id, attachment );
 
-        this.response.status( HttpStatus.OK );
-        this.response.contentType( MediaType.parse( attachment.getMimeType() ) );
-        this.response.body( binary );
+        final PortalResponse.Builder portalResponse = PortalResponse.create().
+            contentType( MediaType.parse( attachment.getMimeType() ) ).
+            body( binary );
 
         if ( this.download )
         {
-            this.response.header( "Content-Disposition", "attachment; filename=" + attachment.getName() );
+            portalResponse.header( "Content-Disposition", "attachment; filename=" + attachment.getName() );
         }
         if ( this.name.endsWith( ".svgz" ) )
         {
-            this.response.header( "Content-Encoding", "gzip" );
+            portalResponse.header( "Content-Encoding", "gzip" );
         }
         if ( this.cacheable )
         {
             final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
             final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
-            setResponseCacheable( everyoneCanRead && masterBranch );
+            setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
         }
+
+        return portalResponse.build();
     }
 
     private Content getContent( final ContentId contentId )

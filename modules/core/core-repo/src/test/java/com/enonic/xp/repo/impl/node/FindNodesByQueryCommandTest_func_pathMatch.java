@@ -33,7 +33,7 @@ public class FindNodesByQueryCommandTest_func_pathMatch
 
         final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1')" );
 
-        assertEquals( 1, result.getNodes().getSize() );
+        assertEquals( 1, result.getNodeIds().getSize() );
     }
 
 

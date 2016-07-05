@@ -19,8 +19,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.ResolveDependenciesAggregationResult;
 import com.enonic.xp.data.ValueTypes;
@@ -58,13 +57,11 @@ public class ResolveDependenciesAggregationFactory
     private Collection<ResolveDependenciesAggregationResult> resolveInboundDependenciesAggregation( final ContentId contentId )
     {
 
-        final FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-            contentQuery( ContentQuery.create().
-                queryExpr( QueryParser.parse( "_references = '" + contentId.toString() + "' and _id != '" + contentId.toString() + "'" ) ).
-                aggregationQuery( TermsAggregationQuery.create( "type" ).
-                    fieldName( "type" ).
-                    orderDirection( TermsAggregationQuery.Direction.DESC ).
-                    build() ).
+        final FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create().
+            queryExpr( QueryParser.parse( "_references = '" + contentId.toString() + "'" ) ).
+            aggregationQuery( TermsAggregationQuery.create( "type" ).
+                fieldName( "type" ).
+                orderDirection( TermsAggregationQuery.Direction.DESC ).
                 build() ).
             build() );
 

@@ -3,6 +3,7 @@ module api.notify {
     export function showSuccess(message: string, autoHide: boolean = true): string {
         return NotifyManager.get().showSuccess(message, autoHide);
     }
+
     export function showFeedback(message: string, autoHide: boolean = true): string {
         return NotifyManager.get().showFeedback(message, autoHide);
     }

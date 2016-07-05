@@ -49,6 +49,7 @@ final class GetContentByIdsCommand
     private Contents doExecute()
     {
         final NodeIds nodeIds = getAsNodeIds( this.params.getIds() );
+
         final Nodes nodes = nodeService.getByIds( nodeIds );
 
         return this.translator.fromNodes( nodes, true );

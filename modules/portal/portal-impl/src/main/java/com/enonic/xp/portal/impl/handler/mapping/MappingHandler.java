@@ -5,18 +5,21 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.BaseHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.BaseWebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class MappingHandler
-    extends BaseHandler
+    extends BaseWebHandler
 {
     private SiteService siteService;
 
@@ -34,23 +37,25 @@ public final class MappingHandler
     }
 
     @Override
-    public final boolean canHandle( final PortalRequest req )
+    public final boolean canHandle( final WebRequest req )
     {
-        return new ControllerMappingsResolver( siteService, contentService ).resolve( req ) != null;
+        return req instanceof PortalRequest &&
+            new ControllerMappingsResolver( siteService, contentService ).resolve( (PortalRequest) req ) != null;
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).resolve( req );
+        PortalRequest portalRequest = (PortalRequest) webRequest;
+        final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).resolve( portalRequest );
 
-        final MappingHandlerWorker worker = new MappingHandlerWorker();
+        final MappingHandlerWorker worker = new MappingHandlerWorker( portalRequest );
         worker.mappingDescriptor = mapping;
         worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.rendererFactory = rendererFactory;
-        return worker;
+        return worker.execute();
     }
 
     @Reference

@@ -21,6 +21,7 @@ import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
 import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -30,13 +31,13 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.RepositoryIndexMappingProvider;
 import com.enonic.xp.repo.impl.repository.RepositorySearchIndexSettingsProvider;
 import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
@@ -46,7 +47,11 @@ public class IndexServiceImpl
 {
     private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
 
+    private final static int BATCH_SIZE = 10_000;
+
     private IndexServiceInternal indexServiceInternal;
+
+    private IndexDataService indexDataService;
 
     private SearchService searchService;
 
@@ -82,6 +87,7 @@ public class IndexServiceImpl
 
             final NodeBranchQueryResult results = this.searchService.query( NodeBranchQuery.create().
                 query( QueryExpr.from( compareExpr ) ).
+                batchSize( BATCH_SIZE ).
                 size( SearchService.GET_ALL_SIZE_FLAG ).
                 build(), InternalContext.from( reindexContext ) );
 
@@ -92,7 +98,7 @@ public class IndexServiceImpl
             LOG.info( "Starting reindexing '" + branch + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
                           " items to process" );
 
-            for ( final NodeBranchMetadata nodeBranchMetadata : results )
+            for ( final NodeBranchEntry nodeBranchEntry : results )
             {
                 if ( nodeIndex % logStep == 0 )
                 {
@@ -101,11 +107,11 @@ public class IndexServiceImpl
                             "..." );
                 }
 
-                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchMetadata.getVersionId() );
+                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchEntry.getVersionId() );
 
-                final Node node = NodeFactory.create( nodeVersion, nodeBranchMetadata );
+                final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
-                this.indexServiceInternal.store( node, InternalContext.create( ContextAccessor.current() ).
+                this.indexDataService.store( node, InternalContext.create( ContextAccessor.current() ).
                     repositoryId( params.getRepositoryId() ).
                     branch( branch ).
                     build() );
@@ -211,5 +217,11 @@ public class IndexServiceImpl
     public void setNodeVersionDao( final NodeVersionDao nodeVersionDao )
     {
         this.nodeVersionDao = nodeVersionDao;
+    }
+
+    @Reference
+    public void setIndexDataService( final IndexDataService indexDataService )
+    {
+        this.indexDataService = indexDataService;
     }
 }

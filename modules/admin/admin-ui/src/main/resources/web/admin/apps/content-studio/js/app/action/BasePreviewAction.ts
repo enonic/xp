@@ -9,9 +9,9 @@ interface OpenedWindow {
 }
 
 export class BasePreviewAction extends Action {
-    
+
     private notifyBlocked: () => void;
-    
+
     constructor(label: string, shortcut?: string, global?: boolean) {
         super(label, shortcut, global);
         // Notification is shown not less than once in a minute, if triggered
@@ -27,7 +27,7 @@ export class BasePreviewAction extends Action {
         if (isBlocked) {
             this.notifyBlocked();
         }
-        
+
         return isBlocked;
     }
 
@@ -48,7 +48,7 @@ export class BasePreviewAction extends Action {
     protected openBlankWindow(content: api.content.ContentSummary): OpenedWindow {
         const openedWindow = window.open('', content.getId());
         const isBlocked = this.popupCheck(openedWindow);
-        return { openedWindow, isBlocked };
+        return {openedWindow, isBlocked};
     }
 
     protected updateLocation(targetWindow, content: api.content.ContentSummary, focus: boolean = true) {

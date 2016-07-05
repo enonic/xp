@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.websocket.Endpoint;
 
-import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.websocket.EndpointFactory;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 final class EndpointFactoryImpl
     implements EndpointFactory

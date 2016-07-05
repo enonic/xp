@@ -30,6 +30,7 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
+import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -63,7 +64,6 @@ public class NodeServiceImplTest
         final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
         Mockito.when( config.getSnapshotsDir() ).thenReturn( xpHome.newFolder() );
         this.nodeService.setConfiguration( config );
-        this.elasticsearchDao.setConfiguration( config );
 
         this.nodeService.initialize();
         this.createDefaultRootNode();
@@ -204,7 +204,7 @@ public class NodeServiceImplTest
         assertNotNull( getNodeById( node.id() ) );
     }
 
-    @Test
+    @Test(expected = SnapshotException.class)
     public void non_existing_snapshot()
         throws Exception
     {

@@ -1,16 +1,23 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import java.util.Collection;
+
+import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 
 public interface StorageDao
 {
     String store( final StoreRequest request );
 
+    void store( final Collection<IndexDocument> indexDocuments );
+
     boolean delete( final DeleteRequest request );
+
+    boolean delete( final DeleteRequests request );
 
     GetResult getById( final GetByIdRequest request );
 
     GetResults getByIds( final GetByIdsRequest requests );
 
-    SearchResult getByValues( final GetByValuesRequest request );
+    void copy( final CopyRequest request );
+
 }

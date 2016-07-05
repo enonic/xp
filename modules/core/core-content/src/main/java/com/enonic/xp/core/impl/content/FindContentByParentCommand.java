@@ -31,7 +31,7 @@ final class FindContentByParentCommand
     {
         final FindNodesByParentResult result = nodeService.findByParent( createFindNodesByParentParams() );
 
-        final Nodes nodes = result.getNodes();
+        final Nodes nodes = this.nodeService.getByIds( result.getNodeIds() );
 
         final Contents contents = this.translator.fromNodes( nodes, true );
 

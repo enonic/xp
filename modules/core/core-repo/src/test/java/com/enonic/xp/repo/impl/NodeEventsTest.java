@@ -1,9 +1,15 @@
 package com.enonic.xp.repo.impl;
 
+import java.util.List;
+
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -35,7 +41,30 @@ public class NodeEventsTest
         final Node pushed3 = createNode( "pushed3", NodePath.create( "/mynode1/pushed3" ).build(), "id3" );
         final Nodes nodes = Nodes.from( pushed1, pushed2, pushed3 );
 
-        Event event = NodeEvents.pushed( nodes );
+        List<NodeBranchEntry> branchEntries = Lists.newArrayList();
+
+        branchEntries.add( NodeBranchEntry.create().
+            nodeId( pushed1.id() ).
+            nodePath( pushed1.path() ).
+            nodeState( NodeState.DEFAULT ).
+            nodeVersionId( pushed1.getNodeVersionId() ).
+            build() );
+
+        branchEntries.add( NodeBranchEntry.create().
+            nodeId( pushed2.id() ).
+            nodePath( pushed2.path() ).
+            nodeState( NodeState.DEFAULT ).
+            nodeVersionId( pushed2.getNodeVersionId() ).
+            build() );
+
+        branchEntries.add( NodeBranchEntry.create().
+            nodeId( pushed3.id() ).
+            nodePath( pushed3.path() ).
+            nodeState( NodeState.DEFAULT ).
+            nodeVersionId( pushed3.getNodeVersionId() ).
+            build() );
+
+        Event event = NodeEvents.pushed( NodeBranchEntries.from( branchEntries ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );

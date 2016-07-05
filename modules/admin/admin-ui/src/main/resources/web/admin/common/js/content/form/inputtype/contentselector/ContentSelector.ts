@@ -108,8 +108,7 @@ module api.content.form.inputtype.contentselector {
             }
             super.layout(input, propertyArray);
 
-            var contentSelectorLoader = ContentSelectorLoader.create().
-                setContent(this.config.content).
+            var contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
                 setInputName(input.getName()).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(this.allowedContentTypes).
@@ -124,8 +123,6 @@ module api.content.form.inputtype.contentselector {
                 .setLoader(contentSelectorLoader)
                 .setValue(value)
                 .setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader))
-                .setDisplayMissingSelectedOptions(true)
-                .setRemoveMissingSelectedOptions(true)
                 .build();
 
             this.contentComboBox.getComboBox().onContentMissing((ids: string[]) => {
@@ -212,7 +209,7 @@ module api.content.form.inputtype.contentselector {
                     }
                 }
             });
-            return new api.content.GetContentSummaryByIds(contentIds).get().
+            return new api.content.GetContentSummaryByIds(contentIds).sendAndParse().
                 then((result: api.content.ContentSummary[]) => {
                     return result;
                 });

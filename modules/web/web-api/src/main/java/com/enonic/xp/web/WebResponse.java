@@ -39,6 +39,16 @@ public class WebResponse
         this.webSocket = builder.webSocket;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final WebResponse source )
+    {
+        return new Builder( source );
+    }
+
     public HttpStatus getStatus()
     {
         return this.status;

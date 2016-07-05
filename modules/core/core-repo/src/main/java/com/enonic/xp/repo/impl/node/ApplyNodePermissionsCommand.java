@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repo.impl.search.SearchService;
@@ -35,6 +36,11 @@ final class ApplyNodePermissionsCommand
         this.mergingStrategy = builder.mergingStrategy;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public Nodes execute()
     {
         final Node node = doGetById( params.getNodeId() );
@@ -58,7 +64,12 @@ final class ApplyNodePermissionsCommand
             size( SearchService.GET_ALL_SIZE_FLAG ).
             build();
 
-        final Nodes children = doFindNodesByParent( findByParentParams ).getNodes();
+        final FindNodesByParentResult result = doFindNodesByParent( findByParentParams );
+
+        final Nodes children = GetNodesByIdsCommand.create( this ).
+            ids( result.getNodeIds() ).
+            build().
+            execute();
 
         for ( Node child : children )
         {
@@ -104,11 +115,6 @@ final class ApplyNodePermissionsCommand
             permissions( permissions ).
             inheritPermissions( inheritsPermissions );
         return updateNodeBuilder.build();
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

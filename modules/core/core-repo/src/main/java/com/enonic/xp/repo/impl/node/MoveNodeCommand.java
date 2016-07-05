@@ -9,16 +9,15 @@ import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
-import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
@@ -27,6 +26,9 @@ import com.enonic.xp.security.acl.Permission;
 public class MoveNodeCommand
     extends AbstractNodeCommand
 {
+
+    public static final int BATCH_SIZE = 10_000;
+
     private final NodeId nodeId;
 
     private final NodePath newParentPath;
@@ -39,6 +41,16 @@ public class MoveNodeCommand
         this.nodeId = builder.id;
         this.newParentPath = builder.newParentPath;
         this.newNodeName = builder.newNodeName;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
     }
 
     public MoveNodeResult execute()
@@ -145,11 +157,11 @@ public class MoveNodeCommand
             parent( persistedNode.path() ).
             from( 0 ).
             size( SearchService.GET_ALL_SIZE_FLAG ).
-            searchMode( SearchMode.SEARCH ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final NodesBranchMetadata nodesBranchMetadata =
-            this.storageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
+        final NodeBranchEntries nodeBranchEntries = this.storageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), false,
+                                                                                               InternalContext.from(
+                                                                                                   ContextAccessor.current() ) );
 
         final NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
 
@@ -181,9 +193,9 @@ public class MoveNodeCommand
             movedNode = doStore( nodeToMoveBuilder.build(), true );
         }
 
-        for ( final NodeBranchMetadata nodeBranchMetadata : nodesBranchMetadata )
+        for ( final NodeBranchEntry nodeBranchEntry : nodeBranchEntries )
         {
-            doMoveNode( nodeToMoveBuilder.build().path(), getNodeName( nodeBranchMetadata ), nodeBranchMetadata.getNodeId() );
+            doMoveNode( nodeToMoveBuilder.build().path(), getNodeName( nodeBranchEntry ), nodeBranchEntry.getNodeId() );
         }
 
         return movedNode;
@@ -197,9 +209,9 @@ public class MoveNodeCommand
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
 
-    private NodeName getNodeName( final NodeBranchMetadata nodeBranchMetadata )
+    private NodeName getNodeName( final NodeBranchEntry nodeBranchEntry )
     {
-        return NodeName.from( nodeBranchMetadata.getNodePath().getLastElement().toString() );
+        return NodeName.from( nodeBranchEntry.getNodePath().getLastElement().toString() );
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )
@@ -215,16 +227,6 @@ public class MoveNodeCommand
         {
             throw new NodeAlreadyExistAtPathException( newParentPath );
         }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
     }
 
     public static class Builder

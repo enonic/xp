@@ -25,6 +25,11 @@ public class FindNodesByQueryCommand
         return new Builder();
     }
 
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
     public FindNodesByQueryResult execute()
     {
         final NodeQueryResult nodeQueryResult = searchService.query( query, InternalContext.from( ContextAccessor.current() ) );
@@ -36,7 +41,7 @@ public class FindNodesByQueryCommand
 
         for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
         {
-            resultBuilder.addNode( doGetById( resultEntry.getId() ) );
+            resultBuilder.addNodeId( resultEntry.getId() );
         }
 
         return resultBuilder.build();
@@ -50,6 +55,11 @@ public class FindNodesByQueryCommand
         private Builder()
         {
             super();
+        }
+
+        private Builder( final AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder query( NodeQuery query )

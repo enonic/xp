@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodePath;
 
 final class DeleteNodeByPathCommand
@@ -18,7 +19,7 @@ final class DeleteNodeByPathCommand
         this.nodePath = builder.nodePath;
     }
 
-    Node execute()
+    NodeBranchEntries execute()
     {
         final Context context = ContextAccessor.current();
 
@@ -27,12 +28,7 @@ final class DeleteNodeByPathCommand
             build().
             execute();
 
-        if ( node != null )
-        {
-            deleteNodeWithChildren( node, context );
-        }
-
-        return node;
+            return node != null ? deleteNodeWithChildren( node, context ) : NodeBranchEntries.empty();
     }
 
     static Builder create()

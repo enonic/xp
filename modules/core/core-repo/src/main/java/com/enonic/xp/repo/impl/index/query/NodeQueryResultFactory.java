@@ -17,7 +17,7 @@ public class NodeQueryResultFactory
 
         for ( final SearchHit result : results )
         {
-            builder.addEntry( new NodeQueryResultEntry( result.getScore(), result.getId() ) );
+            builder.addEntry( NodeQueryResultEntryFactory.create( result ) );
         }
 
         builder.aggregations( searchResult.getAggregations() );

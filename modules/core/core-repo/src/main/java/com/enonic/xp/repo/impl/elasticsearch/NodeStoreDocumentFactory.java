@@ -21,7 +21,7 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.RepositoryId;
 
 
-class NodeStoreDocumentFactory
+public class NodeStoreDocumentFactory
 {
     private final Node node;
 
@@ -37,6 +37,11 @@ class NodeStoreDocumentFactory
         branch = builder.branch;
         repositoryId = builder.repositoryId;
         this.refresh = builder.refresh;
+    }
+
+    public static Builder createBuilder()
+    {
+        return new Builder();
     }
 
     public Collection<IndexDocument> create()
@@ -74,7 +79,6 @@ class NodeStoreDocumentFactory
 
         return builder.build();
     }
-
 
     private void addNodeMetaData( final IndexItems.Builder builder )
     {
@@ -166,7 +170,6 @@ class NodeStoreDocumentFactory
         }
     }
 
-
     private void addNodeDataProperties( final IndexItems.Builder builder )
     {
         PropertyVisitor visitor = new PropertyVisitor()
@@ -200,12 +203,6 @@ class NodeStoreDocumentFactory
 
         visitor.traverse( this.node.data() );
     }
-
-    public static Builder createBuilder()
-    {
-        return new Builder();
-    }
-
 
     public static final class Builder
     {

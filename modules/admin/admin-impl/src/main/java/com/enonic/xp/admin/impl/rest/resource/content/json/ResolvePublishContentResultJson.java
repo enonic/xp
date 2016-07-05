@@ -1,31 +1,41 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
+import com.enonic.xp.admin.impl.json.content.ContentIdJson;
+import com.enonic.xp.content.ContentIds;
 
 public class ResolvePublishContentResultJson
 {
-    private final List<ContentPublishItemJson> requestedContents;
+    private final List<ContentIdJson> requestedContents;
 
-    private final List<ContentPublishItemJson> dependentContents;
+    private final List<ContentIdJson> dependentContents;
+
+    private final Boolean containsRemovable;
 
     private ResolvePublishContentResultJson( Builder builder )
     {
-        requestedContents = builder.requestedContents;
-        dependentContents = builder.dependentContents;
+        requestedContents = builder.requestedContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
+        dependentContents = builder.dependentContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
+        containsRemovable = builder.containsRemovable;
     }
 
     @SuppressWarnings("unused")
-    public List<ContentPublishItemJson> getRequestedContents()
+    public List<ContentIdJson> getRequestedContents()
     {
         return requestedContents;
     }
 
     @SuppressWarnings("unused")
-    public List<ContentPublishItemJson> getDependentContents()
+    public List<ContentIdJson> getDependentContents()
     {
         return dependentContents;
+    }
+
+    public Boolean getContainsRemovable()
+    {
+        return containsRemovable;
     }
 
     public static Builder create()
@@ -36,23 +46,31 @@ public class ResolvePublishContentResultJson
     public static final class Builder
     {
 
-        private List<ContentPublishItemJson> requestedContents = Lists.newLinkedList();
+        private ContentIds requestedContents;
 
-        private List<ContentPublishItemJson> dependentContents = Lists.newLinkedList();
+        private ContentIds dependentContents;
+
+        private Boolean containsRemovable;
 
         private Builder()
         {
         }
 
-        public Builder setRequestedContents( final List<ContentPublishItemJson> requestedContents )
+        public Builder setRequestedContents( final ContentIds requestedContents )
         {
             this.requestedContents = requestedContents;
             return this;
         }
 
-        public Builder setDependentContents( final List<ContentPublishItemJson> dependentContents )
+        public Builder setDependentContents( final ContentIds dependentContents )
         {
             this.dependentContents = dependentContents;
+            return this;
+        }
+
+        public Builder setContainsRemovable( final Boolean containsRemovable )
+        {
+            this.containsRemovable = containsRemovable;
             return this;
         }
 

@@ -12,24 +12,22 @@ import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
 public abstract class AbstractElasticsearchIntegrationTest
 {
-    @Rule
-    public TemporaryFolder xpHome = new TemporaryFolder();
-
     protected static final Repository TEST_REPO = Repository.create().
         id( RepositoryId.from( "cms-repo" ) ).
         build();
 
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
-    protected ElasticsearchDaoImpl elasticsearchDao;
+    @Rule
+    public TemporaryFolder xpHome = new TemporaryFolder();
 
-    protected ElasticsearchIndexServiceInternal elasticsearchIndexService;
+    protected IndexServiceInternalImpl elasticsearchIndexService;
 
     protected Client client;
 
@@ -42,15 +40,11 @@ public abstract class AbstractElasticsearchIntegrationTest
         server = new EmbeddedElasticsearchServer( xpHome.getRoot() );
 
         this.client = server.getClient();
-        this.elasticsearchDao = new ElasticsearchDaoImpl();
-        this.elasticsearchDao.setClient( client );
 
-        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
-        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
-        this.elasticsearchIndexService = new ElasticsearchIndexServiceInternal();
-        elasticsearchIndexService.setElasticsearchDao( elasticsearchDao );
+        this.elasticsearchIndexService = new IndexServiceInternalImpl();
         elasticsearchIndexService.setClient( client );
     }
 

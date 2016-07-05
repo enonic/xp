@@ -1,7 +1,10 @@
 package com.enonic.xp.repo.impl.storage;
 
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -10,11 +13,10 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
-import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 public interface StorageService
@@ -25,15 +27,22 @@ public interface StorageService
 
     void delete( final NodeId nodeId, final InternalContext context );
 
+    void delete( final NodeIds nodeIds, final InternalContext context );
+
     Node updateMetadata( final Node node, final InternalContext context );
 
     void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
+
+    void publish( final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId, final InternalContext context,
+                  final Branch target );
+
+    void publish( final PushNodeEntries entries, final InternalContext context );
 
     Node get( final NodeId nodeId, final InternalContext context );
 
     Node get( final NodePath nodePath, final InternalContext context );
 
-    Nodes get( final NodeIds nodeIds, final InternalContext context );
+    Nodes get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
 
     Nodes get( final NodePaths nodePaths, final InternalContext context );
 
@@ -41,13 +50,16 @@ public interface StorageService
 
     NodeVersion get( final NodeVersionMetadata nodeVersionMetadata );
 
-    NodeBranchMetadata getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
+    NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 
-    NodesBranchMetadata getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context );
+    NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
 
     NodeVersionMetadata getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
 
     ReturnValues getIndexedData( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context );
+
+    ReturnValues getIndexedData( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context );
+
 
     NodeId getIdForPath( final NodePath nodePath, final InternalContext context );
 

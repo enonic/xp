@@ -20,7 +20,7 @@ import com.enonic.xp.query.filter.Filters;
 public class AbstractQuery
     implements Query
 {
-    protected final static int DEFAULT_QUERY_SIZE = 10;
+    private final static int DEFAULT_QUERY_SIZE = 10;
 
     private final QueryExpr query;
 
@@ -34,7 +34,11 @@ public class AbstractQuery
 
     private final int size;
 
+    private final int batchSize;
+
     private final SearchMode searchMode;
+
+    private final SearchOptimizer searchOptimizer;
 
     private final ImmutableList<OrderExpr> orderBys;
 
@@ -44,11 +48,13 @@ public class AbstractQuery
         this.query = builder.query;
         this.from = builder.from;
         this.size = builder.size;
+        this.batchSize = builder.batchSize;
         this.searchMode = builder.searchMode;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
         this.orderBys = setOrderExpressions( builder );
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
+        this.searchOptimizer = builder.searchOptimizer;
     }
 
     private ImmutableList<OrderExpr> setOrderExpressions( final Builder builder )
@@ -100,28 +106,42 @@ public class AbstractQuery
         return size;
     }
 
+    public int getBatchSize()
+    {
+        return batchSize;
+    }
+
     public SearchMode getSearchMode()
     {
         return searchMode;
     }
 
+    public SearchOptimizer getSearchOptimizer()
+    {
+        return searchOptimizer;
+    }
+
     public static abstract class Builder<B extends Builder>
     {
-        private QueryExpr query;
-
         private final Filters.Builder postFilters = Filters.create();
 
         private final Filters.Builder queryFilters = Filters.create();
 
         private final Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
+        private QueryExpr query;
+
         private int from;
 
         private int size = DEFAULT_QUERY_SIZE;
 
-        private List<OrderExpr> orderBys = Lists.newLinkedList();
+        private int batchSize = 5_000;
+
+        private final List<OrderExpr> orderBys = Lists.newLinkedList();
 
         private SearchMode searchMode = SearchMode.SEARCH;
+
+        private SearchOptimizer searchOptimizer = SearchOptimizer.SPEED;
 
         protected Builder()
         {
@@ -185,16 +205,16 @@ public class AbstractQuery
         }
 
         @SuppressWarnings("unchecked")
-        public B addOrderBy( final OrderExpr orderExpr )
+        public B batchSize( int batchSize )
         {
-            this.orderBys.add( orderExpr );
+            this.batchSize = batchSize;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B setOrderBys( final List<OrderExpr> orderExpr )
+        public B addOrderBy( final OrderExpr orderExpr )
         {
-            this.orderBys = orderExpr;
+            this.orderBys.add( orderExpr );
             return (B) this;
         }
 
@@ -209,6 +229,13 @@ public class AbstractQuery
         public B searchMode( SearchMode searchMode )
         {
             this.searchMode = searchMode;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B searchOptimizer( SearchOptimizer searchOptimizer )
+        {
+            this.searchOptimizer = searchOptimizer;
             return (B) this;
         }
     }

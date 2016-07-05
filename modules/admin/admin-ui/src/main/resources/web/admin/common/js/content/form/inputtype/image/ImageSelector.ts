@@ -97,10 +97,9 @@ module api.content.form.inputtype.image {
                         }
                     });
 
-                event.getDeletedItems().
-                    filter(deletedItem => !deletedItem.isPending() &&
-                                          selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
-                    forEach((deletedItem) => {
+                event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
+                                                              selectedContentIdsMap.hasOwnProperty(
+                                                                  deletedItem.getContentId().toString())).forEach((deletedItem) => {
                         var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
                         if (option != null) {
                             this.selectedOptionsView.removeSelectedOptions([option]);
@@ -207,8 +206,7 @@ module api.content.form.inputtype.image {
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
                                    [ContentTypeName.IMAGE.toString()];
 
-            var contentSelectorLoader = ContentSelectorLoader.create().
-                setContent(this.config.content).
+            var contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
                 setInputName(inputName).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(contentTypes).
@@ -449,7 +447,7 @@ module api.content.form.inputtype.image {
                     contentIds.push(ContentId.fromReference(property.getReference()));
                 }
             });
-            return new api.content.GetContentSummaryByIds(contentIds).get();
+            return new api.content.GetContentSummaryByIds(contentIds).sendAndParse();
         }
 
         protected getNumberOfValids(): number {

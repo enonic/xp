@@ -16,7 +16,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -33,6 +32,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.exception.ExceptionRenderer;
 
 @Component
 public final class ExceptionRendererImpl
@@ -53,38 +55,39 @@ public final class ExceptionRendererImpl
     private AuthControllerService authControllerService;
 
     @Override
-    public PortalResponse render( final PortalRequest req, final PortalException cause )
+    public PortalResponse render( final WebRequest webRequest, final WebException cause )
     {
-        final HttpStatus httpStatus = cause.getStatus();
-        if ( httpStatus != null )
+        if ( webRequest instanceof PortalRequest )
         {
-            final String handlerMethod = String.format( STATUS_HANDLER, httpStatus.value() );
-            final PortalResponse statusCustomError = renderCustomError( req, cause, handlerMethod );
-            if ( statusCustomError != null )
+            PortalRequest portalRequest = (PortalRequest) webRequest;
+            final HttpStatus httpStatus = cause.getStatus();
+            if ( httpStatus != null )
             {
-                req.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
-                return statusCustomError;
+                final String handlerMethod = String.format( STATUS_HANDLER, httpStatus.value() );
+                final PortalResponse statusCustomError = renderCustomError( portalRequest, cause, handlerMethod );
+                if ( statusCustomError != null )
+                {
+                    return statusCustomError;
+                }
+            }
+
+            final PortalResponse idProviderError = renderIdProviderError( portalRequest, cause );
+            if ( idProviderError != null )
+            {
+                return idProviderError;
+            }
+
+            final PortalResponse defaultCustomError = renderCustomError( portalRequest, cause, DEFAULT_HANDLER );
+            if ( defaultCustomError != null )
+            {
+                return defaultCustomError;
             }
         }
 
-        final PortalResponse idProviderError = renderIdProviderError( req, cause );
-        if ( idProviderError != null )
-        {
-            req.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
-            return idProviderError;
-        }
-
-        final PortalResponse defaultCustomError = renderCustomError( req, cause, DEFAULT_HANDLER );
-        if ( defaultCustomError != null )
-        {
-            req.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
-            return defaultCustomError;
-        }
-
-        return renderInternalErrorPage( req, cause );
+        return renderInternalErrorPage( webRequest, cause );
     }
 
-    private PortalResponse renderCustomError( final PortalRequest req, final PortalException cause, final String handlerMethod )
+    private PortalResponse renderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
         if ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() )
         {
@@ -101,7 +104,7 @@ public final class ExceptionRendererImpl
     }
 
 
-    private PortalResponse doRenderCustomError( final PortalRequest req, final PortalException cause, final String handlerMethod )
+    private PortalResponse doRenderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
         Site site = req.getSite();
         if ( site == null )
@@ -199,7 +202,7 @@ public final class ExceptionRendererImpl
         }
     }
 
-    private PortalResponse renderIdProviderError( final PortalRequest req, final PortalException cause )
+    private PortalResponse renderIdProviderError( final PortalRequest req, final WebException cause )
     {
         if ( isUnauthorizedError( cause.getStatus() ) )
         {
@@ -219,14 +222,14 @@ public final class ExceptionRendererImpl
         return null;
     }
 
-    private PortalResponse renderInternalErrorPage( final PortalRequest req, final PortalException cause )
+    private PortalResponse renderInternalErrorPage( final WebRequest req, final WebException cause )
     {
         final ExceptionInfo info = toErrorInfo( cause );
         logIfNeeded( info );
         return info.toResponse( req );
     }
 
-    private ExceptionInfo toErrorInfo( final PortalException cause )
+    private ExceptionInfo toErrorInfo( final WebException cause )
     {
         return ExceptionInfo.create( cause.getStatus() ).
             cause( cause ).

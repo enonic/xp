@@ -10,15 +10,12 @@ public class SearchHit
 
     private final String id;
 
-    private final long version;//  = -1;
-
     private final ReturnValues returnValues;
 
     private SearchHit( final Builder builder )
     {
         this.score = builder.score;
         this.id = builder.id;
-        this.version = builder.version;
         this.returnValues = builder.returnValues;
     }
 
@@ -50,20 +47,6 @@ public class SearchHit
     public ReturnValues getReturnValues()
     {
         return returnValues;
-    }
-
-    public String getStringValue( final String fieldName )
-    {
-        final ReturnValue returnValue = doGetField( fieldName, true );
-
-        if ( returnValue.getSingleValue() == null )
-        {
-            return null;
-        }
-        else
-        {
-            return returnValue.getSingleValue().toString();
-        }
     }
 
     private ReturnValue doGetField( final String fieldName, final boolean failOnMissing )
@@ -110,11 +93,9 @@ public class SearchHit
 
     public static class Builder
     {
-        private float score = Float.NEGATIVE_INFINITY;
+        private float score = 0;
 
         private String id;
-
-        private long version = -1;
 
         private ReturnValues returnValues;
 
@@ -127,12 +108,6 @@ public class SearchHit
         public Builder id( final String id )
         {
             this.id = id;
-            return this;
-        }
-
-        public Builder version( final long version )
-        {
-            this.version = version;
             return this;
         }
 

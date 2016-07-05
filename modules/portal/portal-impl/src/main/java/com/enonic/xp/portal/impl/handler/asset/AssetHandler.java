@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.asset;
 
+import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,14 +8,16 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class AssetHandler
     extends EndpointHandler
 {
@@ -24,15 +27,14 @@ public final class AssetHandler
 
     public AssetHandler()
     {
-        super( "asset" );
-        setMethodsAllowed( HttpMethod.GET, HttpMethod.HEAD );
+        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "asset" );
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String restPath = findRestPath( req );
+        final String restPath = findRestPath( webRequest );
 
         final Matcher matcher = PATTERN.matcher( restPath );
 
@@ -41,14 +43,14 @@ public final class AssetHandler
             throw notFound( "Not a valid asset url pattern" );
         }
 
-        final AssetHandlerWorker worker = new AssetHandlerWorker();
+        final AssetHandlerWorker worker = new AssetHandlerWorker( webRequest );
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         worker.cacheable = matcher.group( 2 ) != null;
         worker.applicationKey = applicationKey;
         worker.name = matcher.group( 3 );
         worker.resourceService = this.resourceService;
 
-        return worker;
+        return worker.execute();
     }
 
     @Reference

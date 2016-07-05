@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
@@ -7,8 +8,12 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -17,9 +22,10 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -36,13 +42,18 @@ final class DeleteContentCommand
         this.params = builder.params;
     }
 
-    Contents execute()
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    DeleteContentsResult execute()
     {
         params.validate();
 
         try
         {
-            final Contents deletedContents = doExecute();
+            final DeleteContentsResult deletedContents = doExecute();
             nodeService.refresh( RefreshMode.SEARCH );
             return deletedContents;
         }
@@ -52,59 +63,122 @@ final class DeleteContentCommand
         }
     }
 
-    private Contents doExecute()
+    private DeleteContentsResult doExecute()
     {
+        this.nodeService.refresh( RefreshMode.ALL );
+
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
 
-        final Nodes.Builder nodesToDelete = Nodes.create();
-        recursiveDelete( nodeToDelete, nodesToDelete );
+        final DeleteContentsResult deletedContents = doDeleteContent( nodeToDelete.id() );
 
         this.nodeService.refresh( RefreshMode.ALL );
 
-        return this.translator.fromNodes( nodesToDelete.build(), false );
+        return deletedContents;
     }
 
-    private void recursiveDelete( Node nodeToDelete, Nodes.Builder deletedNodes )
+    private DeleteContentsResult doDeleteContent( NodeId nodeToDelete )
+    {
+        final CompareStatus rootNodeStatus = getCompareStatus( nodeToDelete );
+
+        final NodeIds children = getAllChildren( nodeToDelete );
+
+        final DeleteContentsResult.Builder result = DeleteContentsResult.create();
+
+        if ( rootNodeStatus == CompareStatus.NEW )
+        {
+            // Root node is new, just delete all children
+            final Node node = this.nodeService.getById( nodeToDelete );
+
+            final NodeIds nodes = this.nodeService.deleteById( nodeToDelete );
+
+            result.addDeleted( ContentIds.from( nodes.getAsStrings() ) );
+
+            if ( nodes.contains( node.id() ) )
+            {
+                this.fillResult( result, node.name().toString(), node.data().getRoot().getString( ContentPropertyNames.TYPE ) );
+            }
+
+        }
+        else if ( this.params.isDeleteOnline() )
+        {
+            final Node node = this.nodeService.getById( nodeToDelete );
+
+            final NodeIds nodes = deleteNodeInDraftAndMaster( nodeToDelete );
+
+            result.addDeleted( ContentIds.from( nodes.getAsStrings() ) );
+
+            if ( nodes.contains( node.id() ) )
+            {
+                this.fillResult( result, node.name().toString(), node.data().getRoot().getString( ContentPropertyNames.TYPE ) );
+            }
+        }
+        else
+        {
+            SetNodeStateResult stateResult = this.nodeService.setNodeState( SetNodeStateParams.create().
+                nodeId( nodeToDelete ).
+                nodeState( NodeState.PENDING_DELETE ).
+                build() );
+
+            result.addPending( ContentId.from( nodeToDelete.toString() ) );
+
+            result.setContentName( stateResult.getUpdatedNodes().first().name().toString() );
+
+            for ( final NodeId child : children )
+            {
+                final DeleteContentsResult childDeleteResult = this.doDeleteContent( child );
+
+                result.addDeleted( childDeleteResult.getDeletedContents() );
+                result.addPending( childDeleteResult.getPendingContents() );
+
+                if ( StringUtils.isNotEmpty( childDeleteResult.getContentName() ) )
+                {
+                    result.setContentName( childDeleteResult.getContentName() );
+                }
+
+                if ( StringUtils.isNotEmpty( childDeleteResult.getContentType() ) )
+                {
+                    result.setContentType( childDeleteResult.getContentType() );
+                }
+            }
+        }
+        return result.build();
+    }
+
+    private void fillResult( final DeleteContentsResult.Builder result, final String name, final String type )
+    {
+        final ContentName contentName = ContentName.from( name );
+        if ( !contentName.isUnnamed() )
+        {
+            result.setContentName( name );
+        }
+        else
+        {
+            result.setContentType( type );
+        }
+    }
+
+    private NodeIds deleteNodeInDraftAndMaster( final NodeId nodeToDelete )
+    {
+        final Context currentContext = ContextAccessor.current();
+        final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, currentContext );
+        final NodeIds masterNodes = deleteNodeInContext( nodeToDelete, ContextBuilder.from( currentContext ).
+            branch( ContentConstants.BRANCH_MASTER ).
+            build() );
+        return masterNodes != null ? masterNodes : draftNodes;
+    }
+
+    private NodeIds getAllChildren( final NodeId nodeToDelete )
     {
         final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
-            parentPath( nodeToDelete.path() ).
+            parentId( nodeToDelete ).
+            recursive( true ).
             build() );
 
-        for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
-        {
-            recursiveDelete( childNodeToDelete, deletedNodes );
-        }
-
-        final CompareStatus status = getCompareStatus( nodeToDelete );
-
-        if ( status == CompareStatus.NEW )
-        {
-            final Node deletedNode = nodeService.deleteById( nodeToDelete.id() );
-            deletedNodes.add( deletedNode );
-            return;
-        }
-
-        if ( this.params.isDeleteOnline() )
-        {
-            final Context currentContext = ContextAccessor.current();
-            deleteNodeInContext( nodeToDelete, currentContext );
-            final Node deletedNode = deleteNodeInContext( nodeToDelete, ContextBuilder.from( currentContext ).
-                branch( ContentConstants.BRANCH_MASTER ).
-                build() );
-            deletedNodes.add( deletedNode );
-            return;
-        }
-
-        final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( SetNodeStateParams.create().
-            nodeId( nodeToDelete.id() ).
-            nodeState( NodeState.PENDING_DELETE ).
-            build() );
-
-        deletedNodes.addAll( setNodeStateResult.getUpdatedNodes() );
+        return findNodesByParentResult.getNodeIds();
     }
 
-    private CompareStatus getCompareStatus( final Node nodeToDelete )
+    private CompareStatus getCompareStatus( final NodeId nodeToDelete )
     {
         final Context context = ContextAccessor.current();
         final Branch currentBranch = context.getBranch();
@@ -112,24 +186,18 @@ final class DeleteContentCommand
         final NodeComparison compare;
         if ( currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
         {
-            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_MASTER );
+            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_MASTER );
         }
         else
         {
-            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_DRAFT );
+            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_DRAFT );
         }
         return compare.getCompareStatus();
     }
 
-    private Node deleteNodeInContext( final Node nodeToDelete, final Context context )
+    private NodeIds deleteNodeInContext( final NodeId nodeToDelete, final Context context )
     {
-        return context.callWith( () -> this.nodeService.deleteById( nodeToDelete.id() ) );
-    }
-
-
-    public static Builder create()
-    {
-        return new Builder();
+        return context.callWith( () -> this.nodeService.deleteById( nodeToDelete ) );
     }
 
     public static class Builder

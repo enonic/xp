@@ -14,6 +14,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -43,11 +44,12 @@ public class SetNodeChildOrderCommandTest
 
         String previousName = "";
 
-        for ( final Node n : result.getNodes() )
+        for ( final NodeId n : result.getNodeIds() )
         {
-            final boolean smallerThanPreviousName = previousName.compareTo( n.name().toString() ) < 0;
+            final Node node = getNode( n );
+            final boolean smallerThanPreviousName = previousName.compareTo( node.name().toString() ) < 0;
             assertTrue( Objects.equals( previousName, "" ) || smallerThanPreviousName );
-            previousName = n.name().toString();
+            previousName = node.name().toString();
         }
     }
 
@@ -59,11 +61,12 @@ public class SetNodeChildOrderCommandTest
 
         String previousName = "";
 
-        for ( final Node n : result.getNodes() )
+        for ( final NodeId n : result.getNodeIds() )
         {
-            final boolean largerThanPreviousName = previousName.compareTo( n.name().toString() ) > 0;
+            final Node node = getNode( n );
+            final boolean largerThanPreviousName = previousName.compareTo( node.name().toString() ) > 0;
             assertTrue( Objects.equals( previousName, "" ) || largerThanPreviousName );
-            previousName = n.name().toString();
+            previousName = node.name().toString();
         }
     }
 
@@ -76,11 +79,12 @@ public class SetNodeChildOrderCommandTest
 
         String previousName = "";
 
-        for ( final Node n : result.getNodes() )
+        for ( final NodeId n : result.getNodeIds() )
         {
-            final boolean smallerThanPreviousName = previousName.compareTo( n.name().toString() ) < 0;
+            final Node node = getNode( n );
+            final boolean smallerThanPreviousName = previousName.compareTo( node.name().toString() ) < 0;
             assertTrue( Objects.equals( previousName, "" ) || smallerThanPreviousName );
-            previousName = n.name().toString();
+            previousName = node.name().toString();
         }
     }
 
@@ -100,12 +104,14 @@ public class SetNodeChildOrderCommandTest
 
         Long previousOrderValue = null;
 
-        for ( final Node n : result.getNodes() )
+        for ( final NodeId n : result.getNodeIds() )
         {
-            assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + n.getManualOrderValue(),
-                        previousOrderValue == null || n.getManualOrderValue() > previousOrderValue );
+            final Node currentNode = getNode( n );
 
-            previousOrderValue = n.getManualOrderValue();
+            assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue(),
+                        previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue );
+
+            previousOrderValue = currentNode.getManualOrderValue();
         }
     }
 
@@ -131,18 +137,20 @@ public class SetNodeChildOrderCommandTest
         String previousName = "";
         Long previousOrderValue = null;
 
-        for ( final Node n : result.getNodes() )
+        for ( final NodeId n : result.getNodeIds() )
         {
-            final boolean largerThanPreviousName = previousName.compareTo( n.name().toString() ) < 0;
-            assertTrue( "Wrong value, previousValue = " + previousName + ", current = " + n.name(),
+            final Node currentNode = getNode( n );
+
+            final boolean largerThanPreviousName = previousName.compareTo( currentNode.name().toString() ) < 0;
+            assertTrue( "Wrong value, previousValue = " + previousName + ", current = " + currentNode.name(),
                         Objects.equals( previousName, "" ) || largerThanPreviousName );
 
-            assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + n.getManualOrderValue(),
-                        previousOrderValue == null || n.getManualOrderValue() < previousOrderValue );
+            assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue(),
+                        previousOrderValue == null || currentNode.getManualOrderValue() < previousOrderValue );
 
-            previousOrderValue = n.getManualOrderValue();
+            previousOrderValue = currentNode.getManualOrderValue();
 
-            previousName = n.name().toString();
+            previousName = currentNode.name().toString();
         }
     }
 

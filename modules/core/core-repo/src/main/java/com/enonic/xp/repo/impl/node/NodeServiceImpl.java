@@ -29,6 +29,7 @@ import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -49,6 +50,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
@@ -163,6 +165,23 @@ public class NodeServiceImpl
     @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
+        if ( params.isRecursive() )
+        {
+            return FindNodeIdsByParentCommand.create().
+                parentId( params.getParentId() ).
+                parentPath( params.getParentPath() ).
+                recursive( true ).
+                from( params.getFrom() ).
+                size( params.getSize() ).
+                countOnly( params.isCountOnly() ).
+                childOrder( params.getChildOrder() ).
+                indexServiceInternal( this.indexServiceInternal ).
+                searchService( this.searchService ).
+                storageService( this.storageService ).
+                build().
+                execute();
+        }
+
         return FindNodesByParentCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -250,9 +269,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node deleteById( final NodeId id )
+    public NodeIds deleteById( final NodeId id )
     {
-        final Node deletedNode = DeleteNodeByIdCommand.create().
+        final NodeBranchEntries deletedNodes = DeleteNodeByIdCommand.create().
             nodeId( id ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -260,17 +279,18 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( deletedNode != null )
+        if ( deletedNodes.isNotEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.deleted( deletedNode ) );
+            this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
-        return deletedNode;
+
+        return NodeIds.from( deletedNodes.getKeys() );
     }
 
     @Override
-    public Node deleteByPath( final NodePath path )
+    public NodeIds deleteByPath( final NodePath path )
     {
-        final Node deletedNode = DeleteNodeByPathCommand.create().
+        final NodeBranchEntries deletedNodes = DeleteNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -278,11 +298,11 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( deletedNode != null )
+        if ( deletedNodes.isNotEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.deleted( deletedNode ) );
+            this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
-        return deletedNode;
+        return NodeIds.from( deletedNodes.getKeys() );
     }
 
     @Override
@@ -425,7 +445,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeIds resolveSyncWork( final SyncWorkResolverParams params )
+    public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         return ResolveSyncWorkCommand.create().
             target( params.getBranch() ).
@@ -509,12 +529,6 @@ public class NodeServiceImpl
             refreshMode( refreshMode ).
             build().
             execute();
-    }
-
-    @Override
-    public void deleteSnapshotRespository()
-    {
-        this.snapshotService.deleteSnapshotRepository();
     }
 
     @Override

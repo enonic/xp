@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,8 +25,11 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -48,15 +52,15 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
-import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -71,6 +75,8 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
+
+import static org.junit.Assert.*;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -114,21 +120,23 @@ public class AbstractContentServiceTest
 
     protected ContentNodeTranslatorImpl translator;
 
+    protected ContentTypeServiceImpl contentTypeService;
+
     private NodeVersionDaoImpl nodeDao;
 
     private VersionServiceImpl versionService;
 
     private BranchServiceImpl branchService;
 
-    private ElasticsearchIndexServiceInternal indexService;
+    private IndexServiceInternalImpl indexService;
 
     private StorageServiceImpl storageService;
 
     private SearchServiceImpl searchService;
 
-    private IndexedDataServiceImpl indexedDataService;
+    private IndexDataServiceImpl indexedDataService;
 
-    private ElasticsearchSearchDao searchDao;
+    private SearchDaoImpl searchDao;
 
     @Before
     public void setUp()
@@ -142,21 +150,23 @@ public class AbstractContentServiceTest
 
         this.blobStore = new MemoryBlobStore();
 
-        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
-        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
+        this.searchDao = new SearchDaoImpl();
+        this.searchDao.setClient( this.client );
+
         this.branchService = new BranchServiceImpl();
         this.branchService.setStorageDao( storageDao );
+        this.branchService.setSearchDao( this.searchDao );
 
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
-        this.indexService = new ElasticsearchIndexServiceInternal();
+        this.indexService = new IndexServiceInternalImpl();
         this.indexService.setClient( client );
-        this.indexService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeVersionDaoImpl();
         this.nodeDao.setConfiguration( repoConfig );
@@ -164,7 +174,7 @@ public class AbstractContentServiceTest
 
         this.contentService = new ContentServiceImpl();
 
-        this.indexedDataService = new IndexedDataServiceImpl();
+        this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
         this.storageService = new StorageServiceImpl();
@@ -172,10 +182,7 @@ public class AbstractContentServiceTest
         this.storageService.setVersionService( this.versionService );
         this.storageService.setNodeVersionDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
-        this.storageService.setIndexedDataService( this.indexedDataService );
-
-        this.searchDao = new ElasticsearchSearchDao();
-        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+        this.storageService.setIndexDataService( this.indexedDataService );
 
         this.searchService = new SearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
@@ -209,7 +216,7 @@ public class AbstractContentServiceTest
         final SiteServiceImpl siteService = new SiteServiceImpl();
         siteService.setSiteDescriptorRegistry( siteDescriptorRegistry );
 
-        final ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl();
+        this.contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
 
         this.translator = new ContentNodeTranslatorImpl();
@@ -451,5 +458,33 @@ public class AbstractContentServiceTest
                 build() ).
             addFormItem( set ).
             build();
+    }
+
+    protected void assertOrder( final FindContentByQueryResult result, final Content... expectedOrder )
+    {
+        final ContentIds contentIds = result.getContents().getIds();
+
+        doAssertOrder( contentIds, expectedOrder );
+    }
+
+    protected void assertOrder( final ContentIds contentIds, final Content... expectedOrder )
+    {
+        doAssertOrder( contentIds, expectedOrder );
+    }
+
+    private void doAssertOrder( final ContentIds contentIds, final Content[] expectedOrder )
+    {
+        assertEquals( "Expected [" + expectedOrder.length + "] number of hits in result", expectedOrder.length, contentIds.getSize() );
+
+        final Iterator<ContentId> iterator = contentIds.iterator();
+
+        for ( final Content content : expectedOrder )
+        {
+            assertTrue( "Expected more content, iterator empty", iterator.hasNext() );
+            final ContentId next = iterator.next();
+            assertEquals( "Expected content with path [" + content.getPath() + "] in this position, found [" +
+                              this.contentService.getById( next ).getPath() +
+                              "]", content.getId(), next );
+        }
     }
 }

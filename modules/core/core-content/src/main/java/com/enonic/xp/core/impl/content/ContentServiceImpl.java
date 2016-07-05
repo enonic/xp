@@ -31,17 +31,20 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
@@ -57,10 +60,10 @@ import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
-import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
@@ -281,7 +284,21 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents delete( final DeleteContentParams params )
+    public DeleteContentsResult delete( final DeleteContentParams params )
+    {
+        return DeleteAndFetchContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            params( params ).
+            build().
+            execute();
+    }
+
+
+    @Override
+    public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).
@@ -292,6 +309,7 @@ public class ContentServiceImpl
             build().
             execute();
     }
+
 
     @Override
     public PushContentsResult push( final PushContentParams params )
@@ -311,9 +329,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ResolvePublishDependenciesResult resolvePublishDependencies( ResolvePublishDependenciesParams params )
+    public CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params )
     {
-        return ResolvePublishDependenciesCommand.create().
+        return ResolveContentsToBePublishedCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -484,6 +502,20 @@ public class ContentServiceImpl
     {
         return FindContentByQueryCommand.create().
             params( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+
+    @Override
+    public FindContentIdsByQueryResult find( final ContentQuery query )
+    {
+        return FindContentIdsByQueryCommand.create().
+            query( query ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -686,7 +718,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents unpublishContent( final UnpublishContentParams params )
+    public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
         return UnpublishContentCommand.create().
             params( params ).

@@ -20,6 +20,8 @@ public class FindNodesByParentParams
 
     private final boolean countOnly;
 
+    private final boolean recursive;
+
     private FindNodesByParentParams( Builder builder )
     {
         Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
@@ -30,6 +32,7 @@ public class FindNodesByParentParams
         from = builder.from;
         childOrder = builder.childOrder;
         countOnly = builder.countOnly;
+        recursive = builder.recursive;
     }
 
     public NodePath getParentPath()
@@ -62,6 +65,11 @@ public class FindNodesByParentParams
         return countOnly;
     }
 
+    public boolean isRecursive()
+    {
+        return recursive;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -80,6 +88,8 @@ public class FindNodesByParentParams
         private ChildOrder childOrder;
 
         private boolean countOnly = false;
+
+        private boolean recursive = false;
 
         private Builder()
         {
@@ -118,6 +128,12 @@ public class FindNodesByParentParams
         public Builder countOnly( final boolean countOnly )
         {
             this.countOnly = countOnly;
+            return this;
+        }
+
+        public Builder recursive( final boolean recursive )
+        {
+            this.recursive = recursive;
             return this;
         }
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class NodeManualOrderValueResolverTest
             nodeIds.add( NodeId.from( i ) );
         }
 
-        final LinkedList<NodeManualOrderValueResolver.NodeIdOrderValue> resolvedOrder = NodeManualOrderValueResolver.resolve( nodeIds );
+        final List<NodeManualOrderValueResolver.NodeIdOrderValue> resolvedOrder = NodeManualOrderValueResolver.resolve( nodeIds );
 
         double previousValue = NodeManualOrderValueResolver.START_ORDER_VALUE + 1;
 

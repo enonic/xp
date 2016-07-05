@@ -57,8 +57,8 @@ public class FindNodesByQueryCommandTest_compare
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node2.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node2.id() ) );
     }
 
     @Test
@@ -86,8 +86,8 @@ public class FindNodesByQueryCommandTest_compare
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node1.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node1.id() ) );
     }
 
     @Test
@@ -118,8 +118,8 @@ public class FindNodesByQueryCommandTest_compare
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node1.id() ) );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node1.id() ) );
     }
 
 
