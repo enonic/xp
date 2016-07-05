@@ -15,7 +15,7 @@ export class PublishAction extends api.ui.Action {
 
         this.onExecuted(() => {
 
-            if (wizard.checkContentCanBePublished(true)) {
+            if (wizard.checkContentCanBePublished()) {
                 wizard.setRequireValid(true);
 
                 if (wizard.hasUnsavedChanges()) {
