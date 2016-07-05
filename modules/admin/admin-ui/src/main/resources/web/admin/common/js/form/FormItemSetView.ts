@@ -264,6 +264,12 @@ module api.form {
             });
         }
 
+        public setHighlightOnValidityChange(highlight: boolean) {
+            this.formItemSetOccurrences.getOccurrenceViews().forEach((view: FormItemSetOccurrenceView) => {
+                view.setHighlightOnValidityChange(highlight);
+            });
+        }
+
         hasValidUserInput(): boolean {
 
             var result = true;

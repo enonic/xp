@@ -1,0 +1,74 @@
+.input-error(@color: @input-light-red) {
+  background-color: @color;
+
+  &:focus {
+    .box-shadow(0px 0px 5px @color);
+  }
+}
+
+.input-glow(@color: @admin-input-blue) {
+  &:hover {
+    &:not([disabled]) {
+      border: 1px solid @color;
+    }
+    &[disabled] {
+      border: 1px solid greyscale(@color);
+    }
+  }
+  &:focus {
+    .box-shadow(0px 0px 5px @color);
+    border: 1px solid @color;
+  }
+}
+
+.highlight(@color: @admin-input-red) {
+  .input-error();
+  .input-glow(@color);
+  &:hover {
+    .box-shadow(0px 0px 5px @color);
+  }
+}
+
+.highlight-background(@color: @input-light-red) {
+  background-color: @color;
+  -webkit-transition: background-color 200ms cubic-bezier(0.0, 0.0, 0.2, 1);
+  transition: background-color 200ms cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+.show-validation-viewer() {
+  .validation-viewer {
+    font-size: 14px;
+    display: block;
+    color: @input-red-text;
+  }
+}
+.input-view-error() {
+
+  .highlight-background();
+
+  .form-input {
+    .input-error();
+
+    &.media-uploader-el a.dropzone {
+      .highlight()
+    }
+
+    &.@{_COMMON_PREFIX}text-input {
+      .input-glow(@admin-input-red);
+    }
+
+    &.@{_COMMON_PREFIX}combobox.expanded > .@{_COMMON_PREFIX}text-input {
+      background-color: @admin-white;
+    }
+  }
+
+  .date-time-picker, .time-picker, .date-picker {
+    &.expanded .form-input {
+      background-color: @admin-white;
+    }
+  }
+
+  label + .input-wrapper {
+    margin-left: @form-label-width - 12px;
+  }
+}

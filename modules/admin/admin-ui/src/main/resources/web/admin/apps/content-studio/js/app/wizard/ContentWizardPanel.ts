@@ -313,7 +313,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
                 this.isContentFormValid = this.isValid();
                 this.thumbnailUploader.toggleClass("invalid", !this.isValid());
-                this.contentWizardToolbarPublishControls.setContentCanBePublished(this.checkContentCanBePublished(false));
+                this.contentWizardToolbarPublishControls.setContentCanBePublished(this.checkContentCanBePublished());
             });
 
             this.addClass("content-wizard-panel");
@@ -351,6 +351,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
 
         this.listenToContentEvents();
+
+        this.wizardActions.getSaveAction().onExecuted(() => {
+            if (this.isLayingOutNew()) {
+                this.displayValidationErrors();
+            }
+        });
     }
 
     private availableSizeChangedHandler(item: ResponsiveItem) {
@@ -930,6 +936,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
+                this.contentWizardStepForm.getFormView().addClass("panel-may-display-validation-errors");
+                if (this.isLayingOutNew()) {
+                    this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
+                } else {
+                    this.displayValidationErrors();
+                }
+
                 if (this.liveFormPanel) {
 
                     if (!this.liveEditModel) {
@@ -1252,31 +1265,42 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-live");
     }
 
-    public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
-        if (this.contentWizardToolbarPublishControls.isPendingDelete()) {
-            // allow deleting published content without validity check
-            return true;
-        }
+    private displayValidationErrors() {
         if (!this.isContentFormValid) {
-            this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
+            this.contentWizardStepForm.displayValidationErrors(true);
         }
 
-        var allMetadataFormsValid = true;
-        var allMetadataFormsHasValidUserInput = true;
         for (var key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
                 var form = this.metadataStepFormByName[key];
                 if (!form.isValid()) {
-                    form.displayValidationErrors(displayValidationErrors);
+                    form.displayValidationErrors(true);
+                }
+            }
+        }
+    }
+
+    public checkContentCanBePublished(): boolean {
+        if (this.contentWizardToolbarPublishControls.isPendingDelete()) {
+            // allow deleting published content without validity check
+            return true;
+        }
+
+        var allMetadataFormsValid = true;
+        var allMetadataFormsHaveValidUserInput = true;
+        for (var key in this.metadataStepFormByName) {
+            if (this.metadataStepFormByName.hasOwnProperty(key)) {
+                var form = this.metadataStepFormByName[key];
+                if (!form.isValid()) {
                     allMetadataFormsValid = false;
                 }
                 var formHasValidUserInput = form.getFormView().hasValidUserInput();
                 if (!formHasValidUserInput) {
-                    allMetadataFormsHasValidUserInput = false;
+                    allMetadataFormsHaveValidUserInput = false;
                 }
             }
         }
-        return this.isContentFormValid && allMetadataFormsValid && allMetadataFormsHasValidUserInput;
+        return this.isContentFormValid && allMetadataFormsValid && allMetadataFormsHaveValidUserInput;
     }
 
     getLiveFormPanel(): LiveFormPanel {

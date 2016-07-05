@@ -124,6 +124,12 @@ module api.form {
             });
         }
 
+        public setHighlightOnValidityChange(highlight: boolean) {
+            this.formItemViews.forEach((view: FormItemView) => {
+                view.setHighlightOnValidityChange(highlight);
+            });
+        }
+
         hasValidUserInput(): boolean {
 
             var result = true;
