@@ -35,8 +35,14 @@
   transition: background-color 200ms cubic-bezier(0.0, 0.0, 0.2, 1);
 }
 
+.show-validation-viewer() {
+  .validation-viewer {
+    font-size: 14px;
+    display: block;
+    color: @input-red-text;
+  }
+}
 .input-view-error() {
-  padding: 10px 10px 10px 10px;
 
   .highlight-background();
 
@@ -54,5 +60,15 @@
     &.@{_COMMON_PREFIX}combobox.expanded > .@{_COMMON_PREFIX}text-input {
       background-color: @admin-white;
     }
+  }
+
+  .date-time-picker, .time-picker, .date-picker {
+    &.expanded .form-input {
+      background-color: @admin-white;
+    }
+  }
+
+  label + .input-wrapper {
+    margin-left: @form-label-width - 12px;
   }
 }

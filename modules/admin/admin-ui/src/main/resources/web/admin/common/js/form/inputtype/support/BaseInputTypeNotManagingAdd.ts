@@ -218,6 +218,25 @@ module api.form.inputtype.support {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
+            var recording = this.validateOccurrences();
+
+            if (!this.hasValidUserInput()) {
+                recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
+                    setOverwriteDefault(true).
+                    setMessage("Incorrect value entered").
+                    build());
+            }
+
+            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
+            }
+
+            this.previousValidationRecording = recording;
+            return recording;
+        }
+
+
+        private validateOccurrences(): api.form.inputtype.InputValidationRecording {
             var recording = new api.form.inputtype.InputValidationRecording();
             var numberOfValids = 0;
             this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
@@ -238,43 +257,7 @@ module api.form.inputtype.support {
                 recording.setBreaksMaximumOccurrences(true);
             }
 
-            var additionalValidation: api.form.AdditionalValidationRecord = this.getSpecialValidation();
-            recording.setAdditionalValidationRecord(additionalValidation);
-
-            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
-                this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
-            }
-
-            this.previousValidationRecording = recording;
             return recording;
-        }
-
-        getSpecialValidation(): api.form.AdditionalValidationRecord {
-            var result = api.form.AdditionalValidationRecord.create().setOverwriteDefault(false).build();
-
-            this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: api.form.inputtype.support.InputOccurrenceView) => {
-                var picker;
-
-                if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.DatePicker)) {
-                    picker = <api.ui.time.DatePicker>(occurrenceView.getInputElement());
-                }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.DateTimePicker)) {
-                    picker = <api.ui.time.DateTimePicker>(occurrenceView.getInputElement())
-                }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.TimePicker)) {
-                    picker = <api.ui.time.TimePicker>(occurrenceView.getInputElement());
-                }
-
-                if (picker && !picker.isValid()) {
-                    result = api.form.AdditionalValidationRecord.create().
-                        setOverwriteDefault(true).
-                        setMessage("Incorrect value entered").
-                        build();
-                    return;
-                }
-            });
-
-            return result;
         }
 
         protected getPropertyValue(property: Property): string {
@@ -293,7 +276,6 @@ module api.form.inputtype.support {
         valueBreaksRequiredContract(value: Value): boolean {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
-
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
