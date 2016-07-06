@@ -1,4 +1,4 @@
-const CONFIG = {
+var CONFIG = {
     gulpTasks: 'gulp/tasks/',
     root: {
         src: 'src/main/resources/web/admin',
@@ -57,4 +57,4 @@ const CONFIG = {
     }
 };
 
-export default CONFIG;
+module.exports = CONFIG;

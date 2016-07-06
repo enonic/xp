@@ -3,33 +3,33 @@
  TSC + Gulp for old modules, webpack for new ones.
  */
 
-import CONFIG from "../config";
-import gulp from "gulp";
-import gulpSequence from "gulp-sequence";
-import tsc from "gulp-typescript";
-import typescript from "typescript";
-import sourcemaps from "gulp-sourcemaps";
-import newer from "gulp-newer";
-import webpack from "webpack";
-import assign from "deep-assign";
-import newerStream from "../util/newerStream";
-import nameResolver from "../util/nameResolver";
-import pathResolver, {anyPath} from "../util/pathResolver";
-import webpackConfig from "../util/webpackConfig";
-import logger from "../util/compileLogger";
+var _ = require("lodash");
+var CONFIG = require("../config");
+var gulp = require("gulp");
+var gulpSequence = require("gulp-sequence");
+var tsc = require("gulp-typescript");
+var typescript = require("typescript");
+var sourcemaps = require("gulp-sourcemaps");
+var newer = require("gulp-newer");
+var webpack = require("webpack");
+var assign = require("deep-assign");
+var newerStream = require("../util/newerStream");
+var nameResolver = require("../util/nameResolver");
+var pathResolver = require("../util/pathResolver");
+var webpackConfig = require("../util/webpackConfig");
+var logger = require("../util/compileLogger");
 
-const subtasks = CONFIG.tasks.js.files;
-
-const tsResolver = nameResolver.bind(null, 'ts');
+var subtasks = CONFIG.tasks.js.files;
+var tsResolver = nameResolver.bind(null, 'ts');
 
 function filterTasks(tasks, callback) {
     const filtered = {};
 
-    for (const name in tasks) {
-        if (callback(tasks[name])) {
-            filtered[name] = tasks[name];
+    _.forOwn(tasks, function (task, name) {
+        if (callback(task)) {
+            filtered[name] = task;
         }
-    }
+    });
 
     return filtered;
 }
@@ -40,23 +40,22 @@ function filterTasks(tasks, callback) {
  js: common
  js: live
  */
-const tsTasks = filterTasks(subtasks, task => !task.name);
+var tsTasks = filterTasks(subtasks, function (task) {
+    return !task.name;
+});
 
-for (const name in tsTasks) {
-    const task = tsTasks[name];
+_.forOwn(tsTasks, function (task, name) {
+    var taskPath = pathResolver.commonPaths(task.src, task.dest, CONFIG.root.src);
+    var newerPath = pathResolver.anyPath(taskPath.src.dir, 'ts');
 
-    const taskPath = pathResolver(task.src, task.dest, CONFIG.root.src);
-    const newerPath = anyPath(taskPath.src.dir, 'ts');
+    var tsOptions = assign({typescript: typescript, out: taskPath.dest.full}, CONFIG.tasks.js.ts);
 
-    const tsOptions = assign({typescript, out: taskPath.dest.full}, CONFIG.tasks.js.ts);
-
-    gulp.task(tsResolver(name), () => {
-
-        const tsNewer = gulp.src(newerPath)
+    gulp.task(tsResolver(name), function () {
+        var tsNewer = gulp.src(newerPath)
             .pipe(newer(taskPath.dest.full))
             .pipe(newerStream(taskPath.src.full));
 
-        const tsResult = tsNewer
+        var tsResult = tsNewer
             .pipe(sourcemaps.init())
             .pipe(tsc(tsOptions));
 
@@ -69,9 +68,9 @@ for (const name in tsTasks) {
         return tsResult.dts
             .pipe(gulp.dest('./'));
     });
-}
+});
 
-gulp.task('ts', gulpSequence(...Object.keys(tsTasks).map(tsResolver)));
+gulp.task('ts', gulpSequence(Object.keys(tsTasks).map(tsResolver)));
 
 /*
  Modules processed with webpack.
@@ -81,11 +80,13 @@ gulp.task('ts', gulpSequence(...Object.keys(tsTasks).map(tsResolver)));
  js: content
  js: user
  */
-const webpackTasks = filterTasks(subtasks, task => !!task.name);
+var webpackTasks = filterTasks(subtasks, function (task) {
+    return !!task.name;
+});
 
-gulp.task('webpack', (cb) => {
-    webpack(webpackConfig(webpackTasks), (err, stats) => {
-        logger(err, stats);
+gulp.task('webpack', function (cb) {
+    webpack(webpackConfig(webpackTasks), function (err, stats) {
+        logger.logWebpack(err, stats);
         cb();
     });
 });

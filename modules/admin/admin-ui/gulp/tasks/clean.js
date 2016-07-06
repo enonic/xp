@@ -2,20 +2,25 @@
  Clean the resulted files from src.
  */
 
-import CONFIG from "../config";
-import gulp from "gulp";
-import del from "del";
-import path from "path";
-import {log, pipeError as error} from "../util/compileLogger";
+var CONFIG = require("../config");
+var gulp = require("gulp");
+var del = require("del");
+var path = require("path");
+var logger = require("../util/compileLogger");
 
 function resolveCleanPaths() {
     return [path.join(CONFIG.root.src, CONFIG.tasks.clean.pattern)];
 }
 
-gulp.task('clean', (cb) => {
-    const cleanPaths = resolveCleanPaths();
-    const cleanDot = CONFIG.tasks.clean.cleanDot;
+gulp.task('clean', function (cb) {
+    var cleanPaths = resolveCleanPaths();
+    var cleanDot = CONFIG.tasks.clean.cleanDot;
+
     return del(cleanPaths, {dot: cleanDot})
-        .catch(e => error(cb, e))
-        .then(files => log(`Cleaned ${ files && files.length || 0 } file(s).`));
+        .catch(function (e) {
+            logger.pipeError(cb, e);
+        })
+        .then(function (files) {
+            logger.log("Cleaned " + (files && files.length || 0) + " file(s).");
+        });
 });

@@ -1,1 +1,3 @@
-export default (module, name) => `${module}: ${name}`;
+module.exports = function (module, name) {
+    return module + ": " + name;
+};

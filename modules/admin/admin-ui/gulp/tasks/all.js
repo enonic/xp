@@ -2,8 +2,8 @@
  Main tasks
  */
 
-import gulp from "gulp";
-import gulpSequence from "gulp-sequence";
+var gulp = require("gulp");
+var gulpSequence = require("gulp-sequence");
 
 gulp.task('all: no ts', ['css', 'directives']);
 gulp.task('all: no css', gulpSequence('directives', 'js'));

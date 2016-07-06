@@ -1,21 +1,21 @@
-import CONFIG from "../config";
-import path from "path";
+var _ = require("lodash");
+var CONFIG = require("../config");
+var path = require("path");
 
-export default (tasks) => {
-    // entry
-    const entry = {};
-    for (const name in tasks) {
-        const task = tasks[name];
-        const basePath = task.assets ? CONFIG.assets.src : CONFIG.root.src;
-        entry[task.name] = `.${path.join('/', basePath, task.src)}`;
-    }
+module.exports = function (tasks) {
+    var entry = {};
+
+    _.forOwn(tasks, function (task) {
+        var basePath = task.assets ? CONFIG.assets.src : CONFIG.root.src;
+        entry[task.name] = "." + path.join('/', basePath, task.src);
+    });
 
     // output
-    const output = {filename: `.${path.join('/', CONFIG.root.dest, '/apps/[name]/js/_all.js')}`};
+    var output = {filename: "." + path.join('/', CONFIG.root.dest, '/apps/[name]/js/_all.js')};
 
-    const config = {
-        entry,
-        output,
+    return {
+        entry: entry,
+        output: output,
         resolve: {
             extensions: ['', '.js', '.ts']
         },
@@ -34,6 +34,4 @@ export default (tasks) => {
         },
         progress: false
     };
-
-    return config;
 };

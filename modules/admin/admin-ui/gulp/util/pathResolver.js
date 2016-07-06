@@ -1,14 +1,13 @@
-import path from "path";
+var path = require("path");
 
-export default (src, dest, root) => commonPaths(src, dest, root, root);
-
-export function commonPaths(src, dest, srcRoot, destRoot) {
-    const fullSrc = path.join(srcRoot, src);
-    const fullDest = path.join(destRoot, dest);
+module.exports.commonPaths = function (src, dest, srcRoot, destRoot) {
+    destRoot = destRoot || srcRoot;
+    var fullSrc = path.join(srcRoot, src);
+    var fullDest = path.join(destRoot, dest);
 
     return {
-        srcRoot,
-        destRoot,
+        srcRoot: srcRoot,
+        destRoot: destRoot,
         src: {
             full: fullSrc,
             dir: path.dirname(fullSrc),
@@ -20,8 +19,8 @@ export function commonPaths(src, dest, srcRoot, destRoot) {
             base: path.basename(fullDest)
         }
     }
-}
+};
 
-export function anyPath(root, ext = '*') {
-    return `${root}${path.sep}**${path.sep}*.${ext}`;
-}
+module.exports.anyPath = function (root, ext) {
+    return root + path.sep + "**" + path.sep + "*." + (ext || "*");
+};
