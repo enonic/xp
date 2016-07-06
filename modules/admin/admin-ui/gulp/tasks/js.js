@@ -44,10 +44,11 @@ const tsTasks = filterTasks(subtasks, task => !task.name);
 
 for (const name in tsTasks) {
     const task = tsTasks[name];
-    const tsOptions = assign({typescript, out: task.dest}, CONFIG.tasks.js.ts);
 
     const taskPath = pathResolver(task.src, task.dest, CONFIG.root.src);
     const newerPath = anyPath(taskPath.src.dir, 'ts');
+
+    const tsOptions = assign({typescript, out: taskPath.dest.full}, CONFIG.tasks.js.ts);
 
     gulp.task(tsResolver(name), () => {
 
@@ -62,11 +63,11 @@ for (const name in tsTasks) {
         // generate *.js
         tsResult.js
             .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest(taskPath.destRoot));
+            .pipe(gulp.dest('./'));
 
         // generate *.d.js
         return tsResult.dts
-            .pipe(gulp.dest(taskPath.destRoot));
+            .pipe(gulp.dest('./'));
     });
 }
 
