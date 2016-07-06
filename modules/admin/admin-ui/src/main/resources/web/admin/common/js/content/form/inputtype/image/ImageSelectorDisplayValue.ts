@@ -6,7 +6,7 @@ module api.content.form.inputtype.image {
 
     export class ImageSelectorDisplayValue {
 
-        private uploadItem: api.ui.uploader.UploadItem<ContentSummary>;
+        private uploadItem: UploadItem<ContentSummary>;
 
         private content: ContentSummary;
 

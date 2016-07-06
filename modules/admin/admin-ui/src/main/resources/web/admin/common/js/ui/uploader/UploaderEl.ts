@@ -6,25 +6,6 @@ module api.ui.uploader {
     import CloseButton = api.ui.button.CloseButton;
     import Element = api.dom.Element;
 
-    export class PluploadStatus {
-        public static QUEUED = plupload.QUEUED;
-        public static UPLOADING = plupload.UPLOADING;
-        public static FAILED = plupload.FAILED;
-        public static DONE = plupload.DONE;
-    }
-
-    export interface PluploadFile {
-        id: string;
-        name: string;
-        percent: number;
-        type: string;
-        size: number;
-        origSize: number;
-        loaded: number;
-        status: PluploadStatus;
-        lastModifiedDate: Date;
-    }
-
     export interface FineUploaderFile {
         id: string,
         name: string,

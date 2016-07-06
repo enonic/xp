@@ -7,7 +7,6 @@ module api.content.form.inputtype.upload {
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
-    import PluploadFile = api.ui.uploader.PluploadFile;
     import UploaderEl = api.ui.uploader.UploaderEl
     import FileUploaderEl = api.ui.uploader.FileUploaderEl;
 
