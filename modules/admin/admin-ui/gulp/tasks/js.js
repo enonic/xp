@@ -3,10 +3,10 @@
  TSC + Gulp for old modules, webpack for new ones.
  */
 
-var _ = require("lodash");
 var CONFIG = require("../config");
 var gulp = require("gulp");
 var gulpSequence = require("gulp-sequence");
+var _ = require("lodash");
 var tsc = require("gulp-typescript");
 var typescript = require("typescript");
 var sourcemaps = require("gulp-sourcemaps");
@@ -92,6 +92,6 @@ gulp.task('webpack', function (cb) {
 });
 
 /*
- Main CSS task
+ Main JS task
  */
 gulp.task('js', gulpSequence('ts: common', ['ts: live', 'webpack']));

@@ -2,9 +2,9 @@
  Compile LESS files, apply autoprefixer and generate sourcemaps.
  */
 
-var _ = require("lodash");
 var CONFIG = require("../config");
 var gulp = require("gulp");
+var _ = require("lodash");
 var less = require("gulp-less");
 var AutoPrefixer = require("less-plugin-autoprefix");
 var sourcemaps = require("gulp-sourcemaps");
