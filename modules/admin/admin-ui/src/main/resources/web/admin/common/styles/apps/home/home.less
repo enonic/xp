@@ -54,96 +54,182 @@
       }
     }
   }
+}
 
-  .xp-about-dialog-container {
-    display: none;
-    position: fixed;
+.xp-about-dialog {
+  max-width: 440px;
 
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+  .dialog-header {
+    margin-bottom: 0px;
+  }
 
+  .xp-about-dialog-app-icon {
+    float: left;
+    margin-right: 15px;
+  }
+
+  a {
+    color: blue;
+  }
+
+  h1 {
+    margin: 10px 0 5px 0;
+  }
+
+  .xp-about-dialog-version-block {
+    font-size: 14px;
+    margin-bottom: 15px;
+
+    .xp-about-dialog-version {
+      font-weight: bold;
+    }
+  }
+
+  .xp-about-dialog-text {
+    font-weight: bold;
+    text-align: justify;
+  }
+
+  .xp-about-dialog-button-close {
+    background-color: #DB4437;
+  }
+
+  .dialog-buttons {
+    display: flex;
     align-items: center;
     justify-content: space-around;
-    background-color: transparent;
-    background-color: rgba(0, 0, 0, 0.4);
+  }
 
-    .xp-about-dialog {
-      position: relative;
-      max-width: 495px;
-      padding: 20px;
-      background-color: white;
-      box-sizing: border-box;
-      flex: 0 1 auto;
+}
 
-      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1),
-      0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+.xp-tour-dialog {
+  max-width: 560px;
 
-      font-family: "Open Sans", sans-serif;
-      font-size: 14px;
+  .dialog-content {
+    .subtitle {
+      padding: 10px;
+      color: @admin-white;
+      background-color: @form-button-bg;
+      margin-bottom: 10px;
 
-      .xp-about-dialog-corner-close {
-        position: absolute;
-        right: 10px;
-        top: 0px;
-        font-size: 27px;
-        transform: rotate(45deg);
+      .subtitle-part-1 {
+        font-size: 13px;
         font-weight: bold;
-        cursor: pointer;
       }
+    }
 
-      .xp-about-dialog-app-icon {
-        float: left;
-        margin-top: 10px;
-        margin-right: 15px;
+    .caption {
+      font-size: 22px;
+      padding: 10px 0px 15px 0px;
+    }
+
+    img {
+      float: left;
+      height: 200px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    li {
+      list-style: inside;
+    }
+
+    .text {
+      .paragraph2, .paragraph3 {
+        margin-top: 15px;
       }
+    }
 
-      a {
-        color: blue;
+    .step-1 {
+      img {
+        margin-right: 35px;
       }
+    }
 
-      h1 {
-        margin: 10px 0 5px 0;
+    .step-2 {
+      img {
+        float: right;
+        margin-left: 35px;
       }
+    }
 
-      .xp-about-dialog-version-block {
-        margin-bottom: 15px;
-
-        .xp-about-dialog-version {
-          font-weight: bold;
-        }
+    .step-3 {
+      img {
+        margin-right: 35px;
+        box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
+        0px 2px 3px 0px rgba(0, 0, 0, 0.5);
       }
+    }
 
-      .xp-about-dialog-text {
-        font-weight: bold;
-        text-align: justify;
-        margin-bottom: 30px;
+    .step-4 {
+      img {
+        float: right;
+        margin-left: 35px;
+        box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
+        0px 2px 3px 0px rgba(0, 0, 0, 0.5);
       }
+    }
 
-      .xp-about-dialog-actions {
+    .step-5 {
+      .demo-apps {
+        margin: 20px 0px 10px 0px;
         display: flex;
         align-items: center;
         justify-content: space-around;
 
-        button {
-          width: 100px;
-          height: 36px;
-          border: none;
-          text-transform: uppercase;
-          color: white;
-          cursor: pointer;
-          border-radius: 2px;
-          box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
-          0px 2px 3px 0px rgba(0, 0, 0, 0.5);
+        .demo-app {
+          display: inline-block;
+          text-align: center;
+          position: relative;
 
-          &.xp-about-dialog-button-close {
-            background-color: #DB4437;
+          img {
+            float: none;
+            height: 90px;
           }
 
-          &:active {
-            box-shadow: inset 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
-            inset 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+          .demo-app-title {
+            text-transform: uppercase;
+          }
+
+          .progress-bar {
+            position: absolute;
+            width: 100%;
+            bottom: -30px;
+
+            .progress-indicator {
+              background-color: @admin-green;
+            }
+          }
+
+          .demo-app-status {
+            position: absolute;
+            width: 100%;
+            bottom: -30px;
+            font-size: 16px;
+            color: @admin-green;
+
+            &.failure {
+              color: @input-red-text;
+            }
+          }
+        }
+
+      }
+
+      .install-apps {
+        display: flex;
+        justify-content: space-around;
+
+        .install-apps-button {
+          margin-top: 25px;
+          display: flex;
+          justify-content: space-around;
+          background-color: @admin-green;
+
+          &:hover {
+            background-color: #79c82d;
           }
         }
       }
@@ -151,5 +237,44 @@
     }
   }
 
+  .dialog-buttons {
+    .button-container {
+      width: 100%;
+
+      button {
+        width: 130px;
+        height: 36px;
+        text-align: center;
+        margin-left: 0px;
+
+        &:first-child {
+          float: left;
+          background-color: @form-button-bg;
+
+          &:hover {
+            background-color: #b3b3b3;
+          }
+        }
+
+        &:last-child {
+          float: right;
+          background-color: @admin-green;
+
+          &:hover {
+            background-color: #79c82d;
+          }
+
+          &.last-step {
+            background-color: @form-button-bg;
+
+            &:hover {
+              background-color: #b3b3b3;
+            }
+          }
+        }
+      }
+
+    }
+  }
 
 }
