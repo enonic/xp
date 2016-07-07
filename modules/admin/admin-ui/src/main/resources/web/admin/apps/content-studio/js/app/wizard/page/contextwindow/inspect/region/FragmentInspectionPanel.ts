@@ -52,6 +52,9 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
     }
 
     private layout() {
+
+        this.removeChildren();
+
         this.fragmentSelector = new FragmentDropdown("", this.loader);
 
         this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
