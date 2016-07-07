@@ -73,9 +73,11 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
     }
 
     protected reloadDescriptorsOnApplicationChange() {
-        (<GetLayoutDescriptorsByApplicationsRequest>this.selector.getLoader().getRequest()).
-            setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
-        super.reloadDescriptorsOnApplicationChange();
+        if(this.selector) {
+            (<GetLayoutDescriptorsByApplicationsRequest>this.selector.getLoader().getRequest()).
+                setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
+            super.reloadDescriptorsOnApplicationChange();
+        }
     }
 
     protected applicationUnavailableHandler() {

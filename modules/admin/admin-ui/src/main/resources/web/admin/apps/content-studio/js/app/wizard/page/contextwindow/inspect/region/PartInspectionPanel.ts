@@ -68,9 +68,11 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
     }
 
     protected reloadDescriptorsOnApplicationChange() {
-        (<GetPartDescriptorsByApplicationsRequest>this.selector.getLoader().getRequest()).
-            setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
-        super.reloadDescriptorsOnApplicationChange();
+        if(this.selector) {
+            (<GetPartDescriptorsByApplicationsRequest>this.selector.getLoader().getRequest()).
+                setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
+            super.reloadDescriptorsOnApplicationChange();
+        }
     }
 
     setComponent(component: PartComponent, descriptor?: PartDescriptor) {
