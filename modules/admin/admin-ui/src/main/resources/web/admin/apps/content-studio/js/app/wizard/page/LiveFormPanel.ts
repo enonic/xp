@@ -241,7 +241,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.pageModel.setIgnorePropertyChanges(true);
 
         this.liveEditPageProxy.setModel(liveEditModel);
-        this.imageInspectionPanel.setModel(liveEditModel);
         this.pageInspectionPanel.setModel(liveEditModel);
         this.partInspectionPanel.setModel(liveEditModel);
         this.layoutInspectionPanel.setModel(liveEditModel);
