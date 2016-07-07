@@ -109,13 +109,14 @@ module api.form.inputtype.text {
 
             var blurHandler = (e) => {
                 //checking if remove occurence button clicked or not
+                api.util.AppHelper.dispatchCustomEvent("focusout", this);
+
                 if (!isMouseOverRemoveOccurenceButton) {
                     this.setStaticInputHeight();
                     textAreaWrapper.removeClass(focusedEditorCls);
                 }
                 this.notifyBlurred(e);
 
-                api.util.AppHelper.dispatchCustomEvent("focusout", this);
             };
 
             var keydownHandler = (e) => {
@@ -145,8 +146,10 @@ module api.form.inputtype.text {
 
             new HTMLAreaBuilder().
                 setSelector('textarea.' + id.replace(/\./g, '_')).
-                setAssetsUri(baseUrl).setInline(false).onCreateDialog(createDialogHandler).setFocusHandler(focusHandler).setBlurHandler(
-                blurHandler).setKeydownHandler(keydownHandler).setKeyupHandler(notifyValueChanged).setNodeChangeHandler(
+                setAssetsUri(baseUrl).setInline(false).onCreateDialog(createDialogHandler).
+                setFocusHandler(focusHandler.bind(this)).
+                setBlurHandler(blurHandler.bind(this)).
+                setKeydownHandler(keydownHandler).setKeyupHandler(notifyValueChanged).setNodeChangeHandler(
                 notifyValueChanged).setContentPath(this.contentPath).setContent(this.content).setApplicationKeys(this.applicationKeys).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
