@@ -1,6 +1,10 @@
 {
-  "name": "my-typescript",
-  "version": "1.0.0",
+  "name": "admin-ui",
+  "version": "2.0.0",
+  "description": "Enonix XP - Admin UI module",
+  "scripts": {
+    "postinstall": "gulp resources"
+  },
   "devDependencies": {
     "deep-assign": "^2.0.0",
     "del": "^2.2.1",
