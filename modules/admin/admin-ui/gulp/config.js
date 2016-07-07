@@ -53,6 +53,18 @@ var CONFIG = {
             webpack: {
                 dest: '/apps/[name]/js/_all.js'
             }
+        },
+        resources: {
+            entries: [
+                // Example structure
+                // Will include `material-design-lite/material.min.js` and others
+                // {
+                //     dir: 'material-design-lite/',
+                //     name: 'material',
+                //     ext: ['.min.js', '.min.js.map', '.min.css', '.min.css.map']
+                // }
+            ],
+            dest: 'common/lib/'
         }
     }
 };
