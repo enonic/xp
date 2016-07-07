@@ -36,9 +36,9 @@ function filterTasks(tasks, callback) {
 
 /*
  Modules processed with plain TS compiler and gulp.
- Will be moved to webpack in near future.
- js: common
- js: live
+ Will be moved to webpack in the nearest future.
+ js:common
+ js:live
  */
 var tsTasks = filterTasks(subtasks, function (task) {
     return !task.name;
@@ -74,11 +74,11 @@ gulp.task('ts', gulpSequence(Object.keys(tsTasks).map(tsResolver)));
 
 /*
  Modules processed with webpack.
- js: home
- js: launcher
- js: applications
- js: content
- js: user
+ js:home
+ js:launcher
+ js:applications
+ js:content
+ js:user
  */
 var webpackTasks = filterTasks(subtasks, function (task) {
     return !!task.name;
@@ -94,4 +94,4 @@ gulp.task('webpack', function (cb) {
 /*
  Main JS task
  */
-gulp.task('js', gulpSequence('ts: common', ['ts: live', 'webpack']));
+gulp.task('js', gulpSequence('ts:common', ['ts:live', 'webpack']));
