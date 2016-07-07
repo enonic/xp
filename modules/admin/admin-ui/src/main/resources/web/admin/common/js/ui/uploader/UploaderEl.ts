@@ -505,7 +505,7 @@ module api.ui.uploader {
         }
 
         isEnabled(): boolean {
-            return this.uploader != null;
+            return !this.config.disabled;
         }
 
         getParams(): {[key: string]: any} {

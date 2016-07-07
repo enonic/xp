@@ -52,19 +52,21 @@ module api.util {
         }
 
         static dispatchCustomEvent(name: string, element: api.dom.Element) {
-            let event = document.createEvent('Event');
-            event.initEvent(name, true, true);
-            element.getHTMLElement().dispatchEvent(event);
+            wemjq(element.getHTMLElement()).trigger(name);
         }
 
         static focusInOut(element: api.dom.Element, onFocusOut: () => void, wait: number = 50, preventMouseDown: boolean = true) {
-            let focusOutTimeout = 0;
+            let target,
+                focusOutTimeout = 0;
 
-            element.onFocusOut(() => {
-                focusOutTimeout = setTimeout(onFocusOut, wait);
+            element.onFocusOut((event) => {
+                if(target == event.target) {
+                    focusOutTimeout = setTimeout(onFocusOut, wait);
+                }
             });
 
-            element.onFocusIn(() => {
+            element.onFocusIn((event) => {
+                target = event.target;
                 clearTimeout(focusOutTimeout);
             });
 
