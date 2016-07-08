@@ -114,13 +114,11 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.loadMask = new LoadMask(this);
     }
 
+    // in order to toggle appropriate handlers during drag event
+    // we catch drag enter on this element and trigger uploader to appear,
+    // then catch drag leave on uploader's dropzone to get back to previous state
     private initDragAndDropUploaderEvents() {
         var dragOverEl;
-        // make use of the fact that when dragging
-        // first drag enter occurs on the child element and after that
-        // drag leave occurs on the parent element that we came from
-        // meaning that to know when we left some element
-        // we need to compare it to the one currently dragged over
         this.onDragEnter((event: DragEvent) => {
             if (this.uploader.isEnabled()) {
                 var target = <HTMLElement> event.target;
@@ -132,21 +130,8 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
             }
         });
 
-        this.onDragLeave((event: DragEvent) => {
-            if (this.uploader.isEnabled()) {
-                var targetEl = <HTMLElement> event.target;
-
-                if (dragOverEl == targetEl) {
-                    this.uploader.hide();
-                }
-            }
-        });
-
-        this.onDrop((event: DragEvent) => {
-            if (this.uploader.isEnabled()) {
-                this.uploader.hide();
-            }
-        });
+        this.uploader.getMediaUploader().onDropzoneDragLeave(() => this.uploader.hide());
+        this.uploader.getMediaUploader().onDropzoneDrop(() =>  this.uploader.hide());
     }
 
     private closeAndFireEventFromMediaUpload(event: FileUploadStartedEvent<Content>) {
@@ -221,7 +206,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     hide() {
         super.hide();
-        this.uploader.stop();
         this.mostPopularContentTypes.hide();
         this.clearAllItems();
     }

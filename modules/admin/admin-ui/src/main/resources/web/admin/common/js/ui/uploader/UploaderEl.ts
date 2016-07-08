@@ -41,6 +41,7 @@ module api.ui.uploader {
 
         protected config: UploaderElConfig;
         protected uploader;
+        protected dragAndDropper;
         protected value;
         private uploadedItems: UploadItem<MODEL>[] = [];
 
@@ -61,8 +62,12 @@ module api.ui.uploader {
         private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>):void }[] = [];
         private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>):void }[] = [];
         private uploadResetListeners: {():void }[] = [];
+        private dropzoneDragEnterListeners: { (event):void }[] = [];
+        private dropzoneDragLeaveListeners: { (event):void }[] = [];
+        private dropzoneDropListeners: { (event):void }[] = [];
 
         private debouncedUploadStart: () => void;
+        private initHandlerOnEvent: (event) => void;
 
         public static debug: boolean = false;
 
@@ -91,9 +96,18 @@ module api.ui.uploader {
 
             this.handleInitTrigger();
 
-            this.onRemoved((event) => this.destroyHandler.call(this, event));
+            this.onRemoved((event) => this.destroyHandler());
 
             this.listenToDragEvents();
+
+            this.initDebouncedUploadStart();
+        }
+
+        private initDebouncedUploadStart() {
+            this.debouncedUploadStart = api.util.AppHelper.debounce(() => {
+                this.notifyFileUploadStarted(this.uploadedItems);
+                this.uploader.uploadStoredFiles();
+            }, 250, false);
         }
 
         private initTextInput() {
@@ -156,10 +170,11 @@ module api.ui.uploader {
         }
 
         private handleInitTrigger() {
+            this.initHandlerOnEvent = (event) => this.initHandler();
             if (this.config.deferred) {
-                this.onShown((event) => this.initHandler.call(this, event));
+                this.onShown(this.initHandlerOnEvent);
             } else {
-                this.onRendered((event) => this.initHandler.call(this, event));
+                this.onRendered(this.initHandlerOnEvent);
             }
         }
 
@@ -227,10 +242,8 @@ module api.ui.uploader {
                         this.config.dropAlwaysAllowed ? this.getId() : this.dropzone.getId()
                     );
 
-                    this.debouncedUploadStart = api.util.AppHelper.debounce(() => {
-                        this.notifyFileUploadStarted(this.uploadedItems);
-                        this.uploader.uploadStoredFiles();
-                    }, 250, false);
+                    this.unShown(this.initHandlerOnEvent);
+                    this.unRendered(this.initHandlerOnEvent);
 
                     if (this.value) {
                         this.setValue(this.value);
@@ -248,6 +261,10 @@ module api.ui.uploader {
             if (this.uploader) {
                 this.uploader.reset(true);
                 this.uploader = null;
+            }
+            if (this.dragAndDropper) {
+                this.dragAndDropper.dispose();
+                this.dragAndDropper = null;
             }
         }
 
@@ -397,7 +414,7 @@ module api.ui.uploader {
 
         stop(): UploaderEl<MODEL> {
             if (this.uploader) {
-                this.uploader.stop();
+                this.uploader.cancelAll();
             }
             return this;
         }
@@ -476,6 +493,8 @@ module api.ui.uploader {
             this.config.disabled = !enabled;
 
             if (!enabled) {
+                this.unShown(this.initHandlerOnEvent);
+                this.unRendered(this.initHandlerOnEvent);
                 this.dropzone.getEl().setAttribute('disabled', 'true');
             } else {
                 this.dropzone.getEl().removeAttribute('disabled');
@@ -492,6 +511,8 @@ module api.ui.uploader {
                 if (UploaderEl.debug) {
                     console.log('Enabling uploader', this);
                 }
+                this.unShown(this.initHandlerOnEvent);
+                this.unRendered(this.initHandlerOnEvent);
                 if (this.config.deferred) {
 
                     if (this.isVisible()) {
@@ -500,7 +521,7 @@ module api.ui.uploader {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' shown', this);
                         }
-                        this.onShown((event) => this.initHandler.call(this, event));
+                        this.onShown(this.initHandlerOnEvent);
                     }
                 } else {
 
@@ -510,7 +531,7 @@ module api.ui.uploader {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' rendered', this);
                         }
-                        this.onRendered((event) => this.initHandler.call(this, event));
+                        this.onRendered(this.initHandlerOnEvent);
                     }
                 }
             }
@@ -518,7 +539,7 @@ module api.ui.uploader {
         }
 
         isEnabled(): boolean {
-            return this.uploader != null;
+            return !this.config.disabled;
         }
 
         getParams(): {[key: string]: any} {
@@ -533,40 +554,6 @@ module api.ui.uploader {
                 }
             }
             return null;
-        }
-
-        private isFolder(file: PluploadFile): boolean {
-            // there's no way to detect if uploaded file is a folder so this is as close as we can get
-            return file.size % 4096 == 0 && api.util.StringHelper.isEmpty(file.type);
-        }
-
-        private validateFiles(up, files: PluploadFile[]) {
-            // Check for folders
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i];
-                if (this.isFolder(file)) {
-                    if (UploaderEl.debug) {
-                        console.log('Removing folder [' + file.name + '] because it can\'t be uploaded', this);
-                    }
-
-                    files.splice(i, 1);
-                    up.splice(i, 1);
-                    api.notify.NotifyManager.get().showWarning('Folder [' + file.name + '] upload is not supported yet');
-                }
-            }
-
-            // Check for max allowed occurrences
-            /* if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
-             if (UploaderEl.debug) {
-             console.log('Max ' + this.config.maximumOccurrences + ' files allowed, removing the rest', this);
-             }
-
-             files.splice(this.config.maximumOccurrences);
-             up.splice(this.config.maximumOccurrences);
-             api.notify.NotifyManager.get().showWarning('Max ' + this.config.maximumOccurrences + ' files are allowed');
-             }*/
-
-            return files.length > 0;
         }
 
         private submitCallback(id, name) {
@@ -671,6 +658,9 @@ module api.ui.uploader {
                 validation: {
                     acceptFiles: this.config.allowTypes
                 },
+                text: {
+                    fileInputTitle: ""
+                },
                 callbacks: {
                     onSubmit: this.submitCallback.bind(this),
                     onStatusChange: this.statusChangeCallback.bind(this),
@@ -682,12 +672,15 @@ module api.ui.uploader {
             });
 
             if (this.config.allowDrop) {
-                new qq.DragAndDrop({
+                this.dragAndDropper = new qq.DragAndDrop({
                     dropZoneElements: [document.getElementById(dropId)],
+                    debug: false,
                     callbacks: {
-                        processingDroppedFilesComplete: function (files, dropTarget) {
-                            uploader.addFiles(files); //this submits the dropped files to Fine Uploader
-                        }
+                        //this submits the dropped files to Fine Uploader
+                        processingDroppedFilesComplete: (files, dropTarget) => uploader.addFiles(files),
+                        onDrop: (event) => this.notifyDropzoneDrop(event),
+                        onDragEnter: (event) => this.notifyDropzoneDragEnter(event),
+                        onDragLeave: (event) => this.notifyDropzoneDragLeave(event)
                     }
                 });
             }
@@ -714,6 +707,10 @@ module api.ui.uploader {
 
         getDropzone(): api.dom.AEl {
             return this.dropzone;
+        }
+
+        showFileSelectionDialog() {
+            wemjq(this.uploader.getInputButton().getInput()).simulate("click");
         }
 
         onUploadStarted(listener: (event: FileUploadStartedEvent<MODEL>) => void) {
@@ -773,6 +770,54 @@ module api.ui.uploader {
         unUploadFailed(listener: (event: FileUploadFailedEvent<MODEL>) => void) {
             this.uploadFailedListeners = this.uploadFailedListeners.filter((currentListener) => {
                 return listener != currentListener;
+            });
+        }
+
+        onDropzoneDragEnter(listener: (event) => void) {
+            this.dropzoneDragEnterListeners.push(listener);
+        }
+
+        unDropzoneDragEnter(listener: (event) => void) {
+            this.dropzoneDragEnterListeners = this.dropzoneDragEnterListeners.filter((currentListener) => {
+                return listener != currentListener;
+            });
+        }
+
+        onDropzoneDragLeave(listener: (event) => void) {
+            this.dropzoneDragLeaveListeners.push(listener);
+        }
+
+        unDropzoneDragLeave(listener: (event) => void) {
+            this.dropzoneDragLeaveListeners = this.dropzoneDragLeaveListeners.filter((currentListener) => {
+                return listener != currentListener;
+            });
+        }
+
+        onDropzoneDrop(listener: (event) => void) {
+            this.dropzoneDropListeners.push(listener);
+        }
+
+        unDropzoneDragDrop(listener: (event) => void) {
+            this.dropzoneDropListeners = this.dropzoneDropListeners.filter((currentListener) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyDropzoneDragEnter(event) {
+            this.dropzoneDragEnterListeners.forEach((listener: (event)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyDropzoneDragLeave(event) {
+            this.dropzoneDragLeaveListeners.forEach((listener: (event)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyDropzoneDrop(event) {
+            this.dropzoneDropListeners.forEach((listener: (event)=>void) => {
+                listener(event);
             });
         }
 

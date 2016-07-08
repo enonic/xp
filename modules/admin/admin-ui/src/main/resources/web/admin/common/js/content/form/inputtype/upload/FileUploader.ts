@@ -77,7 +77,7 @@ module api.content.form.inputtype.upload {
             uploadButton.addClass('upload-button');
 
             uploadButton.onClicked((event: MouseEvent) => {
-                wemjq(this.uploaderEl.getDropzone().getEl().getHTMLElement()).simulate("click");
+                this.uploaderEl.showFileSelectionDialog();
             });
 
             wrapper.appendChild(this.uploaderEl);

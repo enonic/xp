@@ -11,7 +11,14 @@
  *
  * Licensed only under the MIT license (http://fineuploader.com/licensing).
  */
-
+/*!
+ * Enonic changes
+ * 07.07.2016 @sts Adjusted reset method to make it able to clean the created input that triggers file select dialog
+ * 07.07.2016 @sts Adjusted isErrorUploadResponse method so that it does not treat absence of success field on our responses as error
+ * 07.07.2016 @sts Added getInputButton() method that returns first input button of uploader form _buttons array
+ * 07.07.2016 @sts Added onDrop, onDragEnter and onDragLeave callbacks for dropzone
+ * 07.07.2016 @sts Adjusted uploader's input overflow property
+ */
 
 (function (global) {
     /*globals window, navigator, document, FormData, File, HTMLInputElement, XMLHttpRequest, Blob, Storage, ActiveXObject */
@@ -1315,7 +1322,7 @@
         // Make button suitable container for input
         qq(options.element).css({
             position: "relative",
-            overflow: "hidden",
+            // overflow: "hidden",
             // Make sure browse button is in the right side in Internet Explorer
             direction: "ltr"
         });
@@ -1364,6 +1371,15 @@
                 qq(options.element).removeClass(options.focusClass);
                 input = null;
                 input = createInput();
+            },
+
+            remove: function () {
+                if (input.parentNode) {
+                    qq(input).remove();
+                }
+
+                qq(options.element).removeClass(options.focusClass);
+                input = null;
             }
         });
 
@@ -1889,7 +1905,7 @@
                 return false;
             },
 
-            reset: function () {
+            reset: function (removeButtons) {
                 this.log("Resetting uploader...");
 
                 this._handler.reset();
@@ -1900,7 +1916,7 @@
                 this._thumbnailUrls = [];
 
                 qq.each(this._buttons, function (idx, button) {
-                    button.reset();
+                    !!removeButtons ? button.remove() : button.reset();
                 });
 
                 this._paramsStore.reset();
@@ -1917,6 +1933,10 @@
                 this._failedSinceLastAllComplete = [];
 
                 this._totalProgress && this._totalProgress.reset();
+            },
+
+            getInputButton: function () {
+                return this._buttons[0];
             },
 
             retry: function (id) {
@@ -8049,7 +8069,8 @@
             },
 
             isErrorUploadResponse = function (xhr, response) {
-                return qq.indexOf([200, 201, 202, 203, 204], xhr.status) < 0 || !response.success ||
+                return qq.indexOf([200, 201, 202, 203, 204], xhr.status) < 0 ||
+                       // !response.success ||
                        response.reset;
             },
 
@@ -8511,9 +8532,11 @@
                 onEnter: function (e) {
                     qq(dropArea).addClass(options.classes.dropActive);
                     e.stopPropagation();
+                    options.callbacks.onDragEnter(e);
                 },
                 onLeaveNotDescendants: function (e) {
                     qq(dropArea).removeClass(options.classes.dropActive);
+                    options.callbacks.onDragLeave(e);
                 },
                 onDrop: function (e) {
                     handleDataTransfer(e.dataTransfer, dropZone).then(
@@ -8524,6 +8547,7 @@
                             options.callbacks.dropLog("Drop event DataTransfer parsing failed.  No files will be uploaded.", "error");
                         }
                     );
+                    options.callbacks.onDrop(e);
                 }
             });
 
@@ -8666,7 +8690,13 @@
             },
             dropLog: function (message, level) {
                 qq.log(message, level);
-            }
+            },
+            onDragEnter: function (event) {
+            },
+            onDragLeave: function (event) {
+            },
+            onDrop: function (event) {
+            },
         };
     };
 

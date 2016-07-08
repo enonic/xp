@@ -203,7 +203,7 @@ module api.content.form.inputtype.upload {
                 if (property.hasNullValue()) {
                     return;
                 }
-                wemjq(this.mediaUploaderEl.getDropzone().getEl().getHTMLElement()).simulate("click");
+                this.mediaUploaderEl.showFileSelectionDialog();
             });
 
             wrapper.appendChild(this.mediaUploaderEl);
