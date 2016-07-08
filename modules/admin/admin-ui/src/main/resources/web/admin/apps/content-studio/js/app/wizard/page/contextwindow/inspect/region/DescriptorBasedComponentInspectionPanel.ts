@@ -35,17 +35,17 @@ export class DescriptorBasedComponentInspectionPanel<COMPONENT extends Descripto
             if (this.liveEditModel != null && this.liveEditModel.getSiteModel() != null) {
                 let siteModel = this.liveEditModel.getSiteModel();
 
-                siteModel.unApplicationUnavailable(this.applicationUnavailableHandler);
-                siteModel.unApplicationAdded(this.reloadDescriptorsOnApplicationChange);
-                siteModel.unApplicationRemoved(this.reloadDescriptorsOnApplicationChange);
+                siteModel.unApplicationUnavailable(this.applicationUnavailableHandler.bind(this));
+                siteModel.unApplicationAdded(this.reloadDescriptorsOnApplicationChange.bind(this));
+                siteModel.unApplicationRemoved(this.reloadDescriptorsOnApplicationChange.bind(this));
             }
 
             super.setModel(liveEditModel);
             this.layout();
 
-            liveEditModel.getSiteModel().onApplicationUnavailable(this.applicationUnavailableHandler);
-            liveEditModel.getSiteModel().onApplicationAdded(this.reloadDescriptorsOnApplicationChange);
-            liveEditModel.getSiteModel().onApplicationRemoved(this.reloadDescriptorsOnApplicationChange);
+            liveEditModel.getSiteModel().onApplicationUnavailable(this.applicationUnavailableHandler.bind(this));
+            liveEditModel.getSiteModel().onApplicationAdded(this.reloadDescriptorsOnApplicationChange.bind(this));
+            liveEditModel.getSiteModel().onApplicationRemoved(this.reloadDescriptorsOnApplicationChange.bind(this));
         }
     }
 

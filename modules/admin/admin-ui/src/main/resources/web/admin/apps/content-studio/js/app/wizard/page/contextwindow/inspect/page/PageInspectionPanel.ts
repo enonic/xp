@@ -54,7 +54,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
     private layout() {
 
-        this.pageModel.unReset(this.modelResetListener);
+        this.pageModel.unReset(this.modelResetListener.bind(this));
 
         this.removeChildren();
 
@@ -116,7 +116,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             this.pageModel.setCustomized(true);
         });
 
-        this.pageModel.onReset(this.modelResetListener);
+        this.pageModel.onReset(this.modelResetListener.bind(this));
     }
 
     modelResetListener() {
