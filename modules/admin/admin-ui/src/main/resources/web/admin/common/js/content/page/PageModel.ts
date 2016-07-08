@@ -503,7 +503,7 @@ module api.content.page {
         isModified(): boolean {
             // default template regions differing from page regions means it has been modified
             return !!this.getDefaultPageTemplate() && this.getDefaultPageTemplate().isPage() &&
-                !this.getDefaultPageTemplate().getRegions().equals(this.getRegions());
+                   !this.getDefaultPageTemplate().getRegions().equals(this.getRegions());
         }
 
         private contentHasNonRenderableTemplateSet() {
@@ -578,6 +578,12 @@ module api.content.page {
 
         onReset(listener: ()=>void) {
             this.resetListeners.push(listener);
+        }
+
+        unReset(listener: ()=>void) {
+            this.resetListeners = this.resetListeners.filter((curr: ()=>void) => {
+                return listener != curr;
+            });
         }
 
         private notifyReset() {

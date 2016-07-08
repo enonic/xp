@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -273,24 +272,6 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals( "<a href=\"http://localhost/portal/draft" + content.getPath() + "\">Content</a>", processedHtml );
-    }
-
-    @Test
-    @Ignore
-    public void process_html_with_script()
-    {
-        //Process an html text containing a link to this content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"/some/path\"><script>alert('test')</script>Content</a><script>alert('test')</script>" );
-
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        ServletRequestHolder.setRequest( req );
-
-        //Checks that the page URL of the content is returned
-        final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/some/path\">Content</a>", processedHtml );
     }
 
     @Test

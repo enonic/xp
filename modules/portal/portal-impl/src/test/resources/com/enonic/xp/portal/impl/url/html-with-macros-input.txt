@@ -1,7 +1,7 @@
 <a href="/some/path">[macroName par1="val1" par2="val2"]body body[/macroName]</a>
 <a href="/some/path">[macroName par1="val1" par2="val2"/]</a>
-<a href="[macroNoBody /]">[macro par1="val1" par2="val2"/]</a> \[macroName]skip me[/macroName]
+<a href="#">[macro par1="val1" par2="val2"/]</a> \[macroName]skip me[/macroName]
 <p>[macroName par1="val1"]body [macroInBody]macroInBody[/macroInBody] body[/macroName]</p>
-<a href="[macro /]">body</a>
+<a href="#">[macro /]</a>
 \[macro /] \[macro][/macro] \ [macro /]
 [macro_name][macro_in_body/][/macro_name]

@@ -73,7 +73,7 @@ export class UserTreeGridItem implements api.Equitable {
             return 'Groups';
 
         }
-
+        return "";
     }
 
     getDataId(): string {
