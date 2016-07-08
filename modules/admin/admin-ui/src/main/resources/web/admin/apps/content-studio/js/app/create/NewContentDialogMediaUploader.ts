@@ -4,14 +4,10 @@ import Content = api.content.Content;
 
 export class NewContentDialogMediaUploader extends api.dom.DivEl {
 
-    private uploaderEnabled: boolean;
-
     private mediaUploaderEl: api.content.MediaUploaderEl;
 
     constructor() {
         super("uploader-container");
-
-        this.uploaderEnabled = true;
 
         var uploaderMask = new api.dom.DivEl('uploader-mask');
 
@@ -27,22 +23,23 @@ export class NewContentDialogMediaUploader extends api.dom.DivEl {
             showReset: false,
             showCancel: false,
             allowMultiSelection: true,
-            deferred: true  // wait till the window is shown
+            deferred: true
         });
         this.appendChild(this.mediaUploaderEl);
+
+        this.mediaUploaderEl.setEnabled(true);
     }
 
     setEnabled(value: boolean) {
-        this.uploaderEnabled = value;
+        this.mediaUploaderEl.setEnabled(value);
     }
 
     isEnabled(): boolean {
-        return this.uploaderEnabled;
+        return this.mediaUploaderEl.isEnabled();
     }
 
     reset() {
         this.mediaUploaderEl.reset();
-        this.mediaUploaderEl.setEnabled(this.uploaderEnabled);
     }
 
     setParams(params: {[key: string]: any}) {
