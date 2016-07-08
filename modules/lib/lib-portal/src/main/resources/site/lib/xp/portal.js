@@ -112,7 +112,7 @@ exports.pageUrl = function (params) {
  * @example-ref examples/portal/serviceUrl.js
  *
  * @param {object} params Input parameters as JSON.
- * @param {string} params.name Name of the service.
+ * @param {string} params.service Name of the service.
  * @param {string} [params.application] Other application to reference to. Default is current application.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
