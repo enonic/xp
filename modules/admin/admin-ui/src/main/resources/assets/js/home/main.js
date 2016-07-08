@@ -10,4 +10,7 @@ $(function () {
     var launcher = require('./launcher');
     launcher.init();
 
+    var sessionExpiredDetector = require('./sessionExpiredDetector');
+    sessionExpiredDetector.startPolling();
+
 });
