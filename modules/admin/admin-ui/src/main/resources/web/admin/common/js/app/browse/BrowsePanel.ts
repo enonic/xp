@@ -7,13 +7,13 @@ module api.app.browse {
 
     export interface BrowsePanelParams<M extends api.Equitable> {
 
-        browseToolbar:api.ui.toolbar.Toolbar;
+        browseToolbar: api.ui.toolbar.Toolbar;
 
-        treeGrid?:api.ui.treegrid.TreeGrid<Object>;
+        treeGrid?: api.ui.treegrid.TreeGrid<Object>;
 
-        browseItemPanel:BrowseItemPanel<M>;
+        browseItemPanel: BrowseItemPanel<M>;
 
-        filterPanel?:api.app.browse.filter.BrowseFilterPanel;
+        filterPanel?: api.app.browse.filter.BrowseFilterPanel;
 
         hasDetailsPanel?: boolean;
     }
@@ -98,29 +98,31 @@ module api.app.browse {
             });
         }
 
-        doRender(): boolean {
-            this.gridAndItemsSplitPanel = new api.ui.panel.SplitPanelBuilder(this.treeGrid, this.browseItemPanel)
-                .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD)
-                .build();
+        doRender(): wemQ.Promise<boolean> {
+            return super.doRender().then((rendered) => {
+                this.gridAndItemsSplitPanel = new api.ui.panel.SplitPanelBuilder(this.treeGrid, this.browseItemPanel)
+                    .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD)
+                    .build();
 
-            this.gridAndItemsSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
+                this.gridAndItemsSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
 
-            this.browseToolbar.addClass("browse-toolbar");
-            this.gridAndItemsSplitPanel.addClass("content-grid-and-browse-split-panel");
+                this.browseToolbar.addClass("browse-toolbar");
+                this.gridAndItemsSplitPanel.addClass("content-grid-and-browse-split-panel");
 
-            if (this.filterPanel) {
-                this.gridAndToolbarPanel = new api.ui.panel.Panel();
-                this.gridAndToolbarPanel.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
+                if (this.filterPanel) {
+                    this.gridAndToolbarPanel = new api.ui.panel.Panel();
+                    this.gridAndToolbarPanel.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
 
-                this.filterAndGridSplitPanel = this.setupFilterPanel();
-                this.appendChild(this.filterAndGridSplitPanel);
-                if (this.filterPanelIsHiddenByDefault) {
-                    this.hideFilterPanel();
+                    this.filterAndGridSplitPanel = this.setupFilterPanel();
+                    this.appendChild(this.filterAndGridSplitPanel);
+                    if (this.filterPanelIsHiddenByDefault) {
+                        this.hideFilterPanel();
+                    }
+                } else {
+                    this.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
                 }
-            } else {
-                this.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
-            }
-            return true;
+                return rendered;
+            });
         }
 
         getFilterAndGridSplitPanel(): api.ui.panel.Panel {

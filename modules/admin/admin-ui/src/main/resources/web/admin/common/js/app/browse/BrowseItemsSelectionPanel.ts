@@ -2,7 +2,7 @@ module api.app.browse {
 
     export class BrowseItemsSelectionPanel<M extends api.Equitable> extends api.ui.panel.Panel {
 
-        private deselectedListeners: {(event: ItemDeselectedEvent<M>):void}[] = [];
+        private deselectedListeners: {(event: ItemDeselectedEvent<M>): void}[] = [];
         private items: BrowseItem<M>[] = [];
         private selectionItems: SelectionItem<M>[] = [];
         private messageForNoSelection = "You are wasting this space - select something!";
@@ -73,11 +73,11 @@ module api.app.browse {
                 this.itemsContainer.removeChildren();
             }
 
-            const removeCallback = () => {
+            const selectionItem = new SelectionItem(this.createItemViewer(item), item);
+            selectionItem.onRemoveClicked((e: MouseEvent) => {
                 this.removeItem(item);
                 this.notifyDeselected(item);
-            };
-            const selectionItem = new SelectionItem(this.createItemViewer(item), item, removeCallback);
+            });
 
             if (!this.mobileView && !this.isLimitReached()) {
                 this.itemsContainer.appendChild(selectionItem);

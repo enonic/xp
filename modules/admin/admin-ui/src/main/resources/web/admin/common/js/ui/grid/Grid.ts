@@ -166,8 +166,10 @@ module api.ui.grid {
         }
 
         render() {
-            this.slickGrid.render();
-            super.render();
+            return super.render().then((rendered) => {
+                this.slickGrid.render();
+                return rendered;
+            });
         }
 
         renderGrid() {

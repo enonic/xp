@@ -38,9 +38,9 @@ module api.ui.security.acl {
             this.permissionSelector = new PermissionSelector();
             this.permissionSelector.onValueChanged((event: api.ValueChangedEvent) => {
                 this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
-                    allow: this.ace.getAllowedPermissions().sort(),
-                    deny: this.ace.getDeniedPermissions().sort()
-                }));
+                        allow: this.ace.getAllowedPermissions().sort(),
+                        deny: this.ace.getDeniedPermissions().sort()
+                    }));
                 this.notifyValueChanged(this.getAccessControlEntry());
             });
 
@@ -61,12 +61,13 @@ module api.ui.security.acl {
             this.setAccessControlEntry(this.ace, true);
         }
 
-        doRender() {
-            super.doRender();
-            this.appendChild(this.accessSelector);
-            this.appendChild(this.removeButton);
-            this.appendChild(this.permissionSelector);
-            return true;
+        doRender(): wemQ.Promise<boolean> {
+            return super.doRender().then((rendered) => {
+                this.appendChild(this.accessSelector);
+                this.appendChild(this.removeButton);
+                this.appendChild(this.permissionSelector);
+                return rendered;
+            });
         }
 
         getPermissionSelector(): PermissionSelector {

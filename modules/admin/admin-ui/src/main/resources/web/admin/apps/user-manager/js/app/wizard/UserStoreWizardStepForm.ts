@@ -15,7 +15,7 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
         super();
     }
 
-    layout(userStore: api.security.UserStore) {
+    layout(userStore?: api.security.UserStore): wemQ.Promise<void> {
 
         this.formView = this.createFormView(userStore);
 
@@ -40,7 +40,7 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
         });
     }
 
-    private createFormView(userStore: api.security.UserStore): api.form.FormView {
+    private createFormView(userStore?: api.security.UserStore): api.form.FormView {
         var isSystemUserStore = (!!userStore && userStore.getKey().isSystem()).toString();
         var formBuilder = new api.form.FormBuilder().
             addFormItem(new api.form.InputBuilder().

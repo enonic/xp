@@ -57,9 +57,11 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
         return 50;
     }
 
-    doRender() {
-        this.removeChildren();
-        this.appendChild(this.namesAndIconView);
-        return true;
+    doRender(): wemQ.Promise<boolean> {
+        return super.doRender().then((rendered) => {
+            this.removeChildren();
+            this.appendChild(this.namesAndIconView);
+            return rendered;
+        });
     }
 }

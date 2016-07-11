@@ -270,15 +270,16 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
 
         itemViewer.setObject(item);
 
-        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).
-            setId(item.getId()).
-            setDisplayName(item.getDisplayName()).
-            setPath(item.getPath().toString()).
-            setIconUrl(new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
+        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).setId(item.getId()).setDisplayName(
+            item.getDisplayName()).setPath(item.getPath().toString()).setIconUrl(
+            new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
-        return new StatusSelectionItem(itemViewer, browseItem, () => {
+        var statusItem = new StatusSelectionItem(itemViewer, browseItem);
+        statusItem.onRemoveClicked((e: MouseEvent) => {
             this.removeItem(item);
         });
+
+        return statusItem;
     }
 
     getItemId(item: ContentSummaryAndCompareStatus): string {
@@ -299,11 +300,9 @@ export class DialogDependantList extends ListBox<ContentSummaryAndCompareStatus>
 
         dependantViewer.setObject(item);
 
-        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).
-            setId(item.getId()).
-            setDisplayName(item.getDisplayName()).
-            setPath(item.getPath().toString()).
-            setIconUrl(new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
+        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).setId(item.getId()).setDisplayName(
+            item.getDisplayName()).setPath(item.getPath().toString()).setIconUrl(
+            new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
         let selectionItem = new StatusSelectionItem(dependantViewer, browseItem);
 

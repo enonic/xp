@@ -103,11 +103,12 @@ module api.ui.security.acl {
             return ace;
         }
 
-        doRender() {
-            super.doRender();
-            this.appendChild(this.accessSelector);
-            this.appendChild(this.removeButton);
-            return true;
+        doRender(): wemQ.Promise<boolean> {
+            return super.doRender().then((rendered) => {
+                this.appendChild(this.accessSelector);
+                this.appendChild(this.removeButton);
+                return rendered;
+            });
         }
     }
 

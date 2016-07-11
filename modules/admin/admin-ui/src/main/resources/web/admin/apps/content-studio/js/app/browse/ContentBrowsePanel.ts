@@ -112,36 +112,37 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.handleGlobalEvents();
     }
 
-    doRender(): boolean {
-        super.doRender();
+    doRender(): wemQ.Promise<boolean> {
+        return super.doRender().then((rendered) => {
 
-        var nonMobileDetailsPanelsManagerBuilder = NonMobileDetailsPanelsManager.create();
-        this.initSplitPanelWithDockedDetails(nonMobileDetailsPanelsManagerBuilder);
-        this.initFloatingDetailsPanel(nonMobileDetailsPanelsManagerBuilder);
-        this.initItemStatisticsPanelForMobile();
+            var nonMobileDetailsPanelsManagerBuilder = NonMobileDetailsPanelsManager.create();
+            this.initSplitPanelWithDockedDetails(nonMobileDetailsPanelsManagerBuilder);
+            this.initFloatingDetailsPanel(nonMobileDetailsPanelsManagerBuilder);
+            this.initItemStatisticsPanelForMobile();
 
-        var nonMobileDetailsPanelsManager = nonMobileDetailsPanelsManagerBuilder.build();
-        if (nonMobileDetailsPanelsManager.requiresCollapsedDetailsPanel()) {
-            nonMobileDetailsPanelsManager.hideDockedDetailsPanel();
-        }
-        nonMobileDetailsPanelsManager.ensureButtonHasCorrectState();
-
-        this.setActiveDetailsPanel(nonMobileDetailsPanelsManager);
-
-        this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
-
-        this.onShown(() => {
-            if (!!nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget()) {
-                nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget().slideIn();
+            var nonMobileDetailsPanelsManager = nonMobileDetailsPanelsManagerBuilder.build();
+            if (nonMobileDetailsPanelsManager.requiresCollapsedDetailsPanel()) {
+                nonMobileDetailsPanelsManager.hideDockedDetailsPanel();
             }
+            nonMobileDetailsPanelsManager.ensureButtonHasCorrectState();
+
+            this.setActiveDetailsPanel(nonMobileDetailsPanelsManager);
+
+            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
+
+            this.onShown(() => {
+                if (!!nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget()) {
+                    nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget().slideIn();
+                }
+            });
+
+            this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
+
+            let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
+            this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
+
+            return rendered;
         });
-
-        this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-
-        let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
-        this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
-
-        return true;
     }
 
     private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
@@ -383,8 +384,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                             }),
                             !isFiltered
                         ).then((results) => {
-                                nodes = nodes.concat(results);
-                            });
+                            nodes = nodes.concat(results);
+                        });
                     }
                     break;
                 }

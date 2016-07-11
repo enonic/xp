@@ -96,12 +96,11 @@ module api.dom {
 
         public static debug: boolean = false;
 
-        private addedListeners: {(event: ElementAddedEvent) : void}[] = [];
-        private removedListeners: {(event: ElementRemovedEvent) : void}[] = [];
-        private renderedListeners: {(event: ElementRenderedEvent) : void}[] = [];
-        private shownListeners: {(event: ElementShownEvent) : void}[] = [];
-        private hiddenListeners: {(event: ElementHiddenEvent) : void}[] = [];
-        private resizedListeners: {(event: ElementResizedEvent) : void}[] = [];
+        private addedListeners: {(event: ElementAddedEvent): void}[] = [];
+        private removedListeners: {(event: ElementRemovedEvent): void}[] = [];
+        private renderedListeners: {(event: ElementRenderedEvent): void}[] = [];
+        private shownListeners: {(event: ElementShownEvent): void}[] = [];
+        private hiddenListeners: {(event: ElementHiddenEvent): void}[] = [];
 
         constructor(builder: ElementBuilder) {
             this.children = [];
@@ -206,34 +205,61 @@ module api.dom {
             return null;
         }
 
-        init() {
-            if (!this.isRendered()) {
-                this.render(false);
+        init(): wemQ.Promise<boolean> {
+            if (Element.debug) {
+                console.debug("Element.init", api.ClassHelper.getClassName(this));
             }
-            this.children.forEach((child: Element) => {
-                child.init();
-            });
-            if (this.isVisible()) {
-                this.notifyShown();
-            }
+            return (this.isRendered() ? wemQ(true) : this.render(false))
+                .then((rendered) => {
+                    var childPromises = [];
+                    this.children.forEach((child: Element) => {
+                        childPromises.push(child.init());
+                    });
+
+                    return wemQ.all(childPromises).then((childResults) => {
+
+                        if (this.isVisible()) {
+                            this.notifyShown();
+                        }
+
+                        return rendered;
+                    }).catch((reason) => {
+                        api.DefaultErrorHandler.handle(reason);
+                        return false;
+                    });
+                });
         }
 
-        render(deep: boolean = true) {
+        render(deep: boolean = true): wemQ.Promise<boolean> {
+            if (Element.debug) {
+                console.debug("Element.render", api.ClassHelper.getClassName(this));
+            }
+            var childPromises = [];
             if (deep) {
                 this.children.forEach((child: Element) => {
-                    child.render();
+                    childPromises.push(child.render());
                 });
             }
-            this.rendered = this.doRender();
-            this.notifyRendered();
+            return wemQ.all(childPromises)
+                .then(childResults => {
+                    return this.doRender();
+                })
+                .then((rendered) => {
+                    this.rendered = rendered;
+                    this.notifyRendered();
+                    return rendered;
+                }).catch((reason) => {
+                    api.DefaultErrorHandler.handle(reason);
+                    return false;
+                });
         }
 
         isRendered(): boolean {
             return this.rendered;
         }
 
-        doRender(): boolean {
-            return true;
+        doRender(): wemQ.Promise<boolean> {
+            return wemQ(true);
         }
 
         show() {
@@ -1041,10 +1067,8 @@ module api.dom {
 
 
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
-            return new Element(new ElementFromHelperBuilder().
-                setHelper(new ElementHelper(element)).
-                setLoadExistingChildren(loadExistingChildren).
-                setParentElement(parent));
+            return new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(element)).setLoadExistingChildren(
+                loadExistingChildren).setParentElement(parent));
         }
 
         static fromString(s: string, loadExistingChildren: boolean = true): Element {

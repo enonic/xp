@@ -1,16 +1,16 @@
 import "../../../../../api.ts";
-
-import DragHelper = api.ui.DragHelper;
-import PageView = api.liveedit.PageView;
-import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
-import Content = api.content.Content;
-import PageMode = api.content.page.PageMode;
 import {ContentWizardPanel} from "../../../ContentWizardPanel";
 import {LiveEditPageProxy} from "../../LiveEditPageProxy";
 import {Insertable} from "./Insertable";
 import {InsertablesGrid} from "./InsertablesGrid";
 import {Insertables} from "./Insertables";
 import {PageComponentsView} from "../../../PageComponentsView";
+
+import DragHelper = api.ui.DragHelper;
+import PageView = api.liveedit.PageView;
+import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
+import Content = api.content.Content;
+import PageMode = api.content.page.PageMode;
 
 export interface ComponentTypesPanelConfig {
 
@@ -58,7 +58,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         this.componentsView.onShown(() => {
             if (!this.componentsView.getParentElement()) {
                 //append it on click only to be sure that content wizard panel is ready
-                var offset = config.contentWizardPanel.getLiveFormPanel().getEl().getOffsetToParent();
+                var offset = config.contentWizardPanel.getLivePanel().getEl().getOffsetToParent();
                 this.componentsView.getEl().setOffset(offset);
                 config.contentWizardPanel.appendChild(this.componentsView);
             }
