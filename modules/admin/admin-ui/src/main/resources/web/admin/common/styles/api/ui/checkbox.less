@@ -10,20 +10,44 @@
   }
 
   label {
-    color: #777 !important;
-    display: block;
+    display: inline-block;
     white-space: nowrap;
     padding: 0px 5px 0px 23px;
     cursor: pointer;
 
-    &:before {
+    &.left:before, &.right:before, &.top:after {
       content: '';
-      position: absolute;
       display: block;
       background: url("../../../images/admin-unchecked.gif") -1px -2px no-repeat;
       width: 13px;
       height: 13px;
+    }
+
+    &.top {
+      padding-left: 0px;
+      margin-bottom: 19px;
+
+      &:after {
+        position: absolute;
+        top: 21px;
+      }
+    }
+
+    &.right:before {
+      position: absolute;
       left: 4px;
+      margin-top: 2px;
+    }
+
+    &.left {
+      padding-left: 0px;
+      display: inline-block;
+
+      &:before {
+        float: right;
+        margin-left: 7px;
+        margin-top: 2px;
+      }
     }
   }
 
@@ -45,9 +69,7 @@
     }
 
     &:checked + label {
-      color: #333 !important;
-
-      &:before {
+      &:before, &:after {
         background: url("../../../images/admin-checked.gif") -1px -2px no-repeat;
       }
     }

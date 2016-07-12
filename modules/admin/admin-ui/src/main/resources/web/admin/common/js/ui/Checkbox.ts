@@ -9,17 +9,20 @@ module api.ui {
 
         public static debug = false;
 
-        constructor(text?: string, checked?: boolean) {
-            super("div", "checkbox", undefined, String(checked != undefined ? checked : false));
-            // we need an id for the label to interact nicely
-            this.checkbox = <api.dom.InputEl> new api.dom.Element(new api.dom.NewElementBuilder().
-                setTagName('input').
-                setGenerateId(true));
-            this.checkbox.getEl().setAttribute('type', 'checkbox');
-            this.appendChild(this.checkbox);
+        constructor(builder: CheckboxBuilder) {
+            super("div", "checkbox", undefined, String(builder.checked || false));
 
-            this.label = new api.dom.LabelEl(text, this.checkbox);
+            this.initCheckbox();
+            this.initLabel(builder.text, builder.labelPosition);
+
+            this.appendChild(this.checkbox)
             this.appendChild(this.label);
+        }
+
+        private initCheckbox() {
+            // we need an id for the label to interact nicely
+            this.checkbox = <api.dom.InputEl> new api.dom.Element(new api.dom.NewElementBuilder().setTagName('input').setGenerateId(true));
+            this.checkbox.getEl().setAttribute('type', 'checkbox');
 
             wemjq(this.checkbox.getHTMLElement()).change((e) => {
                 if (Checkbox.debug) {
@@ -28,6 +31,16 @@ module api.ui {
                 this.refreshValueChanged();
                 this.refreshDirtyState();
             });
+
+        }
+
+        private initLabel(text: string, labelPosition: LabelPosition) {
+            this.label = new api.dom.LabelEl(text, this.checkbox);
+            this.label.addClass(this.getLabelPositionAsString(labelPosition));
+        }
+
+        private getLabelPositionAsString(labelPosition: LabelPosition = LabelPosition.RIGHT): string {
+            return LabelPosition[labelPosition].toLowerCase();
         }
 
         setChecked(newValue: boolean, silent?: boolean): Checkbox {
@@ -105,6 +118,10 @@ module api.ui {
             return this.checkbox.getEl().getAttribute('placeholder');
         }
 
+        static create(): CheckboxBuilder {
+            return new CheckboxBuilder();
+        }
+
         onFocus(listener: (event: FocusEvent) => void) {
             this.checkbox.onFocus(listener);
         }
@@ -121,4 +138,43 @@ module api.ui {
             this.checkbox.unBlur(listener);
         }
     }
+
+    export enum LabelPosition {
+        TOP,
+        RIGHT,
+        LEFT
+    }
+
+    export class CheckboxBuilder {
+        text: string;
+
+        checked: boolean;
+
+        labelPosition: LabelPosition;
+
+        constructor() {
+        }
+
+        setLabelText(value: string): CheckboxBuilder {
+            this.text = value;
+            return this;
+        }
+
+        setChecked(value: boolean): CheckboxBuilder {
+            this.checked = value;
+            return this;
+        }
+
+        setLabelPosition(value: LabelPosition): CheckboxBuilder {
+            this.labelPosition = value;
+            return this;
+        }
+
+        build(): Checkbox {
+            return new Checkbox(this);
+        }
+    }
+
+
+
 }

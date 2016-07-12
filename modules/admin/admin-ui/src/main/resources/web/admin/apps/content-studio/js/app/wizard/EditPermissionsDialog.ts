@@ -1,10 +1,10 @@
 import "../../api.ts";
+import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
 
 import Content = api.content.Content;
 import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import AccessControlList = api.security.acl.AccessControlList;
-import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
 
 export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
 
@@ -29,7 +29,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
 
         this.addClass('edit-permissions-dialog');
 
-        this.inheritPermissionsCheck = new api.ui.Checkbox().setLabel('Inherit permissions');
+        this.inheritPermissionsCheck = api.ui.Checkbox.create().setLabelText('Inherit permissions').build();
         this.inheritPermissionsCheck.addClass('inherit-perm-check');
         this.appendChildToContentPanel(this.inheritPermissionsCheck);
 
@@ -65,7 +65,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         };
         this.inheritPermissionsCheck.onValueChanged(changeListener);
 
-        this.overwriteChildPermissionsCheck = new api.ui.Checkbox().setLabel('Overwrite child permissions');
+        this.overwriteChildPermissionsCheck = api.ui.Checkbox.create().setLabelText('Overwrite child permissions').build();
         this.overwriteChildPermissionsCheck.addClass('overwrite-child-check');
         this.appendChildToContentPanel(this.overwriteChildPermissionsCheck);
 

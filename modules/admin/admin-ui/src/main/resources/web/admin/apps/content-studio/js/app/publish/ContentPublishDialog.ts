@@ -212,7 +212,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         let childrenCheckboxListener = () => this.refreshPublishDependencies().done();
 
-        this.childrenCheckbox = new api.ui.Checkbox('Include child items');
+        this.childrenCheckbox = api.ui.Checkbox.create().setLabelText('Include child items').build();
         this.childrenCheckbox.addClass('include-child-check');
         this.childrenCheckbox.onValueChanged(childrenCheckboxListener);
 

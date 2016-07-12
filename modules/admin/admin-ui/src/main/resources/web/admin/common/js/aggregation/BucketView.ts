@@ -20,7 +20,7 @@ module api.aggregation {
             this.parentAggregationView = parentAggregationView;
             this.displayName = displayName;
 
-            this.checkbox = new api.ui.Checkbox(this.resolveLabelValue(), select);
+            this.checkbox = api.ui.Checkbox.create().setLabelText(this.resolveLabelValue()).setChecked(select).build();
 
             this.checkbox.onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifySelectionChanged(eval(event.getOldValue()), eval(event.getNewValue()));
