@@ -610,7 +610,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         } else if (this.isContentRenderable() && areasContainId) {
             // also update live form panel for renderable content without asking
             this.liveFormPanel.skipNextReloadConfirmation(true);
-            this.liveFormPanel.loadPage();
+            this.liveFormPanel.loadPage(false);
         }
         this.resetLastFocusedElement();
     }
@@ -725,7 +725,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
                 this.liveFormPanel.setModel(this.liveEditModel);
                 this.liveFormPanel.skipNextReloadConfirmation(true);
-                this.liveFormPanel.loadPage();
+                this.liveFormPanel.loadPage(false);
                 this.updatePreviewActionVisibility();
                 return wemQ(null);
             });
