@@ -10,7 +10,6 @@ import PrincipalKey = api.security.PrincipalKey;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import FormIcon = api.app.wizard.FormIcon;
 import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;

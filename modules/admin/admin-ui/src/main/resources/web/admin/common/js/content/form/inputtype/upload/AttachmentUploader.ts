@@ -7,7 +7,6 @@ module api.content.form.inputtype.upload {
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
-    import PluploadFile = api.ui.uploader.PluploadFile;
 
     import AttachmentUploaderEl = api.content.AttachmentUploaderEl;
     import Content = api.content.Content;
@@ -41,7 +40,7 @@ module api.content.form.inputtype.upload {
                     this.uploaderWrapper.removeClass("empty");
                 });
 
-                this.uploaderEl.onFileUploaded((event:api.ui.uploader.FileUploadedEvent<Attachment>) => {
+                this.uploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<Attachment>) => {
 
                     var attachment = <Attachment>event.getUploadItem().getModel();
 
@@ -86,11 +85,12 @@ module api.content.form.inputtype.upload {
                 name: this.getContext().input.getName(),
                 showReset: false,
                 showCancel: false,
-                allowMultiSelection: true,
+                allowMultiSelection: this.getInput().getOccurrences().getMaximum() != 1,
                 hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true,
                 maximumOccurrences: this.getInput().getOccurrences().getMaximum(),
-                attachmentRemoveCallback: this.removeItem.bind(this)
+                attachmentRemoveCallback: this.removeItem.bind(this),
+                hasUploadButton: false
             });
         }
 

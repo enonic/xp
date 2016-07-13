@@ -2,19 +2,19 @@ module api.ui.uploader {
 
     export class UploadItem<MODEL extends api.Equitable> implements api.Equitable {
 
-        private file: PluploadFile;
+        private file: FineUploaderFile;
         private model: MODEL;
 
         private failedListeners: {(): void}[] = [];
         private uploadListeners: {(model: MODEL): void}[] = [];
         private progressListeners: {(progress: number): void}[] = [];
 
-        constructor(file: PluploadFile) {
+        constructor(file: FineUploaderFile) {
             this.file = file;
         }
 
         getId(): string {
-            return this.file.id;
+            return this.file.id + "";
         }
 
         setId(id: string): UploadItem<MODEL> {
@@ -45,15 +45,6 @@ module api.ui.uploader {
             return this;
         }
 
-        getMimeType(): string {
-            return this.file.type;
-        }
-
-        setMimeType(type: string): UploadItem<MODEL> {
-            this.file.type = type;
-            return this;
-        }
-
         getSize(): number {
             return this.file.size;
         }
@@ -73,11 +64,11 @@ module api.ui.uploader {
             return this;
         }
 
-        getStatus(): PluploadStatus {
+        getStatus(): string {
             return this.file.status;
         }
 
-        setStatus(status: PluploadStatus): UploadItem<MODEL> {
+        setStatus(status: string): UploadItem<MODEL> {
             this.file.status = status;
             return this;
         }
@@ -99,16 +90,16 @@ module api.ui.uploader {
                 if (!api.ObjectHelper.stringEquals(this.file.id, other.file.id) ||
                     !api.ObjectHelper.stringEquals(this.file.name, other.file.name) ||
                     !api.ObjectHelper.numberEquals(this.file.percent, other.file.percent) ||
-                    !api.ObjectHelper.stringEquals(this.file.type, other.file.type) ||
+                    //!api.ObjectHelper.stringEquals(this.file.type, other.file.type) ||
                     !api.ObjectHelper.numberEquals(this.file.size, other.file.size) ||
-                    !api.ObjectHelper.numberEquals(this.file.origSize, other.file.origSize) ||
+                    //!api.ObjectHelper.numberEquals(this.file.origSize, other.file.origSize) ||
                     this.file.status != this.file.status) {
                     return false;
                 }
 
-                if (this.file.lastModifiedDate.getMilliseconds() != other.file.lastModifiedDate.getMilliseconds()) {
+                /*if (this.file.lastModifiedDate.getMilliseconds() != other.file.lastModifiedDate.getMilliseconds()) {
                     return false;
-                }
+                 }*/
 
             } else if (!this.file && !other.file) {
                 return true;

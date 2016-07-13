@@ -3,7 +3,6 @@ module api.util.htmlarea.dialog {
     import FormItemBuilder = api.ui.form.FormItemBuilder;
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
-    import UploadItem = api.ui.uploader.UploadItem;
     import FileUploadedEvent = api.ui.uploader.FileUploadedEvent;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
@@ -269,15 +268,14 @@ module api.util.htmlarea.dialog {
                 },
                 operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
-                showButtons: false,
                 showResult: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
                 scaleWidth: false,
-                deferred: true
+                deferred: true,
+                showCancel: false
             });
 
-            uploader.addClass("minimized");
             uploader.hide();
 
             uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {

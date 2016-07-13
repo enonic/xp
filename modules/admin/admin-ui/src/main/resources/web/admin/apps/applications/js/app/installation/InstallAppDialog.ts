@@ -1,7 +1,6 @@
 import "../../api.ts";
 
 import ApplicationKey = api.application.ApplicationKey;
-import UploadItem = api.ui.uploader.UploadItem;
 import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
@@ -47,12 +46,16 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         this.marketAppPanel = new MarketAppPanel("market-app-panel");
         this.marketAppPanel.onShown(() => {
             this.marketAppPanel.getMarketAppsTreeGrid().onLoaded(this.onMarketLoaded)
+            this.centerMyself();
         });
     }
 
     private initUploadAppPanel() {
 
         this.uploadAppPanel = new UploadAppPanel(this.getCancelAction(), "upload-app-panel");
+        this.uploadAppPanel.onShown(() => {
+            this.centerMyself();
+        });
 
         this.uploadAppPanel.getApplicationInput().onKeyUp((event: KeyboardEvent) => {
             if (event.keyCode === 27) {
@@ -86,10 +89,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
             uploadFailedHandler(event, this.uploadAppPanel.getApplicationInput().getUploader())
         });
 
-        this.uploadAppPanel.getApplicationUploaderEl().onUploadFailed((event) => {
-            uploadFailedHandler(event, this.uploadAppPanel.getApplicationUploaderEl())
-        });
-
         let uploadCompletedHandler = (event: FileUploadCompleteEvent<Application>) => {
             if (event.getUploadItems()) {
                 this.close();
@@ -97,14 +96,12 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         };
 
         this.uploadAppPanel.getApplicationInput().onUploadCompleted(uploadCompletedHandler);
-        this.uploadAppPanel.getApplicationUploaderEl().onUploadCompleted(uploadCompletedHandler);
 
         let uploadStartedHandler = (event: FileUploadStartedEvent<Application>) => {
             new api.application.ApplicationUploadStartedEvent(event.getUploadItems()).fire();
         };
 
         this.uploadAppPanel.getApplicationInput().onUploadStarted(uploadStartedHandler);
-        this.uploadAppPanel.getApplicationUploaderEl().onUploadStarted(uploadStartedHandler);
     }
 
     open() {
@@ -122,7 +119,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     hide() {
         super.hide();
-        this.uploadAppPanel.getApplicationUploaderEl().stop();
+        this.uploadAppPanel.getApplicationInput().stop();
         this.addClass("hidden");
         this.removeClass("animated");
     }
@@ -136,7 +133,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     }
 
     private resetFileInputWithUploader() {
-        this.uploadAppPanel.getApplicationUploaderEl().reset();
         this.uploadAppPanel.getApplicationInput().reset();
     }
 }

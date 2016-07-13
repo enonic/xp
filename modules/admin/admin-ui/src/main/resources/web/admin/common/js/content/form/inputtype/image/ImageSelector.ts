@@ -403,37 +403,24 @@ module api.content.form.inputtype.image {
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
-            /*
-             * Drag N' Drop
-             */
-            var body = api.dom.Body.get();
-
-            this.uploader.addClass("minimized");
-            var dragOverEl;
-            // make use of the fact that when dragging
-            // first drag enter occurs on the child element and after that
-            // drag leave occurs on the parent element that we came from
-            // meaning that to know when we left some element
-            // we need to compare it to the one currently dragged over
+            //Drag N' Drop
+            // in order to toggle appropriate class during drag event
+            // we catch drag enter on this element and trigger uploader to appear,
+            // then catch drag leave on uploader's dropzone to get back to previous state
             this.onDragEnter((event: DragEvent) => {
-                var target = <HTMLElement> event.target;
+                event.stopPropagation();
                 this.uploader.giveFocus();
-                this.uploader.toggleClass("minimized", false);
-                dragOverEl = target;
+                this.uploader.setDropzoneVisible(true, true);
             });
 
-            body.onDragLeave((event: DragEvent) => {
-                var targetEl = <HTMLElement> event.target;
-                if (dragOverEl == targetEl) {
-                    this.uploader.giveBlur();
-                    this.uploader.toggleClass("minimized", true);
-                    dragOverEl = null;
-                }
+            this.uploader.onDropzoneDragLeave((event: DragEvent) => {
+                this.uploader.giveBlur();
+                this.uploader.setDropzoneVisible(false);
             });
 
-            body.onDrop((event: DragEvent) => {
+            this.uploader.onDropzoneDrop((event) => {
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
-                this.uploader.toggleClass("minimized", true);
+                this.uploader.setDropzoneVisible(false);
             });
 
             return this.uploader;
