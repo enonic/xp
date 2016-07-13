@@ -94,6 +94,8 @@ module api.dom {
 
         private rendered: boolean;
 
+        private rendering: boolean;
+
         public static debug: boolean = false;
 
         private addedListeners: {(event: ElementAddedEvent): void}[] = [];
@@ -209,35 +211,45 @@ module api.dom {
             if (Element.debug) {
                 console.debug("Element.init", api.ClassHelper.getClassName(this));
             }
-            return (this.isRendered() ? wemQ(true) : this.render(false))
-                .then((rendered) => {
-                    var childPromises = [];
-                    this.children.forEach((child: Element) => {
-                        childPromises.push(child.init());
-                    });
+            var renderPromise;
+            if (this.isRendered() || this.isRendering()) {
+                renderPromise = wemQ(true);
+            } else {
+                renderPromise = this.render(false);
+            }
+            return renderPromise.then((rendered) => {
 
-                    return wemQ.all(childPromises).then((childResults) => {
-
-                        if (this.isVisible()) {
-                            this.notifyShown();
-                        }
-
-                        return rendered;
-                    }).catch((reason) => {
-                        api.DefaultErrorHandler.handle(reason);
-                        return false;
-                    });
+                var childPromises = [];
+                this.children.forEach((child: Element) => {
+                    childPromises.push(child.init());
                 });
+
+                return wemQ.all(childPromises).then((childResults) => {
+                    if (Element.debug) {
+                        console.log("Element.init done", api.ClassHelper.getClassName(this));
+                    }
+
+                    if (this.isVisible()) {
+                        this.notifyShown();
+                    }
+
+                    return rendered;
+                }).catch((reason) => {
+                    api.DefaultErrorHandler.handle(reason);
+                    return false;
+                });
+            });
         }
 
         render(deep: boolean = true): wemQ.Promise<boolean> {
             if (Element.debug) {
-                console.debug("Element.render", api.ClassHelper.getClassName(this));
+                console.log('Element.render', api.ClassHelper.getClassName(this));
             }
+            this.rendering = true;
             var childPromises = [];
             if (deep) {
                 this.children.forEach((child: Element) => {
-                    childPromises.push(child.render());
+                    childPromises.push(child.render(deep));
                 });
             }
             return wemQ.all(childPromises)
@@ -245,13 +257,22 @@ module api.dom {
                     return this.doRender();
                 })
                 .then((rendered) => {
+                    if (Element.debug) {
+                        console.log('Element.render done', api.ClassHelper.getClassName(this));
+                    }
+                    this.rendering = false;
                     this.rendered = rendered;
                     this.notifyRendered();
+
                     return rendered;
                 }).catch((reason) => {
                     api.DefaultErrorHandler.handle(reason);
                     return false;
                 });
+        }
+
+        isRendering(): boolean {
+            return this.rendering;
         }
 
         isRendered(): boolean {
