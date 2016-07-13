@@ -620,7 +620,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             var liveFormPanel = this.getLivePanel();
             if (liveFormPanel) {
                 liveFormPanel.skipNextReloadConfirmation(true);
-                liveFormPanel.loadPage();
+                liveFormPanel.loadPage(false);
             }
         }
         this.resetLastFocusedElement();
@@ -738,7 +738,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
                 liveFormPanel.setModel(this.liveEditModel);
                 liveFormPanel.skipNextReloadConfirmation(true);
-                liveFormPanel.loadPage();
+                liveFormPanel.loadPage(false);
                 this.updatePreviewActionVisibility();
                 return wemQ(null);
             });

@@ -111,12 +111,11 @@ public class PushContentCommand
 
         final boolean validContents = checkIfAllContentsValid( pushContentsIds );
 
-        if ( !validContents )
+        if ( validContents )
         {
-            return;
+            doPushNodes( pushNodesIds.build() );
         }
 
-        doPushNodes( pushNodesIds.build() );
         doDeleteNodes( deletedNodesIds.build() );
     }
 
