@@ -152,7 +152,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
             var userTreeGridItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
 
-            this.appendNode(userTreeGridItem, true, false);
+            this.appendNode(userTreeGridItem, true, false, this.getRoot().isFiltered() ? this.getRoot().getDefaultRoot() : null);
 
             if (!this.getRoot().isFiltered()) {
                 this.initData(this.getRoot().getDefaultRoot().treeToList());
