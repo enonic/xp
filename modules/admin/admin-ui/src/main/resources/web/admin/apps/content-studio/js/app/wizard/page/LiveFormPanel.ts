@@ -1,4 +1,21 @@
 import "../../../api.ts";
+import {ContentWizardPanel} from "../ContentWizardPanel";
+import {DefaultModels} from "./DefaultModels";
+import {EmulatorPanel} from "./contextwindow/EmulatorPanel";
+import {LiveEditPageProxy} from "./LiveEditPageProxy";
+import {TextInspectionPanel} from "./contextwindow/inspect/region/TextInspectionPanel";
+import {ContentInspectionPanel} from "./contextwindow/inspect/ContentInspectionPanel";
+import {RegionInspectionPanel} from "./contextwindow/inspect/region/RegionInspectionPanel";
+import {ImageInspectionPanel} from "./contextwindow/inspect/region/ImageInspectionPanel";
+import {LayoutInspectionPanel} from "./contextwindow/inspect/region/LayoutInspectionPanel";
+import {FragmentInspectionPanel} from "./contextwindow/inspect/region/FragmentInspectionPanel";
+import {PartInspectionPanel} from "./contextwindow/inspect/region/PartInspectionPanel";
+import {PageInspectionPanel} from "./contextwindow/inspect/page/PageInspectionPanel";
+import {InspectionsPanel, InspectionsPanelConfig} from "./contextwindow/inspect/InspectionsPanel";
+import {InsertablesPanel} from "./contextwindow/insert/InsertablesPanel";
+import {ContextWindowController} from "./contextwindow/ContextWindowController";
+import {ContextWindow, ContextWindowConfig} from "./contextwindow/ContextWindow";
+import {ShowContentFormEvent} from "../ShowContentFormEvent";
 
 import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateKey = api.content.page.PageTemplateKey;
@@ -57,23 +74,6 @@ import HtmlAreaDialogShownEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogE
 import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
 
 import Panel = api.ui.panel.Panel;
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {DefaultModels} from "./DefaultModels";
-import {EmulatorPanel} from "./contextwindow/EmulatorPanel";
-import {LiveEditPageProxy} from "./LiveEditPageProxy";
-import {TextInspectionPanel} from "./contextwindow/inspect/region/TextInspectionPanel";
-import {ContentInspectionPanel} from "./contextwindow/inspect/ContentInspectionPanel";
-import {RegionInspectionPanel} from "./contextwindow/inspect/region/RegionInspectionPanel";
-import {ImageInspectionPanel} from "./contextwindow/inspect/region/ImageInspectionPanel";
-import {LayoutInspectionPanel} from "./contextwindow/inspect/region/LayoutInspectionPanel";
-import {FragmentInspectionPanel} from "./contextwindow/inspect/region/FragmentInspectionPanel";
-import {PartInspectionPanel} from "./contextwindow/inspect/region/PartInspectionPanel";
-import {PageInspectionPanel} from "./contextwindow/inspect/page/PageInspectionPanel";
-import {InspectionsPanel, InspectionsPanelConfig} from "./contextwindow/inspect/InspectionsPanel";
-import {InsertablesPanel} from "./contextwindow/insert/InsertablesPanel";
-import {ContextWindowController} from "./contextwindow/ContextWindowController";
-import {ContextWindow, ContextWindowConfig} from "./contextwindow/ContextWindow";
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
 
 export interface LiveFormPanelConfig {
 
@@ -393,12 +393,16 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
             this.pageView = event.getPageView();
+            var windowToggler = this.contentWizardPanel.getContextWindowToggler();
+            var componentsToggler = this.contentWizardPanel.getComponentsViewToggler();
             if (this.pageView) {
                 this.insertablesPanel.setPageView(this.pageView);
-            }
-            else {
-                this.contentWizardPanel.getContextWindowToggler().hide();
-                this.contentWizardPanel.getComponentsViewToggler().hide();
+                windowToggler.show();
+                componentsToggler.show();
+            } else {
+                windowToggler.hide();
+                componentsToggler.hide()
+            :
             }
         });
 

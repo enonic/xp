@@ -1,4 +1,7 @@
 import "../../../api.ts";
+import {ShowContentFormEvent} from "../ShowContentFormEvent";
+import {ShowLiveEditEvent} from "../ShowLiveEditEvent";
+import {ShowSplitEditEvent} from "../ShowSplitEditEvent";
 
 declare var CONFIG;
 
@@ -46,10 +49,6 @@ import RegionView = api.liveedit.RegionView;
 import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEvent;
 import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
-
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
-import {ShowLiveEditEvent} from "../ShowLiveEditEvent";
-import {ShowSplitEditEvent} from "../ShowSplitEditEvent";
 
 export class LiveEditPageProxy {
 
@@ -137,9 +136,7 @@ export class LiveEditPageProxy {
         this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
         this.hideLoadMaskHandler = () => {
-            if (this.loadMask.isVisible()) {
-                this.loadMask.hide();
-            }
+            this.loadMask.hide();
         };
         this.onLiveEditPageViewReady(() => {
             this.liveEditPageViewReady = true;
