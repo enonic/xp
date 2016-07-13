@@ -26,7 +26,8 @@ module api.content.form.inputtype.upload {
                 maximumOccurrences: 1,
                 scaleWidth: true,
                 hideDropZone: true,
-                showReset: false
+                showReset: false,
+                hasUploadButton: false
             });
 
             this.appendChild(this.imageUploader);

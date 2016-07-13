@@ -29,11 +29,13 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
         this.applicationUploaderEl = new ApplicationUploaderEl({
             name: 'application-input-uploader',
-            allowDrop: false,
+            allowDrop: true,
             showResult: false,
             allowMultiSelection: true,
             deferred: true,  // wait till it's shown
-            value: originalValue
+            value: originalValue,
+            showCancel: false,
+            showReset: false
         });
 
         super(this.textInput, this.applicationUploaderEl);

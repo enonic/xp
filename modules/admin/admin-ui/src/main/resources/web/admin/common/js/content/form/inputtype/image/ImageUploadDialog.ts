@@ -34,7 +34,9 @@ module api.content.form.inputtype.image {
                 showReset: false,
                 showResult: false,
                 allowMultiSelection: allowMultiSelection,
-                scaleWidth: false
+                scaleWidth: false,
+                hideDropZone: false,
+                hasUploadButton: false
             });
 
             this.imageUploader.onUploadCompleted(() => {
@@ -45,7 +47,6 @@ module api.content.form.inputtype.image {
             this.getCancelAction().onExecuted((action: UploadDialogCancelAction) => {
                 this.imageUploader.stop();
                 this.imageUploader.reset();
-                this.close();
             });
 
             api.dom.Body.get().appendChild(this);

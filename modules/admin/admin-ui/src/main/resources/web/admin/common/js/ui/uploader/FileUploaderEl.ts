@@ -49,10 +49,7 @@ module api.ui.uploader {
                     console.log('Initing uploader', this);
                 }
                 if (!this.uploader && this.config.url) {
-                    this.uploader = this.initUploader(
-                        this.dropzone.getId(),
-                        this.config.dropAlwaysAllowed ? this.getId() : this.dropzone.getId()
-                    );
+                    this.uploader = this.initUploader();
                 }
             }
         }

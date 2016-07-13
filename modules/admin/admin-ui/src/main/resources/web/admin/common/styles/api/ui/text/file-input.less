@@ -17,42 +17,10 @@
     position: absolute;
     top: 0;
     right: 0;
-    height: 37px;
-    width: 37px;
-    .input-border();
-    .input-glow();
-    .box-sizing(border-box);
-
-    .dropzone-container {
-      height: 100%;
-
-      .dropzone {
-        .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent);
-        .box-sizing(border-box);
-
-        &[disabled] {
-          pointer-events: none;
-          opacity: 0.5;
-        }
-
-        padding: 0;
-        min-height: 0;
-        height: 100%;
-        background: url("../../../../images/upload.png") no-repeat center;
-        z-index: @z-index-modal-dialog + 1;
-
-        &:before {
-          display: none;
-        }
-      }
-
-    }
 
     .progress-bar {
       margin: 0;
       height: 100%;
     }
-
   }
-
 }
