@@ -10,14 +10,14 @@ export class UploadAppPanel extends api.ui.panel.Panel {
 
     private applicationInput: ApplicationInput;
 
-    private applicationUploaderEl: api.application.ApplicationUploaderEl;
+    private dropzoneContainer: api.ui.uploader.DropzoneContainer;
 
     constructor(cancelAction: Action, className?: string) {
         super(className);
 
         this.initApplicationInput(cancelAction);
 
-        this.initApplicationUploader();
+        this.initDragAndDropUploaderEvents();
 
         this.onShown(() => {
             this.applicationInput.giveFocus();
@@ -28,46 +28,34 @@ export class UploadAppPanel extends api.ui.panel.Panel {
         return this.applicationInput;
     }
 
-    getApplicationUploaderEl(): ApplicationUploaderEl {
-        return this.applicationUploaderEl;
-    }
-
     private initApplicationInput(cancelAction: Action) {
-        this.applicationInput = new ApplicationInput(cancelAction, 'large').setPlaceholder("Paste link or drop files here");
+        this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
+        this.dropzoneContainer.hide();
+        this.appendChild(this.dropzoneContainer);
+
+        this.applicationInput = new ApplicationInput(cancelAction, 'large').
+            setPlaceholder("Paste link or drop files here");
+
+        this.applicationInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
 
         this.appendChild(this.applicationInput);
     }
 
-    private initApplicationUploader() {
-
-        var uploaderContainer = new api.dom.DivEl('uploader-container');
-        this.appendChild(uploaderContainer);
-
-        var uploaderMask = new api.dom.DivEl('uploader-mask');
-        uploaderContainer.appendChild(uploaderMask);
-
-        this.applicationUploaderEl = new api.application.ApplicationUploaderEl({
-            params: {},
-            name: 'application-uploader',
-            showResult: false,
-            allowMultiSelection: false,
-            deferred: true  // wait till the window is shown
-        });
-        uploaderContainer.appendChild(this.applicationUploaderEl);
-        this.applicationUploaderEl.onFileUploaded(() => uploaderContainer.hide());
-        this.applicationUploaderEl.onUploadFailed(() => uploaderContainer.hide());
-
+    // in order to toggle appropriate handlers during drag event
+    // we catch drag enter on this element and trigger uploader to appear,
+    // then catch drag leave on uploader's dropzone to get back to previous state
+    private initDragAndDropUploaderEvents() {
         var dragOverEl;
         this.onDragEnter((event: DragEvent) => {
             var target = <HTMLElement> event.target;
 
             if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
-                uploaderContainer.show();
+                this.dropzoneContainer.show();
             }
             dragOverEl = target;
         });
 
-        this.applicationUploaderEl.onDropzoneDragLeave(() => uploaderContainer.hide());
-        this.applicationUploaderEl.onDropzoneDrop(() => uploaderContainer.hide());
+        this.applicationInput.getUploader().onDropzoneDragLeave(() => this.dropzoneContainer.hide());
+        this.applicationInput.getUploader().onDropzoneDrop(() => this.dropzoneContainer.hide());
     }
 }

@@ -18,14 +18,12 @@ module api.ui.uploader {
     export interface UploaderElConfig {
         name: string;
         url?: string;
-        allowBrowse?: boolean;
+        hasUploadButton?: boolean;
         allowDrop?: boolean;
         dropAlwaysAllowed?: boolean;            // allow drop no matter if the dropzone is visible
         resultAlwaysVisisble?: boolean;         // never hide the result
-        dropzoneAlwaysVisible?: boolean;       // never hide the dropzone
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
-        showInput?: boolean;
         showReset?: boolean;
         showCancel?: boolean;
         showResult?: boolean;
@@ -44,11 +42,11 @@ module api.ui.uploader {
         protected dragAndDropper;
         protected value;
         private uploadedItems: UploadItem<MODEL>[] = [];
+        private extraDropzoneIds: string[] = [];
 
-        private input: api.ui.text.TextInput;
-
-        private dropzoneContainer: api.dom.DivEl;
+        private dropzoneContainer: DropzoneContainer;
         protected dropzone: api.dom.AEl;
+        private uploadButton: api.dom.DivEl;
 
         private progress: api.ui.ProgressBar;
         private cancelBtn: Button;
@@ -76,11 +74,12 @@ module api.ui.uploader {
 
             // init defaults
             this.initConfig(config);
-            this.initTextInput();
 
             if (this.config.value) {
                 this.value = this.config.value;
             }
+
+            this.initUploadButton();
 
             this.initDropzone();
 
@@ -103,6 +102,17 @@ module api.ui.uploader {
             this.initDebouncedUploadStart();
         }
 
+        private initUploadButton() {
+            if (this.config.hasUploadButton) {
+                this.uploadButton = new api.dom.DivEl('upload-button');
+                this.uploadButton.setId('upload-button-' + new Date().getTime());
+                this.uploadButton.onClicked((event: MouseEvent) => {
+                    this.showFileSelectionDialog();
+                });
+                this.appendChild(this.uploadButton);
+            }
+        }
+
         private initDebouncedUploadStart() {
             this.debouncedUploadStart = api.util.AppHelper.debounce(() => {
                 this.notifyFileUploadStarted(this.uploadedItems);
@@ -110,26 +120,9 @@ module api.ui.uploader {
             }, 250, false);
         }
 
-        private initTextInput() {
-            if (this.config.showInput) {
-                this.input = api.ui.text.TextInput.middle();
-                this.input.setPlaceholder("Paste URL to image here");
-                this.appendChild(this.input);
-            }
-        }
-
         private initDropzone() {
-            // need the container to constrain plupload created dropzone
-            this.dropzoneContainer = new api.dom.DivEl('dropzone-container');
-            this.dropzone = new api.dom.AEl("dropzone");
-            // id needed for plupload to init, adding timestamp in case of multiple occurrences on page
-            this.dropzone.setId('uploader-dropzone-' + new Date().getTime());
-            this.dropzone.getEl().setTabIndex(-1);// for mac default settings
-            this.getEl().setTabIndex(0);
-            this.dropzoneContainer.appendChild(this.dropzone);
-            if (this.config.hideDropZone) {
-                this.dropzoneContainer.getEl().setAttribute("hidden", "true");
-            }
+            this.dropzoneContainer = new DropzoneContainer();
+            this.dropzone = this.dropzoneContainer.getDropzone();
             this.appendChild(this.dropzoneContainer);
         }
 
@@ -237,10 +230,7 @@ module api.ui.uploader {
                     console.log('Initing uploader', this);
                 }
                 if (!this.uploader && this.config.url) {
-                    this.uploader = this.initUploader(
-                        this.dropzone.getId(),
-                        this.config.dropAlwaysAllowed ? this.getId() : this.dropzone.getId()
-                    );
+                    this.uploader = this.initUploader();
 
                     this.unShown(this.initHandlerOnEvent);
                     this.unRendered(this.initHandlerOnEvent);
@@ -286,17 +276,14 @@ module api.ui.uploader {
             if (this.config.maximumOccurrences == undefined) {
                 this.config.maximumOccurrences = 0;
             }
-            if (this.config.allowBrowse == undefined) {
-                this.config.allowBrowse = true;
+            if (this.config.hasUploadButton == undefined) {
+                this.config.hasUploadButton = true;
             }
             if (this.config.allowDrop == undefined) {
                 this.config.allowDrop = true;
             }
             if (this.config.dropAlwaysAllowed == undefined) {
                 this.config.dropAlwaysAllowed = false;
-            }
-            if (this.config.dropzoneAlwaysVisible == undefined) {
-                this.config.dropzoneAlwaysVisible = false;
             }
             if (this.config.resultAlwaysVisisble == undefined) {
                 this.config.resultAlwaysVisisble = false;
@@ -309,6 +296,9 @@ module api.ui.uploader {
             }
             if (this.config.disabled == undefined) {
                 this.config.disabled = false;
+            }
+            if (this.config.hideDropZone == undefined) {
+                this.config.hideDropZone = true;
             }
         }
 
@@ -429,8 +419,8 @@ module api.ui.uploader {
             return "File(s) [" + fileString + "] were not uploaded";
         }
 
-        protected setDropzoneVisible(visible: boolean = true) {
-            if (!visible && this.config.dropzoneAlwaysVisible) {
+        setDropzoneVisible(visible: boolean = true, isDrag: boolean = false) {
+            if (visible && this.config.hideDropZone && !isDrag) {
                 return;
             }
 
@@ -439,10 +429,7 @@ module api.ui.uploader {
                 this.setResultVisible(false);
             }
 
-            if (this.input) {
-                this.input.setVisible(visible);
-            }
-            this.dropzoneContainer.setVisible(visible);
+            this.dropzoneContainer.toggleClass("visible", visible);
         }
 
         setProgressVisible(visible: boolean = true) {
@@ -642,21 +629,21 @@ module api.ui.uploader {
             this.uploadedItems.length = 0;
         }
 
-        protected initUploader(browseId: string, dropId: string) {
+        protected initUploader() {
             var uploader = new qq.FineUploaderBasic({
                 debug: false,
-                button: this.config.allowBrowse ? document.getElementById(browseId) : undefined,
+                button: document.getElementById(this.dropzone.getId()), //this.config.allowBrowse ? document.getElementById(this.dropzone.getId()) : undefined,
                 multiple: this.config.allowMultiSelection,
                 folders: false,
                 autoUpload: false,
                 request: {
                     endpoint: this.config.url,
-                    params: this.config.params,
+                    params: this.config.params || {},
                     inputName: "file",
                     filenameParam: "name"
                 },
                 validation: {
-                    acceptFiles: this.config.allowTypes
+                    acceptFiles: this.getFileExtensions(this.config.allowTypes),
                 },
                 text: {
                     fileInputTitle: ""
@@ -673,10 +660,10 @@ module api.ui.uploader {
 
             if (this.config.allowDrop) {
                 this.dragAndDropper = new qq.DragAndDrop({
-                    dropZoneElements: [document.getElementById(dropId)],
-                    debug: false,
+                    dropZoneElements: this.getDropzoneElements(),
+                    dropActive: "dragover",
                     callbacks: {
-                        //this submits the dropped files to Fine Uploader
+                        //this submits the dropped files to uploader
                         processingDroppedFilesComplete: (files, dropTarget) => uploader.addFiles(files),
                         onDrop: (event) => this.notifyDropzoneDrop(event),
                         onDragEnter: (event) => this.notifyDropzoneDragEnter(event),
@@ -687,6 +674,46 @@ module api.ui.uploader {
 
             this.disableInputFocus(); // on init
             return uploader;
+        }
+
+        private getFileExtensions(allowTypes: {title: string; extensions: string}[]): string {
+            var result = "";
+            allowTypes.forEach(allowType => {
+                if (allowType.extensions) {
+                    result += "." + allowType.extensions.split(",").join(",.") + ",";
+                }
+            });
+            return result;
+        }
+
+        addDropzone(id: string) {
+            if (this.config.allowDrop) {
+                this.extraDropzoneIds.push(id);
+                if (this.dragAndDropper) {
+                    var elem = document.getElementById(id);
+                    if (elem) {
+                        this.dragAndDropper.setupExtraDropzone(elem);
+                    }
+                }
+            }
+        }
+
+        private getDropzoneElements(): HTMLElement[] {
+            var dropElements = [];
+            if (this.config.dropAlwaysAllowed) {
+                dropElements.push(document.getElementById(this.getId()));
+            } else {
+                dropElements.push(document.getElementById(this.dropzone.getId()));
+            }
+
+            this.extraDropzoneIds.forEach(id => {
+                var elem = document.getElementById(id);
+                if (elem) {
+                    dropElements.push(elem);
+                }
+            });
+
+            return dropElements;
         }
 
         private disableInputFocus() {
@@ -855,6 +882,31 @@ module api.ui.uploader {
             this.uploadFailedListeners.forEach((listener: (event: FileUploadFailedEvent<MODEL>)=>void) => {
                 listener(new FileUploadFailedEvent<MODEL>(uploadItem));
             });
+        }
+    }
+
+    export class DropzoneContainer extends api.dom.DivEl {
+
+        private dropzone: api.dom.AEl;
+
+        constructor(hasMask: boolean = false) {
+            super('dropzone-container');
+            this.initDropzone();
+            if (hasMask) {
+                this.appendChild(new api.dom.DivEl('uploader-mask'));
+            }
+        }
+
+        private initDropzone() {
+            this.dropzone = new api.dom.AEl("dropzone");
+            this.dropzone.setId('uploader-dropzone-' + new Date().getTime());
+            this.dropzone.getEl().setTabIndex(-1);// for mac default settings
+            this.getEl().setTabIndex(0);
+            this.appendChild(this.dropzone);
+        }
+
+        getDropzone(): api.dom.AEl {
+            return this.dropzone;
         }
     }
 }

@@ -5,7 +5,6 @@ import {NewContentDialogItemSelectedEvent} from "./NewContentDialogItemSelectedE
 import {NewMediaUploadEvent} from "./NewMediaUploadEvent";
 import {NewContentEvent} from "./NewContentEvent";
 import {FilterableItemsList} from "./FilterableItemsList";
-import {NewContentDialogMediaUploader} from "./NewContentDialogMediaUploader";
 
 import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
@@ -31,7 +30,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private fileInput: api.ui.text.FileInput;
 
-    private uploader: NewContentDialogMediaUploader;
+    private dropzoneContainer: api.ui.uploader.DropzoneContainer;
 
     private allContentTypes: FilterableItemsList;
 
@@ -60,7 +59,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     private initElements() {
         this.initContentTypesLists();
         this.initFileInput();
-        this.initMediaUploader();
+        this.initDragAndDropUploaderEvents();
         this.initLoadMask();
     }
 
@@ -76,9 +75,15 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
 
     private initFileInput() {
-        this.fileInput = new api.ui.text.FileInput('large').setPlaceholder("Search for content types").setUploaderParams({
-            parent: ContentPath.ROOT.toString()
-        });
+        this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
+        this.dropzoneContainer.hide();
+        this.appendChild(this.dropzoneContainer);
+
+        this.fileInput = new api.ui.text.FileInput('large', undefined).
+            setPlaceholder("Search for content types").
+            setUploaderParams({parent: ContentPath.ROOT.toString()});
+
+        this.fileInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
 
         this.initFileInputEvents();
     }
@@ -103,13 +108,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         });
     }
 
-    private initMediaUploader() {
-        this.uploader = new NewContentDialogMediaUploader();
-        this.uploader.onUploadStarted(this.closeAndFireEventFromMediaUpload.bind(this));
-
-        this.initDragAndDropUploaderEvents();
-    }
-
     private initLoadMask() {
         this.loadMask = new LoadMask(this);
     }
@@ -120,18 +118,19 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     private initDragAndDropUploaderEvents() {
         var dragOverEl;
         this.onDragEnter((event: DragEvent) => {
-            if (this.uploader.isEnabled()) {
+           // if (this.uploader.isEnabled()) {
                 var target = <HTMLElement> event.target;
 
                 if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
-                    this.uploader.show();
+                    // this.uploader.show();
+                    this.dropzoneContainer.show();
                 }
                 dragOverEl = target;
-            }
+            //}
         });
 
-        this.uploader.getMediaUploader().onDropzoneDragLeave(() => this.uploader.hide());
-        this.uploader.getMediaUploader().onDropzoneDrop(() =>  this.uploader.hide());
+        this.fileInput.getUploader().onDropzoneDragLeave(() => this.dropzoneContainer.hide());
+        this.fileInput.getUploader().onDropzoneDrop(() => this.dropzoneContainer.hide());
     }
 
     private closeAndFireEventFromMediaUpload(event: FileUploadStartedEvent<Content>) {
@@ -158,8 +157,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
         this.appendChildToContentPanel(this.recentContentTypes);
 
-        this.appendChild(this.uploader);
-
         this.getContentPanel().getParentElement().appendChild(this.loadMask);
     }
 
@@ -171,7 +168,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
             parent: parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString()
         };
 
-        this.uploader.setParams(params);
         this.fileInput.setUploaderParams(params)
     }
 
@@ -194,7 +190,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.updateDialogTitlePath();
 
         this.fileInput.disable();
-        this.uploader.setEnabled(false);
+        //this.uploader.setEnabled(false);
         this.resetFileInputWithUploader();
 
         super.show();
@@ -270,15 +266,13 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private toggleUploadersEnabled() {
         var uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
-        this.uploader.setEnabled(uploaderEnabled);
         this.toggleClass("no-uploader-el", !uploaderEnabled);
         this.fileInput.getUploader().setEnabled(uploaderEnabled);
     }
 
     private resetFileInputWithUploader() {
-        this.uploader.reset();
         this.fileInput.reset();
-        this.fileInput.getUploader().setEnabled(this.uploader.isEnabled());
+        this.fileInput.getUploader().setEnabled(false);
     }
 }
 

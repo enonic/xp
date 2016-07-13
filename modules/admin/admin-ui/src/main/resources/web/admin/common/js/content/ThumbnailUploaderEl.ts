@@ -22,9 +22,6 @@ module api.content {
             if (config.showReset == undefined) {
                 config.showReset = false;
             }
-            if (config.dropzoneAlwaysVisible == undefined) {
-                config.dropzoneAlwaysVisible = true;
-            }
             if (config.resultAlwaysVisisble == undefined) {
                 config.resultAlwaysVisisble = true;
             }
@@ -35,6 +32,12 @@ module api.content {
             }
             if (config.allowMultiSelection == undefined) {
                 config.allowMultiSelection = false;
+            }
+            if (config.hasUploadButton == undefined) {
+                config.hasUploadButton = false;
+            }
+            if (config.hideDropZone == undefined) {
+                config.hideDropZone = false;
             }
 
             super(config);

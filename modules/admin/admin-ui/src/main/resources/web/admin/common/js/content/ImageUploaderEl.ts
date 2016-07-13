@@ -36,8 +36,9 @@ module api.content {
             if (config.dropAlwaysAllowed == undefined) {
                 config.dropAlwaysAllowed = true;
             }
-            if (config.dropzoneAlwaysVisible == undefined) {
-                config.dropzoneAlwaysVisible = true;
+
+            if (config.scaleWidth != undefined) {
+                this.scaleWidth = config.scaleWidth;
             }
 
             super(config);
@@ -47,16 +48,6 @@ module api.content {
             this.editModeListeners = [];
             this.focusAutoPositionedListeners = [];
             this.cropAutoPositionedListeners = [];
-
-            if (config.scaleWidth != undefined) {
-                this.scaleWidth = config.scaleWidth;
-            }
-
-            if (config.allowTypes == undefined) {
-                config.allowTypes = [
-                    {title: 'Image files', extensions: 'jpg,gif,png'}
-                ];
-            }
 
             this.addClass('image-uploader-el');
 

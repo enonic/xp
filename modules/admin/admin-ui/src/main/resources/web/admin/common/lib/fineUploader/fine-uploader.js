@@ -18,6 +18,7 @@
  * 07.07.2016 @sts Added getInputButton() method that returns first input button of uploader form _buttons array
  * 07.07.2016 @sts Added onDrop, onDragEnter and onDragLeave callbacks for dropzone
  * 07.07.2016 @sts Adjusted uploader's input overflow property
+ * 13.07.2016 @sts Added debug option for a draganddrop
  */
 
 (function (global) {
@@ -8379,7 +8380,8 @@
             classes: {
                 dropActive: null
             },
-            callbacks: new qq.DragAndDrop.callbacks()
+            callbacks: new qq.DragAndDrop.callbacks(),
+            debug: false
         };
 
         qq.extend(options, o, true);
@@ -8388,7 +8390,9 @@
             // We need to convert the `FileList` to an actual `Array` to avoid iteration issues
             var filesAsArray = Array.prototype.slice.call(files);
 
-            options.callbacks.dropLog("Grabbed " + files.length + " dropped files.");
+            if (options.debug) {
+                options.callbacks.dropLog("Grabbed " + files.length + " dropped files.");
+            }
             uploadDropZone.dropDisabled(false);
             options.callbacks.processingDroppedFilesComplete(filesAsArray, uploadDropZone.getElement());
         }
