@@ -39,7 +39,7 @@ module api.ui.uploader {
         showResult?: boolean;
         maximumOccurrences?: number;
         deferred?: boolean;
-        params?: {[key:string]: any};
+        params?: {[key: string]: any};
         value?: string;
         disabled?: boolean;
         hideDropZone?: boolean;
@@ -64,14 +64,17 @@ module api.ui.uploader {
         private resultContainer: api.dom.DivEl;
         private resetBtn: CloseButton;
 
-        private uploadStartedListeners: {(event: FileUploadStartedEvent<MODEL>):void }[] = [];
-        private uploadProgressListeners: {(event: FileUploadProgressEvent<MODEL>):void }[] = [];
-        private fileUploadedListeners: {(event: FileUploadedEvent<MODEL>):void }[] = [];
-        private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>):void }[] = [];
-        private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>):void }[] = [];
-        private uploadResetListeners: {():void }[] = [];
+        private uploadStartedListeners: {(event: FileUploadStartedEvent<MODEL>): void }[] = [];
+        private uploadProgressListeners: {(event: FileUploadProgressEvent<MODEL>): void }[] = [];
+        private fileUploadedListeners: {(event: FileUploadedEvent<MODEL>): void }[] = [];
+        private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>): void }[] = [];
+        private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>): void }[] = [];
+        private uploadResetListeners: {(): void }[] = [];
 
         private beforeUploadCallback: (files: PluploadFile[]) => void;
+
+        private shownInitHandler;
+        private renderedInitHandler;
 
         public static debug: boolean = false;
 
@@ -483,21 +486,31 @@ module api.ui.uploader {
 
                     if (this.isVisible()) {
                         this.initHandler();
-                    } else {
+                    } else if (!this.shownInitHandler) {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' shown', this);
                         }
-                        this.onShown((event) => this.initHandler.call(this, event));
+                        this.shownInitHandler = (event) => {
+                            this.initHandler();
+                            this.unShown(this.shownInitHandler);
+                            this.shownInitHandler = null;
+                        };
+                        this.onShown(this.shownInitHandler);
                     }
                 } else {
 
                     if (this.isRendered()) {
                         this.initHandler();
-                    } else {
+                    } else if (!this.renderedInitHandler) {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' rendered', this);
                         }
-                        this.onRendered((event) => this.initHandler.call(this, event));
+                        this.renderedInitHandler = (event) => {
+                            this.initHandler();
+                            this.unRendered(this.renderedInitHandler);
+                            this.renderedInitHandler = null;
+                        };
+                        this.onRendered(this.renderedInitHandler);
                     }
                 }
             }
@@ -716,7 +729,8 @@ module api.ui.uploader {
         }
 
         private disableInputFocus() {
-            var focusableElements: NodeListOf<HTMLInputElement> = this.getDropzoneContainer().getHTMLElement().getElementsByTagName("input");
+            var focusableElements: NodeListOf<HTMLInputElement> = this.getDropzoneContainer().getHTMLElement().getElementsByTagName(
+                "input");
             for (var i = 0; i < focusableElements.length; i++) {
                 var el = <HTMLInputElement>focusableElements.item(i);
                 el.tabIndex = -1;

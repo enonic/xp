@@ -229,10 +229,6 @@ module api.dom {
                         console.log("Element.init done", api.ClassHelper.getClassName(this));
                     }
 
-                    if (this.isVisible()) {
-                        this.notifyShown();
-                    }
-
                     return rendered;
                 }).catch((reason) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -264,6 +260,10 @@ module api.dom {
                     this.rendered = rendered;
                     this.notifyRendered();
 
+                    if (this.isVisible()) {
+                        this.notifyShown(this);
+                    }
+
                     return rendered;
                 }).catch((reason) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -286,7 +286,7 @@ module api.dom {
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             wemjq(this.el.getHTMLElement()).show();
-            this.notifyShown(this);
+            this.notifyShown(this, true);
         }
 
         hide() {
@@ -837,16 +837,18 @@ module api.dom {
             })
         }
 
-        private notifyShown(target?: Element) {
+        private notifyShown(target?: Element, deep?: boolean) {
             var shownEvent = new ElementShownEvent(this, target);
             this.shownListeners.forEach((listener) => {
                 listener(shownEvent);
             });
-            this.children.forEach((child: Element) => {
-                if (child.isVisible()) {
-                    child.notifyShown(shownEvent.getTarget());
-                }
-            })
+            if (deep) {
+                this.children.forEach((child: Element) => {
+                    if (child.isVisible()) {
+                        child.notifyShown(shownEvent.getTarget());
+                    }
+                });
+            }
         }
 
         onHidden(listener: (event: ElementHiddenEvent) => void) {

@@ -107,6 +107,9 @@ module api.app.wizard {
                 }
                 firstShow = true;
                 this.mask.hide();
+
+                // check validity on rendered
+                this.notifyValidityChanged(this.isValid());
             });
 
             this.onShown((event: api.dom.ElementShownEvent) => {
@@ -349,8 +352,7 @@ module api.app.wizard {
                 this.params.actions.enableActionsForExisting(this.getPersistedItem());
             }
 
-            return this.doLayout(this.getPersistedItem())
-                .then(() => this.validityManager.notifyValidityChanged(this.isValid()));
+            return this.doLayout(this.getPersistedItem());
         }
 
 

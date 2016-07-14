@@ -347,16 +347,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
             }
 
-            var thumbnailUploader = <ThumbnailUploader> this.getFormIcon();
-
-            this.onValidityChanged((event: api.ValidityChangedEvent) => {
-                this.isContentFormValid = this.isValid();
-                thumbnailUploader.setEnabled(this.contentType.isImage());
-                thumbnailUploader.toggleClass("invalid", !this.isValid());
-                this.getContentWizardToolbarPublishControls()
-                    .setContentCanBePublished(this.checkContentCanBePublished(false));
-            });
-
             this.addClass("content-wizard-panel");
             if (this.getSplitPanel()) {
                 this.getSplitPanel().addClass("prerendered");
@@ -370,8 +360,17 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 ResponsiveManager.unAvailableSizeChanged(this);
             });
 
+            this.onValidityChanged((event: api.ValidityChangedEvent) => {
+                this.isContentFormValid = event.isValid();
+                var thumbnailUploader = this.getFormIcon();
+                thumbnailUploader.setEnabled(this.contentType.isImage());
+                thumbnailUploader.toggleClass("invalid", !event.isValid());
+                this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished(false));
+            });
+
             this.initOnShownHandler(responsiveItem);
 
+            var thumbnailUploader = this.getFormIcon();
             if (thumbnailUploader) {
                 thumbnailUploader.onFileUploaded(this.onFileUploaded.bind(this));
             }
@@ -496,7 +495,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.contentWizardStepForm = new ContentWizardStepForm();
         this.settingsWizardStepForm = new SettingsWizardStepForm();
         this.securityWizardStepForm = new SecurityWizardStepForm();
-        
+
         var applicationKeys = this.site ? this.site.getApplicationKeys() : [];
         var applicationPromises = applicationKeys.map((key: ApplicationKey) => this.fetchApplication(key));
 
@@ -884,11 +883,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private updateThumbnailWithContent(content: Content) {
-        var thumbnailUploader = <ThumbnailUploader> this.getFormIcon();
+        var thumbnailUploader = this.getFormIcon();
 
-        thumbnailUploader.setParams({
-            id: content.getContentId().toString()
-        }).setEnabled(!content.isImage()).setValue(new ContentIconUrlResolver().setContent(content).resolve());
+        thumbnailUploader
+            .setParams({
+                id: content.getContentId().toString()
+            })
+            .setEnabled(content.isImage())
+            .setValue(new ContentIconUrlResolver().setContent(content).resolve());
 
         thumbnailUploader.toggleClass("invalid", !content.isValid());
     }
