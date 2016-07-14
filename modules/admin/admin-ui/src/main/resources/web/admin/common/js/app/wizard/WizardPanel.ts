@@ -46,6 +46,8 @@ module api.app.wizard {
 
         private dataLoaded: boolean = false;
 
+        private isNew: boolean = true;
+
         private closedListeners: {(event: WizardClosedEvent): void}[] = [];
 
         private dataLoadedListeners: {(item: EQUITABLE): void}[] = [];
@@ -167,6 +169,8 @@ module api.app.wizard {
                     deferred.reject(reason);
                 }).done();
             } else {
+                this.isNew = false;
+
                 var equitable = this.getPersistedItem();
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel.doLoadData: data present, skipping load...", equitable);
@@ -264,12 +268,13 @@ module api.app.wizard {
                 console.debug("WizardPanel.doRenderOnDataLoaded");
             }
 
+            this.updateToolbarActions();
+
             this.formPanel = new api.ui.panel.Panel("form-panel");
             this.formPanel.onScroll(() => this.updateStickyToolbar());
 
             this.mainToolbar = this.createMainToolbar();
             if (this.mainToolbar) {
-
                 this.appendChild(this.mainToolbar);
             }
 
@@ -337,22 +342,7 @@ module api.app.wizard {
             });
             this.formPanel.appendChildren(headerAndNavigatorContainer, this.stepsPanel);
 
-            return this.layout().then(() => rendered, (reason) => reason);
-
-        }
-
-        private layout(): wemQ.Promise<void> {
-            if (WizardPanel.debug) {
-                console.debug("WizardPanel.layout");
-            }
-
-            if (!this.isItemPersisted()) {
-                this.params.actions.enableActionsForNew();
-            } else {
-                this.params.actions.enableActionsForExisting(this.getPersistedItem());
-            }
-
-            return this.doLayout(this.getPersistedItem());
+            return this.doLayout(this.getPersistedItem()).then(() => rendered, (reason) => reason);
         }
 
 
@@ -407,6 +397,17 @@ module api.app.wizard {
                 navigationWidth = this.stepsPanel.getEl().getWidth() - this.stepNavigatorAndToolbarContainer.getEl().getPaddingLeft();
             }
             this.stepNavigatorAndToolbarContainer.getEl().setWidthPx(navigationWidth);
+        }
+
+        updateToolbarActions() {
+            if (WizardPanel.debug) {
+                console.debug("WizardPanel.updateToolbarActions: isNew", this.isNew);
+            }
+            if (this.isNew) {
+                this.params.actions.enableActionsForNew();
+            } else {
+                this.params.actions.enableActionsForExisting(this.getPersistedItem());
+            }
         }
 
         toggleMinimize(navigationIndex: number = -1) {
@@ -553,7 +554,8 @@ module api.app.wizard {
                 return this.updatePersistedItem().then((persistedItem: EQUITABLE) => {
                     this.setPersistedItem(persistedItem);
                     this.isChanged = false;
-
+                    this.isNew = false;
+                    this.updateToolbarActions();
                     return this.postUpdatePersistedItem(persistedItem);
                 });
 
@@ -561,7 +563,11 @@ module api.app.wizard {
                 return this.persistNewItem().then((persistedItem: EQUITABLE) => {
                     this.setPersistedItem(persistedItem);
                     this.isChanged = false;
-
+                    // persist new happens before render to init dummy entity and is still considered as new
+                    if (this.isRendered()) {
+                        this.isNew = false;
+                        this.updateToolbarActions();
+                    }
                     return this.postPersistNewItem(persistedItem);
                 });
             }

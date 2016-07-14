@@ -685,7 +685,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (wasSorted) {
                 this.getContentWizardToolbarPublishControls().setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
             }
-        }
+        };
 
         var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
         var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
