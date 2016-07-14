@@ -448,7 +448,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private handleSiteConfigApply() {
         var siteConfigApplyHandler = (event: ContentRequiresSaveEvent) => {
-            if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
+            if (this.isCurrentContentId(event.getContentId())) {
                 this.saveChanges();
             }
         };
@@ -607,15 +607,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private updateWizard(content: Content, unchangedOnly: boolean = true, areasContainId?: boolean) {
-        this.setPersistedItem(content);
+
         this.updateWizardHeader(content);
         this.updateWizardStepForms(content, unchangedOnly);
-        this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
+        this.updateMetadataAndMetadataStepForms(content, unchangedOnly);
 
         if (!unchangedOnly) {
-            this.updateLiveFormOnVersionChange();
-        } else if (this.isContentRenderable() && areasContainId) {
-            // also update live form panel for renderable content without asking
+            this.updateLiveForm(content);
+        } else if (this.isContentRenderable()) {
+            // just refresh live form for renderable content without asking
             var liveFormPanel = this.getLivePanel();
             if (liveFormPanel) {
                 liveFormPanel.skipNextReloadConfirmation(true);
@@ -721,9 +721,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
     }
 
-    private updateLiveFormOnVersionChange() {
-        var content = this.getPersistedItem(),
-            formContext = this.createFormContext(content);
+    private updateLiveForm(content: Content) {
+        var formContext = this.createFormContext(content);
 
         if (!!this.siteModel) {
             this.unbindSiteModelListeners();
@@ -1403,15 +1402,16 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
      * @param content
      */
     private updateMetadataAndMetadataStepForms(content: Content, unchangedOnly: boolean = true) {
-
+        var contentCopy = content.clone();
+        
         for (var key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
 
                 var mixinName = new MixinName(key);
-                var extraData = content.getExtraData(mixinName);
+                var extraData = contentCopy.getExtraData(mixinName);
                 if (!extraData) { // ensure ExtraData object corresponds to each step form
                     extraData = new ExtraData(mixinName, new PropertyTree());
-                    content.getAllExtraData().push(extraData);
+                    contentCopy.getAllExtraData().push(extraData);
                 }
 
                 let form = this.metadataStepFormByName[key];
