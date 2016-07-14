@@ -22,15 +22,15 @@ module api.content.form.inputtype.upload {
                 },
                 operation: api.content.MediaUploaderElOperation.update,
                 name: input.getName(),
-                skipWizardEvents: false,
                 maximumOccurrences: 1,
                 scaleWidth: true,
-                hideDropZone: true,
+                hideDefaultDropZone: true,
                 showReset: false,
                 hasUploadButton: false
             });
 
             this.appendChild(this.imageUploader);
+            this.addClass("image-uploader-input");
         }
 
         getContext(): api.content.form.inputtype.ContentInputTypeViewContext {

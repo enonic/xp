@@ -36,8 +36,8 @@ module api.content {
             if (config.hasUploadButton == undefined) {
                 config.hasUploadButton = false;
             }
-            if (config.hideDropZone == undefined) {
-                config.hideDropZone = false;
+            if (config.hideDefaultDropZone == undefined) {
+                config.hideDefaultDropZone = false;
             }
 
             super(config);

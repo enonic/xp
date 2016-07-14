@@ -33,8 +33,8 @@ module api.content {
                     {title: 'Image files', extensions: 'jpg,jpeg,gif,png'}
                 ];
             }
-            if (config.dropAlwaysAllowed == undefined) {
-                config.dropAlwaysAllowed = true;
+            if (config.selfIsDropzone == undefined) {
+                config.selfIsDropzone = true;
             }
 
             if (config.scaleWidth != undefined) {

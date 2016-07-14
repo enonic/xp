@@ -86,7 +86,7 @@ module api.content.form.inputtype.upload {
                 showReset: false,
                 showCancel: false,
                 allowMultiSelection: this.getInput().getOccurrences().getMaximum() != 1,
-                hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
+                hideDefaultDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true,
                 maximumOccurrences: this.getInput().getOccurrences().getMaximum(),
                 attachmentRemoveCallback: this.removeItem.bind(this),

@@ -121,6 +121,38 @@
     &:before {
       display: none;
     }
+
+    &.dz-dragover {
+      .dropzone-dragover-glow();
+    }
+  }
+}
+
+.image-uploader-input-dz-dragover() {
+  .image-uploader-el {
+    &.dz-dragover {
+      &:after {
+        .dropcircle(140px);
+        z-index: @z-index-modal-dialog;
+        margin-top: -111px; // -140 + 58/2 ( half of the sticky toolbar to be centered over image )
+        font-size: 25px;
+        text-align: center;
+        content: 'Drop image here!';
+      }
+    }
+  }
+}
+
+.dropzone-dragover-glow(@color: @admin-input-blue) {
+
+  &:not([disabled]) {
+    border: 2px dashed @color;
+    .box-shadow(0px 0px 5px darken(@color, 10%));
+  }
+
+  &[disabled] {
+    .box-shadow(0px 0px 5px darken(@color, 80%));
+    cursor: default;
   }
 }
 

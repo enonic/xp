@@ -118,15 +118,14 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     private initDragAndDropUploaderEvents() {
         var dragOverEl;
         this.onDragEnter((event: DragEvent) => {
-            // if (this.uploader.isEnabled()) {
+            if (this.fileInput.getUploader().isEnabled()) {
                 var target = <HTMLElement> event.target;
 
                 if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
-                    // this.uploader.show();
                     this.dropzoneContainer.show();
                 }
                 dragOverEl = target;
-            //}
+            }
         });
 
         this.fileInput.getUploader().onDropzoneDragLeave(() => this.dropzoneContainer.hide());

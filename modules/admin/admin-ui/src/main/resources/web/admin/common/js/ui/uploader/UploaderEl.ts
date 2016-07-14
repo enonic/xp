@@ -20,7 +20,7 @@ module api.ui.uploader {
         url?: string;
         hasUploadButton?: boolean;
         allowDrop?: boolean;
-        dropAlwaysAllowed?: boolean;            // allow drop no matter if the dropzone is visible
+        selfIsDropzone?: boolean;            // allow drop no matter if the dropzone is visible
         resultAlwaysVisisble?: boolean;         // never hide the result
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
@@ -32,7 +32,7 @@ module api.ui.uploader {
         params?: {[key:string]: any};
         value?: string;
         disabled?: boolean;
-        hideDropZone?: boolean;
+        hideDefaultDropZone?: boolean;
     }
 
     export class UploaderEl<MODEL extends api.Equitable> extends api.dom.FormInputEl {
@@ -44,7 +44,7 @@ module api.ui.uploader {
         private uploadedItems: UploadItem<MODEL>[] = [];
         private extraDropzoneIds: string[] = [];
 
-        private dropzoneContainer: DropzoneContainer;
+        private defaultDropzoneContainer: DropzoneContainer;
         protected dropzone: api.dom.AEl;
         private uploadButton: api.dom.DivEl;
 
@@ -97,8 +97,6 @@ module api.ui.uploader {
 
             this.onRemoved((event) => this.destroyHandler());
 
-            this.listenToDragEvents();
-
             this.initDebouncedUploadStart();
         }
 
@@ -121,9 +119,10 @@ module api.ui.uploader {
         }
 
         private initDropzone() {
-            this.dropzoneContainer = new DropzoneContainer();
-            this.dropzone = this.dropzoneContainer.getDropzone();
-            this.appendChild(this.dropzoneContainer);
+            this.defaultDropzoneContainer = new DropzoneContainer();
+            this.dropzone = this.defaultDropzoneContainer.getDropzone();
+            this.defaultDropzoneContainer.addClass("default-dropzone-container");
+            this.appendChild(this.defaultDropzoneContainer);
         }
 
         private initCancelButton() {
@@ -147,7 +146,7 @@ module api.ui.uploader {
 
         private handleKeyEvents() {
             this.onKeyPressed((event: KeyboardEvent) => {
-                if (this.dropzoneContainer.isVisible() && event.keyCode == 13) {
+                if (this.defaultDropzoneContainer.isVisible() && event.keyCode == 13) {
                     wemjq(this.dropzone.getEl().getHTMLElement()).simulate("click");
                 }
             });
@@ -169,50 +168,6 @@ module api.ui.uploader {
             } else {
                 this.onRendered(this.initHandlerOnEvent);
             }
-        }
-
-        private listenToDragEvents() {
-            var dragOverEl;
-            // make use of the fact that when dragging first drag enter occurs on the child element and after that
-            // drag leave occurs on the parent element that we came from meaning that to know when we left some element
-            // we need to compare it to the one currently dragged over
-            this.onDragEnter((event: DragEvent) => {
-                if (this.config.dropAlwaysAllowed) {
-                    var targetEl = <HTMLElement> event.target;
-
-                    if (!dragOverEl) {
-
-                        if (UploaderEl.debug) {
-                            console.log('drag entered, adding class');
-                        }
-                        this.addClass('dragover');
-                    }
-                    dragOverEl = targetEl;
-                }
-            });
-
-            this.onDragLeave((event: DragEvent) => {
-                if (this.config.dropAlwaysAllowed) {
-                    var targetEl = <HTMLElement> event.target;
-
-                    if (dragOverEl == targetEl) {
-                        if (UploaderEl.debug) {
-                            console.log('drag left, removing class');
-                        }
-                        this.removeClass('dragover');
-                        dragOverEl = undefined;
-                    }
-                }
-            });
-
-            this.onDrop((event: DragEvent) => {
-                if (this.config.dropAlwaysAllowed) {
-                    if (UploaderEl.debug) {
-                        console.log('drag drop removing class');
-                    }
-                    this.removeClass('dragover');
-                }
-            });
         }
 
         protected setResetVisible(visible: boolean) {
@@ -237,8 +192,8 @@ module api.ui.uploader {
 
                     if (this.value) {
                         this.setValue(this.value);
-                    } else if (!this.config.hideDropZone) {
-                        this.setDropzoneVisible();
+                    } else if (!this.config.hideDefaultDropZone) {
+                        this.setDefaultDropzoneVisible();
                     }
                 }
             }
@@ -282,8 +237,8 @@ module api.ui.uploader {
             if (this.config.allowDrop == undefined) {
                 this.config.allowDrop = true;
             }
-            if (this.config.dropAlwaysAllowed == undefined) {
-                this.config.dropAlwaysAllowed = false;
+            if (this.config.selfIsDropzone == undefined) {
+                this.config.selfIsDropzone = false;
             }
             if (this.config.resultAlwaysVisisble == undefined) {
                 this.config.resultAlwaysVisisble = false;
@@ -297,8 +252,8 @@ module api.ui.uploader {
             if (this.config.disabled == undefined) {
                 this.config.disabled = false;
             }
-            if (this.config.hideDropZone == undefined) {
-                this.config.hideDropZone = true;
+            if (this.config.hideDefaultDropZone == undefined) {
+                this.config.hideDefaultDropZone = true;
             }
         }
 
@@ -320,10 +275,10 @@ module api.ui.uploader {
                 if (this.config.showResult) {
                     this.setResultVisible();
                 } else {
-                    this.setDropzoneVisible();
+                    this.setDefaultDropzoneVisible();
                 }
             } else {
-                this.setDropzoneVisible();
+                this.setDefaultDropzoneVisible();
                 this.getResultContainer().removeChildren();
                 return this;
             }
@@ -419,8 +374,8 @@ module api.ui.uploader {
             return "File(s) [" + fileString + "] were not uploaded";
         }
 
-        setDropzoneVisible(visible: boolean = true, isDrag: boolean = false) {
-            if (visible && this.config.hideDropZone && !isDrag) {
+        setDefaultDropzoneVisible(visible: boolean = true, isDrag: boolean = false) {
+            if (visible && this.config.hideDefaultDropZone && !isDrag) {
                 return;
             }
 
@@ -429,12 +384,12 @@ module api.ui.uploader {
                 this.setResultVisible(false);
             }
 
-            this.dropzoneContainer.toggleClass("visible", visible);
+            this.defaultDropzoneContainer.toggleClass("visible", visible);
         }
 
         setProgressVisible(visible: boolean = true) {
             if (visible) {
-                this.setDropzoneVisible(false);
+                this.setDefaultDropzoneVisible(false);
                 this.setResultVisible(false);
             }
 
@@ -448,7 +403,7 @@ module api.ui.uploader {
             }
 
             if (visible) {
-                this.setDropzoneVisible(false);
+                this.setDefaultDropzoneVisible(false);
                 this.setProgressVisible(false);
             }
 
@@ -661,7 +616,9 @@ module api.ui.uploader {
             if (this.config.allowDrop) {
                 this.dragAndDropper = new qq.DragAndDrop({
                     dropZoneElements: this.getDropzoneElements(),
-                    dropActive: "dragover",
+                    classes: {
+                        dropActive: "dz-dragover"
+                    },
                     callbacks: {
                         //this submits the dropped files to uploader
                         processingDroppedFilesComplete: (files, dropTarget) => uploader.addFiles(files),
@@ -700,7 +657,7 @@ module api.ui.uploader {
 
         private getDropzoneElements(): HTMLElement[] {
             var dropElements = [];
-            if (this.config.dropAlwaysAllowed) {
+            if (this.config.selfIsDropzone) {
                 dropElements.push(document.getElementById(this.getId()));
             } else {
                 dropElements.push(document.getElementById(this.dropzone.getId()));
@@ -717,7 +674,7 @@ module api.ui.uploader {
         }
 
         private disableInputFocus() {
-            var focusableElements: NodeListOf<HTMLInputElement> = this.getDropzoneContainer().getHTMLElement().getElementsByTagName("input");
+            var focusableElements: NodeListOf<HTMLInputElement> = this.getDefaultDropzoneContainer().getHTMLElement().getElementsByTagName("input");
             for (var i = 0; i < focusableElements.length; i++) {
                 var el = <HTMLInputElement>focusableElements.item(i);
                 el.tabIndex = -1;
@@ -728,8 +685,8 @@ module api.ui.uploader {
             return this.resultContainer;
         }
 
-        getDropzoneContainer(): api.dom.DivEl {
-            return this.dropzoneContainer;
+        getDefaultDropzoneContainer(): api.dom.DivEl {
+            return this.defaultDropzoneContainer;
         }
 
         getDropzone(): api.dom.AEl {

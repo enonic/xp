@@ -35,7 +35,7 @@ module api.content.form.inputtype.image {
                 showResult: false,
                 allowMultiSelection: allowMultiSelection,
                 scaleWidth: false,
-                hideDropZone: false,
+                hideDefaultDropZone: false,
                 hasUploadButton: false
             });
 

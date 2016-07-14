@@ -410,17 +410,17 @@ module api.content.form.inputtype.image {
             this.onDragEnter((event: DragEvent) => {
                 event.stopPropagation();
                 this.uploader.giveFocus();
-                this.uploader.setDropzoneVisible(true, true);
+                this.uploader.setDefaultDropzoneVisible(true, true);
             });
 
             this.uploader.onDropzoneDragLeave((event: DragEvent) => {
                 this.uploader.giveBlur();
-                this.uploader.setDropzoneVisible(false);
+                this.uploader.setDefaultDropzoneVisible(false);
             });
 
             this.uploader.onDropzoneDrop((event) => {
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
-                this.uploader.setDropzoneVisible(false);
+                this.uploader.setDefaultDropzoneVisible(false);
             });
 
             return this.uploader;

@@ -57,10 +57,10 @@ module api.ui.uploader {
         private refreshVisibility() {
             if (this.config.showResult) {
                 this.setResultVisible();
-                this.getDropzoneContainer().setVisible(false);
+                this.getDefaultDropzoneContainer().setVisible(false);
                 this.getDropzone().setVisible(false);
             } else {
-                this.setDropzoneVisible();
+                this.setDefaultDropzoneVisible();
             }
         }
 
