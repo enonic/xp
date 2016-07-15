@@ -228,6 +228,9 @@ module api.ui.uploader {
             if (this.config.showReset == undefined) {
                 this.config.showReset = true;
             }
+
+            //TODO: property is not used. it might have sense to use it when filtering upload file candidates.
+            // otherwise - just remove it
             if (this.config.maximumOccurrences == undefined) {
                 this.config.maximumOccurrences = 0;
             }
@@ -679,6 +682,10 @@ module api.ui.uploader {
                 var el = <HTMLInputElement>focusableElements.item(i);
                 el.tabIndex = -1;
             }
+        }
+
+        getUploadButton(): api.dom.DivEl {
+            return this.uploadButton;
         }
 
         getResultContainer(): api.dom.DivEl {
