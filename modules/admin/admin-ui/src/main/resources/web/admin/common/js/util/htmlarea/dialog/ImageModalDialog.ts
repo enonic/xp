@@ -272,7 +272,8 @@ module api.util.htmlarea.dialog {
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
                 deferred: true,
-                showCancel: false
+                showCancel: false,
+                selfIsDropzone: false
             });
 
             uploader.hide();
