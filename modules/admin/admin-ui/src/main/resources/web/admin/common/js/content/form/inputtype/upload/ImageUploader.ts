@@ -16,14 +16,13 @@ module api.content.form.inputtype.upload {
             super(config);
             var input = config.input;
 
-            this.imageUploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
+            this.imageUploader = new api.content.ImageUploaderEl({
                 params: {
                     content: config.content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.update,
                 name: input.getName(),
                 maximumOccurrences: 1,
-                scaleWidth: true,
                 hideDefaultDropZone: true,
                 showReset: false,
                 hasUploadButton: false

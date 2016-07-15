@@ -7,10 +7,6 @@ module api.content {
     import Rect = api.ui.image.Rect;
     import ImageEditor = api.ui.image.ImageEditor;
 
-    export interface ImageUploaderElConfig extends MediaUploaderElConfig {
-        scaleWidth: boolean;
-    }
-
     export class ImageUploaderEl extends MediaUploaderEl {
 
         private imageEditors: ImageEditor[];
@@ -25,9 +21,7 @@ module api.content {
         private static SELECTED_CLASS = 'selected';
         private static STANDOUT_CLASS = 'standout';
 
-        private scaleWidth: boolean; // parameter states if width of the image must be preferred over its height during resolving
-
-        constructor(config: ImageUploaderElConfig) {
+        constructor(config: MediaUploaderElConfig) {
             if (config.allowTypes == undefined) {
                 config.allowTypes = [
                     {title: 'Image files', extensions: 'jpg,jpeg,gif,png'}
@@ -37,13 +31,8 @@ module api.content {
                 config.selfIsDropzone = true;
             }
 
-            if (config.scaleWidth != undefined) {
-                this.scaleWidth = config.scaleWidth;
-            }
-
             super(config);
 
-            this.scaleWidth = false;
             this.imageEditors = [];
             this.editModeListeners = [];
             this.focusAutoPositionedListeners = [];

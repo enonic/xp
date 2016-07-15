@@ -57,7 +57,6 @@ module api.liveedit.image {
                 name: 'image-selector-placeholder-upload',
                 showCancel: false,
                 showReset: false,
-                scaleWidth: false,
                 showResult: false,
                 allowMultiSelection: false,
                 hideDefaultDropZone: true,

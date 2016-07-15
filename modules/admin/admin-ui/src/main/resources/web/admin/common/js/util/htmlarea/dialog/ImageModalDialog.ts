@@ -262,7 +262,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageUploader(): api.content.ImageUploaderEl {
-            var uploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
+            var uploader = new api.content.ImageUploaderEl({
                 params: {
                     parent: this.content.getContentId().toString()
                 },
@@ -271,7 +271,6 @@ module api.util.htmlarea.dialog {
                 showResult: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                scaleWidth: false,
                 deferred: true,
                 showCancel: false
             });

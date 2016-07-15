@@ -338,7 +338,6 @@ module api.content.form.inputtype.image {
                 showResult: false,
                 maximumOccurrences: this.getRemainingOccurrences(),
                 allowMultiSelection: multiSelection,
-                scaleWidth: false,
                 deferred: true
             });
 
