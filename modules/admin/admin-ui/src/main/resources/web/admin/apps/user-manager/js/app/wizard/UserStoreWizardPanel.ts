@@ -37,7 +37,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     private defaultUserStore: UserStore;
 
-    public static debug: boolean = true;
+    public static debug: boolean = false;
 
     constructor(params: UserStoreWizardPanelParams) {
 
@@ -60,7 +60,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
                     console.debug("UserStoreWizardPanel.doLoadData: loaded data", loader);
                 }
                 if (loader.userStore) {
-                    // in case of new wizard userstore will be created in super.doLoadData()
+                    this.isNew = false;
                     this.setPersistedItem(loader.userStore);
                 }
                 this.defaultUserStore = loader.defaultUserStore;

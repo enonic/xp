@@ -46,7 +46,7 @@ module api.app.wizard {
 
         private dataLoaded: boolean = false;
 
-        private isNew: boolean = true;
+        protected isNew: boolean = true;
 
         private closedListeners: {(event: WizardClosedEvent): void}[] = [];
 
@@ -76,7 +76,7 @@ module api.app.wizard {
 
         private mask: api.ui.mask.LoadMask;
 
-        public static debug: boolean = true;
+        public static debug: boolean = false;
 
         constructor(params: WizardPanelParams<EQUITABLE>) {
             super("wizard-panel");
@@ -86,6 +86,7 @@ module api.app.wizard {
 
             if (params.persistedItem) {
                 this.setPersistedItem(params.persistedItem);
+                this.isNew = false;
             }
 
             // have to be in constructor because onValidityChanged uses it
@@ -169,8 +170,6 @@ module api.app.wizard {
                     deferred.reject(reason);
                 }).done();
             } else {
-                this.isNew = false;
-
                 var equitable = this.getPersistedItem();
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel.doLoadData: data present, skipping load...", equitable);

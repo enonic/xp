@@ -23,6 +23,8 @@ module api.ui.security.acl {
             {value: Access.CUSTOM, name: 'Custom...'}
         ];
 
+        public static debug: boolean = false;
+
         constructor(className?: string) {
             super('user-access-list-item-view' + (className ? " " + className : ""));
         }
@@ -31,19 +33,30 @@ module api.ui.security.acl {
             this.currentUser = user;
         }
 
-        doRender(): wemQ.Promise<boolean> {
-            return super.doRender().then((rendered) => {
-                var data = <EffectivePermission>this.getObject();
+        doLayout(object: EffectivePermission) {
+            super.doLayout(object);
 
-                this.accessLine = new api.dom.SpanEl("access-line").setHtml(this.getOptionName(data.getAccess()));
+            if (UserAccessListItemView.debug) {
+                console.debug("UserAccessListItemView.doLayout");
+            }
+
+            if (!this.accessLine && !this.userLine) {
+                this.accessLine = new api.dom.SpanEl("access-line");
                 this.userLine = new api.dom.DivEl("user-line");
+                this.appendChildren(this.accessLine, this.userLine);
 
-                var isEmpty: boolean = true;
+                this.resizeListener = this.setExtraCount.bind(this);
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, this.resizeListener);
 
+                this.userLine.onRendered(() => {
+                    this.setExtraCount();
+                });
+            }
 
-                data.getMembers().forEach((principal: EffectivePermissionMember) => {
+            if (object) {
+                this.accessLine.setHtml(this.getOptionName(object.getAccess()));
 
-                    isEmpty = false;
+                object.getMembers().forEach((principal: EffectivePermissionMember) => {
 
                     var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
 
@@ -58,22 +71,7 @@ module api.ui.security.acl {
                     }
                     new Tooltip(icon, principal.getDisplayName(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
                 });
-
-                if (isEmpty) {
-                    return false;
-                }
-
-                this.appendChildren(this.accessLine, this.userLine);
-
-                this.resizeListener = this.setExtraCount.bind(this);
-                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, this.resizeListener);
-
-                this.userLine.onRendered(() => {
-                    this.setExtraCount();
-                });
-
-                return rendered;
-            });
+            }
         }
 
         remove(): any {

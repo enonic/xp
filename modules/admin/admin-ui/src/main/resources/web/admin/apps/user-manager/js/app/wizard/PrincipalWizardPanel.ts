@@ -27,7 +27,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
     protected principalNamedListeners: {(event: PrincipalNamedEvent): void}[];
 
-    public static debug: boolean = true;
+    public static debug: boolean = false;
 
     constructor(params: PrincipalWizardPanelParams) {
 
@@ -54,7 +54,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                         console.debug("PrincipalWizardPanel.doLoadData: loaded data", loader);
                     }
                     if (loader.principal) {
-                        // in case of new wizard principal will be created in super.doLoadData()
+                        this.isNew = false;
                         this.setPersistedItem(loader.principal);
                     }
                     return loader.principal;

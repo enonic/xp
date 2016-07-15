@@ -144,7 +144,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
      * Whether constructor is being currently executed or not.
      */
 
-    public static debug: boolean = true;
+    public static debug: boolean = false; 
 
     constructor(params: ContentWizardPanelParams) {
 
@@ -245,6 +245,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 if (loader.content) {
                     // in case of new content will be created in super.loadData()
+                    this.isNew = false;
                     this.setPersistedItem(loader.content);
                 }
                 this.defaultModels = loader.defaultModels;
