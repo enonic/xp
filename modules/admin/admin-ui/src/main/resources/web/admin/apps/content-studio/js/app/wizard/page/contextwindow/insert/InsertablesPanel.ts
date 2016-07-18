@@ -87,7 +87,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
             }
         });
 
-        this.onRendered(this.initializeDraggables.bind(this));
+        this.insertablesGrid.onRendered(this.initializeDraggables.bind(this));
         this.onRemoved(this.destroyDraggables.bind(this));
     }
 
