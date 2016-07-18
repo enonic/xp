@@ -69,67 +69,6 @@
       width: calc(@panel-outer-width - 60px);
     }
   }
-
-  .launcher-tip {
-    position: absolute;
-    padding: 0;
-    height: @header-height;
-    left: -87px;
-
-    -webkit-animation: bounce 2s ease-in-out 1.5s; /* Safari, Chrome and Opera > 12.1 */
-    -moz-animation: bounce 2s ease-in-out 1.5s; /* Firefox < 16 */
-    -ms-animation: bounce 2s ease-in-out 1.5s; /* Internet Explorer */
-    -o-animation: bounce 2s ease-in-out 1.5s; /* Opera < 12.1 */
-    animation: bounce 2s ease-in-out 1.5s;
-
-    @keyframes bounce {
-      0% {
-        left: -357px;
-      }
-      100% {
-        left: -87px;
-      }
-    }
-
-    span {
-      -webkit-animation: fadein 5s linear 2s; /* Safari, Chrome and Opera > 12.1 */
-      -moz-animation: fadein 5s linear 2s; /* Firefox < 16 */
-      -ms-animation: fadein 5s linear 2s; /* Internet Explorer */
-      -o-animation: fadein 5s linear 2s; /* Opera < 12.1 */
-      animation: fadein 5s linear 2s;
-      opacity: 0;
-      display: table-cell;
-      vertical-align: middle;
-      color: @admin-white;
-      font-size: 14px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      white-space: nowrap;
-
-      &:after {
-        position: absolute;
-        font-size: 18px;
-        font-family: 'icomoon';
-        content: "\e3b5";
-        line-height: 22px;
-      }
-
-      @keyframes fadein {
-        0% {
-          opacity: 0;
-        }
-        20% {
-          opacity: 1;
-        }
-        80% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-    }
-  }
 }
 
 .launcher-main-container {
@@ -138,10 +77,6 @@
 
   &:focus {
     outline: none;
-  }
-
-  .launcher-tip {
-    display: none;
   }
 
   .app-row-selected {
@@ -311,6 +246,7 @@
     }
     img {
       width: 24px;
+      height: 24px; // For IE
       margin-right: 10px;
     }
     span {
