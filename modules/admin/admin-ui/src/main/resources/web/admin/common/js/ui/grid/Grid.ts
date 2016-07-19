@@ -110,12 +110,12 @@ module api.ui.grid {
 
             dataView.onRowCountChanged((eventData: Slick.EventData, args) => {
                 this.updateRowCount();
-                // this.renderGrid();
+                this.renderGrid();
             });
 
             dataView.onRowsChanged((eventData: Slick.EventData, args) => {
                 this.invalidateRows(args.rows);
-                // this.renderGrid();
+                this.renderGrid();
             });
         }
 
