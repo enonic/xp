@@ -1,7 +1,6 @@
 var adminUrl = window.CONFIG && window.CONFIG.adminUrl || "/admin";
 var launcherUrl = adminUrl + (adminUrl.slice(-1) == '/' ? "" : "/" ) + "tool/com.enonic.xp.admin.ui/launcher";
 var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
-var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
 var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
 var appId = window.CONFIG ? window.CONFIG.appId : "";
 
@@ -41,6 +40,13 @@ function appendLauncherPanel() {
     document.getElementsByTagName("body")[0].appendChild(div);
 
     launcherPanel = div;
+
+    document.addEventListener('click', function (event) {
+        var isClickOutside = !launcherPanel.contains(event.target) && !launcherButton.contains(event.target);
+        if (isClickOutside && !launcherMainContainer.getAttribute("hidden")) {
+            closeLauncherPanel();
+        }
+    });
 }
 
 function createLauncherLink(container) {
@@ -118,37 +124,6 @@ function addLongClickHandler(container) {
     }
 }
 
-function getBodyWidth() {
-    return document.getElementsByTagName("body")[0].clientWidth;
-}
-
-function getBodyMask() {
-    return document.querySelector('.xp-admin-common-mask.body-mask');
-}
-
-function createBodyMaskDiv() {
-    var div = document.createElement("div");
-    div.classList.add("xp-admin-common-mask", "body-mask");
-    if (isHomeApp) {
-        div.classList.add("app-home");
-    }
-    div.style.display = "none";
-
-    document.getElementsByTagName("body")[0].appendChild(div);
-
-    return div;
-}
-
-function showBodyMask() {
-    bodyMask.style.display = "block";
-    bodyMask.classList.add("launcher");
-}
-
-function hideBodyMask() {
-    bodyMask.style.display = "none";
-    bodyMask.classList.remove("launcher");
-}
-
 function isPanelExpanded() {
     return launcherPanel.classList.contains("visible");
 }
@@ -157,7 +132,6 @@ function openLauncherPanel() {
     launcherMainContainer.removeAttribute("hidden");
     listenToKeyboardEvents();
     toggleButton();
-    showBodyMask();
     launcherPanel.classList.remove("hidden", "slideout");
     launcherPanel.classList.add("visible");
 }
@@ -167,17 +141,8 @@ function closeLauncherPanel(skipTransition) {
     unlistenToKeyboardEvents();
     launcherPanel.classList.remove("visible");
     launcherPanel.classList.add((skipTransition == true) ? "hidden" : "slideout");
-    hideBodyMask();
     toggleButton();
     unselectCurrentApp();
-}
-
-function initBodyMask() {
-    bodyMask = getBodyMask();
-    if (!bodyMask) {
-        bodyMask = createBodyMaskDiv();
-    }
-    bodyMask.addEventListener("click", closeLauncherPanel);
 }
 
 function listenToKeyboardEvents() {
@@ -227,8 +192,6 @@ function onKeyPressed(e) {
 }
 
 exports.init = function () {
-    initBodyMask();
-
     appendLauncherButton();
     appendLauncherPanel();
 };

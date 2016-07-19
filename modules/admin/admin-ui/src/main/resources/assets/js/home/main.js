@@ -33,8 +33,8 @@ function getAboutDialogContent() {
                '        <a href="' + CONFIG.docLinkPrefix + '/appendix/release-notes/" target="_blank">What\'s new</a>' +
                '    </div>' +
                '    <div class="xp-about-dialog-text">' +
-               'Blend sites, applications and services together seamlessly.' +
-               'Our powerful Web Operating System simplifies all stages of the' +
+               'Blend sites, applications and services together seamlessly. ' +
+               'Our powerful Web Operating System simplifies all stages of the ' +
                'digital delivery process - focus on solution rather than technology.' +
                '    </div>' +
                '</div>';

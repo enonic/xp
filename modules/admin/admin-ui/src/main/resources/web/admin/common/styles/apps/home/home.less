@@ -44,13 +44,24 @@
     .dashboard-item {
       text-align: center;
       display: inline-block;
-      margin: 0 14px;
+      margin: 0 20px;
       cursor: pointer;
       font-family: "Open Sans", sans-serif;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
 
       img {
         width: 32px;
         height: 32px; // For IE
+      }
+
+      &:hover {
+        opacity: 0.7;
+      }
+
+      &:first-child {
+        margin-left: 10px;
       }
     }
   }
@@ -65,7 +76,11 @@
 
   .xp-about-dialog-app-icon {
     float: left;
-    margin-right: 15px;
+    margin-right: 25px;
+
+    img {
+      height: 175px;
+    }
   }
 
   a {
@@ -86,8 +101,10 @@
   }
 
   .xp-about-dialog-text {
-    font-weight: bold;
+    font-size: 14px;
     text-align: justify;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .xp-about-dialog-button-close {
@@ -104,6 +121,8 @@
 
 .xp-tour-dialog {
   max-width: 560px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   .dialog-content {
     .subtitle {
@@ -111,10 +130,10 @@
       color: @admin-white;
       background-color: @form-button-bg;
       margin-bottom: 10px;
+      font-weight: bold;
 
       .subtitle-part-1 {
         font-size: 13px;
-        font-weight: bold;
       }
     }
 
@@ -139,6 +158,10 @@
     .text {
       .paragraph2, .paragraph3 {
         margin-top: 15px;
+      }
+
+      div {
+        text-align: justify;
       }
     }
 
@@ -174,7 +197,7 @@
 
     .step-5 {
       .demo-apps {
-        margin: 20px 0px 10px 0px;
+        margin: 10px 0px 10px 0px;
         display: flex;
         align-items: center;
         justify-content: space-around;
@@ -186,7 +209,7 @@
 
           img {
             float: none;
-            height: 90px;
+            height: 82px;
           }
 
           .demo-app-title {
@@ -196,7 +219,7 @@
           .progress-bar {
             position: absolute;
             width: 100%;
-            bottom: -30px;
+            bottom: -23px;
 
             .progress-indicator {
               background-color: @admin-green;
@@ -206,7 +229,7 @@
           .demo-app-status {
             position: absolute;
             width: 100%;
-            bottom: -30px;
+            bottom: -23px;
             font-size: 16px;
             color: @admin-green;
 
@@ -223,7 +246,7 @@
         justify-content: space-around;
 
         .install-apps-button {
-          margin-top: 25px;
+          margin-top: 15px;
           display: flex;
           justify-content: space-around;
           background-color: @admin-green;

@@ -66,7 +66,12 @@ function initNavigation() {
 }
 
 function initTourSteps() {
-    tourSteps = [createStep1(), createStep2(), createStep3(), createStep4(), createStep5()]
+    tourSteps = [createStep1(), createStep2(), createStep3(), createStep4()];
+
+    checkAllDemoAppsInstalled().then(function () {
+        tourSteps.push(createStep5());
+    });
+
 }
 
 function initDemoApps() {
@@ -95,8 +100,6 @@ function initDemoApps() {
     }
 
     demoApps = [demoApp1, demoApp2, demoApp3];
-
-    checkAllDemoAppsInstalled();
 }
 
 function createStep1() {
@@ -198,7 +201,7 @@ function createStep5() {
 }
 
 function checkAllDemoAppsInstalled() {
-    new api.application.ListApplicationsRequest().sendAndParse().then(function (applications) {
+    return new api.application.ListApplicationsRequest().sendAndParse().then(function (applications) {
         demoApps.forEach(function (demoApp) {
             demoApp["isInstalled"] = applications.some(function (application) {
                 return application.id === demoApp.id
@@ -215,10 +218,12 @@ function checkAllDemoAppsInstalled() {
 function getDemoAppsHtml() {
     var html = "";
     demoApps.forEach(function (demoApp, index) {
+        var installed = demoApp["isInstalled"] ? "Installed" : "";
         html += '<div class="demo-app demo-app-' + index + '">' +
                 '    <a href="' + demoApps[index].url + '" target="_blank">' +
                 '    <img class="demo-app-superhero" src="' + demoApps[index].iconUrl + '">' +
                 '    <div class="demo-app-title">' + demoApps[index].name + '</div>' +
+                '    <div class="demo-app-status ' + installed.toLowerCase() + '">' + installed + '</div>   ' +
                 '    </a>' +
                 '</div>'
     });
