@@ -93,17 +93,17 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 }
             });
 
-            var deleteHandler = (event: api.security.event.PrincipalDeletedEvent) => {
+            var deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
                 event.getDeletedItems().forEach((path: string) => {
-                    if (this.getPersistedItem().getKey().toPath() == path) {
+                    if (!!this.getPersistedItem() && this.getPersistedItem().getKey().toPath() == path) {
                         this.close();
                     }
                 });
-            };
+            }).bind(this);
 
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
-                api.security.event.PrincipalDeletedEvent.un(deleteHandler.bind(this));
+                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
             });
 
             this.onShown((event: api.dom.ElementShownEvent) => {
@@ -114,7 +114,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 }
 
                 responsiveItem.update();
-                api.security.event.PrincipalDeletedEvent.on(deleteHandler.bind(this));
+                api.security.event.PrincipalDeletedEvent.on(deleteHandler);
             });
 
             this.constructing = false;
