@@ -1,5 +1,5 @@
-.input-error(@color: @input-light-red) {
-  background-color: @color;
+.input-error(@bgcolor: @input-light-red, @color: @input-light-red) {
+  background-color: @bgcolor;
 
   &:focus {
     .box-shadow(0px 0px 5px @color);
@@ -21,8 +21,8 @@
   }
 }
 
-.highlight(@color: @admin-input-red) {
-  .input-error();
+.highlight(@bgcolor: @input-light-red, @color: @admin-input-red) {
+  .input-error(@bgcolor);
   .input-glow(@color);
   &:hover {
     .box-shadow(0px 0px 5px @color);
@@ -47,10 +47,10 @@
   .highlight-background();
 
   .form-input {
-    .input-error();
+    .input-error(@admin-white);
 
     &.media-uploader-el a.dropzone {
-      .highlight()
+      .highlight(@admin-white)
     }
 
     &.@{_COMMON_PREFIX}text-input {
