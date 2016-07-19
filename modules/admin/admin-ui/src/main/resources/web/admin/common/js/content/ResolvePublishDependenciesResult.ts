@@ -5,28 +5,36 @@ module api.content {
 
     export class ResolvePublishDependenciesResult {
 
-        dependentContents: ContentPublishItem[];
-        requestedContents: ContentPublishItem[];
+        dependentContents: ContentId[];
+        requestedContents: ContentId[];
+        containsRemovable: boolean;
 
-        constructor(dependants: ContentPublishItem[], requested: ContentPublishItem[]) {
+
+        constructor(dependants: ContentId[], requested: ContentId[], containsRemovable: boolean) {
             this.dependentContents = dependants;
             this.requestedContents = requested;
+            this.containsRemovable = containsRemovable;
         }
 
-        getDependants(): ContentPublishItem[] {
+        getDependants(): ContentId[] {
             return this.dependentContents;
         }
 
-        getRequested(): ContentPublishItem[] {
+        getRequested(): ContentId[] {
             return this.requestedContents;
+        }
+
+        isContainsRemovable(): boolean {
+            return this.containsRemovable;
         }
 
         static fromJson(json: ResolvePublishContentResultJson): ResolvePublishDependenciesResult {
 
-            let dependats: ContentPublishItem[] = json.dependentContents.map(dependant => ContentPublishItem.fromJson(dependant));
-            let requested: ContentPublishItem[] = json.requestedContents.map(requested => ContentPublishItem.fromJson(requested));
+            let dependants: ContentId[] = json.dependentContents.map(dependant => new ContentId(dependant.id));
+            let requested: ContentId[] = json.requestedContents.map(dependant => new ContentId(dependant.id));
+            let containsRemovable: boolean = json.containsRemovable;
 
-            return new ResolvePublishDependenciesResult(dependats, requested);
+            return new ResolvePublishDependenciesResult(dependants, requested, containsRemovable);
         }
     }
 }

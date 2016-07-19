@@ -1,28 +1,37 @@
 package com.enonic.xp.portal.handler;
 
+import java.util.EnumSet;
+
 import com.google.common.base.Strings;
 
-import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.handler.BaseWebHandler;
 
 public abstract class EndpointHandler
-    extends BaseHandler
+    extends BaseWebHandler
 {
     private final String pathPrefix;
 
     public EndpointHandler( final String type )
     {
-        super( 0 );
+        this.pathPrefix = "/_/" + type + "/";
+    }
+
+    public EndpointHandler( final EnumSet<HttpMethod> methodsAllowed, final String type )
+    {
+        super( methodsAllowed );
         this.pathPrefix = "/_/" + type + "/";
     }
 
     @Override
-    public final boolean canHandle( final PortalRequest req )
+    public boolean canHandle( final WebRequest req )
     {
         final String endpointPath = Strings.nullToEmpty( req.getEndpointPath() );
         return endpointPath.startsWith( this.pathPrefix );
     }
 
-    protected final String findRestPath( final PortalRequest req )
+    protected final String findRestPath( final WebRequest req )
     {
         final String endpointPath = Strings.nullToEmpty( req.getEndpointPath() );
         return endpointPath.substring( this.pathPrefix.length() );

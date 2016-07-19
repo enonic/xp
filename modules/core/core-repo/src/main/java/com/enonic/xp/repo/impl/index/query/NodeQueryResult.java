@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.index.query;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -9,6 +10,7 @@ import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.node.NodeIds;
 
 public final class NodeQueryResult
+    implements Iterable<NodeQueryResultEntry>
 {
     private final ImmutableList<NodeQueryResultEntry> entries;
 
@@ -40,6 +42,12 @@ public final class NodeQueryResult
     public static Builder create()
     {
         return new Builder();
+    }
+
+    @Override
+    public Iterator<NodeQueryResultEntry> iterator()
+    {
+        return this.entries.iterator();
     }
 
     public long getTotalHits()
@@ -74,7 +82,7 @@ public final class NodeQueryResult
 
     public static final class Builder
     {
-        private final List<NodeQueryResultEntry> entries = Lists.newLinkedList();
+        private final List<NodeQueryResultEntry> entries = Lists.newArrayList();
 
         private long totalHits;
 
@@ -82,7 +90,7 @@ public final class NodeQueryResult
 
         private float maxScore;
 
-        private Aggregations aggregations;
+        private Aggregations aggregations = Aggregations.empty();
 
         public Builder totalHits( final long totalHits )
         {

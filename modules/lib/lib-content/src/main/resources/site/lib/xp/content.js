@@ -166,7 +166,7 @@ exports.getChildren = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} [params.name] Name of content.
- * @param {string} [params.parentPath=/] Path to place content under.
+ * @param {string} params.parentPath Path to place content under.
  * @param {string} [params.displayName] Display name. Default is same as `name`.
  * @param {boolean} [params.requireValid=true] The content has to be valid, according to the content type, to be created. If requireValid=true and the content is not strictly valid, an error will be thrown.
  * @param {string} params.contentType Content type to use.

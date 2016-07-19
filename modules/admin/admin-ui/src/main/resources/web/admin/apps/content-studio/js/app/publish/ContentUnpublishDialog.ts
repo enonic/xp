@@ -13,7 +13,6 @@ import ListBox = api.ui.selector.list.ListBox;
 
 export class ContentUnpublishDialog extends DependantItemsDialog {
 
-    private unpublishButton: DialogButton;
 
     constructor() {
         super("Unpublish item",
@@ -24,41 +23,42 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
 
         var unpublishAction = new ContentUnpublishDialogAction();
         unpublishAction.onExecuted(this.doUnpublish.bind(this));
-        this.unpublishButton = this.addAction(unpublishAction, true, true);
-        this.unpublishButton.setEnabled(false);
+        this.actionButton = this.addAction(unpublishAction, true, true);
+        this.actionButton.setEnabled(false);
 
         this.addCancelButtonToBottom();
 
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
             if (!this.isIgnoreItemsChanged()) {
-                this.refreshPublishDependencies().done();
+                this.refreshUnpublishDependencies().done();
             }
         });
     }
 
     open() {
-        this.refreshPublishDependencies().done(() => this.centerMyself());
+        this.refreshUnpublishDependencies().done(() => this.centerMyself());
 
         super.open();
     }
 
-
-    private refreshPublishDependencies(): wemQ.Promise<void> {
+    private refreshUnpublishDependencies(): wemQ.Promise<void> {
 
         this.getDependantList().clearItems();
-        this.showLoadingSpinnerAtButton();
-        this.unpublishButton.setEnabled(false);
+        this.showLoadingSpinner();
+        this.actionButton.setEnabled(false);
 
-        return this.loadDescendants(this.getItemList().getItems()).then((summaries: ContentSummaryAndCompareStatus[]) => {
+        return this.loadDescendantIds([CompareStatus.EQUAL,CompareStatus.NEWER,CompareStatus.PENDING_DELETE]).then(() => {
+            this.loadDescendants(0, 20).
+                then((items: ContentSummaryAndCompareStatus[]) => {
+                    this.setDependantItems(items);
 
-            this.setDependantItems(this.filterUnpublishableItems(summaries));
+                    // do not set requested contents as they are never going to change
 
-            // do not set requested contents as they are never going to change
-
-            this.hideLoadingSpinnerAtButton();
-            this.unpublishButton.setEnabled(true);
-        }).finally(() => {
-            this.loadMask.hide();
+                    this.hideLoadingSpinner();
+                    this.actionButton.setEnabled(true);
+                }).finally(() => {
+                    this.loadMask.hide();
+                });
         });
 
     }
@@ -73,8 +73,13 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         super.setDependantItems(this.filterUnpublishableItems(items));
 
-        let count = this.countTotal();
-        this.unpublishButton.setLabel(count > 0 ? "Unpublish (" + count + ")" : "Unpublish");
+        this.updateButtonCount("Unpublish", this.countTotal());
+    }
+
+    addDependantItems(items: ContentSummaryAndCompareStatus[]) {
+        super.addDependantItems(this.filterUnpublishableItems(items));
+
+        this.updateButtonCount("Unpublish", this.countTotal());
     }
 
     setContentToUnpublish(contents: ContentSummaryAndCompareStatus[]) {
@@ -93,8 +98,8 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
 
     private doUnpublish() {
 
-        this.showLoadingSpinnerAtButton();
-        this.unpublishButton.setEnabled(false);
+        this.showLoadingSpinner();
+        this.actionButton.setEnabled(false);
 
         var selectedIds = this.getContentToUnpublishIds();
 
@@ -103,24 +108,10 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
                 this.close();
                 UnpublishContentRequest.feedback(jsonResponse);
             }).finally(() => {
-                this.hideLoadingSpinnerAtButton();
-                this.unpublishButton.setEnabled(true);
+                this.hideLoadingSpinner();
+                this.actionButton.setEnabled(true);
             });
     }
-
-    private countTotal(): number {
-        return this.getItemList().getItemCount()
-               + this.getDependantList().getItemCount();
-    }
-
-    private showLoadingSpinnerAtButton() {
-        this.unpublishButton.addClass("spinner");
-    }
-
-    private hideLoadingSpinnerAtButton() {
-        this.unpublishButton.removeClass("spinner");
-    }
-
 }
 
 export class ContentUnpublishDialogAction extends api.ui.Action {

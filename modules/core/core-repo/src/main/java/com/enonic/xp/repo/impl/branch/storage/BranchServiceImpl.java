@@ -1,33 +1,39 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.common.Strings;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repo.impl.branch.BranchService;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.cache.BranchPath;
 import com.enonic.xp.repo.impl.cache.PathCache;
 import com.enonic.xp.repo.impl.cache.PathCacheImpl;
+import com.enonic.xp.repo.impl.search.SearchDao;
+import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
-import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
-import com.enonic.xp.repo.impl.storage.GetByValuesRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
-import com.enonic.xp.repo.impl.storage.GetResults;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
@@ -41,24 +47,26 @@ public class BranchServiceImpl
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
                            BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
 
-    private StorageDao storageDao;
+    private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
     private final PathCache pathCache = new PathCacheImpl();
 
-    private static final Logger LOG = LoggerFactory.getLogger( BranchServiceImpl.class );
+    private StorageDao storageDao;
+
+    private SearchDao searchDao;
 
     @Override
-    public String store( final NodeBranchMetadata nodeBranchMetadata, final InternalContext context )
+    public String store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
-        return doStore( nodeBranchMetadata, context );
+        return doStore( nodeBranchEntry, context );
     }
 
-    private String doStore( final NodeBranchMetadata nodeBranchMetadata, final InternalContext context )
+    private String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
-        final StoreRequest storeRequest = BranchStorageRequestFactory.create( nodeBranchMetadata, context );
+        final StoreRequest storeRequest = BranchStorageRequestFactory.create( nodeBranchEntry, context );
         final String id = this.storageDao.store( storeRequest );
 
-        pathCache.cache( createPath( nodeBranchMetadata.getNodePath(), context ), BranchDocumentId.from( id ) );
+        doCache( context, nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
 
         return id;
     }
@@ -66,35 +74,51 @@ public class BranchServiceImpl
     @Override
     public String move( final MoveBranchParams moveBranchParams, final InternalContext context )
     {
-        final NodeBranchMetadata nodeBranchMetadata = moveBranchParams.getNodeBranchMetadata();
+        final NodeBranchEntry nodeBranchEntry = moveBranchParams.getNodeBranchEntry();
 
         this.pathCache.evict( createPath( moveBranchParams.getPreviousPath(), context ) );
 
-        return doStore( nodeBranchMetadata, context );
+        return doStore( nodeBranchEntry, context );
     }
 
     @Override
     public void delete( final NodeId nodeId, final InternalContext context )
     {
-        final NodeBranchMetadata nodeBranchMetadata = doGetById( nodeId, context );
+        final NodeBranchEntry nodeBranchEntry = doGetById( nodeId, context );
 
-        if ( nodeBranchMetadata == null )
+        if ( nodeBranchEntry == null )
         {
             return;
         }
 
         storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
 
-        pathCache.evict( createPath( nodeBranchMetadata.getNodePath(), context ) );
+        pathCache.evict( createPath( nodeBranchEntry.getNodePath(), context ) );
     }
 
     @Override
-    public NodeBranchMetadata get( final NodeId nodeId, final InternalContext context )
+    public void delete( final NodeIds nodeIds, final InternalContext context )
+    {
+        final NodeBranchEntries nodeBranchEntries = getIgnoreOrder( nodeIds, context );
+
+        nodeBranchEntries.forEach( entry -> pathCache.evict( createPath( entry.getNodePath(), context ) ) );
+
+        storageDao.delete( DeleteRequests.create().
+            forceRefresh( false ).
+            ids( nodeIds.stream().
+                map( nodeId -> new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
+                collect( Collectors.toSet() ) ).
+            settings( createStorageSettings( context ) ).
+            build() );
+    }
+
+    @Override
+    public NodeBranchEntry get( final NodeId nodeId, final InternalContext context )
     {
         return doGetById( nodeId, context );
     }
 
-    private NodeBranchMetadata doGetById( final NodeId nodeId, final InternalContext context )
+    private NodeBranchEntry doGetById( final NodeId nodeId, final InternalContext context )
     {
         final GetByIdRequest getByIdRequest = createGetByIdRequest( nodeId, context );
         final GetResult getResult = this.storageDao.getById( getByIdRequest );
@@ -104,78 +128,50 @@ public class BranchServiceImpl
             return null;
         }
 
-        final NodeBranchMetadata nodeBranchMetadata = NodeBranchVersionFactory.create( getResult.getReturnValues() );
+        final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
-        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ),
-                         BranchDocumentId.from( getResult.getId() ) );
-
-        return nodeBranchMetadata;
+        return nodeBranchEntry;
     }
 
     @Override
-    public NodesBranchMetadata get( final NodeIds nodeIds, final InternalContext context )
+    public NodeBranchEntries get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context )
     {
-        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest();
-
-        for ( final NodeId nodeId : nodeIds )
+        if ( keepOrder )
         {
-            getByIdsRequest.add( GetByIdRequest.create().
-                id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
-                storageSettings( createStorageSettings( context ) ).
-                returnFields( BRANCH_RETURN_FIELDS ).
-                routing( nodeId.toString() ).
-                build() );
+            return getKeepOrder( nodeIds, context );
         }
 
-        final GetResults getResults = this.storageDao.getByIds( getByIdsRequest );
-
-        final NodesBranchMetadata.Builder builder = NodesBranchMetadata.create();
-
-        for ( final GetResult getResult : getResults )
-        {
-            if ( !getResult.isEmpty() )
-            {
-                final NodeBranchMetadata nodeBranchMetadata = NodeBranchVersionFactory.create( getResult.getReturnValues() );
-
-                pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ),
-                                 BranchDocumentId.from( getResult.getId() ) );
-
-                builder.add( nodeBranchMetadata );
-            }
-        }
-
-        return builder.build();
-    }
-
-
-    @Override
-    public NodeBranchMetadata get( final NodePath nodePath, final InternalContext context )
-    {
-        return doGetByPath( nodePath, context );
+        return getIgnoreOrder( nodeIds, context );
     }
 
     @Override
-    public NodesBranchMetadata get( final NodePaths nodePaths, final InternalContext context )
+    public NodeBranchEntry get( final NodePath nodePath, final InternalContext context )
     {
-        Set<NodeBranchMetadata> nodeBranchMetadatas = Sets.newHashSet();
+        return doGetByPathNew( nodePath, context );
+    }
+
+    @Override
+    public NodeBranchEntries get( final NodePaths nodePaths, final InternalContext context )
+    {
+        Set<NodeBranchEntry> nodeBranchEntries = Sets.newHashSet();
 
         for ( final NodePath nodePath : nodePaths )
         {
-            final NodeBranchMetadata branchVersion = doGetByPath( nodePath, context );
+            final NodeBranchEntry branchVersion = doGetByPathNew( nodePath, context );
 
             if ( branchVersion != null )
             {
-                nodeBranchMetadatas.add( branchVersion );
+                nodeBranchEntries.add( branchVersion );
             }
         }
 
-        return NodesBranchMetadata.from( nodeBranchMetadatas );
+        return NodeBranchEntries.from( nodeBranchEntries );
     }
 
     @Override
     public void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
-        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), new BranchDocumentId( nodeId, context.getBranch() ) );
+        doCache( context, nodePath, nodeId );
     }
 
     @Override
@@ -189,7 +185,8 @@ public class BranchServiceImpl
         return new BranchPath( context.getBranch(), nodePath );
     }
 
-    private NodeBranchMetadata doGetByPath( final NodePath nodePath, final InternalContext context )
+
+    private NodeBranchEntry doGetByPathNew( final NodePath nodePath, final InternalContext context )
     {
         final String id = this.pathCache.get( new BranchPath( context.getBranch(), nodePath ) );
 
@@ -199,12 +196,22 @@ public class BranchServiceImpl
             return doGetById( nodeId, context );
         }
 
-        final SearchResult result = this.storageDao.getByValues( GetByValuesRequest.create().
-            storageSettings( createStorageSettings( context ) ).
-            addValue( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
-            addValue( BranchIndexPath.PATH.getPath(), nodePath.toString() ).
+        final NodeBranchQuery query = NodeBranchQuery.create().
+            addQueryFilter( ValueFilter.create().
+                fieldName( BranchIndexPath.PATH.getPath() ).
+                addValue( ValueFactory.newString( nodePath.toString() ) ).build() ).
+            addQueryFilter( ValueFilter.create().
+                fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
+                addValue( ValueFactory.newString( context.getBranch().getName() ) ).
+                build() ).
+            size( 1 ).
+            build();
+
+        final SearchResult result = this.searchDao.search( SearchRequest.create().
+            settings( createStorageSettings( context ) ).
             returnFields( BRANCH_RETURN_FIELDS ).
-            expectSingleValue( true ).
+            acl( context.getPrincipalsKeys() ).
+            query( query ).
             build() );
 
         if ( !result.isEmpty() )
@@ -235,11 +242,70 @@ public class BranchServiceImpl
 
     private void doCacheResult( final InternalContext context, final GetResult getResult )
     {
-        final NodeBranchMetadata nodeBranchMetadata = NodeBranchVersionFactory.create( getResult.getReturnValues() );
+        final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
-        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ),
-                         BranchDocumentId.from( getResult.getId() ) );
+        doCache( context, nodeBranchEntry.getNodePath(), nodeBranchEntry.getNodeId() );
     }
+
+    private void doCache( final InternalContext context, final NodePath nodePath, final NodeId nodeId )
+    {
+        doCache( context, nodePath, new BranchDocumentId( nodeId, context.getBranch() ) );
+    }
+
+    private void doCache( final InternalContext context, final NodePath nodePath, final BranchDocumentId branchDocumentId )
+    {
+        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), branchDocumentId );
+    }
+
+    private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
+    {
+        final NodeBranchEntries.Builder builder = NodeBranchEntries.create();
+
+        final GetBranchEntriesMethod getBranchEntriesMethod = GetBranchEntriesMethod.create().
+            context( context ).
+            pathCache( this.pathCache ).
+            returnFields( BRANCH_RETURN_FIELDS ).
+            storageDao( this.storageDao ).
+            build();
+
+        if ( nodeIds.getSize() > BATCHED_EXECUTOR_LIMIT )
+        {
+            builder.addAll( BatchedBranchEntryExecutor.create().
+                nodeIds( nodeIds ).
+                method( getBranchEntriesMethod ).
+                build().
+                execute() );
+        }
+        else
+        {
+            getBranchEntriesMethod.execute( nodeIds.getSet(), builder );
+        }
+
+        return builder.build();
+    }
+
+    private NodeBranchEntries getIgnoreOrder( final NodeIds nodeIds, final InternalContext context )
+    {
+        final SearchResult results = this.searchDao.search( SearchRequest.create().
+            query( NodeBranchQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
+                    addValue( ValueFactory.newString( context.getBranch().getName() ) ).
+                    build() ).
+                addQueryFilter( ValueFilter.create().
+                    fieldName( BranchIndexPath.NODE_ID.getPath() ).
+                    addValues( nodeIds.getAsStrings() ).
+                    build() ).
+                size( nodeIds.getSize() ).
+                build() ).
+            returnFields( BRANCH_RETURN_FIELDS ).
+            settings( createStorageSettings( context ) ).
+            build() );
+
+        final NodeBranchQueryResult nodeBranchEntries = NodeBranchQueryResultFactory.create( results );
+        return NodeBranchEntries.from( nodeBranchEntries.getList() );
+    }
+
 
     private GetResult createGetResult( final SearchHit searchHit )
     {
@@ -271,6 +337,12 @@ public class BranchServiceImpl
     public void setStorageDao( final StorageDao storageDao )
     {
         this.storageDao = storageDao;
+    }
+
+    @Reference
+    public void setSearchDao( final SearchDao searchDao )
+    {
+        this.searchDao = searchDao;
     }
 }
 

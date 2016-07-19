@@ -53,7 +53,7 @@ public class FindNodesByParentCommandTest
             build() );
 
         assertEquals( 2, children.getHits() );
-        assertEquals( 2, children.getNodes().getSize() );
+        assertEquals( 2, children.getNodeIds().getSize() );
     }
 
     @Test
@@ -109,7 +109,8 @@ public class FindNodesByParentCommandTest
             build() );
 
         assertEquals( 10, children.getHits() );
-        assertEquals( "my-child-0", children.getNodes().first().name().toString() );
+
+        assertEquals( "my-child-0", getNode( children.getNodeIds().first() ).name().toString() );
 
         children = findByParent( FindNodesByParentParams.create().
             parentPath( createdNode.path() ).
@@ -118,7 +119,7 @@ public class FindNodesByParentCommandTest
             build() );
 
         assertEquals( 10, children.getHits() );
-        assertEquals( "my-child-10", children.getNodes().first().name().toString() );
+        assertEquals( "my-child-10", getNode( children.getNodeIds().first() ).name().toString() );
     }
 
     private void createChildren( final Node createdNode, final int size )
@@ -164,8 +165,8 @@ public class FindNodesByParentCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getNodes().getSize() );
-        assertEquals( childNode, result.getNodes().first() );
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertEquals( childNode, getNode( result.getNodeIds().first() ) );
     }
 
     @Test
@@ -215,7 +216,13 @@ public class FindNodesByParentCommandTest
             build().
             execute();
 
-        Nodes childNodes = result.getNodes();
+        Nodes childNodes = GetNodesByIdsCommand.create().
+            ids( result.getNodeIds() ).
+            indexServiceInternal( indexServiceInternal ).
+            storageService( storageService ).
+            searchService( searchService ).
+            build().
+            execute();
 
         assertEquals( 3, childNodes.getSize() );
         Iterator<Node> iterator = childNodes.iterator();
@@ -235,7 +242,13 @@ public class FindNodesByParentCommandTest
             build().
             execute();
 
-        childNodes = result.getNodes();
+        childNodes = GetNodesByIdsCommand.create().
+            ids( result.getNodeIds() ).
+            indexServiceInternal( indexServiceInternal ).
+            storageService( storageService ).
+            searchService( searchService ).
+            build().
+            execute();
 
         assertEquals( 3, childNodes.getSize() );
         iterator = childNodes.iterator();
@@ -294,7 +307,14 @@ public class FindNodesByParentCommandTest
             parentPath( NodePath.ROOT ).
             build() );
 
-        final Iterator<Node> iterator = result.getNodes().iterator();
+        final Iterator<Node> iterator = GetNodesByIdsCommand.create().
+            ids( result.getNodeIds() ).
+            indexServiceInternal( indexServiceInternal ).
+            storageService( storageService ).
+            searchService( searchService ).
+            build().
+            execute().
+            iterator();
 
         assertEquals( node2.id(), iterator.next().id() );
         assertEquals( node3.id(), iterator.next().id() );

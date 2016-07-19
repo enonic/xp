@@ -12,7 +12,7 @@
       }
     }
 
-    &.display-validation-errors .input-view.invalid {
+    &.display-validation-errors .input-view {
       label + .input-wrapper {
         margin-left: @label-width - 12px;
       }
@@ -421,6 +421,13 @@
 
     .input-view.invalid .preview-panel-scroll-navigation-wrapper {
       display: none;
+    }
+  }
+
+  &.link-modal-dialog {
+    input[type="checkbox"] + label:before {
+      position: absolute;
+      margin-left: 120px;
     }
   }
 

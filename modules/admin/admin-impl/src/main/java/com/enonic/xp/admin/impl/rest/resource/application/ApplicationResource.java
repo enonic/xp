@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -11,13 +13,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
@@ -34,6 +44,8 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartItem;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
@@ -51,6 +63,10 @@ public final class ApplicationResource
     private MarketService marketService;
 
     private AuthDescriptorService authDescriptorService;
+
+    private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
+
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
     @GET
     @Path("list")
@@ -131,6 +147,24 @@ public final class ApplicationResource
     }
 
     @POST
+    @Path("install")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ApplicationInstallResultJson install( final MultipartForm form )
+        throws Exception
+    {
+        final MultipartItem appFile = form.get( "file" );
+
+        if ( appFile == null )
+        {
+            throw new RuntimeException( "Missing file item" );
+        }
+
+        final ByteSource byteSource = appFile.getBytes();
+
+        return installApplication( byteSource, appFile.getFileName() );
+    }
+
+    @POST
     @Path("uninstall")
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationSuccessJson uninstall( final ApplicationListParams params )
@@ -138,6 +172,82 @@ public final class ApplicationResource
     {
         params.getKeys().forEach( applicationKey -> this.applicationService.uninstallApplication( applicationKey, true ) );
         return new ApplicationSuccessJson();
+    }
+
+    @POST
+    @Path("installUrl")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
+        throws Exception
+    {
+        final String urlString = params.getURL();
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
+        String failure;
+        try
+        {
+            final URL url = new URL( urlString );
+
+            if ( ArrayUtils.contains( ALLOWED_PROTOCOLS, url.getProtocol() ) )
+            {
+                ApplicationInstallResultJson json = installApplication( url );
+
+                return json;
+            }
+            else
+            {
+                failure = "Illegal protocol: " + url.getProtocol();
+                result.setFailure( failure );
+
+                return result;
+            }
+
+        }
+        catch ( IOException e )
+        {
+            LOG.error( failure = "Failed to upload application from " + urlString );
+            result.setFailure( failure );
+            return result;
+        }
+    }
+
+    private ApplicationInstallResultJson installApplication( final URL url )
+    {
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
+
+        try
+        {
+            final Application application = this.applicationService.installGlobalApplication( url );
+
+            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
+        }
+        catch ( Exception e )
+        {
+            final String failure = "Failed to process application from " + url;
+            LOG.error( failure );
+
+            result.setFailure( failure );
+        }
+        return result;
+    }
+
+    private ApplicationInstallResultJson installApplication( final ByteSource byteSource, final String applicationName )
+    {
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
+
+        try
+        {
+            final Application application = this.applicationService.installGlobalApplication( byteSource );
+
+            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
+        }
+        catch ( Exception e )
+        {
+            final String failure = "Failed to process application " + applicationName;
+            LOG.error( failure );
+
+            result.setFailure( failure );
+        }
+        return result;
     }
 
     @POST

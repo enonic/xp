@@ -2,10 +2,12 @@ module api.content {
 
     export interface PublishContentResult {
 
-        successes: {id:string; name:string}[];
+        successes: number;
 
-        failures: {name:string; reason:string}[];
+        failures: number;
 
-        deleted: {id:string; name:string}[];
+        deleted: number;
+
+        contentName: string;
     }
 }

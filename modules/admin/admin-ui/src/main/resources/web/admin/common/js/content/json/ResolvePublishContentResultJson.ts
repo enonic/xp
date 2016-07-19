@@ -2,7 +2,8 @@ module api.content.json {
 
     export interface ResolvePublishContentResultJson {
 
-        dependentContents: ContentPublishItemJson[];
-        requestedContents: ContentPublishItemJson[];
+        dependentContents: ContentIdBaseItemJson[];
+        requestedContents: ContentIdBaseItemJson[];
+        containsRemovable: boolean;
     }
 }

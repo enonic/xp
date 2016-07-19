@@ -7,24 +7,36 @@ import com.enonic.xp.content.CompareStatus;
 @Beta
 public class NodeComparison
 {
-    private final NodeId nodeId;
+    private final NodePath sourcePath;
+
+    private final NodeId sourceId;
+
+    private final NodeId targetId;
 
     private final CompareStatus compareStatus;
 
-    public NodeComparison( final NodeId nodeId, final CompareStatus compareStatus )
+    public NodeComparison( final NodeBranchEntry sourceEntry, final NodeBranchEntry targetEntry, final CompareStatus compareStatus )
     {
-        this.nodeId = nodeId;
+        this.sourceId = sourceEntry != null ? sourceEntry.getNodeId() : null;
+        this.targetId = targetEntry != null ? targetEntry.getNodeId() : null;
+        this.sourcePath = sourceEntry != null ? sourceEntry.getNodePath() : null;
+
         this.compareStatus = compareStatus;
     }
 
     public NodeId getNodeId()
     {
-        return nodeId;
+        return sourceId != null ? sourceId : targetId;
     }
 
     public CompareStatus getCompareStatus()
     {
         return compareStatus;
+    }
+
+    public NodePath getSourcePath()
+    {
+        return sourcePath;
     }
 
     @Override
@@ -34,29 +46,35 @@ public class NodeComparison
         {
             return true;
         }
-        if ( !( o instanceof NodeComparison ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
 
         final NodeComparison that = (NodeComparison) o;
 
-        if ( compareStatus != null ? !compareStatus.equals( that.compareStatus ) : that.compareStatus != null )
+        if ( sourcePath != null ? !sourcePath.equals( that.sourcePath ) : that.sourcePath != null )
         {
             return false;
         }
-        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
+        if ( sourceId != null ? !sourceId.equals( that.sourceId ) : that.sourceId != null )
         {
             return false;
         }
+        if ( targetId != null ? !targetId.equals( that.targetId ) : that.targetId != null )
+        {
+            return false;
+        }
+        return compareStatus == that.compareStatus;
 
-        return true;
     }
 
     @Override
     public int hashCode()
     {
-        int result = nodeId != null ? nodeId.hashCode() : 0;
+        int result = sourcePath != null ? sourcePath.hashCode() : 0;
+        result = 31 * result + ( sourceId != null ? sourceId.hashCode() : 0 );
+        result = 31 * result + ( targetId != null ? targetId.hashCode() : 0 );
         result = 31 * result + ( compareStatus != null ? compareStatus.hashCode() : 0 );
         return result;
     }

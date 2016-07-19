@@ -95,9 +95,16 @@ public final class Contents
 
         public Builder add( Content content )
         {
-            contents.add( content );
+            this.contents.add( content );
             return this;
         }
+
+        public Builder addAll( Contents contents )
+        {
+            this.contents.addAll( contents.getSet() );
+            return this;
+        }
+
 
         public Contents build()
         {

@@ -102,12 +102,12 @@ module api.content {
 
         private createSearchExpression(searchString): Expression {
             return new api.query.PathMatchExpressionBuilder()
-                        .setSearchString(searchString)
-                        .setPath(this.content ? this.content.getPath().toString() : "")
-                        .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
-                        .addField(new QueryField(QueryField.NAME, 3))
-                        .addField(new QueryField(QueryField.ALL))
-                        .build();
+                .setSearchString(searchString)
+                .setPath(this.content ? this.content.getPath().toString() : "")
+                .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
+                .addField(new QueryField(QueryField.NAME, 3))
+                .addField(new QueryField(QueryField.ALL))
+                .build();
         }
 
         getQueryExpr(): api.query.expr.QueryExpr {

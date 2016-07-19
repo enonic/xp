@@ -10,7 +10,7 @@ import com.enonic.xp.aggregation.Aggregations;
 @Beta
 public class FindNodesByQueryResult
 {
-    private final Nodes nodes;
+    private final NodeIds nodeIds;
 
     private final Aggregations aggregations;
 
@@ -20,7 +20,7 @@ public class FindNodesByQueryResult
 
     private FindNodesByQueryResult( final Builder builder )
     {
-        this.nodes = Nodes.from( builder.nodes );
+        this.nodeIds = NodeIds.from( builder.nodeIds );
         this.totalHits = builder.totalHits;
         this.hits = builder.hits;
         this.aggregations = builder.aggregations;
@@ -31,9 +31,9 @@ public class FindNodesByQueryResult
         return new Builder();
     }
 
-    public Nodes getNodes()
+    public NodeIds getNodeIds()
     {
-        return this.nodes;
+        return this.nodeIds;
     }
 
     public Aggregations getAggregations()
@@ -53,7 +53,7 @@ public class FindNodesByQueryResult
 
     public static final class Builder
     {
-        private final Set<Node> nodes = Sets.newLinkedHashSet();
+        private final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
 
         private long totalHits;
 
@@ -71,9 +71,9 @@ public class FindNodesByQueryResult
             return this;
         }
 
-        public Builder addNode( final Node node )
+        public Builder addNodeId( final NodeId nodeId )
         {
-            this.nodes.add( node );
+            this.nodeIds.add( nodeId );
             return this;
         }
 

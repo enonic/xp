@@ -241,7 +241,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.pageModel.setIgnorePropertyChanges(true);
 
         this.liveEditPageProxy.setModel(liveEditModel);
-        this.imageInspectionPanel.setModel(liveEditModel);
         this.pageInspectionPanel.setModel(liveEditModel);
         this.partInspectionPanel.setModel(liveEditModel);
         this.layoutInspectionPanel.setModel(liveEditModel);
@@ -320,10 +319,12 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.liveEditPageProxy.skipNextReloadConfirmation(skip);
     }
 
-    loadPage() {
+    loadPage(clearInspection: boolean = true) {
         if (this.pageSkipReload == false && !this.pageLoading) {
 
-            this.clearSelection();
+            if(clearInspection) {
+                this.clearSelection();
+            }
 
             this.pageLoading = true;
             this.liveEditPageProxy.load();

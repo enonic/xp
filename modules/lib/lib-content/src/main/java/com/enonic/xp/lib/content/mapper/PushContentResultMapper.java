@@ -3,8 +3,8 @@ package com.enonic.xp.lib.content.mapper;
 import java.util.List;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -35,20 +35,20 @@ public class PushContentResultMapper
         serializeFailedContent( gen, "failedContents", value.getFailedContents() );
     }
 
-    private void serializeContentIds( final MapGenerator gen, final String name, final Contents contents )
+    private void serializeContentIds( final MapGenerator gen, final String name, final ContentIds contents )
     {
         gen.array( name );
-        for ( ContentId id : contents.getIds() )
+        for ( ContentId id : contents )
         {
             gen.value( id.toString() );
         }
         gen.end();
     }
 
-    private void serializeFailedContent( final MapGenerator gen, final String name, final Contents contents )
+    private void serializeFailedContent( final MapGenerator gen, final String name, final ContentIds contentIds )
     {
         gen.array( name );
-        for ( ContentId id : contents.getIds() )
+        for ( ContentId id : contentIds )
         {
             gen.value( id.toString() );
         }

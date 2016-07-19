@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.index.query;
 
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.repo.impl.ReturnValues;
 
 public class NodeQueryResultEntry
 {
@@ -8,10 +9,13 @@ public class NodeQueryResultEntry
 
     private final NodeId id;
 
-    public NodeQueryResultEntry( final float score, final String id )
+    private final ReturnValues returnValues;
+
+    public NodeQueryResultEntry( final float score, final String id, final ReturnValues returnValues )
     {
         this.score = score;
         this.id = NodeId.from( id );
+        this.returnValues = returnValues;
     }
 
     public float getScore()
@@ -24,4 +28,8 @@ public class NodeQueryResultEntry
         return id;
     }
 
+    public ReturnValues getReturnValues()
+    {
+        return returnValues;
+    }
 }

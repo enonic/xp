@@ -62,13 +62,13 @@ public class ReorderChildNodeCommandTest
             build() );
 
         // updated node order: c,a,b,d,e,f
-        final Iterator<Node> iterator = reOrderedResult.getNodes().iterator();
-        assertEquals( "c", iterator.next().id().toString() );
-        assertEquals( "a", iterator.next().id().toString() );
-        assertEquals( "b", iterator.next().id().toString() );
-        assertEquals( "d", iterator.next().id().toString() );
-        assertEquals( "e", iterator.next().id().toString() );
-        assertEquals( "f", iterator.next().id().toString() );
+        final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();
+        assertEquals( "c", iterator.next().toString() );
+        assertEquals( "a", iterator.next().toString() );
+        assertEquals( "b", iterator.next().toString() );
+        assertEquals( "d", iterator.next().toString() );
+        assertEquals( "e", iterator.next().toString() );
+        assertEquals( "f", iterator.next().toString() );
     }
 
     @Test
@@ -102,13 +102,13 @@ public class ReorderChildNodeCommandTest
             build() );
 
         // updated node order: a,c,b,d,e,f
-        final Iterator<Node> iterator = reOrderedResult.getNodes().iterator();
-        assertEquals( "a", iterator.next().id().toString() );
-        assertEquals( "c", iterator.next().id().toString() );
-        assertEquals( "b", iterator.next().id().toString() );
-        assertEquals( "d", iterator.next().id().toString() );
-        assertEquals( "e", iterator.next().id().toString() );
-        assertEquals( "f", iterator.next().id().toString() );
+        final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();
+        assertEquals( "a", iterator.next().toString() );
+        assertEquals( "c", iterator.next().toString() );
+        assertEquals( "b", iterator.next().toString() );
+        assertEquals( "d", iterator.next().toString() );
+        assertEquals( "e", iterator.next().toString() );
+        assertEquals( "f", iterator.next().toString() );
     }
 
     @Test
@@ -141,13 +141,13 @@ public class ReorderChildNodeCommandTest
             build() );
 
         // updated node order: a,b,d,e,f,c
-        final Iterator<Node> iterator = reOrderedResult.getNodes().iterator();
-        assertEquals( "a", iterator.next().id().toString() );
-        assertEquals( "b", iterator.next().id().toString() );
-        assertEquals( "d", iterator.next().id().toString() );
-        assertEquals( "e", iterator.next().id().toString() );
-        assertEquals( "f", iterator.next().id().toString() );
-        assertEquals( "c", iterator.next().id().toString() );
+        final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();
+        assertEquals( "a", iterator.next().toString() );
+        assertEquals( "b", iterator.next().toString() );
+        assertEquals( "d", iterator.next().toString() );
+        assertEquals( "e", iterator.next().toString() );
+        assertEquals( "f", iterator.next().toString() );
+        assertEquals( "c", iterator.next().toString() );
     }
 
     private void createChildNodes( final Node parentNode )

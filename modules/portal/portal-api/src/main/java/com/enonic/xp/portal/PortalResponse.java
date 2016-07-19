@@ -52,6 +52,11 @@ public final class PortalResponse
         return applyFilters;
     }
 
+    public static Builder create( final WebResponse source )
+    {
+        return new Builder( source );
+    }
+
     public static Builder create( final PortalResponse source )
     {
         return new Builder( source );
@@ -68,6 +73,12 @@ public final class PortalResponse
 
         private Builder()
         {
+            clearContributions();
+        }
+
+        private Builder( final WebResponse source )
+        {
+            super( source );
             clearContributions();
         }
 

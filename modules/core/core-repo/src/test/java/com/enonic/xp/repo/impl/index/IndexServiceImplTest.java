@@ -19,6 +19,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
@@ -45,6 +46,7 @@ public class IndexServiceImplTest
         this.indexService.setSearchService( this.searchService );
         this.indexService.setIndexServiceInternal( this.indexServiceInternal );
         this.indexService.setNodeVersionDao( this.nodeDao );
+        this.indexService.setIndexDataService( this.indexedDataService );
 
         this.rootNode = this.createDefaultRootNode();
     }
@@ -96,7 +98,6 @@ public class IndexServiceImplTest
         assertNotNull( queryForNode( node.id() ) );
         assertNotNull( queryForNode( rootNode.id() ) );
     }
-
 
     @Test
     public void purge_then_reindex()
@@ -286,7 +287,9 @@ public class IndexServiceImplTest
             build().
             execute();
 
-        return result.getNodes().getNodeById( nodeId );
+        final Nodes nodes = getNodes( result.getNodeIds() );
+
+        return nodes.getNodeById( nodeId );
     }
 
 

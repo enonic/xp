@@ -1,4 +1,10 @@
 import "../../api.ts";
+import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from "./UserTreeGridItem";
+import {UserTreeGridActions} from "./UserTreeGridActions";
+import {UserTreeGridItemViewer} from "./UserTreeGridItemViewer";
+import {EditPrincipalEvent} from "./EditPrincipalEvent";
+import {PrincipalBrowseResetEvent} from "./filter/PrincipalBrowseResetEvent";
+import {PrincipalBrowseSearchEvent} from "./filter/PrincipalBrowseSearchEvent";
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -16,12 +22,6 @@ import Principal = api.security.Principal;
 import UserStore = api.security.UserStore;
 import PrincipalType = api.security.PrincipalType;
 import UserStoreKey = api.security.UserStoreKey;
-import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from "./UserTreeGridItem";
-import {UserTreeGridActions} from "./UserTreeGridActions";
-import {UserTreeGridItemViewer} from "./UserTreeGridItemViewer";
-import {EditPrincipalEvent} from "./EditPrincipalEvent";
-import {PrincipalBrowseResetEvent} from "./filter/PrincipalBrowseResetEvent";
-import {PrincipalBrowseSearchEvent} from "./filter/PrincipalBrowseSearchEvent";
 
 export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
@@ -152,13 +152,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
             var userTreeGridItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
 
-            // Remove roles from the end to add them lately
-            var children = this.getRoot().getDefaultRoot().getChildren(),
-                roles = children.pop();
-
-            this.appendNode(userTreeGridItem, true, false);
-
-            children.push(roles);
+            this.appendNode(userTreeGridItem, true, false, this.getRoot().isFiltered() ? this.getRoot().getDefaultRoot() : null);
 
             if (!this.getRoot().isFiltered()) {
                 this.initData(this.getRoot().getDefaultRoot().treeToList());

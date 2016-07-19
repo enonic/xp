@@ -1,15 +1,17 @@
 package com.enonic.xp.portal.impl.handler.render;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebResponse;
 
 import static org.junit.Assert.*;
 
@@ -18,11 +20,11 @@ public class ComponentHandlerTest
 {
     private ComponentHandler handler;
 
-    @Override
-    protected void configure()
+    @Before
+    public final void setup()
         throws Exception
     {
-        super.configure();
+        super.setup();
 
         this.handler = new ComponentHandler();
         this.handler.setContentService( this.contentService );
@@ -64,7 +66,7 @@ public class ComponentHandlerTest
     {
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
@@ -89,7 +91,7 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
@@ -107,10 +109,10 @@ public class ComponentHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "No template found for content", e.getMessage() );
@@ -128,10 +130,10 @@ public class ComponentHandlerTest
 
         try
         {
-            this.handler.handle( this.request );
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
             fail( "Should throw exception" );
         }
-        catch ( final PortalException e )
+        catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Page component for [main-region/666] not found", e.getMessage() );

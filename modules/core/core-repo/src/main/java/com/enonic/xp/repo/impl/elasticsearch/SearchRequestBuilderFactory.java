@@ -3,9 +3,8 @@ package com.enonic.xp.repo.impl.elasticsearch;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 
+import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 
 public class SearchRequestBuilderFactory
@@ -30,24 +29,21 @@ public class SearchRequestBuilderFactory
 
     public SearchRequestBuilder create()
     {
+        final SearchType searchType =
+            query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT;
+
         final SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
             setIndices( query.getIndexName() ).
             setTypes( query.getIndexType() ).
-            setSearchType( SearchType.DEFAULT ).
+            setSearchType( searchType ).
             setQuery( query.getQuery() ).
             setPostFilter( query.getFilter() ).
             setFrom( query.getFrom() ).
             setSize( resolvedSize );
 
-        for ( final SortBuilder sortBuilder : query.getSortBuilders() )
-        {
-            searchRequestBuilder.addSort( sortBuilder );
-        }
+        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
 
-        for ( final AbstractAggregationBuilder aggregationBuilder : query.getAggregations() )
-        {
-            searchRequestBuilder.addAggregation( aggregationBuilder );
-        }
+        query.getAggregations().forEach( searchRequestBuilder::addAggregation );
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {

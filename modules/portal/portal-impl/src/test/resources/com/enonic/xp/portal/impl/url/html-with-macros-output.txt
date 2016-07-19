@@ -1,7 +1,7 @@
 <a href="/some/path"><!--#MACRO _name="macroName" par1="val1" par2="val2" _body="body body"--></a>
 <a href="/some/path"><!--#MACRO _name="macroName" par1="val1" par2="val2" _body=""--></a>
-<a href="<!--#MACRO _name="macroNoBody" _body=""-->"><!--#MACRO _name="macro" par1="val1" par2="val2" _body=""--></a> \[macroName]skip me[/macroName]
+<a href="#"><!--#MACRO _name="macro" par1="val1" par2="val2" _body=""--></a> \[macroName]skip me[/macroName]
 <p><!--#MACRO _name="macroName" par1="val1" _body="body [macroInBody]macroInBody[/macroInBody] body"--></p>
-<a href="<!--#MACRO _name="macro" _body=""-->">body</a>
+<a href="#"><!--#MACRO _name="macro" _body=""--></a>
 \[macro /] \[macro][/macro] \ <!--#MACRO _name="macro" _body=""-->
 <!--#MACRO _name="macro_name" _body="[macro_in_body/]"-->

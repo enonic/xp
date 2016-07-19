@@ -76,7 +76,7 @@ public class PublishContentHandlerTest
     {
         Contents published =
             Contents.from( exampleContent( PUB_ID_3, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" ) );
-        PushContentsResult exampleResult = PushContentsResult.create().setPushed( published ).build();
+        PushContentsResult exampleResult = PushContentsResult.create().setPushed( published.getIds() ).build();
         ContentIds ids = ContentIds.from( PUB_ID_3 );
         PushContentParams pushParams =
             PushContentParams.create().contentIds( ids ).target( Branch.from( "master" ) ).includeChildren( false ).includeDependencies(
@@ -116,6 +116,7 @@ public class PublishContentHandlerTest
         Contents deleted = Contents.from( exampleContent( DEL_ID, "nocontent", "No Content", "/mysite/leave", "myop", "Delete" ) );
         Contents failed = Contents.from( exampleContent( FAIL_ID, "badcontent", "Bad bad Content", "/mysite/fail", "myop", "Publish" ) );
 
-        return PushContentsResult.create().setPushed( published ).setDeleted( deleted ).setFailed( failed ).build();
+        return PushContentsResult.create().setPushed( published.getIds() ).setDeleted( deleted.getIds() ).setFailed(
+            failed.getIds() ).build();
     }
 }

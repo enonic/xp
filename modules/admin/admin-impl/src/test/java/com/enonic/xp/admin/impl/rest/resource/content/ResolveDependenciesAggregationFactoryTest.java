@@ -18,10 +18,10 @@ import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentType;
@@ -81,8 +81,8 @@ public class ResolveDependenciesAggregationFactoryTest
     {
         final Content content = createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() );
 
-        final FindContentByQueryResult findContentByQueryResult =
-            FindContentByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
+        final FindContentIdsByQueryResult findContentByQueryResult =
+            FindContentIdsByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
                 buckets( Buckets.create().
                     add( Bucket.create().key( "portal:site" ).docCount( 2 ).build() ).
                     add( Bucket.create().key( "base:folder" ).docCount( 1 ).build() ).
@@ -90,7 +90,7 @@ public class ResolveDependenciesAggregationFactoryTest
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.empty() );
-        Mockito.when( contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findContentByQueryResult );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
@@ -129,8 +129,8 @@ public class ResolveDependenciesAggregationFactoryTest
 
         final Content content = createContent( "contentId", data, ContentTypeName.site() );
 
-        final FindContentByQueryResult findContentByQueryResult =
-            FindContentByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
+        final FindContentIdsByQueryResult findContentByQueryResult =
+            FindContentIdsByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
                 buckets( Buckets.create().
                     build() ).build() ) ).build();
 
@@ -138,7 +138,7 @@ public class ResolveDependenciesAggregationFactoryTest
             Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
 
-        Mockito.when( contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findContentByQueryResult );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
@@ -171,14 +171,14 @@ public class ResolveDependenciesAggregationFactoryTest
 
         final Content content = createContent( "content", data, ContentTypeName.site() );
 
-        final FindContentByQueryResult findContentByQueryResult =
-            FindContentByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
+        final FindContentIdsByQueryResult findContentByQueryResult =
+            FindContentIdsByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
                 buckets( Buckets.create().
                     build() ).build() ) ).build();
 
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.from( folderRefContent1, folderRefContent2 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findContentByQueryResult );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
                 true ).build() );

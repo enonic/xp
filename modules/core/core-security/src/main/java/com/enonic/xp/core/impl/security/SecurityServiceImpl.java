@@ -34,10 +34,12 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.CompareExpr;
@@ -94,20 +96,20 @@ public final class SecurityServiceImpl
 {
     private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = ImmutableSet.of( RoleKeys.EVERYONE );
 
+    private final Clock clock;
+
+    private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
+
+    private final SecureRandom secureRandom = new SecureRandom();
+
     private NodeService nodeService;
 
     private IndexService indexService;
-
-    private final Clock clock;
 
     public SecurityServiceImpl()
     {
         this.clock = Clock.systemUTC();
     }
-
-    private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
-
-    private final SecureRandom secureRandom = new SecureRandom();
 
     @Activate
     public void initialize()
@@ -123,9 +125,12 @@ public final class SecurityServiceImpl
     {
         final FindNodesByParentParams findByParent = FindNodesByParentParams.create().
             parentPath( UserStoreNodeTranslator.getUserStoresParentPath() ).build();
-        final FindNodesByParentResult result = callWithContext( () -> this.nodeService.findByParent( findByParent ) );
+        final Nodes nodes = callWithContext( () -> {
+            final FindNodesByParentResult result = this.nodeService.findByParent( findByParent );
+            return this.nodeService.getByIds( result.getNodeIds() );
+        } );
 
-        return UserStoreNodeTranslator.fromNodes( result.getNodes() );
+        return UserStoreNodeTranslator.fromNodes( nodes );
     }
 
     @Override
@@ -213,7 +218,7 @@ public final class SecurityServiceImpl
         } );
     }
 
-    public void doRemoveRelationships( final PrincipalKey from )
+    private void doRemoveRelationships( final PrincipalKey from )
     {
         final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
         nodeService.update( updateNodeParams );
@@ -276,14 +281,16 @@ public final class SecurityServiceImpl
     {
         try
         {
-            final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( NodeQuery.create().
-                addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalPropertyNames.MEMBER_KEY ).
-                    addValue( ValueFactory.newString( member.toString() ) ).
-                    build() ).
-                build() ) );
-
-            return PrincipalKeyNodeTranslator.fromNodes( result.getNodes() );
+            final Nodes nodes = callWithContext( () -> {
+                final FindNodesByQueryResult result = this.nodeService.findByQuery( NodeQuery.create().
+                    addQueryFilter( ValueFilter.create().
+                        fieldName( PrincipalPropertyNames.MEMBER_KEY ).
+                        addValue( ValueFactory.newString( member.toString() ) ).
+                        build() ).
+                    build() );
+                return this.nodeService.getByIds( result.getNodeIds() );
+            } );
+            return PrincipalKeyNodeTranslator.fromNodes( nodes );
         }
         catch ( NodeNotFoundException e )
         {
@@ -454,14 +461,17 @@ public final class SecurityServiceImpl
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
-        final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
+        final Nodes nodes = callWithContext( () -> {
+            final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
+            return this.nodeService.getByIds( result.getNodeIds() );
+        } );
 
-        if ( result.getNodes().getSize() > 1 )
+        if ( nodes.getSize() > 1 )
         {
             throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in userstore " + userStore );
         }
 
-        return result.getNodes().isEmpty() ? null : PrincipalNodeTranslator.userFromNode( result.getNodes().first() );
+        return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
     }
 
     private User findByEmail( final UserStoreKey userStore, final String email )
@@ -471,14 +481,17 @@ public final class SecurityServiceImpl
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
-        final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
+        final Nodes nodes = callWithContext( () -> {
+            final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
+            return this.nodeService.getByIds( result.getNodeIds() );
+        } );
 
-        if ( result.getNodes().getSize() > 1 )
+        if ( nodes.getSize() > 1 )
         {
             throw new IllegalArgumentException( "Expected at most 1 user with email " + email + " in userstore " + userStore );
         }
 
-        return result.getNodes().isEmpty() ? null : PrincipalNodeTranslator.userFromNode( result.getNodes().first() );
+        return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
     }
 
     @Override
@@ -786,7 +799,7 @@ public final class SecurityServiceImpl
     public void deleteUserStore( final UserStoreKey userStoreKey )
     {
         removeRelationships( userStoreKey );
-        final Node deletedNode = callWithContext( () -> {
+        final NodeIds deletedNodes = callWithContext( () -> {
             final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStoreKey );
             final Node node = this.nodeService.getByPath( userStoreNodePath );
             if ( node == null )
@@ -795,7 +808,7 @@ public final class SecurityServiceImpl
             }
             return this.nodeService.deleteById( node.id() );
         } );
-        if ( deletedNode == null )
+        if ( deletedNodes == null )
         {
             throw new UserStoreNotFoundException( userStoreKey );
         }
@@ -804,15 +817,15 @@ public final class SecurityServiceImpl
     @Override
     public void deletePrincipal( final PrincipalKey principalKey )
     {
-        final Node deletedNode = callWithContext( () -> {
+        final NodeIds deletedNodes = callWithContext( () -> {
             doRemoveRelationships( principalKey );
             doRemoveMemberships( principalKey );
 
-            final Node node = this.nodeService.deleteById( toNodeId( principalKey ) );
+            final NodeIds nodes = this.nodeService.deleteById( toNodeId( principalKey ) );
             this.nodeService.refresh( RefreshMode.SEARCH );
-            return node;
+            return nodes;
         } );
-        if ( deletedNode == null )
+        if ( deletedNodes == null && deletedNodes.getSize() > 0 )
         {
             throw new PrincipalNotFoundException( principalKey );
         }
@@ -825,8 +838,9 @@ public final class SecurityServiceImpl
         {
             final NodeQuery nodeQueryBuilder = PrincipalQueryNodeQueryTranslator.translate( query );
             final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( nodeQueryBuilder ) );
+            final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( result.getNodeIds() ) );
 
-            final Principals principals = PrincipalNodeTranslator.fromNodes( result.getNodes() );
+            final Principals principals = PrincipalNodeTranslator.fromNodes( nodes );
             return PrincipalQueryResult.create().
                 addPrincipals( principals ).
                 totalSize( Ints.checkedCast( result.getTotalHits() ) ).

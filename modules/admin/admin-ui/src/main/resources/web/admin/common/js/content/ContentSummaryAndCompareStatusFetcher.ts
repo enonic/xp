@@ -73,7 +73,7 @@ module api.content {
             var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
 
             if (ids.length > 0) {
-                new GetContentSummaryByIds(ids).get().then((contentSummaries: ContentSummary[]) => {
+               new GetContentSummaryByIds(ids).sendAndParse().then((contentSummaries: ContentSummary[]) => {
                     CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then(
                         (compareResults: CompareContentResults) => {
                             deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));

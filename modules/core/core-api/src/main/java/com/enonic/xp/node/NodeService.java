@@ -17,9 +17,9 @@ public interface NodeService
 
     PushNodesResult push( NodeIds ids, Branch target );
 
-    Node deleteById( NodeId id );
+    NodeIds deleteById( NodeId id );
 
-    Node deleteByPath( NodePath path );
+    NodeIds deleteByPath( NodePath path );
 
     Node getById( NodeId id );
 
@@ -55,7 +55,7 @@ public interface NodeService
 
     NodeVersion getByNodeVersion( NodeVersionMetadata nodeVersionMetadata );
 
-    NodeIds resolveSyncWork( SyncWorkResolverParams params );
+    ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
     SnapshotResult snapshot( SnapshotParams params );
 
@@ -66,8 +66,6 @@ public interface NodeService
     SnapshotResults listSnapshots();
 
     void refresh( RefreshMode refreshMode );
-
-    void deleteSnapshotRespository();
 
     int applyPermissions( ApplyNodePermissionsParams params );
 

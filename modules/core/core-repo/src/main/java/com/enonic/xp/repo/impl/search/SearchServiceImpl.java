@@ -31,8 +31,6 @@ import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
 public class SearchServiceImpl
     implements SearchService
 {
-    private SearchDao searchDao;
-
     private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
 
@@ -40,8 +38,21 @@ public class SearchServiceImpl
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
                            BranchIndexPath.TIMESTAMP );
 
+    private SearchDao searchDao;
+
     @Override
     public NodeQueryResult query( final NodeQuery query, final InternalContext context )
+    {
+        return doQuery( query, ReturnFields.empty(), context );
+    }
+
+    @Override
+    public NodeQueryResult query( final NodeQuery query, ReturnFields returnFields, final InternalContext context )
+    {
+        return doQuery( query, returnFields, context );
+    }
+
+    private NodeQueryResult doQuery( final NodeQuery query, final ReturnFields returnFields, final InternalContext context )
     {
         final StorageType storageType = SearchStorageType.from( context.getBranch() );
 
@@ -50,8 +61,8 @@ public class SearchServiceImpl
         final SearchRequest searchRequest = SearchRequest.create().
             settings( createSettings( storageType, storageName ) ).
             acl( context.getPrincipalsKeys() ).
-            searchType( query.isAccurateScoring() ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH ).
             query( query ).
+            returnFields( returnFields ).
             build();
 
         final SearchResult result = searchDao.search( searchRequest );
@@ -69,7 +80,6 @@ public class SearchServiceImpl
             settings( createSettings( storageType, storageName ) ).
             returnFields( BRANCH_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
-            searchType( SearchType.DFS_QUERY_THEN_FETCH ).
             query( nodeBranchQuery ).
             build();
 
@@ -93,7 +103,6 @@ public class SearchServiceImpl
             settings( createSettings( storageType, storageName ) ).
             returnFields( VERSION_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
-            searchType( SearchType.DFS_QUERY_THEN_FETCH ).
             query( query ).
             build();
 
@@ -136,6 +145,7 @@ public class SearchServiceImpl
 
         return builder.build();
     }
+
 
     private StorageSettings createSettings( final StorageType storageType, final StorageName storageName )
     {

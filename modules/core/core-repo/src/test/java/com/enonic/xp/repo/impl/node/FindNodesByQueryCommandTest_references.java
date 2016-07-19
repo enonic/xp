@@ -48,9 +48,9 @@ public class FindNodesByQueryCommandTest_references
 
         assertEquals( 3, result.getHits() );
 
-        assertNotNull( result.getNodes().getNodeById( NodeId.from( "node2" ) ) );
-        assertNotNull( result.getNodes().getNodeById( NodeId.from( "node3" ) ) );
-        assertNotNull( result.getNodes().getNodeById( NodeId.from( "node4" ) ) );
+        assertTrue( result.getNodeIds().contains( NodeId.from( "node2" ) ) );
+        assertTrue( result.getNodeIds().contains( NodeId.from( "node3" ) ) );
+        assertTrue( result.getNodeIds().contains( NodeId.from( "node4" ) ) );
     }
 
     private Node createNodeWithReference( final String name, final NodeId ref )

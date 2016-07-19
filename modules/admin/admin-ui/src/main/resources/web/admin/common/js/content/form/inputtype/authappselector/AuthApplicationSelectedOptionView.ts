@@ -30,7 +30,8 @@ module api.content.site.inputtype.siteconfigurator {
 
         private readOnly: boolean;
 
-        constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext, readOnly: boolean = false) {
+        constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext,
+                    readOnly: boolean = false) {
             this.editClickedListeners = [];
             this.siteConfigFormDisplayedListeners = [];
             this.readOnly = readOnly;

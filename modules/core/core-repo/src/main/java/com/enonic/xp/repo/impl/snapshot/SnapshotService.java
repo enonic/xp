@@ -16,7 +16,5 @@ public interface SnapshotService
 
     DeleteSnapshotsResult delete( final DeleteSnapshotParams params );
 
-    void deleteSnapshotRepository();
-
     SnapshotResults list();
 }

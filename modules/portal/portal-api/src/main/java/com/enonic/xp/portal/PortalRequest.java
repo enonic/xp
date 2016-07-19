@@ -53,6 +53,15 @@ public final class PortalRequest
         this.branch = DEFAULT_BRANCH;
     }
 
+    public PortalRequest( final WebRequest webRequest )
+    {
+        super(webRequest);
+        this.baseUri = "";
+        this.contentPath = ContentPath.from( "/" );
+        this.mode = RenderMode.LIVE;
+        this.branch = DEFAULT_BRANCH;
+    }
+
     public Branch getBranch()
     {
         return branch;

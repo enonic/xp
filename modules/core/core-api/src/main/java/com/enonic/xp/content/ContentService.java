@@ -27,11 +27,14 @@ public interface ContentService
 
     Content rename( RenameContentParams params );
 
-    Contents delete( DeleteContentParams params );
+    @Deprecated
+    DeleteContentsResult delete( DeleteContentParams params );
+
+    DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
     PushContentsResult push( PushContentParams params );
 
-    ResolvePublishDependenciesResult resolvePublishDependencies( ResolvePublishDependenciesParams params );
+    CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
     Content duplicate( DuplicateContentParams params );
 
@@ -57,7 +60,10 @@ public interface ContentService
 
     FindContentByParentResult findByParent( FindContentByParentParams params );
 
+    @Deprecated
     FindContentByQueryResult find( FindContentByQueryParams params );
+
+    FindContentIdsByQueryResult find( final ContentQuery query );
 
     CompareContentResult compare( CompareContentParams params );
 
@@ -84,6 +90,6 @@ public interface ContentService
 
     Content reprocess( ContentId contentId );
 
-    Contents unpublishContent( final UnpublishContentParams params );
+    UnpublishContentsResult unpublishContent( final UnpublishContentParams params );
 
 }

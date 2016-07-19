@@ -166,7 +166,7 @@ module api.util.htmlarea.editor {
                 menubar: false,
                 statusbar: false,
                 paste_as_text: true,
-                browser_spellcheck : true,
+                browser_spellcheck: true,
                 plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
                 external_plugins: {
                     "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
@@ -266,9 +266,7 @@ module api.util.htmlarea.editor {
 
         private notifyImageDialog(config) {
             let event = CreateHtmlAreaDialogEvent.create().
-                setConfig(config).
-                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).
-                setContent(this.content).
+                setConfig(config).setType(api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).setContent(this.content).
                 build();
             this.publishCreateDialogEvent(event);
         }
@@ -284,8 +282,10 @@ module api.util.htmlarea.editor {
         private notifyMacroDialog(config) {
             let event = CreateHtmlAreaDialogEvent.create().
                 setConfig(config).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContentPath(this.contentPath).setApplicationKeys(
+                this.applicationKeys).
                 setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).
-                setContentPath(this.contentPath).
+                setContent(this.content).
                 setApplicationKeys(this.applicationKeys).
                 build();
             this.publishCreateDialogEvent(event);

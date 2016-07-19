@@ -30,13 +30,13 @@ public class ContentQueryJson
 
     @JsonCreator
     public ContentQueryJson( @JsonProperty("queryExpr") final String queryExprString, //
-                      @JsonProperty("from") final Integer from, //
-                      @JsonProperty("size") final Integer size, //
-                      @JsonProperty("contentTypeNames") final List<String> contentTypeNameString,
+                             @JsonProperty("from") final Integer from, //
+                             @JsonProperty("size") final Integer size, //
+                             @JsonProperty("contentTypeNames") final List<String> contentTypeNameString,
                              @JsonProperty("mustBeReferencedById") final String mustBeReferencedById,
-                      @JsonProperty("expand") final String expand,
-                      @JsonProperty("aggregationQueries") final List<AggregationQueryJson> aggregationQueries, //
-                      @JsonProperty("queryFilters") final List<FilterJson> queryFilters )
+                             @JsonProperty("expand") final String expand,
+                             @JsonProperty("aggregationQueries") final List<AggregationQueryJson> aggregationQueries, //
+                             @JsonProperty("queryFilters") final List<FilterJson> queryFilters )
     {
 
         this.queryExprString = queryExprString;

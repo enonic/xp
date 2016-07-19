@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
@@ -11,6 +10,9 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +28,7 @@ public class PushNodesCommandTest
     }
 
     @Test
-    public void push_to_other_branch()
+    public void push_single()
         throws Exception
     {
         final Node node = createNode( CreateNodeParams.create().
@@ -65,6 +67,34 @@ public class PushNodesCommandTest
         final Node prodNode = CTX_OTHER.callWith( () -> getNodeById( child.id() ) );
 
         assertTrue( prodNode != null );
+    }
+
+
+    @Test
+    public void push_child_missing_permission()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+
+        final Node child = createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child" ).
+            permissions( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    allowAll().
+                    deny( Permission.PUBLISH ).
+                    principal( TEST_DEFAULT_USER.getKey() ).
+                    build() ).build() ).
+            build() );
+
+        final PushNodesResult result = pushNodes( NodeIds.from( node.id(), child.id() ), WS_OTHER );
+
+        assertEquals( 1, result.getSuccessful().getSize() );
+        assertEquals( 1, result.getFailed().size() );
+        assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailed().iterator().next().getReason() );
     }
 
     @Test
@@ -176,8 +206,9 @@ public class PushNodesCommandTest
             setNodeId( NodeId.from( "child2_1" ) ).
             build() );
 
-        pushNodes( NodeIds.from( node1.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
-                   WS_OTHER );
+        final PushNodesResult result =
+            pushNodes( NodeIds.from( node1.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
+                       WS_OTHER );
 
         assertNotNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
 
@@ -233,43 +264,6 @@ public class PushNodesCommandTest
 
         assertEquals( 2, result.getSuccessful().getSize() );
     }
-
-    @Ignore
-    @Test
-    public void push_deleted()
-        throws Exception
-    {
-        final Node parent = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "parent" ).
-            setNodeId( NodeId.from( "parent" ) ).
-            build() );
-
-        final Node child1 = createNode( CreateNodeParams.create().
-            parent( parent.path() ).
-            name( "child1" ).
-            setNodeId( NodeId.from( "child1" ) ).
-            build() );
-
-        final Node child1_1 = createNode( CreateNodeParams.create().
-            parent( child1.path() ).
-            name( "child1_1" ).
-            setNodeId( NodeId.from( "child1_1" ) ).
-            build() );
-
-        refresh();
-
-        pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
-
-        doDeleteNode( parent.id() );
-
-        refresh();
-
-        final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
-
-        assertEquals( 3, result.getSuccessful().getSize() );
-    }
-
 
     @Test
     public void push_after_rename()

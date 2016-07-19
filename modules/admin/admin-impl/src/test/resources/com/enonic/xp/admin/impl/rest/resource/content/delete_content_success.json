@@ -1,16 +1,7 @@
 {
-  "failures": [],
-  "pendings": [],
-  "successes": [
-    {
-      "id": "123",
-      "name": "one",
-      "type": "folder"
-    },
-    {
-      "id": "123",
-      "name": "one",
-      "type": "folder"
-    }
-  ]
+  "contentName" : null,
+  "contentType" : null,
+  "failureReason" : null,
+  "pending" : 0,
+  "success" : 2
 }

@@ -1,6 +1,6 @@
 package com.enonic.xp.index;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
@@ -68,6 +68,22 @@ public class IndexConfig
 
     private final ImmutableList<IndexValueProcessor> indexValueProcessors;
 
+    private IndexConfig( Builder builder )
+    {
+        decideByType = builder.decideByType;
+        enabled = builder.enabled;
+        nGram = builder.nGram;
+        fulltext = builder.fulltext;
+        includeInAllText = builder.includeInAllText;
+        indexValueProcessors = ImmutableList.copyOf( builder.indexValueProcessors );
+        path = builder.path;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public boolean isDecideByType()
     {
         return decideByType;
@@ -101,94 +117,6 @@ public class IndexConfig
     public ImmutableList<IndexValueProcessor> getIndexValueProcessors()
     {
         return indexValueProcessors;
-    }
-
-    private IndexConfig( Builder builder )
-    {
-        decideByType = builder.decideByType;
-        enabled = builder.enabled;
-        nGram = builder.nGram;
-        fulltext = builder.fulltext;
-        includeInAllText = builder.includeInAllText;
-        indexValueProcessors = ImmutableList.copyOf( builder.indexValueProcessors );
-        path = builder.path;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-
-    public static final class Builder
-    {
-        private boolean decideByType = false;
-
-        private boolean enabled = true;
-
-        private boolean nGram = false;
-
-        private boolean fulltext = false;
-
-        private boolean includeInAllText = false;
-
-        private boolean path = false;
-
-        private List<IndexValueProcessor> indexValueProcessors = new LinkedList<>();
-
-        private Builder()
-        {
-        }
-
-        public Builder decideByType( boolean decideByType )
-        {
-            this.decideByType = decideByType;
-            return this;
-        }
-
-        public Builder enabled( boolean enabled )
-        {
-            this.enabled = enabled;
-            return this;
-        }
-
-        public Builder nGram( boolean nGram )
-        {
-            this.nGram = nGram;
-            return this;
-        }
-
-        public Builder fulltext( boolean fulltext )
-        {
-            this.fulltext = fulltext;
-            return this;
-        }
-
-        public Builder path( boolean path )
-        {
-            this.path = path;
-            return this;
-        }
-
-        public Builder includeInAllText( boolean includeInAllText )
-        {
-            this.includeInAllText = includeInAllText;
-            return this;
-        }
-
-        public Builder addIndexValueProcessor( IndexValueProcessor indexValueProcessor )
-        {
-            if ( indexValueProcessor != null )
-            {
-                this.indexValueProcessors.add( indexValueProcessor );
-            }
-            return this;
-        }
-
-        public IndexConfig build()
-        {
-            return new IndexConfig( this );
-        }
     }
 
     @Override
@@ -243,5 +171,76 @@ public class IndexConfig
         result = 31 * result + ( includeInAllText ? 1 : 0 );
         result = 31 * result + ( path ? 1 : 0 );
         return result;
+    }
+
+    public static final class Builder
+    {
+        private boolean decideByType = false;
+
+        private boolean enabled = true;
+
+        private boolean nGram = false;
+
+        private boolean fulltext = false;
+
+        private boolean includeInAllText = false;
+
+        private boolean path = false;
+
+        private List<IndexValueProcessor> indexValueProcessors = new ArrayList<>();
+
+        private Builder()
+        {
+        }
+
+        public Builder decideByType( boolean decideByType )
+        {
+            this.decideByType = decideByType;
+            return this;
+        }
+
+        public Builder enabled( boolean enabled )
+        {
+            this.enabled = enabled;
+            return this;
+        }
+
+        public Builder nGram( boolean nGram )
+        {
+            this.nGram = nGram;
+            return this;
+        }
+
+        public Builder fulltext( boolean fulltext )
+        {
+            this.fulltext = fulltext;
+            return this;
+        }
+
+        public Builder path( boolean path )
+        {
+            this.path = path;
+            return this;
+        }
+
+        public Builder includeInAllText( boolean includeInAllText )
+        {
+            this.includeInAllText = includeInAllText;
+            return this;
+        }
+
+        public Builder addIndexValueProcessor( IndexValueProcessor indexValueProcessor )
+        {
+            if ( indexValueProcessor != null )
+            {
+                this.indexValueProcessors.add( indexValueProcessor );
+            }
+            return this;
+        }
+
+        public IndexConfig build()
+        {
+            return new IndexConfig( this );
+        }
     }
 }

@@ -14,8 +14,8 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
@@ -86,9 +86,11 @@ public class DuplicateNodeCommandTest
             parentPath( duplicatedNode.path() ).
             build() );
 
-        final Nodes childNodes = children.getNodes();
+        final NodeIds childNodes = children.getNodeIds();
         assertEquals( 1, childNodes.getSize() );
-        assertEquals( childNode.name(), childNodes.first().name() );
+        final Node duplicatedChildNode = getNode( childNodes.first() );
+        assertEquals( childNode.name(), duplicatedChildNode.name() );
+        assertEquals( duplicatedNode.path(), duplicatedChildNode.parentPath() );
     }
 
     @Test
@@ -282,21 +284,25 @@ public class DuplicateNodeCommandTest
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "my-node" ) ).
             name( "my-node" ).
             build() );
 
         final Node childNode1 = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
+            setNodeId( NodeId.from( "child1" ) ).
             name( "child1" ).
             build() );
 
         final Node childNode2 = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
+            setNodeId( NodeId.from( "child2" ) ).
             name( "child2" ).
             build() );
 
         final Node childNode3 = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
+            setNodeId( NodeId.from( "child3" ) ).
             name( "child3" ).
             build() );
 
@@ -326,11 +332,11 @@ public class DuplicateNodeCommandTest
     {
         final FindNodesByParentResult children = findChildren( parentNode );
 
-        final Iterator<Node> iterator = children.getNodes().iterator();
+        final Iterator<NodeId> iterator = children.getNodeIds().iterator();
 
-        assertEquals( first, iterator.next().name().toString() );
-        assertEquals( second, iterator.next().name().toString() );
-        assertEquals( third, iterator.next().name().toString() );
+        assertEquals( first, getNode( iterator.next() ).name().toString() );
+        assertEquals( second, getNode( iterator.next() ).name().toString() );
+        assertEquals( third, getNode( iterator.next() ).name().toString() );
     }
 
     private void put_child1_on_top( final Node parentNode, final Node childNode1, final Node childNode3 )

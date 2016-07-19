@@ -7,11 +7,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.StorageService;
@@ -21,9 +17,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 abstract class AbstractNodeCommand
 {
-    static final OrderExpressions DEFAULT_ORDER_EXPRESSIONS =
-        OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) );
-
     final IndexServiceInternal indexServiceInternal;
 
     final StorageService storageService;

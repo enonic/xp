@@ -4,19 +4,19 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.storage.StorageService;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 class CompareStatusResolver
 {
-    private final NodeBranchMetadata source;
+    private final NodeBranchEntry source;
 
-    private final NodeBranchMetadata target;
+    private final NodeBranchEntry target;
 
     private final StorageService storageService;
 
@@ -92,21 +92,21 @@ class CompareStatusResolver
     }
 
 
-    private NodeVersionMetadata getVersion( final NodeBranchMetadata nodeBranchMetadata )
+    private NodeVersionMetadata getVersion( final NodeBranchEntry nodeBranchEntry )
     {
-        if ( nodeBranchMetadata == null )
+        if ( nodeBranchEntry == null )
         {
             throw new IllegalArgumentException( "Expected branchNodeVersion to be != null when trying to fetch NodeVersion" );
         }
 
         final NodeVersionMetadata version =
-            storageService.getVersion( new NodeVersionDocumentId( nodeBranchMetadata.getNodeId(), nodeBranchMetadata.getVersionId() ),
+            storageService.getVersion( new NodeVersionDocumentId( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId() ),
                                        InternalContext.from( ContextAccessor.current() ) );
 
         if ( version == null )
         {
             throw new NodeNotFoundException(
-                "Didn't find versionId '" + nodeBranchMetadata.getVersionId() + "' of Node with id '" + nodeBranchMetadata.getNodeId() +
+                "Didn't find versionId '" + nodeBranchEntry.getVersionId() + "' of Node with id '" + nodeBranchEntry.getNodeId() +
                     "'" );
         }
 
@@ -115,9 +115,9 @@ class CompareStatusResolver
 
     public static final class Builder
     {
-        private NodeBranchMetadata source;
+        private NodeBranchEntry source;
 
-        private NodeBranchMetadata target;
+        private NodeBranchEntry target;
 
         private StorageService storageService;
 
@@ -125,13 +125,13 @@ class CompareStatusResolver
         {
         }
 
-        public Builder source( NodeBranchMetadata source )
+        public Builder source( NodeBranchEntry source )
         {
             this.source = source;
             return this;
         }
 
-        public Builder target( NodeBranchMetadata target )
+        public Builder target( NodeBranchEntry target )
         {
             this.target = target;
             return this;

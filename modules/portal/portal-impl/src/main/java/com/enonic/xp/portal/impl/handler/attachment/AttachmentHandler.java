@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.attachment;
 
+import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,12 +10,15 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = PortalHandler.class)
+@Component(immediate = true, service = WebHandler.class)
 public final class AttachmentHandler
     extends EndpointHandler
 {
@@ -24,15 +28,20 @@ public final class AttachmentHandler
 
     public AttachmentHandler()
     {
-        super( "attachment" );
-        setMethodsAllowed( HttpMethod.GET, HttpMethod.HEAD );
+        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "attachment" );
     }
 
     @Override
-    protected PortalHandlerWorker newWorker( final PortalRequest req )
+    public boolean canHandle( final WebRequest webRequest )
+    {
+        return super.canHandle( webRequest ) && webRequest instanceof PortalRequest;
+    }
+
+    @Override
+    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String restPath = findRestPath( req );
+        final String restPath = findRestPath( webRequest );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
@@ -40,14 +49,13 @@ public final class AttachmentHandler
             throw notFound( "Not a valid attachment url pattern" );
         }
 
-        final AttachmentHandlerWorker worker = new AttachmentHandlerWorker();
+        final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( (PortalRequest) webRequest );
         worker.contentService = this.contentService;
         worker.download = "download".equals( matcher.group( 1 ) );
         worker.id = ContentId.from( matcher.group( 2 ) );
         worker.cacheable = matcher.group( 3 ) != null;
         worker.name = matcher.group( 4 );
-
-        return worker;
+        return worker.execute();
     }
 
     @Reference

@@ -62,6 +62,12 @@ public final class Nodes
         return NodePaths.from( paths );
     }
 
+    public NodeIds getIds()
+    {
+        final Collection<NodeId> ids = Collections2.transform( this.set, new ToIdFunction() );
+        return NodeIds.from( ids );
+    }
+
     private final static class ToIdFunction
         implements Function<Node, NodeId>
     {

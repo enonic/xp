@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -12,6 +13,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
@@ -20,28 +22,31 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
-import com.enonic.xp.repo.impl.elasticsearch.snapshot.ElasticsearchSnapshotService;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
-import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
@@ -50,6 +55,7 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
 
@@ -92,17 +98,17 @@ public abstract class AbstractNodeTest
 
     protected BranchServiceImpl branchService;
 
-    protected ElasticsearchIndexServiceInternal indexServiceInternal;
+    protected IndexServiceInternalImpl indexServiceInternal;
 
-    protected ElasticsearchSnapshotService snapshotService;
+    protected SnapshotServiceImpl snapshotService;
 
     protected StorageServiceImpl storageService;
 
     protected SearchServiceImpl searchService;
 
-    protected ElasticsearchSearchDao searchDao;
+    protected SearchDaoImpl searchDao;
 
-    protected IndexedDataServiceImpl indexedDataService;
+    protected IndexDataServiceImpl indexedDataService;
 
     @Before
     public void setUp()
@@ -111,6 +117,7 @@ public abstract class AbstractNodeTest
         super.setUp();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
+        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/snapshots" ) );
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
@@ -118,21 +125,20 @@ public abstract class AbstractNodeTest
 
         this.blobStore = new MemoryBlobStore();
 
-        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
-        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
-        this.searchDao = new ElasticsearchSearchDao();
-        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+        this.searchDao = new SearchDaoImpl();
+        this.searchDao.setClient( this.client );
 
-        this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
-        this.indexServiceInternal.setClient( client );
-        this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
+        this.indexServiceInternal = new IndexServiceInternalImpl();
+        this.indexServiceInternal.setClient( this.client );
 
         // Branch and version-services
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setStorageDao( storageDao );
+        this.branchService.setSearchDao( this.searchDao );
 
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
@@ -143,7 +149,7 @@ public abstract class AbstractNodeTest
         this.nodeDao.setConfiguration( repoConfig );
         this.nodeDao.setBlobStore( blobStore );
 
-        this.indexedDataService = new IndexedDataServiceImpl();
+        this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
         this.storageService = new StorageServiceImpl();
@@ -151,21 +157,21 @@ public abstract class AbstractNodeTest
         this.storageService.setBranchService( this.branchService );
         this.storageService.setIndexServiceInternal( this.indexServiceInternal );
         this.storageService.setNodeVersionDao( this.nodeDao );
-        this.storageService.setIndexedDataService( this.indexedDataService );
+        this.storageService.setIndexDataService( this.indexedDataService );
 
         // Search-service
 
         this.searchService = new SearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
 
-        this.snapshotService = new ElasticsearchSnapshotService();
-        this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
+        this.snapshotService = new SnapshotServiceImpl();
+        this.snapshotService.setClient( this.client );
+        this.snapshotService.setConfiguration( repoConfig );
 
         createRepository( TEST_REPO );
         createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
     }
-
 
     void createRepository( final Repository repository )
     {
@@ -207,6 +213,12 @@ public abstract class AbstractNodeTest
             build().
             execute();
     }
+
+    void createContentRepository()
+    {
+        createRepository( TEST_REPO );
+    }
+
 
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
@@ -289,6 +301,11 @@ public abstract class AbstractNodeTest
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
     }
 
+    protected void printContentRepoIndex( final RepositoryId repositoryId, final Branch branch )
+    {
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getName() );
+    }
+
     protected void printBranchIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
@@ -321,22 +338,24 @@ public abstract class AbstractNodeTest
             execute();
     }
 
-    protected Node doDeleteNode( final NodeId nodeId )
+    protected NodeIds doDeleteNode( final NodeId nodeId )
     {
-        return DeleteNodeByIdCommand.create().
+        final NodeBranchEntries result = DeleteNodeByIdCommand.create().
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
+
+        return NodeIds.from( result.getKeys() );
     }
 
     protected void queryAndAssert( final String queryString, final int expected )
     {
         final FindNodesByQueryResult result = doQuery( queryString );
 
-        assertEquals( expected, result.getNodes().getSize() );
+        assertEquals( expected, result.getNodeIds().getSize() );
     }
 
     protected FindNodesByQueryResult doQuery( final String queryString )
@@ -352,7 +371,7 @@ public abstract class AbstractNodeTest
     {
         assertEquals( nodes.length, result.getHits() );
 
-        final Iterator<Node> iterator = result.getNodes().iterator();
+        final Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
 
         for ( final Node node : nodes )
         {
@@ -364,11 +383,55 @@ public abstract class AbstractNodeTest
     {
         assertEquals( ids.length, result.getHits() );
 
-        final Iterator<Node> iterator = result.getNodes().iterator();
+        final Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
 
         for ( final String id : ids )
         {
             assertEquals( id, iterator.next().id().toString() );
         }
+    }
+
+    protected final void createNodes( final Node parent, final int numberOfNodes, final int maxLevels, final int level )
+    {
+        for ( int i = 0; i < numberOfNodes; i++ )
+        {
+            final PropertyTree data = new PropertyTree();
+            data.addReference( "myRef", new Reference( parent.id() ) );
+
+            final Node node = createNode( CreateNodeParams.create().
+                name( "nodeName_" + level + "-" + i ).
+                parent( parent.path() ).
+                data( data ).
+                build(), false );
+
+            if ( level < maxLevels )
+            {
+                createNodes( node, numberOfNodes, maxLevels, level + 1 );
+            }
+        }
+    }
+
+    protected Node getNode( final NodeId nodeId )
+    {
+        return GetNodeByIdCommand.create().
+            id( nodeId ).
+            indexServiceInternal( indexServiceInternal ).
+            storageService( storageService ).
+            searchService( searchService ).
+            build().
+            execute();
+
+    }
+
+    protected Nodes getNodes( final NodeIds nodeIds )
+    {
+        return GetNodesByIdsCommand.create().
+            ids( nodeIds ).
+            indexServiceInternal( indexServiceInternal ).
+            storageService( storageService ).
+            searchService( searchService ).
+            build().
+            execute();
+
     }
 }

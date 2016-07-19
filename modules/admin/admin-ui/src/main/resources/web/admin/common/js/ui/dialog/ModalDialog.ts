@@ -27,8 +27,6 @@ module api.ui.dialog {
 
         private static openDialogsCounter: number = 0;
 
-        private modalDialogIsFocused: boolean = false;
-
         private buttonRowIsFocused: boolean = false;
 
         private tabbable: api.dom.Element[];
@@ -89,30 +87,19 @@ module api.ui.dialog {
                     }
                 });
 
-
-            let modalDialogFocusOutTimeout;
             let buttonRowFocusOutTimeout;
 
-            this.onFocusIn((event) => {
-                this.modalDialogIsFocused = true;
-                clearTimeout(modalDialogFocusOutTimeout);
-            });
-
-            this.onFocusOut((event) => {
-                modalDialogFocusOutTimeout = setTimeout(() => {
-                    this.modalDialogIsFocused = false;
-
-                    if (this.hasTabbable() && !this.hasSubDialog()) {
-                        // last focusable - Cancel
-                        // first focusable - X
-                        if (this.buttonRowIsFocused) { // last element lost focus
-                            this.tabbable[0].giveFocus();
-                        } else {
-                            this.tabbable[this.tabbable.length - 1].giveFocus();
-                        }
+            api.util.AppHelper.focusInOut(this, () => {
+                if (this.hasTabbable() && !this.hasSubDialog()) {
+                    // last focusable - Cancel
+                    // first focusable - X
+                    if (this.buttonRowIsFocused) { // last element lost focus
+                        this.tabbable[0].giveFocus();
+                    } else {
+                        this.tabbable[this.tabbable.length - 1].giveFocus();
                     }
-                }, 50);
-            });
+                }
+            }, 50, false);
 
             this.buttonRow.onFocusIn((event) => {
                 this.buttonRowIsFocused = true;

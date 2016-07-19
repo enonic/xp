@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -334,19 +333,18 @@ public class FindNodesWithVersionDifferenceCommandTest
     {
         refresh();
 
-        final FindNodesWithVersionDifferenceParams.Builder queryBuilder = FindNodesWithVersionDifferenceParams.create().
+        final FindNodesWithVersionDifferenceCommand.Builder commandBuilder = FindNodesWithVersionDifferenceCommand.create().
+            searchService( this.searchService ).
+            storageService( this.storageService ).
             target( target ).
             source( source );
 
         if ( nodePath != null )
         {
-            queryBuilder.nodePath( nodePath );
+            commandBuilder.nodePath( nodePath );
         }
 
-        return FindNodesWithVersionDifferenceCommand.create().
-            searchService( this.searchService ).
-            query( queryBuilder.build() ).
-            build().
+        return commandBuilder.build().
             execute();
     }
 
@@ -354,7 +352,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     {
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
-            editor( editableNode -> editableNode.manualOrderValue = 10l ).
+            editor( editableNode -> editableNode.manualOrderValue = 10L ).
             build();
 
         return UpdateNodeCommand.create().

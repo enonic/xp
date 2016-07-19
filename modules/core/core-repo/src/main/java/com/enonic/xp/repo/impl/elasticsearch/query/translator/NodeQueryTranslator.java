@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.ValueFactory;
@@ -44,7 +43,6 @@ public class NodeQueryTranslator
             setAggregations( aggregationsBuilder.create( query.getAggregationQueries() ) ).
             sortBuilders( sortBuilder.create( query.getOrderBys() ) ).
             filter( filterBuilderFactory.create( query.getPostFilters() ) ).
-            searchType( SearchType.valueOf( request.getSearchType().toString() ) ).
             setReturnFields( request.getReturnFields() ).
             from( query.getFrom() ).
             size( query.getSize() );
