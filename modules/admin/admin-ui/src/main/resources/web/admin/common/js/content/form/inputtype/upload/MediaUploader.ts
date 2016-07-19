@@ -238,7 +238,7 @@ module api.content.form.inputtype.upload {
                 showCancel: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
+                hideDefaultDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true
             });
         }

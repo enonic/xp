@@ -262,21 +262,20 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageUploader(): api.content.ImageUploaderEl {
-            var uploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
+            var uploader = new api.content.ImageUploaderEl({
                 params: {
                     parent: this.content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
-                showButtons: false,
                 showResult: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                scaleWidth: false,
-                deferred: true
+                deferred: true,
+                showCancel: false,
+                selfIsDropzone: false
             });
 
-            uploader.addClass("minimized");
             uploader.hide();
 
             uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {

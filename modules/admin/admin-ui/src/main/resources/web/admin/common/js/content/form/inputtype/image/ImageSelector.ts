@@ -338,7 +338,6 @@ module api.content.form.inputtype.image {
                 showResult: false,
                 maximumOccurrences: this.getRemainingOccurrences(),
                 allowMultiSelection: multiSelection,
-                scaleWidth: false,
                 deferred: true
             });
 
@@ -403,28 +402,24 @@ module api.content.form.inputtype.image {
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
-            /*
-             * Drag N' Drop
-             */
-
-            this.uploader.addClass("minimized");
-
+            //Drag N' Drop
             // in order to toggle appropriate class during drag event
             // we catch drag enter on this element and trigger uploader to appear,
             // then catch drag leave on uploader's dropzone to get back to previous state
             this.onDragEnter((event: DragEvent) => {
+                event.stopPropagation();
                 this.uploader.giveFocus();
-                this.uploader.toggleClass("minimized", false);
+                this.uploader.setDefaultDropzoneVisible(true, true);
             });
 
             this.uploader.onDropzoneDragLeave((event: DragEvent) => {
                 this.uploader.giveBlur();
-                this.uploader.toggleClass("minimized", true);
+                this.uploader.setDefaultDropzoneVisible(false);
             });
 
             this.uploader.onDropzoneDrop((event) => {
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
-                this.uploader.toggleClass("minimized", true);
+                this.uploader.setDefaultDropzoneVisible(false);
             });
 
             return this.uploader;

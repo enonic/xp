@@ -1,4 +1,4 @@
-// =include fineuploader/fine-uploader.js
+// =include fineuploader/fine-uploader.min.js
 // =include jquery-2.1.4.js
 // =include jquery-ui.js
 // =include jquery.simulate.js

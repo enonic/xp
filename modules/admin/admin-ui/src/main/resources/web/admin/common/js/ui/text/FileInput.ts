@@ -22,12 +22,12 @@ module api.ui.text {
             this.mediaUploaderEl = new api.content.MediaUploaderEl({
                 operation: api.content.MediaUploaderElOperation.create,
                 name: 'file-input-uploader',
-                allowDrop: false,
+                allowDrop: true,
                 showResult: false,
                 showReset: false,
                 showCancel: false,
                 allowMultiSelection: true,
-                deferred: true,  // wait till it's shown
+                deferred: false,  // wait till it's shown
                 value: originalValue
             });
 
