@@ -22,12 +22,17 @@ export class NewContentDialogMediaUploader extends api.dom.DivEl {
             showResult: false,
             showReset: false,
             showCancel: false,
+            allowBrowse: false,
             allowMultiSelection: true,
             deferred: true
         });
         this.appendChild(this.mediaUploaderEl);
 
         this.mediaUploaderEl.setEnabled(true);
+    }
+
+    getMediaUploader(): api.content.MediaUploaderEl {
+        return this.mediaUploaderEl;
     }
 
     setEnabled(value: boolean) {

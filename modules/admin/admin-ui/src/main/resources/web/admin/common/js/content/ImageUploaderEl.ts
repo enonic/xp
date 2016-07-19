@@ -190,7 +190,7 @@ module api.content {
                 }
             };
             var uploadButtonClickedHandler = () => {
-                wemjq(this.getDropzone().getEl().getHTMLElement()).simulate("click");
+                this.showFileSelectionDialog();
             };
             var getLastButtonInContainerBlurHandler = () => {
                 this.toggleSelected(imageEditor);

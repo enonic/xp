@@ -1,7 +1,6 @@
 import "../../api.ts";
 
 import ApplicationKey = api.application.ApplicationKey;
-import UploadItem = api.ui.uploader.UploadItem;
 import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;

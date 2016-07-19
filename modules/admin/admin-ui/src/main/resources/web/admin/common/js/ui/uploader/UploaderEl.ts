@@ -1,26 +1,18 @@
+declare var qq;
+
 module api.ui.uploader {
 
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
     import Element = api.dom.Element;
 
-    export class PluploadStatus {
-        public static QUEUED = plupload.QUEUED;
-        public static UPLOADING = plupload.UPLOADING;
-        public static FAILED = plupload.FAILED;
-        public static DONE = plupload.DONE;
-    }
-
-    export interface PluploadFile {
-        id: string;
-        name: string;
-        percent: number;
-        type: string;
-        size: number;
-        origSize: number;
-        loaded: number;
-        status: PluploadStatus;
-        lastModifiedDate: Date;
+    export interface FineUploaderFile {
+        id: string,
+        name: string,
+        size: number,
+        uuid: string,
+        status: string,
+        percent: number
     }
 
     export interface UploaderElConfig {
@@ -43,13 +35,13 @@ module api.ui.uploader {
         value?: string;
         disabled?: boolean;
         hideDropZone?: boolean;
-        beforeUploadCallback?: (files: PluploadFile[]) => void;
     }
 
     export class UploaderEl<MODEL extends api.Equitable> extends api.dom.FormInputEl {
 
         protected config: UploaderElConfig;
         protected uploader;
+        protected dragAndDropper;
         protected value;
         private uploadedItems: UploadItem<MODEL>[] = [];
 
@@ -70,8 +62,12 @@ module api.ui.uploader {
         private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>):void }[] = [];
         private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>):void }[] = [];
         private uploadResetListeners: {():void }[] = [];
+        private dropzoneDragEnterListeners: { (event):void }[] = [];
+        private dropzoneDragLeaveListeners: { (event):void }[] = [];
+        private dropzoneDropListeners: { (event):void }[] = [];
 
-        private beforeUploadCallback: (files: PluploadFile[]) => void;
+        private debouncedUploadStart: () => void;
+        private initHandlerOnEvent: (event) => void;
 
         public static debug: boolean = false;
 
@@ -80,17 +76,49 @@ module api.ui.uploader {
 
             // init defaults
             this.initConfig(config);
-
-            if (this.config.showInput) {
-                this.input = api.ui.text.TextInput.middle();
-                this.input.setPlaceholder("Paste URL to image here");
-                this.appendChild(this.input);
-            }
+            this.initTextInput();
 
             if (this.config.value) {
                 this.value = this.config.value;
             }
 
+            this.initDropzone();
+
+            this.appendChild(this.progress = new api.ui.ProgressBar());
+
+            this.appendChild(this.resultContainer = new api.dom.DivEl('result-container'));
+
+            this.initCancelButton();
+
+            this.initResetButton();
+
+            this.handleKeyEvents();
+
+            this.handleInitTrigger();
+
+            this.onRemoved((event) => this.destroyHandler());
+
+            this.listenToDragEvents();
+
+            this.initDebouncedUploadStart();
+        }
+
+        private initDebouncedUploadStart() {
+            this.debouncedUploadStart = api.util.AppHelper.debounce(() => {
+                this.notifyFileUploadStarted(this.uploadedItems);
+                this.uploader.uploadStoredFiles();
+            }, 250, false);
+        }
+
+        private initTextInput() {
+            if (this.config.showInput) {
+                this.input = api.ui.text.TextInput.middle();
+                this.input.setPlaceholder("Paste URL to image here");
+                this.appendChild(this.input);
+            }
+        }
+
+        private initDropzone() {
             // need the container to constrain plupload created dropzone
             this.dropzoneContainer = new api.dom.DivEl('dropzone-container');
             this.dropzone = new api.dom.AEl("dropzone");
@@ -103,13 +131,9 @@ module api.ui.uploader {
                 this.dropzoneContainer.getEl().setAttribute("hidden", "true");
             }
             this.appendChild(this.dropzoneContainer);
+        }
 
-            this.progress = new api.ui.ProgressBar();
-            this.appendChild(this.progress);
-
-            this.resultContainer = new api.dom.DivEl('result-container');
-            this.appendChild(this.resultContainer);
-
+        private initCancelButton() {
             this.cancelBtn = new Button("Cancel");
             this.cancelBtn.setVisible(this.config.showCancel);
             this.cancelBtn.onClicked((event: MouseEvent) => {
@@ -117,14 +141,18 @@ module api.ui.uploader {
                 this.reset();
             });
             this.appendChild(this.cancelBtn);
+        }
 
+        private initResetButton() {
             this.resetBtn = new CloseButton();
             this.resetBtn.setVisible(this.config.showReset);
             this.resetBtn.onClicked((event: MouseEvent) => {
                 this.reset();
             });
             this.appendChild(this.resetBtn);
+        }
 
+        private handleKeyEvents() {
             this.onKeyPressed((event: KeyboardEvent) => {
                 if (this.dropzoneContainer.isVisible() && event.keyCode == 13) {
                     wemjq(this.dropzone.getEl().getHTMLElement()).simulate("click");
@@ -139,25 +167,21 @@ module api.ui.uploader {
                 new KeyBinding('del', resetHandler),
                 new KeyBinding('backspace', resetHandler)
             ]);
+        }
 
-
+        private handleInitTrigger() {
+            this.initHandlerOnEvent = (event) => this.initHandler();
             if (this.config.deferred) {
-                this.onShown((event) => this.initHandler.call(this, event));
+                this.onShown(this.initHandlerOnEvent);
             } else {
-                this.onRendered((event) => this.initHandler.call(this, event));
+                this.onRendered(this.initHandlerOnEvent);
             }
-
-            this.onRemoved((event) => this.destroyHandler.call(this, event));
-
-            this.listenToDragEvents();
         }
 
         private listenToDragEvents() {
             var dragOverEl;
-            // make use of the fact that when dragging
-            // first drag enter occurs on the child element and after that
-            // drag leave occurs on the parent element that we came from
-            // meaning that to know when we left some element
+            // make use of the fact that when dragging first drag enter occurs on the child element and after that
+            // drag leave occurs on the parent element that we came from meaning that to know when we left some element
             // we need to compare it to the one currently dragged over
             this.onDragEnter((event: DragEvent) => {
                 if (this.config.dropAlwaysAllowed) {
@@ -218,6 +242,9 @@ module api.ui.uploader {
                         this.config.dropAlwaysAllowed ? this.getId() : this.dropzone.getId()
                     );
 
+                    this.unShown(this.initHandlerOnEvent);
+                    this.unRendered(this.initHandlerOnEvent);
+
                     if (this.value) {
                         this.setValue(this.value);
                     } else if (!this.config.hideDropZone) {
@@ -232,8 +259,12 @@ module api.ui.uploader {
                 console.log('Destroying uploader', this);
             }
             if (this.uploader) {
-                this.uploader.destroy();
+                this.uploader.reset(true);
                 this.uploader = null;
+            }
+            if (this.dragAndDropper) {
+                this.dragAndDropper.dispose();
+                this.dragAndDropper = null;
             }
         }
 
@@ -279,8 +310,6 @@ module api.ui.uploader {
             if (this.config.disabled == undefined) {
                 this.config.disabled = false;
             }
-
-            this.beforeUploadCallback = this.config.beforeUploadCallback;
         }
 
         getName(): string {
@@ -385,7 +414,7 @@ module api.ui.uploader {
 
         stop(): UploaderEl<MODEL> {
             if (this.uploader) {
-                this.uploader.stop();
+                this.uploader.cancelAll();
             }
             return this;
         }
@@ -452,10 +481,11 @@ module api.ui.uploader {
 
         setParams(params: {[key: string]: any}): UploaderEl<MODEL> {
             if (this.uploader) {
-                this.uploader.setOption('multipart_params', params);
-            } else {
-                this.config.params = params;
+                this.uploader.setParams(params);
             }
+
+            this.config.params = params;
+
             return this;
         }
 
@@ -463,6 +493,8 @@ module api.ui.uploader {
             this.config.disabled = !enabled;
 
             if (!enabled) {
+                this.unShown(this.initHandlerOnEvent);
+                this.unRendered(this.initHandlerOnEvent);
                 this.dropzone.getEl().setAttribute('disabled', 'true');
             } else {
                 this.dropzone.getEl().removeAttribute('disabled');
@@ -479,6 +511,8 @@ module api.ui.uploader {
                 if (UploaderEl.debug) {
                     console.log('Enabling uploader', this);
                 }
+                this.unShown(this.initHandlerOnEvent);
+                this.unRendered(this.initHandlerOnEvent);
                 if (this.config.deferred) {
 
                     if (this.isVisible()) {
@@ -487,7 +521,7 @@ module api.ui.uploader {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' shown', this);
                         }
-                        this.onShown((event) => this.initHandler.call(this, event));
+                        this.onShown(this.initHandlerOnEvent);
                     }
                 } else {
 
@@ -497,7 +531,7 @@ module api.ui.uploader {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' rendered', this);
                         }
-                        this.onRendered((event) => this.initHandler.call(this, event));
+                        this.onRendered(this.initHandlerOnEvent);
                     }
                 }
             }
@@ -509,7 +543,7 @@ module api.ui.uploader {
         }
 
         getParams(): {[key: string]: any} {
-            return this.uploader ? this.uploader.getOption('multipart_params') : this.config.params;
+            return this.config.params;
         }
 
         private findUploadItemById(id: string): UploadItem<MODEL> {
@@ -522,196 +556,136 @@ module api.ui.uploader {
             return null;
         }
 
-        private isFolder(file: PluploadFile): boolean {
-            // there's no way to detect if uploaded file is a folder so this is as close as we can get
-            return file.size % 4096 == 0 && api.util.StringHelper.isEmpty(file.type);
+        private submitCallback(id, name) {
+            var file: FineUploaderFile = this.uploader.getFile(id);
+            file.id = id;
+
+            var uploadFile = new UploadItem<MODEL>(file);
+            this.uploadedItems.push(uploadFile);
+
+            this.setProgressVisible();
+
+            this.debouncedUploadStart();
         }
 
-        private validateFiles(up, files: PluploadFile[]) {
-            // Check for folders
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i];
-                if (this.isFolder(file)) {
-                    if (UploaderEl.debug) {
-                        console.log('Removing folder [' + file.name + '] because it can\'t be uploaded', this);
-                    }
-
-                    files.splice(i, 1);
-                    up.splice(i, 1);
-                    api.notify.NotifyManager.get().showWarning('Folder [' + file.name + '] upload is not supported yet');
-                }
+        private statusChangeCallback(id, oldStatus, newStatus) {
+            var uploadItem = this.findUploadItemById(id);
+            if (!!uploadItem) {
+                uploadItem.setStatus(newStatus);
             }
-
-            // Check for max allowed occurrences
-            /* if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
-             if (UploaderEl.debug) {
-             console.log('Max ' + this.config.maximumOccurrences + ' files allowed, removing the rest', this);
-             }
-
-             files.splice(this.config.maximumOccurrences);
-             up.splice(this.config.maximumOccurrences);
-             api.notify.NotifyManager.get().showWarning('Max ' + this.config.maximumOccurrences + ' files are allowed');
-             }*/
-
-            return files.length > 0;
         }
 
-        protected initUploader(browseId: string, dropId: string) {
+        private progressCallback(id, name, uploadedBytes, totalBytes) {
+            var percent = Math.round(uploadedBytes / totalBytes * 100);
 
-            if (!plupload) {
-                throw new Error("Uploader: plupload not found, check if it is included in page.");
+            this.progress.setValue(percent);
+
+            var uploadItem = this.findUploadItemById(id);
+            if (uploadItem) {
+                uploadItem.setProgress(percent);
+                this.notifyFileUploadProgress(uploadItem);
             }
+        }
 
-            var uploader = new plupload.Uploader({
-                multipart_params: this.config.params,
-                runtimes: 'html5,flash,silverlight,html4',
-                multi_selection: this.config.allowMultiSelection,
-                browse_button: this.config.allowBrowse ? browseId : undefined,
-                url: this.config.url,
-                multipart: true,
-                drop_element: this.config.allowDrop ? dropId : undefined,
-                flash_swf_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.swf'),
-                silverlight_xap_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.xap'),
-                filters: {
-                    mime_types: this.config.allowTypes
-                }
-            });
-
-            uploader.bind('Init', (up, params) => {
-                if (UploaderEl.debug) {
-                    console.log('uploader init', up, params);
-                }
-                this.disableInputFocus();
-
-            }, this);
-
-            uploader.bind('FilesAdded', (up, files: PluploadFile[]) => {
-
-                if (this.beforeUploadCallback) {
-                    this.beforeUploadCallback(files);
-                }
-
-                if (UploaderEl.debug) {
-                    console.log('uploader files added', up, files);
-                }
-
-                if (!this.validateFiles(up, files)) {
-                    if (UploaderEl.debug) {
-                        console.log('no valid files for upload found', up, files);
-                    }
-                    return;
-                }
-
-                files.forEach((file: PluploadFile) => {
-                    this.uploadedItems.push(new UploadItem<MODEL>(file));
-                });
-
-                this.setProgressVisible();
-
-                // detach from the main thread
-                setTimeout(function () {
-                    up.start();
-                }, 1);
-
-                this.notifyFileUploadStarted(this.uploadedItems);
-            }, this);
-
-            uploader.bind('QueueChanged', (up) => {
-                if (UploaderEl.debug) {
-                    console.log('uploader queue changed', up);
-                }
-            }, this);
-
-            uploader.bind('UploadFile', (up, file) => {
-                if (UploaderEl.debug) {
-                    console.log('uploader upload file', up, file);
-                }
-            }, this);
-
-            uploader.bind('UploadProgress', (up, file: PluploadFile) => {
-                if (UploaderEl.debug) {
-                    console.log('uploader upload progress', up, file);
-                }
-
-                this.progress.setValue(file.percent);
-
-                var uploadItem = this.findUploadItemById(file.id);
-                if (uploadItem) {
-                    uploadItem.setProgress(file.percent);
-                    this.notifyFileUploadProgress(uploadItem);
-                }
-            }, this);
-
-            uploader.bind('FileUploaded', (up, file: PluploadFile, response) => {
-                if (UploaderEl.debug) {
-                    console.log('uploader file uploaded', up, file, response);
-                }
-
-                if (response && response.status === 200) {
-                    try {
-                        var uploadItem = this.findUploadItemById(file.id);
-                        if (uploadItem) {
-                            var model: MODEL = this.createModel(JSON.parse(response.response));
-                            uploadItem.setModel(model);
-                            this.notifyFileUploaded(uploadItem);
-                        }
-                    } catch (e) {
-                        console.warn("Failed to parse the response", response, e);
-                    }
-                }
-
-            }, this);
-
-            uploader.bind('Error', (up, response) => {
-                if (UploaderEl.debug) {
-                    console.log('uploader error', up, response);
-                }
-
+        private fileCompleteCallback(id, name, response, xhrOrXdr) {
+            if (xhrOrXdr && xhrOrXdr.status === 200) {
                 try {
-                    var responseObj = JSON.parse(response.response);
+                    var uploadItem = this.findUploadItemById(id);
+                    if (uploadItem) {
+                        var model: MODEL = this.createModel(JSON.parse(xhrOrXdr.response));
+                        uploadItem.setModel(model);
+                        this.notifyFileUploaded(uploadItem);
+                    }
+                } catch (e) {
+                    console.warn("Failed to parse the response", response, e);
+                }
+            }
+        }
+
+        private errorCallback(id, name, errorReason, xhrOrXdr) {
+            if (xhrOrXdr && xhrOrXdr.status !== 200) {
+                try {
+                    var responseObj = JSON.parse(xhrOrXdr.response);
                     var error = new api.rest.RequestError(responseObj.status, responseObj.message);
                     api.DefaultErrorHandler.handle(error);
                 } catch (e) {
-                    console.warn("Failed to parse the response", response, e);
-                    var files = up.files.map((file: PluploadFile) => file.name);
-                    api.notify.NotifyManager.get().showError(this.getErrorMessage(files.join(', ')));
+                    console.warn("Failed to parse the response", xhrOrXdr.response, e);
+                    api.notify.NotifyManager.get().showError(this.getErrorMessage(name));
                 }
 
-                var uploadItem = this.findUploadItemById(response.file.id);
+                var uploadItem = this.findUploadItemById(id);
                 if (uploadItem) {
                     uploadItem.setModel(null);
                     this.notifyUploadFailed(uploadItem);
                 }
-            }, this);
+            }
+        }
 
-            uploader.bind('UploadComplete', (up, files) => {
-                if (UploaderEl.debug) {
-                    console.log('uploader upload complete', up, files);
+        private allCompleteCallback(succeeded, failed) {
+            var values = [];
+            this.uploadedItems.forEach((item) => {
+                if (item.getStatus() == qq.status.UPLOAD_SUCCESSFUL) {
+                    if (item.getModel()) {
+                        values.push(this.getModelValue(item.getModel()));
+                    } else {
+                        item.notifyFailed();
+                        this.notifyUploadFailed(item);
+                    }
                 }
+            });
 
-                var values = [];
-                this.uploadedItems.forEach((item) => {
-                    if (item.getStatus() == PluploadStatus.DONE) {
-                        if (item.getModel()) {
-                            values.push(this.getModelValue(item.getModel()));
-                        } else {
-                            item.notifyFailed();
-                            this.notifyUploadFailed(item);
-                        }
+            if (values.length > 0) {
+                this.setValue(JSON.stringify(values), false, true);
+                this.notifyUploadCompleted(this.uploadedItems);
+            }
+
+            this.uploadedItems.length = 0;
+        }
+
+        protected initUploader(browseId: string, dropId: string) {
+            var uploader = new qq.FineUploaderBasic({
+                debug: false,
+                button: this.config.allowBrowse ? document.getElementById(browseId) : undefined,
+                multiple: this.config.allowMultiSelection,
+                folders: false,
+                autoUpload: false,
+                request: {
+                    endpoint: this.config.url,
+                    params: this.config.params,
+                    inputName: "file",
+                    filenameParam: "name"
+                },
+                validation: {
+                    acceptFiles: this.config.allowTypes
+                },
+                text: {
+                    fileInputTitle: ""
+                },
+                callbacks: {
+                    onSubmit: this.submitCallback.bind(this),
+                    onStatusChange: this.statusChangeCallback.bind(this),
+                    onProgress: this.progressCallback.bind(this),
+                    onComplete: this.fileCompleteCallback.bind(this),
+                    onError: this.errorCallback.bind(this),
+                    onAllComplete: this.allCompleteCallback.bind(this)
+                }
+            });
+
+            if (this.config.allowDrop) {
+                this.dragAndDropper = new qq.DragAndDrop({
+                    dropZoneElements: [document.getElementById(dropId)],
+                    debug: false,
+                    callbacks: {
+                        //this submits the dropped files to Fine Uploader
+                        processingDroppedFilesComplete: (files, dropTarget) => uploader.addFiles(files),
+                        onDrop: (event) => this.notifyDropzoneDrop(event),
+                        onDragEnter: (event) => this.notifyDropzoneDragEnter(event),
+                        onDragLeave: (event) => this.notifyDropzoneDragLeave(event)
                     }
                 });
+            }
 
-                if (values.length > 0) {
-                    this.setValue(JSON.stringify(values), false, true);
-                    this.notifyUploadCompleted(this.uploadedItems);
-                }
-
-                this.uploadedItems.length = 0;
-                this.uploader.splice();
-            }, this);
-
-            uploader.init();
-
+            this.disableInputFocus(); // on init
             return uploader;
         }
 
@@ -733,6 +707,10 @@ module api.ui.uploader {
 
         getDropzone(): api.dom.AEl {
             return this.dropzone;
+        }
+
+        showFileSelectionDialog() {
+            wemjq(this.uploader.getInputButton().getInput()).simulate("click");
         }
 
         onUploadStarted(listener: (event: FileUploadStartedEvent<MODEL>) => void) {
@@ -792,6 +770,54 @@ module api.ui.uploader {
         unUploadFailed(listener: (event: FileUploadFailedEvent<MODEL>) => void) {
             this.uploadFailedListeners = this.uploadFailedListeners.filter((currentListener) => {
                 return listener != currentListener;
+            });
+        }
+
+        onDropzoneDragEnter(listener: (event) => void) {
+            this.dropzoneDragEnterListeners.push(listener);
+        }
+
+        unDropzoneDragEnter(listener: (event) => void) {
+            this.dropzoneDragEnterListeners = this.dropzoneDragEnterListeners.filter((currentListener) => {
+                return listener != currentListener;
+            });
+        }
+
+        onDropzoneDragLeave(listener: (event) => void) {
+            this.dropzoneDragLeaveListeners.push(listener);
+        }
+
+        unDropzoneDragLeave(listener: (event) => void) {
+            this.dropzoneDragLeaveListeners = this.dropzoneDragLeaveListeners.filter((currentListener) => {
+                return listener != currentListener;
+            });
+        }
+
+        onDropzoneDrop(listener: (event) => void) {
+            this.dropzoneDropListeners.push(listener);
+        }
+
+        unDropzoneDragDrop(listener: (event) => void) {
+            this.dropzoneDropListeners = this.dropzoneDropListeners.filter((currentListener) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyDropzoneDragEnter(event) {
+            this.dropzoneDragEnterListeners.forEach((listener: (event)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyDropzoneDragLeave(event) {
+            this.dropzoneDragLeaveListeners.forEach((listener: (event)=>void) => {
+                listener(event);
+            });
+        }
+
+        private notifyDropzoneDrop(event) {
+            this.dropzoneDropListeners.forEach((listener: (event)=>void) => {
+                listener(event);
             });
         }
 
