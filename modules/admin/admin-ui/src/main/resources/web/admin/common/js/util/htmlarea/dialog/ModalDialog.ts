@@ -83,7 +83,7 @@ module api.util.htmlarea.dialog {
 
         protected createForm(formItems:FormItem[]):Form {
             var form = new Form(),
-                validationCls = ModalDialog.VALIDATION_CLASS;
+                validationCls = api.form.FormView.VALIDATION_CLASS;
 
             formItems.forEach((formItem:FormItem) => {
                 form.add(this.createFieldSet(formItem));
@@ -98,9 +98,9 @@ module api.util.htmlarea.dialog {
 
         protected displayValidationErrors(value: boolean) {
             if (value) {
-                this.mainForm.addClass(ModalDialog.VALIDATION_CLASS);
+                this.mainForm.addClass(api.form.FormView.VALIDATION_CLASS);
             } else {
-                this.mainForm.removeClass(ModalDialog.VALIDATION_CLASS);
+                this.mainForm.removeClass(api.form.FormView.VALIDATION_CLASS);
             }
         }
 
