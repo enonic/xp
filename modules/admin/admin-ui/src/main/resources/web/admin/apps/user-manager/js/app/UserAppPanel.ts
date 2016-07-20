@@ -104,18 +104,12 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
     addWizardPanel(tabMenuItem: api.app.bar.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
         super.addWizardPanel(tabMenuItem, wizardPanel);
 
-        wizardPanel.onRendered((event) => {
+        wizardPanel.onRendered(() => {
+            tabMenuItem.setLabel(this.getWizardPanelItemDisplayName(wizardPanel));
 
             wizardPanel.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() === "displayName") {
-                    var name = <string>event.getNewValue();
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, UserStoreWizardPanel)) {
-                        name = name ||
-                               api.content.ContentUnnamed.prettifyUnnamed((<UserStoreWizardPanel>wizardPanel).getUserItemType());
-                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, PrincipalWizardPanel)) {
-                        name = name ||
-                               api.content.ContentUnnamed.prettifyUnnamed((<PrincipalWizardPanel>wizardPanel).getUserItemType());
-                    }
+                    var name = <string>event.getNewValue() || this.getPrettyNameForWizardPanel(wizardPanel);
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
             });
@@ -165,60 +159,57 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
 
     }
 
+    private getWizardPanelItemDisplayName(wizardPanel: api.app.wizard.WizardPanel<api.Equitable>): string {
+        var displayName;
+        if (!!wizardPanel.getPersistedItem()) {
+            displayName = (<any>wizardPanel.getPersistedItem()).getDisplayName();
+        }
+
+        return displayName || this.getPrettyNameForWizardPanel(wizardPanel);
+    }
+
+    private getPrettyNameForWizardPanel(wizard: api.app.wizard.WizardPanel<api.Equitable>): string {
+        return api.content.ContentUnnamed.prettifyUnnamed((<UserItemWizardPanel>wizard).getUserItemType());
+    }
+
     private handleWizardUpdated(wizard: UserItemWizardPanel<api.Equitable>, tabMenuItem: AppBarTabMenuItem,
                                 closeMenuItem: AppBarTabMenuItem) {
-
-        var displayName, id: string;
-        if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.Principal)) {
-            displayName = (<api.security.Principal>wizard.getPersistedItem()).getDisplayName() ||
-                          api.content.ContentUnnamed.prettifyUnnamed((<api.security.Principal>wizard.getPersistedItem()).getDisplayName());
-            id = (<api.security.Principal>wizard.getPersistedItem()).getKey().getId();
-        } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.UserStore)) {
-            displayName = (<api.security.UserStore>wizard.getPersistedItem()).getDisplayName() ||
-                          api.content.ContentUnnamed.prettifyUnnamed((<UserStoreWizardPanel>wizard).getUserItemType());
-            id = (<api.security.UserStore>wizard.getPersistedItem()).getKey().getId();
-        }
 
         if (closeMenuItem != null) {
             this.getAppBarTabMenu().deselectNavigationItem();
             this.getAppBarTabMenu().removeNavigationItem(closeMenuItem);
             this.removePanelByIndex(closeMenuItem.getIndex());
         }
-        tabMenuItem = new AppBarTabMenuItemBuilder().setLabel(displayName).setTabId(wizard.getTabId()).setEditing(true).setCloseAction(
-            wizard.getCloseAction()).build();
+        tabMenuItem = new AppBarTabMenuItemBuilder().
+            setTabId(wizard.getTabId()).
+            setEditing(true).
+            setCloseAction(wizard.getCloseAction()).
+            build();
         this.addWizardPanel(tabMenuItem, wizard);
 
-        var viewTabId = AppBarTabId.forView(id);
-        var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
-        if (viewTabMenuItem != null) {
-            this.removePanelByIndex(viewTabMenuItem.getIndex());
-        }
-
+        // TODO: what is this view that we try to remove?
+        /*var viewTabId = AppBarTabId.forView(id);
+         var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
+         if (viewTabMenuItem != null) {
+         this.removePanelByIndex(viewTabMenuItem.getIndex());
+         }*/
     }
 
 
     private handleNew(event: NewPrincipalEvent) {
-        var userItem = event.getPrincipals()[0];
-
-        var data: PrincipalData = this.resolvePrincipalData(userItem);
-
-        var tabId = AppBarTabId.forNew(data.tabName),
+        var userItem = event.getPrincipals()[0],
+            data: PrincipalData = this.resolvePrincipalData(userItem),
+            tabId = AppBarTabId.forNew(data.tabName),
             tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
         if (tabMenuItem != null) {
             this.selectPanel(tabMenuItem);
-
         } else {
-
             if (!userItem || userItem.getType() == UserTreeGridItemType.USER_STORE) {
-
                 this.handleUserStoreNew(tabId, data.tabName);
-
             } else {
                 this.loadUserStoreIfNeeded(userItem).then((userStore: UserStore) => {
-
                     this.handlePrincipalNew(tabId, data, userStore, userItem);
-
                 });
             }
         }
@@ -329,12 +320,8 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
     }
 
     private handleUserStoreNew(tabId: AppBarTabId, tabName: string) {
-        var wizardParams = <UserStoreWizardPanelParams> new UserStoreWizardPanelParams()
-            .setTabId(tabId);
-
-        var wizard = new UserStoreWizardPanel(wizardParams);
-
-        this.handleWizardCreated(wizard, tabName);
+        var wizardParams = <UserStoreWizardPanelParams> new UserStoreWizardPanelParams().setTabId(tabId);
+        this.handleWizardCreated(new UserStoreWizardPanel(wizardParams), tabName);
     }
 
 
@@ -447,38 +434,21 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
 
         var name = e.getPrincipal().getDisplayName();
         if (api.ObjectHelper.iFrameSafeInstanceOf(wizard, PrincipalWizardPanel)) {
-            name = name ||
-                   api.content.ContentUnnamed.prettifyUnnamed((<UserItemWizardPanel<Principal>>wizard).getUserItemType());
+            name = name || this.getPrettyNameForWizardPanel(wizard);
         }
         this.getAppBarTabMenu().getNavigationItemById(newTabId).setLabel(name, !e.getPrincipal().getDisplayName());
     }
 
-    private resolveTabMenuItemForUserItemBeingEditedOrViewed(userItem: UserTreeGridItem): AppBarTabMenuItem {
-        var result = this.resolveTabMenuItemForUserItemBeingEdited(userItem);
-        if (!result) {
-            result = this.resolveTabMenuItemForUserItemBeingViewed(userItem)
-        }
-        return result;
-    }
-
     private resolveTabMenuItemForUserItemBeingEdited(userItem: UserTreeGridItem): AppBarTabMenuItem {
         if (!!userItem) {
-            var appBarTabId: AppBarTabId = this.getTabIdForUserItem(userItem);
-            var tabId = this.getAppBarTabMenu().getNavigationItemById(appBarTabId);
-            if (tabId) {
-                return tabId;
-            }
+            return this.getAppBarTabMenu().getNavigationItemById(this.getTabIdForUserItem(userItem));
         }
         return null;
     }
 
     private resolveTabMenuItemForUserItemBeingViewed(userItem: UserTreeGridItem): AppBarTabMenuItem {
         if (!!userItem) {
-            var appBarTabId: AppBarTabId = this.getTabIdForUserItem(userItem);
-            var tabId = this.getAppBarTabMenu().getNavigationItemById(appBarTabId);
-            if (tabId) {
-                return tabId;
-            }
+            return this.getAppBarTabMenu().getNavigationItemById(this.getTabIdForUserItem(userItem));
         }
 
         return null;
