@@ -58,13 +58,11 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     enableActionsForNew() {
         this.save.setEnabled(true);
-        this.duplicate.setEnabled(false);
         this.delete.setEnabled(true)
     }
 
     enableActionsForExisting(existing: api.content.Content) {
         this.save.setEnabled(existing.isEditable());
-        this.duplicate.setEnabled(true);
         this.delete.setEnabled(existing.isDeletable());
 
         this.enableActionsForExistingByPermissions(existing);
