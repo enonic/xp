@@ -6,6 +6,9 @@ $(function () {
 
     setupAboutDialog();
 
+    var sessionExpiredDetector = require('./sessionExpiredDetector');
+    sessionExpiredDetector.startPolling();
+
     var xptour = require('./xptour');
     xptour.init();
 });
