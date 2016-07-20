@@ -362,7 +362,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
-                this.isContentFormValid = event.isValid();
+                this.isContentFormValid = event.isValid() && this.isValid();
                 var thumbnailUploader = this.getFormIcon();
                 thumbnailUploader.setEnabled(this.contentType.isImage());
                 thumbnailUploader.toggleClass("invalid", !event.isValid());
@@ -1283,8 +1283,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
         }
 
-        var allMetadataFormsValid = true;
-        var allMetadataFormsHasValidUserInput = true;
+        var allMetadataFormsValid = true,
+            allMetadataFormsHaveValidUserInput = true;
         for (var key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
                 var form = this.metadataStepFormByName[key];
@@ -1294,11 +1294,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 var formHasValidUserInput = form.getFormView().hasValidUserInput();
                 if (!formHasValidUserInput) {
-                    allMetadataFormsHasValidUserInput = false;
+                    allMetadataFormsHaveValidUserInput = false;
                 }
             }
         }
-        return this.isContentFormValid && allMetadataFormsValid && allMetadataFormsHasValidUserInput;
+        return this.isContentFormValid && allMetadataFormsValid && allMetadataFormsHaveValidUserInput;
     }
 
     getContextWindowToggler(): TogglerButton {
