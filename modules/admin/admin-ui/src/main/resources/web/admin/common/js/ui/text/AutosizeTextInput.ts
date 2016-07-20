@@ -43,26 +43,28 @@ module api.ui.text {
         }
 
         private updateSize() {
-            var inputEl = this.getEl(),
-                cloneEl = this.clone.getEl();
+            if (this.isVisible()) {
+                var inputEl = this.getEl(),
+                    cloneEl = this.clone.getEl();
 
-            cloneEl.setFontSize(inputEl.getFontSize()).
-                setPaddingLeft(inputEl.getPaddingLeft() + 'px').
-                setPaddingRight(inputEl.getPaddingRight() + 'px');
+                cloneEl.setFontSize(inputEl.getFontSize()).
+                    setPaddingLeft(inputEl.getPaddingLeft() + 'px').
+                    setPaddingRight(inputEl.getPaddingRight() + 'px');
 
-            this.attendant.insertAfterEl(this);
+                this.attendant.insertAfterEl(this);
 
-            cloneEl.setInnerHtml(this.getValue());
-            // Set input width to text length from the clone <div>
-            // or to maximum possible width corresponding to attendant width.
-            if (cloneEl.getWidthWithBorder() > this.attendant.getEl().getWidth()) {
-                inputEl.setWidth("100%");
-            } else {
-                inputEl.setWidthPx(cloneEl.getWidthWithBorder());
+                cloneEl.setInnerHtml(this.getValue());
+                // Set input width to text length from the clone <div>
+                // or to maximum possible width corresponding to attendant width.
+                if (cloneEl.getWidthWithBorder() > this.attendant.getEl().getWidth()) {
+                    inputEl.setWidth("100%");
+                } else {
+                    inputEl.setWidthPx(cloneEl.getWidthWithBorder());
+                }
+
+
+                this.attendant.remove();
             }
-
-
-            this.attendant.remove();
         }
 
     }
