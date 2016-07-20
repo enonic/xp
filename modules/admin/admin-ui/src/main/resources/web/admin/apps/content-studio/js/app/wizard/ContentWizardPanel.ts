@@ -51,7 +51,6 @@ import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import FormIcon = api.app.wizard.FormIcon;
 import ThumbnailUploader = api.content.ThumbnailUploaderEl;
 import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import TogglerButton = api.ui.button.TogglerButton;

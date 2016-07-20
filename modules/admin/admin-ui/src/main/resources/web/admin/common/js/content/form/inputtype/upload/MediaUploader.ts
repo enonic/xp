@@ -6,7 +6,6 @@ module api.content.form.inputtype.upload {
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
-    import PluploadFile = api.ui.uploader.PluploadFile;
 
     export interface MediaUploaderConfigAllowType {
         name: string;
@@ -204,7 +203,7 @@ module api.content.form.inputtype.upload {
                 if (property.hasNullValue()) {
                     return;
                 }
-                wemjq(this.mediaUploaderEl.getDropzone().getEl().getHTMLElement()).simulate("click");
+                this.mediaUploaderEl.showFileSelectionDialog();
             });
 
             wrapper.appendChild(this.mediaUploaderEl);
@@ -239,7 +238,7 @@ module api.content.form.inputtype.upload {
                 showCancel: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
+                hideDefaultDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true
             });
         }

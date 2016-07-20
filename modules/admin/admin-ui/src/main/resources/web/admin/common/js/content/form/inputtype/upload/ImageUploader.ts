@@ -16,20 +16,20 @@ module api.content.form.inputtype.upload {
             super(config);
             var input = config.input;
 
-            this.imageUploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
+            this.imageUploader = new api.content.ImageUploaderEl({
                 params: {
                     content: config.content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.update,
                 name: input.getName(),
-                skipWizardEvents: false,
                 maximumOccurrences: 1,
-                scaleWidth: true,
-                hideDropZone: true,
-                showReset: false
+                hideDefaultDropZone: true,
+                showReset: false,
+                hasUploadButton: false
             });
 
             this.appendChild(this.imageUploader);
+            this.addClass("image-uploader-input");
         }
 
         getContext(): api.content.form.inputtype.ContentInputTypeViewContext {

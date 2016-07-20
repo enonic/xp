@@ -54,9 +54,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         }
 
         var iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        this.formIcon = new FormIcon(iconUrl, "Click to upload icon");
-        this.formIcon.addClass("icon icon-xlarge");
-        this.formIcon.addClass("icon-address-book");
+        this.formIcon = new FormIcon(iconUrl, "icon icon-xlarge icon-address-book");
 
         this.wizardActions = new UserStoreWizardActions(this);
         this.toolbar = new UserStoreWizardToolbar({
