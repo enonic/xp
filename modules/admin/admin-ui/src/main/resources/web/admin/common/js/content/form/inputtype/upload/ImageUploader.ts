@@ -62,7 +62,7 @@ module api.content.form.inputtype.upload {
             });
 
             this.imageUploader.onUploadReset(() => {
-                this.saveToProperty(null);
+                this.saveToProperty(this.newInitialValue());
             });
 
             this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
@@ -87,7 +87,6 @@ module api.content.form.inputtype.upload {
 
             return property.hasNonNullValue() ? this.updateProperty(property) : wemQ<void>(null);
         }
-
 
         protected saveToProperty(value: api.data.Value) {
             this.ignorePropertyChange = true;

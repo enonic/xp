@@ -36,6 +36,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private showSplitEditAction: api.ui.Action;
 
+    private deleteOnlyMode: boolean;
+
     constructor(wizardPanel: ContentWizardPanel) {
         this.save = new api.app.wizard.SaveAction(wizardPanel, "Save draft");
         this.duplicate = new DuplicateContentAction(wizardPanel);
@@ -68,10 +70,40 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.enableActionsForExistingByPermissions(existing);
     }
 
-    enableDeleteOnly() {
+    private switchOnDeleteOnly(content: api.content.Content) {
+        if (this.deleteOnlyMode) {
+            return
+        }
+        this.deleteOnlyMode = true;
+
         this.save.setEnabled(false);
         this.duplicate.setEnabled(false);
+        this.publish.setEnabled(false);
+        this.enableDeleteIfAllowed(content);
+    }
+
+    private switchOffDeleteOnly(content: api.content.Content) {
+        if (!this.deleteOnlyMode) {
+            return
+        }
+        this.deleteOnlyMode = false;
+        this.save.setEnabled(true);
+        this.duplicate.setEnabled(true);
         this.delete.setEnabled(true)
+        this.publish.setEnabled(true);
+        this.enableActionsForExistingByPermissions(content);
+    }
+
+    private enableDeleteIfAllowed(content: api.content.Content) {
+        new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+            var hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
+                loginResult, content.getPermissions());
+            if (hasDeletePermission) {
+                this.delete.setEnabled(true);
+            } else {
+                this.delete.setEnabled(false);
+            }
+        });
     }
 
     private enableActionsForExistingByPermissions(existing: api.content.Content) {
