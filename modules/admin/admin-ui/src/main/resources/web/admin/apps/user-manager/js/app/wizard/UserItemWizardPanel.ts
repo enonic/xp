@@ -34,7 +34,8 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
         this.constructing = true;
 
         var iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        this.formIcon = new FormIcon(iconUrl, "icon icon-xlarge");
+        this.formIcon = new FormIcon(iconUrl, "icon");
+        this.formIcon.addClass("icon-xlarge");
 
         super({
             tabId: params.tabId,
