@@ -392,6 +392,7 @@ module api.ui.uploader {
 
         setProgressVisible(visible: boolean = true) {
             if (visible) {
+                this.progress.setValue(0);
                 this.setDefaultDropzoneVisible(false);
                 this.setResultVisible(false);
             }
