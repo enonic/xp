@@ -9,6 +9,8 @@ import Content = api.content.Content;
 import ContentSummary = api.content.ContentSummary;
 import Site = api.content.site.Site;
 import ContentType = api.schema.content.ContentType;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import CompareStatus = api.content.CompareStatus;
 
 export class ContentWizardDataLoader {
 
@@ -21,6 +23,8 @@ export class ContentWizardDataLoader {
     siteContent: Site;
 
     defaultModels: DefaultModels;
+
+    compareStatus: CompareStatus;
 
     loadData(params: ContentWizardPanelParams): wemQ.Promise<ContentWizardDataLoader> {
         if (!params.contentSummary) {
@@ -60,30 +64,31 @@ export class ContentWizardDataLoader {
         return this.loadContent(params.contentSummary).then((loadedContent: Content) => {
 
             this.content = loadedContent;
-            return this.loadContentType(this.content.getType());
 
-        }).then((contentType: ContentType) => {
+            let parentPromise = this.loadParentContent(params, false);
+            let typePromise = this.loadContentType(this.content.getType());
+            let statusPromise = api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(this.content);
+            let siteAndModelsPromise = this.loadSite(this.content.getContentId()).then((loadedSite: Site) => {
 
+                if (!!loadedSite) {
+                    this.siteContent = loadedSite;
+                }
+                return this.loadDefaultModels(this.siteContent, this.content.getType());
+
+            });
+
+            return wemQ.all([parentPromise, typePromise, statusPromise, siteAndModelsPromise]);
+
+        }).spread((parentContent, contentType, compareStatus, defaultModels) => {
+
+            this.parentContent = parentContent;
             this.contentType = contentType;
-            return this.loadParentContent(params, false);
-
-        }).then((loadedParentContent: Content) => {
-
-            this.parentContent = loadedParentContent;
-            return this.loadSite(this.content.getContentId());
-
-        }).then((loadedSite: Site) => {
-
-            if (!!loadedSite) {
-                this.siteContent = loadedSite;
+            if (compareStatus) {
+                this.compareStatus = compareStatus.getCompareStatus();
             }
-            return this.loadDefaultModels(this.siteContent, this.content.getType());
-
-        }).then((defaultModels: DefaultModels) => {
-
             this.defaultModels = defaultModels;
-            return this;
 
+            return this;
         });
     }
 

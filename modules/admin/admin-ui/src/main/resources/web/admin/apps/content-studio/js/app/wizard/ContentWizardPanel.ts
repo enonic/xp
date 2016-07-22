@@ -144,7 +144,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
      * Whether constructor is being currently executed or not.
      */
 
-    public static debug: boolean = false; 
+    public static debug: boolean = true;
 
     constructor(params: ContentWizardPanelParams) {
 
@@ -219,7 +219,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
 
         this.listenToContentEvents();
-        this.initPublishButtonForMobile();
         this.handleSiteConfigApply();
         this.handleBrokenImageInTheWizard();
 
@@ -252,6 +251,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.site = loader.siteContent;
                 this.contentType = loader.contentType;
                 this.parentContent = loader.parentContent;
+                this.contentCompareStatus = loader.compareStatus;
 
             }).then(() => super.doLoadData());
     }
@@ -343,6 +343,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (ContentWizardPanel.debug) {
                 console.debug("ContentWizardPanel.doRenderOnDataLoaded");
             }
+
+            this.initPublishButtonForMobile();
 
             if (this.contentType.hasContentDisplayNameScript()) {
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
@@ -795,19 +797,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             var publishControls = this.getContentWizardToolbarPublishControls();
             let wizardHeader = this.getWizardHeader();
 
-            api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).done(
-                (contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
+            wizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
 
-                    this.contentCompareStatus = contentSummaryAndCompareStatus.getCompareStatus();
+            publishControls.setCompareStatus(this.contentCompareStatus);
+            publishControls.setLeafContent(!this.getPersistedItem().hasChildren());
 
-
-                    wizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
-
-                    publishControls.setCompareStatus(this.contentCompareStatus);
-                    publishControls.setLeafContent(!contentSummaryAndCompareStatus.hasChildren());
-                    this.managePublishButtonStateForMobile(this.contentCompareStatus);
-                });
-
+            this.managePublishButtonStateForMobile(this.contentCompareStatus);
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
             publishControls.enableActionsForExisting(persistedContent);
@@ -921,9 +916,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             api.DefaultErrorHandler.handle(reason);
         }).done();
 
-        var parallelPromises: wemQ.Promise<any>[] = [this.createSteps()];
-
-        return wemQ.all(parallelPromises).spread<void>((schemas: Mixin[]) => {
+        return this.createSteps().then((schemas: Mixin[]) => {
 
             var formContext = this.createFormContext(content);
 

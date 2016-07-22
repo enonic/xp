@@ -76,7 +76,7 @@ module api.app.wizard {
 
         private mask: api.ui.mask.LoadMask;
 
-        public static debug: boolean = false;
+        public static debug: boolean = true;
 
         constructor(params: WizardPanelParams<EQUITABLE>) {
             super("wizard-panel");
@@ -195,7 +195,7 @@ module api.app.wizard {
                 if (this.isDataLoaded()) {
                     return this.doRenderOnDataLoaded(rendered).then((rendered) => {
 
-                        return rendered;
+                        return this.doLayout(this.getPersistedItem()).then(() => rendered);
                     });
                 } else {
                     if (WizardPanel.debug) {
@@ -210,7 +210,10 @@ module api.app.wizard {
                         }
 
                         this.doRenderOnDataLoaded(rendered)
-                            .then(rendered => deferred.resolve(rendered))
+                            .then((rendered) => {
+                                return this.doLayout(this.getPersistedItem())
+                                    .then(() => deferred.resolve(rendered));
+                            })
                             .catch(reason => {
                                 deferred.reject(reason);
                                 api.DefaultErrorHandler.handle(reason);
@@ -341,7 +344,7 @@ module api.app.wizard {
             });
             this.formPanel.appendChildren(headerAndNavigatorContainer, this.stepsPanel);
 
-            return this.doLayout(this.getPersistedItem()).then(() => rendered, (reason) => reason);
+            return wemQ(rendered);
         }
 
 
