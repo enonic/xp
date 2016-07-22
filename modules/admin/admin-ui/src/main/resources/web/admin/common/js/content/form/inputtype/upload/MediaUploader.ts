@@ -227,6 +227,8 @@ module api.content.form.inputtype.upload {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
 
+            var hideDropZone = (<any>(this.config.inputConfig)).hideDropZone;
+
             return new api.content.MediaUploaderEl({
                 params: {
                     content: this.getContext().content.getContentId().toString()
@@ -234,10 +236,9 @@ module api.content.form.inputtype.upload {
                 operation: api.content.MediaUploaderElOperation.update,
                 allowTypes: allowTypes,
                 name: this.getContext().input.getName(),
-                showCancel: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                hideDefaultDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
+                hideDefaultDropZone: hideDropZone != null ? hideDropZone : true,
                 deferred: true,
                 hasUploadButton: false
             });

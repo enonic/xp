@@ -97,14 +97,15 @@ module api.ui.uploader {
         }
 
         private initUploadButton() {
-            if (this.config.hasUploadButton) {
-                this.uploadButton = new api.dom.DivEl('upload-button');
-                this.uploadButton.setId('upload-button-' + new Date().getTime());
-                this.uploadButton.onClicked((event: MouseEvent) => {
-                    this.showFileSelectionDialog();
-                });
-                this.appendChild(this.uploadButton);
+            if (!this.config.hasUploadButton) {
+                return
             }
+            this.uploadButton = new api.dom.DivEl('upload-button');
+            this.uploadButton.setId('upload-button-' + new Date().getTime());
+            this.uploadButton.onClicked((event: MouseEvent) => {
+                this.showFileSelectionDialog();
+            });
+            this.appendChild(this.uploadButton);
         }
 
         private initDebouncedUploadStart() {
@@ -349,6 +350,7 @@ module api.ui.uploader {
         reset(): UploaderEl<MODEL> {
             this.setValue(null);
             this.notifyUploadReset();
+            this.setProgressVisible(false);
             return this;
         }
 
