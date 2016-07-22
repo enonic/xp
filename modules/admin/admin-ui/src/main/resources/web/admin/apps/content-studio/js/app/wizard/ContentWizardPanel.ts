@@ -442,8 +442,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private handleBrokenImageInTheWizard() {
         var brokenImageHandler = (event: ImageErrorEvent) => {
             if (this.getPersistedItem().getId() === event.getContentId().toString()) {
-                this.wizardActions.enableDeleteOnly();
-                this.publishAction.setEnabled(false);
+                this.wizardActions.switchOnDeleteOnly(this.getPersistedItem());
             }
         };
 
@@ -666,6 +665,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (isCurrent || areasContainId) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     this.updateWizard(content, unchangedOnly, areasContainId);
+                    this.wizardActions.switchOffDeleteOnly(this.getPersistedItem());
                 });
             }
         };
