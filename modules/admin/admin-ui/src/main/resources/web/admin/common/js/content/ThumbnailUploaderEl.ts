@@ -19,9 +19,6 @@ module api.content {
             if (config.showCancel == undefined) {
                 config.showCancel = false;
             }
-            if (config.showReset == undefined) {
-                config.showReset = false;
-            }
             if (config.resultAlwaysVisisble == undefined) {
                 config.resultAlwaysVisisble = true;
             }

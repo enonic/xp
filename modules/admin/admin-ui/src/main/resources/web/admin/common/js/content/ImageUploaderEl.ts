@@ -42,7 +42,6 @@ module api.content {
 
             this.initialWidth = 0;
             this.onShown(() => {
-                this.setResetVisible(false);
 
                 if (this.getEl().getWidth() == 0) {
                     this.initialWidth = Math.max(this.getParentElement().getEl().getWidth(), this.initialWidth);

@@ -24,7 +24,6 @@ module api.content.form.inputtype.upload {
                 name: input.getName(),
                 maximumOccurrences: 1,
                 hideDefaultDropZone: true,
-                showReset: false,
                 hasUploadButton: false
             });
 

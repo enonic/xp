@@ -234,7 +234,6 @@ module api.content.form.inputtype.upload {
                 operation: api.content.MediaUploaderElOperation.update,
                 allowTypes: allowTypes,
                 name: this.getContext().input.getName(),
-                showReset: false,
                 showCancel: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,

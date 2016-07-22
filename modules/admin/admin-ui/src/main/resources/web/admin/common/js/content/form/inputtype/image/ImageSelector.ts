@@ -334,7 +334,6 @@ module api.content.form.inputtype.image {
                 operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showCancel: false,
-                showReset: false,
                 showResult: false,
                 maximumOccurrences: this.getRemainingOccurrences(),
                 allowMultiSelection: multiSelection,
