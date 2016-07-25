@@ -674,6 +674,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             if (isCurrent || areasContainId) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
+                    this.setPersistedItem(content);
                     this.updateWizard(content, unchangedOnly, areasContainId);
                 });
             }
@@ -797,18 +798,16 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             var publishControls = this.getContentWizardToolbarPublishControls();
             let wizardHeader = this.getWizardHeader();
 
-            if (this.isNew) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
-                    this.contentCompareStatus = summaryAndStatus.getCompareStatus();
+            api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
+                this.contentCompareStatus = summaryAndStatus.getCompareStatus();
 
-                    wizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
+                wizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
 
-                    publishControls.setCompareStatus(this.contentCompareStatus);
-                    publishControls.setLeafContent(!this.getPersistedItem().hasChildren());
+                publishControls.setCompareStatus(this.contentCompareStatus);
+                publishControls.setLeafContent(!this.getPersistedItem().hasChildren());
 
-                    this.managePublishButtonStateForMobile(this.contentCompareStatus);
-                });
-            }
+                this.managePublishButtonStateForMobile(this.contentCompareStatus);
+            });
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
             publishControls.enableActionsForExisting(persistedContent);
