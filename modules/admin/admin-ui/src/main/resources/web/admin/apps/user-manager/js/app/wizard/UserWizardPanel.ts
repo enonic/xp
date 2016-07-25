@@ -79,7 +79,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
                 return wemQ<void>(null);
             } else {
-                return this.doLayoutPersistedItem(persistedPrincipal.clone());
+                return this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null);
             }
 
         });
