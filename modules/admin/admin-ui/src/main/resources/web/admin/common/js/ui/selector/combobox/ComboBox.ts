@@ -343,7 +343,7 @@ module api.ui.selector.combobox {
             var result: string[] = [];
             values.forEach((val) => {
                 var option = this.getOptionByValue(val);
-                if (option == null) {
+                if (option == null && !api.util.StringHelper.isBlank(val)) {
                     result.push(val);
                 }
             });
