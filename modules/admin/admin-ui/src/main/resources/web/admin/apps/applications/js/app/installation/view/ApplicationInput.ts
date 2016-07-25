@@ -34,8 +34,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             allowMultiSelection: true,
             deferred: true,  // wait till it's shown
             value: originalValue,
-            showCancel: false,
-            showReset: false
+            showCancel: false
         });
 
         super(this.textInput, this.applicationUploaderEl);

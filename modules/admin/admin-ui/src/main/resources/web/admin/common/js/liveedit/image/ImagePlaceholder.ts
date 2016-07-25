@@ -56,7 +56,6 @@ module api.liveedit.image {
                 operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-placeholder-upload',
                 showCancel: false,
-                showReset: false,
                 showResult: false,
                 allowMultiSelection: false,
                 hideDefaultDropZone: true,

@@ -24,7 +24,6 @@ module api.ui.uploader {
         resultAlwaysVisisble?: boolean;         // never hide the result
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
-        showReset?: boolean;
         showCancel?: boolean;
         showResult?: boolean;
         maximumOccurrences?: number;
@@ -52,7 +51,6 @@ module api.ui.uploader {
         private cancelBtn: Button;
 
         private resultContainer: api.dom.DivEl;
-        private resetBtn: CloseButton;
 
         private uploadStartedListeners: {(event: FileUploadStartedEvent<MODEL>):void }[] = [];
         private uploadProgressListeners: {(event: FileUploadProgressEvent<MODEL>):void }[] = [];
@@ -89,8 +87,6 @@ module api.ui.uploader {
 
             this.initCancelButton();
 
-            this.initResetButton();
-
             this.handleKeyEvents();
 
             this.handleInitTrigger();
@@ -101,14 +97,15 @@ module api.ui.uploader {
         }
 
         private initUploadButton() {
-            if (this.config.hasUploadButton) {
-                this.uploadButton = new api.dom.DivEl('upload-button');
-                this.uploadButton.setId('upload-button-' + new Date().getTime());
-                this.uploadButton.onClicked((event: MouseEvent) => {
-                    this.showFileSelectionDialog();
-                });
-                this.appendChild(this.uploadButton);
+            if (!this.config.hasUploadButton) {
+                return
             }
+            this.uploadButton = new api.dom.DivEl('upload-button');
+            this.uploadButton.setId('upload-button-' + new Date().getTime());
+            this.uploadButton.onClicked((event: MouseEvent) => {
+                this.showFileSelectionDialog();
+            });
+            this.appendChild(this.uploadButton);
         }
 
         private initDebouncedUploadStart() {
@@ -135,15 +132,6 @@ module api.ui.uploader {
             this.appendChild(this.cancelBtn);
         }
 
-        private initResetButton() {
-            this.resetBtn = new CloseButton();
-            this.resetBtn.setVisible(this.config.showReset);
-            this.resetBtn.onClicked((event: MouseEvent) => {
-                this.reset();
-            });
-            this.appendChild(this.resetBtn);
-        }
-
         private handleKeyEvents() {
             this.onKeyPressed((event: KeyboardEvent) => {
                 if (this.defaultDropzoneContainer.isVisible() && event.keyCode == 13) {
@@ -168,11 +156,6 @@ module api.ui.uploader {
             } else {
                 this.onRendered(this.initHandlerOnEvent);
             }
-        }
-
-        protected setResetVisible(visible: boolean) {
-            this.config.showReset = visible;
-            this.resetBtn.setVisible(visible);
         }
 
         protected initHandler() {
@@ -224,9 +207,6 @@ module api.ui.uploader {
             }
             if (this.config.showCancel == undefined) {
                 this.config.showCancel = true;
-            }
-            if (this.config.showReset == undefined) {
-                this.config.showReset = true;
             }
 
             //TODO: property is not used. it might have sense to use it when filtering upload file candidates.
@@ -370,6 +350,7 @@ module api.ui.uploader {
         reset(): UploaderEl<MODEL> {
             this.setValue(null);
             this.notifyUploadReset();
+            this.setProgressVisible(false);
             return this;
         }
 
@@ -412,7 +393,6 @@ module api.ui.uploader {
             }
 
             this.resultContainer.setVisible(visible);
-            this.resetBtn.setVisible(visible && this.config.showReset);
         }
 
 

@@ -24,7 +24,6 @@ module api.ui.text {
                 name: 'file-input-uploader',
                 allowDrop: true,
                 showResult: false,
-                showReset: false,
                 showCancel: false,
                 allowMultiSelection: true,
                 deferred: false,  // wait till it's shown
