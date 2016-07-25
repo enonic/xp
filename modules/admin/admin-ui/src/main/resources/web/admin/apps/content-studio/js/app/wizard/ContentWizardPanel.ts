@@ -797,12 +797,18 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             var publishControls = this.getContentWizardToolbarPublishControls();
             let wizardHeader = this.getWizardHeader();
 
-            wizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
+            if (this.isNew) {
+                api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
+                    this.contentCompareStatus = summaryAndStatus.getCompareStatus();
 
-            publishControls.setCompareStatus(this.contentCompareStatus);
-            publishControls.setLeafContent(!this.getPersistedItem().hasChildren());
+                    wizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
 
-            this.managePublishButtonStateForMobile(this.contentCompareStatus);
+                    publishControls.setCompareStatus(this.contentCompareStatus);
+                    publishControls.setLeafContent(!this.getPersistedItem().hasChildren());
+
+                    this.managePublishButtonStateForMobile(this.contentCompareStatus);
+                });
+            }
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
             publishControls.enableActionsForExisting(persistedContent);
@@ -1397,7 +1403,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
      */
     private updateMetadataAndMetadataStepForms(content: Content, unchangedOnly: boolean = true) {
         var contentCopy = content.clone();
-        
+
         for (var key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
 
