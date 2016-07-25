@@ -183,7 +183,8 @@ module api.content.form.inputtype.contentselector {
             for (let i = 0; i < length; i++) {
                 if (this.getPropertyArray().get(i).getValue().getString() == id) {
                     this.getPropertyArray().remove(i);
-                    api.notify.NotifyManager.get().showWarning('Removed missing reference with id=' + id);
+                    api.notify.NotifyManager.get().showWarning("Failed to load content item with id " + id +
+                                                               ". The reference will be removed upon save.");
                     break;
                 }
             }
