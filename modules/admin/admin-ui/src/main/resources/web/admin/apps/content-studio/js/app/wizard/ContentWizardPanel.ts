@@ -1272,7 +1272,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             // allow deleting published content without validity check
             return true;
         }
-        if (!this.isContentFormValid) {
+        if (!this.isContentFormValid && this.contentWizardStepForm) {
             this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
         }
 
