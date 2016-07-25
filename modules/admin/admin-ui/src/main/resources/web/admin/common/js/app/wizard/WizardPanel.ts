@@ -111,6 +111,11 @@ module api.app.wizard {
                 firstShow = true;
                 this.mask.hide();
 
+                if (this.splitPanel) {
+                    this.splitPanel.getEl().setOpacity(1);
+                }
+                this.formPanel.getEl().setOpacity(1);
+
                 // check validity on rendered
                 this.notifyValidityChanged(this.isValid());
             });
@@ -211,8 +216,7 @@ module api.app.wizard {
 
                         this.doRenderOnDataLoaded(rendered)
                             .then((rendered) => {
-                                return this.doLayout(this.getPersistedItem())
-                                    .then(() => deferred.resolve(rendered));
+                                return this.doLayout(this.getPersistedItem()).then(() => deferred.resolve(rendered));
                             })
                             .catch(reason => {
                                 deferred.reject(reason);

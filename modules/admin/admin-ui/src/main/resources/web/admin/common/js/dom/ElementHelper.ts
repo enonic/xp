@@ -249,6 +249,15 @@ module api.dom {
             return this;
         }
 
+        getOpacity(): number {
+            return parseFloat(this.el.style.opacity);
+        }
+
+        setOpacity(value: number): ElementHelper {
+            this.el.style.opacity = String(value);
+            return this;
+        }
+
         getVisibility(): string {
             return this.el.style.visibility;
         }
