@@ -304,13 +304,17 @@ module api.dom {
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             wemjq(this.el.getHTMLElement()).show();
-            this.notifyShown(this, true);
+            if (this.isRendered()) {
+                this.notifyShown(this, true);
+            }
         }
 
         hide() {
             // Using jQuery to hide, since it seems to contain some smartness
             wemjq(this.el.getHTMLElement()).hide();
-            this.notifyHidden(this);
+            if (this.isRendered()) {
+                this.notifyHidden(this);
+            }
         }
 
         setVisible(value: boolean): Element {

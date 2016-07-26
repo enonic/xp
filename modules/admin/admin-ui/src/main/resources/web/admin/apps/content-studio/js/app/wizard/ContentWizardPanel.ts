@@ -144,7 +144,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
      * Whether constructor is being currently executed or not.
      */
 
-    public static debug: boolean = true;
+    public static debug: boolean = false;
 
     constructor(params: ContentWizardPanelParams) {
 

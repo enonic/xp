@@ -22,11 +22,11 @@ module api.content.site.inputtype.siteconfigurator {
 
         private editClickedListeners: {(event: MouseEvent): void;}[];
 
-        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey) : void}[];
+        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey): void}[];
 
         private formContext: ContentFormContext;
 
-        private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent):void};
+        private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent): void};
 
         constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
             this.editClickedListeners = [];
@@ -42,11 +42,9 @@ module api.content.site.inputtype.siteconfigurator {
         layout() {
             var header = new api.dom.DivEl('header');
 
-            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.large)).
-                setMainName(this.application.getDisplayName()).
-                setSubName(this.application.getName() + "-" + this.application.getVersion()).
-                setIconClass("icon-xlarge icon-puzzle");
+            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
+                api.app.NamesAndIconViewSize.large)).setMainName(this.application.getDisplayName()).setSubName(
+                this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
 
             header.appendChild(namesAndIconView);
 
@@ -61,7 +59,12 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.appendChild(header);
 
-            this.initFormView();
+            this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
+                this.toggleClass("invalid", !event.isValid())
+            };
+
+            this.formView = this.createFormView(this.siteConfig);
+            this.formView.layout();
 
             if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
@@ -70,13 +73,6 @@ module api.content.site.inputtype.siteconfigurator {
 
         setSiteConfig(siteConfig: SiteConfig) {
             this.siteConfig = siteConfig;
-        }
-
-        private initFormView() {
-            this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
-                this.toggleClass("invalid", !event.isValid())
-            };
-            this.formView = this.createFormView(this.siteConfig);
         }
 
         private createEditButton(): api.dom.AEl {
@@ -124,6 +120,7 @@ module api.content.site.inputtype.siteconfigurator {
                     this.formView,
                     okCallback,
                     cancelCallback);
+
                 siteConfiguratorDialog.open();
             }
         }
@@ -160,13 +157,12 @@ module api.content.site.inputtype.siteconfigurator {
         private createFormView(siteConfig: SiteConfig): FormView {
             var formView = new FormView(this.formContext, this.application.getForm(), siteConfig.getConfig());
             formView.addClass("site-form");
-            formView.layout().then(() => {
-                this.formView.validate(false, true);
-                this.toggleClass("invalid", !this.formView.isValid());
+
+            formView.onLayoutFinished(() => {
+                formView.validate(false, true);
+                this.toggleClass("invalid", !formView.isValid());
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+            });
 
             return formView;
         }

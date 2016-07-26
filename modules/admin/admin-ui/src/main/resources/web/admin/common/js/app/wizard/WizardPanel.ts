@@ -76,7 +76,7 @@ module api.app.wizard {
 
         private mask: api.ui.mask.LoadMask;
 
-        public static debug: boolean = true;
+        public static debug: boolean = false;
 
         constructor(params: WizardPanelParams<EQUITABLE>) {
             super("wizard-panel");
