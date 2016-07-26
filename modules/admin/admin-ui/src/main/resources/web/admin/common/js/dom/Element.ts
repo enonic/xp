@@ -207,16 +207,23 @@ module api.dom {
             return null;
         }
 
-        init(): wemQ.Promise<boolean> {
+        /**
+         * Inits element by rendering element first,
+         * then all its children,
+         * and then throwing the rendered (and shown) events
+         * @returns {Promise<boolean>}
+         */
+        protected init(): wemQ.Promise<boolean> {
             if (Element.debug) {
-                console.debug("Element.init", api.ClassHelper.getClassName(this));
+                console.debug("Element.init started", api.ClassHelper.getClassName(this));
             }
             var renderPromise;
             if (this.isRendered() || this.isRendering()) {
                 renderPromise = wemQ(true);
             } else {
-                renderPromise = this.render(false);
+                renderPromise = this.doRender();
             }
+            this.rendering = true;
             return renderPromise.then((rendered) => {
 
                 var childPromises = [];
@@ -229,33 +236,6 @@ module api.dom {
                         console.log("Element.init done", api.ClassHelper.getClassName(this));
                     }
 
-                    return rendered;
-                }).catch((reason) => {
-                    api.DefaultErrorHandler.handle(reason);
-                    return false;
-                });
-            });
-        }
-
-        render(deep: boolean = true): wemQ.Promise<boolean> {
-            if (Element.debug) {
-                console.log('Element.render', api.ClassHelper.getClassName(this));
-            }
-            this.rendering = true;
-            var childPromises = [];
-            if (deep) {
-                this.children.forEach((child: Element) => {
-                    childPromises.push(child.render(deep));
-                });
-            }
-            return wemQ.all(childPromises)
-                .then(childResults => {
-                    return this.doRender();
-                })
-                .then((rendered) => {
-                    if (Element.debug) {
-                        console.log('Element.render done', api.ClassHelper.getClassName(this));
-                    }
                     this.rendering = false;
                     this.rendered = rendered;
                     this.notifyRendered();
@@ -269,6 +249,44 @@ module api.dom {
                     api.DefaultErrorHandler.handle(reason);
                     return false;
                 });
+            });
+        }
+
+        /**
+         * Renders the element,
+         * then all its children,
+         * and throws rendered event after that
+         * @param deep tells if all the children should be rendered as well
+         * @returns {Promise<boolean>}
+         */
+        render(deep: boolean = true): wemQ.Promise<boolean> {
+            if (Element.debug) {
+                console.log('Element.render started', api.ClassHelper.getClassName(this));
+            }
+            this.rendering = true;
+            return this.doRender().then((rendered) => {
+
+                var childPromises = [];
+                if (deep) {
+                    this.children.forEach((child: Element) => {
+                        childPromises.push(child.render(deep));
+                    });
+                }
+                return wemQ.all(childPromises).then((childResults) => {
+                    if (Element.debug) {
+                        console.log('Element.render done', api.ClassHelper.getClassName(this));
+                    }
+
+                    this.rendering = false;
+                    this.rendered = rendered;
+                    this.notifyRendered();
+
+                    return rendered;
+                }).catch((reason) => {
+                    api.DefaultErrorHandler.handle(reason);
+                    return false;
+                });
+            })
         }
 
         isRendering(): boolean {
