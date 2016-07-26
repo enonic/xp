@@ -364,10 +364,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
-                this.isContentFormValid = event.isValid() && this.isValid();
+                let isThisValid = this.isValid();
+                this.isContentFormValid = isThisValid;
                 var thumbnailUploader = this.getFormIcon();
-                thumbnailUploader.setEnabled(this.contentType.isImage());
-                thumbnailUploader.toggleClass("invalid", !event.isValid());
+                thumbnailUploader.toggleClass("invalid", isThisValid);
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished(false));
             });
 
@@ -375,6 +375,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             var thumbnailUploader = this.getFormIcon();
             if (thumbnailUploader) {
+                thumbnailUploader.setEnabled(this.contentType.isImage());
                 thumbnailUploader.onFileUploaded(this.onFileUploaded.bind(this));
             }
 
