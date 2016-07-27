@@ -111,6 +111,9 @@ module api.app.wizard {
                 firstShow = true;
                 this.mask.hide();
 
+                if (this.mainToolbar) {
+                    this.mainToolbar.getEl().setOpacity(1);
+                }
                 if (this.splitPanel) {
                     this.splitPanel.getEl().setOpacity(1);
                 }
