@@ -65,6 +65,12 @@ module api.content.page {
             })
         }
 
+        reset() {
+            if (this.liveEditModel.getPageModel().getController() || this.liveEditModel.getPageModel().getTemplate()) {
+                this.liveEditModel.getPageModel().reset();
+            }
+        }
+
         onLoadedData(listener: (event: LoadedDataEvent<PageDescriptor>) => void) {
             this.loadedDataListeners.push(listener);
         }
