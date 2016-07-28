@@ -630,6 +630,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }).some((deletedItem) => {
                     if (this.getPersistedItem().getPath().equals(deletedItem.getContentPath())) {
                         if (deletedItem.isPending()) {
+                            this.contentWizardToolbarPublishControls.setContentCanBePublished(true, false);
                             this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
                             this.contentCompareStatus = CompareStatus.PENDING_DELETE;
                         } else {
