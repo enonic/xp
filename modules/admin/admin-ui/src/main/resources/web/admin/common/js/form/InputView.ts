@@ -86,6 +86,10 @@ module api.form {
             inputTypeViewLayoutPromise.then(() => {
                 this.appendChild(this.inputTypeView.getElement());
 
+                if (this.input.getHelpText()) {
+                    this.appendHelpText(this.input.getHelpText());
+                }
+
                 if (!this.inputTypeView.isManagingAdd()) {
 
                     var inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
@@ -124,6 +128,15 @@ module api.form {
             });
 
             return inputTypeViewLayoutPromise;
+        }
+
+        private appendHelpText(helpText: string) {
+            var helpTextDiv = new api.dom.DivEl("help-text");
+            var pEl = new api.dom.PEl();
+            pEl.getEl().setText(helpText);
+            helpTextDiv.appendChild(pEl);
+
+            this.appendChild(helpTextDiv);
         }
 
         private getPropertyArray(propertySet: PropertySet): PropertyArray {
