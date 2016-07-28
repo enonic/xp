@@ -55,15 +55,6 @@ export class InsertablesPanel extends api.ui.panel.Panel {
 
         this.componentsView = new PageComponentsView(config.liveEditPage);
 
-        this.componentsView.onShown(() => {
-            if (!this.componentsView.getParentElement()) {
-                //append it on click only to be sure that content wizard panel is ready
-                var offset = config.contentWizardPanel.getLivePanel().getEl().getOffsetToParent();
-                this.componentsView.getEl().setOffset(offset);
-                config.contentWizardPanel.appendChild(this.componentsView);
-            }
-        });
-
         this.appendChildren(topDescription, this.insertablesGrid);
 
         this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {

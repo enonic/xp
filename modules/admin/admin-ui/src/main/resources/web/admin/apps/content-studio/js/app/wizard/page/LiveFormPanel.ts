@@ -205,8 +205,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.contextWindowController = new ContextWindowController(
             this.contextWindow,
-            this.contentWizardPanel.getContextWindowToggler(),
-            this.contentWizardPanel.getComponentsViewToggler()
+            this.contentWizardPanel
         );
 
         this.contextWindow.onDisplayModeChanged(() => {
