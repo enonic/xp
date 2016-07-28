@@ -36,7 +36,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private showSplitEditAction: api.ui.Action;
 
-    private deleteOnlyMode: boolean;
+    private deleteOnlyMode: boolean = false;
 
     constructor(wizardPanel: ContentWizardPanel) {
         this.save = new api.app.wizard.SaveAction(wizardPanel, "Save draft");
