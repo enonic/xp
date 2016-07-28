@@ -34,8 +34,6 @@ module api.form {
 
         private collapseButton: api.dom.AEl;
 
-        private validationViewer: api.form.ValidationRecordingViewer;
-
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
@@ -167,9 +165,6 @@ module api.form {
 
                 this.bottomButtonRow.appendChild(this.addButton);
                 this.bottomButtonRow.appendChild(this.collapseButton);
-
-                this.validationViewer = new api.form.ValidationRecordingViewer();
-                this.appendChild(this.validationViewer);
 
                 this.refresh();
                 this.validate(true);
@@ -347,7 +342,6 @@ module api.form {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }
-            this.validationViewer.setObject(recording);
         }
 
         giveFocus(): boolean {
