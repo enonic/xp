@@ -603,19 +603,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
     }
 
-    private updateWizard(content: Content, unchangedOnly: boolean = true, areasContainId?: boolean) {
+    private updateWizard(content: Content, unchangedOnly: boolean = true) {
         this.setPersistedItem(content);
         this.updateWizardHeader(content);
         this.updateWizardStepForms(content, unchangedOnly);
         this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
-
-        if (!unchangedOnly) {
-            this.updateLiveFormOnVersionChange();
-        } else if (this.isContentRenderable() && areasContainId) {
-            // also update live form panel for renderable content without asking
-            this.liveFormPanel.skipNextReloadConfirmation(true);
-            this.liveFormPanel.loadPage(false);
-        }
         this.resetLastFocusedElement();
     }
 
@@ -655,7 +647,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
         };
 
-        var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true) => {
+        var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true, versionChanged: boolean = false) => {
             var isCurrent = this.isCurrentContentId(contentId);
 
             // Find all html areas in form
@@ -665,7 +657,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             if (isCurrent || areasContainId) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
-                    this.updateWizard(content, unchangedOnly, areasContainId);
+                    this.updateWizard(content, unchangedOnly);
+                    if (versionChanged) {
+                        this.updateLiveFormOnVersionChange();
+                    } else if (this.isContentRenderable() && areasContainId) {
+                        // also update live form panel for renderable content without asking
+                        this.liveFormPanel.skipNextReloadConfirmation(true);
+                        this.liveFormPanel.loadPage(false);
+                    }
                     this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
                 });
             }
@@ -682,7 +681,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         }
 
-        var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
+        var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false, true);
         var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
 
         var movedHandler = (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {

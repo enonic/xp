@@ -70,7 +70,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.enableActionsForExistingByPermissions(existing);
     }
 
-    private setDeleteOnlyMode(content: api.content.Content, valueOn: boolean = true) {
+    setDeleteOnlyMode(content: api.content.Content, valueOn: boolean = true) {
         if (this.deleteOnlyMode == valueOn) {
             return;
         }
