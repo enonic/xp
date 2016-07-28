@@ -96,6 +96,8 @@ module api.dom {
 
         private rendering: boolean;
 
+        private childrenAddedDuringInit: boolean;
+
         public static debug: boolean = false;
 
         private addedListeners: {(event: ElementAddedEvent): void}[] = [];
@@ -226,12 +228,28 @@ module api.dom {
             this.rendering = true;
             return renderPromise.then((rendered) => {
 
-                var childPromises = [];
-                this.children.forEach((child: Element) => {
-                    childPromises.push(child.init());
-                });
+                return this.initChildren(rendered);
+            });
+        }
 
-                return wemQ.all(childPromises).then((childResults) => {
+        private initChildren(rendered): wemQ.Promise<boolean> {
+            this.childrenAddedDuringInit = false;
+            var childPromises = [];
+
+            this.children.forEach((child: Element) => {
+                if (!child.isRendered()) {
+                    childPromises.push(child.init());
+                }
+            });
+
+            return wemQ.all(childPromises).then((childResults) => {
+
+                if (this.childrenAddedDuringInit) {
+                    if (Element.debug) {
+                        console.debug("Element.init: initing children that were added during init", api.ClassHelper.getClassName(this));
+                    }
+                    return this.initChildren(rendered);
+                } else {
                     if (Element.debug) {
                         console.log("Element.init done", api.ClassHelper.getClassName(this));
                     }
@@ -245,10 +263,10 @@ module api.dom {
                     }
 
                     return rendered;
-                }).catch((reason) => {
-                    api.DefaultErrorHandler.handle(reason);
-                    return false;
-                });
+                }
+            }).catch((reason) => {
+                api.DefaultErrorHandler.handle(reason);
+                return false;
             });
         }
 
@@ -549,6 +567,8 @@ module api.dom {
 
             if (parent.isRendered()) {
                 child.init();
+            } else if (parent.isRendering()) {
+                this.childrenAddedDuringInit = true;
             }
             child.notifyAdded();
             return this;
@@ -634,6 +654,8 @@ module api.dom {
             // Run init of replacement if parent is rendered
             if (parent.isRendered()) {
                 replacement.init();
+            } else if (parent.isRendering()) {
+                this.childrenAddedDuringInit = true;
             }
 
             // Remove this from DOM completely
