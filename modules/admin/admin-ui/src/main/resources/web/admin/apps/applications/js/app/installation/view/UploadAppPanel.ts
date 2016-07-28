@@ -1,13 +1,15 @@
 import "../../../api.ts";
+import {ApplicationInput} from "./ApplicationInput";
 
 import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
 import InputEl = api.dom.InputEl;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import Action = api.ui.Action;
-import {ApplicationInput} from "./ApplicationInput";
 
 export class UploadAppPanel extends api.ui.panel.Panel {
 
+    private cancelAction: Action;
+    
     private applicationInput: ApplicationInput;
 
     private applicationUploaderEl: api.application.ApplicationUploaderEl;
@@ -15,7 +17,7 @@ export class UploadAppPanel extends api.ui.panel.Panel {
     constructor(cancelAction: Action, className?: string) {
         super(className);
 
-        this.initApplicationInput(cancelAction);
+        this.cancelAction = cancelAction;
 
         this.initApplicationUploader();
 
@@ -24,18 +26,17 @@ export class UploadAppPanel extends api.ui.panel.Panel {
         });
     }
 
-    getApplicationInput(): ApplicationInput {
-        return this.applicationInput;
-    }
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
 
-    getApplicationUploaderEl(): ApplicationUploaderEl {
-        return this.applicationUploaderEl;
-    }
+            this.applicationInput = new ApplicationInput(this.cancelAction, 'large').setPlaceholder("Paste link or drop files here");
 
-    private initApplicationInput(cancelAction: Action) {
-        this.applicationInput = new ApplicationInput(cancelAction, 'large').setPlaceholder("Paste link or drop files here");
+            this.appendChild(this.applicationInput);
 
-        this.appendChild(this.applicationInput);
+            this.initApplicationUploader();
+
+            return rendered;
+        });
     }
 
     private initApplicationUploader() {
@@ -81,5 +82,13 @@ export class UploadAppPanel extends api.ui.panel.Panel {
         this.onDrop((event: DragEvent) => {
             uploaderContainer.hide();
         });
+    }
+
+    getApplicationInput(): ApplicationInput {
+        return this.applicationInput;
+    }
+
+    getApplicationUploaderEl(): ApplicationUploaderEl {
+        return this.applicationUploaderEl;
     }
 }

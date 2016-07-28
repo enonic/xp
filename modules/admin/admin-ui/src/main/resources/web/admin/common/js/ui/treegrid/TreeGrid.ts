@@ -195,7 +195,7 @@ module api.ui.treegrid {
 
                 this.loadBufferSize = builder.getLoadBufferSize();
                 var interval;
-                this.onShown(() => {
+                this.onRendered(() => {
                     if (interval) {
                         clearInterval(interval);
                     }

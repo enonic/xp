@@ -15,20 +15,20 @@ export class MarketAppPanel extends api.ui.panel.Panel {
 
     constructor(className?: string) {
         super(className);
+    }
 
-        var gridInitialized = false;
-
-        this.onShown(() => {
-            if (gridInitialized) {
-                return;
-            }
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
 
             this.marketAppsTreeGrid = new MarketAppsTreeGrid();
             this.marketAppsTreeGrid.updateInstallApplications(this.installApplications);
-            this.initDataLoadListener();
-            this.initAvailableSizeChangeListener();
             this.appendChild(this.marketAppsTreeGrid);
-            gridInitialized = true;
+
+            this.initDataLoadListener();
+
+            this.initAvailableSizeChangeListener();
+
+            return rendered;
         });
     }
 
