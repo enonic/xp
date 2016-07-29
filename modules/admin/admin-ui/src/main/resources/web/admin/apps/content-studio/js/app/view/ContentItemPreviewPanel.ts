@@ -45,6 +45,12 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
             }
         });
 
+        this.onHidden((event) => {
+            if (this.mask.isVisible()) {
+                this.mask.hide();
+            }
+        });
+
         this.frame.onLoaded((event: UIEvent) => {
             var frameWindow = this.frame.getHTMLElement()["contentWindow"];
 

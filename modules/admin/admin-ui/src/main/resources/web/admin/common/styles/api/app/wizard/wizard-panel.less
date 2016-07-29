@@ -7,7 +7,7 @@
   }
 
   .toolbar {
-
+    .opacity(0);
     border-bottom: 1px solid @admin-medium-gray-border;
 
     &.scroll-shadow {
@@ -31,11 +31,17 @@
 
   .form-panel {
     overflow-y: auto !important;
+    .opacity(0);
+  }
+
+  .split-panel {
+    .opacity(0);
   }
 
   .wizard-steps-panel {
     margin: 0;
     padding: 0 0 0 110px;
+    overflow: visible; // for the dropdowns to be visible outside the form
 
     .wizard-step-form {
 

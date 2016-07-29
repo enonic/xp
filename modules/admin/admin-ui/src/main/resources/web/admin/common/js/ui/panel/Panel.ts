@@ -11,7 +11,7 @@ module api.ui.panel {
             super("panel" + (className ? " " + className : ""));
             this.doOffset = true;
 
-            this.onShown((event) => {
+            this.onAdded((event) => {
                 if (this.doOffset) {
                     this.calculateOffset();
                 }
@@ -26,7 +26,17 @@ module api.ui.panel {
             }
         }
 
-        private calculateOffset() {
+        doRender(): Q.Promise<boolean> {
+            return super.doRender().then((rendered) => {
+                if (this.doOffset) {
+                    this.calculateOffset();
+                }
+
+                return rendered;
+            })
+        }
+
+        protected calculateOffset() {
             // calculates bottom of previous element in dom and set panel top to this value.
             var previous = this.getEl().getPrevious();
             var top = previous ? (previous.getOffsetTopRelativeToParent() + previous.getHeightWithMargin()) : 0;

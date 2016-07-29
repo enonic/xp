@@ -1,4 +1,6 @@
 import "../../api.ts";
+import {MarketAppPanel} from "./view/MarketAppPanel";
+import {UploadAppPanel} from "./view/UploadAppPanel";
 
 import ApplicationKey = api.application.ApplicationKey;
 import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
@@ -8,9 +10,6 @@ import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
 import Application = api.application.Application;
 
 import DockedPanel = api.ui.panel.DockedPanel;
-
-import {MarketAppPanel} from "./view/MarketAppPanel";
-import {UploadAppPanel} from "./view/UploadAppPanel";
 
 export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
@@ -31,10 +30,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         this.onMarketLoaded = this.centerMyself.bind(this);
 
-        this.initUploadAppPanel();
-
-        this.initMarketAppPanel();
-
         api.dom.Body.get().appendChild(this);
     }
 
@@ -42,51 +37,49 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         this.marketAppPanel.updateInstallApplications(installApplications);
     }
 
-    private initMarketAppPanel() {
-        this.marketAppPanel = new MarketAppPanel("market-app-panel");
-        this.marketAppPanel.onShown(() => {
-            this.marketAppPanel.getMarketAppsTreeGrid().onLoaded(this.onMarketLoaded)
-            this.centerMyself();
-        });
-    }
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
 
-    private initUploadAppPanel() {
-
-        this.uploadAppPanel = new UploadAppPanel(this.getCancelAction(), "upload-app-panel");
-        this.uploadAppPanel.onShown(() => {
-            this.centerMyself();
-        });
-
-        this.uploadAppPanel.getApplicationInput().onKeyUp((event: KeyboardEvent) => {
-            if (event.keyCode === 27) {
-                this.getCancelAction().execute();
+            if (!this.marketAppPanel) {
+                this.marketAppPanel = new MarketAppPanel("market-app-panel");
             }
+
+            if (!this.uploadAppPanel) {
+                this.uploadAppPanel = new UploadAppPanel(this.getCancelAction(), "upload-app-panel");
+                this.uploadAppPanel.onRendered((event) => {
+                    this.uploadAppPanel.getApplicationInput().onKeyUp((event: KeyboardEvent) => {
+                        if (event.keyCode === 27) {
+                            this.getCancelAction().execute();
+                        }
+                    });
+
+                    this.initUploaderListeners(this.uploadAppPanel);
+                });
+            }
+
+            if (!this.dockedPanel) {
+                this.dockedPanel = new DockedPanel();
+                this.dockedPanel.addClass("install-app-docked-panel");
+                this.dockedPanel.addItem("Enonic Market", true, this.marketAppPanel);
+                this.dockedPanel.addItem("Upload", true, this.uploadAppPanel);
+
+                this.appendChildToContentPanel(this.dockedPanel);
+            }
+
+            return rendered;
         });
-
-        this.initUploaderListeners();
-
     }
 
-    private initAndAppendInstallAppsTabsPanel() {
-        let installAppDockedPanel = new DockedPanel();
-        installAppDockedPanel.addClass("install-app-docked-panel");
-        installAppDockedPanel.addItem("Enonic Market", true, this.marketAppPanel);
-        installAppDockedPanel.addItem("Upload", true, this.uploadAppPanel);
-
-        this.appendChildToContentPanel(installAppDockedPanel);
-        this.dockedPanel = installAppDockedPanel;
-    }
-
-    private initUploaderListeners() {
+    private initUploaderListeners(uploadAppPanel: UploadAppPanel) {
 
         let uploadFailedHandler = (event: FileUploadFailedEvent<Application>, uploader: ApplicationUploaderEl) => {
-            this.uploadAppPanel.getApplicationInput().showFailure(
+            uploadAppPanel.getApplicationInput().showFailure(
                 uploader.getFailure());
             this.resetFileInputWithUploader();
         };
 
-        this.uploadAppPanel.getApplicationInput().onUploadFailed((event) => {
-            uploadFailedHandler(event, this.uploadAppPanel.getApplicationInput().getUploader())
+        uploadAppPanel.getApplicationInput().onUploadFailed((event) => {
+            uploadFailedHandler(event, uploadAppPanel.getApplicationInput().getUploader())
         });
 
         let uploadCompletedHandler = (event: FileUploadCompleteEvent<Application>) => {
@@ -104,20 +97,15 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         this.uploadAppPanel.getApplicationInput().onUploadStarted(uploadStartedHandler);
     }
 
-    open() {
-        if (!this.dockedPanel) {
-            this.initAndAppendInstallAppsTabsPanel();
-        }
-        super.open();
-    }
-
     show() {
+        this.marketAppPanel.getMarketAppsTreeGrid().onLoaded(this.onMarketLoaded);
         this.resetFileInputWithUploader();
         super.show();
         this.marketAppPanel.loadGrid();
     }
 
     hide() {
+        this.marketAppPanel.getMarketAppsTreeGrid().unLoaded(this.onMarketLoaded);
         super.hide();
         this.uploadAppPanel.getApplicationInput().stop();
         this.addClass("hidden");
@@ -125,9 +113,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     }
 
     close() {
-        if (!!this.marketAppPanel.getMarketAppsTreeGrid()) {
-            this.marketAppPanel.getMarketAppsTreeGrid().unLoaded(this.onMarketLoaded);
-        }
         this.uploadAppPanel.getApplicationInput().reset();
         super.close();
     }

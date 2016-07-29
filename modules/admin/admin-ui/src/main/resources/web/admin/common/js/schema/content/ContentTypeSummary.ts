@@ -48,6 +48,10 @@ module api.schema.content {
             return this.getContentTypeName().isImage();
         }
 
+        isShortcut(): boolean {
+            return this.getContentTypeName().isShortcut();
+        }
+
         isFinal(): boolean {
             return this.final;
         }

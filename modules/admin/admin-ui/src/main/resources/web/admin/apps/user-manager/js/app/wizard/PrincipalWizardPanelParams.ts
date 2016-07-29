@@ -1,39 +1,32 @@
 import "../../api.ts";
 import {UserItemWizardPanelParams} from "./UserItemWizardPanelParams";
+import Principal = api.security.Principal;
+import PrincipalType = api.security.PrincipalType;
+import UserStore = api.security.UserStore;
+import PrincipalKey = api.security.PrincipalKey;
 
-export class PrincipalWizardPanelParams extends UserItemWizardPanelParams {
+export class PrincipalWizardPanelParams extends UserItemWizardPanelParams<Principal> {
 
-    persistedPrincipal: api.security.Principal;
+    persistedType: PrincipalType;
 
-    persistedType: api.security.PrincipalType;
-
-    persistedPath: string;
-
-    userStore: api.security.UserStore;
+    userStore: UserStore;
 
     parentOfSameType: boolean;
 
-    setPersistedPrincipal(value: api.security.Principal): PrincipalWizardPanelParams {
-        this.persistedPrincipal = value;
+    principalKey: PrincipalKey;
+
+
+    setPrincipalKey(value: api.security.PrincipalKey): PrincipalWizardPanelParams {
+        this.principalKey = value;
         return this;
     }
 
-    setPrincipalType(value: api.security.PrincipalType): PrincipalWizardPanelParams {
+    setPersistedType(value: PrincipalType): PrincipalWizardPanelParams {
         this.persistedType = value;
         return this;
     }
 
-    setPrincipalPath(value: string): PrincipalWizardPanelParams {
-        this.persistedPath = value;
-        return this;
-    }
-
-    setAppBarTabId(value: api.app.bar.AppBarTabId): PrincipalWizardPanelParams {
-        this.tabId = value;
-        return this;
-    }
-
-    setUserStore(value: api.security.UserStore): PrincipalWizardPanelParams {
+    setUserStore(value: UserStore): PrincipalWizardPanelParams {
         this.userStore = value;
         return this;
     }
@@ -41,9 +34,5 @@ export class PrincipalWizardPanelParams extends UserItemWizardPanelParams {
     setParentOfSameType(value: boolean): PrincipalWizardPanelParams {
         this.parentOfSameType = value;
         return this;
-    }
-
-    getPersistedItem() {
-        return this.persistedPrincipal;
     }
 }

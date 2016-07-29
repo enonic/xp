@@ -6,26 +6,25 @@ import BrowseItem = api.app.browse.BrowseItem;
 
 export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSummaryAndCompareStatus> {
 
-    private statusDiv: api.dom.DivEl;
-
-    constructor(viewer: api.ui.Viewer<ContentSummaryAndCompareStatus>, item: BrowseItem<ContentSummaryAndCompareStatus>,
-                removeCallback?: () => void) {
-        super(viewer, item, removeCallback);
-
-        this.initStatusDiv(item.getModel().getCompareStatus());
+    constructor(viewer: api.ui.Viewer<ContentSummaryAndCompareStatus>, item: BrowseItem<ContentSummaryAndCompareStatus>) {
+        super(viewer, item);
     }
 
-    doRender(): boolean {
-        super.doRender();
-        this.appendChild(this.statusDiv);
+    doRender(): wemQ.Promise<boolean> {
+        return super.doRender().then((rendered) => {
 
-        return true;
+            var statusDiv = this.initStatusDiv(this.item.getModel().getCompareStatus());
+            this.appendChild(statusDiv);
+
+            return rendered;
+        });
     }
 
     private initStatusDiv(status: CompareStatus) {
-        this.statusDiv = new api.dom.DivEl("status");
-        this.statusDiv.setHtml(api.content.CompareStatusFormatter.formatStatus(status));
+        var statusDiv = new api.dom.DivEl("status");
+        statusDiv.setHtml(api.content.CompareStatusFormatter.formatStatus(status));
         var statusClass = "" + CompareStatus[status];
-        this.statusDiv.addClass(statusClass.toLowerCase());
+        statusDiv.addClass(statusClass.toLowerCase());
+        return statusDiv;
     }
 }

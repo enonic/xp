@@ -1,40 +1,29 @@
 module api.app.wizard {
 
+    import Toolbar = api.ui.toolbar.Toolbar;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+    import Panel = api.ui.panel.Panel;
 
-    export interface WizardPanelParams {
+    /*
+     Only data should be passed to constructor
+     views are to be created on render
+     */
+    export interface WizardPanelParams<EQUITABLE extends api.Equitable> {
 
-        tabId:api.app.bar.AppBarTabId;
+        tabId: api.app.bar.AppBarTabId;
 
-        persistedItem:any;
+        persistedItem: EQUITABLE;
 
-        formIcon: any;
+        actions: WizardActions<any>;
 
-        mainToolbar:api.ui.toolbar.Toolbar;
-
-        stepToolbar?:api.ui.toolbar.Toolbar;
-
-        header:WizardHeader;
-
-        actions:WizardActions<any>;
-
-        livePanel?:api.ui.panel.Panel;
-
-        split?:boolean;
     }
 
     export class WizardPanel<EQUITABLE extends api.Equitable> extends api.ui.panel.Panel implements api.ui.Closeable, api.ui.ActionContainer {
 
-        private tabId: api.app.bar.AppBarTabId;
+        protected params: WizardPanelParams<EQUITABLE>;
 
         private persistedItem: EQUITABLE;
-
-        private mainToolbar: api.ui.toolbar.Toolbar;
-
-        protected actions: WizardActions<EQUITABLE>;
-
-        private header: WizardHeader;
 
         private stepNavigator: WizardStepNavigator;
 
@@ -42,16 +31,28 @@ module api.app.wizard {
 
         private stepsPanel: WizardStepsPanel;
 
+        protected wizardHeader: WizardHeader;
+
+        protected livePanel: Panel;
+
+        protected mainToolbar: Toolbar;
+
+        protected stepToolbar: Toolbar;
+
+        protected formIcon: api.dom.Element;
+
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
 
-        private layingOutNew: boolean;
+        private dataLoaded: boolean = false;
 
-        private firstShow: boolean;
+        protected isNew: boolean = true;
 
-        private closedListeners: {(event: WizardClosedEvent):void}[] = [];
+        private closedListeners: {(event: WizardClosedEvent): void}[] = [];
 
-        protected formPanel: api.ui.panel.Panel;
+        private dataLoadedListeners: {(item: EQUITABLE): void}[] = [];
+
+        protected formPanel: Panel;
 
         private lastFocusedElement: HTMLElement;
 
@@ -73,51 +74,264 @@ module api.app.wizard {
 
         private scrollPosition: number = 0;
 
-        constructor(params: WizardPanelParams, onSuccess: () => void, onError?: (reason: any) => void) {
+        private mask: api.ui.mask.LoadMask;
+
+        public static debug: boolean = false;
+
+        constructor(params: WizardPanelParams<EQUITABLE>) {
             super("wizard-panel");
+
+            this.params = params;
+            this.mask = new api.ui.mask.LoadMask(this);
+
+            if (params.persistedItem) {
+                this.setPersistedItem(params.persistedItem);
+                this.isNew = false;
+            }
+
+            // have to be in constructor because onValidityChanged uses it
             this.validityManager = new WizardValidityManager();
 
-            this.tabId = params.tabId;
-            this.persistedItem = params.persistedItem;
-            this.header = params.header;
-            this.mainToolbar = params.mainToolbar;
-            params.stepToolbar;
-            this.actions = params.actions;
+            // call loadData even if persistedItem is set to load additional data
+            this.loadData();
 
-            this.validityManager.setHeader(this.header);
+            this.onAdded((event: api.dom.ElementAddedEvent) => {
+                if (WizardPanel.debug) {
+                    console.debug("WizardPanel: added", event);
+                }
+
+                this.mask.show();
+            });
+
+            var firstShow;
+            this.onRendered((event: api.dom.ElementRenderedEvent) => {
+                if (WizardPanel.debug) {
+                    console.debug("ContentWizardPanel: rendered", event);
+                }
+                firstShow = true;
+                this.mask.hide();
+
+                if (this.mainToolbar) {
+                    this.mainToolbar.getEl().setOpacity(1);
+                }
+                if (this.splitPanel) {
+                    this.splitPanel.getEl().setOpacity(1);
+                }
+                this.formPanel.getEl().setOpacity(1);
+
+                // check validity on rendered
+                this.notifyValidityChanged(this.isValid());
+            });
+
+            this.onShown((event: api.dom.ElementShownEvent) => {
+                if (WizardPanel.debug) {
+                    console.debug("ContentWizardPanel: shown", event);
+                }
+                if (firstShow) {
+                    firstShow = false;
+                    this.giveInitialFocus();
+                }
+
+                if (!!this.lastFocusedElement) {
+                    this.lastFocusedElement.focus();
+                }
+            });
+        }
+
+        /*
+         Loads necessary data for rendering on wizard open
+         */
+        private loadData() {
+            if (WizardPanel.debug) {
+                console.debug("WizardPanel.loadData");
+            }
+
+            this.dataLoaded = false;
+            this.doLoadData().done((item: EQUITABLE) => {
+                this.dataLoaded = true;
+                if (WizardPanel.debug) {
+                    console.debug("WizardPanel.loadData: data loaded", item);
+                }
+                this.notifyDataLoaded(item);
+            }, (reason) => {
+                api.DefaultErrorHandler.handle(reason);
+            });
+        }
+
+        protected doLoadData(): wemQ.Promise<EQUITABLE> {
+            if (WizardPanel.debug) {
+                console.debug("WizardPanel.doLoadData");
+            }
+            var deferred = wemQ.defer<EQUITABLE>();
+
+            if (!this.getPersistedItem()) {
+                if (WizardPanel.debug) {
+                    console.debug("WizardPanel.doLoadData: loading new data...");
+                }
+                // Ensure a nameless and empty content is persisted before rendering new
+                this.saveChanges().then((equitable) => {
+                    if (WizardPanel.debug) {
+                        console.debug("WizardPanel.doLoadData: data created", equitable);
+                    }
+                    deferred.resolve(equitable);
+                }).catch((reason) => {
+                    deferred.reject(reason);
+                }).done();
+            } else {
+                var equitable = this.getPersistedItem();
+                if (WizardPanel.debug) {
+                    console.debug("WizardPanel.doLoadData: data present, skipping load...", equitable);
+                }
+                deferred.resolve(equitable);
+            }
+
+            return deferred.promise;
+        }
+
+        protected isDataLoaded(): boolean {
+            return this.dataLoaded;
+        }
+
+        /*
+         Wait for loadData to finish in order to render
+         */
+        doRender(): wemQ.Promise<boolean> {
+            if (WizardPanel.debug) {
+                console.debug("WizardPanel.doRender");
+            }
+            return super.doRender().then((rendered) => {
+                if (this.isDataLoaded()) {
+                    return this.doRenderOnDataLoaded(rendered).then((rendered) => {
+
+                        return this.doLayout(this.getPersistedItem()).then(() => rendered);
+                    });
+                } else {
+                    if (WizardPanel.debug) {
+                        console.debug("WizardPanel.doRender: waiting for data to be loaded...");
+                    }
+                    var deferred = wemQ.defer<boolean>();
+
+                    // ensure render happens when data loaded
+                    this.onDataLoaded((item: EQUITABLE) => {
+                        if (WizardPanel.debug) {
+                            console.debug("WizardPanel.doRender: data loaded, resuming render...");
+                        }
+
+                        this.doRenderOnDataLoaded(rendered)
+                            .then((rendered) => {
+                                return this.doLayout(this.getPersistedItem()).then(() => deferred.resolve(rendered));
+                            })
+                            .catch(reason => {
+                                deferred.reject(reason);
+                                api.DefaultErrorHandler.handle(reason);
+                            }).done();
+                    });
+
+                    return deferred.promise;
+                }
+            });
+        }
+
+        protected createMainToolbar(): Toolbar {
+            return null;
+        }
+
+        public getMainToolbar(): Toolbar {
+            return this.mainToolbar;
+        }
+
+        protected createLivePanel(): Panel {
+            return null;
+        }
+
+        public getLivePanel(): Panel {
+            return this.livePanel;
+        }
+
+        protected createWizardHeader(): WizardHeader {
+            return null;
+        }
+
+        public getWizardHeader(): WizardHeader {
+            return this.wizardHeader;
+        }
+
+        protected createFormIcon(): api.dom.Element {
+            return null;
+        }
+
+        public getFormIcon(): api.dom.Element {
+            return this.formIcon;
+        }
+
+        protected createStepToolbar(): Toolbar {
+            return null;
+        }
+
+        public getStepToolbar(): Toolbar {
+            return this.stepToolbar;
+        }
+
+        protected doRenderOnDataLoaded(rendered: boolean): wemQ.Promise<boolean> {
+            if (WizardPanel.debug) {
+                console.debug("WizardPanel.doRenderOnDataLoaded");
+            }
+
+            this.updateToolbarActions();
 
             this.formPanel = new api.ui.panel.Panel("form-panel");
             this.formPanel.onScroll(() => this.updateStickyToolbar());
 
-            this.appendChild(this.mainToolbar);
-            if (params.split && params.livePanel) {
+            this.mainToolbar = this.createMainToolbar();
+            if (this.mainToolbar) {
+                this.appendChild(this.mainToolbar);
+            }
+
+            this.livePanel = this.createLivePanel();
+            if (this.livePanel) {
+
                 this.toggleMinimizeListener = (event: api.ui.ActivatedEvent) => {
                     this.toggleMinimize(event.getIndex());
                 };
                 this.minimizeEditButton = new api.dom.DivEl("minimize-edit icon icon-arrow-right");
                 this.formPanel.prependChild(this.minimizeEditButton);
-                this.splitPanel = this.createSplitPanel(this.formPanel, params.livePanel);
+
+                this.splitPanel = this.createSplitPanel(this.formPanel, this.livePanel);
                 this.appendChild(this.splitPanel);
+
                 api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this.minimizeEditButton, () => {
                     this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
                 });
                 this.minimizeEditButton.onClicked(this.toggleMinimize.bind(this, -1));
+
             } else {
+
                 this.appendChild(this.formPanel);
             }
 
-
             var headerAndNavigatorContainer = new api.dom.DivEl("header-and-navigator-container");
-            headerAndNavigatorContainer.appendChild(params.formIcon);
-            headerAndNavigatorContainer.appendChild(this.header);
 
-            var container = new api.dom.DivEl("test-container");
-            this.stepNavigatorAndToolbarContainer = new WizardStepNavigatorAndToolbar("wizard-step-navigator-and-toolbar");
-            this.stepNavigator = new WizardStepNavigator();
-            if (params.stepToolbar) {
-                this.stepNavigatorAndToolbarContainer.setStepToolbar(params.stepToolbar);
+            this.formIcon = this.createFormIcon();
+            if (this.formIcon) {
+                headerAndNavigatorContainer.appendChild(this.formIcon);
             }
+
+            this.wizardHeader = this.createWizardHeader();
+            if (this.wizardHeader) {
+                headerAndNavigatorContainer.appendChild(this.wizardHeader);
+                this.validityManager.setHeader(this.wizardHeader);
+            }
+
+            this.stepNavigatorAndToolbarContainer = new WizardStepNavigatorAndToolbar("wizard-step-navigator-and-toolbar");
+
+            this.stepToolbar = this.createStepToolbar();
+            if (this.stepToolbar) {
+                this.stepNavigatorAndToolbarContainer.setStepToolbar(this.stepToolbar);
+            }
+
+            this.stepNavigator = new WizardStepNavigator();
             this.stepNavigatorAndToolbarContainer.setStepNavigator(this.stepNavigator);
+
             headerAndNavigatorContainer.appendChild(this.stepNavigatorAndToolbarContainer);
 
             this.stepsPanel = new WizardStepsPanel(this.stepNavigator, this.formPanel);
@@ -125,6 +339,7 @@ module api.app.wizard {
                 // set scroll offset equal to the height of the step navigator to switch steps at the bottom of it when sticky
                 this.stepsPanel.setScrollOffset(event.getElement().getEl().getHeight());
             });
+
             ResponsiveManager.onAvailableSizeChanged(this.stepNavigatorAndToolbarContainer, (item: ResponsiveItem) => {
                 // update offset if step navigator is resized
                 if (this.isVisible()) {
@@ -136,70 +351,37 @@ module api.app.wizard {
             });
             this.formPanel.appendChildren(headerAndNavigatorContainer, this.stepsPanel);
 
-            this.layingOutNew = this.persistedItem == null;
+            return wemQ(rendered);
+        }
 
-            if (this.layingOutNew) {
-                this.preLayoutNew().
-                    then(() => this.layoutNew()).
-                    then(() => {
-                        this.postLayoutNew();
-                        onSuccess();
-                    }).
-                    catch((reason: any) => {
-                        if (onError) {
-                            onError(reason);
-                        } else {
-                            api.DefaultErrorHandler.handle(reason);
-                        }
-                    }).
-                    done(() => this.validityManager.notifyValidityChanged(this.isValid()));
-            } else {
-                this.startLayoutPersistedItem(this.persistedItem).
-                    then(() => {
-                        this.postLayoutPersisted(this.persistedItem);
-                        onSuccess();
-                    }).
-                    catch((reason: any) => {
-                        if (onError) {
-                            onError(reason);
-                        } else {
-                            api.DefaultErrorHandler.handle(reason);
-                        }
-                    }).
-                    done(() => this.validityManager.notifyValidityChanged(this.isValid()));
-            }
 
-            this.onRendered((event: api.dom.ElementRenderedEvent) => {
+        onDataLoaded(listener: (item: EQUITABLE) => void) {
+            this.dataLoadedListeners.push(listener);
+        }
 
-                this.firstShow = true;
-            });
-            this.onShown((event: api.dom.ElementShownEvent) => {
+        unDataLoaded(listener: (item: EQUITABLE) => void) {
+            this.dataLoadedListeners = this.dataLoadedListeners.filter((current) => {
+                return listener !== current;
+            })
+        }
 
-                if (this.firstShow) {
-                    this.firstShow = false;
-                    this.giveInitialFocus();
-                }
-
-                if (!!this.lastFocusedElement) {
-                    this.lastFocusedElement.focus();
-                }
-            });
+        private notifyDataLoaded(item: EQUITABLE) {
+            this.dataLoadedListeners.forEach((listener) => {
+                listener(item);
+            })
         }
 
         protected getWizardStepsPanel(): WizardStepsPanel {
             return this.stepsPanel;
         }
 
-        getMainToolbar(): api.ui.toolbar.Toolbar {
-            return this.mainToolbar;
-        }
-
         updateStickyToolbar() {
             var scrollTop = this.formPanel.getHTMLElement().scrollTop;
-            var wizardHeaderHeight = this.header.getEl().getHeightWithMargin();
+            var wizardHeaderHeight = this.getWizardHeader().getEl().getHeightWithMargin();
             var navigationWidth;
+            let mainToolbar = this.getMainToolbar();
             if (scrollTop > wizardHeaderHeight) {
-                this.mainToolbar.removeClass("scroll-shadow");
+                mainToolbar.removeClass("scroll-shadow");
                 var stepNavigatorEl = this.stepNavigatorAndToolbarContainer.getEl().addClass("scroll-stick");
                 if (!this.stepNavigatorPlaceholder) {
                     this.stepNavigatorPlaceholder = new api.dom.DivEl('toolbar-placeholder');
@@ -207,7 +389,7 @@ module api.app.wizard {
                     this.stepNavigatorPlaceholder.getEl().setWidthPx(stepNavigatorEl.getWidth()).setHeightPx(stepNavigatorEl.getHeight());
                 }
             } else if (scrollTop < wizardHeaderHeight) {
-                this.mainToolbar.addClass("scroll-shadow");
+                mainToolbar.addClass("scroll-shadow");
                 this.stepNavigatorAndToolbarContainer.removeClass("scroll-stick");
                 if (this.stepNavigatorPlaceholder) {
                     this.stepNavigatorPlaceholder.remove();
@@ -215,7 +397,7 @@ module api.app.wizard {
                 }
             }
             if (scrollTop == 0) {
-                this.mainToolbar.removeClass("scroll-shadow");
+                mainToolbar.removeClass("scroll-shadow");
             }
 
             if (this.minimized) {
@@ -224,6 +406,17 @@ module api.app.wizard {
                 navigationWidth = this.stepsPanel.getEl().getWidth() - this.stepNavigatorAndToolbarContainer.getEl().getPaddingLeft();
             }
             this.stepNavigatorAndToolbarContainer.getEl().setWidthPx(navigationWidth);
+        }
+
+        updateToolbarActions() {
+            if (WizardPanel.debug) {
+                console.debug("WizardPanel.updateToolbarActions: isNew", this.isNew);
+            }
+            if (this.isNew) {
+                this.params.actions.enableActionsForNew();
+            } else {
+                this.params.actions.enableActionsForExisting(this.getPersistedItem());
+            }
         }
 
         toggleMinimize(navigationIndex: number = -1) {
@@ -264,8 +457,7 @@ module api.app.wizard {
         }
 
         giveInitialFocus() {
-            this.header.giveFocus();
-
+            this.getWizardHeader().giveFocus();
             this.startRememberFocus();
         }
 
@@ -282,15 +474,11 @@ module api.app.wizard {
         }
 
         getTabId(): api.app.bar.AppBarTabId {
-            return this.tabId;
+            return this.params.tabId;
         }
 
         setTabId(tabId: api.app.bar.AppBarTabId) {
-            this.tabId = tabId;
-        }
-
-        getHeader(): WizardHeader {
-            return this.header;
+            this.params.tabId = tabId;
         }
 
         getIconUrl(): string {
@@ -298,7 +486,7 @@ module api.app.wizard {
         }
 
         getActions(): api.ui.Action[] {
-            return this.actions.getActions();
+            return this.params.actions.getActions();
         }
 
         getSteps(): WizardStep[] {
@@ -336,51 +524,11 @@ module api.app.wizard {
             return this.stepsPanel.removeNavigablePanel(form);
         }
 
-        preLayoutNew(): wemQ.Promise<void> {
-            // To be overridden by inheritors - if extra work is needed at end of layoutNew
-            var deferred = wemQ.defer<void>();
-            deferred.resolve(null);
-            return deferred.promise;
-        }
-
-        isLayingOutNew(): boolean {
-            return this.layingOutNew;
-        }
-
-        layoutNew(): wemQ.Promise<void> {
-            var deferred = wemQ.defer<void>();
-            this.actions.enableActionsForNew();
-            deferred.resolve(null);
-            return deferred.promise;
-        }
-
-        postLayoutNew(): wemQ.Promise<void> {
-            // To be overridden by inheritors - if extra work is needed at end of layoutNew
-            var deferred = wemQ.defer<void>();
-            deferred.resolve(null);
-            return deferred.promise;
-        }
-
-        private startLayoutPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
-
-            this.persistedItem = persistedItem;
-            this.actions.enableActionsForExisting(persistedItem);
-
-            return this.layoutPersistedItem(persistedItem);
-        }
-
-        layoutPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
-
-            var deferred = wemQ.defer<void>();
-            deferred.resolve(null);
-            return deferred.promise;
-        }
-
-        postLayoutPersisted(existing: EQUITABLE): wemQ.Promise<void> {
-            // To be overridden by inheritors - if extra work is needed at end of startLayoutPersistedItem
-            var deferred = wemQ.defer<void>();
-            deferred.resolve(null);
-            return deferred.promise;
+        doLayout(persistedItem: EQUITABLE): wemQ.Promise<void> {
+            if (WizardPanel.debug) {
+                console.debug("WizardPanel.doLayout", persistedItem);
+            }
+            return wemQ<void>(null);
         }
 
         getPersistedItem(): EQUITABLE {
@@ -392,6 +540,9 @@ module api.app.wizard {
         }
 
         protected setPersistedItem(newPersistedItem: EQUITABLE): void {
+            if (WizardPanel.debug) {
+                console.debug("WizardPanel.setPersistedItem", newPersistedItem);
+            }
             this.persistedItem = newPersistedItem;
         }
 
@@ -410,18 +561,23 @@ module api.app.wizard {
 
             if (this.isItemPersisted()) {
                 return this.updatePersistedItem().then((persistedItem: EQUITABLE) => {
-
+                    this.setPersistedItem(persistedItem);
                     this.isChanged = false;
-                    return this.startLayoutPersistedItem(persistedItem).
-                        then(() => persistedItem);
+                    this.isNew = false;
+                    this.updateToolbarActions();
+                    return this.postUpdatePersistedItem(persistedItem);
                 });
+
             } else {
                 return this.persistNewItem().then((persistedItem: EQUITABLE) => {
-
+                    this.setPersistedItem(persistedItem);
                     this.isChanged = false;
-                    return this.postPersistNewItem(persistedItem).
-                        then(() => this.startLayoutPersistedItem(persistedItem)).
-                        then(() => persistedItem);
+                    // persist new happens before render to init dummy entity and is still considered as new
+                    if (this.isRendered()) {
+                        this.isNew = false;
+                        this.updateToolbarActions();
+                    }
+                    return this.postPersistNewItem(persistedItem);
                 });
             }
         }
@@ -433,11 +589,10 @@ module api.app.wizard {
             throw new Error("Must be overriden by inheritor");
         }
 
-        postPersistNewItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
+        postPersistNewItem(persistedItem: EQUITABLE): wemQ.Promise<EQUITABLE> {
             // To be overridden by inheritors - if extra work is needed at end of persistNewItem
-            var deferred = wemQ.defer<void>();
-            deferred.resolve(null);
-            return deferred.promise;
+
+            return wemQ(persistedItem);
         }
 
         /*
@@ -446,6 +601,13 @@ module api.app.wizard {
         updatePersistedItem(): wemQ.Promise<EQUITABLE> {
             throw new Error("Must be overriden by inheritor");
         }
+
+        postUpdatePersistedItem(persistedItem: EQUITABLE): wemQ.Promise<EQUITABLE> {
+            // To be overridden by inheritors - if extra work is needed at end of updatePersistedItem
+
+            return wemQ(persistedItem);
+        }
+
 
         close(checkCanClose: boolean = false) {
             if (!checkCanClose || this.canClose()) {
