@@ -11,17 +11,12 @@ module api.content {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
 
-            var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>().
-                setComboBoxName(builder.name ? builder.name : 'contentSelector').
-                setLoader(loader).
-                setSelectedOptionsView(new ContentSelectedOptionsView()).
-                setMaximumOccurrences(builder.maximumOccurrences).
-                setOptionDisplayValueViewer(new api.content.ContentSummaryViewer()).
-                setDelayedInputValueChangedHandling(750).
-                setValue(builder.value).
-                setDisplayMissingSelectedOptions(builder.displayMissingSelectedOptions).
-                setRemoveMissingSelectedOptions(builder.removeMissingSelectedOptions).
-                setMinWidth(builder.minWidth);
+            var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>().setComboBoxName(
+                builder.name ? builder.name : 'contentSelector').setLoader(loader).setSelectedOptionsView(
+                new ContentSelectedOptionsView()).setMaximumOccurrences(builder.maximumOccurrences).setOptionDisplayValueViewer(
+                new api.content.ContentSummaryViewer()).setDelayedInputValueChangedHandling(750).setValue(
+                builder.value).setDisplayMissingSelectedOptions(builder.displayMissingSelectedOptions).setRemoveMissingSelectedOptions(
+                builder.removeMissingSelectedOptions).setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
 
@@ -79,7 +74,8 @@ module api.content {
             super(option);
         }
 
-        layout() {
+        doRender(): wemQ.Promise<boolean> {
+
             var removeButtonEl = new api.dom.AEl("remove"),
                 message = new api.dom.H6El("missing-content");
 
@@ -93,8 +89,9 @@ module api.content {
                 return false;
             });
 
-            this.appendChild(removeButtonEl);
-            this.appendChild(message);
+            this.appendChildren<api.dom.Element>(removeButtonEl, message);
+
+            return wemQ(true);
         }
     }
 

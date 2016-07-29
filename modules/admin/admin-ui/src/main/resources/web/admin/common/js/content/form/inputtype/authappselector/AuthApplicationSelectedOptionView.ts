@@ -22,11 +22,11 @@ module api.content.site.inputtype.siteconfigurator {
 
         private editClickedListeners: {(event: MouseEvent): void;}[];
 
-        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey) : void}[];
+        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey): void}[];
 
         private formContext: ContentFormContext;
 
-        private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent):void};
+        private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent): void};
 
         private readOnly: boolean;
 
@@ -43,14 +43,13 @@ module api.content.site.inputtype.siteconfigurator {
             super(option);
         }
 
-        layout() {
+        doRender(): wemQ.Promise<boolean> {
+
             var header = new api.dom.DivEl('header');
 
-            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.large)).
-                setMainName(this.application.getDisplayName()).
-                setSubName(this.application.getName() + "-" + this.application.getVersion()).
-                setIconClass("icon-xlarge icon-puzzle");
+            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
+                api.app.NamesAndIconViewSize.large)).setMainName(this.application.getDisplayName()).setSubName(
+                this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
 
             header.appendChild(namesAndIconView);
 
@@ -70,6 +69,8 @@ module api.content.site.inputtype.siteconfigurator {
             if (!this.readOnly && this.application.getAuthForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
             }
+
+            return wemQ(true);
         }
 
         setSiteConfig(siteConfig: SiteConfig) {

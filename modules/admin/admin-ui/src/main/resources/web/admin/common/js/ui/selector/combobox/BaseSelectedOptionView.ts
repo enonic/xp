@@ -10,14 +10,13 @@ module api.ui.selector.combobox {
 
         constructor(option: api.ui.selector.Option<T>) {
             super("selected-option");
-            this.layout();
-            this.setOption(option);
+
+            this.option = option;
         }
 
         setOption(option: api.ui.selector.Option<T>) {
-            this.option = option;
             if (this.optionValueEl) {
-                this.optionValueEl.getEl().setInnerHtml(this.option.displayValue.toString());
+                this.optionValueEl.getEl().setInnerHtml(option.displayValue.toString());
             }
         }
 
@@ -25,9 +24,13 @@ module api.ui.selector.combobox {
             return this.option;
         }
 
-        layout() {
+        doRender(): wemQ.Promise<boolean> {
+
             var removeButtonEl = new api.dom.AEl("remove");
             this.optionValueEl = new api.dom.DivEl('option-value');
+            if (this.option) {
+                this.setOption(this.option);
+            }
 
             removeButtonEl.onClicked((event: Event) => {
                 this.notifyRemoveClicked();
@@ -37,8 +40,9 @@ module api.ui.selector.combobox {
                 return false;
             });
 
-            this.appendChild(removeButtonEl);
-            this.appendChild(this.optionValueEl);
+            this.appendChildren<api.dom.Element>(removeButtonEl, this.optionValueEl);
+
+            return wemQ(true);
         }
 
         protected notifyRemoveClicked() {

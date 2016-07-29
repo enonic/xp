@@ -12,17 +12,15 @@ module api.content.page.region {
     export class LayoutDescriptorComboBox extends RichComboBox<LayoutDescriptor> {
 
         constructor(loader: LayoutDescriptorLoader) {
-            super(new RichComboBoxBuilder<LayoutDescriptor>().
-                setIdentifierMethod("getKey").
-                setOptionDisplayValueViewer(new LayoutDescriptorViewer()).
-                setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
-                setLoader(loader).
-                setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText(
+            super(new RichComboBoxBuilder<LayoutDescriptor>().setIdentifierMethod("getKey").setOptionDisplayValueViewer(
+                new LayoutDescriptorViewer()).setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).setLoader(
+                loader).setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText(
                 "No layouts available"));
         }
+
         getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {
             var option = this.getOptionByValue(descriptorKey.toString());
-            if(option) {
+            if (option) {
                 return option.displayValue;
             }
             return null;
@@ -62,7 +60,8 @@ module api.content.page.region {
             this.addClass("layout-descriptor-selected-option-view");
         }
 
-        layout() {
+        doRender(): wemQ.Promise<boolean> {
+
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView.setIconClass("icon-earth icon-medium")
                 .setMainName(this.descriptor.getDisplayName())
@@ -77,8 +76,9 @@ module api.content.page.region {
                 return false;
             });
 
-            this.appendChild(removeButtonEl);
-            this.appendChild(namesAndIconView);
+            this.appendChildren<api.dom.Element>(removeButtonEl, namesAndIconView);
+
+            return wemQ(true);
         }
 
     }

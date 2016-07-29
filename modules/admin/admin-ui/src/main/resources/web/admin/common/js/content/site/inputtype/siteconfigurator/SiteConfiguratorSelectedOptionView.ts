@@ -39,7 +39,8 @@ module api.content.site.inputtype.siteconfigurator {
             super(option);
         }
 
-        layout() {
+        doRender(): wemQ.Promise<boolean> {
+
             var header = new api.dom.DivEl('header');
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
@@ -69,6 +70,8 @@ module api.content.site.inputtype.siteconfigurator {
             if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
             }
+
+            return wemQ(true);
         }
 
         setSiteConfig(siteConfig: SiteConfig) {

@@ -11,19 +11,16 @@ module api.content.page.region {
 
     export class PartDescriptorComboBox extends RichComboBox<PartDescriptor> {
 
-        constructor(loader:PartDescriptorLoader) {
-            super(new RichComboBoxBuilder<PartDescriptor>().
-                setIdentifierMethod("getKey").
-                setOptionDisplayValueViewer(new PartDescriptorViewer()).
-                setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
-                setLoader(loader).
-                setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText(
+        constructor(loader: PartDescriptorLoader) {
+            super(new RichComboBoxBuilder<PartDescriptor>().setIdentifierMethod("getKey").setOptionDisplayValueViewer(
+                new PartDescriptorViewer()).setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).setLoader(
+                loader).setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText(
                 "No parts available"));
         }
 
         getDescriptor(descriptorKey: DescriptorKey): PartDescriptor {
             var option = this.getOptionByValue(descriptorKey.toString());
-            if(option) {
+            if (option) {
                 return option.displayValue;
             }
             return null;
@@ -49,29 +46,30 @@ module api.content.page.region {
 
     export class PartDescriptorSelectedOptionsView extends BaseSelectedOptionsView<PartDescriptor> {
 
-        createSelectedOption(option:Option<PartDescriptor>):SelectedOption<PartDescriptor> {
+        createSelectedOption(option: Option<PartDescriptor>): SelectedOption<PartDescriptor> {
             return new SelectedOption<PartDescriptor>(new PartDescriptorSelectedOptionView(option), this.count());
         }
     }
 
     export class PartDescriptorSelectedOptionView extends BaseSelectedOptionView<PartDescriptor> {
 
-        private descriptor:PartDescriptor;
+        private descriptor: PartDescriptor;
 
-        constructor(option:Option<PartDescriptor>) {
+        constructor(option: Option<PartDescriptor>) {
             this.descriptor = option.displayValue;
             super(option);
             this.addClass("part-descriptor-selected-option-view");
         }
 
-        layout() {
+        doRender(): wemQ.Promise<boolean> {
+            
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView.setIconClass("icon-puzzle icon-medium")
                 .setMainName(this.descriptor.getDisplayName())
                 .setSubName(this.descriptor.getKey().toString());
 
             var removeButtonEl = new api.dom.AEl("remove");
-            removeButtonEl.onClicked((event:MouseEvent) => {
+            removeButtonEl.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
 
                 event.stopPropagation();
@@ -79,8 +77,9 @@ module api.content.page.region {
                 return false;
             });
 
-            this.appendChild(removeButtonEl);
-            this.appendChild(namesAndIconView);
+            this.appendChildren<api.dom.Element>(removeButtonEl, namesAndIconView);
+
+            return wemQ(true);
         }
 
     }
