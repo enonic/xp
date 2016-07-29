@@ -1,4 +1,12 @@
 import "../../api.ts";
+import {UserItemWizardPanel} from "./UserItemWizardPanel";
+import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
+import {UserStoreWizardPanelParams} from "./UserStoreWizardPanelParams";
+import {UserStoreWizardActions} from "./action/UserStoreWizardActions";
+import {UserStoreWizardToolbar} from "./UserStoreWizardToolbar";
+import {UserStoreWizardStepForm} from "./UserStoreWizardStepForm";
+import {Router} from "../Router";
+import {UserStoreWizardDataLoader} from "./UserStoreWizardDataLoader";
 
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
@@ -14,14 +22,6 @@ import WizardStep = api.app.wizard.WizardStep;
 import FormIcon = api.app.wizard.FormIcon;
 import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
-import {UserItemWizardPanel} from "./UserItemWizardPanel";
-import {PrincipalDescriptionWizardStepForm} from "./PrincipalDescriptionWizardStepForm";
-import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
-import {UserStoreWizardPanelParams} from "./UserStoreWizardPanelParams";
-import {UserStoreWizardActions} from "./action/UserStoreWizardActions";
-import {UserStoreWizardToolbar} from "./UserStoreWizardToolbar";
-import {UserStoreWizardStepForm} from "./UserStoreWizardStepForm";
-import {Router} from "../Router";
 
 export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
@@ -29,61 +29,112 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     private permissionsWizardStepForm: SecurityWizardStepForm;
 
-    private defaultUserStore: UserStore;
-
-    private persistedUserStoreKey: UserStoreKey;
+    private userStoreParams: UserStoreWizardPanelParams;
 
     isUserStoreFormValid: boolean;
-    userStorePath: string;
 
     userStoreNamedListeners: {(event: UserStoreNamedEvent): void}[];
 
-    constructor(params: UserStoreWizardPanelParams, callback: (wizard: UserStoreWizardPanel) => void) {
+    private defaultUserStore: UserStore;
 
-        this.userStoreWizardStepForm = new UserStoreWizardStepForm();
-        this.permissionsWizardStepForm = new SecurityWizardStepForm();
+    public static debug: boolean = false;
 
-        this.constructing = true;
+    constructor(params: UserStoreWizardPanelParams) {
+
         this.isUserStoreFormValid = false;
         this.userStoreNamedListeners = [];
 
-        this.userStorePath = params.persistedPath;
-        this.defaultUserStore = params.defaultUserStore;
-        if (params.userStore) {
-            this.persistedUserStoreKey = params.userStore.getKey();
+        this.userStoreParams = params;
+
+        super(params);
+    }
+
+    protected doLoadData(): Q.Promise<UserStore> {
+        if (UserStoreWizardPanel.debug) {
+            console.debug("UserStoreWizardPanel.doLoadData");
         }
+        // don't call super.doLoadData to prevent saving new entity
+        return new UserStoreWizardDataLoader().loadData(this.userStoreParams)
+            .then((loader) => {
+                if (UserStoreWizardPanel.debug) {
+                    console.debug("UserStoreWizardPanel.doLoadData: loaded data", loader);
+                }
+                if (loader.userStore) {
+                    this.isNew = false;
+                    this.setPersistedItem(loader.userStore);
+                }
+                this.defaultUserStore = loader.defaultUserStore;
+                return loader.userStore;
+            });
+    }
 
-        var iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        this.formIcon = new FormIcon(iconUrl, "icon");
-        this.formIcon.addClass("icon-xlarge icon-address-book");
+    protected createWizardActions(): UserStoreWizardActions {
+        return new UserStoreWizardActions(this);
+    }
 
-        this.wizardActions = new UserStoreWizardActions(this);
-        this.toolbar = new UserStoreWizardToolbar({
+
+    protected createMainToolbar(): UserStoreWizardToolbar {
+        return new UserStoreWizardToolbar({
             saveAction: this.wizardActions.getSaveAction(),
             deleteAction: this.wizardActions.getDeleteAction()
         });
+    }
 
-        this.wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
+    public getMainToolbar(): api.ui.toolbar.Toolbar {
+        return <UserStoreWizardToolbar>super.getMainToolbar();
+    }
 
-        this.wizardHeader.setPath(this.userStorePath);
+    protected createFormIcon(): api.app.wizard.FormIcon {
+        var iconUrl = api.dom.ImgEl.PLACEHOLDER;
+        this.formIcon = new FormIcon(iconUrl, "icon");
+        this.formIcon.addClass("icon-xlarge icon-address-book");
+        return formIcon
+    }
 
-        if (params.userStore) {
-            this.wizardHeader.disableNameInput();
-            this.wizardHeader.setAutoGenerationEnabled(false);
+    protected createWizardHeader(): api.app.wizard.WizardHeaderWithDisplayNameAndName {
+        var wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
+
+
+        let existing = this.getPersistedItem(),
+            displayName = "",
+            name = "";
+
+        if (!!existing) {
+            displayName = existing.getDisplayName();
+            name = existing.getKey().getId();
+
+            wizardHeader.disableNameInput();
+            wizardHeader.setAutoGenerationEnabled(false);
         } else {
-            this.getUserStoreWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+            displayName = "";
+            name = "";
+
+            wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
                 var updateStatus = event.getPropertyName() === "name" ||
-                                   (this.getUserStoreWizardHeader().isAutoGenerationEnabled() && event.getPropertyName() === "displayName");
+                                   (wizardHeader.isAutoGenerationEnabled()
+                                    && event.getPropertyName() === "displayName");
 
                 if (updateStatus) {
                     this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
                 }
             });
+
         }
 
-        super(params, () => {
+        wizardHeader.setPath(this.userStoreParams.persistedPath);
+        wizardHeader.initNames(displayName, name, false);
 
+        return wizardHeader;
+    }
+
+    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+        return super.doRenderOnDataLoaded(rendered).then((rendered) => {
+            if (UserStoreWizardPanel.debug) {
+                console.debug("UserStoreWizardPanel.doRenderOnDataLoaded");
+            }
             this.addClass("principal-wizard-panel");
+
+            this.getFormIcon().addClass("icon-address-book");
 
             var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isVisible()) {
@@ -105,115 +156,56 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
                 responsiveItem.update();
             });
 
-            this.constructing = false;
-
-            callback(this);
+            return rendered;
         });
-
-        this.formIcon.addClass("icon-address-book");
     }
 
     getUserItemType(): string {
         return "User Store";
     }
 
-    getUserStoreWizardHeader(): WizardHeaderWithDisplayNameAndName {
-        return this.wizardHeader;
-    }
-
-    giveInitialFocus() {
-        this.wizardHeader.giveFocus();
-        this.startRememberFocus();
-    }
-
-    saveChanges(): wemQ.Promise<UserStore> {
-        if (!this.wizardHeader.getName()) {
-            var deferred = wemQ.defer<UserStore>();
-            api.notify.showError("Name can not be empty");
-            // deferred.resolve(null);
-            deferred.reject(new Error("Name can not be empty"));
-            return deferred.promise;
-        } else {
-            return super.saveChanges();
-        }
-
-    }
-
-    createSteps(): wemQ.Promise<any[]> {
-        var deferred = wemQ.defer<WizardStep[]>();
-
+    createSteps(persistedItem: UserStore): WizardStep[] {
         var steps: WizardStep[] = [];
+
+        this.userStoreWizardStepForm = new UserStoreWizardStepForm();
+        this.permissionsWizardStepForm = new SecurityWizardStepForm();
 
         steps.push(new WizardStep("User Store", this.userStoreWizardStepForm));
         steps.push(new WizardStep("Permissions", this.permissionsWizardStepForm));
 
-        this.setSteps(steps);
-
-        deferred.resolve(steps);
-        return deferred.promise;
+        return steps;
     }
 
-    preLayoutNew(): wemQ.Promise<void> {
-        var deferred = wemQ.defer<void>();
+    doLayout(persistedUserStore: UserStore): wemQ.Promise<void> {
+        return super.doLayout(persistedUserStore).then(() => {
 
-        this.doLayoutPersistedItem(null);
+            if (this.isRendered()) {
+                return wemQ<void>(null);
+            } else {
+                return this.doLayoutPersistedItem(persistedUserStore ? persistedUserStore.clone() : null);
+            }
 
-        deferred.resolve(null);
-
-        return deferred.promise;
-    }
-
-    postLayoutNew(): wemQ.Promise<void> {
-        var deferred = wemQ.defer<void>();
-
-        this.wizardHeader.initNames("", this.userStorePath, false);
-        this.userStoreWizardStepForm.layout(null);
-        this.permissionsWizardStepForm.layoutReadOnly(this.defaultUserStore);
-
-        deferred.resolve(null);
-        return deferred.promise;
-    }
-
-    layoutPersistedItem(persistedUserStore: UserStore): wemQ.Promise<void> {
-
-        var viewedUserStore;
-        if (!this.constructing) {
-
-            var deferred = wemQ.defer<void>();
-            deferred.resolve(null);
-            return deferred.promise;
-        }
-        else {
-            return this.doLayoutPersistedItem(persistedUserStore.clone());
-        }
-    }
-
-    doLayoutPersistedItem(userStore: UserStore): wemQ.Promise<void> {
-
-        var parallelPromises: wemQ.Promise<any>[] = [
-            // Load attachments?
-            this.createSteps()
-        ];
-
-        return wemQ.all(parallelPromises).spread<void>(() => {
         });
     }
 
-    postLayoutPersisted(existing: UserStore): wemQ.Promise<void> {
-        var deferred = wemQ.defer<void>();
 
-        this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
-        this.userStoreWizardStepForm.layout(existing.clone());
-        this.permissionsWizardStepForm.layout(existing.clone(), this.defaultUserStore);
+    protected doLayoutPersistedItem(persistedItem: UserStore): Q.Promise<void> {
 
-        deferred.resolve(null);
-        return deferred.promise;
+        if (!!persistedItem) {
+            this.getWizardHeader().setDisplayName(persistedItem.getDisplayName());
+            this.userStoreWizardStepForm.layout(persistedItem);
+            this.permissionsWizardStepForm.layout(persistedItem, this.defaultUserStore);
+        } else {
+            this.userStoreWizardStepForm.layout();
+            this.permissionsWizardStepForm.layoutReadOnly(this.defaultUserStore);
+        }
+
+        return wemQ<void>(null);
     }
 
     persistNewItem(): wemQ.Promise<UserStore> {
         return this.produceCreateUserStoreRequest().sendAndParse().then((userStore: UserStore) => {
-            this.wizardHeader.disableNameInput();
-            this.wizardHeader.setAutoGenerationEnabled(false);
+
             api.notify.showFeedback('UserStore was created!');
             new api.security.UserItemCreatedEvent(null, userStore).fire();
 
@@ -221,12 +213,10 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         });
     }
 
-    postPersistNewItem(userStore: UserStore): wemQ.Promise<void> {
+    postPersistNewItem(userStore: UserStore): wemQ.Promise<UserStore> {
         Router.setHash("edit/" + userStore.getKey());
 
-        var deferred = wemQ.defer<void>();
-        deferred.resolve(null);
-        return deferred.promise;
+        return wemQ(userStore);
     }
 
     updatePersistedItem(): wemQ.Promise<UserStore> {
@@ -245,8 +235,9 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     hasUnsavedChanges(): boolean {
         var persistedUserStore: UserStore = this.getPersistedItem();
         if (persistedUserStore == undefined) {
-            return this.wizardHeader.getName() !== "" ||
-                   this.wizardHeader.getDisplayName() !== "" ||
+            let wizardHeader = this.getWizardHeader();
+            return wizardHeader.getName() !== "" ||
+                   wizardHeader.getDisplayName() !== "" ||
                    !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
         } else {
             var viewedUserStore = this.assembleViewedUserStore();
@@ -255,39 +246,34 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     resolveUserStoreNameForUpdateRequest(): string {
-        if (api.util.StringHelper.isEmpty(this.wizardHeader.getName())) {
+        let wizardHeader = this.getWizardHeader();
+        if (api.util.StringHelper.isEmpty(wizardHeader.getName())) {
             return this.getPersistedItem().getDisplayName();
         } else {
-            return this.wizardHeader.getName();
+            return wizardHeader.getName();
         }
     }
 
-    getPersistedItemKey(): UserStoreKey {
-        return this.persistedUserStoreKey;
-    }
-
     private assembleViewedUserStore(): UserStore {
-        return new UserStoreBuilder().
-            setDisplayName(this.wizardHeader.getDisplayName()).
-            setKey(this.getPersistedItem().getKey().toString()).
-            setDescription(this.userStoreWizardStepForm.getDescription()).
-            setAuthConfig(this.userStoreWizardStepForm.getAuthConfig()).
-            setPermissions(this.permissionsWizardStepForm.getPermissions()).
-            build();
+        return new UserStoreBuilder().setDisplayName(this.getWizardHeader().getDisplayName()).setKey(
+            this.getPersistedItem().getKey().toString()).setDescription(this.userStoreWizardStepForm.getDescription()).setAuthConfig(
+            this.userStoreWizardStepForm.getAuthConfig()).setPermissions(this.permissionsWizardStepForm.getPermissions()).build();
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {
-        var key = new UserStoreKey(this.wizardHeader.getName()),
-            name = this.wizardHeader.getDisplayName(),
+        var header = this.getWizardHeader(),
+            key = new UserStoreKey(header.getName()),
+            name = header.getDisplayName(),
             description = this.userStoreWizardStepForm.getDescription(),
             authConfig = this.userStoreWizardStepForm.getAuthConfig(),
             permissions = this.permissionsWizardStepForm.getPermissions();
-        return new CreateUserStoreRequest().
-            setDisplayName(name).
-            setKey(key).
-            setDescription(description).
-            setAuthConfig(authConfig).
-            setPermissions(permissions);
+
+        return new CreateUserStoreRequest()
+            .setDisplayName(name)
+            .setKey(key)
+            .setDescription(description)
+            .setAuthConfig(authConfig)
+            .setPermissions(permissions);
     }
 
     private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
@@ -297,12 +283,12 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             authConfig = viewedUserStore.getAuthConfig(),
             permissions = viewedUserStore.getPermissions();
 
-        return new UpdateUserStoreRequest().
-            setKey(key).
-            setDisplayName(name).
-            setDescription(description).
-            setAuthConfig(authConfig).
-            setPermissions(permissions);
+        return new UpdateUserStoreRequest()
+            .setKey(key)
+            .setDisplayName(name)
+            .setDescription(description)
+            .setAuthConfig(authConfig)
+            .setPermissions(permissions);
     }
 
 

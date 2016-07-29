@@ -1,5 +1,4 @@
 import "../../api.ts";
-import {DefaultModels} from "./page/DefaultModels";
 
 export class ContentWizardPanelParams {
 
@@ -7,23 +6,20 @@ export class ContentWizardPanelParams {
 
     tabId: api.app.bar.AppBarTabId;
 
-    contentType: api.schema.content.ContentType;
+    contentTypeName: api.schema.content.ContentTypeName;
 
     parentContent: api.content.Content;
 
-    persistedContent: api.content.Content;
+    contentSummary: api.content.ContentSummary;
 
-    site: api.content.site.Site;
 
-    defaultModels: DefaultModels;
-
-    setAppBarTabId(value: api.app.bar.AppBarTabId): ContentWizardPanelParams {
+    setTabId(value: api.app.bar.AppBarTabId): ContentWizardPanelParams {
         this.tabId = value;
         return this;
     }
 
-    setContentType(value: api.schema.content.ContentType): ContentWizardPanelParams {
-        this.contentType = value;
+    setContentTypeName(value: api.schema.content.ContentTypeName): ContentWizardPanelParams {
+        this.contentTypeName = value;
         return this;
     }
 
@@ -32,18 +28,8 @@ export class ContentWizardPanelParams {
         return this;
     }
 
-    setPersistedContent(value: api.content.Content): ContentWizardPanelParams {
-        this.persistedContent = value;
-        return this;
-    }
-
-    setSite(value: api.content.site.Site): ContentWizardPanelParams {
-        this.site = value;
-        return this;
-    }
-
-    setDefaultModels(value: DefaultModels): ContentWizardPanelParams {
-        this.defaultModels = value;
+    setContentSummary(value: api.content.ContentSummary): ContentWizardPanelParams {
+        this.contentSummary = value;
         return this;
     }
 

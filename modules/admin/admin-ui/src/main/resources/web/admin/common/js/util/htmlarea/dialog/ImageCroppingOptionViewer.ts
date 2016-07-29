@@ -12,9 +12,9 @@ module api.util.htmlarea.dialog {
         }
 
         setObject(object: ImageCroppingOption) {
-            super.setObject(object);
-
             this.nameView.setMainName(object.getDisplayValue());
+
+            return super.setObject(object);
         }
 
         getPreferredHeight(): number {

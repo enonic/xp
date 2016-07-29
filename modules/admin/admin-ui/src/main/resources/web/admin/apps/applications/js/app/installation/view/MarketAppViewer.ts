@@ -1,39 +1,27 @@
 import "../../../api.ts";
 
 import MarketApplication = api.application.MarketApplication;
+import NamesAndIconViewSize = api.app.NamesAndIconViewSize;
 
 export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
 
     private namesAndIconView: api.app.NamesAndIconView;
 
-    constructor(className?: string, size: api.app.NamesAndIconViewSize = api.app.NamesAndIconViewSize.small) {
+    private relativePath: boolean;
+
+    private size: NamesAndIconViewSize;
+
+    public static debug: boolean = false;
+
+    constructor(className?: string, size: NamesAndIconViewSize = NamesAndIconViewSize.small) {
         super(className);
-        this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(size).build();
+
+        this.size = size;
     }
 
-    setObject(object: MarketApplication, relativePath: boolean = false) {
-        super.setObject(object);
-
-        var displayName = this.resolveDisplayName(object),
-            subName = this.resolveSubName(object, relativePath),
-            subTitle = this.resolveSubTitle(object),
-            iconUrl = this.resolveIconUrl(object);
-
-        this.namesAndIconView.getNamesView().setMainName(displayName, false).setSubName(subName, subTitle);
-        if (!!subTitle) {
-            this.namesAndIconView.getEl().setTitle(subTitle);
-        } else if (!!subName) {
-            this.namesAndIconView.getEl().setTitle(subName);
-        }
-        if (!!iconUrl) {
-            this.namesAndIconView.setIconUrl(iconUrl);
-        }
-        this.namesAndIconView.getIconImageEl().onError(() => {
-            this.namesAndIconView.setIconClass("icon-puzzle icon-large");
-            this.namesAndIconView.getIconImageEl().setSrc("");
-        });
-
-        this.render();
+    setObject(object: MarketApplication, relativePath: boolean = false): wemQ.Promise<boolean> {
+        this.relativePath = relativePath;
+        return super.setObject(object);
     }
 
     resolveDisplayName(object: MarketApplication): string {
@@ -57,9 +45,37 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
         return 50;
     }
 
-    doRender() {
-        this.removeChildren();
-        this.appendChild(this.namesAndIconView);
-        return true;
+    doLayout(object: MarketApplication) {
+        super.doLayout(object);
+
+        if (MarketAppViewer.debug) {
+            console.debug("MarketAppViewer.doLayout");
+        }
+
+        if (!this.namesAndIconView) {
+            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
+            this.appendChild(this.namesAndIconView);
+        }
+
+        if (object) {
+            var displayName = this.resolveDisplayName(object),
+                subName = this.resolveSubName(object, this.relativePath),
+                subTitle = this.resolveSubTitle(object),
+                iconUrl = this.resolveIconUrl(object);
+
+            this.namesAndIconView.getNamesView().setMainName(displayName, false).setSubName(subName, subTitle);
+            if (!!subTitle) {
+                this.namesAndIconView.getEl().setTitle(subTitle);
+            } else if (!!subName) {
+                this.namesAndIconView.getEl().setTitle(subName);
+            }
+            if (!!iconUrl) {
+                this.namesAndIconView.setIconUrl(iconUrl);
+            }
+            this.namesAndIconView.getIconImageEl().onError(() => {
+                this.namesAndIconView.setIconClass("icon-puzzle icon-large");
+                this.namesAndIconView.getIconImageEl().setSrc("");
+            });
+        }
     }
 }

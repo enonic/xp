@@ -18,6 +18,8 @@ module api.ui.security.acl {
         private valueChangedListeners: {(item: AccessControlEntry): void}[] = [];
         private editable: boolean = true;
 
+        public static debug: boolean = false;
+
         constructor(ace: AccessControlEntry) {
             super();
             this.setClass('access-control-entry');
@@ -25,48 +27,62 @@ module api.ui.security.acl {
 
             this.ace = ace;
 
-            this.accessSelector = new AccessSelector();
-
-            this.removeButton = new api.dom.AEl("icon-close");
-            this.removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveClicked(event);
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-
-            this.permissionSelector = new PermissionSelector();
-            this.permissionSelector.onValueChanged((event: api.ValueChangedEvent) => {
-                this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
-                    allow: this.ace.getAllowedPermissions().sort(),
-                    deny: this.ace.getDeniedPermissions().sort()
-                }));
-                this.notifyValueChanged(this.getAccessControlEntry());
-            });
-
-            this.permissionSelector.setValue({allow: ace.getAllowedPermissions(), deny: ace.getDeniedPermissions()}, true);
-            // this.toggleClass("dirty", !ace.isInherited());
-
-            this.accessSelector.onValueChanged((event: api.ValueChangedEvent) => {
-                if (Access[event.getNewValue()] == Access.CUSTOM) {
-                    this.permissionSelector.show();
-                } else {
-                    if (Access[event.getOldValue()] == Access.CUSTOM) {
-                        this.permissionSelector.hide();
-                    }
-                    this.permissionSelector.setValue(this.getPermissionsValueFromAccess(Access[event.getNewValue()]));
-                }
-            });
-
             this.setAccessControlEntry(this.ace, true);
         }
 
-        doRender() {
-            super.doRender();
-            this.appendChild(this.accessSelector);
-            this.appendChild(this.removeButton);
-            this.appendChild(this.permissionSelector);
-            return true;
+        doLayout(object: Principal) {
+            super.doLayout(object);
+
+            if (AccessControlEntryView.debug) {
+                console.debug("AccessControlEntryView.doLayout");
+            }
+
+            // permissions will be set on access selector value change
+
+            if (!this.accessSelector) {
+                this.accessSelector = new AccessSelector();
+                this.appendChild(this.accessSelector);
+            }
+            this.accessSelector.setValue(AccessControlEntryView.getAccessValueFromEntry(this.ace), true);
+
+            if (!this.removeButton) {
+                this.removeButton = new api.dom.AEl("icon-close");
+                this.removeButton.onClicked((event: MouseEvent) => {
+                    this.notifyRemoveClicked(event);
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                });
+                this.appendChild(this.removeButton);
+            }
+
+            if (!this.permissionSelector) {
+                this.permissionSelector = new PermissionSelector();
+                this.permissionSelector.onValueChanged((event: api.ValueChangedEvent) => {
+                    this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
+                            allow: this.ace.getAllowedPermissions().sort(),
+                            deny: this.ace.getDeniedPermissions().sort()
+                        }));
+                    this.notifyValueChanged(this.getAccessControlEntry());
+                });
+
+
+                // this.toggleClass("dirty", !ace.isInherited());
+
+                this.accessSelector.onValueChanged((event: api.ValueChangedEvent) => {
+                    if (Access[event.getNewValue()] == Access.CUSTOM) {
+                        this.permissionSelector.show();
+                    } else {
+                        if (Access[event.getOldValue()] == Access.CUSTOM) {
+                            this.permissionSelector.hide();
+                        }
+                        this.permissionSelector.setValue(this.getPermissionsValueFromAccess(Access[event.getNewValue()]));
+                    }
+                });
+
+                this.appendChild(this.permissionSelector);
+            }
+            this.permissionSelector.setValue({allow: this.ace.getAllowedPermissions(), deny: this.ace.getDeniedPermissions()}, true);
         }
 
         getPermissionSelector(): PermissionSelector {
@@ -111,8 +127,7 @@ module api.ui.security.acl {
             var principal = Principal.create().setKey(ace.getPrincipalKey()).setDisplayName(ace.getPrincipalDisplayName()).build();
             this.setObject(principal);
 
-            this.accessSelector.setValue(AccessControlEntryView.getAccessValueFromEntry(ace), silent);
-            // permissions will be set on access selector value change
+            this.doLayout(principal);
         }
 
         public getAccessControlEntry(): AccessControlEntry {

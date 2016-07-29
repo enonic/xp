@@ -4,26 +4,47 @@ module api.app.browse {
 
         private viewer: api.ui.Viewer<M>;
 
-        private item: BrowseItem<M>;
+        protected item: BrowseItem<M>;
 
         private removeEl: api.dom.DivEl;
 
-        constructor(viewer: api.ui.Viewer<M>, item: BrowseItem<M>, removeCallback?: () => void) {
+        private removeListeners: {(event: MouseEvent): void}[] = [];
+
+        constructor(viewer: api.ui.Viewer<M>, item: BrowseItem<M>) {
             super("browse-selection-item");
             this.viewer = viewer;
             this.item = item;
-            this.initRemoveButton(removeCallback);
-            this.appendChild(this.removeEl);
-            this.appendChild(this.viewer);
+        }
+
+        doRender(): Q.Promise<boolean> {
+            return super.doRender().then((rendered) => {
+                this.removeEl = this.initRemoveButton();
+                this.appendChild(this.removeEl);
+                this.appendChild(this.viewer);
+                return rendered;
+            });
         }
 
         private initRemoveButton(callback?: () => void) {
-            this.removeEl = new api.dom.DivEl("icon remove");
-            this.removeEl.onClicked(() => {
-                if (callback) {
-                    callback();
-                }
-            });
+            var removeEl = new api.dom.DivEl("icon remove");
+            removeEl.onClicked(this.notifyRemoveClicked.bind(this));
+            return removeEl;
+        }
+
+        onRemoveClicked(listener: (event: MouseEvent) => void) {
+            this.removeListeners.push(listener);
+        }
+
+        unRemoveClicked(listener: (event: MouseEvent) => void) {
+            this.removeListeners = this.removeListeners.filter((current) => {
+                return current !== listener;
+            })
+        }
+
+        notifyRemoveClicked(event: MouseEvent) {
+            this.removeListeners.forEach((listener) => {
+                listener(event);
+            })
         }
 
         setBrowseItem(item: BrowseItem<M>) {
@@ -38,11 +59,13 @@ module api.app.browse {
         }
 
         hideRemoveButton() {
-            this.removeEl.hide();
-        }
-
-        doRender(): boolean {
-            return true;
+            if (this.isRendered()) {
+                this.removeEl.hide();
+            } else {
+                this.onRendered(() => {
+                    this.removeEl.hide();
+                });
+            }
         }
     }
 

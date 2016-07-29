@@ -27,6 +27,8 @@ module api.ui.grid {
 
         private debounceSelectionChange: boolean;
 
+        public static debug: boolean = false;
+
         constructor(dataView: DataView<T>, columns: GridColumn<T>[], options?: GridOptions<T>) {
             super("grid");
 
@@ -108,12 +110,12 @@ module api.ui.grid {
 
             dataView.onRowCountChanged((eventData: Slick.EventData, args) => {
                 this.updateRowCount();
-                this.render();
+                this.renderGrid();
             });
 
             dataView.onRowsChanged((eventData: Slick.EventData, args) => {
                 this.invalidateRows(args.rows);
-                this.render();
+                this.renderGrid();
             });
         }
 
@@ -165,12 +167,20 @@ module api.ui.grid {
             this.slickGrid.unregisterPlugin(plugin);
         }
 
-        render() {
-            this.slickGrid.render();
-            super.render();
+        doRender() {
+            if (Grid.debug) {
+                console.debug("Grid.doRender");
+            }
+            return super.doRender().then((rendered) => {
+                this.renderGrid();
+                return rendered;
+            });
         }
 
         renderGrid() {
+            if (Grid.debug) {
+                console.debug("Grid.renderGrid");
+            }
             this.slickGrid.render();
         }
 

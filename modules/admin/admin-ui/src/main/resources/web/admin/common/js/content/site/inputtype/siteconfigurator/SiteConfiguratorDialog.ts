@@ -15,28 +15,24 @@ module api.content.site.inputtype.siteconfigurator {
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
+        public static debug: boolean = false;
+
+        private formView: FormView;
+
+        private okCallback: () => void;
+
+        private cancelCallback: () => void;
+
         constructor(name: string, subName: string, formView: FormView, okCallback?: () => void, cancelCallback?: () => void) {
             super({
                 title: this.initHeader(name, subName)
             });
 
-            this.getEl().addClass("site-configurator-dialog");
-            this.appendChildToContentPanel(formView);
+            this.formView = formView;
+            this.okCallback = okCallback;
+            this.cancelCallback = cancelCallback;
 
-            formView.onLayoutFinished(() => {
-                this.handleSelectorsDropdowns(formView);
-                this.handleDialogClose(formView);
-
-                this.addClass("animated");
-                this.centerMyself();
-                wemjq(this.getHTMLElement()).find('input[type=text],textarea,select').first().focus();
-                this.updateTabbable();
-            });
-
-            this.addOkButton(okCallback);
-            this.getCancelAction().onExecuted(() => cancelCallback());
-
-            this.addCancelButtonToBottom();
+            this.addClass("site-configurator-dialog");
 
             CreateHtmlAreaDialogEvent.on((event: CreateHtmlAreaDialogEvent) => {
                 this.addClass("masked");
@@ -45,8 +41,34 @@ module api.content.site.inputtype.siteconfigurator {
                     this.removeClass("masked");
                 })
             });
+        }
 
+        doRender(): Q.Promise<boolean> {
+            return super.doRender().then((rendered) => {
+                if (SiteConfiguratorDialog.debug) {
+                    console.debug("SiteConfiguratorDialog.doRender");
+                }
 
+                this.appendChildToContentPanel(this.formView);
+
+                wemjq(this.getHTMLElement()).find('input[type=text],textarea,select').first().focus();
+                this.updateTabbable();
+
+                this.addOkButton(this.okCallback);
+                this.getCancelAction().onExecuted(() => this.cancelCallback());
+
+                this.addCancelButtonToBottom();
+
+                return this.formView.layout().then(() => {
+                    this.addClass("animated");
+                    this.centerMyself();
+
+                    this.handleSelectorsDropdowns(this.formView);
+                    this.handleDialogClose(this.formView);
+
+                    return rendered;
+                });
+            });
         }
 
         private addOkButton(okCallback: () => void) {
@@ -63,11 +85,8 @@ module api.content.site.inputtype.siteconfigurator {
         private initHeader(name: string, subName: string): ModalDialogHeader {
             var dialogHeader = new ModalDialogHeader("");
 
-            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.large)).
-                setMainName(name).
-                setSubName(subName).
-                setIconClass("icon-xlarge icon-puzzle");
+            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
+                api.app.NamesAndIconViewSize.large)).setMainName(name).setSubName(subName).setIconClass("icon-xlarge icon-puzzle");
 
             dialogHeader.appendChild(namesAndIconView);
             return dialogHeader;

@@ -1,4 +1,7 @@
 import "../../api.ts";
+import {GroupRoleWizardPanel} from "./GroupRoleWizardPanel";
+import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
+import {RoleMembersWizardStepForm} from "./RoleMembersWizardStepForm";
 
 import Role = api.security.Role;
 import RoleBuilder = api.security.RoleBuilder;
@@ -10,57 +13,35 @@ import PrincipalKey = api.security.PrincipalKey;
 import RoleKeys = api.security.RoleKeys;
 
 import WizardStep = api.app.wizard.WizardStep;
-import {GroupRoleWizardPanel} from "./GroupRoleWizardPanel";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
-import {PrincipalWizardPanel} from "./PrincipalWizardPanel";
-import {RoleMembersWizardStepForm} from "./RoleMembersWizardStepForm";
 
 export class RoleWizardPanel extends GroupRoleWizardPanel {
 
-    constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
+    constructor(params: PrincipalWizardPanelParams) {
 
-        super(new RoleMembersWizardStepForm(), params, () => {
-            this.addClass("role-wizard-panel");
-            callback(this);
-        });
+        super(new RoleMembersWizardStepForm(), params);
+
+        this.addClass("role-wizard-panel");
     }
 
-    createSteps(principal?: Principal): wemQ.Promise<any[]> {
-        var deferred = wemQ.defer<WizardStep[]>();
-
+    createSteps(principal?: Principal): WizardStep[] {
         var steps: WizardStep[] = [];
 
-        steps.push(new WizardStep("Role", this.getDescriptionWizardStepForm()));
+        var descriptionStep = this.getDescriptionWizardStepForm();
+
+        steps.push(new WizardStep("Role", descriptionStep));
 
         var principalKey: PrincipalKey = principal ? principal.getKey() : undefined;
         if (!RoleKeys.EVERYONE.equals(principalKey)) {
-            steps.push(new WizardStep("Grants", this.getMembersWizardStepForm()));
+            var membersStep = this.getMembersWizardStepForm();
+            steps.push(new WizardStep("Grants", membersStep));
         }
 
-        this.setSteps(steps);
-
-        deferred.resolve(steps);
-        return deferred.promise;
-    }
-
-    doLayoutPersistedItem(principal: Principal): wemQ.Promise<void> {
-        var parallelPromises: wemQ.Promise<any>[] = [
-            this.createSteps(principal)
-        ];
-
-        return wemQ.all(parallelPromises).spread<void>(() => {
-            this.wizardHeader.setDisplayName(principal.getDisplayName());
-            this.getDescriptionWizardStepForm().layout(principal);
-            this.getMembersWizardStepForm().layout(principal);
-
-            return wemQ<void>(null);
-        });
+        return steps;
     }
 
     persistNewItem(): wemQ.Promise<Principal> {
         return this.produceCreateRoleRequest().sendAndParse().then((principal: Principal) => {
-            this.getPrincipalWizardHeader().disableNameInput();
-            this.wizardHeader.setAutoGenerationEnabled(false);
+
             api.notify.showFeedback('Role was created!');
             new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
             this.notifyPrincipalNamed(principal);
@@ -70,8 +51,9 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
     }
 
     produceCreateRoleRequest(): CreateRoleRequest {
-        var key = PrincipalKey.ofRole(this.wizardHeader.getName()),
-            name = this.wizardHeader.getDisplayName(),
+        var wizardHeader = this.getWizardHeader();
+        var key = PrincipalKey.ofRole(wizardHeader.getName()),
+            name = wizardHeader.getDisplayName(),
             members = this.getMembersWizardStepForm().getMembers().map((el) => {
                 return el.getKey();
             }),
@@ -118,7 +100,8 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
     assembleViewedItem(): Principal {
         return new RoleBuilder(this.getPersistedItem().asRole()).setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
             return el.getKey();
-        })).setDisplayName(this.wizardHeader.getDisplayName()).setDescription(this.getDescriptionWizardStepForm().getDescription()).build();
+        })).setDisplayName(this.getWizardHeader().getDisplayName()).setDescription(
+            this.getDescriptionWizardStepForm().getDescription()).build();
     }
 
     isPersistedEqualsViewed(): boolean {

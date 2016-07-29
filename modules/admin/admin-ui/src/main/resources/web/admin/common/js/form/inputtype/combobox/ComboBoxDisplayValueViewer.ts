@@ -7,8 +7,9 @@ module api.form.inputtype.combobox {
         }
 
         setObject(value: string) {
-            super.setObject(value);
             this.getEl().setInnerHtml(value);
+
+            return super.setObject(value);
         }
 
         getPreferredHeight(): number {

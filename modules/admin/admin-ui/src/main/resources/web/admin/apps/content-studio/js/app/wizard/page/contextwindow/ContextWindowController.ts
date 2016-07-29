@@ -1,13 +1,14 @@
 import "../../../../api.ts";
+import {ContextWindow} from "./ContextWindow";
+import {ShowContentFormEvent} from "../../ShowContentFormEvent";
+import {ShowSplitEditEvent} from "../../ShowSplitEditEvent";
+import {ShowLiveEditEvent} from "../../ShowLiveEditEvent";
+import {ContentWizardPanel} from "../../ContentWizardPanel";
 
 import ComponentView = api.liveedit.ComponentView;
 import Component = api.content.page.region.Component;
 import PageView = api.liveedit.PageView;
 import TogglerButton = api.ui.button.TogglerButton;
-import {ContextWindow} from "./ContextWindow";
-import {ShowContentFormEvent} from "../../ShowContentFormEvent";
-import {ShowSplitEditEvent} from "../../ShowSplitEditEvent";
-import {ShowLiveEditEvent} from "../../ShowLiveEditEvent";
 
 export class ContextWindowController {
 
@@ -19,10 +20,13 @@ export class ContextWindowController {
 
     private togglerOverriden: boolean = false;
 
-    constructor(contextWindow: ContextWindow, contextWindowToggler: TogglerButton, componentsViewToggler: TogglerButton) {
+    private contentWizardPanel: ContentWizardPanel;
+
+    constructor(contextWindow: ContextWindow, contentWizardPanel: ContentWizardPanel) {
         this.contextWindow = contextWindow;
-        this.contextWindowToggler = contextWindowToggler;
-        this.componentsViewToggler = componentsViewToggler;
+        this.contentWizardPanel = contentWizardPanel;
+        this.contextWindowToggler = contentWizardPanel.getContextWindowToggler();
+        this.componentsViewToggler = contentWizardPanel.getComponentsViewToggler();
 
         var componentsView = this.contextWindow.getComponentsView();
 
@@ -42,6 +46,13 @@ export class ContextWindowController {
         });
 
         this.componentsViewToggler.onActiveChanged((isActive: boolean) => {
+            if (!componentsView.getParentElement() && isActive) {
+                //append it on click only to be sure that content wizard panel is ready
+                var offset = contentWizardPanel.getLivePanel().getEl().getOffsetToParent();
+                componentsView.getEl().setOffset(offset);
+                contentWizardPanel.appendChild(componentsView);
+            }
+
             componentsView.setVisible(isActive);
         });
 

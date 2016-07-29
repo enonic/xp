@@ -23,6 +23,8 @@ module api.ui.security.acl {
             {value: Access.CUSTOM, name: 'Custom...'}
         ];
 
+        public static debug: boolean = false;
+
         constructor(className?: string) {
             super('user-access-list-item-view' + (className ? " " + className : ""));
         }
@@ -31,47 +33,45 @@ module api.ui.security.acl {
             this.currentUser = user;
         }
 
-        doRender(): boolean {
-            var data = <EffectivePermission>this.getObject();
+        doLayout(object: EffectivePermission) {
+            super.doLayout(object);
 
-            this.accessLine = new api.dom.SpanEl("access-line").setHtml(this.getOptionName(data.getAccess()));
-            this.userLine = new api.dom.DivEl("user-line");
-
-            var isEmpty: boolean = true;
-
-
-            data.getMembers().forEach((principal: EffectivePermissionMember) => {
-
-                isEmpty = false;
-
-                var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
-
-                var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
-                    ? display.join("").substring(0, 2)
-                    : principal.getDisplayName().substring(0, 2).toUpperCase());
-                if (this.currentUser && this.currentUser.getKey().equals(principal.getUserKey())) {
-                    icon.addClass("active");
-                    this.userLine.insertChild(icon, 0);
-                } else {
-                    this.userLine.appendChild(icon);
-                }
-                new Tooltip(icon, principal.getDisplayName(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
-            });
-
-            if (isEmpty) {
-                return false;
+            if (UserAccessListItemView.debug) {
+                console.debug("UserAccessListItemView.doLayout");
             }
 
-            this.appendChildren(this.accessLine, this.userLine);
+            if (!this.accessLine && !this.userLine) {
+                this.accessLine = new api.dom.SpanEl("access-line");
+                this.userLine = new api.dom.DivEl("user-line");
+                this.appendChildren(this.accessLine, this.userLine);
 
-            this.resizeListener = this.setExtraCount.bind(this);
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, this.resizeListener);
+                this.resizeListener = this.setExtraCount.bind(this);
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, this.resizeListener);
 
-            this.userLine.onRendered(() => {
-                this.setExtraCount();
-            })
+                this.userLine.onRendered(() => {
+                    this.setExtraCount();
+                });
+            }
 
-            return true;
+            if (object) {
+                this.accessLine.setHtml(this.getOptionName(object.getAccess()));
+
+                object.getMembers().forEach((principal: EffectivePermissionMember) => {
+
+                    var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+
+                    var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
+                        ? display.join("").substring(0, 2)
+                        : principal.getDisplayName().substring(0, 2).toUpperCase());
+                    if (this.currentUser && this.currentUser.getKey().equals(principal.getUserKey())) {
+                        icon.addClass("active");
+                        this.userLine.insertChild(icon, 0);
+                    } else {
+                        this.userLine.appendChild(icon);
+                    }
+                    new Tooltip(icon, principal.getDisplayName(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
+                });
+            }
         }
 
         remove(): any {

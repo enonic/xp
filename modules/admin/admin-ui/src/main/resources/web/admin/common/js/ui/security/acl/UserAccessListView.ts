@@ -16,15 +16,16 @@ module api.ui.security.acl {
             super('user-access-list-view' + (className ? " " + className : ""));
         }
 
-        doRender(): boolean {
-            super.doRender();
+        doRender(): wemQ.Promise<boolean> {
+            return super.doRender().then((rendered) => {
 
-            if (this.userAccessListItemViews && this.userAccessListItemViews.length > 0) {
-                this.userAccessListItemViews.forEach((userAccessListItemView: UserAccessListItemView) => {
-                    this.appendChild(userAccessListItemView);
-                });
-            }
-            return true;
+                if (this.userAccessListItemViews && this.userAccessListItemViews.length > 0) {
+                    this.userAccessListItemViews.forEach((userAccessListItemView: UserAccessListItemView) => {
+                        this.appendChild(userAccessListItemView);
+                    });
+                }
+                return rendered;
+            });
         }
 
         setItemViews(userAccessListItemViews: UserAccessListItemView[]) {

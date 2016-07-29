@@ -13,8 +13,7 @@ module api.content {
 
             this.value = value;
 
-            this.link = new api.dom.AEl().
-                setUrl(api.util.UriHelper.getRestUri('content/media/' + contentId +'/'+ value));
+            this.link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + contentId + '/' + value));
             this.link.setHtml(value);
 
             this.initRemoveButton(removeCallback);
@@ -31,16 +30,18 @@ module api.content {
             });
         }
 
-        getValue() : string {
+        getValue(): string {
             return this.value;
         }
 
-        doRender(): boolean {
-            this.removeChildren();
+        doRender(): wemQ.Promise<boolean> {
+            return super.doRender().then((rendered) => {
 
-            this.appendChild(this.removeEl);
-            this.appendChild(this.link);
-            return true;
+                this.removeChildren();
+                this.appendChildren(this.removeEl, this.link);
+
+                return rendered;
+            });
         }
     }
 }

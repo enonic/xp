@@ -12,6 +12,7 @@ import ContentId = api.content.ContentId;
 import ContentPublishItem = api.content.ContentPublishItem;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
+import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -228,7 +229,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private extendsWindowHeightSize(): boolean {
-        if (this.getResponsiveItem().isInRangeOrBigger(api.ui.responsive.ResponsiveRanges._540_720)) {
+        if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
             var el = this.getEl(),
                 bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty('top')) || 0) +
                                          el.getMarginTop() +

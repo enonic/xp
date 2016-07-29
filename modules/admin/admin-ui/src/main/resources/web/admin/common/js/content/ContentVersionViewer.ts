@@ -86,13 +86,14 @@ module api.content {
         }
 
         setObject(contentVersion: ContentVersion, row?: number) {
-            super.setObject(contentVersion);
 
             //TODO: use content version image and number instead of row
             this.namesAndIconView
                 .setMainName(contentVersion.modifierDisplayName)
                 .setSubNameElements(this.getSubNameElements(contentVersion))
                 .setIconClass("icon-user");
+
+            return super.setObject(contentVersion);
         }
     }
 

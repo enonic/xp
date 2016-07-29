@@ -1,4 +1,7 @@
 import "../../api.ts";
+import {GroupRoleWizardPanel} from "./GroupRoleWizardPanel";
+import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
+import {GroupMembersWizardStepForm} from "./GroupMembersWizardStepForm";
 
 import Group = api.security.Group;
 import GroupBuilder = api.security.GroupBuilder;
@@ -10,58 +13,35 @@ import PrincipalKey = api.security.PrincipalKey;
 import PrincipalLoader = api.security.PrincipalLoader;
 
 import WizardStep = api.app.wizard.WizardStep;
-import {GroupRoleWizardPanel} from "./GroupRoleWizardPanel";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
-import {PrincipalWizardPanel} from "./PrincipalWizardPanel";
-import {GroupMembersWizardStepForm} from "./GroupMembersWizardStepForm";
 
 export class GroupWizardPanel extends GroupRoleWizardPanel {
 
-    constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
+    constructor(params: PrincipalWizardPanelParams) {
 
-        super(new GroupMembersWizardStepForm(), params, () => {
-            this.addClass("group-wizard-panel");
-            callback(this);
-        });
+        super(new GroupMembersWizardStepForm(), params);
+
+        this.addClass("group-wizard-panel");
     }
 
-    createSteps(principal?: Principal): wemQ.Promise<any[]> {
-        var deferred = wemQ.defer<WizardStep[]>();
-
+    createSteps(principal?: Principal): WizardStep[] {
         var steps: WizardStep[] = [];
 
-        steps.push(new WizardStep("Group", this.getDescriptionWizardStepForm()));
-        steps.push(new WizardStep("Grants", this.getMembersWizardStepForm()));
+        var descriptionStep = this.getDescriptionWizardStepForm();
+        var membersStep = this.getMembersWizardStepForm();
 
-        this.setSteps(steps);
+        steps.push(new WizardStep("Group", descriptionStep));
+        steps.push(new WizardStep("Grants", membersStep));
 
-        deferred.resolve(steps);
-        return deferred.promise;
-    }
-
-    doLayoutPersistedItem(principal: Principal): wemQ.Promise<void> {
-
-        var parallelPromises: wemQ.Promise<any>[] = [
-            // Load attachments?
-            this.createSteps()
-        ];
-
-        return wemQ.all(parallelPromises).spread<void>(() => {
-            this.wizardHeader.setDisplayName(principal.getDisplayName());
-            this.getDescriptionWizardStepForm().layout(principal);
-            this.getMembersWizardStepForm().layout(principal);
-
-            return wemQ(null);
-        });
+        return steps;
     }
 
     persistNewItem(): wemQ.Promise<Principal> {
         return this.produceCreateGroupRequest().sendAndParse().then((principal: Principal) => {
-            this.getPrincipalWizardHeader().disableNameInput();
-            this.wizardHeader.setAutoGenerationEnabled(false);
+
             api.notify.showFeedback('Group was created!');
             new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
             this.notifyPrincipalNamed(principal);
+
             (<PrincipalLoader>this.getMembersWizardStepForm().getLoader()).skipPrincipal(principal.getKey());
 
             return principal;
@@ -69,13 +49,18 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     produceCreateGroupRequest(): CreateGroupRequest {
-        var key = PrincipalKey.ofGroup(this.getUserStoreKey(), this.wizardHeader.getName()),
-            name = this.wizardHeader.getDisplayName(),
+        var wizardHeader = this.getWizardHeader();
+        var key = PrincipalKey.ofGroup(this.getUserStore().getKey(), wizardHeader.getName()),
+            name = wizardHeader.getDisplayName(),
             members = this.getMembersWizardStepForm().getMembers().map((el) => {
                 return el.getKey();
             }),
             description = this.getDescriptionWizardStepForm().getDescription();
-        return new CreateGroupRequest().setKey(key).setDisplayName(name).setMembers(members).setDescription(description);
+        return new CreateGroupRequest()
+            .setKey(key)
+            .setDisplayName(name)
+            .setMembers(members)
+            .setDescription(description);
     }
 
     updatePersistedItem(): wemQ.Promise<Principal> {
@@ -115,9 +100,13 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     assembleViewedItem(): Principal {
-        return new GroupBuilder(this.getPersistedItem().asGroup()).setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
-            return el.getKey();
-        })).setDisplayName(this.wizardHeader.getDisplayName()).setDescription(this.getDescriptionWizardStepForm().getDescription()).build();
+        return new GroupBuilder(this.getPersistedItem().asGroup())
+            .setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
+                return el.getKey();
+            }))
+            .setDisplayName(this.getWizardHeader().getDisplayName())
+            .setDescription(this.getDescriptionWizardStepForm().getDescription())
+            .build();
     }
 
     isPersistedEqualsViewed(): boolean {

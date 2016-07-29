@@ -1,13 +1,15 @@
 import "../../../api.ts";
+import {ApplicationInput} from "./ApplicationInput";
 
 import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
 import InputEl = api.dom.InputEl;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import Action = api.ui.Action;
-import {ApplicationInput} from "./ApplicationInput";
 
 export class UploadAppPanel extends api.ui.panel.Panel {
 
+    private cancelAction: Action;
+    
     private applicationInput: ApplicationInput;
 
     private dropzoneContainer: api.ui.uploader.DropzoneContainer;
@@ -15,9 +17,7 @@ export class UploadAppPanel extends api.ui.panel.Panel {
     constructor(cancelAction: Action, className?: string) {
         super(className);
 
-        this.initApplicationInput(cancelAction);
-
-        this.initDragAndDropUploaderEvents();
+        this.cancelAction = cancelAction;
 
         this.onShown(() => {
             this.applicationInput.giveFocus();
@@ -28,17 +28,24 @@ export class UploadAppPanel extends api.ui.panel.Panel {
         return this.applicationInput;
     }
 
-    private initApplicationInput(cancelAction: Action) {
-        this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
-        this.dropzoneContainer.hide();
-        this.appendChild(this.dropzoneContainer);
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
 
-        this.applicationInput = new ApplicationInput(cancelAction, 'large').
-            setPlaceholder("Paste link or drop files here");
+            this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
+            this.dropzoneContainer.hide();
+            this.appendChild(this.dropzoneContainer);
+    
+            this.applicationInput = new ApplicationInput(cancelAction, 'large').
+                setPlaceholder("Paste link or drop files here");
+    
+            this.applicationInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
+    
+            this.appendChild(this.applicationInput);
 
-        this.applicationInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
-
-        this.appendChild(this.applicationInput);
+            this.initDragAndDropUploaderEvents();
+            
+            return rendered;
+        });
     }
 
     // in order to toggle appropriate handlers during drag event
