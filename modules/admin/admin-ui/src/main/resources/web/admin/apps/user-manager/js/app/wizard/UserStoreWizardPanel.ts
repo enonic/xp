@@ -47,6 +47,8 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         this.userStoreParams = params;
 
         super(params);
+
+        this.listenToUserItemEvents();
     }
 
     protected doLoadData(): Q.Promise<UserStore> {
@@ -301,4 +303,41 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             listener.call(this, new UserStoreNamedEvent(this, userStore));
         });
     }
+
+    private listenToUserItemEvents() {
+
+        var principalCreatedHandler = (event: api.security.UserItemCreatedEvent) => {
+            if (!this.getPersistedItem()) { // skip if user store is not persisted yet
+                return;
+            }
+
+            let principal = event.getPrincipal();
+            let isCreatedInCurrentUserStore = !!principal && (principal.isUser() || principal.isGroup())
+                                              && event.getUserStore().getKey().equals(this.getPersistedItem().getKey());
+
+            if (isCreatedInCurrentUserStore) {
+                this.wizardActions.getDeleteAction().setEnabled(false);
+            }
+        };
+
+        var principalDeletedHandler = (event: api.security.UserItemDeletedEvent) => {
+            if (!this.getPersistedItem() || !event.getPrincipals()) { // skip if user store is not persisted yet or if anything except users or roles was deleted
+                return;
+            }
+
+            this.getPersistedItem().isDeletable().then((result: boolean) => {
+                this.wizardActions.getDeleteAction().setEnabled(result);
+            })
+        };
+
+        api.security.UserItemCreatedEvent.on(principalCreatedHandler);
+        api.security.UserItemDeletedEvent.on(principalDeletedHandler);
+
+        this.onClosed(() => {
+            api.security.UserItemCreatedEvent.un(principalCreatedHandler);
+            api.security.UserItemDeletedEvent.un(principalDeletedHandler);
+        });
+
+    }
+
 }
