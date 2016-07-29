@@ -159,11 +159,34 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
 
-        this.wizardActions = new ContentWizardActions(this);
-        this.wizardActions.getShowLiveEditAction().setEnabled(false);
+        this.initWizardActions();
 
         this.metadataStepFormByName = {};
 
+        this.initListeners();
+
+        super({
+            tabId: params.tabId,
+            persistedItem: null,
+            actions: this.wizardActions
+        });
+
+        this.listenToContentEvents();
+        this.handleSiteConfigApply();
+        this.handleBrokenImageInTheWizard();
+    }
+
+    private initWizardActions() {
+        this.wizardActions = new ContentWizardActions(this);
+        this.wizardActions.getShowLiveEditAction().setEnabled(false);
+        this.wizardActions.getSaveAction().onExecuted(() => {
+            if (this.isNew) {
+                this.displayValidationErrors();
+            }
+        });
+    }
+
+    private initListeners() {
         this.dataChangedListener = () => {
             var publishControls = this.getContentWizardToolbarPublishControls();
             if (this.isContentFormValid && publishControls.isOnline()) {
@@ -198,8 +221,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                                     api.notify.showWarning(message);
                                 }
                             }).catch((reason: any) => { //app was uninstalled
-                            api.notify.showWarning(message);
-                        });
+                                api.notify.showWarning(message);
+                            });
 
                         this.unShown(shownHandler);
                     };
@@ -212,16 +235,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         };
 
-        super({
-            tabId: params.tabId,
-            persistedItem: null,
-            actions: this.wizardActions
-        });
-
-        this.listenToContentEvents();
-        this.handleSiteConfigApply();
-        this.handleBrokenImageInTheWizard();
-
         api.app.wizard.MaskContentWizardPanelEvent.on(event => {
             if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
                 this.params.actions.suspendActions(event.isMask());
@@ -229,9 +242,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
 
         ContentPermissionsAppliedEvent.on((event) => this.contentPermissionsUpdated(event.getContent()));
-
     }
-
 
     protected doLoadData(): Q.Promise<api.content.Content> {
         if (ContentWizardPanel.debug) {
