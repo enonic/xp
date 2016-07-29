@@ -315,6 +315,11 @@ module api.dom {
             return this.rendered;
         }
 
+        /**
+         * Do all the element rendering here
+         * Return false to tell that rendering failed
+         * @returns {Q.Promise<boolean>}
+         */
         doRender(): wemQ.Promise<boolean> {
             return wemQ(true);
         }

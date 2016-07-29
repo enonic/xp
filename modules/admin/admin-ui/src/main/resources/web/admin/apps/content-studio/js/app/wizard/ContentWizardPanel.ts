@@ -368,14 +368,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.isContentFormValid = isThisValid;
                 var thumbnailUploader = this.getFormIcon();
                 thumbnailUploader.toggleClass("invalid", isThisValid);
-                this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished(false));
+                this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
             });
 
             this.initOnShownHandler(responsiveItem);
 
             var thumbnailUploader = this.getFormIcon();
             if (thumbnailUploader) {
-                thumbnailUploader.setEnabled(this.contentType.isImage());
+                thumbnailUploader.setEnabled(!this.contentType.isImage());
                 thumbnailUploader.onFileUploaded(this.onFileUploaded.bind(this));
             }
 
@@ -889,7 +889,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             .setParams({
                 id: content.getContentId().toString()
             })
-            .setEnabled(content.isImage())
+            .setEnabled(!content.isImage())
             .setValue(new ContentIconUrlResolver().setContent(content).resolve());
 
         thumbnailUploader.toggleClass("invalid", !content.isValid());
@@ -959,7 +959,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
                 this.contentWizardStepForm.getFormView().addClass("panel-may-display-validation-errors");
-                if (this.isNew()) {
+                if (this.isNew) {
                     this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
                 } else {
                     this.displayValidationErrors();

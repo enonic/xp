@@ -52,18 +52,17 @@ module api.ui.uploader {
 
         private resultContainer: api.dom.DivEl;
 
-        private uploadStartedListeners: {(event: FileUploadStartedEvent<MODEL>):void }[] = [];
-        private uploadProgressListeners: {(event: FileUploadProgressEvent<MODEL>):void }[] = [];
-        private fileUploadedListeners: {(event: FileUploadedEvent<MODEL>):void }[] = [];
-        private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>):void }[] = [];
-        private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>):void }[] = [];
-        private uploadResetListeners: {():void }[] = [];
-        private dropzoneDragEnterListeners: { (event):void }[] = [];
-        private dropzoneDragLeaveListeners: { (event):void }[] = [];
-        private dropzoneDropListeners: { (event):void }[] = [];
+        private uploadStartedListeners: {(event: FileUploadStartedEvent<MODEL>): void }[] = [];
+        private uploadProgressListeners: {(event: FileUploadProgressEvent<MODEL>): void }[] = [];
+        private fileUploadedListeners: {(event: FileUploadedEvent<MODEL>): void }[] = [];
+        private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>): void }[] = [];
+        private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>): void }[] = [];
+        private uploadResetListeners: {(): void }[] = [];
+        private dropzoneDragEnterListeners: { (event): void }[] = [];
+        private dropzoneDragLeaveListeners: { (event): void }[] = [];
+        private dropzoneDropListeners: { (event): void }[] = [];
 
         private debouncedUploadStart: () => void;
-        private initHandlerOnEvent: (event) => void;
 
         private shownInitHandler;
         private renderedInitHandler;
@@ -92,11 +91,25 @@ module api.ui.uploader {
 
             this.handleKeyEvents();
 
-            this.handleInitTrigger();
+            this.initDebouncedUploadStart();
+
+            let initHandlerOnEvent = (event) => {
+                this.initHandler();
+
+                if (this.config.deferred) {
+                    this.unShown(initHandlerOnEvent);
+                } else {
+                    this.unRendered(initHandlerOnEvent);
+                }
+            };
+
+            if (this.config.deferred) {
+                this.onShown(initHandlerOnEvent);
+            } else {
+                this.onRendered(initHandlerOnEvent);
+            }
 
             this.onRemoved((event) => this.destroyHandler());
-
-            this.initDebouncedUploadStart();
         }
 
         private initUploadButton() {
@@ -152,15 +165,6 @@ module api.ui.uploader {
             ]);
         }
 
-        private handleInitTrigger() {
-            this.initHandlerOnEvent = (event) => this.initHandler();
-            if (this.config.deferred) {
-                this.onShown(this.initHandlerOnEvent);
-            } else {
-                this.onRendered(this.initHandlerOnEvent);
-            }
-        }
-
         protected initHandler() {
             if (this.config.disabled) {
                 if (UploaderEl.debug) {
@@ -172,9 +176,6 @@ module api.ui.uploader {
                 }
                 if (!this.uploader && this.config.url) {
                     this.uploader = this.initUploader();
-
-                    this.unShown(this.initHandlerOnEvent);
-                    this.unRendered(this.initHandlerOnEvent);
 
                     if (this.value) {
                         this.setValue(this.value);
@@ -422,8 +423,6 @@ module api.ui.uploader {
             this.config.disabled = !enabled;
 
             if (!enabled) {
-                this.unShown(this.initHandlerOnEvent);
-                this.unRendered(this.initHandlerOnEvent);
                 this.dropzone.getEl().setAttribute('disabled', 'true');
             } else {
                 this.dropzone.getEl().removeAttribute('disabled');
@@ -440,27 +439,36 @@ module api.ui.uploader {
                 if (UploaderEl.debug) {
                     console.log('Enabling uploader', this);
                 }
-                this.unShown(this.initHandlerOnEvent);
-                this.unRendered(this.initHandlerOnEvent);
+
                 if (this.config.deferred) {
 
                     if (this.isVisible()) {
                         this.initHandler();
-                    } else {
+                    } else if (!this.shownInitHandler) {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' shown', this);
                         }
-                        this.onShown(this.initHandlerOnEvent);
+                        this.shownInitHandler = (event) => {
+                            this.initHandler();
+                            this.unShown(this.shownInitHandler);
+                            this.shownInitHandler = null;
+                        };
+                        this.onShown(this.shownInitHandler);
                     }
                 } else {
 
                     if (this.isRendered()) {
                         this.initHandler();
-                    } else {
+                    } else if (!this.renderedInitHandler) {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' rendered', this);
                         }
-                        this.onRendered(this.initHandlerOnEvent);
+                        this.renderedInitHandler = (event) => {
+                            this.initHandler();
+                            this.unRendered(this.renderedInitHandler);
+                            this.renderedInitHandler = null;
+                        };
+                        this.onRendered(this.renderedInitHandler);
                     }
                 }
             }
@@ -661,7 +669,8 @@ module api.ui.uploader {
         }
 
         private disableInputFocus() {
-            var focusableElements: NodeListOf<HTMLInputElement> = this.getDefaultDropzoneContainer().getHTMLElement().getElementsByTagName("input");
+            var focusableElements: NodeListOf<HTMLInputElement> = this.getDefaultDropzoneContainer().getHTMLElement().getElementsByTagName(
+                "input");
             for (var i = 0; i < focusableElements.length; i++) {
                 var el = <HTMLInputElement>focusableElements.item(i);
                 el.tabIndex = -1;
