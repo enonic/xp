@@ -41,12 +41,11 @@ final class BuiltinContentTypes
             label( "Description" ).
             inputType( InputTypeName.TEXT_AREA ).
             occurrences( 0, 1 ).
-            helpText( "Description of the site. Optional" ).
             build() ).
         addFormItem( Input.create().
             name( "siteConfig" ).
             label( "Applications" ).
-            helpText( "Configure applications needed for the Site" ).
+            helpText( "Configure applications used by this site" ).
             inputType( InputTypeName.SITE_CONFIGURATOR ).
             required( false ).
             multiple( true ).

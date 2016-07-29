@@ -129,12 +129,27 @@ module api.form {
 
             return inputTypeViewLayoutPromise;
         }
-
+        
         private appendHelpText(helpText: string) {
-            var helpTextDiv = new api.dom.DivEl("help-text");
+            var helpTextDiv = new api.dom.DivEl("help-text overflow");
             var pEl = new api.dom.PEl();
             pEl.getEl().setText(helpText);
+
+            var spanEl = new api.dom.SpanEl();
+            spanEl.getEl().setText("More");
+
+            spanEl.onClicked(() => {
+                helpTextDiv.removeClass("overflow");
+            });
+
             helpTextDiv.appendChild(pEl);
+            helpTextDiv.appendChild(spanEl);
+
+            helpTextDiv.onRendered(() => {
+                if (pEl.getEl().isOverflown()) {
+                    helpTextDiv.addClass("collapsed");
+                }
+            });
 
             this.appendChild(helpTextDiv);
         }
