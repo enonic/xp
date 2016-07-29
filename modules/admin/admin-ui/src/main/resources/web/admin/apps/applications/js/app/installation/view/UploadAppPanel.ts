@@ -34,8 +34,8 @@ export class UploadAppPanel extends api.ui.panel.Panel {
             this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
             this.dropzoneContainer.hide();
             this.appendChild(this.dropzoneContainer);
-    
-            this.applicationInput = new ApplicationInput(cancelAction, 'large').
+
+            this.applicationInput = new ApplicationInput(this.cancelAction, 'large').
                 setPlaceholder("Paste link or drop files here");
     
             this.applicationInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
