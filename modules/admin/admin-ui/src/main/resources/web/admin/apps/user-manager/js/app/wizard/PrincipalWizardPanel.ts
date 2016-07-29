@@ -16,7 +16,6 @@ import PrincipalKey = api.security.PrincipalKey;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import FormIcon = api.app.wizard.FormIcon;
 import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
@@ -139,17 +138,17 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 }
             });
 
-            var deleteHandler = (event: api.security.event.PrincipalDeletedEvent) => {
+            var deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
                 event.getDeletedItems().forEach((path: string) => {
-                    if (this.getPersistedItem().getKey().toPath() == path) {
+                    if (!!this.getPersistedItem() && this.getPersistedItem().getKey().toPath() == path) {
                         this.close();
                     }
                 });
-            };
+            }).bind(this);
 
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
-                api.security.event.PrincipalDeletedEvent.un(deleteHandler.bind(this));
+                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
             });
 
             this.onShown((event: api.dom.ElementShownEvent) => {
@@ -160,7 +159,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 }
 
                 responsiveItem.update();
-                api.security.event.PrincipalDeletedEvent.on(deleteHandler.bind(this));
+                api.security.event.PrincipalDeletedEvent.on(deleteHandler);
             });
 
             return rendered;

@@ -3,7 +3,6 @@ import {MarketAppPanel} from "./view/MarketAppPanel";
 import {UploadAppPanel} from "./view/UploadAppPanel";
 
 import ApplicationKey = api.application.ApplicationKey;
-import UploadItem = api.ui.uploader.UploadItem;
 import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
@@ -83,25 +82,19 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
             uploadFailedHandler(event, uploadAppPanel.getApplicationInput().getUploader())
         });
 
-        uploadAppPanel.getApplicationUploaderEl().onUploadFailed((event) => {
-            uploadFailedHandler(event, uploadAppPanel.getApplicationUploaderEl())
-        });
-
         let uploadCompletedHandler = (event: FileUploadCompleteEvent<Application>) => {
             if (event.getUploadItems()) {
                 this.close();
             }
         };
 
-        uploadAppPanel.getApplicationInput().onUploadCompleted(uploadCompletedHandler);
-        uploadAppPanel.getApplicationUploaderEl().onUploadCompleted(uploadCompletedHandler);
+        this.uploadAppPanel.getApplicationInput().onUploadCompleted(uploadCompletedHandler);
 
         let uploadStartedHandler = (event: FileUploadStartedEvent<Application>) => {
             new api.application.ApplicationUploadStartedEvent(event.getUploadItems()).fire();
         };
 
-        uploadAppPanel.getApplicationInput().onUploadStarted(uploadStartedHandler);
-        uploadAppPanel.getApplicationUploaderEl().onUploadStarted(uploadStartedHandler);
+        this.uploadAppPanel.getApplicationInput().onUploadStarted(uploadStartedHandler);
     }
 
     show() {
@@ -114,7 +107,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     hide() {
         this.marketAppPanel.getMarketAppsTreeGrid().unLoaded(this.onMarketLoaded);
         super.hide();
-        this.uploadAppPanel.getApplicationUploaderEl().stop();
+        this.uploadAppPanel.getApplicationInput().stop();
         this.addClass("hidden");
         this.removeClass("animated");
     }
@@ -125,7 +118,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     }
 
     private resetFileInputWithUploader() {
-        this.uploadAppPanel.getApplicationUploaderEl().reset();
         this.uploadAppPanel.getApplicationInput().reset();
     }
 }

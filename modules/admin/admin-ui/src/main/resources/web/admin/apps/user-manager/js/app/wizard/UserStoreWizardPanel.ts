@@ -85,8 +85,9 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     protected createFormIcon(): api.app.wizard.FormIcon {
-        var formIcon = super.createFormIcon();
-        formIcon.addClass("icon-address-book");
+        var iconUrl = api.dom.ImgEl.PLACEHOLDER;
+        this.formIcon = new FormIcon(iconUrl, "icon");
+        this.formIcon.addClass("icon-xlarge icon-address-book");
         return formIcon
     }
 

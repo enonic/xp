@@ -15,7 +15,7 @@ export class PublishAction extends api.ui.Action {
 
         this.onExecuted(() => {
 
-            if (wizard.checkContentCanBePublished(true)) {
+            if (wizard.checkContentCanBePublished()) {
                 wizard.setRequireValid(true);
 
                 if (wizard.hasUnsavedChanges()) {
@@ -23,6 +23,7 @@ export class PublishAction extends api.ui.Action {
                     wizard.saveChanges().then((content) => {
                         if (content) {
                             let contentSummary = ContentSummaryAndCompareStatus.fromContentSummary(content);
+                            contentSummary.setCompareStatus(wizard.getContentCompareStatus());
                             new ContentPublishPromptEvent([contentSummary], includeChildItems).fire();
                         }
                     }).catch((reason: any) => {

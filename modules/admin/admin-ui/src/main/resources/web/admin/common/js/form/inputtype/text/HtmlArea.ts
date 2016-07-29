@@ -30,6 +30,11 @@ module api.form.inputtype.text {
 
         private blurListeners: {(event: FocusEvent): void}[] = [];
 
+        private tools: any = {
+            include: "",
+            exclude: ""
+        };
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
             super(config);
@@ -39,6 +44,13 @@ module api.form.inputtype.text {
             this.contentPath = config.contentPath;
             this.content = config.content;
             this.applicationKeys = config.site ? config.site.getApplicationKeys() : [];
+
+            this.readConfig(config.inputConfig);
+        }
+
+        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+            this.tools.include = inputConfig['include'];
+            this.tools.exclude = inputConfig['exclude'];
         }
 
         getValueType(): ValueType {
@@ -151,6 +163,7 @@ module api.form.inputtype.text {
                 setBlurHandler(blurHandler.bind(this)).
                 setKeydownHandler(keydownHandler).setKeyupHandler(notifyValueChanged).setNodeChangeHandler(
                 notifyValueChanged).setContentPath(this.contentPath).setContent(this.content).setApplicationKeys(this.applicationKeys).
+                setTools(this.tools).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.setEditorContent(id, property);

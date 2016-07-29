@@ -14,21 +14,22 @@ module api.content.form.inputtype.upload {
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config);
-            var input = config.input;
+            this.initUploader(config);
+            this.addClass("image-uploader-input");
+        }
 
-            this.imageUploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
+        private initUploader(config: api.content.form.inputtype.ContentInputTypeViewContext) {
+            this.imageUploader = new api.content.ImageUploaderEl({
                 params: {
                     content: config.content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.update,
-                name: input.getName(),
-                skipWizardEvents: false,
+                name: config.input.getName(),
                 maximumOccurrences: 1,
-                scaleWidth: true,
-                hideDropZone: true,
-                showReset: false
+                hideDefaultDropZone: true
             });
 
+            this.imageUploader.getUploadButton().hide();
             this.appendChild(this.imageUploader);
         }
 
@@ -51,6 +52,8 @@ module api.content.form.inputtype.upload {
 
             this.input = input;
 
+            this.imageUploader.onUploadStarted(() => this.imageUploader.getUploadButton().hide());
+
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 var content = event.getUploadItem().getModel(),
                     value = this.imageUploader.getMediaValue(content);
@@ -62,7 +65,21 @@ module api.content.form.inputtype.upload {
             });
 
             this.imageUploader.onUploadReset(() => {
-                this.saveToProperty(null);
+                this.saveToProperty(this.newInitialValue());
+                this.imageUploader.getUploadButton().show();
+            });
+
+            this.imageUploader.onUploadFailed(() => {
+                this.saveToProperty(this.newInitialValue());
+                this.imageUploader.getUploadButton().show();
+                this.imageUploader.setProgressVisible(false);
+            });
+
+            ImageErrorEvent.on((event: ImageErrorEvent) => {
+                if (this.getContext().content.getContentId().equals(event.getContentId())) {
+                    this.imageUploader.getUploadButton().show();
+                    this.imageUploader.setProgressVisible(false);
+                }
             });
 
             this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
@@ -87,7 +104,6 @@ module api.content.form.inputtype.upload {
 
             return property.hasNonNullValue() ? this.updateProperty(property) : wemQ<void>(null);
         }
-
 
         protected saveToProperty(value: api.data.Value) {
             this.ignorePropertyChange = true;

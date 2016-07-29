@@ -879,7 +879,7 @@ module api.ui.treegrid {
         appendNode(data: DATA, nextToSelection: boolean = false, prepend: boolean = true,
                    stashedParentNode?: TreeNode<DATA>): wemQ.Promise<void> {
             var parentNode = this.getParentNode(nextToSelection, stashedParentNode);
-            var index = prepend ? 0 : parentNode.getChildren().length - 1;
+            var index = prepend ? 0 :  Math.max(0, parentNode.getChildren().length - 1);
             return this.insertNode(data, nextToSelection, index, stashedParentNode);
         }
 

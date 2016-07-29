@@ -19,12 +19,6 @@ module api.content {
             if (config.showCancel == undefined) {
                 config.showCancel = false;
             }
-            if (config.showReset == undefined) {
-                config.showReset = false;
-            }
-            if (config.dropzoneAlwaysVisible == undefined) {
-                config.dropzoneAlwaysVisible = true;
-            }
             if (config.resultAlwaysVisisble == undefined) {
                 config.resultAlwaysVisisble = true;
             }
@@ -35,6 +29,12 @@ module api.content {
             }
             if (config.allowMultiSelection == undefined) {
                 config.allowMultiSelection = false;
+            }
+            if (config.hasUploadButton == undefined) {
+                config.hasUploadButton = false;
+            }
+            if (config.hideDefaultDropZone == undefined) {
+                config.hideDefaultDropZone = false;
             }
 
             super(config);

@@ -41,6 +41,8 @@ module api.form {
 
         public static debug: boolean = false;
 
+        public static VALIDATION_CLASS: string = "display-validation-errors";
+
         /**
          * @param context the form context.
          * @param form the form to display.
@@ -130,6 +132,12 @@ module api.form {
             return this.formItemLayer.update(propertySet, unchangedOnly);
         }
 
+        public highlightInputsOnValidityChange(highlight: boolean) {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.setHighlightOnValidityChange(highlight);
+            });
+        }
+
         private checkSizeChanges() {
             if (this.isVisible() && this.isSizeChanged()) {
                 this.preserveCurrentSize();
@@ -187,9 +195,9 @@ module api.form {
 
         public displayValidationErrors(value: boolean) {
             if (value) {
-                this.addClass("display-validation-errors");
+                this.addClass(FormView.VALIDATION_CLASS);
             } else {
-                this.removeClass("display-validation-errors");
+                this.removeClass(FormView.VALIDATION_CLASS);
             }
             for (var i = 0; i < this.formItemViews.length; i++) {
                 this.formItemViews[i].displayValidationErrors(value);

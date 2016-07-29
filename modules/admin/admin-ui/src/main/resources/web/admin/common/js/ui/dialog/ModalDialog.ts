@@ -134,8 +134,8 @@ module api.ui.dialog {
             return this.cancelAction;
         }
 
-        addCancelButtonToBottom() {
-            var cancelAction = new api.ui.Action("Cancel");
+        addCancelButtonToBottom(buttonLabel: string = "Cancel") {
+            var cancelAction = new api.ui.Action(buttonLabel);
             cancelAction.setIconClass("cancel-button-bottom");
             cancelAction.onExecuted(() => this.cancelAction.execute());
             this.buttonRow.addAction(cancelAction);
@@ -176,12 +176,17 @@ module api.ui.dialog {
             el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
 
             if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
-                el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px");
-                el.addClass("centered_horizontally");
+                this.centerHorisontally();
             } else {
                 el.setMarginLeft("0px");
                 el.removeClass("centered_horizontally");
             }
+        }
+
+        centerHorisontally() {
+            var el = this.getEl();
+            el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px");
+            el.addClass("centered_horizontally");
         }
 
         getButtonRow(): ModalDialogButtonRow {

@@ -12,7 +12,7 @@
       }
     }
 
-    &.display-validation-errors .input-view.invalid {
+    &.display-validation-errors .input-view {
       label + .input-wrapper {
         margin-left: @label-width - 12px;
       }
@@ -169,10 +169,6 @@
         .wrapper {
           display: none;
         }
-      }
-
-      .input-wrapper .rich-combobox {
-          width: 93%;
       }
 
       &.image-preview .input-wrapper {
@@ -373,7 +369,7 @@
         .flexbox();
 
         .image-uploader-el {
-          max-width: 37px;
+          max-width: 37px !important;
           position: static;
 
           .dropzone-container {

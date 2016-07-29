@@ -465,9 +465,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private handleBrokenImageInTheWizard() {
         var brokenImageHandler = (event: ImageErrorEvent) => {
-            if (this.getPersistedItem().getId() === event.getContentId().toString()) {
-                this.wizardActions.enableDeleteOnly();
-                this.wizardActions.getPublishAction().setEnabled(false);
+            if (this.isCurrentContentId(event.getContentId())) {
+                this.wizardActions.setDeleteOnlyMode(this.getPersistedItem());
             }
         };
 
@@ -610,22 +609,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
     }
 
-    private updateWizard(content: Content, unchangedOnly: boolean = true, areasContainId?: boolean) {
+    private updateWizard(content: Content, unchangedOnly: boolean = true) {
 
         this.updateWizardHeader(content);
         this.updateWizardStepForms(content, unchangedOnly);
-        this.updateMetadataAndMetadataStepForms(content, unchangedOnly);
-
-        if (!unchangedOnly) {
-            this.updateLiveForm(content);
-        } else if (this.isContentRenderable()) {
-            // just refresh live form for renderable content without asking
-            var liveFormPanel = this.getLivePanel();
-            if (liveFormPanel) {
-                liveFormPanel.skipNextReloadConfirmation(true);
-                liveFormPanel.loadPage(false);
-            }
-        }
+        this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
         this.resetLastFocusedElement();
     }
 
@@ -640,8 +628,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }).some((deletedItem) => {
                     if (this.getPersistedItem().getPath().equals(deletedItem.getContentPath())) {
                         if (deletedItem.isPending()) {
-                            this.getContentWizardToolbarPublishControls()
-                                .setCompareStatus(CompareStatus.PENDING_DELETE);
+                            let publishControls = this.getContentWizardToolbarPublishControls();
+                            publishControls.setContentCanBePublished(true, false);
+                            publishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
                             this.contentCompareStatus = CompareStatus.PENDING_DELETE;
                         } else {
                             this.close();
@@ -665,7 +654,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
         };
 
-        var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true) => {
+        var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true, versionChanged: boolean = false) => {
             var isCurrent = this.isCurrentContentId(contentId);
 
             // Find all html areas in form
@@ -676,7 +665,16 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (isCurrent || areasContainId) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     this.setPersistedItem(content);
-                    this.updateWizard(content, unchangedOnly, areasContainId);
+                    this.updateWizard(content, unchangedOnly);
+                    if (versionChanged) {
+                        this.updateLiveFormOnVersionChange();
+                    } else if (this.isContentRenderable() && areasContainId) {
+                        // also update live form panel for renderable content without asking
+                        let liveFormPanel = this.getLiveFormPanel();
+                        liveFormPanel.skipNextReloadConfirmation(true);
+                        liveFormPanel.loadPage(false);
+                    }
+                    this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
                 });
             }
         };
@@ -692,7 +690,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         };
 
-        var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
+        var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false, true);
         var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
 
         var movedHandler = (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
@@ -726,8 +724,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
     }
 
-    private updateLiveForm(content: Content) {
-        var formContext = this.createFormContext(content);
+    private updateLiveFormOnVersionChange() {
+        var content = this.getPersistedItem(),
+            formContext = this.createFormContext(content);
 
         if (!!this.siteModel) {
             this.unbindSiteModelListeners();
@@ -959,6 +958,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
+                this.contentWizardStepForm.getFormView().addClass("panel-may-display-validation-errors");
+                if (this.isNew()) {
+                    this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
+                } else {
+                    this.displayValidationErrors();
+                }
+                
                 this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
                 var liveFormPanel = this.getLivePanel();
@@ -1273,22 +1279,33 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-live");
     }
 
-    public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
+    private displayValidationErrors() {
+        if (!this.isContentFormValid) {
+            this.contentWizardStepForm.displayValidationErrors(true);
+        }
+
+        for (var key in this.metadataStepFormByName) {
+            if (this.metadataStepFormByName.hasOwnProperty(key)) {
+                var form = this.metadataStepFormByName[key];
+                if (!form.isValid()) {
+                    form.displayValidationErrors(true);
+                }
+            }
+        }
+    }
+
+    public checkContentCanBePublished(): boolean {
         if (this.getContentWizardToolbarPublishControls().isPendingDelete()) {
             // allow deleting published content without validity check
             return true;
         }
-        if (!this.isContentFormValid && this.contentWizardStepForm) {
-            this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
-        }
-
+        
         var allMetadataFormsValid = true,
             allMetadataFormsHaveValidUserInput = true;
         for (var key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
                 var form = this.metadataStepFormByName[key];
                 if (!form.isValid()) {
-                    form.displayValidationErrors(displayValidationErrors);
                     allMetadataFormsValid = false;
                 }
                 var formHasValidUserInput = form.getFormView().hasValidUserInput();

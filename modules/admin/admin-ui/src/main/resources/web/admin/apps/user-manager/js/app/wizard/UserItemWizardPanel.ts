@@ -51,7 +51,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     protected createFormIcon(): FormIcon {
         var iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        var formIcon = new FormIcon(iconUrl, "Click to upload icon");
+        var formIcon = new FormIcon(iconUrl, "icon");
         formIcon.addClass("icon icon-xlarge");
         return formIcon;
     }
