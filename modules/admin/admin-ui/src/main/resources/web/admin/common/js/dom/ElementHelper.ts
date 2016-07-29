@@ -710,5 +710,9 @@ module api.dom {
                        return (childNode.nodeType == Node.ELEMENT_NODE);
                    });
         }
+        
+        isOverflown() {
+            return this.el.offsetWidth < this.el.scrollWidth;
+        }
     }
 }
