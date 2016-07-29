@@ -59,7 +59,7 @@ module api.form {
 
         }
 
-        public layout(): wemQ.Promise<void> {
+        public layout(validate: boolean = true): wemQ.Promise<void> {
 
             if (this.input.getInputType().getName() !== "Checkbox") { //checkbox input type generates clickable label itself
                 if (this.input.getLabel()) {
@@ -124,7 +124,7 @@ module api.form {
                     this.handleInputValidationRecording(event.getRecording(), false);
                 });
 
-                this.refresh();
+                this.refresh(validate);
             });
 
             return inputTypeViewLayoutPromise;
@@ -211,12 +211,14 @@ module api.form {
             }
         }
 
-        refresh() {
+        refresh(validate: boolean = true) {
             if (!this.inputTypeView.isManagingAdd()) {
                 var inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
             }
-            this.validate(false);
+            if (validate) {
+                this.validate(false);
+            }
         }
 
         private resolveValidationRecordingPath(): ValidationRecordingPath {
