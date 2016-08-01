@@ -301,6 +301,10 @@ module api.form {
         }
 
         private renderValidationErrors(recording: ValidationRecording, additionalValidationRecord: AdditionalValidationRecord) {
+            if (!this.mayRenderValidationError()) {
+                return;
+            }
+
             if (recording.isValid() && this.hasValidUserInput()) {
                 this.removeClass("invalid");
                 this.addClass("valid");
@@ -315,6 +319,10 @@ module api.form {
             if (additionalValidationRecord && additionalValidationRecord.isOverwriteDefault()) {
                 this.validationViewer.appendValidationMessage(additionalValidationRecord.getMessage());
             }
+        }
+
+        private mayRenderValidationError(): boolean {
+            return this.input.getInputType().getName() !== "SiteConfigurator";
         }
 
         onFocus(listener: (event: FocusEvent) => void) {
