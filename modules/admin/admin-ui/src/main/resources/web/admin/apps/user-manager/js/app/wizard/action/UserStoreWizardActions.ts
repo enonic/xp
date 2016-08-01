@@ -15,7 +15,7 @@ export class UserStoreWizardActions extends UserItemWizardActions<api.security.U
         this.establishDeleteActionState(userStore ? userStore.getKey() : null);
     }
 
-    private establishDeleteActionState(key: api.security.UserStoreKey) {
+    establishDeleteActionState(key: api.security.UserStoreKey) {
         if (key) {
             UserStore.checkOnDeletable(key).then((result: boolean) => {
                 this.getDeleteAction().setEnabled(result);
