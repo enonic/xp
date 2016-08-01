@@ -1,4 +1,4 @@
-package com.enonic.xp.script.impl.value;
+package com.enonic.xp.script.impl.util;
 
 import java.util.List;
 import java.util.Map;
@@ -9,13 +9,18 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.xp.script.impl.util.NashornHelper;
-import com.enonic.xp.script.impl.util.ScriptMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class JsObjectConverter
 {
-    public static Object toJs( final Object value )
+    private final JavascriptHelper helper;
+
+    public JsObjectConverter( final JavascriptHelper helper )
+    {
+        this.helper = helper;
+    }
+
+    public Object toJs( final Object value )
     {
         if ( value instanceof MapSerializable )
         {
@@ -30,7 +35,7 @@ public final class JsObjectConverter
         return value;
     }
 
-    public static Object[] toJsArray( final Object[] values )
+    public Object[] toJsArray( final Object[] values )
     {
         final Object[] result = new Object[values.length];
         for ( int i = 0; i < values.length; i++ )
@@ -41,16 +46,16 @@ public final class JsObjectConverter
         return result;
     }
 
-    private static Object toJs( final MapSerializable value )
+    private Object toJs( final MapSerializable value )
     {
-        final ScriptMapGenerator generator = new ScriptMapGenerator();
+        final ScriptMapGenerator generator = new ScriptMapGenerator( this.helper );
         value.serialize( generator );
         return generator.getRoot();
     }
 
-    private static Object toJs( final List list )
+    private Object toJs( final List list )
     {
-        final Object array = NashornHelper.newNativeArray();
+        final Object array = this.helper.newJsArray();
         for ( final Object element : list )
         {
             NashornHelper.addToNativeArray( array, toJs( element ) );
@@ -59,12 +64,12 @@ public final class JsObjectConverter
         return array;
     }
 
-    public static Object fromJs( final Object value )
+    public Object fromJs( final Object value )
     {
         return toObject( value );
     }
 
-    private static Object toObject( final Object source )
+    private Object toObject( final Object source )
     {
         if ( source instanceof ScriptObjectMirror )
         {
@@ -74,7 +79,7 @@ public final class JsObjectConverter
         return source;
     }
 
-    private static Object toObject( final ScriptObjectMirror source )
+    private Object toObject( final ScriptObjectMirror source )
     {
         if ( source.isArray() )
         {
@@ -94,7 +99,7 @@ public final class JsObjectConverter
         }
     }
 
-    private static List<Object> toList( final ScriptObjectMirror source )
+    private List<Object> toList( final ScriptObjectMirror source )
     {
         final List<Object> result = Lists.newArrayList();
         for ( final Object item : source.values() )
@@ -109,7 +114,7 @@ public final class JsObjectConverter
         return result;
     }
 
-    static Map<String, Object> toMap( final Object source )
+    public Map<String, Object> toMap( final Object source )
     {
         if ( source instanceof ScriptObjectMirror )
         {
@@ -119,7 +124,7 @@ public final class JsObjectConverter
         return Maps.newHashMap();
     }
 
-    private static Map<String, Object> toMap( final ScriptObjectMirror source )
+    private Map<String, Object> toMap( final ScriptObjectMirror source )
     {
         final Map<String, Object> result = Maps.newLinkedHashMap();
         for ( final Map.Entry<String, Object> entry : source.entrySet() )
@@ -134,7 +139,7 @@ public final class JsObjectConverter
         return result;
     }
 
-    private static Function<Object[], Object> toFunction( final ScriptObjectMirror source )
+    private Function<Object[], Object> toFunction( final ScriptObjectMirror source )
     {
         return arg -> toObject( source.call( null, arg ) );
     }

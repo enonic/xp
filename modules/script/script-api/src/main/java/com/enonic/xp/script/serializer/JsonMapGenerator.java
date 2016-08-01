@@ -17,6 +17,11 @@ import com.google.common.annotations.Beta;
 public final class JsonMapGenerator
     extends MapGeneratorBase
 {
+    public JsonMapGenerator()
+    {
+        initRoot();
+    }
+
     @Override
     protected Object newMap()
     {

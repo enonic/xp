@@ -46,7 +46,7 @@ public final class ScriptExecutorManager
         }
 
         final ClassLoader classLoader = application.getClassLoader();
-        final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader, "-strict" );
+        final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader );
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setEngine( engine );
