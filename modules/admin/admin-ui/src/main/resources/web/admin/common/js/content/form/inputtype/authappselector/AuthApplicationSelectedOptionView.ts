@@ -65,7 +65,13 @@ module api.content.site.inputtype.siteconfigurator {
             }
             this.appendChild(header);
 
-            this.initFormView();
+            this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
+                this.toggleClass("invalid", !event.isValid())
+            };
+
+            this.formView = this.createFormView(this.siteConfig);
+            this.formView.layout();
+
             if (!this.readOnly && this.application.getAuthForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
             }
@@ -75,13 +81,6 @@ module api.content.site.inputtype.siteconfigurator {
 
         setSiteConfig(siteConfig: SiteConfig) {
             this.siteConfig = siteConfig;
-        }
-
-        private initFormView() {
-            this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
-                this.toggleClass("invalid", !event.isValid())
-            };
-            this.formView = this.createFormView(this.siteConfig);
         }
 
         private createEditButton(): api.dom.AEl {
@@ -128,6 +127,7 @@ module api.content.site.inputtype.siteconfigurator {
                     this.formView,
                     okCallback,
                     cancelCallback);
+
                 siteConfiguratorDialog.open();
             }
         }
@@ -164,13 +164,12 @@ module api.content.site.inputtype.siteconfigurator {
         private createFormView(siteConfig: SiteConfig): FormView {
             var formView = new FormView(this.formContext, this.application.getAuthForm(), siteConfig.getConfig());
             formView.addClass("site-form");
-            formView.layout().then(() => {
-                this.formView.validate(false, true);
-                this.toggleClass("invalid", !this.formView.isValid());
+
+            formView.onLayoutFinished(() => {
+                formView.validate(false, true);
+                this.toggleClass("invalid", !formView.isValid());
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+            });
 
             return formView;
         }
