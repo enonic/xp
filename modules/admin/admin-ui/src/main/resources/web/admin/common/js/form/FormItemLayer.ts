@@ -37,16 +37,16 @@ module api.form {
             return this;
         }
 
-        layout(propertySet: PropertySet): wemQ.Promise<FormItemView[]> {
+        layout(propertySet: PropertySet, validate: boolean = true): wemQ.Promise<FormItemView[]> {
 
             this.formItemViews = [];
 
-            return this.doLayoutPropertySet(propertySet).then(() => {
+            return this.doLayoutPropertySet(propertySet, validate).then(() => {
                 return wemQ<FormItemView[]>(this.formItemViews);
             });
         }
 
-        private doLayoutPropertySet(propertySet: PropertySet): wemQ.Promise<void> {
+        private doLayoutPropertySet(propertySet: PropertySet, validate: boolean = true): wemQ.Promise<void> {
 
             let layoutPromises: wemQ.Promise<void>[] = [];
 
@@ -75,7 +75,7 @@ module api.form {
                     this.parentEl.appendChild(formItemSetView);
                     this.formItemViews.push(formItemSetView);
 
-                    layoutPromises.push(formItemSetView.layout());
+                    layoutPromises.push(formItemSetView.layout(validate));
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FieldSet)) {
 
                     var fieldSet: FieldSet = <FieldSet>formItem;
@@ -105,7 +105,7 @@ module api.form {
 
                     inputs.push(inputView);
 
-                    layoutPromises.push(inputView.layout());
+                    layoutPromises.push(inputView.layout(validate));
                 }
             });
 
