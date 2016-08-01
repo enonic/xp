@@ -180,6 +180,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getSaveAction().onExecuted(() => {
+            if (this.isNew) { // validation might have not been called for some cases for new item
+                this.contentWizardStepForm.validate();
+            }
             this.displayValidationErrors();
         });
     }
@@ -373,11 +376,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
-                let isThisValid = this.isValid();
+                let isThisValid = event.isValid() && this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
                 this.isContentFormValid = isThisValid;
                 var thumbnailUploader = this.getFormIcon();
                 thumbnailUploader.toggleClass("invalid", isThisValid);
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
+                if (!this.isNew) {
+                    this.displayValidationErrors();
+                }
             });
 
             this.initOnShownHandler(responsiveItem);
@@ -802,7 +808,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
 
             this.updateThumbnailWithContent(persistedContent);
-            this.notifyValidityChanged(persistedContent.isValid());
 
             var publishControls = this.getContentWizardToolbarPublishControls();
             let wizardHeader = this.getWizardHeader();
