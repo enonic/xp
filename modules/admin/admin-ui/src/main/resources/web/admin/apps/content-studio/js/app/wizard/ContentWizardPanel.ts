@@ -180,9 +180,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getSaveAction().onExecuted(() => {
-            if (this.isNew) {
-                this.displayValidationErrors();
-            }
+            this.displayValidationErrors();
         });
     }
 
