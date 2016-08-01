@@ -22,7 +22,7 @@ module api.util.htmlarea.editor {
         private convertUrls: boolean = false;
         private hasActiveDialog: boolean = false;
 
-        private tools: string = "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image macro link unlink | table | code";
+        private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
 
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
