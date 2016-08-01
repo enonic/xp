@@ -21,7 +21,6 @@ import com.enonic.xp.script.impl.function.CallFunction;
 import com.enonic.xp.script.impl.function.ScriptFunctions;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.ErrorHelper;
-import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
@@ -125,9 +124,7 @@ final class ScriptExecutorImpl
         try
         {
             final ScriptFunctions functions = new ScriptFunctions( script, this );
-            final Object result =
-                func.call( null, functions.getApp(), functions.getLog(), functions.getRequire(), functions.getResolve(), functions );
-            return NashornHelper.unwrap( result );
+            return func.call( null, functions.getApp(), functions.getLog(), functions.getRequire(), functions.getResolve(), functions );
         }
         catch ( final Exception e )
         {

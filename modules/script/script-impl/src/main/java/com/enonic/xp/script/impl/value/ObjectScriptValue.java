@@ -14,7 +14,7 @@ final class ObjectScriptValue
 
     private final JSObject value;
 
-    public ObjectScriptValue( final ScriptValueFactory factory, final JSObject value )
+    ObjectScriptValue( final ScriptValueFactory factory, final JSObject value )
     {
         this.factory = factory;
         this.value = value;

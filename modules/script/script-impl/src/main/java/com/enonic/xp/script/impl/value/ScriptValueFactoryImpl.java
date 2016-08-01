@@ -44,6 +44,11 @@ public final class ScriptValueFactoryImpl
 
     private ScriptValue newValue( final JSObject value )
     {
+        if ( NashornHelper.isDateType( value ) )
+        {
+            return new ScalarScriptValue( NashornHelper.toDate( value ) );
+        }
+
         if ( value.isFunction() )
         {
             return new FunctionScriptValue( this, value );

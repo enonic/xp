@@ -1,10 +1,12 @@
 package com.enonic.xp.script.impl.util;
 
+import java.util.Date;
+
 import javax.script.ScriptEngine;
 
+import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import jdk.nashorn.api.scripting.ScriptUtils;
 import jdk.nashorn.internal.objects.Global;
 import jdk.nashorn.internal.objects.NativeArray;
 import jdk.nashorn.internal.runtime.ScriptObject;
@@ -31,7 +33,7 @@ public final class NashornHelper
 
     public static boolean isUndefined( final Object value )
     {
-        return ( value instanceof Undefined );
+        return value == null || value.getClass().equals( Undefined.class );
     }
 
     public static boolean isNativeArray( final Object value )
@@ -51,26 +53,17 @@ public final class NashornHelper
 
     public static void addToNativeArray( final Object array, final Object value )
     {
-        NativeArray.push( array, new Object[] { value } );
+        NativeArray.push( array, new Object[]{value} );
     }
 
-    public static Object wrap( final Object source )
+    public static boolean isDateType( final JSObject value )
     {
-        if ( source instanceof ScriptObject )
-        {
-            return ScriptUtils.wrap( (ScriptObject) source );
-        }
-
-        return source;
+        return "Date".equalsIgnoreCase( value.getClassName() );
     }
 
-    public static Object unwrap( final Object source )
+    public static Date toDate( final JSObject value )
     {
-        if ( source instanceof ScriptObjectMirror )
-        {
-            return ScriptUtils.unwrap( source );
-        }
-
-        return source;
+        final Number time = (Number) ( (ScriptObjectMirror) value ).callMember( "getTime" );
+        return new Date( time.longValue() );
     }
 }

@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 import com.google.common.base.Joiner;
 
 import jdk.nashorn.api.scripting.JSObject;
-import jdk.nashorn.internal.runtime.Undefined;
 
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.util.NashornHelper;
@@ -57,13 +56,6 @@ public class ScriptValueFactoryImplTest
         assertNonArray( value );
         assertNonObject( value );
         assertNonFunction( value );
-    }
-
-    @Test
-    public void newValue_undefined()
-    {
-        final ScriptValue value = this.factory.newValue( Undefined.getEmpty() );
-        assertNull( value );
     }
 
     @Test
