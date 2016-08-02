@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="224px" height="258px" viewBox="0 0 224 258" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>discuss-icon-only</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="discuss-icon-only">
+            <g id="Page-1">
+                <g id="Group">
+                    <path d="M170.779728,217.074008 C202.717709,196.419569 224,159.436659 224,117.25 C224,52.4946131 173.855892,0 112,0 C50.144108,0 0,52.4946131 0,117.25 C0,177.661427 43.6421653,227.401875 99.72135,233.803456 L203.753906,257.821264 L170.779728,217.074008 L170.779728,217.074008 Z M112,209.571006 C160.601058,209.571006 200,168.157345 200,117.071006 C200,65.9846666 160.601058,24.5710059 112,24.5710059 C63.398942,24.5710059 24,65.9846666 24,117.071006 C24,168.157345 63.398942,209.571006 112,209.571006 L112,209.571006 Z" id="Oval-6" fill="#FFFFFF"></path>
+                    <path d="M70.5,113 L159,113" id="Line-8" stroke="#FFFFFF" stroke-width="14"></path>
+                    <path d="M70.5,140 L121,140" id="Line-6" stroke="#FFFFFF" stroke-width="14"></path>
+                    <path d="M70.5,87 L155,87" id="Line-7" stroke="#FFFFFF" stroke-width="14"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

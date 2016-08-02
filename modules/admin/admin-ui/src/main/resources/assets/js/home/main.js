@@ -17,7 +17,6 @@ function setupAboutDialog() {
     var aboutDialog = new api.ui.dialog.ModalDialog({title: new api.ui.dialog.ModalDialogHeader("")});
     aboutDialog.addClass("xp-about-dialog");
     aboutDialog.appendChildToContentPanel(getAboutDialogContent());
-    aboutDialog.addCancelButtonToBottom("Close");
     document.querySelector(".xp-about").addEventListener("click", function () {
         aboutDialog.open();
         aboutDialog.centerHorisontally();

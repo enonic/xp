@@ -12,7 +12,8 @@ function handleGet(req) {
     var busIconUrl = portal.assetUrl({path: "icons/bus.svg"});
     var infoIconUrl = portal.assetUrl({path: "icons/info-with-circle.svg"});
     var docsIconUrl = portal.assetUrl({path: "icons/docs.svg"});
-    var forumIconUrl = portal.assetUrl({path: "icons/forum.svg"});
+    var forumIconUrl = portal.assetUrl({path: "icons/discuss.svg"});
+    var marketIconUrl = portal.assetUrl({path: "icons/market.svg"});
     
     var isLatestSnapshot = app.version.endsWith('.0.SNAPSHOT');
     var docLinkPrefix = 'http://docs.enonic.com/en/';
@@ -32,6 +33,7 @@ function handleGet(req) {
         infoIconUrl: infoIconUrl,
         docsIconUrl: docsIconUrl,
         forumIconUrl: forumIconUrl,
+        marketIconUrl: marketIconUrl,
         baseUri: '',
         portalAssetsUrl: portal.assetUrl({path: ""}),
         xpVersion: app.version.replace('.SNAPSHOT', ''),
