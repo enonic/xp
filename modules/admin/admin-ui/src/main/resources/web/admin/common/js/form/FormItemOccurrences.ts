@@ -124,7 +124,7 @@ module api.form {
             return this.allowedOccurrences.maximumReached(this.countOccurrences());
         }
 
-        layout(): wemQ.Promise<void> {
+        layout(validate: boolean = true): wemQ.Promise<void> {
 
             var occurrences;
             if (this.propertyArray.getSize() > 0) {
@@ -135,7 +135,7 @@ module api.form {
 
             var layoutPromises: wemQ.Promise<V>[] = [];
             occurrences.forEach((occurrence: FormItemOccurrence<V>) => {
-                layoutPromises.push(this.addOccurrence(occurrence));
+                layoutPromises.push(this.addOccurrence(occurrence, validate));
             });
 
             return wemQ.all(layoutPromises).spread<void>(() => wemQ<void>(null));
@@ -189,14 +189,14 @@ module api.form {
             throw new Error("Must be implemented by inheritor");
         }
 
-        public createAndAddOccurrence(insertAtIndex: number = this.countOccurrences()): wemQ.Promise<V> {
+        public createAndAddOccurrence(insertAtIndex: number = this.countOccurrences(), validate: boolean = true): wemQ.Promise<V> {
 
             var occurrence: FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
 
-            return this.addOccurrence(occurrence);
+            return this.addOccurrence(occurrence, validate);
         }
 
-        protected addOccurrence(occurrence: FormItemOccurrence<V>): wemQ.Promise<V> {
+        protected addOccurrence(occurrence: FormItemOccurrence<V>, validate: boolean = true): wemQ.Promise<V> {
             if (FormItemOccurrences.debug) {
                 console.debug('FormItemOccurrences.addOccurrence:', occurrence);
             }
@@ -224,7 +224,7 @@ module api.form {
 
             this.notifyOccurrenceAdded(occurrence, occurrenceView);
 
-            return occurrenceView.layout().then(() => {
+            return occurrenceView.layout(validate).then(() => {
                 this.resetOccurrenceIndexes();
                 this.refreshOccurrenceViews();
                 occurrenceView.giveFocus();

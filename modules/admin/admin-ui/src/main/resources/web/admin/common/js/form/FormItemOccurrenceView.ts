@@ -17,7 +17,7 @@ module api.form {
             throw new Error("Must be implemented by inheritor");
         }
 
-        public layout(): wemQ.Promise<void> {
+        public layout(validate: boolean = true): wemQ.Promise<void> {
             return wemQ<void>(null);
         }
 
