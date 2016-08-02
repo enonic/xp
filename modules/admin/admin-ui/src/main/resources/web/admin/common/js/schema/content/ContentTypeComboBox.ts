@@ -9,7 +9,6 @@ module api.schema.content {
                 .setSelectedOptionsView(new ContentTypeSelectedOptionsView())
                 .setOptionDisplayValueViewer(new ContentTypeSummaryViewer())
                 .setMaximumOccurrences(maximumOccurrences));
-            loader.load();
         }
 
     }

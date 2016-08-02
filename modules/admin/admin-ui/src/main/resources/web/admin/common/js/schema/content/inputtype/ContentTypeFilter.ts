@@ -71,8 +71,6 @@ module api.schema.content.inputtype {
 
             this.setLayoutInProgress(false);
             this.combobox.unLoaded(this.onContentTypesLoadedHandler);
-
-            this.validate(false);
         }
 
         private onContentTypeSelected(selectedOption: api.ui.selector.combobox.SelectedOption<ContentTypeSummary>): void {
@@ -107,7 +105,10 @@ module api.schema.content.inputtype {
 
             this.appendChild(this.combobox = this.createComboBox());
 
-            return wemQ<void>(null);
+            return this.combobox.getLoader().load().then(() => {
+                this.validate(false);
+                return wemQ<void>(null);
+            });
         }
 
 
