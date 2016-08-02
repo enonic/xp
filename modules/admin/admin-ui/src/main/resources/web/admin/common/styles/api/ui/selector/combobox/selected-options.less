@@ -50,6 +50,14 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    &.non-editable {
+      .edit {
+        cursor: default;
+        pointer-events: none;
+        opacity: 0.5;
+      }
+    }
   }
 }
 
