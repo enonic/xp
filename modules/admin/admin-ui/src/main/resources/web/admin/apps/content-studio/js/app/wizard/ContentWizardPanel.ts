@@ -685,7 +685,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         this.updateLiveFormOnVersionChange();
                     } else if (this.isContentRenderable() && areasContainId) {
                         // also update live form panel for renderable content without asking
-                        let liveFormPanel = this.getLiveFormPanel();
+                        let liveFormPanel = this.getLivePanel();
                         liveFormPanel.skipNextReloadConfirmation(true);
                         liveFormPanel.loadPage(false);
                     }
