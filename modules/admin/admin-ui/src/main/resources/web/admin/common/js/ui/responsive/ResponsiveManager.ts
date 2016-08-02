@@ -11,9 +11,13 @@ module api.ui.responsive {
         }): ResponsiveItem {
             var responsiveItem: ResponsiveItem = new ResponsiveItem(el, handler),
                 listener = () => {
-                    responsiveItem.update();
+                    if (el.isRendered()) {
+                        responsiveItem.update();
+                    }
                 },
                 responsiveListener = new ResponsiveListener(responsiveItem, listener);
+
+            this.updateItemOnRender(el, responsiveItem);
 
             ResponsiveManager.responsiveListeners.push(responsiveListener);
 
@@ -23,32 +27,44 @@ module api.ui.responsive {
             return responsiveItem;
         }
 
+        private static updateItemOnRender(el: api.dom.Element, responsiveItem: ResponsiveItem) {
+            if (el.isRendered()) {
+                responsiveItem.update();
+            } else {
+                var renderedHandler = (event) => {
+                    responsiveItem.update();
+                    el.unRendered(renderedHandler); // update needs
+                }
+                el.onRendered(renderedHandler);
+            }
+        }
+
         static unAvailableSizeChanged(el: api.dom.Element) {
 
             ResponsiveManager.responsiveListeners =
-            ResponsiveManager.responsiveListeners.filter((curr) => {
-                if (curr.getItem().getElement() === el) {
-                    ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
-                    ResponsiveManager.window.unResized(curr.getListener());
-                    return false;
-                } else {
-                    return true;
-                }
-            });
+                ResponsiveManager.responsiveListeners.filter((curr) => {
+                    if (curr.getItem().getElement() === el) {
+                        ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
+                        ResponsiveManager.window.unResized(curr.getListener());
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
         }
 
         static unAvailableSizeChangedByItem(item: ResponsiveItem) {
 
             ResponsiveManager.responsiveListeners =
-            ResponsiveManager.responsiveListeners.filter((curr) => {
-                if (curr.getItem() === item) {
-                    ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
-                    ResponsiveManager.window.unResized(curr.getListener());
-                    return false;
-                } else {
-                    return true;
-                }
-            });
+                ResponsiveManager.responsiveListeners.filter((curr) => {
+                    if (curr.getItem() === item) {
+                        ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
+                        ResponsiveManager.window.unResized(curr.getListener());
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
         }
 
         // Manual event triggering
