@@ -28,7 +28,7 @@ export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepFor
         this.loader =
             new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).skipPrincipals([PrincipalKey.ofAnonymous()]);
 
-        this.principals = new PrincipalComboBox(this.loader);
+        this.principals = PrincipalComboBox.create().setLoader(this.loader).build();
         var handler = () => {
             this.selectMembers();
             loadedHandler();

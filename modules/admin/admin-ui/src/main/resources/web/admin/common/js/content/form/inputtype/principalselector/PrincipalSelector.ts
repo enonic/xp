@@ -28,10 +28,8 @@ module api.content.form.inputtype.principalselector {
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var principalTypeConfig = inputConfig['principalType'] || [];
             this.principalTypes =
-                principalTypeConfig.map((cfg) => cfg['value']).
-                    filter((val) => !!val).
-                    map((val: string) => api.security.PrincipalType[val]).
-                    filter((val) => !!val);
+                principalTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val).map(
+                    (val: string) => api.security.PrincipalType[val]).filter((val) => !!val);
         }
 
         public getPrincipalComboBox(): api.ui.security.PrincipalComboBox {
@@ -73,9 +71,10 @@ module api.content.form.inputtype.principalselector {
         private createComboBox(input: api.form.Input): api.ui.security.PrincipalComboBox {
 
             var value = this.getValueFromPropertyArray(this.getPropertyArray());
-            var principalLoader = new api.security.PrincipalLoader().
-                setAllowedTypes(this.principalTypes);
-            var comboBox = new api.ui.security.PrincipalComboBox(principalLoader, input.getOccurrences().getMaximum(), value);
+            var principalLoader = new api.security.PrincipalLoader().setAllowedTypes(this.principalTypes);
+
+            var comboBox = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(
+                input.getOccurrences().getMaximum()).setValue(value).build();
 
             comboBox.onOptionDeselected((event: SelectedOptionEvent<api.security.Principal>) => {
                 this.getPropertyArray().remove(event.getSelectedOption().getIndex());
