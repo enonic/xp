@@ -4,6 +4,8 @@ import com.enonic.xp.launcher.LauncherException;
 
 public final class RequirementChecker
 {
+    private final static int JAVA_UPDATE_MIN = 92;
+
     private final SystemProperties properties;
 
     public RequirementChecker( final SystemProperties properties )
@@ -24,7 +26,7 @@ public final class RequirementChecker
             throw throwJavaVersionRequirements( version );
         }
 
-        if ( version.getUpdate() < 40 )
+        if ( version.getUpdate() < JAVA_UPDATE_MIN )
         {
             throw throwJavaVersionRequirements( version );
         }
@@ -32,6 +34,6 @@ public final class RequirementChecker
 
     private LauncherException throwJavaVersionRequirements( final JavaVersion version )
     {
-        throw new LauncherException( "Java 1.8 update 40 and above is required. You are running %s.", version );
+        throw new LauncherException( "Java 1.8 update " + JAVA_UPDATE_MIN + " and above is required. You are running %s.", version );
     }
 }
