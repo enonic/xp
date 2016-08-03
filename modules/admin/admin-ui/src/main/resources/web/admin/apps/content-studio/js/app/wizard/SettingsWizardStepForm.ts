@@ -50,7 +50,14 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         var localeFormItem = new FormItemBuilder(this.localeCombo).setLabel('Language').build();
 
         var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
-        this.ownerCombo = new PrincipalComboBox(loader, 1, content.getOwner() ? content.getOwner().toString() : undefined);
+
+        this.ownerCombo = PrincipalComboBox.create().
+        setLoader(loader).
+        setMaxOccurences(1).
+        setValue(content.getOwner() ? content.getOwner().toString() : undefined).
+        setDisplayMissing(true).
+        build();
+
         var ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
 
         var fieldSet = new api.ui.form.Fieldset();

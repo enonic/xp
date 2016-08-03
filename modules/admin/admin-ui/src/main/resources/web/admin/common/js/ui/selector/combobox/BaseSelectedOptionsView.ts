@@ -188,7 +188,8 @@ module api.ui.selector.combobox {
         makeEmptyOption(id: string): Option<T> {
             return <Option<T>>{
                 value: id,
-                displayValue: null
+                displayValue: null,
+                empty: true
             };
         }
 

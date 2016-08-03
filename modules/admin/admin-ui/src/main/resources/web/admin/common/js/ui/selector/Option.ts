@@ -10,6 +10,8 @@ module api.ui.selector {
 
         readOnly?: boolean;
 
+        empty? :boolean;
+
     }
 
 }

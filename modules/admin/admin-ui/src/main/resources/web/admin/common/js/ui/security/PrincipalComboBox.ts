@@ -6,19 +6,61 @@ module api.ui.security {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
+    import PrincipalKey = api.security.PrincipalKey;
 
     export class PrincipalComboBox extends api.ui.selector.combobox.RichComboBox<Principal> {
-        constructor(loader?: PrincipalLoader, maxOccurrences?: number, value?: string) {
-            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Principal>().
-                setMaximumOccurrences(maxOccurrences || 0).
-                setComboBoxName("principalSelector").
-                setIdentifierMethod("getKey").
-                setLoader(loader || new PrincipalLoader()).
-                setValue(value).
-                setSelectedOptionsView(new PrincipalSelectedOptionsView()).
-                setOptionDisplayValueViewer(new PrincipalViewer()).
-                setDelayedInputValueChangedHandling(500);
-            super(builder);
+        constructor(builder: PrincipalComboBoxBuilder) {
+            var richComboBoxBuilder = new api.ui.selector.combobox.RichComboBoxBuilder<Principal>().
+            setMaximumOccurrences(builder.maxOccurrences).
+            setComboBoxName("principalSelector").
+            setIdentifierMethod("getKey").
+            setLoader(builder.loader).
+            setValue(builder.value).
+            setDisplayMissingSelectedOptions(builder.displayMissing).
+            setSelectedOptionsView(new PrincipalSelectedOptionsView()).
+            setOptionDisplayValueViewer(new PrincipalViewer()).
+            setDelayedInputValueChangedHandling(500);
+
+            super(richComboBoxBuilder);
+        }
+
+        static create(): PrincipalComboBoxBuilder {
+            return new PrincipalComboBoxBuilder();
+        }
+    }
+
+    export class PrincipalComboBoxBuilder {
+
+        loader: PrincipalLoader = new PrincipalLoader();
+
+        maxOccurrences: number = 0;
+
+        value: string;
+
+        displayMissing: boolean = false;
+
+        setLoader(value: PrincipalLoader): PrincipalComboBoxBuilder {
+            this.loader = value;
+            return this;
+        }
+
+        setMaxOccurences(value: number): PrincipalComboBoxBuilder {
+            this.maxOccurrences = value;
+            return this;
+        }
+
+        setValue(value: string): PrincipalComboBoxBuilder {
+            this.value = value;
+            return this;
+        }
+
+        setDisplayMissing(value: boolean): PrincipalComboBoxBuilder {
+            this.displayMissing = value;
+            return this;
+        }
+
+        build(): PrincipalComboBox {
+            return new PrincipalComboBox(this);
         }
     }
 
@@ -58,11 +100,35 @@ module api.ui.security {
             super("principal-selected-options-view");
         }
 
-        createSelectedOption(option: Option<Principal>): SelectedOption<Principal> {
-            var optionView = new PrincipalSelectedOptionView(option);
+        createSelectedOption(option: Option<Principal>, isEmpty?: boolean): SelectedOption<Principal> {
+            var optionView = !option.empty ? new PrincipalSelectedOptionView(option) : new RemovedPrincipalSelectedOptionView(option);
             return new api.ui.selector.combobox.SelectedOption<Principal>(optionView, this.count());
         }
 
+        makeEmptyOption(id: string): Option<Principal> {
+
+            let key = PrincipalKey.fromString(id);
+
+            return <Option<Principal>>{
+                value: id,
+                displayValue: Principal.create().setDisplayName(key.getId()).
+                setKey(key).build(),
+                empty: true
+            };
+        }
+
+    }
+
+    export class RemovedPrincipalSelectedOptionView extends PrincipalSelectedOptionView {
+
+        constructor(option: Option<Principal>) {
+            super(option);
+            this.addClass("removed");
+        }
+
+        resolveSubName(object: Principal, relativePath: boolean = false): string {
+            return "This user is deleted";
+        }
     }
 
 }

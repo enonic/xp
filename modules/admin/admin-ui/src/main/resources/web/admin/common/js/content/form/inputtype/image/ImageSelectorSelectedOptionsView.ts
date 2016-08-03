@@ -152,7 +152,8 @@ module api.content.form.inputtype.image {
         makeEmptyOption(id: string): Option<ImageSelectorDisplayValue> {
             return <Option<ImageSelectorDisplayValue>>{
                 value: id,
-                displayValue: ImageSelectorDisplayValue.makeEmpty()
+                displayValue: ImageSelectorDisplayValue.makeEmpty(),
+                empty: true
             };
         }
 
