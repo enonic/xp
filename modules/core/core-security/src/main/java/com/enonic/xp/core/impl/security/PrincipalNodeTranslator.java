@@ -66,7 +66,8 @@ abstract class PrincipalNodeTranslator
         final PropertySet nodeAsSet = node.data().getRoot();
         if ( nodeAsSet.isNull( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) )
         {
-            throw new IllegalArgumentException( "Property " + PrincipalPropertyNames.PRINCIPAL_TYPE_KEY + " not found on node with id " + node.id() );
+            throw new IllegalArgumentException(
+                "Property " + PrincipalPropertyNames.PRINCIPAL_TYPE_KEY + " not found on node with id " + node.id() );
         }
 
         final PrincipalType principalType = PrincipalType.valueOf( nodeAsSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
@@ -228,6 +229,17 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
+        populateUserExtraDataMap( data, user );
+    }
+
+    private static void populateUserExtraDataMap( final PropertySet data, final User user )
+    {
+        final PropertySet dataExtraDataMap = data.addSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY );
+        user.getExtraDataMap().
+            entrySet().
+            forEach( entry -> {
+                dataExtraDataMap.setSet( entry.getKey(), entry.getValue() );
+            } );
     }
 
     private static void populateRoleData( final PropertySet data, final Role role )
@@ -246,13 +258,28 @@ abstract class PrincipalNodeTranslator
 
         final PropertyTree nodeAsTree = node.data();
 
-        return User.create().
+        final User.Builder user = User.create().
             email( nodeAsTree.getString( PrincipalPropertyNames.EMAIL_KEY ) ).
             login( nodeAsTree.getString( PrincipalPropertyNames.LOGIN_KEY ) ).
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
-            authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) ).
-            build();
+            authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) );
+
+        extractUserExtraDataMap( nodeAsTree, user );
+
+        return user.build();
+    }
+
+    private static void extractUserExtraDataMap( final PropertyTree nodeAsTree, final User.Builder user )
+    {
+        final PropertySet nodeExtraDataMap = nodeAsTree.getSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY );
+        if ( nodeExtraDataMap != null )
+        {
+            for ( String nodeExtraDataNamespace : nodeExtraDataMap.getPropertyNames() )
+            {
+                user.addExtraData( nodeExtraDataNamespace, nodeExtraDataMap.getSet( nodeExtraDataNamespace ) );
+            }
+        }
     }
 
     private static Group createGroupFromNode( final Node node )

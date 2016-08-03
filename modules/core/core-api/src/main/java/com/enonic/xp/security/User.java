@@ -72,6 +72,11 @@ public final class User
         return loginDisabled;
     }
 
+    public ImmutableMap<String, PropertySet> getExtraDataMap()
+    {
+        return extraDataMap;
+    }
+
     public static Builder create()
     {
         return new Builder();
