@@ -15,34 +15,6 @@ module api.util {
         }
 
         /**
-         * Parses passed string to UTC time string - local timezone will add a time shift to result.
-         * @param localTime
-         * @returns {string}
-         */
-        public static parseTimeToUTC(localTime: string): string {
-            var values = localTime.split(':');
-            var date = new Date();
-            var localHours = Number(values[0]);
-            if (values.length == 3) {
-                date.setHours(localHours, Number(values[1]), Number(values[2]));
-            } else {
-                date.setHours(localHours, Number(values[1]));
-            }
-
-            var hoursAsString = "" + date.getUTCHours();
-            var minutesAsString = "" + date.getUTCMinutes();
-            return hoursAsString + ":" + minutesAsString;
-        }
-
-        public static parseUTCDate(value: string): Date {
-
-            var parsedYear: number = Number(value.substring(0, 4));
-            var parsedMonth: number = Number(value.substring(5, 7));
-            var parsedDayOfMonth: number = Number(value.substring(8, 10));
-            return api.util.DateHelper.newUTCDate(parsedYear, parsedMonth - 1, parsedDayOfMonth);
-        }
-
-        /**
          * Parses passed UTC string into Date object.
          * @param value
          * @param ignoreLocalTimezone - local time zone will be ignored if this parameter is true.
@@ -65,11 +37,6 @@ module api.util {
             }
         }
 
-        public static newUTCDate(year: number, month: number, date: number) {
-
-            return new Date(Date.UTC(year, month, date));
-        }
-
         public static newUTCDateTime(year: number, month: number, date: number, hours: number, minutes: number, seconds: number = 0) {
 
             return new Date(Date.UTC(year, month, date, hours, minutes, seconds));
@@ -81,11 +48,6 @@ module api.util {
          */
         public static newDateTime(year: number, month: number, date: number, hours: number, minutes: number, seconds: number = 0) {
             return new Date(year, month, date, hours, minutes, seconds);
-        }
-
-        public static formatUTCDate(date: Date): string {
-            var yearAsString = "" + date.getUTCFullYear();
-            return yearAsString + "-" + this.padNumber(date.getUTCMonth() + 1) + "-" + this.padNumber(date.getUTCDate());
         }
 
         /**
@@ -113,27 +75,12 @@ module api.util {
             return (num < 10 ? '0' : '') + num;
         }
 
-        public static formatUTCDateTime(date: Date): string {
-            var dateAsString = DateHelper.formatUTCDate(date);
-            return dateAsString + "T" + this.padNumber(date.getUTCHours()) + ":" + this.padNumber(date.getUTCMinutes()) + ":" +
-                   this.padNumber(date.getUTCSeconds());
-        }
-
         /**
-         * Formats passed date as date string, like 2010-01-01T10:55:00
+         * Parses passed iso-like string 2010-01-01 into js date,
+         * month expected to be in a 1-12 range
          * @param date
          * @returns {string}
          */
-        public static formatDateTime(date: Date): string {
-            var dateAsString = DateHelper.formatDate(date);
-            var timeAsString = DateHelper.formatTime(date);
-            return dateAsString + "T" + timeAsString;
-        }
-
-        public static formatUTCDateTimeForInstant(date: Date): string {
-            return this.formatUTCDateTime(date) + "Z";
-        }
-
         public static parseDate(value: string, dateSeparator: string = "-", forceDaysBeOfTwoChars: boolean = false): Date {
             var dateStr = (value || '').trim();
             if (dateStr.length < 8 || dateStr.length > 10) {
@@ -148,9 +95,9 @@ module api.util {
                 return null;
             }
 
-            var parsedYear: number = Number(parts[0]);
-            var parsedMonth: number = Number(parts[1]);
-            var parsedDayOfMonth: number = Number(parts[2]);
+            var parsedYear: number = Number(parts[0]),
+                parsedMonth: number = Number(parts[1]),
+                parsedDayOfMonth: number = Number(parts[2]);
 
             var date = new Date(parsedYear, parsedMonth - 1, parsedDayOfMonth);
             return date.getFullYear() === parsedYear && date.getMonth() === (parsedMonth - 1) && date.getDate() === parsedDayOfMonth

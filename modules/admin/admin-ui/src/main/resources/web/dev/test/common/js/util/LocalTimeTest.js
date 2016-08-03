@@ -114,15 +114,14 @@ describe("api.util.LocalTimeTest", function () {
 
         it("should parse time in correct format", function () {
             var parsedTime = api.util.LocalTime.fromString("12");
-            var originalTime = api.util.LocalTime.create().setHours(12).setMinutes(0).build();
+            var originalTime = api.util.LocalTime.create().setHours(12).setMinutes(0).setSeconds(0).build();
 
             expect(originalTime.equals(parsedTime)).toBeTruthy();
         });
 
         it("should parse time in correct format", function () {
             var parsedTime = api.util.LocalTime.fromString("6:7");
-            var originalTime = api.util.LocalTime.create().setHours(6).setMinutes(7).build();
-
+            var originalTime = api.util.LocalTime.create().setHours(6).setMinutes(7).setSeconds(0).build();
             expect(originalTime.equals(parsedTime)).toBeTruthy();
         });
 
