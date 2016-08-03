@@ -8,12 +8,12 @@ module api.data {
             super("LocalDate");
         }
 
-        isValid(value: string): boolean {
+        isValid(value: any): boolean {
             if (api.ObjectHelper.iFrameSafeInstanceOf(value, LocalDate)) {
                 return true;
             }
 
-            return LocalDate.isValidDate(value);
+            return LocalDate.isValidISODateString(value);
         }
 
         isConvertible(value: string): boolean {
@@ -37,7 +37,7 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = LocalDate.parseDate(value);
+            var date = LocalDate.fromISOString(value);
             return new Value(date, this);
         }
 
