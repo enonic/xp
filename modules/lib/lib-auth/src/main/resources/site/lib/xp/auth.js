@@ -329,3 +329,22 @@ exports.getIdProviderConfig = function () {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
     return __.toNativeObject(bean.execute());
 };
+
+/**
+ * Search for principals matching the specified criteria.
+ *
+ * @example-ref examples/auth/findPrincipals.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Key to the user.
+ * @param {string} params.namespace Namespace of the extra data.
+ * @returns {object} The extra data as JSON
+ */
+exports.getUserExtraData = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetUserExtraDataHandler');
+
+    bean.key = __.nullOrValue(params.key);
+    bean.namespace = __.nullOrValue(params.namespace);
+
+    return __.toNativeObject(bean.execute());
+};
