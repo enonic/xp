@@ -17,6 +17,8 @@ public class ApplicationDescriptorBuilderTest
 
     private static final String APP_DESCRIPTOR_FILENAME = "application.xml";
 
+    private static final String APP_ICON_FILENAME = "application.svg";
+
     @Before
     public void setup()
         throws Exception
@@ -32,6 +34,9 @@ public class ApplicationDescriptorBuilderTest
         Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getResource( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
+        final URL resourceIcon = resourceTestHelper.getTestResource( APP_ICON_FILENAME );
+        Mockito.when( bundle.getResource( APP_ICON_FILENAME ) ).thenReturn( resourceIcon );
+        Mockito.when( bundle.getEntry( APP_ICON_FILENAME ) ).thenReturn( resourceIcon );
 
         final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().
             bundle( bundle ).build();

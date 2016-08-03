@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
 
 import org.osgi.framework.Bundle;
 
@@ -9,11 +11,14 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.xml.parser.XmlApplicationParser;
 
 final class ApplicationDescriptorBuilder
 {
     private static final String APP_DESCRIPTOR_FILENAME = "application.xml";
+
+    private static final String APP_ICON_FILENAME = "application.svg";
 
     private Bundle bundle;
 
@@ -35,6 +40,21 @@ final class ApplicationDescriptorBuilder
             source( xml );
         parser.parse();
 
+        if ( hasAppIcon( bundle ) )
+        {
+            final URL iconUrl = bundle.getResource( APP_ICON_FILENAME );
+            try
+            {
+                final byte[] iconData = Resources.toByteArray( iconUrl );
+                final Icon icon = Icon.from( iconData, "image/svg+xml", Instant.ofEpochMilli( this.bundle.getLastModified() ) );
+                appDescriptorBuilder.icon( icon );
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( "Unable to load application icon for " + bundle.getSymbolicName(), e );
+            }
+        }
+
         return appDescriptorBuilder.build();
     }
 
@@ -50,4 +70,13 @@ final class ApplicationDescriptorBuilder
         }
     }
 
+    public static boolean hasAppDescriptor( final Bundle bundle )
+    {
+        return ( bundle.getEntry( APP_DESCRIPTOR_FILENAME ) != null );
+    }
+
+    private boolean hasAppIcon( final Bundle bundle )
+    {
+        return ( bundle.getEntry( APP_ICON_FILENAME ) != null );
+    }
 }
