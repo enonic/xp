@@ -49,10 +49,6 @@ module api.content.form.inputtype.time {
             return datePicker;
         }
 
-        availableSizeChanged() {
-        }
-
-
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly?: boolean) {
             var datePicker = <api.ui.time.DatePicker> occurrence;
             if (!unchangedOnly || !datePicker.isDirty()) {
