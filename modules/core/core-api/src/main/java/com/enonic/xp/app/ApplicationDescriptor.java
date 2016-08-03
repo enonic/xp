@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.icon.Icon;
 
@@ -18,8 +19,9 @@ public final class ApplicationDescriptor
 
     private ApplicationDescriptor( final Builder builder )
     {
+        Preconditions.checkNotNull( builder.key, "key is required" );
         this.key = builder.key;
-        this.description = builder.description;
+        this.description = builder.description != null ? builder.description : "";
         this.icon = builder.icon;
     }
 
