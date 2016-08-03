@@ -723,3 +723,10 @@
   display: block;
   text-decoration: none;
 }
+
+.flat-mixin(@bgColor: @admin-white) {
+  .border-radius(0);
+  background-image: none;
+  box-shadow: none;
+  background-color: @bgColor;
+}
