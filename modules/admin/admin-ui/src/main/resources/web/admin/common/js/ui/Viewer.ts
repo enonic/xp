@@ -32,7 +32,9 @@ module api.ui {
         setObject(object: OBJECT) {
             this.object = object;
 
-            return this.doLayout(object);
+            if(this.isRendered()) {
+                return this.doLayout(object);
+            }
         }
 
         getObject(): OBJECT {
@@ -41,6 +43,13 @@ module api.ui {
 
         getPreferredHeight(): number {
             throw new Error("Must be implemented by inheritors");
+        }
+
+        toString(): string {
+            if(!this.isRendered()) {
+                this.doLayout(this.getObject());
+            }
+            return super.toString();
         }
     }
 }
