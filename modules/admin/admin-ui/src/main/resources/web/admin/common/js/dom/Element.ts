@@ -675,12 +675,8 @@ module api.dom {
                 return;
             }
 
-            var childPos = parent.children.indexOf(this);
-            parent.removeChild(this);
+            this.replaceWith(wrapperElement);
             wrapperElement.appendChild(this);
-            // add wrapper to parent in the same position of the current element
-            parent.el.appendChild(wrapperElement.getEl().getHTMLElement());
-            parent.insertChildElement(this, wrapperElement, childPos);
         }
 
         getParentElement(): Element {
