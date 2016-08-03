@@ -5,7 +5,9 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -31,6 +33,8 @@ public final class User
 
     private final boolean loginDisabled;
 
+    private final ImmutableMap<String, PropertySet> extraDataMap;
+
     private User( final Builder builder )
     {
         super( builder );
@@ -45,6 +49,7 @@ public final class User
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
+        this.extraDataMap = builder.extraDataMap.build();
     }
 
     public String getEmail()
@@ -88,6 +93,8 @@ public final class User
 
         private boolean loginDisabled;
 
+        private ImmutableMap.Builder<String, PropertySet> extraDataMap = ImmutableMap.builder();
+
         private Builder()
         {
             super();
@@ -100,6 +107,7 @@ public final class User
             this.login = user.getLogin();
             this.authenticationHash = user.getAuthenticationHash();
             this.loginDisabled = user.isDisabled();
+            this.extraDataMap.putAll( user.extraDataMap );
         }
 
         public Builder login( final String value )
@@ -117,6 +125,12 @@ public final class User
         public Builder authenticationHash( final String value )
         {
             this.authenticationHash = value;
+            return this;
+        }
+
+        public Builder addExtraData( final String namespace, PropertySet extraData )
+        {
+            this.extraDataMap.put( namespace, extraData );
             return this;
         }
 
@@ -138,7 +152,8 @@ public final class User
                 Objects.equals( email, other.email ) &&
                 Objects.equals( authenticationHash, other.authenticationHash ) &&
                 Objects.equals( login, other.login ) &&
-                Objects.equals( loginDisabled, other.loginDisabled );
+                Objects.equals( loginDisabled, other.loginDisabled ) &&
+                Objects.equals( extraDataMap.build(), other.extraDataMap );
 
         }
 
