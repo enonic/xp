@@ -148,6 +148,10 @@ public final class SendMailHandler
         if ( attachmentList.isEmpty() )
         {
             message.setText( nullToEmpty( this.body ), "UTF-8" );
+            if ( this.contentType != null )
+            {
+                message.addHeader( "Content-Type", this.contentType );
+            }
         }
         else
         {
@@ -155,6 +159,10 @@ public final class SendMailHandler
 
             final MimeBodyPart textPart = new MimeBodyPart();
             textPart.setText( nullToEmpty( this.body ), "UTF-8" );
+            if ( this.contentType != null )
+            {
+                textPart.addHeader( "Content-Type", this.contentType );
+            }
             multipart.addBodyPart( textPart );
 
             for ( Attachment attachment : attachmentList )
@@ -168,10 +176,6 @@ public final class SendMailHandler
             message.setContent( multipart );
         }
 
-        if ( this.contentType != null )
-        {
-            message.addHeader( "Content-Type", this.contentType );
-        }
     }
 
     private InternetAddress toAddress( final String address )
