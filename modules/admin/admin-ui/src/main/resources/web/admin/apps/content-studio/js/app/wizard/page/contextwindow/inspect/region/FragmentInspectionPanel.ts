@@ -5,13 +5,13 @@ import {FragmentSelectorForm} from "./FragmentSelectorForm";
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
-import GetContentSummaryByIdRequest = api.content.GetContentSummaryByIdRequest;
+import GetContentSummaryByIdRequest = api.content.resource.GetContentSummaryByIdRequest;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
-import GetContentByIdRequest = api.content.GetContentByIdRequest;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import Content = api.content.Content;
 import LayoutComponentType = api.content.page.region.LayoutComponentType;
 import QueryExpr = api.query.expr.QueryExpr;
@@ -35,14 +35,14 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
     private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
-    private loader: api.content.FragmentContentSummaryLoader;
+    private loader: api.content.resource.FragmentContentSummaryLoader;
 
     constructor() {
         super(<ComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("fragment")
         });
 
-        this.loader = new api.content.FragmentContentSummaryLoader();
+        this.loader = new api.content.resource.FragmentContentSummaryLoader();
     }
 
     setModel(liveEditModel: LiveEditModel) {

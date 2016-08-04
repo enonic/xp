@@ -233,7 +233,7 @@ module api.util.htmlarea.dialog {
 
         private createContentSelector(id: string, label: string, value: string,
                                       contentTypeNames?: api.schema.content.ContentTypeName[]): FormItem {
-            let loader = new api.content.ContentSummaryLoader();
+            let loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(this.content.getPath());
 
             let contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),

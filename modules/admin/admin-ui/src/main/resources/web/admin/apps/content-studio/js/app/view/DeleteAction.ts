@@ -14,7 +14,7 @@ export class DeleteAction extends api.ui.Action {
                 .setNoCallback(null)
                 .setYesCallback(() => {
                     itemViewPanel.close();
-                    new api.content.DeleteContentRequest()
+                    new api.content.resource.DeleteContentRequest()
                         .addContentPath(contentToDelete.getPath())
                         .sendAndParse()
                         .then((result: api.content.DeleteContentResult) => {

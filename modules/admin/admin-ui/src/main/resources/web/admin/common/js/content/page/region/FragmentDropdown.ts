@@ -6,7 +6,7 @@ module api.content.page.region {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     import ContentSummary = api.content.ContentSummary;
-    import ContentSummaryLoader = api.content.ContentSummaryLoader;
+    import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
 
     import RichDropdown = api.ui.selector.dropdown.RichDropdown;
 

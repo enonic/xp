@@ -6,8 +6,8 @@ import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentSummary = api.content.ContentSummary;
 import ContentIds = api.content.ContentIds;
 import ContentId = api.content.ContentId;
-import GetDescendantsOfContents = api.content.GetDescendantsOfContents;
-import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+import GetDescendantsOfContents = api.content.resource.GetDescendantsOfContents;
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -187,7 +187,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
                               size: number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
         let ids = this.dependantIds.slice(from, from+size);
-        return api.content.ContentSummaryAndCompareStatusFetcher.fetchByIds(ids);
+        return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByIds(ids);
     }
 
     protected countTotal(): number {

@@ -4,6 +4,7 @@ module api.content {
     import Option = api.ui.selector.Option;
     import RichComboBox = api.ui.selector.combobox.RichComboBox;
     import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
+    import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
 
     export class ContentComboBox extends RichComboBox<ContentSummary> {
 

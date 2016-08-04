@@ -223,7 +223,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private updateActionsByPermissionsNoItemsSelected(): wemQ.Promise<any> {
-        return new api.content.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
+        return new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
             (allowedPermissions: Permission[]) => {
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
@@ -249,7 +249,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             return contentBrowseItem.getModel().getContentId();
         });
 
-        return new api.content.GetPermittedActionsRequest().addContentIds(...selectedItemsIds).addPermissionsToBeChecked(Permission.CREATE,
+        return new api.content.resource.GetPermittedActionsRequest().addContentIds(...selectedItemsIds).addPermissionsToBeChecked(
+            Permission.CREATE,
             Permission.DELETE, Permission.PUBLISH).sendAndParse().then(
             (allowedPermissions: Permission[]) => {
 
@@ -291,7 +292,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         var deferred = wemQ.defer<boolean>();
 
         if (contentSummary.hasParent()) {
-            new api.content.GetContentByPathRequest(contentSummary.getPath().getParentPath()).sendAndParse().then(
+            new api.content.resource.GetContentByPathRequest(contentSummary.getPath().getParentPath()).sendAndParse().then(
                 (parent: api.content.Content) => {
                     new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
                         deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
@@ -302,7 +303,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
                 });
         } else {
-            new api.content.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
+            new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
                 (allowedPermissions: Permission[]) => {
                     deferred.resolve(allowedPermissions.indexOf(Permission.CREATE) > -1);
             });

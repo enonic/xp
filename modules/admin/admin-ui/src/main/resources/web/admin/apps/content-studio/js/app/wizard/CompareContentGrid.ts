@@ -11,7 +11,7 @@ import ContentSummaryViewer = api.content.ContentSummaryViewer;
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
-import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
@@ -47,7 +47,7 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
 
     fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
         var parentContentId = parentNode && parentNode.getData() ? parentNode.getData().getContentId() : null;
-        return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId).then(
+        return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId).then(
             (data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                 return data.getContents();
             });

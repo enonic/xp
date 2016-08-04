@@ -5,7 +5,7 @@ export interface ConfirmContentDeleteDialogConfig {
 
     totalItemsToDelete: number;
 
-    deleteRequest: api.content.DeleteContentRequest;
+    deleteRequest: api.content.resource.DeleteContentRequest;
 
     yesCallback: (exclude?: api.content.CompareStatus[]) => void;
 }

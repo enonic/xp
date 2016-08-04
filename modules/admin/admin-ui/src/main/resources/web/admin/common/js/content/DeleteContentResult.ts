@@ -1,6 +1,7 @@
 module api.content {
 
 
+    import DeleteContentResultJson = api.content.json.DeleteContentResultJson;
     export class DeleteContentResult {
 
         private success: number;

@@ -127,8 +127,8 @@ module api.content.form.inputtype.upload {
         private deleteContent(property: Property) {
             var contentId = this.getContext().content.getContentId();
 
-            new api.content.GetContentByIdRequest(contentId).sendAndParse().then((content: api.content.Content) => {
-                var deleteRequest = new api.content.DeleteContentRequest();
+            new api.content.resource.GetContentByIdRequest(contentId).sendAndParse().then((content: api.content.Content) => {
+                var deleteRequest = new api.content.resource.DeleteContentRequest();
 
                 deleteRequest.addContentPath(content.getPath());
                 deleteRequest.sendAndParse().then((result: api.content.DeleteContentResult) => {

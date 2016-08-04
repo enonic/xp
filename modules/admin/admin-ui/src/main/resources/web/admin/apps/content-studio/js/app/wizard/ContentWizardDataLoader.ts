@@ -96,7 +96,7 @@ export class ContentWizardDataLoader {
         if (api.ObjectHelper.iFrameSafeInstanceOf(summary, Content)) {
             return wemQ(<Content> summary);
         } else {
-            return new api.content.GetContentByIdRequest(summary.getContentId()).sendAndParse();
+            return new api.content.resource.GetContentByIdRequest(summary.getContentId()).sendAndParse();
         }
     }
 
@@ -113,7 +113,7 @@ export class ContentWizardDataLoader {
     }
 
     private loadSite(contentId: ContentId): wemQ.Promise<Site> {
-        return contentId ? new api.content.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Site>(null);
+        return contentId ? new api.content.resource.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Site>(null);
     }
 
     private loadDefaultModels(site: Site, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
@@ -145,7 +145,7 @@ export class ContentWizardDataLoader {
             return wemQ<Content>(null);
         }
 
-        return new api.content.GetContentByPathRequest(this.content.getPath().getParentPath()).sendAndParse();
+        return new api.content.resource.GetContentByPathRequest(this.content.getPath().getParentPath()).sendAndParse();
     }
 
 }

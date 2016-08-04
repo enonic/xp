@@ -7,7 +7,7 @@ module api.content.form.inputtype.image {
     import ValueTypes = api.data.ValueTypes;
     import ContentId = api.content.ContentId;
     import ContentSummary = api.content.ContentSummary;
-    import ContentSummaryLoader = api.content.ContentSummaryLoader;
+    import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
     import ContentComboBox = api.content.form.inputtype.image.ImageContentComboBox;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -433,7 +433,7 @@ module api.content.form.inputtype.image {
                     contentIds.push(ContentId.fromReference(property.getReference()));
                 }
             });
-            return new api.content.GetContentSummaryByIds(contentIds).sendAndParse();
+            return new api.content.resource.GetContentSummaryByIds(contentIds).sendAndParse();
         }
 
         protected getNumberOfValids(): number {

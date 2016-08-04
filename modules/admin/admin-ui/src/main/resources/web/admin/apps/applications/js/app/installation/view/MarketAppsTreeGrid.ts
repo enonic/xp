@@ -18,7 +18,7 @@ import ContentResponse = api.content.ContentResponse;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
-import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import ChildOrder = api.content.ChildOrder;
 
 import CompareStatus = api.content.CompareStatus;
