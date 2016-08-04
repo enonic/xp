@@ -277,7 +277,7 @@ abstract class PrincipalNodeTranslator
         {
             for ( String nodeExtraDataNamespace : nodeExtraDataMap.getPropertyNames() )
             {
-                user.addExtraData( nodeExtraDataNamespace, nodeExtraDataMap.getSet( nodeExtraDataNamespace ) );
+                user.putExtraData( nodeExtraDataNamespace, nodeExtraDataMap.getSet( nodeExtraDataNamespace ) );
             }
         }
     }

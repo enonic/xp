@@ -1,9 +1,11 @@
 package com.enonic.xp.security;
 
 import java.time.Instant;
+import java.util.Map;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.data.PropertySet;
 
@@ -26,7 +28,7 @@ public final class EditableUser
 
     public Instant modifiedTime;
 
-    public ImmutableMap.Builder<String, PropertySet> extraDataMap;
+    public Map<String, PropertySet> extraDataMap;
 
     public EditableUser( final User source )
     {
@@ -38,8 +40,7 @@ public final class EditableUser
         this.loginDisabled = source.isDisabled();
         this.key = source.getKey();
         this.modifiedTime = source.getModifiedTime();
-        this.extraDataMap = ImmutableMap.builder();
-        this.extraDataMap.putAll( source.getExtraDataMap() );
+        this.extraDataMap = Maps.newHashMap( source.getExtraDataMap() );
     }
 
     public User build()
@@ -51,7 +52,7 @@ public final class EditableUser
             authenticationHash( authenticationHash ).
             key( key ).
             modifiedTime( modifiedTime ).
-            setExtraDataMap( extraDataMap ).
+            putAllExtraDataMap( ImmutableMap.copyOf( this.extraDataMap ) ).
             build();
     }
 }

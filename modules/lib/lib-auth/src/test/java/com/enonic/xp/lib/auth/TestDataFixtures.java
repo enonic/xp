@@ -31,7 +31,7 @@ public class TestDataFixtures
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
             login( "user1" ).
-            addExtraData( "com.enonic.app.myapp", getTestExtraData() ).
+            putExtraData( "com.enonic.app.myapp", getTestExtraData() ).
             build();
     }
 

@@ -1,11 +1,13 @@
 package com.enonic.xp.security;
 
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.mail.EmailValidator;
@@ -49,7 +51,7 @@ public final class User
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
-        this.extraDataMap = builder.extraDataMap.build();
+        this.extraDataMap = ImmutableMap.copyOf( builder.extraDataMap );
     }
 
     public String getEmail()
@@ -103,7 +105,7 @@ public final class User
 
         private boolean loginDisabled;
 
-        private ImmutableMap.Builder<String, PropertySet> extraDataMap = ImmutableMap.builder();
+        private Map<String, PropertySet> extraDataMap = Maps.newHashMap();
 
         private Builder()
         {
@@ -138,15 +140,15 @@ public final class User
             return this;
         }
 
-        public Builder addExtraData( final String namespace, PropertySet extraData )
+        public Builder putExtraData( final String namespace, PropertySet extraData )
         {
             this.extraDataMap.put( namespace, extraData );
             return this;
         }
 
-        public Builder setExtraDataMap( final ImmutableMap.Builder<String, PropertySet> extraDataMap )
+        public Builder putAllExtraDataMap( final Map<String, PropertySet> extraDataMap )
         {
-            this.extraDataMap = extraDataMap;
+            this.extraDataMap.putAll( extraDataMap );
             return this;
         }
 
@@ -169,7 +171,7 @@ public final class User
                 Objects.equals( authenticationHash, other.authenticationHash ) &&
                 Objects.equals( login, other.login ) &&
                 Objects.equals( loginDisabled, other.loginDisabled ) &&
-                Objects.equals( extraDataMap.build(), other.extraDataMap );
+                Objects.equals( ImmutableMap.copyOf( extraDataMap ), other.extraDataMap );
 
         }
 

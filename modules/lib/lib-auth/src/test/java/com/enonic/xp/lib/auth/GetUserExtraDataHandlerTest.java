@@ -23,7 +23,7 @@ public class GetUserExtraDataHandlerTest
     }
 
     @Test
-    public void testExample()
+    public void testExamples()
     {
         Mockito.when( securityService.getUser( Mockito.any() ) ).
             thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
