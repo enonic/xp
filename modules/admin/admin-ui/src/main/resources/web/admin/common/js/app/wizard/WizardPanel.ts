@@ -250,7 +250,7 @@ module api.app.wizard {
 
             this.updateToolbarActions();
 
-            this.formPanel = new api.ui.panel.Panel("form-panel");
+            this.formPanel = new api.ui.panel.Panel("form-panel rendering");
             this.formPanel.onScroll(() => this.updateStickyToolbar());
 
             this.formPanel.onAdded((event) => {
@@ -268,10 +268,10 @@ module api.app.wizard {
                 }
                 firstShow = true;
                 this.formMask.hide();
-                this.formPanel.getEl().setOpacity(1);
+                this.formPanel.removeClass('rendering');
 
                 if (this.mainToolbar) {
-                    this.mainToolbar.getEl().setOpacity(1);
+                    this.mainToolbar.removeClass('rendering');
                 }
 
                 // check validity on rendered
@@ -294,11 +294,13 @@ module api.app.wizard {
 
             this.mainToolbar = this.createMainToolbar();
             if (this.mainToolbar) {
+                this.mainToolbar.addClass('rendering');
                 this.appendChild(this.mainToolbar);
             }
 
             this.livePanel = this.createLivePanel();
             if (this.livePanel) {
+                this.livePanel.addClass('rendering');
 
                 this.toggleMinimizeListener = (event: api.ui.ActivatedEvent) => {
                     this.toggleMinimize(event.getIndex());
@@ -319,7 +321,7 @@ module api.app.wizard {
                         console.debug("WizardPanel: livePanel.onRendered");
                     }
                     this.liveMask.hide();
-                    this.livePanel.getEl().setOpacity(1);
+                    this.livePanel.removeClass('rendering');
                 });
 
                 this.splitPanel = this.createSplitPanel(this.formPanel, this.livePanel);
