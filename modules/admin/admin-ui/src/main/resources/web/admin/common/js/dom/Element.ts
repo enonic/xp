@@ -229,6 +229,10 @@ module api.dom {
             return renderPromise.then((rendered) => {
 
                 return this.initChildren(rendered);
+            }).catch((reason) => {
+
+                api.DefaultErrorHandler.handle(reason);
+                return false;
             });
         }
 
@@ -313,6 +317,10 @@ module api.dom {
 
         isRendered(): boolean {
             return this.rendered;
+        }
+
+        isAdded(): boolean {
+            return !!this.getHTMLElement().parentNode;
         }
 
         /**
@@ -575,7 +583,10 @@ module api.dom {
             } else if (parent.isRendering()) {
                 this.childrenAddedDuringInit = true;
             }
-            child.notifyAdded();
+            // notify added if I am added to dom only, otherwise do it on added to dom
+            if (this.isAdded()) {
+                child.notifyAdded();
+            }
             return this;
         }
 
@@ -831,7 +842,10 @@ module api.dom {
             this.addedListeners.forEach((listener) => {
                 listener(addedEvent);
             });
-            // Each child throw its own added
+
+            this.children.forEach((child: Element) => {
+                child.notifyAdded();
+            })
         }
 
         onRemoved(listener: (event: ElementRemovedEvent) => void) {
