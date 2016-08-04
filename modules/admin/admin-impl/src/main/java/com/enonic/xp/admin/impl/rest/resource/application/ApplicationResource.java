@@ -1,7 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -9,9 +11,12 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,13 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
@@ -42,6 +48,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
@@ -58,6 +65,8 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 public final class ApplicationResource
     implements JaxRsComponent
 {
+    private final Icon defaultAppIcon;
+
     private ApplicationService applicationService;
 
     private ApplicationDescriptorService applicationDescriptorService;
@@ -68,9 +77,18 @@ public final class ApplicationResource
 
     private AuthDescriptorService authDescriptorService;
 
+    private ApplicationIconUrlResolver iconUrlResolver;
+
     private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
+
+    public ApplicationResource()
+    {
+        final byte[] image = loadDefaultImage( "app_default.svg" );
+        defaultAppIcon = Icon.from( image, "image/svg+xml", Instant.ofEpochMilli( 0L ) );
+        iconUrlResolver = new ApplicationIconUrlResolver();
+    }
 
     @GET
     @Path("list")
@@ -105,7 +123,7 @@ public final class ApplicationResource
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
 
-                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor );
+                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
             }
         }
 
@@ -127,7 +145,7 @@ public final class ApplicationResource
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
         final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( appKey );
         final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( appKey );
-        return new ApplicationJson( application, local, appDescriptor, siteDescriptor, authDescriptor );
+        return new ApplicationJson( application, local, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
     }
 
     @POST
@@ -214,6 +232,41 @@ public final class ApplicationResource
         }
     }
 
+    @GET
+    @Path("icon/{appKey}")
+    @Produces("image/*")
+    public Response getIcon( @PathParam("appKey") final String appKeyStr, @QueryParam("hash") final String hash )
+        throws Exception
+    {
+        final ApplicationKey appKey = ApplicationKey.from( appKeyStr );
+        final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( appKey );
+        final Icon icon = appDescriptor == null ? null : appDescriptor.getIcon();
+
+        final Response.ResponseBuilder responseBuilder;
+        if ( icon == null )
+        {
+            responseBuilder = Response.ok( defaultAppIcon.asInputStream(), defaultAppIcon.getMimeType() );
+            applyMaxAge( Integer.MAX_VALUE, responseBuilder );
+        }
+        else
+        {
+            responseBuilder = Response.ok( icon.toByteArray(), icon.getMimeType() );
+            if ( StringUtils.isNotEmpty( hash ) )
+            {
+                applyMaxAge( Integer.MAX_VALUE, responseBuilder );
+            }
+        }
+
+        return responseBuilder.build();
+    }
+
+    private void applyMaxAge( int maxAge, final Response.ResponseBuilder responseBuilder )
+    {
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge( maxAge );
+        responseBuilder.cacheControl( cacheControl );
+    }
+
     private ApplicationInstallResultJson installApplication( final URL url )
     {
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
@@ -222,7 +275,7 @@ public final class ApplicationResource
         {
             final Application application = this.applicationService.installGlobalApplication( url );
 
-            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
+            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false, iconUrlResolver ) );
         }
         catch ( Exception e )
         {
@@ -242,7 +295,7 @@ public final class ApplicationResource
         {
             final Application application = this.applicationService.installGlobalApplication( byteSource );
 
-            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
+            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false, iconUrlResolver ) );
         }
         catch ( Exception e )
         {
@@ -284,7 +337,7 @@ public final class ApplicationResource
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
-                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor );
+                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
             }
         }
 
@@ -300,6 +353,23 @@ public final class ApplicationResource
         catch ( NumberFormatException e )
         {
             return defaultValue;
+        }
+    }
+
+    private byte[] loadDefaultImage( final String imageName )
+    {
+        try (final InputStream in = getClass().getResourceAsStream( imageName ))
+        {
+            if ( in == null )
+            {
+                throw new IllegalArgumentException( "Image [" + imageName + "] not found" );
+            }
+
+            return ByteStreams.toByteArray( in );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Failed to load default image: " + imageName, e );
         }
     }
 

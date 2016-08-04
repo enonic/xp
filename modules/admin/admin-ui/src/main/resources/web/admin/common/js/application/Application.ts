@@ -37,6 +37,8 @@ module api.application {
 
         private maxSystemVersion: string;
 
+        private iconUrl: string;
+
         constructor(builder: ApplicationBuilder) {
             super(builder);
             this.applicationKey = builder.applicationKey;
@@ -55,6 +57,7 @@ module api.application {
             this.metaSteps = builder.metaSteps;
             this.minSystemVersion = builder.minSystemVersion;
             this.maxSystemVersion = builder.maxSystemVersion;
+            this.iconUrl = builder.iconUrl;
         }
 
         getDisplayName(): string {
@@ -133,6 +136,10 @@ module api.application {
             return this.metaSteps;
         }
 
+        getIconUrl(): string {
+            return this.iconUrl;
+        }
+
         static fromJson(json: api.application.json.ApplicationJson): Application {
             return new ApplicationBuilder().fromJson(json).build();
         }
@@ -164,7 +171,8 @@ module api.application {
                    api.ObjectHelper.arrayEquals(this.contentTypeDependencies, other.contentTypeDependencies) &&
                    api.ObjectHelper.equals(this.metaSteps, other.metaSteps) &&
                    this.minSystemVersion == other.minSystemVersion &&
-                   this.maxSystemVersion == other.maxSystemVersion;
+                   this.maxSystemVersion == other.maxSystemVersion &&
+                   this.iconUrl == other.iconUrl;
         }
     }
 
@@ -202,11 +210,12 @@ module api.application {
 
         maxSystemVersion: string;
 
+        iconUrl: string;
+
 
         constructor(source?: Application) {
             this.applicationDependencies = [];
             this.contentTypeDependencies = [];
-            this.metaSteps;
             if (source) {
                 super(source);
                 this.applicationKey = source.getApplicationKey();
@@ -224,6 +233,7 @@ module api.application {
                 this.metaSteps = source.getMetaSteps();
                 this.minSystemVersion = source.getMinSystemVersion();
                 this.maxSystemVersion = source.getMaxSystemVersion();
+                this.iconUrl = source.getIconUrl();
             }
         }
 
@@ -245,6 +255,7 @@ module api.application {
             this.authConfig = json.authConfig != null ? api.form.Form.fromJson(json.authConfig) : null;
             this.minSystemVersion = json.minSystemVersion;
             this.maxSystemVersion = json.maxSystemVersion;
+            this.iconUrl = json.iconUrl;
 
             if (json.applicationDependencies != null) {
                 json.applicationDependencies.forEach((dependency: string) => {
