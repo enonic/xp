@@ -61,35 +61,35 @@ export class ContentWizardDataLoader {
 
     private loadDataForEdit(params: ContentWizardPanelParams): wemQ.Promise<ContentWizardDataLoader> {
 
-        return this.loadContent(params.contentSummary).then((loadedContent: Content) => {
+        let sitePromise = this.loadSite(params.contentSummary.getContentId()).then((loadedSite: Site) => {
+
+            this.siteContent = loadedSite;
+
+            return this.loadDefaultModels(this.siteContent, params.contentSummary.getType()).then((defaultModels) => {
+                this.defaultModels = defaultModels;
+            });
+        });
+
+        let contentPromise = this.loadContent(params.contentSummary).then((loadedContent: Content) => {
 
             this.content = loadedContent;
 
             let parentPromise = this.loadParentContent(params, false);
             let typePromise = this.loadContentType(this.content.getType());
             let statusPromise = api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(this.content);
-            let siteAndModelsPromise = this.loadSite(this.content.getContentId()).then((loadedSite: Site) => {
 
-                if (!!loadedSite) {
-                    this.siteContent = loadedSite;
+            return wemQ.all([parentPromise, typePromise, statusPromise]).spread((parentContent, contentType, compareStatus) => {
+                this.parentContent = parentContent;
+                this.contentType = contentType;
+                if (compareStatus) {
+                    this.compareStatus = compareStatus.getCompareStatus();
                 }
-                return this.loadDefaultModels(this.siteContent, this.content.getType());
-
             });
-
-            return wemQ.all([parentPromise, typePromise, statusPromise, siteAndModelsPromise]);
-
-        }).spread((parentContent, contentType, compareStatus, defaultModels) => {
-
-            this.parentContent = parentContent;
-            this.contentType = contentType;
-            if (compareStatus) {
-                this.compareStatus = compareStatus.getCompareStatus();
-            }
-            this.defaultModels = defaultModels;
-
-            return this;
         });
+
+        return wemQ.all([sitePromise, contentPromise]).then(() => {
+            return this;
+        })
     }
 
     private loadContent(summary: ContentSummary): wemQ.Promise<Content> {

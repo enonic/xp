@@ -11,7 +11,7 @@ module api.ui.responsive {
         }): ResponsiveItem {
             var responsiveItem: ResponsiveItem = new ResponsiveItem(el, handler),
                 listener = () => {
-                    if (el.isRendered()) {
+                    if (el.isVisible()) {
                         responsiveItem.update();
                     }
                 },
@@ -34,7 +34,7 @@ module api.ui.responsive {
                 var renderedHandler = (event) => {
                     responsiveItem.update();
                     el.unRendered(renderedHandler); // update needs
-                }
+                };
                 el.onRendered(renderedHandler);
             }
         }
