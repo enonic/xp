@@ -331,12 +331,12 @@ exports.getIdProviderConfig = function () {
 };
 
 /**
- * Search for principals matching the specified criteria.
+ * This function retrieves the extra data stored on a user for a specific scope .
  *
- * @example-ref examples/auth/findPrincipals.js
+ * @example-ref examples/auth/getUserExtraData.js
  *
  * @param {object} params JSON parameters.
- * @param {string} params.key Key to the user.
+ * @param {string} params.key Principal key of the user.
  * @param {string} params.namespace Namespace of the extra data.
  * @returns {object} The extra data as JSON
  */
@@ -345,6 +345,27 @@ exports.getUserExtraData = function (params) {
 
     bean.key = __.nullOrValue(params.key);
     bean.namespace = __.nullOrValue(params.namespace);
+
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function retrieves the extra data stored on a user for a specific scope and updates it.
+ *
+ * @example-ref examples/auth/getUserExtraData.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Principal key of the user.
+ * @param {string} params.namespace Namespace of the extra data.
+ * @param {function} params.editor User extra data editor function to apply.
+ * @returns {object} The extra data as JSON
+ */
+exports.modifyUserExtraData = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.ModifyUserExtraDataHandler');
+
+    bean.key = __.nullOrValue(params.key);
+    bean.namespace = __.nullOrValue(params.namespace);
+    bean.editor = __.toScriptValue(required(params, 'editor'));
 
     return __.toNativeObject(bean.execute());
 };

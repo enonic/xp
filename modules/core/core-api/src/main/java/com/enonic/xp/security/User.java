@@ -77,6 +77,11 @@ public final class User
         return extraDataMap;
     }
 
+    public PropertySet getExtraData( final String namespace )
+    {
+        return extraDataMap.get( namespace );
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -136,6 +141,12 @@ public final class User
         public Builder addExtraData( final String namespace, PropertySet extraData )
         {
             this.extraDataMap.put( namespace, extraData );
+            return this;
+        }
+
+        public Builder setExtraDataMap( final ImmutableMap.Builder<String, PropertySet> extraDataMap )
+        {
+            this.extraDataMap = extraDataMap;
             return this;
         }
 
