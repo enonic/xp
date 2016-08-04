@@ -7,47 +7,33 @@ module api.util {
         }
 
         public static getTZOffset(): number {
-            return (new Date().getTimezoneOffset() / 60) * -1;
+            var jan = new Date(2016, 0, 1),
+                jul = new Date(2016, 6, 1),
+                absoluteOffsetInHrs = Math.min(Math.abs(jan.getTimezoneOffset() / 60), Math.abs(jul.getTimezoneOffset() / 60));
+
+            return jan.getTimezoneOffset() > 0 ? absoluteOffsetInHrs * -1 : absoluteOffsetInHrs;
         }
 
-        public static getTZOffsetFromDate(s: Date): number {
-            return (s.getTimezoneOffset() / 60) * -1;
+        // returns true if passed date uses daylight savings time
+        public static isDST(date: Date): boolean {
+            return Math.abs(date.getTimezoneOffset() / 60) > DateHelper.getTZOffset();
         }
 
         /**
          * Parses passed UTC string into Date object.
          * @param value
-         * @param ignoreLocalTimezone - local time zone will be ignored if this parameter is true.
          * @returns {Date}
          */
-        public static parseUTCDateTime(value: string, ignoreLocalTimezone: boolean = false): Date {
+        public static makeDateFromUTCString(value: string): Date {
 
-            var parsedYear: number = Number(value.substring(0, 4));
-            var parsedMonth: number = Number(value.substring(5, 7));
-            var parsedDayOfMonth: number = Number(value.substring(8, 10));
-            var parsedHours: number = Number(value.substring(11, 13));
-            var parsedMinutes: number = Number(value.substring(14, 16));
-            var parsedSeconds: number = Number(value.substring(17, 19));
-            if (ignoreLocalTimezone) {
-                return DateHelper.newDateTime(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes,
-                    parsedSeconds);
-            } else {
-                return DateHelper.newUTCDateTime(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes,
-                    parsedSeconds);
-            }
-        }
+            var parsedYear: number = Number(value.substring(0, 4)),
+                parsedMonth: number = Number(value.substring(5, 7)),
+                parsedDayOfMonth: number = Number(value.substring(8, 10)),
+                parsedHours: number = Number(value.substring(11, 13)),
+                parsedMinutes: number = Number(value.substring(14, 16)),
+                parsedSeconds: number = Number(value.substring(17, 19));
 
-        public static newUTCDateTime(year: number, month: number, date: number, hours: number, minutes: number, seconds: number = 0) {
-
-            return new Date(Date.UTC(year, month, date, hours, minutes, seconds));
-        }
-
-        /**
-         * Creates Date object from passes values. Method does not take in account local timezone unlike newUTCDateTime() method.
-         * @returns {Date}
-         */
-        public static newDateTime(year: number, month: number, date: number, hours: number, minutes: number, seconds: number = 0) {
-            return new Date(year, month, date, hours, minutes, seconds);
+            return new Date(Date.UTC(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes, parsedSeconds));
         }
 
         /**
