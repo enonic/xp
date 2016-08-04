@@ -7,7 +7,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.DeleteContentsResult;
+import com.enonic.xp.content.Contents;
 
 public class DeleteContentHandlerTest
     extends BaseContentHandlerTest
@@ -16,9 +16,8 @@ public class DeleteContentHandlerTest
     public void testExample()
     {
         final Content content = TestDataFixtures.newContent();
-        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( content.getId() ).build();
 
-        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( Contents.from( content ) );
 
         runScript( "/site/lib/xp/examples/content/delete.js" );
     }
@@ -30,8 +29,7 @@ public class DeleteContentHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( content.getId() ).build();
-        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( Contents.from( content ) );
 
         runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteById" );
     }
@@ -41,9 +39,8 @@ public class DeleteContentHandlerTest
         throws Exception
     {
         final Content content = TestDataFixtures.newContent();
-        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( content.getId() ).build();
 
-        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( result);
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( Contents.from( content ));
 
         runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteByPath" );
     }
