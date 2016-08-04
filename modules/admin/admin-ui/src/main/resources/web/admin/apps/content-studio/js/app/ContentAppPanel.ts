@@ -72,7 +72,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         case 'edit':
             var id = path.getElement(1);
             if (id) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
                         new api.content.event.EditContentEvent([content]).fire();
                     });
@@ -81,7 +81,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         case 'view' :
             var id = path.getElement(1);
             if (id) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
                         new ViewContentEvent([content]).fire();
                     });

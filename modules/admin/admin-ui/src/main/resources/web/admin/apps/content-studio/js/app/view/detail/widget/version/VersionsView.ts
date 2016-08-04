@@ -62,7 +62,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
 
     private loadData(): wemQ.Promise<ContentVersion[]> {
         if (this.contentId) {
-            return new api.content.GetContentVersionsForViewRequest(this.contentId).sendAndParse().then(
+            return new api.content.resource.GetContentVersionsForViewRequest(this.contentId).sendAndParse().then(
                 (contentVersions: api.content.ContentVersions) => {
                     this.activeVersion = contentVersions.getActiveVersion();
                     return contentVersions.getContentVersions();
@@ -154,7 +154,8 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
             ? "This version is active"
             : "Restore this version").onExecuted((action: api.ui.Action) => {
             if (!isActive) {
-                new api.content.SetActiveContentVersionRequest(item.id, this.contentId).sendAndParse().then((contentId: ContentId) => {
+                new api.content.resource.SetActiveContentVersionRequest(item.id, this.contentId).sendAndParse().then(
+                    (contentId: ContentId) => {
                     api.notify.NotifyManager.get().showFeedback(`Version successfully changed to ${item.id}`);
                     new api.content.event.ActiveContentVersionSetEvent(this.contentId, item.id).fire();
                 });

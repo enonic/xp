@@ -4,7 +4,7 @@ import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItem
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareContentResults = api.content.CompareContentResults;
 import DialogButton = api.ui.dialog.DialogButton;
-import PublishContentRequest = api.content.PublishContentRequest;
+import PublishContentRequest = api.content.resource.PublishContentRequest;
 import ContentIds = api.content.ContentIds;
 import ResolvePublishDependenciesResult = api.content.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
@@ -133,7 +133,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         let ids = this.getContentToPublishIds(),
             loadChildren = this.childrenCheckbox.isChecked();
 
-        let resolveDependenciesRequest = api.content.ResolvePublishDependenciesRequest.
+        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.
             create().
             setIds(ids).
             setExcludedIds(this.excludedIds).
@@ -253,7 +253,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked())
             .setIds(selectedIds).
             setExcludedIds(this.excludedIds).send().then(
-            (jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
+            (jsonResponse: api.rest.JsonResponse<api.content.json.PublishContentJson>) => {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
             }).finally(() => {

@@ -22,10 +22,10 @@ import ContentSummary = api.content.ContentSummary;
 import ContentPath = api.content.ContentPath;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import CompareContentRequest = api.content.CompareContentRequest;
+import CompareContentRequest = api.content.resource.CompareContentRequest;
 import CompareContentResults = api.content.CompareContentResults;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
 import TreeNodeParentOfContent = api.content.TreeNodeParentOfContent;
 
@@ -33,7 +33,7 @@ import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 
 import ContentQueryResult = api.content.ContentQueryResult;
 import ContentSummaryJson = api.content.json.ContentSummaryJson;
-import ContentQueryRequest = api.content.ContentQueryRequest;
+import ContentQueryRequest = api.content.resource.ContentQueryRequest;
 
 import CompareStatus = api.content.CompareStatus;
 
@@ -712,7 +712,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             if (!node.hasChildren()) {
                 if (!!node.getData()) {
                     parallelPromises.push(
-                        new api.content.GetContentByIdRequest(node.getData().getContentSummary().getContentId()).sendAndParse().then(
+                        new api.content.resource.GetContentByIdRequest(node.getData().getContentSummary().getContentId()).sendAndParse().then(
                             (content: api.content.Content) => {
                                 node.getData().setContentSummary(content);
                             })

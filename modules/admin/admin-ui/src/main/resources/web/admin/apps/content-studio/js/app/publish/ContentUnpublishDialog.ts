@@ -3,7 +3,7 @@ import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
-import UnpublishContentRequest = api.content.UnpublishContentRequest;
+import UnpublishContentRequest = api.content.resource.UnpublishContentRequest;
 import ResolvePublishDependenciesResult = api.content.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
@@ -104,7 +104,7 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
         var selectedIds = this.getContentToUnpublishIds();
 
         new UnpublishContentRequest().setIds(selectedIds).setIncludeChildren(true).send().then(
-            (jsonResponse: api.rest.JsonResponse<api.content.UnpublishContentResult>) => {
+            (jsonResponse: api.rest.JsonResponse<api.content.json.UnpublishContentJson>) => {
                 this.close();
                 UnpublishContentRequest.feedback(jsonResponse);
             }).finally(() => {

@@ -28,9 +28,9 @@ import ContentBuilder = api.content.ContentBuilder;
 import Thumbnail = api.thumb.Thumbnail;
 import ContentName = api.content.ContentName;
 import ContentUnnamed = api.content.ContentUnnamed;
-import CreateContentRequest = api.content.CreateContentRequest;
-import UpdateContentRequest = api.content.UpdateContentRequest;
-import GetContentByIdRequest = api.content.GetContentByIdRequest;
+import CreateContentRequest = api.content.resource.CreateContentRequest;
+import UpdateContentRequest = api.content.resource.UpdateContentRequest;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ExtraData = api.content.ExtraData;
 import Page = api.content.page.Page;
@@ -45,7 +45,7 @@ import AccessControlEntry = api.security.acl.AccessControlEntry;
 import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 import IsRenderableRequest = api.content.page.IsRenderableRequest;
-import GetNearestSiteRequest = api.content.GetNearestSiteRequest;
+import GetNearestSiteRequest = api.content.resource.GetNearestSiteRequest;
 import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
 
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
@@ -812,7 +812,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             var publishControls = this.getContentWizardToolbarPublishControls();
             let wizardHeader = this.getWizardHeader();
 
-            api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
+            api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
                 this.contentCompareStatus = summaryAndStatus.getCompareStatus();
 
                 wizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);

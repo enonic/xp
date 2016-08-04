@@ -1,4 +1,5 @@
 import "../../../../../api.ts";
+import {WidgetItemView} from "../../WidgetItemView";
 
 import CompareStatus = api.content.CompareStatus;
 import ContentSummary = api.content.ContentSummary;
@@ -15,7 +16,6 @@ import Permission = api.security.acl.Permission;
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
 import User = api.security.User;
-import {WidgetItemView} from "../../WidgetItemView";
 
 export class UserAccessWidgetItemView extends WidgetItemView {
 
@@ -134,7 +134,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
             this.currentUser = loginResult.getUser();
             if (this.contentId) {
-                return new api.content.GetContentByIdRequest(this.contentId).sendAndParse().then((content: Content) => {
+                return new api.content.resource.GetContentByIdRequest(this.contentId).sendAndParse().then((content: Content) => {
                     if (content) {
                         this.layoutHeader(content);
                         return this.layoutList(content).then(() => {

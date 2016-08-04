@@ -8,7 +8,7 @@ import {FilterableItemsList} from "./FilterableItemsList";
 
 import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
-import GetNearestSiteRequest = api.content.GetNearestSiteRequest;
+import GetNearestSiteRequest = api.content.resource.GetNearestSiteRequest;
 import ContentName = api.content.ContentName;
 import Content = api.content.Content;
 import ContentPath = api.content.ContentPath;
@@ -19,7 +19,7 @@ import Site = api.content.site.Site;
 import ApplicationKey = api.application.ApplicationKey;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import UploadItem = api.ui.uploader.UploadItem;
-import ListContentByPathRequest = api.content.ListContentByPathRequest;
+import ListContentByPathRequest = api.content.resource.ListContentByPathRequest;
 import LoadMask = api.ui.mask.LoadMask;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {

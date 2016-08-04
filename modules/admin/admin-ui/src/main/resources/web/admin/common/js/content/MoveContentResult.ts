@@ -1,5 +1,6 @@
 module api.content {
 
+    import MoveContentResultJson = api.content.json.MoveContentResultJson;
     export class MoveContentResult {
 
         private moveSuccess: string[];

@@ -55,7 +55,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageSelector(id: string): FormItem {
-            let loader = new api.content.ContentSummaryLoader();
+            let loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(this.content.getPath());
 
             let imageSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),

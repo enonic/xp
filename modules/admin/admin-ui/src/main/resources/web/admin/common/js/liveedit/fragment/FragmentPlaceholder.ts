@@ -2,7 +2,7 @@ module api.liveedit.fragment {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
     import FragmentComponent = api.content.page.region.FragmentComponent;
-    import GetContentByIdRequest = api.content.GetContentByIdRequest;
+    import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
     import Content = api.content.Content;
     import LayoutComponentType = api.content.page.region.LayoutComponentType;
     import QueryExpr = api.query.expr.QueryExpr;
@@ -26,7 +26,7 @@ module api.liveedit.fragment {
             this.comboboxWrapper = new api.dom.DivEl('rich-combobox-wrapper');
 
             var sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
-            var loader = new api.content.FragmentContentSummaryLoader().setParentSitePath(sitePath);
+            var loader = new api.content.resource.FragmentContentSummaryLoader().setParentSitePath(sitePath);
             
             this.comboBox = api.content.ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).setMinWidth(270).build();
 

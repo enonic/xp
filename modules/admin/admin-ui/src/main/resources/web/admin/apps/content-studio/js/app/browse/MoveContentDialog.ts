@@ -96,7 +96,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
         var contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
-        new api.content.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
+        new api.content.resource.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
             if (parentContent) {
                 this.destinationSearchInput.deselect(parentContent);
             }

@@ -5,8 +5,8 @@ import {ImageSelectorForm} from "./ImageSelectorForm";
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
-import ContentSummaryLoader = api.content.ContentSummaryLoader;
-import GetContentSummaryByIdRequest = api.content.GetContentSummaryByIdRequest;
+import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
+import GetContentSummaryByIdRequest = api.content.resource.GetContentSummaryByIdRequest;
 import ContentComboBox = api.content.ContentComboBox;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import LiveEditModel = api.liveedit.LiveEditModel;
@@ -39,7 +39,7 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         super(<ComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("image", "icon-xlarge")
         });
-        this.loader = new api.content.ContentSummaryLoader();
+        this.loader = new api.content.resource.ContentSummaryLoader();
         this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
         this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(this.loader).build();
 
