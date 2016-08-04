@@ -35,5 +35,7 @@ module api.application.json {
         maxSystemVersion: string;
 
         local: boolean;
+
+        iconUrl: string;
     }
 }

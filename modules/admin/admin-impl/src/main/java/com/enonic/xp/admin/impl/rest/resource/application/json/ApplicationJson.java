@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.json.application;
+package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import java.time.Instant;
 import java.util.List;
@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
+import com.enonic.xp.admin.impl.rest.resource.application.ApplicationIconUrlResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.auth.AuthDescriptor;
@@ -28,8 +29,11 @@ public class ApplicationJson
 
     private final ImmutableList<String> metaStepMixinNames;
 
+    private final String iconUrl;
+
     public ApplicationJson( final Application application, final boolean local, final ApplicationDescriptor applicationDescriptor,
-                            final SiteDescriptor siteDescriptor, final AuthDescriptor authDescriptor )
+                            final SiteDescriptor siteDescriptor, final AuthDescriptor authDescriptor,
+                            final ApplicationIconUrlResolver iconUrlResolver )
     {
         this.application = application;
         this.applicationDescriptor = applicationDescriptor;
@@ -45,6 +49,7 @@ public class ApplicationJson
             }
         }
         this.metaStepMixinNames = mixinNamesBuilder.build();
+        this.iconUrl = iconUrlResolver.resolve( application.getKey(), applicationDescriptor );
     }
 
     public String getKey()
@@ -120,6 +125,11 @@ public class ApplicationJson
     public String getDescription()
     {
         return applicationDescriptor == null ? "" : applicationDescriptor.getDescription();
+    }
+
+    public String getIconUrl()
+    {
+        return iconUrl;
     }
 
     @Override
