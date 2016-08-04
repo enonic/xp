@@ -25,6 +25,7 @@
       },
       "config": null,
       "deletable": false,
+      "description": "Application description",
       "displayName": "application display name",
       "editable": false,
       "key": "testapplication",

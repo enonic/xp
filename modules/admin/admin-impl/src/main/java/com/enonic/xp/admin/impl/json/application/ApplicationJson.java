@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.SiteDescriptor;
@@ -15,9 +16,11 @@ import com.enonic.xp.site.SiteDescriptor;
 public class ApplicationJson
     implements ItemJson
 {
-    final Application application;
+    private final Application application;
 
-    final boolean local;
+    private final ApplicationDescriptor applicationDescriptor;
+
+    private final boolean local;
 
     private final FormJson config;
 
@@ -25,10 +28,11 @@ public class ApplicationJson
 
     private final ImmutableList<String> metaStepMixinNames;
 
-    public ApplicationJson( final Application application, final boolean local, final SiteDescriptor siteDescriptor,
-                            final AuthDescriptor authDescriptor )
+    public ApplicationJson( final Application application, final boolean local, final ApplicationDescriptor applicationDescriptor,
+                            final SiteDescriptor siteDescriptor, final AuthDescriptor authDescriptor )
     {
         this.application = application;
+        this.applicationDescriptor = applicationDescriptor;
         this.local = local;
         this.config = siteDescriptor != null && siteDescriptor.getForm() != null ? new FormJson( siteDescriptor.getForm() ) : null;
         this.authConfig = authDescriptor != null && authDescriptor.getConfig() != null ? new FormJson( authDescriptor.getConfig() ) : null;
@@ -111,6 +115,11 @@ public class ApplicationJson
     public List<String> getMetaSteps()
     {
         return metaStepMixinNames;
+    }
+
+    public String getDescription()
+    {
+        return applicationDescriptor == null ? "" : applicationDescriptor.getDescription();
     }
 
     @Override

@@ -34,6 +34,8 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicat
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptor;
+import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
@@ -58,6 +60,8 @@ public final class ApplicationResource
 {
     private ApplicationService applicationService;
 
+    private ApplicationDescriptorService applicationDescriptorService;
+
     private SiteService siteService;
 
     private MarketService marketService;
@@ -79,10 +83,8 @@ public final class ApplicationResource
                 filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
                     containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
                     containsIgnoreCase( application.getMinSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getUrl(), query ) ||
-                    containsIgnoreCase( application.getVendorName(), query ) ||
-                    containsIgnoreCase( application.getVendorUrl(), query ) ).
+                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
+                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
                 collect( Collectors.toList() ) );
         }
 
@@ -101,8 +103,9 @@ public final class ApplicationResource
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
                 final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+                final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
 
-                json.add( application, localApplication, siteDescriptor, authDescriptor );
+                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor );
             }
         }
 
@@ -123,7 +126,8 @@ public final class ApplicationResource
         final boolean local = this.applicationService.isLocalApplication( appKey );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
         final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( appKey );
-        return new ApplicationJson( application, local, siteDescriptor, authDescriptor );
+        final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( appKey );
+        return new ApplicationJson( application, local, appDescriptor, siteDescriptor, authDescriptor );
     }
 
     @POST
@@ -279,7 +283,8 @@ public final class ApplicationResource
             {
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
-                json.add( application, localApplication, siteDescriptor, authDescriptor );
+                final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
+                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor );
             }
         }
 
@@ -302,6 +307,12 @@ public final class ApplicationResource
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
+    }
+
+    @Reference
+    public void setApplicationDescriptorService( final ApplicationDescriptorService applicationDescriptorService )
+    {
+        this.applicationDescriptorService = applicationDescriptorService;
     }
 
     @Reference
