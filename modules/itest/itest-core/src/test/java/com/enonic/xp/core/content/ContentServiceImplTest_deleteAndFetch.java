@@ -1,5 +1,7 @@
 package com.enonic.xp.core.content;
 
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
@@ -101,7 +103,8 @@ public class ContentServiceImplTest_deleteAndFetch
             this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
         assertNotNull( deletedContents );
-        assertTrue( deletedContents.contains( content ) );
+        assertTrue( deletedContents.stream().map( curContent -> curContent.getId().toString() ).collect( Collectors.toList() ).contains(
+            content.getId().toString() ) );
         //Checks that the content and the children are deleted
         final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams(
             ContentIds.from( content.getId(), child1Content.getId(), child2Content.getId(), subChildContent.getId() ) );
