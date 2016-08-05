@@ -6,7 +6,9 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
@@ -42,13 +44,13 @@ final class DeleteAndFetchContentCommand
         return new Builder();
     }
 
-    DeleteContentsResult execute()
+    Contents execute()
     {
         params.validate();
 
         try
         {
-            final DeleteContentsResult deletedContents = doExecute();
+            final Contents deletedContents = doExecute();
             nodeService.refresh( RefreshMode.SEARCH );
             return deletedContents;
         }
@@ -58,7 +60,7 @@ final class DeleteAndFetchContentCommand
         }
     }
 
-    private DeleteContentsResult doExecute()
+    private Contents doExecute()
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
@@ -68,7 +70,8 @@ final class DeleteAndFetchContentCommand
 
         this.nodeService.refresh( RefreshMode.ALL );
 
-        return nodesToDelete.build();
+        return nodesToDelete.build().getDeletedContents().contains( ContentId.from( nodeToDelete.id().toString() ) ) ? Contents.from(
+            this.translator.fromNode( nodeToDelete, false ) ) : null;
     }
 
     private void recursiveDelete( NodeId nodeToDelete, DeleteContentsResult.Builder deletedNodes )
@@ -107,7 +110,7 @@ final class DeleteAndFetchContentCommand
             nodeState( NodeState.PENDING_DELETE ).
             build() );
 
-            deletedNodes.addPending( ContentIds.from( setNodeStateResult.getUpdatedNodes().getIds().getAsStrings() ) );
+        deletedNodes.addPending( ContentIds.from( setNodeStateResult.getUpdatedNodes().getIds().getAsStrings() ) );
     }
 
     private CompareStatus getCompareStatus( final NodeId nodeToDelete )
