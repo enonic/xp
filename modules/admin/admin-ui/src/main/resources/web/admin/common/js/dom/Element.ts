@@ -219,6 +219,11 @@ module api.dom {
             if (Element.debug) {
                 console.debug("Element.init started", api.ClassHelper.getClassName(this));
             }
+
+            if (this.isVisible()) {
+                this.notifyShown(this);
+            }
+
             var renderPromise;
             if (this.isRendered() || this.isRendering()) {
                 renderPromise = wemQ(true);
@@ -261,10 +266,6 @@ module api.dom {
                     this.rendering = false;
                     this.rendered = rendered;
                     this.notifyRendered();
-
-                    if (this.isVisible()) {
-                        this.notifyShown(this);
-                    }
 
                     return rendered;
                 }
@@ -335,17 +336,13 @@ module api.dom {
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             wemjq(this.el.getHTMLElement()).show();
-            if (this.isRendered()) {
-                this.notifyShown(this, true);
-            }
+            this.notifyShown(this, true);
         }
 
         hide() {
             // Using jQuery to hide, since it seems to contain some smartness
             wemjq(this.el.getHTMLElement()).hide();
-            if (this.isRendered()) {
-                this.notifyHidden(this);
-            }
+            this.notifyHidden(this);
         }
 
         setVisible(value: boolean): Element {

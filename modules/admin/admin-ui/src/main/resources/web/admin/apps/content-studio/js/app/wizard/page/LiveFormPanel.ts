@@ -253,7 +253,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     public getPage(): Page {
-        return this.pageModel.getPage();
+        return this.pageModel ? this.pageModel.getPage() : null;
     }
 
     setModel(liveEditModel: LiveEditModel) {

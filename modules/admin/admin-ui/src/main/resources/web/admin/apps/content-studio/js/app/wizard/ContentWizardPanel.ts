@@ -985,6 +985,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions.getShowSplitEditAction().setEnabled(renderable);
         this.wizardActions.getPreviewAction().setVisible(renderable);
 
+        this.getCycleViewModeButton().setVisible(renderable);
+
         if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
 
             this.wizardActions.getShowSplitEditAction().execute();
@@ -1161,6 +1163,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     hasUnsavedChanges(): boolean {
+        if (!this.isRendered()) {
+            return false;
+        }
         var persistedContent: Content = this.getPersistedItem();
         if (persistedContent == undefined) {
             return true;

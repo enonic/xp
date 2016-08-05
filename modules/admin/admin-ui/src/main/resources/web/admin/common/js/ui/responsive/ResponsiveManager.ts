@@ -17,7 +17,7 @@ module api.ui.responsive {
                 },
                 responsiveListener = new ResponsiveListener(responsiveItem, listener);
 
-            this.updateItemOnRender(el, responsiveItem);
+            this.updateItemOnShown(el, responsiveItem);
 
             ResponsiveManager.responsiveListeners.push(responsiveListener);
 
@@ -27,15 +27,15 @@ module api.ui.responsive {
             return responsiveItem;
         }
 
-        private static updateItemOnRender(el: api.dom.Element, responsiveItem: ResponsiveItem) {
-            if (el.isRendered()) {
+        private static updateItemOnShown(el: api.dom.Element, responsiveItem: ResponsiveItem) {
+            if (el.isVisible()) {
                 responsiveItem.update();
             } else {
                 var renderedHandler = (event) => {
                     responsiveItem.update();
-                    el.unRendered(renderedHandler); // update needs
+                    el.unShown(renderedHandler); // update needs
                 };
-                el.onRendered(renderedHandler);
+                el.onShown(renderedHandler);
             }
         }
 
