@@ -234,7 +234,10 @@ abstract class PrincipalNodeTranslator
 
     private static void populateUserExtraDataMap( final PropertySet data, final User user )
     {
-        final PropertySet dataExtraDataMap = data.addSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY );
+        final PropertySet dataExtraDataMap = data.hasProperty( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY )
+            ? data.getSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY )
+            : data.addSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY );
+
         user.getExtraDataMap().
             entrySet().
             forEach( entry -> {

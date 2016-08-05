@@ -81,7 +81,12 @@ public final class User
 
     public PropertySet getExtraData( final String namespace )
     {
-        return extraDataMap.get( namespace );
+        return extraDataMap.get( sanitizeNamespace( namespace ) );
+    }
+
+    private static String sanitizeNamespace( String namespace )
+    {
+        return namespace.replace( '.', '-' );
     }
 
     public static Builder create()
@@ -142,13 +147,14 @@ public final class User
 
         public Builder putExtraData( final String namespace, PropertySet extraData )
         {
-            this.extraDataMap.put( namespace, extraData );
+            this.extraDataMap.put( sanitizeNamespace( namespace ), extraData );
             return this;
         }
 
         public Builder putAllExtraDataMap( final Map<String, PropertySet> extraDataMap )
         {
-            this.extraDataMap.putAll( extraDataMap );
+            extraDataMap.entrySet().
+                forEach( entry -> this.putExtraData( entry.getKey(), entry.getValue() ) );
             return this;
         }
 

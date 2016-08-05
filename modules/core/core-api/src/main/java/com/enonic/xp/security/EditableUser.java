@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.data.PropertySet;
@@ -52,7 +51,7 @@ public final class EditableUser
             authenticationHash( authenticationHash ).
             key( key ).
             modifiedTime( modifiedTime ).
-            putAllExtraDataMap( ImmutableMap.copyOf( this.extraDataMap ) ).
+            putAllExtraDataMap( this.extraDataMap ).
             build();
     }
 }

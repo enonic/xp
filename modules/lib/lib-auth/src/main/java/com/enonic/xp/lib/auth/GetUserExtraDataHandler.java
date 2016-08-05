@@ -3,8 +3,6 @@ package com.enonic.xp.lib.auth;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.google.common.collect.ImmutableMap;
-
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
 import com.enonic.xp.script.bean.BeanContext;
@@ -39,8 +37,8 @@ public final class GetUserExtraDataHandler
 
         if ( user.isPresent() )
         {
-            final ImmutableMap<String, PropertySet> extraDataMap = user.get().getExtraDataMap();
-            final PropertySet extraData = extraDataMap.get( this.namespace );
+            final PropertySet extraData = user.get().
+                getExtraData( this.namespace );
             if ( extraData != null )
             {
                 return new PropertyTreeMapper( extraData.toTree() );
