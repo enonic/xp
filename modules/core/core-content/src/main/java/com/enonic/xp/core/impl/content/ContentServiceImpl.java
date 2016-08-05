@@ -288,6 +288,7 @@ public class ContentServiceImpl
     {
         return DeleteAndFetchContentCommand.create().
             nodeService( this.nodeService ).
+            contentService( this ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
