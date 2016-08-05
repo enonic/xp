@@ -15,6 +15,7 @@ module api.ui.panel {
             this.deck = new NavigatedDeckPanel(this.navigator);
 
             this.setDoOffset(false);
+            this.deck.setDoOffset(false);
         }
 
         doRender(): Q.Promise<boolean> {
