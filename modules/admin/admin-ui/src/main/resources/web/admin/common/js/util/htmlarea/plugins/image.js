@@ -23,13 +23,14 @@ tinymce.PluginManager.add('image', function (editor) {
                 break;
         }
 
-        function insertFigureElement(html) {
-            if (figureEl) {
-                dom.remove(figureEl);
-            }
-
+        function insertFigureElement(newFigureEl) {
             editor.focus();
-            editor.selection.setContent(html);
+            if (figureEl) {
+                dom.replace(newFigureEl, figureEl);
+            }
+            else {
+                editor.selection.setContent(newFigureEl.outerHTML);
+            }
 
             var imgElm = dom.get('__mcenew');
             dom.setAttrib(imgElm, 'id', null);

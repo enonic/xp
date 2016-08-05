@@ -372,7 +372,7 @@ module api.util.htmlarea.dialog {
             api.util.htmlarea.editor.HTMLAreaHelper.updateImageParentAlignment(this.image.getHTMLElement());
             this.setImageWidthConstraint();
 
-            var img = this.callback(figure.getHTMLElement().outerHTML);
+            var img = this.callback(figure.getHTMLElement());
             api.util.htmlarea.editor.HTMLAreaHelper.changeImageParentAlignmentOnImageAlignmentChange(img);
         }
 
