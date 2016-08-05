@@ -84,7 +84,7 @@ public final class User
         return extraDataMap.get( sanitizeNamespace( namespace ) );
     }
 
-    private static String sanitizeNamespace( String namespace )
+    public static String sanitizeNamespace( String namespace )
     {
         return namespace.replace( '.', '-' );
     }

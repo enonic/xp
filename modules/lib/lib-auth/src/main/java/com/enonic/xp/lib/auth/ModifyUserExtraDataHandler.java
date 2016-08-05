@@ -83,7 +83,7 @@ public final class ModifyUserExtraDataHandler
     private void updateUser( final EditableUser target, final Map<String, Object> map )
     {
         final PropertyTree propertyTree = createPropertyTree( map );
-        target.extraDataMap.put( namespace, propertyTree == null ? null : propertyTree.getRoot() );
+        target.extraDataMap.put( User.sanitizeNamespace( namespace ), propertyTree == null ? null : propertyTree.getRoot() );
     }
 
     private PropertyTree createPropertyTree( final Map<String, Object> value )
