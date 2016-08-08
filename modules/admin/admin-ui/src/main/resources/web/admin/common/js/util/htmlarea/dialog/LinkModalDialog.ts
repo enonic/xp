@@ -115,6 +115,15 @@ module api.util.htmlarea.dialog {
         protected layout() {
             super.layout();
             this.appendChildToContentPanel(this.dockedPanel = this.createDockedPanel());
+
+            this.getMainForm().onValidityChanged(() => {
+                this.centerMyself();
+            });
+
+            this.dockedPanel.getDeck().onPanelShown(() => {
+                this.centerMyself();
+            })
+
         }
 
         private createContentPanel(): Panel {
@@ -199,6 +208,12 @@ module api.util.htmlarea.dialog {
                 dockedPanel.addItem(LinkModalDialog.tabNames.anchor, true, this.createAnchorPanel(), this.isAnchor());
             }
 
+            dockedPanel.getDeck().getPanels().forEach((panel) => {
+                (<Form>panel.getFirstChild()).onValidityChanged(() => {
+                    this.centerMyself();
+                })
+            });
+
             return dockedPanel;
         }
 
@@ -223,6 +238,10 @@ module api.util.htmlarea.dialog {
 
             let contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
                 contentSelectorComboBox = contentSelector.getComboBox();
+
+            contentSelectorComboBox.onValueChanged(() => {
+                this.centerMyself();
+            })
 
             if (contentTypeNames) {
                 loader.setAllowedContentTypeNames(contentTypeNames);

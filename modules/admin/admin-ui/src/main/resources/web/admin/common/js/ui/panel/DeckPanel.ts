@@ -39,6 +39,10 @@ module api.ui.panel {
             return this.panels[index];
         }
 
+        getPanels() {
+            return this.panels;
+        }
+
         getLastPanel(): Panel {
             return this.getPanel(this.getSize() - 1) || null;
         }
