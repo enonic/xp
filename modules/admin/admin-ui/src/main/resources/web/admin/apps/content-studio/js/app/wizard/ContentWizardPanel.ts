@@ -163,14 +163,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.metadataStepFormByName = {};
 
-        this.initListeners();
-
         super({
             tabId: params.tabId,
             persistedItem: null,
             actions: this.wizardActions
         });
 
+        this.initListeners();
         this.listenToContentEvents();
         this.handleSiteConfigApply();
         this.handleBrokenImageInTheWizard();
@@ -200,6 +199,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private initListeners() {
+
+        this.onDataLoaded(() => {
+            if (this.getPersistedItem()) {
+                Router.setHash("edit/" + this.getPersistedItem().getId());
+            } else {
+                Router.setHash("new/" + this.contentType.getName());
+            }
+        });
+
         this.dataChangedListener = () => {
             var publishControls = this.getContentWizardToolbarPublishControls();
             if (this.isContentFormValid && publishControls.isOnline()) {
@@ -228,12 +236,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 else {
                     let shownHandler = () => {
-                        new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse().then(
-                            (application: Application) => {
-                                if (application.getState() == "stopped") {
-                                    api.notify.showWarning(message);
-                                }
-                            }).catch((reason: any) => { //app was uninstalled
+                        new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
+                            .then(
+                                (application: Application) => {
+                                    if (application.getState() == "stopped") {
+                                        api.notify.showWarning(message);
+                                    }
+                                })
+                            .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
 
@@ -392,14 +402,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
                 if (!this.isNew) {
                     this.displayValidationErrors();
-                }
-            });
-
-            this.onShown((event: api.dom.ElementShownEvent) => {
-                if (this.getPersistedItem()) {
-                    Router.setHash("edit/" + this.getPersistedItem().getId());
-                } else {
-                    Router.setHash("new/" + this.contentType.getName());
                 }
             });
 
@@ -947,7 +949,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 } else {
                     this.displayValidationErrors();
                 }
-                
+
                 this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
                 var liveFormPanel = this.getLivePanel();
@@ -1288,7 +1290,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             // allow deleting published content without validity check
             return true;
         }
-        
+
         var allMetadataFormsValid = true,
             allMetadataFormsHaveValidUserInput = true;
         for (var key in this.metadataStepFormByName) {

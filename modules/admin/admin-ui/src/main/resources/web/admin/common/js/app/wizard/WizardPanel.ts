@@ -320,18 +320,6 @@ module api.app.wizard {
                     this.mainToolbar.removeClass('rendering');
                 }
 
-                if (this.minimizeEditButton) {
-                    updateMinimizeButtonPosition();
-                }
-
-                // check validity on rendered
-                this.notifyValidityChanged(this.isValid());
-            });
-
-            this.formPanel.onShown((event) => {
-                if (WizardPanel.debug) {
-                    console.debug("WizardPanel: formPanel.onShown");
-                }
                 if (firstShow) {
                     firstShow = false;
                     this.giveInitialFocus();
@@ -340,6 +328,13 @@ module api.app.wizard {
                 if (!!this.lastFocusedElement) {
                     this.lastFocusedElement.focus();
                 }
+
+                if (this.minimizeEditButton) {
+                    updateMinimizeButtonPosition();
+                }
+
+                // check validity on rendered
+                this.notifyValidityChanged(this.isValid());
             });
 
             this.mainToolbar = this.createMainToolbar();
