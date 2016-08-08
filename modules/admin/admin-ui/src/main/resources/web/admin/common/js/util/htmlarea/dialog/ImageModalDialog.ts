@@ -58,10 +58,16 @@ module api.util.htmlarea.dialog {
             let loader = new api.content.ContentSummaryLoader();
             loader.setContentPath(this.content.getPath());
 
-            let imageSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
+            let imageSelector = api.content.ContentComboBox.create().
+                    setLoader(loader).
+                    setMaximumOccurrences(1).
+                    build(),
+
                 formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>imageSelector),
                 imageSelectorComboBox = imageSelector.getComboBox();
+
+            imageSelector.getComboBox().getInput().setPlaceholder("Type to search or drop image here...");
 
             this.imageSelector = imageSelector;
 
@@ -275,6 +281,8 @@ module api.util.htmlarea.dialog {
                 showCancel: false,
                 selfIsDropzone: false
             });
+
+            uploader.addDropzone(this.imageSelector.getId());
 
             uploader.hide();
 
