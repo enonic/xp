@@ -30,7 +30,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     private childrenLoaded: boolean = false;
 
     // stashes previous checkbox state items, until selected items changed
-    private stash: {[checked:string]:ContentSummaryAndCompareStatus[]} = {};
+    private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
 
     constructor() {
         super("Publishing Wizard", "Resolving items...", "Other items that will be published");
@@ -251,15 +251,39 @@ export class ContentPublishDialog extends DependantItemsDialog {
         var selectedIds = this.getContentToPublishIds();
 
         new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked())
-            .setIds(selectedIds).
-            setExcludedIds(this.excludedIds).send().then(
-            (jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
+            .setIds(selectedIds).setExcludedIds(this.excludedIds).sendAndParse().then(
+            (taskId: api.task.TaskId) => {
                 this.close();
-                PublishContentRequest.feedback(jsonResponse);
+                this.pollPublishTask(taskId);
+
             }).finally(() => {
-                this.hideLoadingSpinner();
-                this.actionButton.setEnabled(true);
-            });
+            this.hideLoadingSpinner();
+            this.actionButton.setEnabled(true);
+        });
+    }
+
+    private pollPublishTask(taskId: api.task.TaskId, time: number = 500) {
+        setTimeout(() => {
+
+            new api.task.GetTaskInfoRequest(taskId).sendAndParse().then((task: api.task.TaskInfo) => {
+                let state = task.getState();
+                if (!task) {
+                    return; // task probably expired, stop polling
+                }
+
+                if (state == api.task.TaskState.FINISHED) {
+                    api.notify.showSuccess(task.getProgress().getInfo());
+                } else if (state == api.task.TaskState.FAILED) {
+                    api.notify.showWarning('Publishing failed');
+                } else {
+                    this.pollPublishTask(taskId, 1000);
+                }
+
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+
+        }, time);
     }
 
     protected countTotal(): number {

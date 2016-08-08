@@ -163,6 +163,8 @@
 
 ///<reference path='system/_module.ts' />
 
+///<reference path='task/_module.ts' />
+
 ///<reference path='liveedit/_module.ts' />
 ///<reference path='liveedit/image/_module.ts' />
 ///<reference path='liveedit/part/_module.ts' />
