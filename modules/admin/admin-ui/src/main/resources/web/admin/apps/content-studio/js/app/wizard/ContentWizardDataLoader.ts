@@ -76,7 +76,7 @@ export class ContentWizardDataLoader {
 
             let parentPromise = this.loadParentContent(params, false);
             let typePromise = this.loadContentType(this.content.getType());
-            let statusPromise = api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(this.content);
+            let statusPromise = api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(this.content);
 
             return wemQ.all([parentPromise, typePromise, statusPromise]).spread((parentContent, contentType, compareStatus) => {
                 this.parentContent = parentContent;

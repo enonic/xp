@@ -10,7 +10,6 @@ module api.content.site.inputtype.siteconfigurator {
     import SiteConfig = api.content.site.SiteConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import ContentFormContext = api.content.form.ContentFormContext;
-    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
 
     export class SiteConfiguratorSelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<Application> {
 
@@ -107,7 +106,7 @@ module api.content.site.inputtype.siteconfigurator {
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.siteConfig)) {
                         this.applyTemporaryConfig(tempSiteConfig);
-                        new ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
+                        new api.content.event.ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
                     }
                 };
 

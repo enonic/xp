@@ -59,7 +59,7 @@ module api.content.resource {
                         contents = this.filterContent(contents, contentTypes);
                     }
                     if (contents && contents.length > 0) {
-                        contents.sort(new ContentByPathComparator().compare);
+                        contents.sort(new api.content.util.ContentByPathComparator().compare);
                         this.notifyLoadedData(contents);
                     } else {
                         this.notifyLoadedData([]);
@@ -76,7 +76,7 @@ module api.content.resource {
             var contentTypeAllowsChild: { [s: string]: boolean; } = {};
             contentTypes.forEach((contentType)=> contentTypeAllowsChild[contentType.getName()] = contentType.isAllowChildContent());
 
-            var createContentFilter = new api.content.CreateContentFilter();
+            var createContentFilter = new api.content.util.CreateContentFilter();
 
             return contents.filter((content: ContentSummary) => {
                 return !content.getPath().isDescendantOf(this.filterContentPath) && !this.filterContentPath.isChildOf(content.getPath()) &&

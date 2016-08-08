@@ -4,10 +4,9 @@ import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
 import UnpublishContentRequest = api.content.resource.UnpublishContentRequest;
-import ResolvePublishDependenciesResult = api.content.ResolvePublishDependenciesResult;
+import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
-import ContentPublishItem = api.content.ContentPublishItem;
 import ListBox = api.ui.selector.list.ListBox;
 
 

@@ -56,8 +56,8 @@ module api.content.form.inputtype.tag {
             var queryRequest = new ContentQueryRequest(query);
             queryRequest.setExpand(api.rest.Expand.FULL);
 
-            return queryRequest.sendAndParse().
-                then((contentQueryResult: ContentQueryResult<Content,ContentJson>) => {
+            return queryRequest.sendAndParse().then(
+                (contentQueryResult: api.content.resource.result.ContentQueryResult<Content,ContentJson>) => {
 
                     var suggestedTags: string[] = [];
                     contentQueryResult.getContents().forEach((content: Content) => {

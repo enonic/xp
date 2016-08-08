@@ -83,7 +83,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         this.overwriteChildPermissionsCheck.onValueChanged(comboBoxChangeListener);
 
         this.parentPermissions = [];
-        api.content.OpenEditPermissionsDialogEvent.on((event) => {
+        api.content.event.OpenEditPermissionsDialogEvent.on((event) => {
             this.content = event.getContent();
 
             this.getParentPermissions().then((parentPermissions: AccessControlList) => {

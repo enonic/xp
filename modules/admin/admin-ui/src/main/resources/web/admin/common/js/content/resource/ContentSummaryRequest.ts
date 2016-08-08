@@ -60,7 +60,8 @@ module api.content.resource {
         sendAndParse(): wemQ.Promise<ContentSummary[]> {
             this.buildSearchQueryExpr();
 
-            return this.request.sendAndParse().then((queryResult: ContentQueryResult<ContentSummary,json.ContentSummaryJson>) => {
+            return this.request.sendAndParse().then(
+                (queryResult: api.content.resource.result.ContentQueryResult<ContentSummary,json.ContentSummaryJson>) => {
                 return queryResult.getContents();
             });
         }

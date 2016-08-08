@@ -1,4 +1,5 @@
 import "../../../../../api.ts";
+import {ContentVersionViewer} from "./ContentVersionViewer";
 
 import ContentVersion = api.content.ContentVersion;
 import ContentId = api.content.ContentId;
@@ -129,7 +130,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     private createDescriptionBlock(item: ContentVersion): api.dom.Element {
-        var descriptionDiv = new api.content.ContentVersionViewer();
+        var descriptionDiv = new ContentVersionViewer();
         descriptionDiv.addClass("description");
         descriptionDiv.setObject(item);
         return descriptionDiv;

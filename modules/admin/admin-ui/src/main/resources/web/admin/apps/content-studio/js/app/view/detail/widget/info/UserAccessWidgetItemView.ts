@@ -89,7 +89,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         this.appendChild(this.bottomEl);
 
         this.bottomEl.onClicked((event: MouseEvent) => {
-            new api.content.OpenEditPermissionsDialogEvent(content).fire();
+            new api.content.event.OpenEditPermissionsDialogEvent(content).fire();
             event.stopPropagation();
             event.preventDefault();
             return false;
@@ -101,7 +101,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
         var deferred = wemQ.defer<boolean>();
 
-        var request = new api.content.GetEffectivePermissions(content.getContentId());
+        var request = new api.content.resource.GetEffectivePermissionsRequest(content.getContentId());
 
         request.sendAndParse().then((results: api.ui.security.acl.EffectivePermission[]) => {
 
