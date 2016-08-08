@@ -10,7 +10,6 @@ module api.content.site.inputtype.siteconfigurator {
     import SiteConfig = api.content.site.SiteConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import ContentFormContext = api.content.form.ContentFormContext;
-    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
 
     export class AuthApplicationSelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<Application> {
 

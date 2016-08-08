@@ -1,11 +1,11 @@
 import "../../../../../api.ts";
+import {WidgetItemView} from "../../WidgetItemView";
+import {DependencyGroup, DependencyType} from "./DependencyGroup";
+import {ToggleSearchPanelWithDependenciesEvent} from "../../../../browse/ToggleSearchPanelWithDependenciesEvent";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentDependencyJson = api.content.json.ContentDependencyJson;
 import ContentDependencyGroupJson = api.content.json.ContentDependencyGroupJson;
-import {WidgetItemView} from "../../WidgetItemView";
-import {DependencyGroup, DependencyType} from "./DependencyGroup";
-import {ToggleSearchPanelWithDependenciesEvent} from "../../../../browse/ToggleSearchPanelWithDependenciesEvent";
 import ActionButton = api.ui.button.ActionButton;
 import Action = api.ui.Action;
 
@@ -152,7 +152,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
      */
     private resolveDependencies(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
 
-        var resolveDependenciesRequest = new api.content.ResolveDependenciesRequest(item.getContentId());
+        var resolveDependenciesRequest = new api.content.resource.ResolveDependenciesRequest(item.getContentId());
 
         return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<ContentDependencyJson>) => {
             this.initResolvedDependenciesItems(jsonResponse.getResult());

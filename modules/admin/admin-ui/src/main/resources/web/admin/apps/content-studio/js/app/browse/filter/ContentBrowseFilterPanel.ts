@@ -3,10 +3,10 @@ import {ContentBrowseResetEvent} from "./ContentBrowseResetEvent";
 import {ContentBrowseSearchEvent} from "./ContentBrowseSearchEvent";
 import {ContentBrowseRefreshEvent} from "./ContentBrowseRefreshEvent";
 
-import ContentQueryRequest = api.content.ContentQueryRequest;
+import ContentQueryRequest = api.content.resource.ContentQueryRequest;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentSummaryJson = api.content.json.ContentSummaryJson;
-import ContentQueryResult = api.content.ContentQueryResult;
+import ContentQueryResult = api.content.resource.result.ContentQueryResult;
 import ContentSummary = api.content.ContentSummary;
 import AggregationTypeWrapperJson = api.aggregation.AggregationTypeWrapperJson;
 import AggregationGroupView = api.aggregation.AggregationGroupView;

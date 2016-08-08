@@ -1,19 +1,17 @@
 import "../../api.ts";
-
-import TreeNode = api.ui.treegrid.TreeNode;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
-import Element = api.dom.Element;
-import ContentSummary = api.content.ContentSummary;
-import ChildOrder = api.content.ChildOrder;
-import OrderChildMovements = api.content.OrderChildMovements;
-import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
-import DialogButton = api.ui.dialog.DialogButton;
 import {SaveSortedContentAction} from "./action/SaveSortedContentAction";
 import {SortContentTreeGrid} from "./SortContentTreeGrid";
 import {SortContentTabMenu} from "./SortContentTabMenu";
 import {ContentGridDragHandler} from "./ContentGridDragHandler";
 import {OpenSortDialogEvent} from "./OpenSortDialogEvent";
+
+import TreeNode = api.ui.treegrid.TreeNode;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import Element = api.dom.Element;
+import ContentSummary = api.content.ContentSummary;
+import ChildOrder = api.content.order.ChildOrder;
+import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+import DialogButton = api.ui.dialog.DialogButton;
 
 export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -182,7 +180,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
             if (!newOrder.isManual()) {
                 this.curChildOrder = newOrder;
                 this.contentGrid.setChildOrder(this.curChildOrder);
-                /*api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
+                /*api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
                  done((response: api.content.ContentSummaryAndCompareStatus) => {
                  this.contentGrid.reload(response);
                  });*/
@@ -214,13 +212,14 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private setContentChildOrder(order: ChildOrder, silent: boolean = false): wemQ.Promise<api.content.Content> {
-        return new api.content.OrderContentRequest().setSilent(silent).setContentId(this.parentContent.getContentId()).setChildOrder(
+        return new api.content.resource.OrderContentRequest().setSilent(silent).setContentId(
+            this.parentContent.getContentId()).setChildOrder(
             order).sendAndParse();
     }
 
-    private setManualReorder(order: ChildOrder, movements: OrderChildMovements,
+    private setManualReorder(order: ChildOrder, movements: api.content.order.OrderChildMovements,
                              silent: boolean = false): wemQ.Promise<api.content.Content> {
-        return new api.content.OrderChildContentRequest().setSilent(silent).setManualOrder(true).setContentId(
+        return new api.content.resource.OrderChildContentRequest().setSilent(silent).setManualOrder(true).setContentId(
             this.parentContent.getContentId()).setChildOrder(order).setContentMovements(movements).sendAndParse();
     }
 

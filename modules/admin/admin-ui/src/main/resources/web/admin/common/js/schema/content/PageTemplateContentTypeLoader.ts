@@ -16,7 +16,8 @@ module api.schema.content {
 
         sendRequest(): wemQ.Promise<ContentTypeSummary[]> {
             return new GetAllContentTypesRequest().sendAndParse().then((contentTypeArray: ContentTypeSummary[]) => {
-                return new api.content.GetNearestSiteRequest(this.contentId).sendAndParse().then((parentSite: api.content.site.Site) => {
+                return new api.content.resource.GetNearestSiteRequest(this.contentId).sendAndParse().then(
+                    (parentSite: api.content.site.Site) => {
                     var typesAllowedEverywhere: {[key:string]: ContentTypeName} = {};
                     [ContentTypeName.UNSTRUCTURED, ContentTypeName.FOLDER, ContentTypeName.SITE,
                         ContentTypeName.SHORTCUT].forEach((contentTypeName: ContentTypeName) => {

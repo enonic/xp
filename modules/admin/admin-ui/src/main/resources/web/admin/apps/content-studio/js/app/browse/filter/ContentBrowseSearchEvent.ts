@@ -2,16 +2,17 @@ import "../../../api.ts";
 
 export class ContentBrowseSearchEvent extends api.event.Event {
 
-    private contentQueryResult: api.content.ContentQueryResult<any,any>;
+    private contentQueryResult: api.content.resource.result.ContentQueryResult<any,any>;
     private contentQuery: api.content.query.ContentQuery;
 
-    constructor(contentQueryResult: api.content.ContentQueryResult<any,any>, contentQuery?: api.content.query.ContentQuery) {
+    constructor(contentQueryResult: api.content.resource.result.ContentQueryResult<any,any>,
+                contentQuery?: api.content.query.ContentQuery) {
         super();
         this.contentQueryResult = contentQueryResult;
         this.contentQuery = contentQuery;
     }
 
-    getContentQueryResult(): api.content.ContentQueryResult<any,any> {
+    getContentQueryResult(): api.content.resource.result.ContentQueryResult<any,any> {
         return this.contentQueryResult;
     }
 

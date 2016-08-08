@@ -1,11 +1,11 @@
 import "../../../../../api.ts";
+import {WidgetItemView} from "../../WidgetItemView";
 
 import ContentSummary = api.content.ContentSummary;
 import Attachments = api.content.attachment.Attachments;
 import Attachment = api.content.attachment.Attachment;
 import ContentId = api.content.ContentId;
 import AttachmentName = api.content.attachment.AttachmentName;
-import {WidgetItemView} from "../../WidgetItemView";
 
 export class AttachmentsWidgetItemView extends WidgetItemView {
 
@@ -47,7 +47,7 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
     }
 
     private layoutAttachments(): wemQ.Promise<Attachments> {
-        return new api.content.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then(
+        return new api.content.resource.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then(
             (attachments: Attachments) => {
 
                 if (this.hasChild(this.list)) {
