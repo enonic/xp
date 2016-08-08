@@ -17,7 +17,7 @@ module api.util.htmlarea.dialog {
 
         private imagePreviewContainer: api.dom.DivEl;
         private imageCaptionField: FormItem;
-        private imageUploaderEl: api.content.ImageUploaderEl;
+        private imageUploaderEl: api.content.image.ImageUploaderEl;
         private imageElement: HTMLImageElement;
         private content: api.content.ContentSummary;
         private imageSelector: api.content.ContentComboBox;
@@ -55,7 +55,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageSelector(id: string): FormItem {
-            let loader = new api.content.ContentSummaryLoader();
+            let loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(this.content.getPath());
 
             let imageSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
@@ -204,7 +204,8 @@ module api.util.htmlarea.dialog {
         }
 
         private generateDefaultImgSrc(contentId): string {
-            return new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(true).setSize(
+            return new api.content.util.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(
+                true).setSize(
                 ImageModalDialog.maxImageWidth).resolve();
         }
 
@@ -261,12 +262,12 @@ module api.util.htmlarea.dialog {
             }
         }
 
-        private createImageUploader(): api.content.ImageUploaderEl {
-            var uploader = new api.content.ImageUploaderEl({
+        private createImageUploader(): api.content.image.ImageUploaderEl {
+            var uploader = new api.content.image.ImageUploaderEl({
                 params: {
                     parent: this.content.getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.create,
+                operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showResult: false,
                 maximumOccurrences: 1,

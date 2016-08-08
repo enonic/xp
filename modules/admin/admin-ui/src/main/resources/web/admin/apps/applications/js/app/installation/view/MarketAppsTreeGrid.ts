@@ -14,12 +14,11 @@ import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
-import ContentResponse = api.content.ContentResponse;
+import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
-import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
-import ChildOrder = api.content.ChildOrder;
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 
 import CompareStatus = api.content.CompareStatus;
 

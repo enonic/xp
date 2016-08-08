@@ -7,7 +7,7 @@ module api.content.form.inputtype.image {
     import ValueTypes = api.data.ValueTypes;
     import ContentId = api.content.ContentId;
     import ContentSummary = api.content.ContentSummary;
-    import ContentSummaryLoader = api.content.ContentSummaryLoader;
+    import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
     import ContentComboBox = api.content.form.inputtype.image.ImageContentComboBox;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -44,7 +44,7 @@ module api.content.form.inputtype.image {
 
         private contentRequestsAllowed: boolean;
 
-        private uploader: ImageUploaderEl;
+        private uploader: api.content.image.ImageUploaderEl;
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
@@ -325,14 +325,14 @@ module api.content.form.inputtype.image {
             });
         }
 
-        private createUploader(): ImageUploaderEl {
+        private createUploader(): api.content.image.ImageUploaderEl {
             var multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
 
-            this.uploader = new api.content.ImageUploaderEl({
+            this.uploader = new api.content.image.ImageUploaderEl({
                 params: {
                     parent: this.config.content.getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.create,
+                operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showCancel: false,
                 showResult: false,
@@ -433,7 +433,7 @@ module api.content.form.inputtype.image {
                     contentIds.push(ContentId.fromReference(property.getReference()));
                 }
             });
-            return new api.content.GetContentSummaryByIds(contentIds).sendAndParse();
+            return new api.content.resource.GetContentSummaryByIds(contentIds).sendAndParse();
         }
 
         protected getNumberOfValids(): number {

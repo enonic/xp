@@ -139,7 +139,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
             this.actionButton.setEnabled(false);
             this.showLoadingSpinner();
 
-            this.createDeleteRequest().sendAndParse().then((result: api.content.DeleteContentResult) => {
+            this.createDeleteRequest().sendAndParse().then((result: api.content.resource.result.DeleteContentResult) => {
                 this.close();
                 DeleteAction.showDeleteResult(result);
             }).catch((reason: any) => {
@@ -162,8 +162,8 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.updateButtonCount("Delete", this.totalItemsToDelete);
     }
 
-    private createDeleteRequest(): api.content.DeleteContentRequest {
-        var deleteRequest = new api.content.DeleteContentRequest();
+    private createDeleteRequest(): api.content.resource.DeleteContentRequest {
+        var deleteRequest = new api.content.resource.DeleteContentRequest();
 
         this.getItemList().getItems().forEach((item) => {
             deleteRequest.addContentPath(item.getContentSummary().getPath());

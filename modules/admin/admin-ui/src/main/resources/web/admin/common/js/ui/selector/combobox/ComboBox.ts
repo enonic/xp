@@ -308,7 +308,8 @@ module api.ui.selector.combobox {
                 return;
             }
 
-            new api.content.ContentsExistRequest(missingOptionIds).sendAndParse().then((result: api.content.ContentsExistResult) => {
+            new api.content.resource.ContentsExistRequest(missingOptionIds).sendAndParse().then(
+                (result: api.content.resource.result.ContentsExistResult) => {
                 optionIds.forEach((val) => {
                     var option = this.getOptionByValue(val);
                     if (option != null) {

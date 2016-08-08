@@ -1,5 +1,8 @@
 module api.content.form.inputtype.contentselector {
 
+    import ContentSummaryPreLoader = api.content.resource.ContentSummaryPreLoader;
+    import ContentSelectorQueryRequest = api.content.resource.ContentSelectorQueryRequest;
+
     export class ContentSelectorLoader extends ContentSummaryPreLoader {
 
         private contentSelectorQueryRequest: ContentSelectorQueryRequest;

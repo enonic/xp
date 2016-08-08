@@ -37,7 +37,7 @@ module api.content {
         }
 
         resolveIconUrl(object: ContentSummary): string {
-            return new ContentIconUrlResolver().setContent(object).resolve();
+            return new api.content.util.ContentIconUrlResolver().setContent(object).resolve();
         }
     }
 }

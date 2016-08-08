@@ -69,7 +69,7 @@ export class FilterableItemsList extends NewContentDialogList {
 
     private filterByParentContent(items: NewContentDialogListItem[],
                                   siteApplicationKeys: ApplicationKey[]): NewContentDialogListItem[] {
-        var createContentFilter = new api.content.CreateContentFilter().siteApplicationsFilter(siteApplicationKeys);
+        var createContentFilter = new api.content.util.CreateContentFilter().siteApplicationsFilter(siteApplicationKeys);
         return items.filter((item: NewContentDialogListItem) =>
             createContentFilter.isCreateContentAllowed(this.parentContent, item.getContentType())
         );

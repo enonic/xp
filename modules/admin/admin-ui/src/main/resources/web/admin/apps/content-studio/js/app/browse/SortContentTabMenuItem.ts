@@ -4,14 +4,14 @@ import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 
 export class SortContentTabMenuItem extends api.ui.tab.TabMenuItem {
 
-    private childOrder: api.content.ChildOrder;
+    private childOrder: api.content.order.ChildOrder;
 
     constructor(builder: SortContentTabMenuItemBuilder) {
         super((<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(builder.label)));
         this.childOrder = builder.childOrder;
     }
 
-    getChildOrder(): api.content.ChildOrder {
+    getChildOrder(): api.content.order.ChildOrder {
         return this.childOrder;
     }
 
@@ -19,14 +19,14 @@ export class SortContentTabMenuItem extends api.ui.tab.TabMenuItem {
 
 export class SortContentTabMenuItemBuilder {
     label: string;
-    childOrder: api.content.ChildOrder;
+    childOrder: api.content.order.ChildOrder;
 
     setLabel(label: string): SortContentTabMenuItemBuilder {
         this.label = label;
         return this;
     }
 
-    setChildOrder(value: api.content.ChildOrder): SortContentTabMenuItemBuilder {
+    setChildOrder(value: api.content.order.ChildOrder): SortContentTabMenuItemBuilder {
         this.childOrder = value;
         return this;
     }
