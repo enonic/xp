@@ -9,7 +9,7 @@ module api.content.form.inputtype.upload {
 
     export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
-        private imageUploader: api.content.ImageUploaderEl;
+        private imageUploader: api.content.image.ImageUploaderEl;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
@@ -19,11 +19,11 @@ module api.content.form.inputtype.upload {
         }
 
         private initUploader(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            this.imageUploader = new api.content.ImageUploaderEl({
+            this.imageUploader = new api.content.image.ImageUploaderEl({
                 params: {
                     content: config.content.getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.update,
+                operation: api.ui.uploader.MediaUploaderElOperation.update,
                 name: config.input.getName(),
                 maximumOccurrences: 1,
                 hideDefaultDropZone: true
@@ -75,7 +75,7 @@ module api.content.form.inputtype.upload {
                 this.imageUploader.setProgressVisible(false);
             });
 
-            ImageErrorEvent.on((event: ImageErrorEvent) => {
+            api.content.image.ImageErrorEvent.on((event: api.content.image.ImageErrorEvent) => {
                 if (this.getContext().content.getContentId().equals(event.getContentId())) {
                     this.imageUploader.getUploadButton().show();
                     this.imageUploader.setProgressVisible(false);

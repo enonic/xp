@@ -732,7 +732,7 @@ module api.liveedit {
         }
 
         getIconUrl(content: api.content.Content): string {
-            return new api.content.ContentIconUrlResolver().setContent(content).resolve();
+            return new api.content.util.ContentIconUrlResolver().setContent(content).resolve();
         }
 
         getIconClass() {

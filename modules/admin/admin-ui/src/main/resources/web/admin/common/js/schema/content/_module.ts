@@ -7,6 +7,7 @@
 ///<reference path='ContentTypeSummaryLoader.ts' />
 ///<reference path='PageTemplateContentTypeLoader.ts' />
 ///<reference path='ContentState.ts' />
+///<reference path='ContentTypeSummaryByDisplayNameComparator' />
 
 ///<reference path='ContentTypeResourceRequest.ts' />
 ///<reference path='GetAllContentTypesRequest.ts' />

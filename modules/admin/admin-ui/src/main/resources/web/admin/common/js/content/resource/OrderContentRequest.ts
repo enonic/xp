@@ -6,7 +6,7 @@ module api.content.resource {
 
         private contentId: ContentId;
 
-        private childOrder: ChildOrder;
+        private childOrder: api.content.order.ChildOrder;
 
         constructor() {
             super();
@@ -18,7 +18,7 @@ module api.content.resource {
             return this;
         }
 
-        setChildOrder(value: ChildOrder): OrderContentRequest {
+        setChildOrder(value: api.content.order.ChildOrder): OrderContentRequest {
             this.childOrder = value;
             return this;
         }
@@ -33,7 +33,7 @@ module api.content.resource {
         }
 
         private contentToJson(): json.SetChildOrderJson {
-            return ChildOrder.toSetChildOrderJson(this.contentId, this.childOrder, this.silent);
+            return api.content.order.ChildOrder.toSetChildOrderJson(this.contentId, this.childOrder, this.silent);
         }
 
         getRequestPath(): api.rest.Path {

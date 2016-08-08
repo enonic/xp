@@ -7,11 +7,9 @@ import {OpenSortDialogEvent} from "./OpenSortDialogEvent";
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import Element = api.dom.Element;
 import ContentSummary = api.content.ContentSummary;
-import ChildOrder = api.content.ChildOrder;
-import OrderChildMovements = api.content.OrderChildMovements;
+import ChildOrder = api.content.order.ChildOrder;
 import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 import DialogButton = api.ui.dialog.DialogButton;
 
@@ -219,7 +217,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
             order).sendAndParse();
     }
 
-    private setManualReorder(order: ChildOrder, movements: OrderChildMovements,
+    private setManualReorder(order: ChildOrder, movements: api.content.order.OrderChildMovements,
                              silent: boolean = false): wemQ.Promise<api.content.Content> {
         return new api.content.resource.OrderChildContentRequest().setSilent(silent).setManualOrder(true).setContentId(
             this.parentContent.getContentId()).setChildOrder(order).setContentMovements(movements).sendAndParse();

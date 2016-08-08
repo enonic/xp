@@ -13,7 +13,7 @@ module api.liveedit.image {
 
         private comboboxWrapper: api.dom.DivEl;
 
-        private imageUploader: api.content.ImageUploaderEl;
+        private imageUploader: api.content.image.ImageUploaderEl;
 
         constructor(imageView: ImageComponentView) {
             super();
@@ -49,11 +49,11 @@ module api.liveedit.image {
         }
 
         private initImageUploader(imageView: ImageComponentView) {
-            this.imageUploader = new api.content.ImageUploaderEl({
+            this.imageUploader = new api.content.image.ImageUploaderEl({
                 params: {
                     parent: imageView.getLiveEditModel().getContent().getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.create,
+                operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'image-selector-placeholder-upload',
                 showCancel: false,
                 showResult: false,

@@ -1,6 +1,7 @@
 module api.content.resource {
 
     import MoveContentResultJson = api.content.json.MoveContentResultJson;
+    import MoveContentResult = api.content.resource.result.MoveContentResult;
 
     export class MoveContentRequest extends ContentResourceRequest<MoveContentResultJson, MoveContentResult> {
 

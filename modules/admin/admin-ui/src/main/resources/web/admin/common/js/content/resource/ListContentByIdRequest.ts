@@ -1,5 +1,8 @@
 module api.content.resource {
 
+    import ListContentResult = api.content.resource.result.ListContentResult;
+    import ContentResponse = api.content.resource.result.ContentResponse;
+    
     export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
         private parentId: ContentId;
@@ -10,7 +13,7 @@ module api.content.resource {
 
         private size: number;
 
-        private order: ChildOrder;
+        private order: api.content.order.ChildOrder;
 
         constructor(parentId: ContentId) {
             super();
@@ -33,7 +36,7 @@ module api.content.resource {
             return this;
         }
 
-        setOrder(value: ChildOrder): ListContentByIdRequest {
+        setOrder(value: api.content.order.ChildOrder): ListContentByIdRequest {
             this.order = value;
             return this;
         }

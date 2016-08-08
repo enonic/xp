@@ -4,6 +4,8 @@ import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
 import {ContentBrowseSearchEvent} from "./filter/ContentBrowseSearchEvent";
 import {ContentBrowseResetEvent} from "./filter/ContentBrowseResetEvent";
 import {ContentBrowseRefreshEvent} from "./filter/ContentBrowseRefreshEvent";
+import {TreeNodesOfContentPath} from "./TreeNodesOfContentPath";
+import {TreeNodeParentOfContent} from "./TreeNodeParentOfContent";
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -17,21 +19,19 @@ import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
-import ContentResponse = api.content.ContentResponse;
+import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentSummary = api.content.ContentSummary;
 import ContentPath = api.content.ContentPath;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import CompareContentRequest = api.content.resource.CompareContentRequest;
-import CompareContentResults = api.content.CompareContentResults;
+import CompareContentResults = api.content.resource.result.CompareContentResults;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
-import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
-import TreeNodeParentOfContent = api.content.TreeNodeParentOfContent;
 
 import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 
-import ContentQueryResult = api.content.ContentQueryResult;
+import ContentQueryResult = api.content.resource.result.ContentQueryResult;
 import ContentSummaryJson = api.content.json.ContentSummaryJson;
 import ContentQueryRequest = api.content.resource.ContentQueryRequest;
 

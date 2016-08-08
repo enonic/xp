@@ -2,11 +2,13 @@ module api.content.resource {
 
     import CompareContentRequest = api.content.resource.CompareContentRequest;
     import BatchContentRequest = api.content.resource.BatchContentRequest;
+    import ContentResponse = api.content.resource.result.ContentResponse;
+    import CompareContentResults = api.content.resource.result.CompareContentResults;
 
     export class ContentSummaryAndCompareStatusFetcher {
 
         static fetchChildren(parentContentId: ContentId, from: number = 0, size: number = -1,
-                             childOrder?: ChildOrder): wemQ.Promise<ContentResponse<ContentSummaryAndCompareStatus>> {
+                             childOrder?: api.content.order.ChildOrder): wemQ.Promise<ContentResponse<ContentSummaryAndCompareStatus>> {
 
             var deferred = wemQ.defer<ContentResponse<ContentSummaryAndCompareStatus>>();
 
@@ -114,7 +116,7 @@ module api.content.resource {
                                    compareResults: CompareContentResults): ContentSummaryAndCompareStatus[] {
             var list: ContentSummaryAndCompareStatus[] = [];
             contentSummaries.forEach((contentSummary: ContentSummary) => {
-                var compareResult: CompareContentResult = compareResults.get(contentSummary.getId());
+                var compareResult: api.content.resource.result.CompareContentResult = compareResults.get(contentSummary.getId());
                 var newEntry = ContentSummaryAndCompareStatus.fromContentAndCompareStatus(contentSummary, compareResult.getCompareStatus());
                 list.push(newEntry)
             });
