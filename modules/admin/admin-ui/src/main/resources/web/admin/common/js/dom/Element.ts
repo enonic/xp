@@ -219,6 +219,11 @@ module api.dom {
             if (Element.debug) {
                 console.debug("Element.init started", api.ClassHelper.getClassName(this));
             }
+
+            if (this.isVisible()) {
+                this.notifyShown(this);
+            }
+
             var renderPromise;
             if (this.isRendered() || this.isRendering()) {
                 renderPromise = wemQ(true);
@@ -229,6 +234,10 @@ module api.dom {
             return renderPromise.then((rendered) => {
 
                 return this.initChildren(rendered);
+            }).catch((reason) => {
+
+                api.DefaultErrorHandler.handle(reason);
+                return false;
             });
         }
 
@@ -257,10 +266,6 @@ module api.dom {
                     this.rendering = false;
                     this.rendered = rendered;
                     this.notifyRendered();
-
-                    if (this.isVisible()) {
-                        this.notifyShown(this);
-                    }
 
                     return rendered;
                 }
@@ -315,6 +320,10 @@ module api.dom {
             return this.rendered;
         }
 
+        isAdded(): boolean {
+            return !!this.getHTMLElement().parentNode;
+        }
+
         /**
          * Do all the element rendering here
          * Return false to tell that rendering failed
@@ -327,17 +336,13 @@ module api.dom {
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             wemjq(this.el.getHTMLElement()).show();
-            if (this.isRendered()) {
-                this.notifyShown(this, true);
-            }
+            this.notifyShown(this, true);
         }
 
         hide() {
             // Using jQuery to hide, since it seems to contain some smartness
             wemjq(this.el.getHTMLElement()).hide();
-            if (this.isRendered()) {
-                this.notifyHidden(this);
-            }
+            this.notifyHidden(this);
         }
 
         setVisible(value: boolean): Element {
@@ -575,7 +580,10 @@ module api.dom {
             } else if (parent.isRendering()) {
                 this.childrenAddedDuringInit = true;
             }
-            child.notifyAdded();
+            // notify added if I am added to dom only, otherwise do it on added to dom
+            if (this.isAdded()) {
+                child.notifyAdded();
+            }
             return this;
         }
 
@@ -831,7 +839,10 @@ module api.dom {
             this.addedListeners.forEach((listener) => {
                 listener(addedEvent);
             });
-            // Each child throw its own added
+
+            this.children.forEach((child: Element) => {
+                child.notifyAdded();
+            })
         }
 
         onRemoved(listener: (event: ElementRemovedEvent) => void) {

@@ -41,6 +41,10 @@ module api.app.wizard {
 
         protected formIcon: api.dom.Element;
 
+        protected formMask: api.ui.mask.LoadMask;
+
+        protected liveMask: api.ui.mask.LoadMask;
+
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
 
@@ -74,15 +78,12 @@ module api.app.wizard {
 
         private scrollPosition: number = 0;
 
-        private mask: api.ui.mask.LoadMask;
-
         public static debug: boolean = false;
 
         constructor(params: WizardPanelParams<EQUITABLE>) {
             super("wizard-panel");
 
             this.params = params;
-            this.mask = new api.ui.mask.LoadMask(this);
 
             if (params.persistedItem) {
                 this.setPersistedItem(params.persistedItem);
@@ -95,47 +96,35 @@ module api.app.wizard {
             // call loadData even if persistedItem is set to load additional data
             this.loadData();
 
-            this.onAdded((event: api.dom.ElementAddedEvent) => {
-                if (WizardPanel.debug) {
-                    console.debug("WizardPanel: added", event);
-                }
-
-                this.mask.show();
-            });
-
-            var firstShow;
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
                 if (WizardPanel.debug) {
-                    console.debug("ContentWizardPanel: rendered", event);
+                    console.debug("WizardPanel: rendered", event);
                 }
-                firstShow = true;
-                this.mask.hide();
-
-                if (this.mainToolbar) {
-                    this.mainToolbar.getEl().setOpacity(1);
-                }
-                if (this.splitPanel) {
-                    this.splitPanel.getEl().setOpacity(1);
-                }
-                this.formPanel.getEl().setOpacity(1);
-
-                // check validity on rendered
-                this.notifyValidityChanged(this.isValid());
             });
 
             this.onShown((event: api.dom.ElementShownEvent) => {
                 if (WizardPanel.debug) {
-                    console.debug("ContentWizardPanel: shown", event);
+                    console.debug("WizardPanel: shown", event);
                 }
-                if (firstShow) {
-                    firstShow = false;
-                    this.giveInitialFocus();
+                if (this.formPanel && !this.formPanel.isRendered()) {
+                    this.formMask.show();
                 }
-
-                if (!!this.lastFocusedElement) {
-                    this.lastFocusedElement.focus();
+                if (this.livePanel && !this.livePanel.isRendered()) {
+                    this.liveMask.show();
                 }
             });
+
+            this.onHidden((event: api.dom.ElementHiddenEvent) => {
+                if (WizardPanel.debug) {
+                    console.debug("WizardPanel: hidden", event);
+                }
+                if (this.formMask && this.formMask.isVisible()) {
+                    this.formMask.hide();
+                }
+                if (this.liveMask && this.liveMask.isVisible()) {
+                    this.liveMask.hide();
+                }
+            })
         }
 
         /*
@@ -200,31 +189,55 @@ module api.app.wizard {
                 console.debug("WizardPanel.doRender");
             }
             return super.doRender().then((rendered) => {
-                if (this.isDataLoaded()) {
-                    return this.doRenderOnDataLoaded(rendered).then((rendered) => {
 
-                        return this.doLayout(this.getPersistedItem()).then(() => rendered);
-                    });
+                let doRenderOnDataLoadedAndShown = () => {
+                    let deferred = wemQ.defer<boolean>();
+                    let doRenderOnShown = () => {
+                        this.doRenderOnDataLoaded(rendered).then((rendered) => {
+
+                            this.doLayout(this.getPersistedItem())
+                                .then(() => deferred.resolve(rendered))
+                                .catch(reason => {
+                                    deferred.reject(reason);
+                                    api.DefaultErrorHandler.handle(reason);
+                                }).done();
+                        });
+                    };
+
+                    if (this.isVisible()) {
+                        doRenderOnShown();
+                    } else {
+                        if (WizardPanel.debug) {
+                            console.debug("WizardPanel.doRender: waiting for wizard to be shown...");
+                        }
+                        let shownHandler = () => {
+                            if (WizardPanel.debug) {
+                                console.debug("WizardPanel.doRender: wizard shown, resuming render");
+                            }
+                            this.unShown(shownHandler);
+                            doRenderOnShown();
+                        };
+                        this.onShown(shownHandler);
+                    }
+                    return deferred.promise;
+                };
+
+                if (this.isDataLoaded()) {
+                    return doRenderOnDataLoadedAndShown();
                 } else {
                     if (WizardPanel.debug) {
                         console.debug("WizardPanel.doRender: waiting for data to be loaded...");
                     }
-                    var deferred = wemQ.defer<boolean>();
+                    let deferred = wemQ.defer<boolean>();
 
                     // ensure render happens when data loaded
                     this.onDataLoaded((item: EQUITABLE) => {
                         if (WizardPanel.debug) {
-                            console.debug("WizardPanel.doRender: data loaded, resuming render...");
+                            console.debug("WizardPanel.doRender: data loaded, resuming render");
                         }
-
-                        this.doRenderOnDataLoaded(rendered)
-                            .then((rendered) => {
-                                return this.doLayout(this.getPersistedItem()).then(() => deferred.resolve(rendered));
-                            })
-                            .catch(reason => {
-                                deferred.reject(reason);
-                                api.DefaultErrorHandler.handle(reason);
-                            }).done();
+                        doRenderOnDataLoadedAndShown()
+                            .then((rendered) => deferred.resolve(rendered))
+                            .catch((reason) => deferred.reject(reason));
                     });
 
                     return deferred.promise;
@@ -277,36 +290,57 @@ module api.app.wizard {
                 console.debug("WizardPanel.doRenderOnDataLoaded");
             }
 
+            let updateMinimizeButtonPosition = () => {
+                this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
+            };
+
             this.updateToolbarActions();
 
-            this.formPanel = new api.ui.panel.Panel("form-panel");
+            this.formPanel = new api.ui.panel.Panel("form-panel rendering");
             this.formPanel.onScroll(() => this.updateStickyToolbar());
+
+            this.formPanel.onAdded((event) => {
+                if (WizardPanel.debug) {
+                    console.debug("WizardPanel: formPanel.onAdded");
+                }
+                this.formMask = new api.ui.mask.LoadMask(this.formPanel);
+                this.formMask.show();
+            });
+
+            var firstShow;
+            this.formPanel.onRendered((event) => {
+                if (WizardPanel.debug) {
+                    console.debug("WizardPanel: formPanel.onRendered");
+                }
+                firstShow = true;
+                this.formMask.hide();
+                this.formPanel.removeClass('rendering');
+
+                if (this.mainToolbar) {
+                    this.mainToolbar.removeClass('rendering');
+                }
+
+                if (firstShow) {
+                    firstShow = false;
+                    this.giveInitialFocus();
+                }
+
+                if (!!this.lastFocusedElement) {
+                    this.lastFocusedElement.focus();
+                }
+
+                if (this.minimizeEditButton) {
+                    updateMinimizeButtonPosition();
+                }
+
+                // check validity on rendered
+                this.notifyValidityChanged(this.isValid());
+            });
 
             this.mainToolbar = this.createMainToolbar();
             if (this.mainToolbar) {
+                this.mainToolbar.addClass('rendering');
                 this.appendChild(this.mainToolbar);
-            }
-
-            this.livePanel = this.createLivePanel();
-            if (this.livePanel) {
-
-                this.toggleMinimizeListener = (event: api.ui.ActivatedEvent) => {
-                    this.toggleMinimize(event.getIndex());
-                };
-                this.minimizeEditButton = new api.dom.DivEl("minimize-edit icon icon-arrow-right");
-                this.formPanel.prependChild(this.minimizeEditButton);
-
-                this.splitPanel = this.createSplitPanel(this.formPanel, this.livePanel);
-                this.appendChild(this.splitPanel);
-
-                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this.minimizeEditButton, () => {
-                    this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
-                });
-                this.minimizeEditButton.onClicked(this.toggleMinimize.bind(this, -1));
-
-            } else {
-
-                this.appendChild(this.formPanel);
             }
 
             var headerAndNavigatorContainer = new api.dom.DivEl("header-and-navigator-container");
@@ -350,6 +384,57 @@ module api.app.wizard {
                 }
             });
             this.formPanel.appendChildren(headerAndNavigatorContainer, this.stepsPanel);
+
+            this.livePanel = this.createLivePanel();
+            if (this.livePanel) {
+                this.livePanel.addClass('rendering');
+
+                this.toggleMinimizeListener = (event: api.ui.ActivatedEvent) => {
+                    this.toggleMinimize(event.getIndex());
+                };
+                this.minimizeEditButton = new api.dom.DivEl("minimize-edit icon icon-arrow-right");
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this.formPanel, updateMinimizeButtonPosition);
+
+                this.minimizeEditButton.onClicked(this.toggleMinimize.bind(this, -1));
+
+                this.formPanel.prependChild(this.minimizeEditButton);
+
+                this.livePanel.onAdded((event) => {
+                    if (WizardPanel.debug) {
+                        console.debug("WizardPanel: livePanel.onAdded");
+                    }
+                    this.liveMask = new api.ui.mask.LoadMask(this.livePanel);
+                    this.liveMask.show();
+                });
+
+                this.livePanel.onRendered((event) => {
+                    if (WizardPanel.debug) {
+                        console.debug("WizardPanel: livePanel.onRendered");
+                    }
+                    this.liveMask.hide();
+                    this.livePanel.removeClass('rendering');
+                });
+
+                this.splitPanel = this.createSplitPanel(this.formPanel, this.livePanel);
+
+                this.splitPanel.onAdded((event) => {
+                    if (WizardPanel.debug) {
+                        console.debug("WizardPanel: splitPanel.onAdded");
+                    }
+                });
+
+                this.splitPanel.onRendered((event) => {
+                    if (WizardPanel.debug) {
+                        console.debug("WizardPanel: splitPanel.onRendered");
+                    }
+                });
+
+                this.appendChild(this.splitPanel);
+
+            } else {
+
+                this.appendChild(this.formPanel);
+            }
 
             return wemQ(rendered);
         }
@@ -649,17 +734,13 @@ module api.app.wizard {
         private createSplitPanel(firstPanel: api.ui.panel.Panel, secondPanel: api.ui.panel.Panel): api.ui.panel.SplitPanel {
             var splitPanel = new api.ui.panel.SplitPanelBuilder(firstPanel, secondPanel)
                 .setFirstPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL)
-                .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)
-                .build();
-            this.updateSplitPanel(splitPanel);
-            return splitPanel;
-        }
+                .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL);
 
-        private updateSplitPanel(splitPanel: api.ui.panel.SplitPanel) {
             if (wemjq(window).width() > this.splitPanelThreshold) {
                 splitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
             }
-            splitPanel.distribute();
+
+            return splitPanel.build();
         }
 
         private notifyClosed() {

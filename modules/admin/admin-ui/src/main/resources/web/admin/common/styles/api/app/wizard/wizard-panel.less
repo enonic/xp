@@ -7,8 +7,11 @@
   }
 
   .toolbar {
-    .opacity(0);
     border-bottom: 1px solid @admin-medium-gray-border;
+
+    &.rendering * {
+      opacity: 0;
+    }
 
     &.scroll-shadow {
       .box-shadow(0px 2px 6px -2px #000);
@@ -31,10 +34,12 @@
 
   .form-panel {
     overflow-y: auto !important;
-    .opacity(0);
+    &.rendering {
+      .opacity(0);
+    }
   }
 
-  .split-panel {
+  .live-form-panel.rendering {
     .opacity(0);
   }
 

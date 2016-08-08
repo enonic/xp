@@ -1,5 +1,6 @@
 module api.ui.mask {
 
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     export class Mask extends api.dom.DivEl {
 
         private masked: api.dom.Element;
@@ -31,11 +32,11 @@ module api.ui.mask {
                     this.remove();
                 });
                 // Masked element might have been resized on window resize
-                api.dom.WindowDOM.get().onResized((event: UIEvent) => {
+                ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item) => {
                     if (this.isVisible()) {
                         this.positionOver(this.masked);
                     }
-                }, this);
+                });
             }
             api.dom.Body.get().appendChild(this);
         }

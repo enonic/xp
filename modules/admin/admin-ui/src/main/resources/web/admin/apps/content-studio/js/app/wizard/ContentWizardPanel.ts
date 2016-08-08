@@ -163,14 +163,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.metadataStepFormByName = {};
 
-        this.initListeners();
-
         super({
             tabId: params.tabId,
             persistedItem: null,
             actions: this.wizardActions
         });
 
+        this.initListeners();
         this.listenToContentEvents();
         this.handleSiteConfigApply();
         this.handleBrokenImageInTheWizard();
@@ -185,9 +184,30 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
             this.displayValidationErrors();
         });
+
+        this.wizardActions.getShowSplitEditAction().onExecuted(() => {
+            if (!this.inMobileViewMode) {
+                if (!this.isContentRenderable() && !this.getPersistedItem().isSite()) {
+                    this.closeLiveEdit();
+                    this.getContextWindowToggler().setEnabled(false);
+                } else {
+                    this.getCycleViewModeButton()
+                        .selectActiveAction(this.wizardActions.getShowLiveEditAction());
+                }
+            }
+        });
     }
 
     private initListeners() {
+
+        this.onDataLoaded(() => {
+            if (this.getPersistedItem()) {
+                Router.setHash("edit/" + this.getPersistedItem().getId());
+            } else {
+                Router.setHash("new/" + this.contentType.getName());
+            }
+        });
+
         this.dataChangedListener = () => {
             var publishControls = this.getContentWizardToolbarPublishControls();
             if (this.isContentFormValid && publishControls.isOnline()) {
@@ -216,12 +236,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 else {
                     let shownHandler = () => {
-                        new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse().then(
-                            (application: Application) => {
-                                if (application.getState() == "stopped") {
-                                    api.notify.showWarning(message);
-                                }
-                            }).catch((reason: any) => { //app was uninstalled
+                        new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
+                            .then(
+                                (application: Application) => {
+                                    if (application.getState() == "stopped") {
+                                        api.notify.showWarning(message);
+                                    }
+                                })
+                            .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
 
@@ -363,9 +385,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
 
             this.addClass("content-wizard-panel");
-            if (this.getSplitPanel()) {
-                this.getSplitPanel().addClass("prerendered");
-            }
 
             this.inMobileViewMode = false;
 
@@ -385,8 +404,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     this.displayValidationErrors();
                 }
             });
-
-            this.initOnShownHandler(responsiveItem);
 
             var thumbnailUploader = this.getFormIcon();
             if (thumbnailUploader) {
@@ -419,40 +436,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.inMobileViewMode = false;
             }
         }
-    }
-
-    private initOnShownHandler(responsiveItem: ResponsiveItem) {
-        this.onShown((event: api.dom.ElementShownEvent) => {
-            if (this.getPersistedItem()) {
-                Router.setHash("edit/" + this.getPersistedItem().getId());
-            } else {
-                Router.setHash("new/" + this.contentType.getName());
-            }
-            //Set split panel default
-
-            this.wizardActions.getShowSplitEditAction().onExecuted(() => {
-                if (!this.inMobileViewMode) {
-                    if (!this.isContentRenderable() && !this.getPersistedItem().isSite()) {
-                        this.closeLiveEdit();
-                        this.getContextWindowToggler().setEnabled(false);
-                    } else {
-                        this.getCycleViewModeButton()
-                            .selectActiveAction(this.wizardActions.getShowLiveEditAction());
-                    }
-                }
-            });
-
-            if (this.isContentRenderable() || this.getPersistedItem().isSite()) {
-                this.wizardActions.getShowSplitEditAction().execute();
-            }
-            else {
-                if (!!this.getSplitPanel()) {
-                    this.wizardActions.getShowFormAction().execute();
-                }
-            }
-
-            responsiveItem.update();
-        });
     }
 
     private onFileUploaded(event: api.ui.uploader.FileUploadedEvent<api.content.Content>) {
@@ -921,19 +904,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions.getPreviewAction().setVisible(false);
         this.wizardActions.getPreviewAction().setEnabled(false);
 
-        new GetNearestSiteRequest(content.getContentId()).sendAndParse().then((parentSite: Site) => {
-
-            if ((parentSite && !content.getType().isShortcut()) || content.isSite()) {
-                this.setupWizardLiveEdit(true);
-            }
-            else {
-                this.setupWizardLiveEdit(false);
-            }
-
-        }).catch((reason: any) => {
-            this.setupWizardLiveEdit(false);
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
+        this.setupWizardLiveEdit(content.isSite() || this.site && !content.getType().isShortcut());
 
         return this.createSteps().then((schemas: Mixin[]) => {
 
@@ -978,7 +949,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 } else {
                     this.displayValidationErrors();
                 }
-                
+
                 this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
                 var liveFormPanel = this.getLivePanel();
@@ -1016,8 +987,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions.getShowSplitEditAction().setEnabled(renderable);
         this.wizardActions.getPreviewAction().setVisible(renderable);
 
+        this.getCycleViewModeButton().setVisible(renderable);
+
         if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
+
             this.wizardActions.getShowSplitEditAction().execute();
+        } else if (!!this.getSplitPanel()) {
+
+            this.wizardActions.getShowFormAction().execute();
         }
     }
 
@@ -1188,6 +1165,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     hasUnsavedChanges(): boolean {
+        if (!this.isRendered()) {
+            return false;
+        }
         var persistedContent: Content = this.getPersistedItem();
         if (persistedContent == undefined) {
             return true;
@@ -1259,30 +1239,27 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return;
         }
 
-        this.getSplitPanel().addClass("toggle-live");
-        this.getSplitPanel().removeClass("toggle-form toggle-split prerendered");
+        this.getSplitPanel().addClass("toggle-live").removeClass("toggle-form toggle-split");
         this.getMainToolbar().toggleClass("live", true);
         this.toggleClass("form", false);
+
         this.openLiveEdit();
-        ResponsiveManager.fireResizeEvent();
     }
 
     showSplitEdit() {
-        this.getSplitPanel().addClass("toggle-split");
-        this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
+        this.getSplitPanel().addClass("toggle-split").removeClass("toggle-live toggle-form");
         this.getMainToolbar().toggleClass("live", true);
         this.toggleClass("form", false);
+
         this.openLiveEdit();
-        ResponsiveManager.fireResizeEvent();
     }
 
     showForm() {
-        this.getSplitPanel().addClass("toggle-form");
-        this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
+        this.getSplitPanel().addClass("toggle-form").removeClass("toggle-live toggle-split");
         this.getMainToolbar().toggleClass("live", false);
         this.toggleClass("form", true);
+
         this.closeLiveEdit();
-        ResponsiveManager.fireResizeEvent();
     }
 
     private isSplitView(): boolean {
@@ -1313,7 +1290,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             // allow deleting published content without validity check
             return true;
         }
-        
+
         var allMetadataFormsValid = true,
             allMetadataFormsHaveValidUserInput = true;
         for (var key in this.metadataStepFormByName) {
@@ -1533,14 +1510,24 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private openLiveEdit() {
+        var livePanel = this.getLivePanel();
+
         this.getSplitPanel().showSecondPanel();
-        this.getLivePanel().clearPageViewSelectionAndOpenInspectPage();
+        livePanel.clearPageViewSelectionAndOpenInspectPage();
         this.showMinimizeEditButton();
+
+        if (!this.livePanel.isRendered()) {
+            this.liveMask.show();
+        }
     }
 
     private closeLiveEdit() {
         this.getSplitPanel().hideSecondPanel();
         this.hideMinimizeEditButton();
+
+        if (this.liveMask && this.liveMask.isVisible()) {
+            this.liveMask.hide();
+        }
 
         if (this.isMinimized()) {
             this.toggleMinimize();
