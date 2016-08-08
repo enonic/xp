@@ -1,0 +1,16 @@
+steps:
+  - command: "./gradlew build"
+    label: Build
+    agents:
+      - os=linux
+  - command: "./gradlew build uploadArchives"
+    label: Upload
+    agents:
+      - os=linux
+      branches: master
+  - command: "./gradlew build sonarqube"
+    label: Sonar
+    agents:
+      - os=linux
+    branches: master
+  
