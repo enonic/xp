@@ -8,9 +8,9 @@ module api.content.resource {
 
         private contentId: ContentId;
 
-        private childOrder: ChildOrder;
+        private childOrder: api.content.order.ChildOrder;
 
-        private contentMovements: OrderChildMovements;
+        private contentMovements: api.content.order.OrderChildMovements;
 
         constructor() {
             super();
@@ -32,12 +32,12 @@ module api.content.resource {
             return this;
         }
 
-        setChildOrder(value: ChildOrder): OrderChildContentRequest {
+        setChildOrder(value: api.content.order.ChildOrder): OrderChildContentRequest {
             this.childOrder = value;
             return this;
         }
 
-        setContentMovements(value: OrderChildMovements): OrderChildContentRequest {
+        setContentMovements(value: api.content.order.OrderChildMovements): OrderChildContentRequest {
             this.contentMovements = value;
             return this;
         }

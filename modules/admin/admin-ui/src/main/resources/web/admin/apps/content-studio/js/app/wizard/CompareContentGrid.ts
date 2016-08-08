@@ -3,7 +3,7 @@ import "../../api.ts";
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
-import ContentResponse = api.content.ContentResponse;
+import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
@@ -73,9 +73,9 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
     sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
         var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
         if (this.getRoot().getCurrentRoot() == node) {
-            comparator = new api.content.ContentNodeByDisplayNameComparator();
+            comparator = new api.content.util.ContentNodeByDisplayNameComparator();
         } else {
-            comparator = new api.content.ContentNodeByModifiedTimeComparator();
+            comparator = new api.content.util.ContentNodeByModifiedTimeComparator();
         }
         var children: TreeNode<ContentSummaryAndCompareStatus>[] = node.getChildren().sort(comparator.compare);
         node.setChildren(children);

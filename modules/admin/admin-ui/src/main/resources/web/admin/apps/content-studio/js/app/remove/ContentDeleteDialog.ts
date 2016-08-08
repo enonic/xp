@@ -139,7 +139,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
             this.actionButton.setEnabled(false);
             this.showLoadingSpinner();
 
-            this.createDeleteRequest().sendAndParse().then((result: api.content.DeleteContentResult) => {
+            this.createDeleteRequest().sendAndParse().then((result: api.content.resource.result.DeleteContentResult) => {
                 this.close();
                 DeleteAction.showDeleteResult(result);
             }).catch((reason: any) => {

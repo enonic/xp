@@ -14,6 +14,7 @@ import {Router} from "../Router";
 import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
 import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 import {ContentWizardDataLoader} from "./ContentWizardDataLoader";
+import {ThumbnailUploaderEl} from "./ThumbnailUploaderEl";
 
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
@@ -31,7 +32,6 @@ import ContentUnnamed = api.content.ContentUnnamed;
 import CreateContentRequest = api.content.resource.CreateContentRequest;
 import UpdateContentRequest = api.content.resource.UpdateContentRequest;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ExtraData = api.content.ExtraData;
 import Page = api.content.page.Page;
 import Site = api.content.site.Site;
@@ -53,15 +53,14 @@ import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import FormIcon = api.app.wizard.FormIcon;
-import ThumbnailUploader = api.content.ThumbnailUploaderEl;
 import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import TogglerButton = api.ui.button.TogglerButton;
 import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
 import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
-import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
-import ImageErrorEvent = api.content.ImageErrorEvent;
+import ContentRequiresSaveEvent = api.content.event.ContentRequiresSaveEvent;
+import ImageErrorEvent = api.content.image.ImageErrorEvent;
 
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
@@ -269,8 +268,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
 
-    protected createFormIcon(): ThumbnailUploader {
-        var thumbnailUploader = new ThumbnailUploader({
+    protected createFormIcon(): ThumbnailUploaderEl {
+        var thumbnailUploader = new ThumbnailUploaderEl({
             name: 'thumbnail-uploader',
             deferred: true
         });
@@ -282,8 +281,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return thumbnailUploader;
     }
 
-    public getFormIcon(): ThumbnailUploader {
-        return <ThumbnailUploader> super.getFormIcon();
+    public getFormIcon(): ThumbnailUploaderEl {
+        return <ThumbnailUploaderEl> super.getFormIcon();
     }
 
     protected createMainToolbar(): Toolbar {
@@ -904,7 +903,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 id: content.getContentId().toString()
             })
             .setEnabled(!content.isImage())
-            .setValue(new ContentIconUrlResolver().setContent(content).resolve());
+            .setValue(new api.content.util.ContentIconUrlResolver().setContent(content).resolve());
 
         thumbnailUploader.toggleClass("invalid", !content.isValid());
     }

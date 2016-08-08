@@ -7,3 +7,5 @@
 ///<reference path='BatchContentServerEvent.ts' />
 ///<reference path='EditContentEvent.ts' />
 ///<reference path='ActiveContentVersionSetEvent.ts' />
+///<reference path='ContentRequiresSaveEvent.ts' />
+///<reference path='OpenEditPermissionsDialogEvent.ts' />

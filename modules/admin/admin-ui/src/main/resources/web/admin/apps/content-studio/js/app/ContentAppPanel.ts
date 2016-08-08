@@ -10,7 +10,6 @@ import {OpenSortDialogEvent} from "./browse/OpenSortDialogEvent";
 import {OpenMoveDialogEvent} from "./browse/OpenMoveDialogEvent";
 import {ContentWizardPanelParams} from "./wizard/ContentWizardPanelParams";
 
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Content = api.content.Content;
@@ -271,7 +270,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
                 var contentItem = new api.app.view.ViewItem(content)
                     .setDisplayName(content.getDisplayName())
                     .setPath(content.getPath().toString())
-                    .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
+                    .setIconUrl(new api.content.util.ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
 
                 contentItemViewPanel.setItem(contentItem);
 

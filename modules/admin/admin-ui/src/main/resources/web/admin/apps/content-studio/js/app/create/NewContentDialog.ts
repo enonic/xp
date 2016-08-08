@@ -21,6 +21,7 @@ import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import UploadItem = api.ui.uploader.UploadItem;
 import ListContentByPathRequest = api.content.resource.ListContentByPathRequest;
 import LoadMask = api.ui.mask.LoadMask;
+import ContentResponse = api.content.resource.result.ContentResponse;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -215,7 +216,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.loadMask.show();
 
         wemQ.all(this.sendRequestsToFetchContentData())
-            .spread((contentTypes: ContentTypeSummary[], directChilds: api.content.ContentResponse<api.content.ContentSummary>,
+            .spread((contentTypes: ContentTypeSummary[], directChilds: ContentResponse<api.content.ContentSummary>,
                      parentSite: Site) => {
 
                 this.allContentTypes.createItems(contentTypes, parentSite);

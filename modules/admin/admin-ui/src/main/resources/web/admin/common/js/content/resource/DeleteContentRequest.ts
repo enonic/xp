@@ -1,6 +1,7 @@
 module api.content.resource {
 
     import DeleteContentResultJson = api.content.json.DeleteContentResultJson;
+    import DeleteContentResult = api.content.resource.result.DeleteContentResult;
 
     export class DeleteContentRequest extends ContentResourceRequest<DeleteContentResultJson, DeleteContentResult> {
 

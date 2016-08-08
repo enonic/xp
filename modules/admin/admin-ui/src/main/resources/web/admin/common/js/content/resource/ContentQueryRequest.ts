@@ -1,6 +1,7 @@
 module api.content.resource {
 
     import ContentQuery = api.content.query.ContentQuery;
+    import ContentQueryResult = api.content.resource.result.ContentQueryResult;
 
     export class ContentQueryRequest<CONTENT_JSON extends json.ContentIdBaseItemJson,CONTENT extends ContentIdBaseItem>
     extends ContentResourceRequest<json.ContentQueryResultJson<CONTENT_JSON>, ContentQueryResult<CONTENT,CONTENT_JSON>> {

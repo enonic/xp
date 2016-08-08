@@ -16,6 +16,8 @@ import {ToggleSearchPanelWithDependenciesEvent} from "./ToggleSearchPanelWithDep
 import {NewMediaUploadEvent} from "../create/NewMediaUploadEvent";
 import {ContentPreviewPathChangedEvent} from "../view/ContentPreviewPathChangedEvent";
 import {ContentPublishMenuManager} from "./ContentPublishMenuManager";
+import {TreeNodeParentOfContent} from "./TreeNodeParentOfContent";
+import {TreeNodesOfContentPath} from "./TreeNodesOfContentPath";
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -28,11 +30,9 @@ import CompareStatus = api.content.CompareStatus;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentPath = api.content.ContentPath;
 import NodeServerChangeType = api.event.NodeServerChangeType;
 import BatchContentRequest = api.content.resource.BatchContentRequest;
-import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
 import ContentId = api.content.ContentId;
 import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
@@ -220,7 +220,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.contentTreeGrid.onSelectionChanged(updateItem);
 
         // repeated selection
-        api.content.TreeGridItemClickedEvent.on((event) => {
+        api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
             if (event.isRepeatedSelection()) {
                 updateItem();
             }
@@ -252,7 +252,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 if (!!data && !!data.getContentSummary()) {
                     let item = new ContentBrowseItem(data).setId(data.getId()).setDisplayName(
                         data.getContentSummary().getDisplayName()).setPath(data.getContentSummary().getPath().toString()).setIconUrl(
-                        new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+                        new api.content.util.ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
                     browseItems.push(item);
                 }
             }
@@ -380,7 +380,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                     } else {
                         this.contentTreeGrid.xAppendContentNodes(
                             createResult[i].getNodes().map((node) => {
-                                return new api.content.TreeNodeParentOfContent(el, node);
+                                return new TreeNodeParentOfContent(el, node);
                             }),
                             !isFiltered
                         ).then((results) => {
@@ -551,7 +551,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
                 var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).setId(content.getId()).setDisplayName(
                     content.getDisplayName()).setPath(content.getPath().toString()).setIconUrl(
-                    new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).setRenderable(renderable);
+                    new api.content.util.ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).setRenderable(
+                    renderable);
                 this.getBrowseItemPanel().setStatisticsItem(item);
             });
         }

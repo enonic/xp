@@ -1,10 +1,9 @@
 import "../../api.ts";
+import {SortContentTabMenuItem, SortContentTabMenuItemBuilder} from "./SortContentTabMenuItem";
 
-import ChildOrder = api.content.ChildOrder;
-import FieldOrderExpr = api.content.FieldOrderExpr;
-import FieldOrderExprBuilder = api.content.FieldOrderExprBuilder;
-import {SortContentTabMenuItem} from "./SortContentTabMenuItem";
-import {SortContentTabMenuItemBuilder} from "./SortContentTabMenuItem";
+import ChildOrder = api.content.order.ChildOrder;
+import FieldOrderExpr = api.content.order.FieldOrderExpr;
+import FieldOrderExprBuilder = api.content.order.FieldOrderExprBuilder;
 
 export class SortContentTabMenuItems {
 

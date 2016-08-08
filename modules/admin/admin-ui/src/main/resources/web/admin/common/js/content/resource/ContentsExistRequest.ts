@@ -1,6 +1,7 @@
 module api.content.resource {
 
     import ContentsExistJson = api.content.json.ContentsExistJson;
+    import ContentsExistResult = api.content.resource.result.ContentsExistResult;
 
     export class ContentsExistRequest extends ContentResourceRequest<ContentsExistJson, ContentsExistResult> {
 

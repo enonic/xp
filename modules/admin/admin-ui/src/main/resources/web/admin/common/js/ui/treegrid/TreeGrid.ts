@@ -162,7 +162,7 @@ module api.ui.treegrid {
                         this.root.clearStashedSelection();
                         let repeatedSelection = this.grid.selectRow(data.row) === -1;
                         if (!elem.hasClass("sort-dialog-trigger")) {
-                            new api.content.TreeGridItemClickedEvent(repeatedSelection).fire();
+                            new TreeGridItemClickedEvent(repeatedSelection).fire();
                         }
                     }
                 }

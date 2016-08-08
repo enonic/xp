@@ -1,7 +1,6 @@
 import "../../api.ts";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 
 export class DependantItemViewer extends api.ui.NamesAndIconViewer<ContentSummaryAndCompareStatus> {
 
@@ -22,7 +21,7 @@ export class DependantItemViewer extends api.ui.NamesAndIconViewer<ContentSummar
 
     resolveIconUrl(object: ContentSummaryAndCompareStatus): string {
         if(! object.getType().isImage()) {
-            return new api.content.ContentIconUrlResolver().setContent(object.getContentSummary()).resolve();
+            return new api.content.util.ContentIconUrlResolver().setContent(object.getContentSummary()).resolve();
         }
     }
     resolveIconClass (object: ContentSummaryAndCompareStatus): string {
