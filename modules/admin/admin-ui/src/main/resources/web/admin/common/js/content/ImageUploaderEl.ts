@@ -24,7 +24,7 @@ module api.content {
         constructor(config: MediaUploaderElConfig) {
             if (config.allowTypes == undefined) {
                 config.allowTypes = [
-                    {title: 'Image files', extensions: 'jpg,jpeg,gif,png'}
+                    {title: 'Image files', extensions: 'jpg,jpeg,gif,png,svg'}
                 ];
             }
             if (config.selfIsDropzone == undefined) {

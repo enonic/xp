@@ -73,7 +73,7 @@ module api.util.htmlarea.dialog {
 
             formItem.addClass("image-selector");
 
-            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE]);
+            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE, api.schema.content.ContentTypeName.MEDIA_VECTOR]);
 
             if (this.imageElement) {
                 var singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
