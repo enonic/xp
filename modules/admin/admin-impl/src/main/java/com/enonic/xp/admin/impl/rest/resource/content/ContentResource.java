@@ -502,6 +502,7 @@ public final class ContentResource
             excludedContentIds( excludeContentIds ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
+            pushListener( new PushContentProgressListener( progressReporter ) ).
             build() );
 
         final ContentIds pushedContents = result.getPushedContents();

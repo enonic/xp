@@ -45,6 +45,11 @@ public class CompareContentResults
         return ContentIds.from( compareContentResultsMap.keySet() );
     }
 
+    public int size()
+    {
+        return compareContentResultsMap.size();
+    }
+
     public static final class Builder
     {
         private Set<CompareContentResult> compareResults = Sets.newHashSet();

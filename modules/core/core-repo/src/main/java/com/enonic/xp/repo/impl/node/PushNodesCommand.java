@@ -2,9 +2,11 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
+import com.google.common.util.concurrent.Uninterruptibles;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -19,18 +21,19 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PushNodesCommand
     extends AbstractNodeCommand
@@ -39,11 +42,14 @@ public class PushNodesCommand
 
     private final NodeIds ids;
 
+    private final PushNodesListener pushListener;
+
     private PushNodesCommand( final Builder builder )
     {
         super( builder );
         this.target = builder.target;
         this.ids = builder.ids;
+        this.pushListener = builder.pushListener == null ? this::doNothingPushListener : builder.pushListener;
     }
 
     public static Builder create()
@@ -55,7 +61,6 @@ public class PushNodesCommand
     public PushNodesResult execute()
     {
         final Context context = ContextAccessor.current();
-        final AuthenticationInfo authInfo = context.getAuthInfo();
 
         final NodeBranchEntries nodeBranchEntries = getNodeBranchEntries();
         final NodeComparisons comparisons = getNodeComparisons( nodeBranchEntries );
@@ -87,6 +92,7 @@ public class PushNodesCommand
 
         for ( final NodeBranchEntry branchEntry : list )
         {
+            Uninterruptibles.sleepUninterruptibly( 200, TimeUnit.MILLISECONDS );
             final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
 
             final NodeBranchEntry nodeBranchEntry = nodeBranchEntries.get( comparison.getNodeId() );
@@ -100,18 +106,21 @@ public class PushNodesCommand
             if ( !hasPublishPermission )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ACCESS_DENIED );
+                pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.FAILED );
                 continue;
             }
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
                 builder.addSuccess( nodeBranchEntry );
+                pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.PUSHED );
                 continue;
             }
 
             if ( !targetParentExists( nodeBranchEntry.getNodePath(), builder, context ) )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
+                pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.FAILED );
                 continue;
             }
 
@@ -122,6 +131,7 @@ public class PushNodesCommand
 
             //doPushNode( context, nodeBranchEntry, nodeBranchEntry.getVersionId() );
             builder.addSuccess( nodeBranchEntry );
+            pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.PUSHED );
 
             if ( comparison.getCompareStatus() == CompareStatus.MOVED )
             {
@@ -240,12 +250,18 @@ public class PushNodesCommand
         return targetContext.build();
     }
 
+    private void doNothingPushListener( NodeId nodeId, PushNodesListener.PushResult pushResult )
+    {
+    }
+
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
         private Branch target;
 
         private NodeIds ids;
+
+        private PushNodesListener pushListener;
 
         Builder()
         {
@@ -261,6 +277,12 @@ public class PushNodesCommand
         public Builder ids( final NodeIds nodeIds )
         {
             this.ids = nodeIds;
+            return this;
+        }
+
+        public Builder pushListener( final PushNodesListener pushListener )
+        {
+            this.pushListener = pushListener;
             return this;
         }
 

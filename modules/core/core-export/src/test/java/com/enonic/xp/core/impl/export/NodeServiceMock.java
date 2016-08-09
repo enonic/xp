@@ -46,6 +46,7 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
@@ -161,6 +162,12 @@ class NodeServiceMock
 
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public PushNodesResult push( final NodeIds ids, final Branch target, final PushNodesListener pushListener )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

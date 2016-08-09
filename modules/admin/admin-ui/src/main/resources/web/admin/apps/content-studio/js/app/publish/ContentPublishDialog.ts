@@ -32,11 +32,16 @@ export class ContentPublishDialog extends DependantItemsDialog {
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
 
+    private progressBar: api.ui.ProgressBar;
+
     constructor() {
         super("Publishing Wizard", "Resolving items...", "Other items that will be published");
 
         this.setAutoUpdateTitle(false);
         this.getEl().addClass("publish-dialog");
+
+        this.progressBar = new api.ui.ProgressBar(0);
+        this.getButtonRow().insertChild(this.progressBar, 0);
 
         var publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this));
@@ -253,7 +258,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked())
             .setIds(selectedIds).setExcludedIds(this.excludedIds).sendAndParse().then(
             (taskId: api.task.TaskId) => {
-                this.close();
+                //this.close();
                 this.pollPublishTask(taskId);
 
             }).finally(() => {
@@ -271,19 +276,41 @@ export class ContentPublishDialog extends DependantItemsDialog {
                     return; // task probably expired, stop polling
                 }
 
+                let progress = task.getProgress();
+
                 if (state == api.task.TaskState.FINISHED) {
-                    api.notify.showSuccess(task.getProgress().getInfo());
+                    this.setProgressValue(progress.getCurrent(), progress.getTotal());
+                    api.notify.showSuccess(progress.getInfo());
+                    // this.close();
+
                 } else if (state == api.task.TaskState.FAILED) {
                     api.notify.showWarning('Publishing failed');
+                    this.close();
+
                 } else {
-                    this.pollPublishTask(taskId, 1000);
+                    this.setProgressValue(progress.getCurrent(), progress.getTotal());
+                    this.pollPublishTask(taskId, 500);
                 }
 
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
+                this.close();
             }).done();
 
         }, time);
+    }
+
+    private setProgressValue(current: number, total: number) {
+        if (total <= 0) {
+            this.progressBar.setValue(0);
+            return;
+        }
+        if (current > total) {
+            this.progressBar.setValue(100);
+            return;
+        }
+        let value = Math.round((current / total) * 100);
+        this.progressBar.setValue(value);
     }
 
     protected countTotal(): number {
