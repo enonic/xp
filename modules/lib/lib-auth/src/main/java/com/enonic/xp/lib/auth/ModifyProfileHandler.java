@@ -21,7 +21,7 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
 
-public final class ModifyUserExtraDataHandler
+public final class ModifyProfileHandler
     implements ScriptBean
 {
     private Supplier<SecurityService> securityService;
@@ -39,6 +39,7 @@ public final class ModifyUserExtraDataHandler
 
     public void setNamespace( final String namespace )
     {
+        User.checkNamespace( namespace );
         this.namespace = namespace;
     }
 
@@ -56,22 +57,22 @@ public final class ModifyUserExtraDataHandler
         {
             final UpdateUserParams params = UpdateUserParams.create().
                 userKey( this.key ).
-                editor( this.newUserExtraDataEditor() ).
+                editor( this.newProfileEditor() ).
                 build();
 
             final User updatedUser = this.securityService.get().updateUser( params );
-            final PropertySet updatedUserExtraData = updatedUser.getExtraData( namespace );
+            final PropertySet updatedUserExtraData = updatedUser.getProfile( namespace );
             return updatedUserExtraData == null ? null : new PropertyTreeMapper( updatedUserExtraData.toTree() );
         }
 
         return null;
     }
 
-    private UserEditor newUserExtraDataEditor()
+    private UserEditor newProfileEditor()
     {
         return edit -> {
-            final PropertySet extraData = edit.source.getExtraData( namespace );
-            final PropertyTreeMapper mapper = extraData == null ? null : new PropertyTreeMapper( extraData.toTree() );
+            final PropertySet profile = edit.source.getProfile( namespace );
+            final PropertyTreeMapper mapper = profile == null ? null : new PropertyTreeMapper( profile.toTree() );
             final ScriptValue value = this.editor.call( mapper );
             if ( value != null )
             {
@@ -83,7 +84,7 @@ public final class ModifyUserExtraDataHandler
     private void updateUser( final EditableUser target, final Map<String, Object> map )
     {
         final PropertyTree propertyTree = createPropertyTree( map );
-        target.extraDataMap.put( User.sanitizeNamespace( namespace ), propertyTree == null ? null : propertyTree.getRoot() );
+        target.profileMap.put( namespace, propertyTree == null ? null : propertyTree.getRoot() );
     }
 
     private PropertyTree createPropertyTree( final Map<String, Object> value )

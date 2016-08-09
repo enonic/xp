@@ -2,7 +2,7 @@ var authLib = require('/lib/xp/auth');
 var assert = require('/lib/xp/assert');
 
 // BEGIN
-// Callback to edit the user.
+// Callback to edit the user profile.
 function editor(c) {
     if (!c) {
         c = {};
@@ -11,16 +11,16 @@ function editor(c) {
     return c;
 }
 
-// Modify user extra data
-var userExtraData = authLib.modifyUserExtraData({
+// Modify the profile of user1 for myapp
+var profile = authLib.modifyProfile({
     key: "user:enonic:user1",
-    namespace: "com.enonic.app.myapp",
+    namespace: "myapp",
     editor: editor
 });
 // END
 
 // BEGIN
-// Information about the modified user.
+// Information about the modified profile.
 var expected = {
     "set": {
         "subString": "subStringValue",
@@ -31,4 +31,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, userExtraData);
+assert.assertJsonEquals(expected, profile);

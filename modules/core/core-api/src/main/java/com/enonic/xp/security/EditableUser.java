@@ -27,7 +27,7 @@ public final class EditableUser
 
     public Instant modifiedTime;
 
-    public Map<String, PropertySet> extraDataMap;
+    public Map<String, PropertySet> profileMap;
 
     public EditableUser( final User source )
     {
@@ -39,7 +39,7 @@ public final class EditableUser
         this.loginDisabled = source.isDisabled();
         this.key = source.getKey();
         this.modifiedTime = source.getModifiedTime();
-        this.extraDataMap = Maps.newHashMap( source.getExtraDataMap() );
+        this.profileMap = Maps.newHashMap( source.getProfileMap() );
     }
 
     public User build()
@@ -51,7 +51,7 @@ public final class EditableUser
             authenticationHash( authenticationHash ).
             key( key ).
             modifiedTime( modifiedTime ).
-            putAllExtraDataMap( this.extraDataMap ).
+            putAllProfiles( this.profileMap ).
             build();
     }
 }

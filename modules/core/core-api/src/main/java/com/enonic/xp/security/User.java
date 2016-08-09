@@ -3,6 +3,8 @@ package com.enonic.xp.security;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -35,7 +37,7 @@ public final class User
 
     private final boolean loginDisabled;
 
-    private final ImmutableMap<String, PropertySet> extraDataMap;
+    private final ImmutableMap<String, PropertySet> profileMap;
 
     private User( final Builder builder )
     {
@@ -51,7 +53,7 @@ public final class User
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
-        this.extraDataMap = ImmutableMap.copyOf( builder.extraDataMap );
+        this.profileMap = ImmutableMap.copyOf( builder.profileMap );
     }
 
     public String getEmail()
@@ -74,19 +76,34 @@ public final class User
         return loginDisabled;
     }
 
-    public ImmutableMap<String, PropertySet> getExtraDataMap()
+    public ImmutableMap<String, PropertySet> getProfileMap()
     {
-        return extraDataMap;
+        return profileMap;
     }
 
-    public PropertySet getExtraData( final String namespace )
+    public PropertySet getProfile( final String namespace )
     {
-        return extraDataMap.get( sanitizeNamespace( namespace ) );
+        return profileMap.get( namespace );
     }
 
-    public static String sanitizeNamespace( String namespace )
+    public static void checkNamespace( final String namespace )
     {
-        return namespace.replace( '.', '-' );
+        if ( namespace == null )
+        {
+            throw new NullPointerException( "Namespace name cannot be null" );
+        }
+        if ( StringUtils.isBlank( namespace ) )
+        {
+            throw new IllegalArgumentException( "Namespace name cannot be blank" );
+        }
+        if ( namespace.contains( "." ) )
+        {
+            throw new IllegalArgumentException( "Namespace name cannot contain ." );
+        }
+        if ( namespace.contains( "[" ) || namespace.contains( "]" ) )
+        {
+            throw new IllegalArgumentException( "Namespace name cannot contain [ or ]" );
+        }
     }
 
     public static Builder create()
@@ -110,7 +127,7 @@ public final class User
 
         private boolean loginDisabled;
 
-        private Map<String, PropertySet> extraDataMap = Maps.newHashMap();
+        private Map<String, PropertySet> profileMap = Maps.newHashMap();
 
         private Builder()
         {
@@ -124,7 +141,7 @@ public final class User
             this.login = user.getLogin();
             this.authenticationHash = user.getAuthenticationHash();
             this.loginDisabled = user.isDisabled();
-            this.extraDataMap.putAll( user.extraDataMap );
+            this.profileMap.putAll( user.profileMap );
         }
 
         public Builder login( final String value )
@@ -145,16 +162,17 @@ public final class User
             return this;
         }
 
-        public Builder putExtraData( final String namespace, PropertySet extraData )
+        public Builder putProfile( final String namespace, PropertySet profile )
         {
-            this.extraDataMap.put( sanitizeNamespace( namespace ), extraData );
+            checkNamespace( namespace );
+            this.profileMap.put( namespace, profile );
             return this;
         }
 
-        public Builder putAllExtraDataMap( final Map<String, PropertySet> extraDataMap )
+        public Builder putAllProfiles( final Map<String, PropertySet> profileMap )
         {
-            extraDataMap.entrySet().
-                forEach( entry -> this.putExtraData( entry.getKey(), entry.getValue() ) );
+            profileMap.entrySet().
+                forEach( entry -> this.putProfile( entry.getKey(), entry.getValue() ) );
             return this;
         }
 
@@ -177,7 +195,7 @@ public final class User
                 Objects.equals( authenticationHash, other.authenticationHash ) &&
                 Objects.equals( login, other.login ) &&
                 Objects.equals( loginDisabled, other.loginDisabled ) &&
-                Objects.equals( ImmutableMap.copyOf( extraDataMap ), other.extraDataMap );
+                Objects.equals( ImmutableMap.copyOf( profileMap ), other.profileMap );
 
         }
 

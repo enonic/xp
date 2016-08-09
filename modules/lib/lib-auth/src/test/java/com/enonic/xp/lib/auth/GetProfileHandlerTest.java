@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
-public class GetUserExtraDataHandlerTest
+public class GetProfileHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -28,7 +28,7 @@ public class GetUserExtraDataHandlerTest
         Mockito.when( securityService.getUser( Mockito.any() ) ).
             thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
 
-        runScript( "/site/lib/xp/examples/auth/getUserExtraData.js" );
+        runScript( "/site/lib/xp/examples/auth/getProfile.js" );
     }
 
     @Test
@@ -37,6 +37,6 @@ public class GetUserExtraDataHandlerTest
         Mockito.when( securityService.getUser( Mockito.any() ) ).
             thenReturn( Optional.of( TestDataFixtures.getTestUser2() ) );
 
-        runFunction( "/site/test/getUserExtraData-test.js", "noExtraData" );
+        runFunction( "/site/test/getProfile-test.js", "noProfile" );
     }
 }

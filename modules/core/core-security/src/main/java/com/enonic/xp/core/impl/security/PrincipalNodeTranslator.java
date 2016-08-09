@@ -229,19 +229,19 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
-        populateUserExtraDataMap( data, user );
+        populateProfileMap( data, user );
     }
 
-    private static void populateUserExtraDataMap( final PropertySet data, final User user )
+    private static void populateProfileMap( final PropertySet data, final User user )
     {
-        final PropertySet dataExtraDataMap = data.hasProperty( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY )
-            ? data.getSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY )
-            : data.addSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY );
+        final PropertySet profileMap = data.hasProperty( PrincipalPropertyNames.PROFILE_MAP_KEY )
+            ? data.getSet( PrincipalPropertyNames.PROFILE_MAP_KEY )
+            : data.addSet( PrincipalPropertyNames.PROFILE_MAP_KEY );
 
-        user.getExtraDataMap().
+        user.getProfileMap().
             entrySet().
             forEach( entry -> {
-                dataExtraDataMap.setSet( entry.getKey(), entry.getValue() );
+                profileMap.setSet( entry.getKey(), entry.getValue() );
             } );
     }
 
@@ -268,19 +268,19 @@ abstract class PrincipalNodeTranslator
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
             authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) );
 
-        extractUserExtraDataMap( nodeAsTree, user );
+        extractProfileMap( nodeAsTree, user );
 
         return user.build();
     }
 
-    private static void extractUserExtraDataMap( final PropertyTree nodeAsTree, final User.Builder user )
+    private static void extractProfileMap( final PropertyTree nodeAsTree, final User.Builder user )
     {
-        final PropertySet nodeExtraDataMap = nodeAsTree.getSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY );
-        if ( nodeExtraDataMap != null )
+        final PropertySet nodeProfileMap = nodeAsTree.getSet( PrincipalPropertyNames.PROFILE_MAP_KEY );
+        if ( nodeProfileMap != null )
         {
-            for ( String nodeExtraDataNamespace : nodeExtraDataMap.getPropertyNames() )
+            for ( String nodeProfileNamespace : nodeProfileMap.getPropertyNames() )
             {
-                user.putExtraData( nodeExtraDataNamespace, nodeExtraDataMap.getSet( nodeExtraDataNamespace ) );
+                user.putProfile( nodeProfileNamespace, nodeProfileMap.getSet( nodeProfileNamespace ) );
             }
         }
     }

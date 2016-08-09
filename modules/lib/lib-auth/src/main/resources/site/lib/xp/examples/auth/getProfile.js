@@ -2,15 +2,15 @@ var authLib = require('/lib/xp/auth');
 var assert = require('/lib/xp/assert');
 
 // BEGIN
-// Returns the current loggedin user.
-var userExtraData = authLib.getUserExtraData({
+// Returns the profile of user1 for myapp
+var profile = authLib.getProfile({
     key: "user:enonic:user1",
-    namespace: "com.enonic.app.myapp"
+    namespace: "myapp"
 });
 // END
 
 // BEGIN
-// Information when retrieving a user.
+// Information when retrieving a profile.
 var expected = {
     "set": {
         "subString": "subStringValue",
@@ -20,4 +20,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, userExtraData);
+assert.assertJsonEquals(expected, profile);

@@ -331,7 +331,7 @@ exports.getIdProviderConfig = function () {
 };
 
 /**
- * This function retrieves the extra data stored on a user for a specific scope .
+ * This function retrieves the profile of a user for a specific scope .
  *
  * @example-ref examples/auth/getUserExtraData.js
  *
@@ -340,8 +340,8 @@ exports.getIdProviderConfig = function () {
  * @param {string} params.namespace Namespace of the extra data.
  * @returns {object} The extra data as JSON
  */
-exports.getUserExtraData = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.auth.GetUserExtraDataHandler');
+exports.getProfile = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetProfileHandler');
 
     bean.key = __.nullOrValue(params.key);
     bean.namespace = __.nullOrValue(params.namespace);
@@ -350,7 +350,7 @@ exports.getUserExtraData = function (params) {
 };
 
 /**
- * This function retrieves the extra data stored on a user for a specific scope and updates it.
+ * This function retrieves the profile of a user for a specific scope and updates it.
  *
  * @example-ref examples/auth/getUserExtraData.js
  *
@@ -360,8 +360,8 @@ exports.getUserExtraData = function (params) {
  * @param {function} params.editor User extra data editor function to apply.
  * @returns {object} The extra data as JSON
  */
-exports.modifyUserExtraData = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.auth.ModifyUserExtraDataHandler');
+exports.modifyProfile = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.ModifyProfileHandler');
 
     bean.key = __.nullOrValue(params.key);
     bean.namespace = __.nullOrValue(params.namespace);

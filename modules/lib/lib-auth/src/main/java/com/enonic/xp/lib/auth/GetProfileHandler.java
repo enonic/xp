@@ -11,7 +11,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
-public final class GetUserExtraDataHandler
+public final class GetProfileHandler
     implements ScriptBean
 {
     private Supplier<SecurityService> securityService;
@@ -37,11 +37,11 @@ public final class GetUserExtraDataHandler
 
         if ( user.isPresent() )
         {
-            final PropertySet extraData = user.get().
-                getExtraData( this.namespace );
-            if ( extraData != null )
+            final PropertySet profile = user.get().
+                getProfile( this.namespace );
+            if ( profile != null )
             {
-                return new PropertyTreeMapper( extraData.toTree() );
+                return new PropertyTreeMapper( profile.toTree() );
             }
         }
 
