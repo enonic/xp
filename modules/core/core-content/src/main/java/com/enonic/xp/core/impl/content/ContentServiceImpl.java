@@ -325,6 +325,7 @@ public class ContentServiceImpl
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
+            pushListener( params.getPushContentListener() ).
             build().
             execute();
     }
@@ -635,12 +636,12 @@ public class ContentServiceImpl
         final Context context = ContextAccessor.current();
 
         return CompletableFuture.supplyAsync( () -> {
-            // set current context as background thread context
-            final Context futureContext = ContextBuilder.from( context ).build();
+                                                  // set current context as background thread context
+                                                  final Context futureContext = ContextBuilder.from( context ).build();
 
-            return futureContext.callWith( applyPermissionsCommand::execute );
+                                                  return futureContext.callWith( applyPermissionsCommand::execute );
 
-        }, applyPermissionsExecutor );
+                                              }, applyPermissionsExecutor );
     }
 
     @Override

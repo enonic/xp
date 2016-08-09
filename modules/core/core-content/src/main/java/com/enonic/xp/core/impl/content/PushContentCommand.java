@@ -2,9 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 
@@ -14,19 +11,22 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 
 public class PushContentCommand
     extends AbstractContentCommand
+    implements PushNodesListener
 {
-    private final static Logger LOG = LoggerFactory.getLogger( PushContentCommand.class );
+    private final static PushContentListener NULL_LISTENER = new NullPushContentListener();
 
     private final ContentIds contentIds;
 
@@ -40,6 +40,8 @@ public class PushContentCommand
 
     private final boolean includeChildren;
 
+    private final PushContentListener pushContentListener;
+
     private PushContentCommand( final Builder builder )
     {
         super( builder );
@@ -49,6 +51,7 @@ public class PushContentCommand
         this.resolveSyncWork = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
+        this.pushContentListener = builder.pushContentListener == null ? NULL_LISTENER : builder.pushContentListener;
     }
 
     public static Builder create()
@@ -62,19 +65,22 @@ public class PushContentCommand
 
         this.nodeService.refresh( RefreshMode.ALL );
 
+        final CompareContentResults results;
         if ( resolveSyncWork )
         {
-            pushAndDelete( getSyncWork() );
+            results = getSyncWork();
         }
         else
         {
-            pushAndDelete( CompareContentsCommand.create().
+            results = CompareContentsCommand.create().
                 contentIds( this.contentIds ).
                 nodeService( this.nodeService ).
                 target( this.target ).
                 build().
-                execute() );
+                execute();
         }
+        pushContentListener.contentResolved( results.size() );
+        pushAndDelete( results );
 
         timer.stop();
 
@@ -155,7 +161,7 @@ public class PushContentCommand
         }
 
         final Stopwatch nodeServicePushTimer = Stopwatch.createStarted();
-        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
+        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
         System.out.println( "nodeService.push: " + nodeServicePushTimer.stop().toString() );
 
         this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
@@ -163,23 +169,38 @@ public class PushContentCommand
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
-        this.resultBuilder.setDeleted( ContentNodeHelper.toContentIds( NodeIds.from( nodeIdsToDelete ) ) );
+        final ContentIds deletedContents = ContentNodeHelper.toContentIds( NodeIds.from( nodeIdsToDelete ) );
+        this.resultBuilder.setDeleted( deletedContents );
 
         final Context currentContext = ContextAccessor.current();
         deleteNodesInContext( nodeIdsToDelete, currentContext );
         deleteNodesInContext( nodeIdsToDelete, ContextBuilder.from( currentContext ).
             branch( target ).
             build() );
+
+        for ( ContentId contentId : deletedContents )
+        {
+            pushContentListener.contentPushed( contentId, PushContentListener.PushResult.DELETED );
+        }
     }
 
     private void deleteNodesInContext( final NodeIds nodeIds, final Context context )
     {
-        context.callWith( () -> {
-            nodeIds.forEach( nodeService::deleteById );
-            return null;
-        } );
+        context.callWith( () ->
+                          {
+                              nodeIds.forEach( nodeService::deleteById );
+                              return null;
+                          } );
     }
 
+    @Override
+    public void nodePushed( final NodeId nodeId, final PushResult result )
+    {
+        final ContentId contentId = ContentId.from( nodeId.toString() );
+        final PushContentListener.PushResult pushResult =
+            result == PushResult.FAILED ? PushContentListener.PushResult.FAILED : PushContentListener.PushResult.PUSHED;
+        pushContentListener.contentPushed( contentId, pushResult );
+    }
 
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
@@ -193,6 +214,8 @@ public class PushContentCommand
         private boolean includeDependencies = true;
 
         private boolean includeChildren = true;
+
+        private PushContentListener pushContentListener;
 
         public Builder contentIds( final ContentIds contentIds )
         {
@@ -224,6 +247,12 @@ public class PushContentCommand
             return this;
         }
 
+        public Builder pushListener( final PushContentListener pushContentListener )
+        {
+            this.pushContentListener = pushContentListener;
+            return this;
+        }
+
         @Override
         void validate()
         {
@@ -238,5 +267,23 @@ public class PushContentCommand
             return new PushContentCommand( this );
         }
 
+    }
+
+    private static class NullPushContentListener
+        implements PushContentListener
+    {
+        private NullPushContentListener()
+        {
+        }
+
+        @Override
+        public void contentPushed( final ContentId contentId, final PushResult result )
+        {
+        }
+
+        @Override
+        public void contentResolved( final int count )
+        {
+        }
     }
 }
