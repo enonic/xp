@@ -99,7 +99,7 @@ final class ImageHandlerWorker
             orientation( imageOrientation ).
             build();
 
-        final ByteSource source = this.imageService.readImage( readImageParams );
+        final ByteSource source = "svg".equals( format ) ? binary : this.imageService.readImage( readImageParams );
 
         final PortalResponse.Builder portalResponse = PortalResponse.create().
             body( source ).
