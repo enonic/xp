@@ -56,9 +56,6 @@ export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
                 this.previousValidation = event.getRecording();
                 this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
             });
-
-            var formViewValid = this.formView.isValid();
-            this.notifyValidityChanged(new WizardStepValidityChangedEvent(formViewValid));
         });
     }
 

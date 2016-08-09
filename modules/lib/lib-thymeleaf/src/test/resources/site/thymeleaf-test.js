@@ -47,7 +47,7 @@ exports.testExternalFragment = function () {
 exports.testDate = function () {
     var view = resolve('view/date.html');
     var result = thymeleaf.render(view, {
-        date: new Date(Date.parse('1995-11-12T22:24:25'))
+        date: new Date(Date.parse('1995-11-12T22:24:25Z'))
     });
 
     assertHtmlEquals('view/date-result.html', result);

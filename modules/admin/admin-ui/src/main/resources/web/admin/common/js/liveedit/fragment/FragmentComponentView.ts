@@ -4,7 +4,7 @@ module api.liveedit.fragment {
     import ContentView = api.liveedit.ContentView;
     import RegionView = api.liveedit.RegionView;
     import FragmentComponent = api.content.page.region.FragmentComponent;
-    import GetContentByIdRequest = api.content.GetContentByIdRequest;
+    import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
     import Content = api.content.Content;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
 

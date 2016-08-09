@@ -1,6 +1,5 @@
 module api.content.form.inputtype.image {
 
-    import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import ContentSummary = api.content.ContentSummary;
     import UploadItem = api.ui.uploader.UploadItem;
 
@@ -63,7 +62,7 @@ module api.content.form.inputtype.image {
         }
 
         getImageUrl(): string {
-            return this.content ? new ContentIconUrlResolver().setContent(this.content).resolve() : null;
+            return this.content ? new api.content.util.ContentIconUrlResolver().setContent(this.content).resolve() : null;
         }
 
         getLabel(): string {

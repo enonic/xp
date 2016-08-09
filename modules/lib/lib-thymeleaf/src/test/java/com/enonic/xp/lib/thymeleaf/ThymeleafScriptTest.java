@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.thymeleaf;
 
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
@@ -17,6 +18,14 @@ public class ThymeleafScriptTest
     public String getScriptTestFile()
     {
         return "/site/thymeleaf-test.js";
+    }
+
+    @Override
+    protected void initialize()
+        throws Exception
+    {
+        super.initialize();
+        TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
     }
 
     private void assertHtmlEquals( final String expectedHtml, final String actualHtml )

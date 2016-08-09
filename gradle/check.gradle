@@ -4,7 +4,7 @@ def javaVersion = new com.enonic.gradle.JavaVersion()
 assert javaVersion.java8: "Must use a Java 8 compatible JVM to perform this build. Current JVM is ${javaVersion}."
 
 // Check java update
-assert javaVersion.update >= 40: "Must compile using 1.8 update 40 and above. Current JVM is ${javaVersion}."
+assert javaVersion.update >= 92: "Must compile using 1.8 update 92 and above. Current JVM is ${javaVersion}."
 
 // Check gradle version
 assert gradle.gradleVersion =~ "2\\..+": "Gradle version must be 2.x. Current version is ${gradle.gradleVersion}."

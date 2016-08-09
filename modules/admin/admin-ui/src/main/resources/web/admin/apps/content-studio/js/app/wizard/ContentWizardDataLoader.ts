@@ -61,42 +61,42 @@ export class ContentWizardDataLoader {
 
     private loadDataForEdit(params: ContentWizardPanelParams): wemQ.Promise<ContentWizardDataLoader> {
 
-        return this.loadContent(params.contentSummary).then((loadedContent: Content) => {
+        let sitePromise = this.loadSite(params.contentSummary.getContentId()).then((loadedSite: Site) => {
+
+            this.siteContent = loadedSite;
+
+            return this.loadDefaultModels(this.siteContent, params.contentSummary.getType()).then((defaultModels) => {
+                this.defaultModels = defaultModels;
+            });
+        });
+
+        let contentPromise = this.loadContent(params.contentSummary).then((loadedContent: Content) => {
 
             this.content = loadedContent;
 
             let parentPromise = this.loadParentContent(params, false);
             let typePromise = this.loadContentType(this.content.getType());
-            let statusPromise = api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(this.content);
-            let siteAndModelsPromise = this.loadSite(this.content.getContentId()).then((loadedSite: Site) => {
+            let statusPromise = api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(this.content);
 
-                if (!!loadedSite) {
-                    this.siteContent = loadedSite;
+            return wemQ.all([parentPromise, typePromise, statusPromise]).spread((parentContent, contentType, compareStatus) => {
+                this.parentContent = parentContent;
+                this.contentType = contentType;
+                if (compareStatus) {
+                    this.compareStatus = compareStatus.getCompareStatus();
                 }
-                return this.loadDefaultModels(this.siteContent, this.content.getType());
-
             });
-
-            return wemQ.all([parentPromise, typePromise, statusPromise, siteAndModelsPromise]);
-
-        }).spread((parentContent, contentType, compareStatus, defaultModels) => {
-
-            this.parentContent = parentContent;
-            this.contentType = contentType;
-            if (compareStatus) {
-                this.compareStatus = compareStatus.getCompareStatus();
-            }
-            this.defaultModels = defaultModels;
-
-            return this;
         });
+
+        return wemQ.all([sitePromise, contentPromise]).then(() => {
+            return this;
+        })
     }
 
     private loadContent(summary: ContentSummary): wemQ.Promise<Content> {
         if (api.ObjectHelper.iFrameSafeInstanceOf(summary, Content)) {
             return wemQ(<Content> summary);
         } else {
-            return new api.content.GetContentByIdRequest(summary.getContentId()).sendAndParse();
+            return new api.content.resource.GetContentByIdRequest(summary.getContentId()).sendAndParse();
         }
     }
 
@@ -113,7 +113,7 @@ export class ContentWizardDataLoader {
     }
 
     private loadSite(contentId: ContentId): wemQ.Promise<Site> {
-        return contentId ? new api.content.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Site>(null);
+        return contentId ? new api.content.resource.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Site>(null);
     }
 
     private loadDefaultModels(site: Site, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
@@ -145,7 +145,7 @@ export class ContentWizardDataLoader {
             return wemQ<Content>(null);
         }
 
-        return new api.content.GetContentByPathRequest(this.content.getPath().getParentPath()).sendAndParse();
+        return new api.content.resource.GetContentByPathRequest(this.content.getPath().getParentPath()).sendAndParse();
     }
 
 }

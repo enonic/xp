@@ -61,7 +61,7 @@ module api.content {
 
         resolveIconUrl(object: ContentSummaryAndCompareStatus): string {
             var contentSummary = object.getContentSummary();
-            return !!contentSummary ? new ContentIconUrlResolver().setContent(contentSummary).resolve() : "";
+            return !!contentSummary ? new api.content.util.ContentIconUrlResolver().setContent(contentSummary).resolve() : "";
         }
     }
 }

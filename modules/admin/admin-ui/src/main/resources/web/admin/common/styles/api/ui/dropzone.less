@@ -138,8 +138,22 @@
         font-size: 25px;
         text-align: center;
         content: 'Drop image here!';
+        margin-left: 0px;
       }
     }
+  }
+}
+
+.image-dialog-dropcircle() {
+  &:before {
+    .dropcircle(60px);
+    padding: 40px 5px 0;
+    line-height: 20px;
+    z-index: @z-index-modal-dialog;
+    font-size: 14px;
+    text-align: center;
+    content: 'Drop image here!';
+    margin-left: 0px;
   }
 }
 

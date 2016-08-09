@@ -79,13 +79,13 @@ module api.content.event {
                         d.contentId)));
 
                 this.handleContentDeleted(deletedItems);
-                ContentSummaryAndCompareStatusFetcher.fetchByPaths(unpublishedItems.map(item => item.getPath()))
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByPaths(unpublishedItems.map(item => item.getPath()))
                     .then((summaries) => {
                         this.handleContentUnpublished(summaries);
                     });
 
             } else {
-                ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractContentPaths(changes, useNewPaths))
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractContentPaths(changes, useNewPaths))
                     .then((summaries) => {
                         if (ContentServerEventsHandler.debug) {
                             console.debug("ContentServerEventsHandler: fetched summaries", summaries);

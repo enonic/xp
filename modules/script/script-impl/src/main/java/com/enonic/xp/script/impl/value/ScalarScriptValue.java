@@ -7,7 +7,7 @@ final class ScalarScriptValue
 {
     private final Object value;
 
-    public ScalarScriptValue( final Object value )
+    ScalarScriptValue( final Object value )
     {
         this.value = value;
     }

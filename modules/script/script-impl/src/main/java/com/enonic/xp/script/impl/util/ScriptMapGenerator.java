@@ -2,19 +2,27 @@ package com.enonic.xp.script.impl.util;
 
 import com.enonic.xp.script.serializer.MapGeneratorBase;
 
-public final class ScriptMapGenerator
+final class ScriptMapGenerator
     extends MapGeneratorBase
 {
+    private final JavascriptHelper helper;
+
+    ScriptMapGenerator( final JavascriptHelper helper )
+    {
+        this.helper = helper;
+        initRoot();
+    }
+
     @Override
     protected Object newMap()
     {
-        return NashornHelper.newNativeObject();
+        return this.helper.newJsObject();
     }
 
     @Override
     protected Object newArray()
     {
-        return NashornHelper.newNativeArray();
+        return this.helper.newJsArray();
     }
 
     @Override

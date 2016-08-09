@@ -6,20 +6,22 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.enonic.xp.script.impl.value.JsObjectConverter;
 import com.enonic.xp.util.Exceptions;
 
 final class LogArgConverter
 {
     private final ObjectMapper mapper;
 
-    public LogArgConverter()
+    private final JsObjectConverter converter;
+
+    LogArgConverter( final JavascriptHelper helper )
     {
         this.mapper = new ObjectMapper();
         this.mapper.disable( SerializationFeature.INDENT_OUTPUT );
+        this.converter = new JsObjectConverter( helper );
     }
 
-    public Object[] convertArgs( final Object[] args )
+    Object[] convertArgs( final Object[] args )
     {
         final Object[] target = new Object[args.length];
         for ( int i = 0; i < args.length; i++ )
@@ -37,7 +39,7 @@ final class LogArgConverter
             return null;
         }
 
-        final Object result = JsObjectConverter.fromJs( arg );
+        final Object result = this.converter.fromJs( arg );
         if ( result instanceof Map )
         {
             return toJson( result );

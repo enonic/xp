@@ -79,6 +79,17 @@
     .modal-dialog-margin-mixin();
   }
 
+  &._0-240, &._240-360, &._360-540 {
+    .dialog-content {
+      div.input-view.invalid + div.validation-viewer {
+        padding-left: 11px;
+      }
+      .form-view.display-validation-errors .input-view label + .input-wrapper {
+        margin-left: 0;
+      }
+    }
+  }
+
   .image-preview {
     label {
       display: none;

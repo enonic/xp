@@ -210,7 +210,7 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final DeleteContentsResult deletedContents = this.contentService.delete( deleteContentParams );
+        final DeleteContentsResult deletedContents = this.contentService.deleteWithoutFetch( deleteContentParams );
         assertNotNull( deletedContents );
         assertEquals( 4, deletedContents.getPendingContents().getSize() );
 
@@ -267,7 +267,7 @@ public class ContentServiceImplTest_delete
         refresh();
 
         //Deletes the root content
-        final DeleteContentsResult deletedContents = this.contentService.delete( DeleteContentParams.create().
+        final DeleteContentsResult deletedContents = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( parent.getPath() ).
             build() );
 
@@ -317,12 +317,12 @@ public class ContentServiceImplTest_delete
 
         //Deletes the content
         final DeleteContentsResult deletedContents =
-            this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+            this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
         assertNotNull( deletedContents );
         assertEquals( 1, deletedContents.getDeletedContents().getSize() );
 
         final DeleteContentsResult deletedOther = CTX_OTHER.callWith(
-            () -> this.contentService.delete( DeleteContentParams.create().contentPath( contentOther.getPath() ).build() ) );
+            () -> this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( contentOther.getPath() ).build() ) );
 
         assertNotNull( deletedOther );
         assertEquals( 1, deletedOther.getDeletedContents().getSize() );

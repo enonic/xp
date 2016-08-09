@@ -10,7 +10,7 @@ module api.util.htmlarea.editor {
 
         private static getConvertedImageSrc(imgSrc:string):string {
             var contentId = imgSrc.replace(ImageModalDialog.imagePrefix, api.util.StringHelper.EMPTY_STRING),
-                imageUrl = new api.content.ContentImageUrlResolver().
+                imageUrl = new api.content.util.ContentImageUrlResolver().
                     setContentId(new api.content.ContentId(contentId)).
                     setScaleWidth(true).
                     setSize(ImageModalDialog.maxImageWidth).

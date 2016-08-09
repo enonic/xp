@@ -6,10 +6,8 @@ module api.content.form.inputtype.upload {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
-    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
     import UploaderEl = api.ui.uploader.UploaderEl
     import FileUploaderEl = api.ui.uploader.FileUploaderEl;
-
 
     export class FileUploader extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 

@@ -8,7 +8,7 @@ describe("api.ui.time.CalendarDayTest", function () {
         it("given date 2014-01-01 then WEDNESDAY should be returned", function () {
 
             var calendarDay = new CalendarDayBuilder().
-                setDate(api.util.DateHelper.newUTCDate(2014, 0, 1)).
+                setDate(new Date(Date.UTC(2014, 0, 1))).
                 setMonth(0).
                 build();
 
@@ -18,7 +18,7 @@ describe("api.ui.time.CalendarDayTest", function () {
         it("given date 2014-12-31 then WEDNESDAY should be returned", function () {
 
             var calendarDay = new CalendarDayBuilder().
-                setDate(api.util.DateHelper.newUTCDate(2014, 11, 31)).
+                setDate(new Date(Date.UTC(2014, 11, 31))).
                 setMonth(11).
                 build();
 

@@ -98,7 +98,7 @@ function addLongClickHandler(container) {
     var toolWindows = [];
     
     var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
-    for (let i = 0; i < appTiles.length; i++) {
+    for (var i = 0; i < appTiles.length; i++) {
         appTiles[i].addEventListener("click", function (e) {
             if (window.CONFIG.appId == e.currentTarget.getAttribute("data-id") && window.CONFIG.appId == "home") {
                 e.preventDefault();

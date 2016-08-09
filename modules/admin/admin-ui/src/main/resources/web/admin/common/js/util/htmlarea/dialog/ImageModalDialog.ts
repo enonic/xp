@@ -17,7 +17,7 @@ module api.util.htmlarea.dialog {
 
         private imagePreviewContainer: api.dom.DivEl;
         private imageCaptionField: FormItem;
-        private imageUploaderEl: api.content.ImageUploaderEl;
+        private imageUploaderEl: api.content.image.ImageUploaderEl;
         private imageElement: HTMLImageElement;
         private content: api.content.ContentSummary;
         private imageSelector: api.content.ContentComboBox;
@@ -55,19 +55,25 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageSelector(id: string): FormItem {
-            let loader = new api.content.ContentSummaryLoader();
+            let loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(this.content.getPath());
 
-            let imageSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
+            let imageSelector = api.content.ContentComboBox.create().
+                    setLoader(loader).
+                    setMaximumOccurrences(1).
+                    build(),
+
                 formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>imageSelector),
                 imageSelectorComboBox = imageSelector.getComboBox();
+
+            imageSelector.getComboBox().getInput().setPlaceholder("Type to search or drop image here...");
 
             this.imageSelector = imageSelector;
 
             formItem.addClass("image-selector");
 
-            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE]);
+            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE, api.schema.content.ContentTypeName.MEDIA_VECTOR]);
 
             if (this.imageElement) {
                 var singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
@@ -204,7 +210,8 @@ module api.util.htmlarea.dialog {
         }
 
         private generateDefaultImgSrc(contentId): string {
-            return new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(true).setSize(
+            return new api.content.util.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(
+                true).setSize(
                 ImageModalDialog.maxImageWidth).resolve();
         }
 
@@ -261,12 +268,12 @@ module api.util.htmlarea.dialog {
             }
         }
 
-        private createImageUploader(): api.content.ImageUploaderEl {
-            var uploader = new api.content.ImageUploaderEl({
+        private createImageUploader(): api.content.image.ImageUploaderEl {
+            var uploader = new api.content.image.ImageUploaderEl({
                 params: {
                     parent: this.content.getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.create,
+                operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showResult: false,
                 maximumOccurrences: 1,
@@ -275,6 +282,8 @@ module api.util.htmlarea.dialog {
                 showCancel: false,
                 selfIsDropzone: false
             });
+
+            uploader.addDropzone(this.imageSelector.getId());
 
             uploader.hide();
 
@@ -372,7 +381,7 @@ module api.util.htmlarea.dialog {
             api.util.htmlarea.editor.HTMLAreaHelper.updateImageParentAlignment(this.image.getHTMLElement());
             this.setImageWidthConstraint();
 
-            var img = this.callback(figure.getHTMLElement().outerHTML);
+            var img = this.callback(figure.getHTMLElement());
             api.util.htmlarea.editor.HTMLAreaHelper.changeImageParentAlignmentOnImageAlignmentChange(img);
         }
 

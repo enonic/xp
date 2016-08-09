@@ -35,9 +35,9 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
         var groupsLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP]);
         var rolesLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.ROLE]).skipPrincipals([RoleKeys.EVERYONE]);
 
-        this.groups = new PrincipalComboBox(groupsLoader);
+        this.groups = PrincipalComboBox.create().setLoader(groupsLoader).build();
         groupsLoader.load();
-        this.roles = new PrincipalComboBox(rolesLoader);
+        this.roles = PrincipalComboBox.create().setLoader(rolesLoader).build();
         rolesLoader.load();
 
         var groupsHandler = () => {

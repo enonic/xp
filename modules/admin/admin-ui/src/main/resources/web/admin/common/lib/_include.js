@@ -28,4 +28,5 @@
 // =include tinymce/plugins/paste/plugin.js
 // =include tinymce/plugins/charmap/plugin.js
 // =include tinymce/plugins/code/plugin.js
+// =include tinymce/plugins/fullscreen/plugin.js
 // =include bower_components/webcomponentsjs/webcomponents-lite.min.js

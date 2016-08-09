@@ -9,7 +9,7 @@ import com.google.common.io.ByteSource;
 public abstract class MapGeneratorBase
     implements MapGenerator
 {
-    private final Object root;
+    private Object root;
 
     private final Stack<Object> stack;
 
@@ -17,8 +17,12 @@ public abstract class MapGeneratorBase
 
     public MapGeneratorBase()
     {
-        this.root = newMap();
         this.stack = new Stack<>();
+    }
+
+    protected void initRoot()
+    {
+        this.root = newMap();
         this.current = this.root;
     }
 

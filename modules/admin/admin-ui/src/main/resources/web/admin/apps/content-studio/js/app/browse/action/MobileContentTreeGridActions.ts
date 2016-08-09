@@ -1,4 +1,12 @@
 import "../../../api.ts";
+import {ContentTreeGrid} from "../ContentTreeGrid";
+import {ShowNewContentDialogAction} from "./ShowNewContentDialogAction";
+import {EditContentAction} from "./EditContentAction";
+import {DeleteContentAction} from "./DeleteContentAction";
+import {DuplicateContentAction} from "./DuplicateContentAction";
+import {MoveContentAction} from "./MoveContentAction";
+import {SortContentAction} from "./SortContentAction";
+import {PublishContentAction} from "./PublishContentAction";
 
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -8,14 +16,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import Content = api.content.Content;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import AccessControlList = api.security.acl.AccessControlList;
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {ShowNewContentDialogAction} from "./ShowNewContentDialogAction";
-import {EditContentAction} from "./EditContentAction";
-import {DeleteContentAction} from "./DeleteContentAction";
-import {DuplicateContentAction} from "./DuplicateContentAction";
-import {MoveContentAction} from "./MoveContentAction";
-import {SortContentAction} from "./SortContentAction";
-import {PublishContentAction} from "./PublishContentAction";
 
 export class MobileContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -86,7 +86,7 @@ export class MobileContentTreeGridActions implements TreeGridActions<ContentSumm
                         this.SORT_CONTENT.setEnabled(allowsChildren);
                         var hasCreatePermission = false;
                         new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-                            new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).sendAndParse().then(
+                            new api.content.resource.GetContentPermissionsByIdRequest(contentSummary.getContentId()).sendAndParse().then(
                                 (accessControlList: AccessControlList) => {
                                     hasCreatePermission =
                                         this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);

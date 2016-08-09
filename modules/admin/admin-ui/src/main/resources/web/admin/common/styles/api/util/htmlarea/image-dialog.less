@@ -53,6 +53,19 @@
     &.invalid .preview-panel-scroll-navigation-wrapper {
         display: none;
     }
+
+    // styling for when image is dragged over
+    .content-combo-box.dz-dragover {
+      .image-dialog-dropcircle();
+      .hide-inputs-placeholder();
+      input {
+        .box-shadow(0px 0px 5px @admin-input-blue);
+        border: 1px solid @admin-input-blue;
+      }
+      button.@{_COMMON_PREFIX}dropdown-handle {
+        display: none;
+      }
+    }
   }
 
   .form-view {
