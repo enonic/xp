@@ -2,11 +2,9 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.util.concurrent.Uninterruptibles;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -92,7 +90,6 @@ public class PushNodesCommand
 
         for ( final NodeBranchEntry branchEntry : list )
         {
-            Uninterruptibles.sleepUninterruptibly( 200, TimeUnit.MILLISECONDS );
             final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
 
             final NodeBranchEntry nodeBranchEntry = nodeBranchEntries.get( comparison.getNodeId() );
