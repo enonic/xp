@@ -333,7 +333,7 @@ exports.getIdProviderConfig = function () {
 /**
  * This function retrieves the profile of a user for a specific scope .
  *
- * @example-ref examples/auth/getUserExtraData.js
+ * @example-ref examples/auth/getProfile.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user.
@@ -352,7 +352,7 @@ exports.getProfile = function (params) {
 /**
  * This function retrieves the profile of a user for a specific scope and updates it.
  *
- * @example-ref examples/auth/getUserExtraData.js
+ * @example-ref examples/auth/modifyProfile.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user.

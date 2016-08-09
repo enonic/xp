@@ -61,8 +61,8 @@ public final class ModifyProfileHandler
                 build();
 
             final User updatedUser = this.securityService.get().updateUser( params );
-            final PropertySet updatedUserExtraData = updatedUser.getProfile( namespace );
-            return updatedUserExtraData == null ? null : new PropertyTreeMapper( updatedUserExtraData.toTree() );
+            final PropertySet updatedProfile = updatedUser.getProfile( namespace );
+            return updatedProfile == null ? null : new PropertyTreeMapper( updatedProfile.toTree() );
         }
 
         return null;
