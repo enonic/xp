@@ -18,7 +18,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
     private viewedContent: Content;
 
-    private updateContentRequestProducer: {(content: Content, viewedContent: Content) : api.content.UpdateContentRequest; };
+    private updateContentRequestProducer: {(content: Content, viewedContent: Content): api.content.resource.UpdateContentRequest; };
 
     private doneHandledContent = false;
 
@@ -31,7 +31,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
     }
 
     public setUpdateContentRequestProducer(producer: {(content: Content,
-                                                       viewedContent: Content) : api.content.UpdateContentRequest; }): UpdatePersistedContentRoutine {
+                                                       viewedContent: Content): api.content.resource.UpdateContentRequest; }): UpdatePersistedContentRoutine {
         this.updateContentRequestProducer = producer;
         return this;
     }

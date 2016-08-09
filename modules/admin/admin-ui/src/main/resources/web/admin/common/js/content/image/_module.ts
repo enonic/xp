@@ -1,1 +1,2 @@
-///<reference path='ImageContentDataFactory.ts' />
+///<reference path='ImageUploaderEl.ts' />
+///<reference path='ImageErrorEvent.ts' />

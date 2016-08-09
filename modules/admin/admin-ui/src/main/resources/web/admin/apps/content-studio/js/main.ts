@@ -131,12 +131,12 @@ function startApplication() {
             ? event.getParentContent().getContentSummary() : null;
 
         if (parentContent != null) {
-            new api.content.GetContentByIdRequest(parentContent.getContentId()).sendAndParse().then(
+            new api.content.resource.GetContentByIdRequest(parentContent.getContentId()).sendAndParse().then(
                 (newParentContent: api.content.Content) => {
 
                     // TODO: remove pyramid of doom
                     if (parentContent.hasParent() && parentContent.getType().isTemplateFolder()) {
-                        new api.content.GetContentByPathRequest(parentContent.getPath().getParentPath()).sendAndParse().then(
+                        new api.content.resource.GetContentByPathRequest(parentContent.getPath().getParentPath()).sendAndParse().then(
                             (grandParent: api.content.Content) => {
 
                                 newContentDialog.setParentContent(newParentContent);

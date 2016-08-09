@@ -103,7 +103,7 @@ module api.content {
             extraData = extraData.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
             otherMeta = otherMeta.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
 
-            var comparator = new api.content.ExtraDataByMixinNameComparator();
+            var comparator = new api.content.util.ExtraDataByMixinNameComparator();
             return api.ObjectHelper.arrayEquals(extraData.sort(comparator.compare), otherMeta.sort(comparator.compare));
         }
 
@@ -133,7 +133,7 @@ module api.content {
                     return false;
                 }
             } else {
-                var comparator = new api.content.ExtraDataByMixinNameComparator();
+                var comparator = new api.content.util.ExtraDataByMixinNameComparator();
                 if (!api.ObjectHelper.arrayEquals(this.extraData.sort(comparator.compare), other.extraData.sort(comparator.compare))) {
                     return false;
                 }
