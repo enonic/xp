@@ -172,19 +172,19 @@ public final class ContentIconResource
 
     private static class ResolveIconParams
     {
-        public ContentId id;
+        private ContentId id;
 
-        public BinaryReference binaryReference;
+        private BinaryReference binaryReference;
 
-        public ImageOrientation imageOrientation;
+        private ImageOrientation imageOrientation;
 
-        public Cropping cropping;
+        private Cropping cropping;
 
-        public String mimeType;
+        private String mimeType;
 
-        public Integer size;
+        private Integer size;
 
-        public Boolean crop;
+        private Boolean crop;
 
         public ResolveIconParams setId( final ContentId id )
         {
