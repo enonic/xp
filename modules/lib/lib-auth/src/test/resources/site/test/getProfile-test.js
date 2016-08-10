@@ -6,6 +6,5 @@ exports.noProfile = function () {
         key: "user:enonic:user1",
         scope: "myapp"
     });
-    //assert.assertNull('Profile not null', result);
-    assert.assertJsonEquals({}, result);
+    assert.assertNull('Profile not null', result);
 };
