@@ -199,11 +199,19 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private initListeners() {
 
-        this.onDataLoaded(() => {
+        let shownAndLoadedHandler = () => {
             if (this.getPersistedItem()) {
                 Router.setHash("edit/" + this.getPersistedItem().getId());
             } else {
                 Router.setHash("new/" + this.contentType.getName());
+            }
+        };
+
+        this.onShown(() => {
+            if (this.isDataLoaded()) {
+                shownAndLoadedHandler();
+            } else {
+                this.onDataLoaded(shownAndLoadedHandler);
             }
         });
 

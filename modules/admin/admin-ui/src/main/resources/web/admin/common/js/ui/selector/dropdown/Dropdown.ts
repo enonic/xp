@@ -119,8 +119,8 @@ module api.ui.selector.dropdown {
             });
         }
 
-        getInput(): DropdownOptionFilterInput {
-            return this.input;
+        isValid(): boolean {
+            return this.input.isValid();
         }
 
         setEmptyDropdownText(label: string) {
