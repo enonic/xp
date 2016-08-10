@@ -46,6 +46,11 @@ public final class TaskInfo
         return state == TaskState.RUNNING;
     }
 
+    public boolean isDone()
+    {
+        return state == TaskState.FINISHED || state == TaskState.FAILED;
+    }
+
     public TaskProgress getProgress()
     {
         return progress;

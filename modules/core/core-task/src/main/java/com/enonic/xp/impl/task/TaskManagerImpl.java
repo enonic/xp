@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.task;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +32,7 @@ import static java.util.stream.Collectors.toList;
 public final class TaskManagerImpl
     implements TaskManager
 {
-    private final static long KEEP_COMPLETED_MAX_TIME_SEC = 60;
+    final static long KEEP_COMPLETED_MAX_TIME_SEC = 60;
 
     private final ExecutorService executorService;
 
@@ -39,11 +40,14 @@ public final class TaskManagerImpl
 
     private Supplier<TaskId> idGen;
 
+    private Clock clock;
+
     public TaskManagerImpl()
     {
         executorService = Executors.newCachedThreadPool();
         tasks = new ConcurrentHashMap<>();
         idGen = this::newId;
+        clock = Clock.systemUTC();
 
         scheduleCleanup();
     }
@@ -66,7 +70,7 @@ public final class TaskManagerImpl
             build();
 
         final TaskContext taskContext = TaskContext.create().
-            submitTime( Instant.now() ).
+            submitTime( Instant.now( clock ) ).
             taskInfo( info ).
             build();
 
@@ -146,20 +150,27 @@ public final class TaskManagerImpl
         }
         final TaskInfo taskInfo = ctx.getTaskInfo();
         final TaskInfo updatedInfo = taskInfo.copy().state( newState ).build();
-        final Instant doneTime = newState == FAILED || newState == FINISHED ? Instant.now() : null;
+        final Instant doneTime = newState == FAILED || newState == FINISHED ? Instant.now( clock ) : null;
         final TaskContext updatedCtx = ctx.copy().taskInfo( updatedInfo ).doneTime( doneTime ).build();
         tasks.put( taskId, updatedCtx );
     }
 
-    private void removeExpiredTasks()
+    void removeExpiredTasks()
     {
-        final Instant now = Instant.now();
+        final Instant now = Instant.now( clock );
         for ( TaskContext taskCtx : tasks.values() )
         {
-            if ( !taskCtx.getTaskInfo().isRunning() && taskCtx.getDoneTime().until( now, SECONDS ) > KEEP_COMPLETED_MAX_TIME_SEC )
+            System.out.println( taskCtx.getDoneTime() );
+            if ( taskCtx.getTaskInfo().isDone() && taskCtx.getDoneTime() != null &&
+                taskCtx.getDoneTime().until( now, SECONDS ) > KEEP_COMPLETED_MAX_TIME_SEC )
             {
                 tasks.remove( taskCtx.getTaskInfo().getId() );
             }
         }
+    }
+
+    void setClock( final Clock clock )
+    {
+        this.clock = clock;
     }
 }

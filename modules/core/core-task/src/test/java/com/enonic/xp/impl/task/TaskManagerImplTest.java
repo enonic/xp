@@ -1,5 +1,10 @@
 package com.enonic.xp.impl.task;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -89,4 +94,36 @@ public class TaskManagerImplTest
 
     }
 
+    @Test
+    public void testRemoveExpiredTasks()
+        throws InterruptedException
+    {
+        Instant initTime = Instant.now();
+        taskMan.setClock( Clock.fixed( initTime, ZoneId.systemDefault() ) );
+
+        CountDownLatch latch = new CountDownLatch( 1 );
+        RunnableTask runnableTask = ( id, progressReporter ) ->
+        {
+            Uninterruptibles.sleepUninterruptibly( 100, TimeUnit.MILLISECONDS );
+            latch.countDown();
+        };
+
+        TaskId taskId = taskMan.submitTask( runnableTask, "task 1" );
+        taskMan.removeExpiredTasks();
+
+        assertNotNull( taskMan.getTaskInfo( taskId ) );
+        assertEquals( 1, taskMan.getAllTasks().size() );
+        assertEquals( 1, taskMan.getRunningTasks().size() );
+
+        latch.await();
+        Uninterruptibles.sleepUninterruptibly( 100, TimeUnit.MILLISECONDS );
+
+        Instant laterTime = initTime.plus( TaskManagerImpl.KEEP_COMPLETED_MAX_TIME_SEC + 1, ChronoUnit.SECONDS );
+        taskMan.setClock( Clock.fixed( laterTime, ZoneId.systemDefault() ) );
+        taskMan.removeExpiredTasks();
+
+        assertNull( taskMan.getTaskInfo( taskId ) );
+        assertEquals( 0, taskMan.getAllTasks().size() );
+        assertEquals( 0, taskMan.getRunningTasks().size() );
+    }
 }
