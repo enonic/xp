@@ -97,7 +97,7 @@
   }
 
   .xp-about-dialog-text {
-    font-size: 14px;
+    font-size: 13px;
     text-align: justify;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -124,7 +124,31 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  .dialog-header h2 {
+    font-size: 26px;
+  }
+
+  &._0-240, &._240-360, &._360-540 {
+    height: calc(~'100% - 60px');
+    top: 0px;
+    z-index: 2502;
+    max-height: none;
+    margin-top: 0px !important;
+  }
+
+  @media screen and (max-height: 472px) {
+    height: calc(~'100% - 60px');
+    top: 0px;
+    z-index: 2502;
+    max-height: none;
+    margin-top: 0px !important;
+  }
+
+
   .dialog-content {
+    overflow: auto;
+    max-height: calc(~'100% - 85px');
+
     .subtitle {
       padding: 10px;
       color: @admin-white;
@@ -144,7 +168,7 @@
 
     img {
       float: left;
-      height: 200px;
+      height: 196px;
     }
 
     a {
@@ -167,20 +191,20 @@
 
     .step-1 {
       img {
-        margin-right: 35px;
+        margin-right: 10px;
       }
     }
 
     .step-2 {
       img {
         float: right;
-        margin-left: 35px;
+        margin-left: 10px;
       }
     }
 
     .step-3 {
       img {
-        margin-right: 35px;
+        margin-right: 10px;
         box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
         0px 2px 3px 0px rgba(0, 0, 0, 0.5);
       }
@@ -189,7 +213,7 @@
     .step-4 {
       img {
         float: right;
-        margin-left: 35px;
+        margin-left: 10px;
         box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
         0px 2px 3px 0px rgba(0, 0, 0, 0.5);
       }
