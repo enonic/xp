@@ -23,6 +23,10 @@ module api.application {
         }
 
         resolveSubName(object: Application, relativePath: boolean = false): string {
+            if (object.getDescription()) {
+                return object.getDescription();
+            }
+            
             return object.getName();
         }
 

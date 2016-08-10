@@ -51,6 +51,10 @@ module api.content.site.inputtype.siteconfigurator {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());
             }
 
+            if (this.application.getDescription()) {
+                namesAndIconView.setSubName(this.application.getDescription());
+            }
+
             header.appendChild(namesAndIconView);
 
             var removeButton = new api.dom.AEl("remove-button icon-close");
