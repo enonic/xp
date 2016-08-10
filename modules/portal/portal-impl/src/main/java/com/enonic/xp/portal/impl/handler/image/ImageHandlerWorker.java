@@ -86,24 +86,30 @@ final class ImageHandlerWorker
         final String format = getFormat( this.name, mimeType );
         final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
 
-        final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-            contentId( this.contentId ).
-            binaryReference( attachment.getBinaryReference() ).
-            cropping( imageContent.getCropping() ).
-            scaleParams( this.scaleParams ).
-            focalPoint( imageContent.getFocalPoint() ).
-            filterParam( this.filterParam ).
-            backgroundColor( getBackgroundColor() ).
-            format( format ).
-            quality( getImageQuality() ).
-            orientation( imageOrientation ).
-            build();
-
-        final ByteSource source = this.imageService.readImage( readImageParams );
-
         final PortalResponse.Builder portalResponse = PortalResponse.create().
-            body( source ).
             contentType( MediaType.parse( mimeType ) );
+
+        if ( !"svg".equals( format ) )
+        {
+            final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+                contentId( this.contentId ).
+                binaryReference( attachment.getBinaryReference() ).
+                cropping( imageContent.getCropping() ).
+                scaleParams( this.scaleParams ).
+                focalPoint( imageContent.getFocalPoint() ).
+                filterParam( this.filterParam ).
+                backgroundColor( getBackgroundColor() ).
+                format( format ).
+                quality( getImageQuality() ).
+                orientation( imageOrientation ).
+                build();
+
+            portalResponse.body( this.imageService.readImage( readImageParams ) );
+        }
+        else
+        {
+            portalResponse.body( binary );
+        }
 
         if ( cacheable )
         {
