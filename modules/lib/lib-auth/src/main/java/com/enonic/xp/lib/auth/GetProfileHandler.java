@@ -3,7 +3,7 @@ package com.enonic.xp.lib.auth;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -18,16 +18,16 @@ public final class GetProfileHandler
 
     private PrincipalKey key;
 
-    private String namespace;
+    private String scope;
 
     public void setKey( final String key )
     {
         this.key = PrincipalKey.from( key );
     }
 
-    public void setNamespace( final String namespace )
+    public void setScope( final String scope )
     {
-        this.namespace = namespace;
+        this.scope = scope;
     }
 
     public PropertyTreeMapper execute()
@@ -37,11 +37,13 @@ public final class GetProfileHandler
 
         if ( user.isPresent() )
         {
-            final PropertySet profile = user.get().
-                getProfile( this.namespace );
+            final PropertyTree profile = user.get().getProfile();
             if ( profile != null )
             {
-                return new PropertyTreeMapper( profile.toTree() );
+                return new PropertyTreeMapper( profile );
+
+                //TODO
+                //return scope == null ? new PropertyTreeMapper( profile ) : new PropertyMapper( profile.getProperty( scope ) );
             }
         }
 

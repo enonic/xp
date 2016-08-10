@@ -20,5 +20,5 @@ final class PrincipalPropertyNames
 
     public static final String DESCRIPTION_KEY = "description";
 
-    public static final String PROFILE_MAP_KEY = "profile";
+    public static final String PROFILE_KEY = "profile";
 }

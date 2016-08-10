@@ -1,17 +1,12 @@
 package com.enonic.xp.security;
 
-import java.util.Map;
 import java.util.Objects;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
-import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -37,7 +32,7 @@ public final class User
 
     private final boolean loginDisabled;
 
-    private final ImmutableMap<String, PropertySet> profileMap;
+    private final PropertyTree profile;
 
     private User( final Builder builder )
     {
@@ -53,7 +48,7 @@ public final class User
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
-        this.profileMap = ImmutableMap.copyOf( builder.profileMap );
+        this.profile = builder.profile;
     }
 
     public String getEmail()
@@ -76,34 +71,9 @@ public final class User
         return loginDisabled;
     }
 
-    public ImmutableMap<String, PropertySet> getProfileMap()
+    public PropertyTree getProfile()
     {
-        return profileMap;
-    }
-
-    public PropertySet getProfile( final String namespace )
-    {
-        return profileMap.get( namespace );
-    }
-
-    public static void checkNamespace( final String namespace )
-    {
-        if ( namespace == null )
-        {
-            throw new NullPointerException( "Namespace name cannot be null" );
-        }
-        if ( StringUtils.isBlank( namespace ) )
-        {
-            throw new IllegalArgumentException( "Namespace name cannot be blank" );
-        }
-        if ( namespace.contains( "." ) )
-        {
-            throw new IllegalArgumentException( "Namespace name cannot contain ." );
-        }
-        if ( namespace.contains( "[" ) || namespace.contains( "]" ) )
-        {
-            throw new IllegalArgumentException( "Namespace name cannot contain [ or ]" );
-        }
+        return profile;
     }
 
     public static Builder create()
@@ -127,11 +97,12 @@ public final class User
 
         private boolean loginDisabled;
 
-        private Map<String, PropertySet> profileMap = Maps.newHashMap();
+        private PropertyTree profile;
 
         private Builder()
         {
             super();
+            this.profile = new PropertyTree();
         }
 
         private Builder( final User user )
@@ -141,7 +112,7 @@ public final class User
             this.login = user.getLogin();
             this.authenticationHash = user.getAuthenticationHash();
             this.loginDisabled = user.isDisabled();
-            this.profileMap.putAll( user.profileMap );
+            this.profile = user.profile == null ? new PropertyTree() : user.profile.copy();
         }
 
         public Builder login( final String value )
@@ -162,17 +133,9 @@ public final class User
             return this;
         }
 
-        public Builder putProfile( final String namespace, PropertySet profile )
+        public Builder profile( final PropertyTree profile )
         {
-            checkNamespace( namespace );
-            this.profileMap.put( namespace, profile );
-            return this;
-        }
-
-        public Builder putAllProfiles( final Map<String, PropertySet> profileMap )
-        {
-            profileMap.entrySet().
-                forEach( entry -> this.putProfile( entry.getKey(), entry.getValue() ) );
+            this.profile = profile;
             return this;
         }
 
@@ -195,7 +158,7 @@ public final class User
                 Objects.equals( authenticationHash, other.authenticationHash ) &&
                 Objects.equals( login, other.login ) &&
                 Objects.equals( loginDisabled, other.loginDisabled ) &&
-                Objects.equals( ImmutableMap.copyOf( profileMap ), other.profileMap );
+                Objects.equals( profile, other.profile );
 
         }
 

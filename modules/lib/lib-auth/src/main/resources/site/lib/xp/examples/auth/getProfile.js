@@ -5,14 +5,14 @@ var assert = require('/lib/xp/assert');
 // Returns the profile of user1 for myapp
 var profile = authLib.getProfile({
     key: "user:enonic:user1",
-    namespace: "myapp"
+    scope: "myapp"
 });
 // END
 
 // BEGIN
 // Information when retrieving a profile.
 var expected = {
-    "set": {
+    "myApp": {
         "subString": "subStringValue",
         "subLong": 123
     },

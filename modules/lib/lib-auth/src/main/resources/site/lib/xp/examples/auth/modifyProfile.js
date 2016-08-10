@@ -14,7 +14,7 @@ function editor(c) {
 // Modify the profile of user1 for myapp
 var profile = authLib.modifyProfile({
     key: "user:enonic:user1",
-    namespace: "myapp",
+    scope: "myapp",
     editor: editor
 });
 // END
@@ -22,7 +22,7 @@ var profile = authLib.modifyProfile({
 // BEGIN
 // Information about the modified profile.
 var expected = {
-    "set": {
+    "myApp": {
         "subString": "subStringValue",
         "subLong": 123
     },

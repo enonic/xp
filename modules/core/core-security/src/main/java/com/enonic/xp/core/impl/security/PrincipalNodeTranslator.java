@@ -229,20 +229,12 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
-        populateProfileMap( data, user );
+        populateProfile( data, user );
     }
 
-    private static void populateProfileMap( final PropertySet data, final User user )
+    private static void populateProfile( final PropertySet data, final User user )
     {
-        final PropertySet profileMap = data.hasProperty( PrincipalPropertyNames.PROFILE_MAP_KEY )
-            ? data.getSet( PrincipalPropertyNames.PROFILE_MAP_KEY )
-            : data.addSet( PrincipalPropertyNames.PROFILE_MAP_KEY );
-
-        user.getProfileMap().
-            entrySet().
-            forEach( entry -> {
-                profileMap.setSet( entry.getKey(), entry.getValue() );
-            } );
+        data.setSet( PrincipalPropertyNames.PROFILE_KEY, user.getProfile().getRoot() );
     }
 
     private static void populateRoleData( final PropertySet data, final Role role )
@@ -268,21 +260,16 @@ abstract class PrincipalNodeTranslator
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
             authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) );
 
-        extractProfileMap( nodeAsTree, user );
+        extractProfile( nodeAsTree, user );
 
         return user.build();
     }
 
-    private static void extractProfileMap( final PropertyTree nodeAsTree, final User.Builder user )
+    private static void extractProfile( final PropertyTree nodeAsTree, final User.Builder user )
     {
-        final PropertySet nodeProfileMap = nodeAsTree.getSet( PrincipalPropertyNames.PROFILE_MAP_KEY );
-        if ( nodeProfileMap != null )
-        {
-            for ( String nodeProfileNamespace : nodeProfileMap.getPropertyNames() )
-            {
-                user.putProfile( nodeProfileNamespace, nodeProfileMap.getSet( nodeProfileNamespace ) );
-            }
-        }
+        final PropertySet nodeProfile = nodeAsTree.getSet( PrincipalPropertyNames.PROFILE_KEY );
+        final PropertyTree profile = nodeProfile == null ? new PropertyTree() : nodeProfile.toTree();
+        user.profile( profile );
     }
 
     private static Group createGroupFromNode( final Node node )

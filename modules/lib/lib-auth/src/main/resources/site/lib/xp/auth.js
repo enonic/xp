@@ -331,40 +331,40 @@ exports.getIdProviderConfig = function () {
 };
 
 /**
- * This function retrieves the profile of a user for a specific scope .
+ * This function retrieves the profile of a user.
  *
  * @example-ref examples/auth/getProfile.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user.
- * @param {string} params.namespace Namespace of the extra data.
+ * @param {string} [params.scope] Scope of the data to retrieve.
  * @returns {object} The extra data as JSON
  */
 exports.getProfile = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetProfileHandler');
 
     bean.key = __.nullOrValue(params.key);
-    bean.namespace = __.nullOrValue(params.namespace);
+    bean.scope = __.nullOrValue(params.scope);
 
     return __.toNativeObject(bean.execute());
 };
 
 /**
- * This function retrieves the profile of a user for a specific scope and updates it.
+ * This function retrieves the profile of a user and updates it.
  *
  * @example-ref examples/auth/modifyProfile.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user.
- * @param {string} params.namespace Namespace of the extra data.
- * @param {function} params.editor User extra data editor function to apply.
+ * @param {string} [params.scope] Scope of the data to retrieve and update.
+ * @param {function} params.editor Profile editor function to apply.
  * @returns {object} The extra data as JSON
  */
 exports.modifyProfile = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyProfileHandler');
 
     bean.key = __.nullOrValue(params.key);
-    bean.namespace = __.nullOrValue(params.namespace);
+    bean.scope = __.nullOrValue(params.scope);
     bean.editor = __.toScriptValue(required(params, 'editor'));
 
     return __.toNativeObject(bean.execute());

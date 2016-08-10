@@ -1,12 +1,10 @@
 package com.enonic.xp.security;
 
 import java.time.Instant;
-import java.util.Map;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Maps;
 
-import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 
 @Beta
 public final class EditableUser
@@ -27,7 +25,7 @@ public final class EditableUser
 
     public Instant modifiedTime;
 
-    public Map<String, PropertySet> profileMap;
+    public PropertyTree profile;
 
     public EditableUser( final User source )
     {
@@ -39,7 +37,7 @@ public final class EditableUser
         this.loginDisabled = source.isDisabled();
         this.key = source.getKey();
         this.modifiedTime = source.getModifiedTime();
-        this.profileMap = Maps.newHashMap( source.getProfileMap() );
+        this.profile = source.getProfile().copy();
     }
 
     public User build()
@@ -51,7 +49,7 @@ public final class EditableUser
             authenticationHash( authenticationHash ).
             key( key ).
             modifiedTime( modifiedTime ).
-            putAllProfiles( this.profileMap ).
+            profile( profile ).
             build();
     }
 }

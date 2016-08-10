@@ -4,7 +4,8 @@ var auth = require('/lib/xp/auth.js');
 exports.noProfile = function () {
     var result = auth.getProfile({
         key: "user:enonic:user1",
-        namespace: "com.enonic.app.myapp"
+        scope: "myapp"
     });
-    assert.assertNull('Profile not null', result);
+    //assert.assertNull('Profile not null', result);
+    assert.assertJsonEquals({}, result);
 };

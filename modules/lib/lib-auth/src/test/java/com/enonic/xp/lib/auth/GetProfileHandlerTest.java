@@ -32,7 +32,7 @@ public class GetProfileHandlerTest
     }
 
     @Test
-    public void testNoExtraData()
+    public void testNoProfile()
     {
         Mockito.when( securityService.getUser( Mockito.any() ) ).
             thenReturn( Optional.of( TestDataFixtures.getTestUser2() ) );
