@@ -29,6 +29,7 @@ module api.util.htmlarea.dialog {
         private imageToolbar: ImageToolbar;
         private imagePreviewScrollHandler: ImagePreviewScrollHandler;
         private imageLoadMask: api.ui.mask.LoadMask;
+        private dropzoneContainer: api.ui.uploader.DropzoneContainer;
 
         static imagePrefix = "image://";
         static maxImageWidth = 640;
@@ -128,6 +129,7 @@ module api.util.htmlarea.dialog {
             var imageSelectorContainer = imageSelector.getInput().getParentElement();
 
             imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
+            this.initDragAndDropUploaderEvents();
 
             this.createImagePreviewContainer();
 
@@ -283,7 +285,11 @@ module api.util.htmlarea.dialog {
                 selfIsDropzone: false
             });
 
-            uploader.addDropzone(this.imageSelector.getId());
+            this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
+            this.dropzoneContainer.hide();
+            this.appendChild(this.dropzoneContainer);
+
+            uploader.addDropzone(this.dropzoneContainer.getDropzone().getId());
 
             uploader.hide();
 
@@ -312,6 +318,23 @@ module api.util.htmlarea.dialog {
             });
 
             return uploader;
+        }
+
+        private initDragAndDropUploaderEvents() {
+            var dragOverEl;
+            this.onDragEnter((event: DragEvent) => {
+                if (this.imageUploaderEl.isEnabled()) {
+                    var target = <HTMLElement> event.target;
+
+                    if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+                        this.dropzoneContainer.show();
+                    }
+                    dragOverEl = target;
+                }
+            });
+
+            this.imageUploaderEl.onDropzoneDragLeave(() => this.dropzoneContainer.hide());
+            this.imageUploaderEl.onDropzoneDrop(() => this.dropzoneContainer.hide());
         }
 
         private setProgress(value: number) {

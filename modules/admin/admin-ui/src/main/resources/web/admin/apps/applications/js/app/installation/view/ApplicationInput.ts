@@ -32,7 +32,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             allowDrop: true,
             showResult: false,
             allowMultiSelection: true,
-            deferred: true,  // wait till it's shown
+            deferred: false,
             value: originalValue,
             showCancel: false
         });
