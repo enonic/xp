@@ -109,9 +109,16 @@ public final class SecurityServiceImpl
 
     private final SecureRandom secureRandom = new SecureRandom();
 
+    private static final String SU_PASSWORD_KEY = "xp.suPassword";
+
+    private String suPassword;
+
     @Activate
     public void initialize()
     {
+        this.suPassword = Strings.emptyToNull( System.getProperty( SU_PASSWORD_KEY ) );
+        this.suPassword = this.suPassword == null ? null : this.suPassword.trim();
+
         if ( indexService.isMaster() )
         {
             new SecurityInitializer( this, this.nodeService ).initialize();
@@ -391,6 +398,29 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
     {
+        if ( UserStoreKey.system().equals( token.getUserStore() ) && SecurityInitializer.SUPER_USER.getId().equals( token.getUsername() ) )
+        {
+            if ( this.suPassword != null )
+            {
+                if ( this.suPassword.equals( token.getPassword() ) )
+                {
+                    final User admin = User.create().
+                        key( SecurityInitializer.SUPER_USER ).
+                        login( "su" ).
+                        displayName( "Super User" ).
+                        build();
+                    return AuthenticationInfo.create().
+                        principals( RoleKeys.ADMIN, RoleKeys.ADMIN_LOGIN ).
+                        user( admin ).
+                        build();
+                }
+                else
+                {
+                    return AuthenticationInfo.unAuthenticated();
+                }
+            }
+        }
+
         final User user = findByUsername( token.getUserStore(), token.getUsername() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
