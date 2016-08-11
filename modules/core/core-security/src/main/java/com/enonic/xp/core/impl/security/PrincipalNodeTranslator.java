@@ -229,20 +229,12 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
-        populateUserExtraDataMap( data, user );
+        populateProfile( data, user );
     }
 
-    private static void populateUserExtraDataMap( final PropertySet data, final User user )
+    private static void populateProfile( final PropertySet data, final User user )
     {
-        final PropertySet dataExtraDataMap = data.hasProperty( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY )
-            ? data.getSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY )
-            : data.addSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY );
-
-        user.getExtraDataMap().
-            entrySet().
-            forEach( entry -> {
-                dataExtraDataMap.setSet( entry.getKey(), entry.getValue() );
-            } );
+        data.setSet( PrincipalPropertyNames.PROFILE_KEY, user.getProfile().getRoot() );
     }
 
     private static void populateRoleData( final PropertySet data, final Role role )
@@ -268,21 +260,16 @@ abstract class PrincipalNodeTranslator
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
             authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) );
 
-        extractUserExtraDataMap( nodeAsTree, user );
+        extractProfile( nodeAsTree, user );
 
         return user.build();
     }
 
-    private static void extractUserExtraDataMap( final PropertyTree nodeAsTree, final User.Builder user )
+    private static void extractProfile( final PropertyTree nodeAsTree, final User.Builder user )
     {
-        final PropertySet nodeExtraDataMap = nodeAsTree.getSet( PrincipalPropertyNames.EXTRA_DATA_MAP_KEY );
-        if ( nodeExtraDataMap != null )
-        {
-            for ( String nodeExtraDataNamespace : nodeExtraDataMap.getPropertyNames() )
-            {
-                user.putExtraData( nodeExtraDataNamespace, nodeExtraDataMap.getSet( nodeExtraDataNamespace ) );
-            }
-        }
+        final PropertySet nodeProfile = nodeAsTree.getSet( PrincipalPropertyNames.PROFILE_KEY );
+        final PropertyTree profile = nodeProfile == null ? new PropertyTree() : nodeProfile.toTree();
+        user.profile( profile );
     }
 
     private static Group createGroupFromNode( final Node node )

@@ -31,21 +31,21 @@ public class TestDataFixtures
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
             login( "user1" ).
-            putExtraData( "com.enonic.app.myapp", getTestExtraData() ).
+            profile( getProfile() ).
             build();
     }
 
-    private static PropertySet getTestExtraData()
+    private static PropertyTree getProfile()
     {
-        final PropertySet subPropertySet = new PropertySet();
-        subPropertySet.setString( "subString", "subStringValue" );
-        subPropertySet.setLong( "subLong", 123l );
+        final PropertySet appPropertySet = new PropertySet();
+        appPropertySet.setString( "subString", "subStringValue" );
+        appPropertySet.setLong( "subLong", 123l );
 
-        final PropertySet propertySet = new PropertySet();
-        propertySet.setSet( "set", subPropertySet );
-        propertySet.setString( "string", "stringValue" );
+        final PropertyTree profile = new PropertyTree();
+        profile.setSet( "myApp", appPropertySet );
+        profile.setString( "string", "stringValue" );
 
-        return propertySet;
+        return profile;
     }
 
     public static User getTestUser2()

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -11,23 +12,23 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
-public final class GetUserExtraDataHandler
+public final class GetProfileHandler
     implements ScriptBean
 {
     private Supplier<SecurityService> securityService;
 
     private PrincipalKey key;
 
-    private String namespace;
+    private String scope;
 
     public void setKey( final String key )
     {
         this.key = PrincipalKey.from( key );
     }
 
-    public void setNamespace( final String namespace )
+    public void setScope( final String scope )
     {
-        this.namespace = namespace;
+        this.scope = scope;
     }
 
     public PropertyTreeMapper execute()
@@ -37,11 +38,18 @@ public final class GetUserExtraDataHandler
 
         if ( user.isPresent() )
         {
-            final PropertySet extraData = user.get().
-                getExtraData( this.namespace );
-            if ( extraData != null )
+            final PropertyTree profile = user.get().getProfile();
+            if ( profile != null )
             {
-                return new PropertyTreeMapper( extraData.toTree() );
+                if ( scope == null )
+                {
+                    return new PropertyTreeMapper( profile );
+                }
+                else
+                {
+                    final PropertySet scopedProfile = profile.getSet( scope );
+                    return scopedProfile == null ? null : new PropertyTreeMapper( scopedProfile.toTree() );
+                }
             }
         }
 

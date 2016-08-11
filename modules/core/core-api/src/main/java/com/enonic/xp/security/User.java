@@ -1,15 +1,12 @@
 package com.enonic.xp.security;
 
-import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
-import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -35,7 +32,7 @@ public final class User
 
     private final boolean loginDisabled;
 
-    private final ImmutableMap<String, PropertySet> extraDataMap;
+    private final PropertyTree profile;
 
     private User( final Builder builder )
     {
@@ -51,7 +48,7 @@ public final class User
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
-        this.extraDataMap = ImmutableMap.copyOf( builder.extraDataMap );
+        this.profile = builder.profile;
     }
 
     public String getEmail()
@@ -74,19 +71,9 @@ public final class User
         return loginDisabled;
     }
 
-    public ImmutableMap<String, PropertySet> getExtraDataMap()
+    public PropertyTree getProfile()
     {
-        return extraDataMap;
-    }
-
-    public PropertySet getExtraData( final String namespace )
-    {
-        return extraDataMap.get( sanitizeNamespace( namespace ) );
-    }
-
-    public static String sanitizeNamespace( String namespace )
-    {
-        return namespace.replace( '.', '-' );
+        return profile;
     }
 
     public static Builder create()
@@ -110,11 +97,12 @@ public final class User
 
         private boolean loginDisabled;
 
-        private Map<String, PropertySet> extraDataMap = Maps.newHashMap();
+        private PropertyTree profile;
 
         private Builder()
         {
             super();
+            this.profile = new PropertyTree();
         }
 
         private Builder( final User user )
@@ -124,7 +112,7 @@ public final class User
             this.login = user.getLogin();
             this.authenticationHash = user.getAuthenticationHash();
             this.loginDisabled = user.isDisabled();
-            this.extraDataMap.putAll( user.extraDataMap );
+            this.profile = user.profile == null ? new PropertyTree() : user.profile.copy();
         }
 
         public Builder login( final String value )
@@ -145,16 +133,9 @@ public final class User
             return this;
         }
 
-        public Builder putExtraData( final String namespace, PropertySet extraData )
+        public Builder profile( final PropertyTree profile )
         {
-            this.extraDataMap.put( sanitizeNamespace( namespace ), extraData );
-            return this;
-        }
-
-        public Builder putAllExtraDataMap( final Map<String, PropertySet> extraDataMap )
-        {
-            extraDataMap.entrySet().
-                forEach( entry -> this.putExtraData( entry.getKey(), entry.getValue() ) );
+            this.profile = profile;
             return this;
         }
 
@@ -177,7 +158,7 @@ public final class User
                 Objects.equals( authenticationHash, other.authenticationHash ) &&
                 Objects.equals( login, other.login ) &&
                 Objects.equals( loginDisabled, other.loginDisabled ) &&
-                Objects.equals( ImmutableMap.copyOf( extraDataMap ), other.extraDataMap );
+                Objects.equals( profile, other.profile );
 
         }
 

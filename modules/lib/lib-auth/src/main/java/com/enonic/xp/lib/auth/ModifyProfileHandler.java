@@ -21,14 +21,14 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
 
-public final class ModifyUserExtraDataHandler
+public final class ModifyProfileHandler
     implements ScriptBean
 {
     private Supplier<SecurityService> securityService;
 
     private PrincipalKey key;
 
-    private String namespace;
+    private String scope;
 
     private ScriptValue editor;
 
@@ -37,9 +37,9 @@ public final class ModifyUserExtraDataHandler
         this.key = PrincipalKey.from( key );
     }
 
-    public void setNamespace( final String namespace )
+    public void setScope( final String scope )
     {
-        this.namespace = namespace;
+        this.scope = scope;
     }
 
     public void setEditor( final ScriptValue editor )
@@ -56,34 +56,67 @@ public final class ModifyUserExtraDataHandler
         {
             final UpdateUserParams params = UpdateUserParams.create().
                 userKey( this.key ).
-                editor( this.newUserExtraDataEditor() ).
+                editor( this.newProfileEditor() ).
                 build();
 
             final User updatedUser = this.securityService.get().updateUser( params );
-            final PropertySet updatedUserExtraData = updatedUser.getExtraData( namespace );
-            return updatedUserExtraData == null ? null : new PropertyTreeMapper( updatedUserExtraData.toTree() );
+            final PropertyTree updatedProfile = updatedUser.getProfile();
+            return createPropertyTreeMapper( updatedProfile );
         }
 
         return null;
     }
 
-    private UserEditor newUserExtraDataEditor()
+    private UserEditor newProfileEditor()
     {
         return edit -> {
-            final PropertySet extraData = edit.source.getExtraData( namespace );
-            final PropertyTreeMapper mapper = extraData == null ? null : new PropertyTreeMapper( extraData.toTree() );
-            final ScriptValue value = this.editor.call( mapper );
-            if ( value != null )
-            {
-                updateUser( edit, value.getMap() );
-            }
+            final PropertyTree profile = edit.source.getProfile();
+            final PropertyTreeMapper mapper = createPropertyTreeMapper( profile );
+            final ScriptValue scriptValue = this.editor.call( mapper );
+            updateUser( edit, scriptValue );
         };
     }
 
-    private void updateUser( final EditableUser target, final Map<String, Object> map )
+    private PropertyTreeMapper createPropertyTreeMapper( PropertyTree profile )
     {
+        if ( profile == null )
+        {
+            return null;
+        }
+
+        if ( this.scope == null )
+        {
+            return new PropertyTreeMapper( profile );
+        }
+        else
+        {
+            final PropertySet scopedProfile = profile.getSet( scope );
+            return scopedProfile == null ? null : new PropertyTreeMapper( scopedProfile.toTree() );
+        }
+    }
+
+    private void updateUser( final EditableUser target, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            if ( scope != null )
+            {
+                target.profile.removeProperty( scope );
+            }
+            return;
+        }
+
+        final Map<String, Object> map = value.getMap();
         final PropertyTree propertyTree = createPropertyTree( map );
-        target.extraDataMap.put( User.sanitizeNamespace( namespace ), propertyTree == null ? null : propertyTree.getRoot() );
+
+        if ( this.scope == null )
+        {
+            target.profile = propertyTree;
+        }
+        else
+        {
+            target.profile.setSet( scope, propertyTree.getRoot() );
+        }
     }
 
     private PropertyTree createPropertyTree( final Map<String, Object> value )

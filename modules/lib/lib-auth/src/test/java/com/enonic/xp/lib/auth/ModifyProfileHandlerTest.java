@@ -13,7 +13,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
-public class ModifyUserExtraDataHandlerTest
+public class ModifyProfileHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -36,7 +36,7 @@ public class ModifyUserExtraDataHandlerTest
         Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).
             thenAnswer( invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/auth/modifyUserExtraData.js" );
+        runScript( "/site/lib/xp/examples/auth/modifyProfile.js" );
     }
 
     private User invokeUpdate( final UpdateUserParams params )
