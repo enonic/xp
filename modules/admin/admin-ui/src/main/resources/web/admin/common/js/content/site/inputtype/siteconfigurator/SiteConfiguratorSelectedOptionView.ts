@@ -44,10 +44,8 @@ module api.content.site.inputtype.siteconfigurator {
             var header = new api.dom.DivEl('header');
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
-                api.app.NamesAndIconViewSize.large)).setMainName(this.application.getDisplayName()).setSubName(
+                api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
                 this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
-
-            this.getEl().setTitle(this.application.getName());
             
             if (this.application.getIconUrl()) {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());
@@ -58,15 +56,6 @@ module api.content.site.inputtype.siteconfigurator {
             }
 
             header.appendChild(namesAndIconView);
-
-            var removeButton = new api.dom.AEl("remove-button icon-close");
-            removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveClicked();
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-            header.appendChild(removeButton);
 
             this.appendChild(header);
 
@@ -80,6 +69,15 @@ module api.content.site.inputtype.siteconfigurator {
             if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
             }
+
+            var removeButton = new api.dom.AEl("remove-button icon-close");
+            removeButton.onClicked((event: MouseEvent) => {
+                this.notifyRemoveClicked();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
+            header.appendChild(removeButton);
 
             return wemQ(true);
         }
