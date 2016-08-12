@@ -430,6 +430,14 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }
     }
 
+
+    selectAll() {
+        this.grid.mask();
+        setTimeout(() => {
+            super.selectAll();
+            this.grid.unmask();
+        }, 5);
+    }
     /*
      * New API methods
      */
