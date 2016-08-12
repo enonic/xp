@@ -90,14 +90,14 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
             var macrosGroup = new ItemDataGroup("Macros", "macros");
 
-            var macroNames = macros.map((macro: MacroDescriptor) => {
+            var macroNames = macros.
+            filter((macro: MacroDescriptor) => {
+                return !ApplicationKey.SYSTEM.equals(macro.getKey().getApplicationKey());
+            }).map((macro: MacroDescriptor) => {
                 return macro.getDisplayName();
             });
             macrosGroup.addDataArray("Macros", macroNames);
 
-            if (!macrosGroup.isEmpty()) {
-                macrosGroup.show();
-            }
             return macrosGroup;
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
     }
