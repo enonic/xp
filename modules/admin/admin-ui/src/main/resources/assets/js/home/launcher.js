@@ -40,13 +40,16 @@ function appendLauncherPanel() {
     document.getElementsByTagName("body")[0].appendChild(div);
 
     launcherPanel = div;
+}
 
-    document.addEventListener('click', function (event) {
-        var isClickOutside = !launcherPanel.contains(event.target) && !launcherButton.contains(event.target);
-        if (isClickOutside && !launcherMainContainer.getAttribute("hidden")) {
-            closeLauncherPanel();
-        }
-    });
+function onLauncherClick(e) {
+    if (!launcherPanel || !launcherMainContainer) {
+        return;
+    }
+    var isClickOutside = !launcherPanel.contains(e.target) && !launcherButton.contains(e.target);
+    if (isClickOutside && !launcherMainContainer.getAttribute("hidden")) {
+        closeLauncherPanel();
+    }
 }
 
 function createLauncherLink(container) {
@@ -134,9 +137,11 @@ function openLauncherPanel() {
     toggleButton();
     launcherPanel.classList.remove("hidden", "slideout");
     launcherPanel.classList.add("visible");
+    document.addEventListener('click', onLauncherClick);
 }
 
 function closeLauncherPanel(skipTransition) {
+    document.removeEventListener('click', onLauncherClick);
     launcherMainContainer.setAttribute("hidden", "true");
     unlistenToKeyboardEvents();
     launcherPanel.classList.remove("visible");
