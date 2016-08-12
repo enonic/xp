@@ -40,6 +40,25 @@ module api.app.view {
             this.browseItem = item;
         }
 
+        setIconUrl(value: string) {
+            if (this.iconEl) {
+                this.iconEl.remove();
+            }
+
+            var size = this.browseItem.getIconSize() || 64,
+                icon: HTMLImageElement = api.util.loader.ImageLoader.get(value + "?size=size", size, size);
+
+            this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().setTagName("img").setHelper(
+                new api.dom.ImgHelper(icon)));
+
+            this.prependChild(this.iconEl);
+        }
+
+        setHeaderSubtitle(value: string, className: string) {
+            this.headerPathEl.removeChildren();
+            this.appendToHeaderPath(value, className);
+        }
+
         private createIconEl(item: ViewItem<M>) {
             var iconEl: api.dom.Element;
 
