@@ -545,11 +545,12 @@
 
     h2, h5 {
       text-align: center;
+      position: relative;
     }
 
     .prev, .next {
+      position: absolute;
       cursor: pointer;
-      padding: 0 5px;
       color: @admin-button-blue2;
       vertical-align: middle;
       text-decoration: none;
@@ -559,12 +560,31 @@
       .icon-arrow-left();
     }
 
+    .year-container {
+      .prev {
+        top: 5px;
+        left: 15px;
+      }
+      .next {
+        top: 5px;
+        right: 15px;
+      }
+    }
+
     .next {
       .icon-arrow-right4();
     }
 
     .month-container {
-      margin-bottom: 10px;
+      margin: 5px 0 10px 0;
+      .prev {
+        top: 2px;
+        left: 24px;
+      }
+      .next {
+        top: 2px;
+        right: 24px;
+      }
     }
     .calendar {
       text-align: center;
@@ -722,4 +742,11 @@
   font-size: 12px;
   display: block;
   text-decoration: none;
+}
+
+.flat-mixin(@bgColor: @admin-white) {
+  .border-radius(0);
+  background-image: none;
+  box-shadow: none;
+  background-color: @bgColor;
 }

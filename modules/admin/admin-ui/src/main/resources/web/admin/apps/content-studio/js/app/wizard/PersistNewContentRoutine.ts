@@ -1,8 +1,8 @@
 import "../../api.ts";
-
-import CreateContentRequest = api.content.CreateContentRequest;
-import Content = api.content.Content;
 import {ContentWizardPanel} from "./ContentWizardPanel";
+
+import CreateContentRequest = api.content.resource.CreateContentRequest;
+import Content = api.content.Content;
 
 export class PersistedNewContentRoutineContext {
 

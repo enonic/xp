@@ -10,7 +10,6 @@ import {OpenSortDialogEvent} from "./browse/OpenSortDialogEvent";
 import {OpenMoveDialogEvent} from "./browse/OpenMoveDialogEvent";
 import {ContentWizardPanelParams} from "./wizard/ContentWizardPanelParams";
 
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Content = api.content.Content;
@@ -72,7 +71,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         case 'edit':
             var id = path.getElement(1);
             if (id) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
                         new api.content.event.EditContentEvent([content]).fire();
                     });
@@ -81,7 +80,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         case 'view' :
             var id = path.getElement(1);
             if (id) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
                         new ViewContentEvent([content]).fire();
                     });
@@ -271,7 +270,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
                 var contentItem = new api.app.view.ViewItem(content)
                     .setDisplayName(content.getDisplayName())
                     .setPath(content.getPath().toString())
-                    .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
+                    .setIconUrl(new api.content.util.ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
 
                 contentItemViewPanel.setItem(contentItem);
 

@@ -14,6 +14,7 @@ import {Router} from "../Router";
 import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
 import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 import {ContentWizardDataLoader} from "./ContentWizardDataLoader";
+import {ThumbnailUploaderEl} from "./ThumbnailUploaderEl";
 
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
@@ -28,10 +29,9 @@ import ContentBuilder = api.content.ContentBuilder;
 import Thumbnail = api.thumb.Thumbnail;
 import ContentName = api.content.ContentName;
 import ContentUnnamed = api.content.ContentUnnamed;
-import CreateContentRequest = api.content.CreateContentRequest;
-import UpdateContentRequest = api.content.UpdateContentRequest;
-import GetContentByIdRequest = api.content.GetContentByIdRequest;
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+import CreateContentRequest = api.content.resource.CreateContentRequest;
+import UpdateContentRequest = api.content.resource.UpdateContentRequest;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import ExtraData = api.content.ExtraData;
 import Page = api.content.page.Page;
 import Site = api.content.site.Site;
@@ -45,7 +45,7 @@ import AccessControlEntry = api.security.acl.AccessControlEntry;
 import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 import IsRenderableRequest = api.content.page.IsRenderableRequest;
-import GetNearestSiteRequest = api.content.GetNearestSiteRequest;
+import GetNearestSiteRequest = api.content.resource.GetNearestSiteRequest;
 import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
 
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
@@ -53,15 +53,14 @@ import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import FormIcon = api.app.wizard.FormIcon;
-import ThumbnailUploader = api.content.ThumbnailUploaderEl;
 import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import TogglerButton = api.ui.button.TogglerButton;
 import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
 import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
-import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
-import ImageErrorEvent = api.content.ImageErrorEvent;
+import ContentRequiresSaveEvent = api.content.event.ContentRequiresSaveEvent;
+import ImageErrorEvent = api.content.image.ImageErrorEvent;
 
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
@@ -163,14 +162,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.metadataStepFormByName = {};
 
-        this.initListeners();
-
         super({
             tabId: params.tabId,
             persistedItem: null,
             actions: this.wizardActions
         });
 
+        this.initListeners();
         this.listenToContentEvents();
         this.handleSiteConfigApply();
         this.handleBrokenImageInTheWizard();
@@ -185,9 +183,30 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
             this.displayValidationErrors();
         });
+
+        this.wizardActions.getShowSplitEditAction().onExecuted(() => {
+            if (!this.inMobileViewMode) {
+                if (!this.isContentRenderable() && !this.getPersistedItem().isSite()) {
+                    this.closeLiveEdit();
+                    this.getContextWindowToggler().setEnabled(false);
+                } else {
+                    this.getCycleViewModeButton()
+                        .selectActiveAction(this.wizardActions.getShowLiveEditAction());
+                }
+            }
+        });
     }
 
     private initListeners() {
+
+        this.onDataLoaded(() => {
+            if (this.getPersistedItem()) {
+                Router.setHash("edit/" + this.getPersistedItem().getId());
+            } else {
+                Router.setHash("new/" + this.contentType.getName());
+            }
+        });
+
         this.dataChangedListener = () => {
             var publishControls = this.getContentWizardToolbarPublishControls();
             if (this.isContentFormValid && publishControls.isOnline()) {
@@ -216,12 +235,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 else {
                     let shownHandler = () => {
-                        new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse().then(
-                            (application: Application) => {
-                                if (application.getState() == "stopped") {
-                                    api.notify.showWarning(message);
-                                }
-                            }).catch((reason: any) => { //app was uninstalled
+                        new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
+                            .then(
+                                (application: Application) => {
+                                    if (application.getState() == "stopped") {
+                                        api.notify.showWarning(message);
+                                    }
+                                })
+                            .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
 
@@ -269,8 +290,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
 
-    protected createFormIcon(): ThumbnailUploader {
-        var thumbnailUploader = new ThumbnailUploader({
+    protected createFormIcon(): ThumbnailUploaderEl {
+        var thumbnailUploader = new ThumbnailUploaderEl({
             name: 'thumbnail-uploader',
             deferred: true
         });
@@ -282,8 +303,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return thumbnailUploader;
     }
 
-    public getFormIcon(): ThumbnailUploader {
-        return <ThumbnailUploader> super.getFormIcon();
+    public getFormIcon(): ThumbnailUploaderEl {
+        return <ThumbnailUploaderEl> super.getFormIcon();
     }
 
     protected createMainToolbar(): Toolbar {
@@ -363,9 +384,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
 
             this.addClass("content-wizard-panel");
-            if (this.getSplitPanel()) {
-                this.getSplitPanel().addClass("prerendered");
-            }
 
             this.inMobileViewMode = false;
 
@@ -385,8 +403,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     this.displayValidationErrors();
                 }
             });
-
-            this.initOnShownHandler(responsiveItem);
 
             var thumbnailUploader = this.getFormIcon();
             if (thumbnailUploader) {
@@ -419,40 +435,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.inMobileViewMode = false;
             }
         }
-    }
-
-    private initOnShownHandler(responsiveItem: ResponsiveItem) {
-        this.onShown((event: api.dom.ElementShownEvent) => {
-            if (this.getPersistedItem()) {
-                Router.setHash("edit/" + this.getPersistedItem().getId());
-            } else {
-                Router.setHash("new/" + this.contentType.getName());
-            }
-            //Set split panel default
-
-            this.wizardActions.getShowSplitEditAction().onExecuted(() => {
-                if (!this.inMobileViewMode) {
-                    if (!this.isContentRenderable() && !this.getPersistedItem().isSite()) {
-                        this.closeLiveEdit();
-                        this.getContextWindowToggler().setEnabled(false);
-                    } else {
-                        this.getCycleViewModeButton()
-                            .selectActiveAction(this.wizardActions.getShowLiveEditAction());
-                    }
-                }
-            });
-
-            if (this.isContentRenderable() || this.getPersistedItem().isSite()) {
-                this.wizardActions.getShowSplitEditAction().execute();
-            }
-            else {
-                if (!!this.getSplitPanel()) {
-                    this.wizardActions.getShowFormAction().execute();
-                }
-            }
-
-            responsiveItem.update();
-        });
     }
 
     private onFileUploaded(event: api.ui.uploader.FileUploadedEvent<api.content.Content>) {
@@ -683,7 +665,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     this.updateWizard(content, unchangedOnly);
                     if (versionChanged) {
                         this.updateLiveFormOnVersionChange();
-                    } else if (this.isContentRenderable() && areasContainId) {
+                    } else if (this.isContentRenderable()) {
                         // also update live form panel for renderable content without asking
                         let liveFormPanel = this.getLivePanel();
                         liveFormPanel.skipNextReloadConfirmation(true);
@@ -812,7 +794,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             var publishControls = this.getContentWizardToolbarPublishControls();
             let wizardHeader = this.getWizardHeader();
 
-            api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
+            api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
                 this.contentCompareStatus = summaryAndStatus.getCompareStatus();
 
                 wizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
@@ -904,7 +886,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 id: content.getContentId().toString()
             })
             .setEnabled(!content.isImage())
-            .setValue(new ContentIconUrlResolver().setContent(content).resolve());
+            .setValue(new api.content.util.ContentIconUrlResolver().setContent(content).resolve());
 
         thumbnailUploader.toggleClass("invalid", !content.isValid());
     }
@@ -921,19 +903,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions.getPreviewAction().setVisible(false);
         this.wizardActions.getPreviewAction().setEnabled(false);
 
-        new GetNearestSiteRequest(content.getContentId()).sendAndParse().then((parentSite: Site) => {
-
-            if ((parentSite && !content.getType().isShortcut()) || content.isSite()) {
-                this.setupWizardLiveEdit(true);
-            }
-            else {
-                this.setupWizardLiveEdit(false);
-            }
-
-        }).catch((reason: any) => {
-            this.setupWizardLiveEdit(false);
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
+        this.setupWizardLiveEdit(content.isSite() || this.site && !content.getType().isShortcut());
 
         return this.createSteps().then((schemas: Mixin[]) => {
 
@@ -978,7 +948,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 } else {
                     this.displayValidationErrors();
                 }
-                
+
                 this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
                 var liveFormPanel = this.getLivePanel();
@@ -1016,8 +986,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions.getShowSplitEditAction().setEnabled(renderable);
         this.wizardActions.getPreviewAction().setVisible(renderable);
 
+        this.getCycleViewModeButton().setVisible(renderable);
+
         if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
+
             this.wizardActions.getShowSplitEditAction().execute();
+        } else if (!!this.getSplitPanel()) {
+
+            this.wizardActions.getShowFormAction().execute();
         }
     }
 
@@ -1188,6 +1164,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     hasUnsavedChanges(): boolean {
+        if (!this.isRendered()) {
+            return false;
+        }
         var persistedContent: Content = this.getPersistedItem();
         if (persistedContent == undefined) {
             return true;
@@ -1259,30 +1238,27 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return;
         }
 
-        this.getSplitPanel().addClass("toggle-live");
-        this.getSplitPanel().removeClass("toggle-form toggle-split prerendered");
+        this.getSplitPanel().addClass("toggle-live").removeClass("toggle-form toggle-split");
         this.getMainToolbar().toggleClass("live", true);
         this.toggleClass("form", false);
+
         this.openLiveEdit();
-        ResponsiveManager.fireResizeEvent();
     }
 
     showSplitEdit() {
-        this.getSplitPanel().addClass("toggle-split");
-        this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
+        this.getSplitPanel().addClass("toggle-split").removeClass("toggle-live toggle-form");
         this.getMainToolbar().toggleClass("live", true);
         this.toggleClass("form", false);
+
         this.openLiveEdit();
-        ResponsiveManager.fireResizeEvent();
     }
 
     showForm() {
-        this.getSplitPanel().addClass("toggle-form");
-        this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
+        this.getSplitPanel().addClass("toggle-form").removeClass("toggle-live toggle-split");
         this.getMainToolbar().toggleClass("live", false);
         this.toggleClass("form", true);
+
         this.closeLiveEdit();
-        ResponsiveManager.fireResizeEvent();
     }
 
     private isSplitView(): boolean {
@@ -1313,7 +1289,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             // allow deleting published content without validity check
             return true;
         }
-        
+
         var allMetadataFormsValid = true,
             allMetadataFormsHaveValidUserInput = true;
         for (var key in this.metadataStepFormByName) {
@@ -1533,14 +1509,24 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private openLiveEdit() {
+        var livePanel = this.getLivePanel();
+
         this.getSplitPanel().showSecondPanel();
-        this.getLivePanel().clearPageViewSelectionAndOpenInspectPage();
+        livePanel.clearPageViewSelectionAndOpenInspectPage();
         this.showMinimizeEditButton();
+
+        if (!this.livePanel.isRendered()) {
+            this.liveMask.show();
+        }
     }
 
     private closeLiveEdit() {
         this.getSplitPanel().hideSecondPanel();
         this.hideMinimizeEditButton();
+
+        if (this.liveMask && this.liveMask.isVisible()) {
+            this.liveMask.hide();
+        }
 
         if (this.isMinimized()) {
             this.toggleMinimize();

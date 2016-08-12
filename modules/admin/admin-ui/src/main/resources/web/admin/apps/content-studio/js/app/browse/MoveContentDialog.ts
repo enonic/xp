@@ -1,18 +1,19 @@
 import "../../api.ts";
 import {OpenMoveDialogEvent} from "./OpenMoveDialogEvent";
+import {ContentMoveComboBox} from "./ContentMoveComboBox";
 
 import ContentPath = api.content.ContentPath;
 import ContentType = api.schema.content.ContentType;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 import ContentSummary = api.content.ContentSummary;
-import ContentResponse = api.content.ContentResponse;
+import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentIds = api.content.ContentIds;
-import MoveContentResult = api.content.MoveContentResult;
-import MoveContentResultFailure = api.content.MoveContentResultFailure;
+import MoveContentResult = api.content.resource.result.MoveContentResult;
+import MoveContentResultFailure = api.content.resource.result.MoveContentResultFailure;
 
 export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
-    private destinationSearchInput: api.content.ContentMoveComboBox;
+    private destinationSearchInput: ContentMoveComboBox;
 
     private movedContentSummaries: api.content.ContentSummary[];
 
@@ -71,7 +72,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initSearchInput() {
-        this.destinationSearchInput = new api.content.ContentMoveComboBox();
+        this.destinationSearchInput = new ContentMoveComboBox();
         this.destinationSearchInput.addClass("content-selector");
         this.destinationSearchInput.onKeyUp((event: KeyboardEvent) => {
             if (event.keyCode === 27) {
@@ -96,7 +97,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
         var contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
-        new api.content.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
+        new api.content.resource.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
             if (parentContent) {
                 this.destinationSearchInput.deselect(parentContent);
             }
@@ -122,7 +123,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private getParentContent(): api.content.ContentSummary {
-        return this.destinationSearchInput.getSelectedDisplayValues()[0];
+        return (api.content.ContentSummary)
+        this.destinationSearchInput.getSelectedDisplayValues()[0];
     }
 
     show() {

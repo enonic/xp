@@ -1,4 +1,9 @@
 import "../../../api.ts";
+import {WidgetView} from "./WidgetView";
+import {WidgetsSelectionRow} from "./WidgetsSelectionRow";
+import {VersionsWidgetItemView} from "./widget/version/VersionsWidgetItemView";
+import {DependenciesWidgetItemView} from "./widget/dependency/DependenciesWidgetItemView";
+import {InfoWidgetView} from "./widget/info/InfoWidgetView";
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -7,11 +12,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import CompareStatus = api.content.CompareStatus;
 import Widget = api.content.Widget;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
-import {WidgetView} from "./WidgetView";
-import {WidgetsSelectionRow} from "./WidgetsSelectionRow";
-import {VersionsWidgetItemView} from "./widget/version/VersionsWidgetItemView";
-import {DependenciesWidgetItemView} from "./widget/dependency/DependenciesWidgetItemView";
-import {InfoWidgetView} from "./widget/info/InfoWidgetView";
 
 export class DetailsPanel extends api.ui.panel.Panel {
 
@@ -299,7 +299,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     private getAndInitCustomWidgetViews(): wemQ.Promise<any> {
-        var getWidgetsByInterfaceRequest = new api.content.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
+        var getWidgetsByInterfaceRequest = new api.content.resource.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
 
         return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
             widgets.forEach((widget) => {

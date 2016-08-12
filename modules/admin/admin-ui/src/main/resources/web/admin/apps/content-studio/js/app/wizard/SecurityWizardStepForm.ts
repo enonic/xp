@@ -1,4 +1,5 @@
 import "../../api.ts";
+import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
 
 import AccessControlList = api.security.acl.AccessControlList;
 import AccessControlListView = api.ui.security.acl.AccessControlListView;
@@ -9,7 +10,6 @@ import Content = api.content.Content;
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
 import Button = api.ui.button.Button;
-import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
 
 export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -61,7 +61,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
         this.editLink.onClicked(() => {
             if (!!this.content) {
-                new api.content.OpenEditPermissionsDialogEvent(this.content).fire();
+                new api.content.event.OpenEditPermissionsDialogEvent(this.content).fire();
             }
         });
 

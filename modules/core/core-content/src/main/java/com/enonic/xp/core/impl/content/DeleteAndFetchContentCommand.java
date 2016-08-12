@@ -4,9 +4,12 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
@@ -14,12 +17,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.SetNodeStateParams;
@@ -31,10 +32,13 @@ final class DeleteAndFetchContentCommand
 {
     private final DeleteContentParams params;
 
+    private final ContentService contentService;
+
     private DeleteAndFetchContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        contentService = builder.contentService;
     }
 
     public static Builder create()
@@ -42,13 +46,13 @@ final class DeleteAndFetchContentCommand
         return new Builder();
     }
 
-    DeleteContentsResult execute()
+    Contents execute()
     {
         params.validate();
 
         try
         {
-            final DeleteContentsResult deletedContents = doExecute();
+            final Contents deletedContents = doExecute();
             nodeService.refresh( RefreshMode.SEARCH );
             return deletedContents;
         }
@@ -58,17 +62,19 @@ final class DeleteAndFetchContentCommand
         }
     }
 
-    private DeleteContentsResult doExecute()
+    private Contents doExecute()
     {
-        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
-        final Node nodeToDelete = this.nodeService.getByPath( nodePath );
+        final Content content = this.contentService.getByPath( this.params.getContentPath() );
+        NodeId id = NodeId.from( content.getId().toString() );
 
         final DeleteContentsResult.Builder nodesToDelete = DeleteContentsResult.create();
-        recursiveDelete( nodeToDelete.id(), nodesToDelete );
+        recursiveDelete( id, nodesToDelete );
 
         this.nodeService.refresh( RefreshMode.ALL );
 
-        return nodesToDelete.build();
+        return nodesToDelete.build().getDeletedContents().contains( content.getId() ) ?
+            Contents.from(content) : null;
+
     }
 
     private void recursiveDelete( NodeId nodeToDelete, DeleteContentsResult.Builder deletedNodes )
@@ -107,7 +113,7 @@ final class DeleteAndFetchContentCommand
             nodeState( NodeState.PENDING_DELETE ).
             build() );
 
-            deletedNodes.addPending( ContentIds.from( setNodeStateResult.getUpdatedNodes().getIds().getAsStrings() ) );
+        deletedNodes.addPending( ContentIds.from( setNodeStateResult.getUpdatedNodes().getIds().getAsStrings() ) );
     }
 
     private CompareStatus getCompareStatus( final NodeId nodeToDelete )
@@ -137,9 +143,17 @@ final class DeleteAndFetchContentCommand
     {
         private DeleteContentParams params;
 
+        private ContentService contentService;
+
         public Builder params( final DeleteContentParams params )
         {
             this.params = params;
+            return this;
+        }
+
+        public Builder contentService( ContentService contentService )
+        {
+            this.contentService = contentService;
             return this;
         }
 

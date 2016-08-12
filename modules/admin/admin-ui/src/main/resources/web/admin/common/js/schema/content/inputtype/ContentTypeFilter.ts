@@ -43,7 +43,7 @@ module api.schema.content.inputtype {
             var contentId = this.context.site.getContentId(),
                 loader = new api.schema.content.PageTemplateContentTypeLoader(contentId);
 
-            loader.setComparator(new api.content.ContentSummaryByDisplayNameComparator());
+            loader.setComparator(new api.content.ContentTypeSummaryByDisplayNameComparator());
 
             return loader;
         }

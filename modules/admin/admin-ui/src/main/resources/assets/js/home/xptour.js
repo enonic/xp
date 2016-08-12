@@ -105,8 +105,8 @@ function initDemoApps() {
 function createStep1() {
     var html = '<div class="xp-tour-step step-1">' +
                '    <div class="subtitle">' +
-               '        <span class="subtitle-part-1">Welcome to Enonic XP! </span>' +
-               '        <span class="subtitle-part-2">Complete this tour to get started with Enonic XP</span>' +
+               '        <div class="subtitle-part-1">Welcome to Enonic XP! </div>' +
+               '        <div class="subtitle-part-2">Complete this tour to get started with Enonic XP</div>' +
                '    </div>' +
                '    <div class="caption">Enonic XP - The Web Operating System</div>' +
                '    <img src="/admin/common/images/app-icon.svg">' +
@@ -129,8 +129,8 @@ function createStep1() {
 function createStep2() {
     var html = '<div class="xp-tour-step step-2">' +
                '    <div class="subtitle">' +
-               '        <span class="subtitle-part-1">Did you know? </span>' +
-               '        <span class="subtitle-part-2">You can build your own tools and add them to this menu!</span>' +
+               '        <div class="subtitle-part-1">Did you know? </div>' +
+               '        <div class="subtitle-part-2">You can build your own tools and add them to this menu!</div>' +
                '    </div>' +
                '    <div class="caption">Tools and Navigation</div>' +
                '    <img src="/admin/common/images/launcher.svg">' +
@@ -146,8 +146,8 @@ function createStep2() {
 function createStep3() {
     var html = '<div class="xp-tour-step step-3">' +
                '    <div class="subtitle">' +
-               '        <span class="subtitle-part-1">Did you know? </span>' +
-               '        <span class="subtitle-part-2">You can contribute to Enonic Market by submitting your apps!</span>' +
+               '        <div class="subtitle-part-1">Did you know? </div>' +
+               '        <div class="subtitle-part-2">You can contribute to Enonic Market by submitting your apps!</div>' +
                '    </div>' +
                '    <div class="caption">Applications and Enonic Market</div>' +
                '    <img src="/admin/common/images/market.svg">' +
@@ -164,8 +164,8 @@ function createStep3() {
 function createStep4() {
     var html = '<div class="xp-tour-step step-4">' +
                '    <div class="subtitle">' +
-               '        <span class="subtitle-part-1">Did you know? </span>' +
-               '        <span class="subtitle-part-2">You can easily add 3rd party services like Google Analytics to the CMS</span>' +
+               '        <div class="subtitle-part-1">Did you know? </div>' +
+               '        <div class="subtitle-part-2">You can easily add 3rd party services like Google Analytics to the CMS</div>' +
                '    </div>' +
                '    <div class="caption">Embedded CMS - Content Studio</div>' +
                '    <img src="/admin/common/images/studio.svg">' +
@@ -181,8 +181,8 @@ function createStep4() {
 function createStep5() {
     var html = '<div class="xp-tour-step step-5">' +
                '    <div class="subtitle">' +
-               '        <span class="subtitle-part-1">Custom apps you say? </span>' +
-               '        <span class="subtitle-part-2">Simply choose Install + Upload in the Applications Tool</span>' +
+               '        <div class="subtitle-part-1">Custom apps you say? </div>' +
+               '        <div class="subtitle-part-2">Simply choose Install + Upload in the Applications Tool</div>' +
                '    </div>' +
                '    <div class="caption">Install Demo Applications</div>' +
                '    <div class="text">' +

@@ -24,7 +24,8 @@ exports.testChange = function () {
         user: {
             login: 'su',
             userStore: 'system'
-        }
+        },
+        principals: ["role:system.myrole"]
     }, function () {
         return context.get();
     });
@@ -44,7 +45,8 @@ exports.testChange = function () {
             "principals": [
                 "role:system.admin",
                 "role:system.everyone",
-                "user:system:su"
+                "user:system:su",
+                "role:system.myrole"
             ]
         }
     }, result);

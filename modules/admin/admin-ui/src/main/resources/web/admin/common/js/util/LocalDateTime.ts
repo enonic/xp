@@ -12,7 +12,7 @@ module api.util {
 
         private year: number;
 
-        private month: number;
+        private month: number; // 0-11
 
         private day: number;
 

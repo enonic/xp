@@ -119,7 +119,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                 this.publishTree.setEnabled(false);
             } else {
                 // check if already published to show unpublish button
-                api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
                     .then((contentAndCompare: api.content.ContentSummaryAndCompareStatus) => {
 
                         var status = contentAndCompare.getCompareStatus();
@@ -131,9 +131,9 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
 
             if (existing.hasParent()) {
-                new api.content.GetContentByPathRequest(existing.getPath().getParentPath()).sendAndParse().then(
+                new api.content.resource.GetContentByPathRequest(existing.getPath().getParentPath()).sendAndParse().then(
                     (parent: api.content.Content) => {
-                        new api.content.GetContentPermissionsByIdRequest(parent.getContentId()).sendAndParse().then(
+                        new api.content.resource.GetContentPermissionsByIdRequest(parent.getContentId()).sendAndParse().then(
                             (accessControlList: api.security.acl.AccessControlList) => {
                                 var hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(
                                     api.security.acl.Permission.CREATE,
@@ -146,7 +146,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                             })
                     })
             } else {
-                new api.content.GetContentRootPermissionsRequest().sendAndParse().then(
+                new api.content.resource.GetContentRootPermissionsRequest().sendAndParse().then(
                     (accessControlList: api.security.acl.AccessControlList) => {
                         var hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
                             loginResult,

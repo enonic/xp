@@ -8,3 +8,4 @@
 ///<reference path='TreeGridContextMenu.ts' />
 ///<reference path='ContextMenuShownEvent.ts' />
 ///<reference path='DataChangedEvent.ts' />
+///<reference path='TreeGridItemClickedEvent.ts' />

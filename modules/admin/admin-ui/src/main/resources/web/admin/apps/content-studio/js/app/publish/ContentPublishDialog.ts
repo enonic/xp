@@ -2,14 +2,13 @@ import "../../api.ts";
 import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import CompareContentResults = api.content.CompareContentResults;
+import CompareContentResults = api.content.resource.result.CompareContentResults;
 import DialogButton = api.ui.dialog.DialogButton;
-import PublishContentRequest = api.content.PublishContentRequest;
+import PublishContentRequest = api.content.resource.PublishContentRequest;
 import ContentIds = api.content.ContentIds;
-import ResolvePublishDependenciesResult = api.content.ResolvePublishDependenciesResult;
+import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
-import ContentPublishItem = api.content.ContentPublishItem;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
@@ -17,7 +16,6 @@ import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
  * Resolved items are converted into array of SelectionPublishItem<ContentPublishItem> items and stored in selectionItems property.
- * ContentPublishItem contains info for the initially checked item with number of children and dependants items that will get published with it.
  * Dependant items number will change depending on includeChildren checkbox state as
  * resolved dependencies usually differ in that case.
  */
@@ -133,7 +131,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         let ids = this.getContentToPublishIds(),
             loadChildren = this.childrenCheckbox.isChecked();
 
-        let resolveDependenciesRequest = api.content.ResolvePublishDependenciesRequest.
+        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.
             create().
             setIds(ids).
             setExcludedIds(this.excludedIds).
@@ -253,7 +251,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked())
             .setIds(selectedIds).
             setExcludedIds(this.excludedIds).send().then(
-            (jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
+            (jsonResponse: api.rest.JsonResponse<api.content.json.PublishContentJson>) => {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
             }).finally(() => {

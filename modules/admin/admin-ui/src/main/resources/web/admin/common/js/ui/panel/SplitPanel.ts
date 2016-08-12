@@ -270,7 +270,7 @@ module api.ui.panel {
                 ResponsiveManager.onAvailableSizeChanged(this, debounced);
             }
 
-            this.onShown((event: api.dom.ElementShownEvent) => {
+            this.onAdded((event: api.dom.ElementShownEvent) => {
                 let splitPanelSize = this.isHorizontal() ? this.getEl().getHeight() : this.getEl().getWidth();
                 api.util.assert(this.firstPanelMinSize + this.secondPanelMinSize <= splitPanelSize,
                     "warning: total sum of first and second panel minimum sizes exceed total split panel size");
@@ -558,7 +558,7 @@ module api.ui.panel {
                 this.firstPanelSize = this.hiddenFirstPanelPreviousSize;
 
                 this.splitterIsHidden = false;
-                this.splitter.show();
+                this.showSplitter();
             }
 
             this.firstPanel.show();
@@ -574,7 +574,7 @@ module api.ui.panel {
 
             this.splitterIsHidden = false;
             if (showSplitter) {
-                this.splitter.show();
+                this.showSplitter();
             }
 
             this.secondPanelSize = this.hiddenSecondPanelPreviousSize;
@@ -594,7 +594,7 @@ module api.ui.panel {
             }
 
             this.splitterIsHidden = true;
-            this.splitter.hide();
+            this.hideSplitter();
 
             if (!this.firstPanelIsFullScreen) {
                 this.hiddenFirstPanelPreviousSize = this.firstPanelSize;
@@ -619,7 +619,7 @@ module api.ui.panel {
         foldSecondPanel() {
 
             this.splitterIsHidden = true;
-            this.splitter.hide();
+            this.hideSplitter();
 
             if (this.secondPanelShouldSlideRight) {
                 this.slideOutSecondPanelRight();

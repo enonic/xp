@@ -26,11 +26,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 
@@ -98,41 +100,16 @@ public final class ContentIconResource
 
         if ( contentThumbnail != null )
         {
-            final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
-            if ( binary != null )
-            {
-                try
-                {
-                    final boolean isSVG = contentThumbnail.getMimeType().equals( "image/svg+xml" );
+            final ResolveIconParams params = new ResolveIconParams().
+                setBinaryReference( contentThumbnail.getBinaryReference() ).
+                setId( content.getId() ).
+                setImageOrientation( getThumbnailOrientation( contentThumbnail, content.getId() ) ).
+                setMimeType( contentThumbnail.getMimeType() ).
+                setSize( size ).
+                setCrop( crop );
 
-                    if( isSVG )
-                    {
-                        return new ResolvedImage( binary.read(), contentThumbnail.getMimeType() );
-                    }
-                    else
-                    {
-                        final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
-                        final String format = imageService.getFormatByMimeType( contentThumbnail.getMimeType() );
+            return this.resolveResponse( params );
 
-                        final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                                contentId( content.getId() ).
-                                binaryReference( contentThumbnail.getBinaryReference() ).
-                                scaleSize( size ).
-                                scaleSquare( crop ).
-                                format( format ).
-                                orientation( imageOrientation ).
-                                build();
-
-                        final ByteSource thumbnailImage = imageService.readImage( readImageParams );
-                        return new ResolvedImage( thumbnailImage.read(), contentThumbnail.getMimeType() );
-                    }
-
-                }
-                catch ( IOException e )
-                {
-                    throw Exceptions.unchecked( e );
-                }
-            }
         }
         return ResolvedImage.unresolved();
     }
@@ -140,47 +117,127 @@ public final class ContentIconResource
     private ResolvedImage resolveResponseFromImageAttachment( final Media media, final int size, final boolean crop )
     {
         final Attachment imageAttachment = media.getMediaAttachment();
+
         if ( imageAttachment != null )
         {
-            try
-            {
-                final boolean isSVG = imageAttachment.getMimeType().equals( "image/svg+xml" );
+            final ResolveIconParams params = new ResolveIconParams().
+                setBinaryReference( imageAttachment.getBinaryReference() ).
+                setId( media.getId() ).
+                setImageOrientation( getSourceAttachmentOrientation( media ) ).
+                setCropping( media.getCropping() ).
+                setMimeType( imageAttachment.getMimeType() ).
+                setSize( size ).
+                setCrop( crop );
 
-                if( isSVG )
-                {
-                    final ByteSource binary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
-                    return new ResolvedImage( binary.read(), imageAttachment.getMimeType() );
-                }
-                else
-                {
-                    final String format = imageService.getFormatByMimeType( imageAttachment.getMimeType() );
-
-                    final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                            contentId( media.getId() ).
-                            binaryReference( imageAttachment.getBinaryReference() ).
-                            cropping( media.getCropping() ).
-                            scaleSize( size ).
-                            scaleSquare( crop ).
-                            format( format ).
-                            orientation( getSourceAttachmentOrientation( media ) ).
-                            build();
-
-                    final ByteSource contentImage = imageService.readImage( readImageParams );
-                    return new ResolvedImage( contentImage.read(), imageAttachment.getMimeType() );
-                }
-
-            }
-            catch ( IOException e )
-            {
-                throw Exceptions.unchecked( e );
-            }
+            return this.resolveResponse( params );
         }
         return ResolvedImage.unresolved();
+    }
+
+    private ResolvedImage resolveResponse( final ResolveIconParams params )
+    {
+        try
+        {
+            final boolean isSVG = params.mimeType.equals( "image/svg+xml" );
+
+            if ( isSVG )
+            {
+                final ByteSource binary = contentService.getBinary( params.id, params.binaryReference );
+                return new ResolvedImage( binary.read(), params.mimeType );
+            }
+            else
+            {
+                final String format = imageService.getFormatByMimeType( params.mimeType );
+
+                final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+                    contentId( params.id ).
+                    binaryReference( params.binaryReference ).
+                    cropping( params.cropping ).
+                    scaleSize( params.size ).
+                    scaleSquare( params.crop ).
+                    format( format ).
+                    orientation( params.imageOrientation ).
+                    build();
+
+                final ByteSource contentImage = imageService.readImage( readImageParams );
+                return new ResolvedImage( contentImage.read(), params.mimeType );
+            }
+
+        }
+        catch ( IOException e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    private static class ResolveIconParams
+    {
+        private ContentId id;
+
+        private BinaryReference binaryReference;
+
+        private ImageOrientation imageOrientation;
+
+        private Cropping cropping;
+
+        private String mimeType;
+
+        private Integer size;
+
+        private Boolean crop;
+
+        public ResolveIconParams setId( final ContentId id )
+        {
+            this.id = id;
+            return this;
+        }
+
+        public ResolveIconParams setBinaryReference( final BinaryReference binaryReference )
+        {
+            this.binaryReference = binaryReference;
+            return this;
+        }
+
+        public ResolveIconParams setImageOrientation( final ImageOrientation imageOrientation )
+        {
+            this.imageOrientation = imageOrientation;
+            return this;
+        }
+
+        public ResolveIconParams setCropping( final Cropping cropping )
+        {
+            this.cropping = cropping;
+            return this;
+        }
+
+        public ResolveIconParams setMimeType( final String mimeType )
+        {
+            this.mimeType = mimeType;
+            return this;
+        }
+
+        public ResolveIconParams setSize( final Integer size )
+        {
+            this.size = size;
+            return this;
+        }
+
+        public ResolveIconParams setCrop( final Boolean crop )
+        {
+            this.crop = crop;
+            return this;
+        }
     }
 
     private ImageOrientation getSourceAttachmentOrientation( final Media media )
     {
         final ByteSource sourceBinary = contentService.getBinary( media.getId(), media.getMediaAttachment().getBinaryReference() );
+        return mediaInfoService.getImageOrientation( sourceBinary );
+    }
+
+    private ImageOrientation getThumbnailOrientation( final Thumbnail thumbnail, final ContentId id )
+    {
+        final ByteSource sourceBinary = contentService.getBinary( id, thumbnail.getBinaryReference() );
         return mediaInfoService.getImageOrientation( sourceBinary );
     }
 
