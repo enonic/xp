@@ -38,6 +38,8 @@
       }
 
       .header {
+        display: flex;
+        align-items: center;
         position: relative;
         line-height: 48px;
         overflow: hidden;
@@ -47,17 +49,11 @@
         .names-and-icon-view {
           float: left;
           cursor: move;
+          flex: 0 1 100%;
 
           .names-view {
             > * {
               cursor: move;
-            }
-            h6 {
-              height: auto;
-              font-size: 22px;
-              line-height: 30px;
-
-              .ellipsis();
             }
           }
         }
@@ -68,15 +64,13 @@
         }
 
         .edit-button {
-          float: right;
-          margin: 17px 20px 0px 20px;
+          margin: 0 20px;
           font-size: 13px;
           .icon-pencil2();
         }
 
         .remove-button {
-          float: right;
-          line-height: 48px;
+          margin: 0px 6px;
         }
 
       }
