@@ -39,6 +39,15 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         super.setItem(item);
         var currentApplication = item.getModel();
+
+        if (currentApplication.getIconUrl()) {
+            this.getHeader().setIconUrl(currentApplication.getIconUrl());
+        }
+
+        if (currentApplication.getDescription()) {
+            this.getHeader().setHeaderSubtitle(currentApplication.getDescription(), "app-description");
+        }
+
         this.actionMenu.setLabel(api.util.StringHelper.capitalize(currentApplication.getState()));
 
         if (currentApplication.isStarted()) {
@@ -48,6 +57,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             ApplicationBrowseActions.get().START_APPLICATION.setEnabled(true);
             ApplicationBrowseActions.get().STOP_APPLICATION.setEnabled(false);
         }
+
 
         this.applicationDataContainer.removeChildren();
 
