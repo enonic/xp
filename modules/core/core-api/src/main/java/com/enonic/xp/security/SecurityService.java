@@ -152,6 +152,8 @@ public interface SecurityService
 
     PrincipalQueryResult query( PrincipalQuery query );
 
+    PrincipalQueryResult query( UserQuery query );
+
     PrincipalRelationships getRelationships( PrincipalKey from );
 
     void addRelationship( PrincipalRelationship relationship );

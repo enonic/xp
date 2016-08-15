@@ -369,3 +369,23 @@ exports.modifyProfile = function (params) {
 
     return __.toNativeObject(bean.execute());
 };
+
+/**
+ * Search for users matching the specified query.
+ *
+ * @example-ref examples/auth/findUsers.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {string} params.query Query expression.
+ *
+ * @returns {boolean} Result of query.
+ */
+exports.findUsers = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.FindUsersHandler');
+    bean.start = params.start;
+    bean.count = params.count;
+    bean.query = nullOrValue(params.query);
+    return __.toNativeObject(bean.execute());
+};
