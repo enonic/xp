@@ -123,8 +123,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private getParentContent(): api.content.ContentSummary {
-        return (api.content.ContentSummary)
-        this.destinationSearchInput.getSelectedDisplayValues()[0];
+        return <api.content.ContentSummary> this.destinationSearchInput.getSelectedDisplayValues()[0];
     }
 
     show() {
