@@ -1,12 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
@@ -26,8 +20,6 @@ import com.enonic.xp.node.RefreshMode;
 public class PushContentCommand
     extends AbstractContentCommand
 {
-    private final static Logger LOG = LoggerFactory.getLogger( PushContentCommand.class );
-
     private final ContentIds contentIds;
 
     private final ContentIds excludedContentIds;
@@ -58,8 +50,6 @@ public class PushContentCommand
 
     PushContentsResult execute()
     {
-        final Stopwatch timer = Stopwatch.createStarted();
-
         this.nodeService.refresh( RefreshMode.ALL );
 
         if ( resolveSyncWork )
@@ -75,13 +65,6 @@ public class PushContentCommand
                 build().
                 execute() );
         }
-
-        timer.stop();
-
-        final long secondsUsed = timer.elapsed( TimeUnit.SECONDS );
-
-        System.out.println( "PushContentCommand done in " + timer + ", speed: [" +
-                                ( secondsUsed == 0 ? "n/a" : this.contentIds.getSize() / secondsUsed ) );
 
         this.nodeService.refresh( RefreshMode.ALL );
 
@@ -154,9 +137,7 @@ public class PushContentCommand
             return;
         }
 
-        final Stopwatch nodeServicePushTimer = Stopwatch.createStarted();
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
-        System.out.println( "nodeService.push: " + nodeServicePushTimer.stop().toString() );
 
         this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
     }

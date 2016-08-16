@@ -11,7 +11,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.query.IndexQueryBuilderException;
 
-public class InExpressionBuilder
+class InExpressionBuilder
 {
     public static QueryBuilder build( final CompareExpr compareExpr, final QueryFieldNameResolver resolver )
     {

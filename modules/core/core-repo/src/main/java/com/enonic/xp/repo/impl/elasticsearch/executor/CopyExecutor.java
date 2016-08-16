@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
 
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 
 public class CopyExecutor
@@ -98,8 +97,6 @@ public class CopyExecutor
 
         private String targetIndex;
 
-        private NodeIds nodeIds;
-
         private ElasticsearchQuery query;
 
         private Builder( final Client client )
@@ -116,12 +113,6 @@ public class CopyExecutor
         public Builder targetIndex( final String val )
         {
             targetIndex = val;
-            return this;
-        }
-
-        public Builder nodeIds( final NodeIds val )
-        {
-            nodeIds = val;
             return this;
         }
 

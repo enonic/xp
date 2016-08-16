@@ -20,11 +20,11 @@ public class NodeEventListener
 
     private final static Logger LOG = LoggerFactory.getLogger( NodeEventListener.class );
 
-    private NodeCreatedHandler nodeCreatedHandler = new NodeCreatedHandler();
+    private final NodeCreatedHandler nodeCreatedHandler = new NodeCreatedHandler();
 
-    private NodeDeletedHandler nodeDeletedHandler = new NodeDeletedHandler();
+    private final NodeDeletedHandler nodeDeletedHandler = new NodeDeletedHandler();
 
-    private NodeMovedHandler nodeMovedHandler = new NodeMovedHandler();
+    private final NodeMovedHandler nodeMovedHandler = new NodeMovedHandler();
 
     @Override
     public int getOrder()

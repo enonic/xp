@@ -144,9 +144,7 @@ public abstract class AbstractNodeTest
         this.versionService.setStorageDao( storageDao );
 
         // Storage-service
-
         this.nodeDao = new NodeVersionDaoImpl();
-        this.nodeDao.setConfiguration( repoConfig );
         this.nodeDao.setBlobStore( blobStore );
 
         this.indexedDataService = new IndexDataServiceImpl();

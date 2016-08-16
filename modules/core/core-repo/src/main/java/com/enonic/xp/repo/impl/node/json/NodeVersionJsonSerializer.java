@@ -12,7 +12,7 @@ import com.enonic.xp.util.Exceptions;
 
 public final class NodeVersionJsonSerializer
 {
-    protected final ObjectMapper mapper;
+    final ObjectMapper mapper;
 
     private NodeVersionJsonSerializer( final ObjectMapper mapper )
     {

@@ -7,12 +7,12 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 
-public class MemoryBlobRecord
+class MemoryBlobRecord
     implements BlobRecord
 {
-    private BlobKey blobKey;
+    private final BlobKey blobKey;
 
-    private ByteSource byteSource;
+    private final ByteSource byteSource;
 
     public MemoryBlobRecord( final BlobKey blobKey, final ByteSource source )
     {

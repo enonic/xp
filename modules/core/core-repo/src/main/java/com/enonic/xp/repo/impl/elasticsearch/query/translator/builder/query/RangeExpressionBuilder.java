@@ -8,7 +8,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.ValueHelper;
 
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
-public class RangeExpressionBuilder
+class RangeExpressionBuilder
 {
     public static QueryBuilder build( final CompareExpr compareExpr, final QueryFieldNameResolver resolver )
     {

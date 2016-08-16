@@ -9,7 +9,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public final class NodePermissionsResolver
+final class NodePermissionsResolver
 {
     public static void requireContextUserPermission( final Permission permission, final Node node )
         throws NodeAccessException
@@ -50,7 +50,7 @@ public final class NodePermissionsResolver
         return authInfo.getPrincipals().contains( RoleKeys.ADMIN ) || userHasPermission( authInfo, permission, node );
     }
 
-    public static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
+    private static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
     {
         return doUserHasPermission( authInfo, permission, node.getPermissions() );
     }

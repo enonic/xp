@@ -26,9 +26,6 @@ import com.enonic.xp.security.acl.Permission;
 public class MoveNodeCommand
     extends AbstractNodeCommand
 {
-
-    public static final int BATCH_SIZE = 10_000;
-
     private final NodeId nodeId;
 
     private final NodePath newParentPath;

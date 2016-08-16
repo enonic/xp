@@ -4,9 +4,9 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.node.NodeName;
 
-public abstract class DuplicateValueResolver
+abstract class DuplicateValueResolver
 {
-    public final static String COPY_TOKEN = "copy";
+    final static String COPY_TOKEN = "copy";
 
     private final static String NAME_SEPARATOR = "-";
 

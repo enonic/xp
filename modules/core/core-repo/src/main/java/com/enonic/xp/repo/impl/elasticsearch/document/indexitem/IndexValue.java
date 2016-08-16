@@ -4,9 +4,9 @@ import java.time.Instant;
 
 public abstract class IndexValue<T>
 {
-    private T value;
+    private final T value;
 
-    public IndexValue( final T value )
+    IndexValue( final T value )
     {
         this.value = value;
     }

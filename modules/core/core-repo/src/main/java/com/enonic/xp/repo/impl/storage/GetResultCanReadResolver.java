@@ -5,9 +5,9 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
-public class GetResultCanReadResolver
+class GetResultCanReadResolver
 {
-    public static boolean canRead( final PrincipalKeys principalsKeys, final ReturnValue returnValue )
+    static boolean canRead( final PrincipalKeys principalsKeys, final ReturnValue returnValue )
     {
         if ( principalsKeys.contains( RoleKeys.ADMIN ) )
         {

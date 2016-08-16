@@ -63,7 +63,7 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
     }
 
     @Override
-    public abstract String getFunctionName();
+    protected abstract String getFunctionName();
 
     private void setOperator( final ValueExpr expr )
     {
