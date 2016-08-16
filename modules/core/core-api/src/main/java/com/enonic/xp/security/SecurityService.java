@@ -152,7 +152,7 @@ public interface SecurityService
 
     PrincipalQueryResult query( PrincipalQuery query );
 
-    PrincipalQueryResult query( UserQuery query );
+    UserQueryResult query( UserQuery query );
 
     PrincipalRelationships getRelationships( PrincipalKey from );
 

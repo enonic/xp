@@ -75,6 +75,7 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserQuery;
+import com.enonic.xp.security.UserQueryResult;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStoreNotFoundException;
@@ -854,7 +855,7 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public PrincipalQueryResult query( final UserQuery query )
+    public UserQueryResult query( final UserQuery query )
     {
         try
         {
@@ -863,14 +864,14 @@ public final class SecurityServiceImpl
             final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( result.getNodeIds() ) );
 
             final Principals principals = PrincipalNodeTranslator.fromNodes( nodes );
-            return PrincipalQueryResult.create().
-                addPrincipals( principals ).
+            return UserQueryResult.create().
+                addUsers( principals ).
                 totalSize( Ints.checkedCast( result.getTotalHits() ) ).
                 build();
         }
         catch ( NodeNotFoundException e )
         {
-            return PrincipalQueryResult.create().build();
+            return UserQueryResult.create().build();
         }
     }
 

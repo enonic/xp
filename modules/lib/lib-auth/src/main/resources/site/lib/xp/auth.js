@@ -383,7 +383,7 @@ exports.modifyProfile = function (params) {
  * @returns {boolean} Result of query.
  */
 exports.findUsers = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.content.FindUsersHandler');
+    var bean = __.newBean('com.enonic.xp.lib.auth.FindUsersHandler');
     bean.start = params.start;
     bean.count = params.count;
     bean.query = nullOrValue(params.query);
