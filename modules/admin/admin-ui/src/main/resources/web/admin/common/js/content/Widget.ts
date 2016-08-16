@@ -8,12 +8,14 @@ module api.content {
         private displayName: string;
         private interfaces: string[];
         private widgetDescriptorKey: WidgetDescriptorKey;
+        private behaviorPatterns: string[];
 
-        constructor(url: string, displayName: string, interfaces: string[], key: string) {
+        constructor(url: string, displayName: string, interfaces: string[], key: string, behaviorPatterns: string[]) {
             this.url = url;
             this.displayName = displayName;
             this.interfaces = interfaces;
             this.widgetDescriptorKey = this.makeWidgetDescriptorKey(key);
+            this.behaviorPatterns = behaviorPatterns;
         }
 
         private makeWidgetDescriptorKey(key: string): WidgetDescriptorKey {
@@ -36,6 +38,10 @@ module api.content {
 
         public getWidgetDescriptorKey(): api.content.WidgetDescriptorKey {
             return this.widgetDescriptorKey;
+        }
+
+        public getBehaviorPatterns(): string[] {
+            return this.behaviorPatterns;
         }
     }
 

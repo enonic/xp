@@ -23,6 +23,8 @@ export class WidgetView extends api.dom.DivEl {
 
     private contentId: string = "";
 
+    private activationListeners: {() : void}[] = [];
+
     public static debug = false;
 
     constructor(builder: WidgetViewBuilder) {
@@ -37,18 +39,45 @@ export class WidgetView extends api.dom.DivEl {
         }
 
         this.layout();
-        if (this.isUrlBased()) {
-            this.detailsPanel.onPanelSizeChanged(() => {
-                var containerWidth = this.detailsPanel.getEl().getWidth();
-                if (this.detailsPanel.getItem() && containerWidth !== this.containerWidth) {
-                    this.setContent(this.detailsPanel.getItem(), true);
-                }
-            })
-        }
+
+        this.applyBehaviorPatterns();
     }
 
     resetContainerWidth() {
         this.containerWidth = 0;
+    }
+
+    private applyBehaviorPatterns() {
+        if (this.isUrlBased()) {
+            var patterns = this.widget.getBehaviorPatterns();
+            if (!!patterns) {
+                for (let i = 0; i < patterns.length; i++) {
+                    if (patterns[i] == "re-render-on-resize") {
+                        this.handleRerenderOnResize();
+                    }
+                }
+            }
+        }
+    }
+
+    private handleRerenderOnResize() {
+        var setContentHandler = () => {
+            var containerWidth = this.detailsPanel.getEl().getWidth();
+            if (this.detailsPanel.getItem() && containerWidth !== this.containerWidth) {
+                this.setContent(this.detailsPanel.getItem(), true);
+            }
+        }
+        this.detailsPanel.onPanelSizeChanged(() => {
+            if (this.isActive()) {
+                setContentHandler();
+            } else {
+                var onActivatedHandler = () => {
+                    setContentHandler();
+                    this.unActivated(onActivatedHandler);
+                }
+                this.onActivated(onActivatedHandler);
+            }
+        });
     }
 
     private getWidgetUrl() {
@@ -93,7 +122,7 @@ export class WidgetView extends api.dom.DivEl {
         this.widgetItemViews.push(widgetItemView);
     }
 
-    public layout(): wemQ.Promise<any> {
+    private layout(): wemQ.Promise<any> {
 
         this.slideOut();
 
@@ -155,6 +184,7 @@ export class WidgetView extends api.dom.DivEl {
             return;
         }
         this.detailsPanel.setActiveWidget(this);
+        this.notifyActivated();
         this.slideIn();
     }
 
@@ -192,6 +222,20 @@ export class WidgetView extends api.dom.DivEl {
 
     public getDetailsPanel(): DetailsPanel {
         return this.detailsPanel;
+    }
+
+    notifyActivated() {
+        this.activationListeners.forEach((listener: ()=> void) => listener());
+    }
+
+    onActivated(listener: () => void) {
+        this.activationListeners.push(listener);
+    }
+
+    unActivated(listener: ()=>void) {
+        this.activationListeners = this.activationListeners.filter((currentListener: ()=>void) => {
+            return currentListener != listener;
+        });
     }
 
     public static create(): WidgetViewBuilder {

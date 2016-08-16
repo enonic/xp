@@ -21,6 +21,8 @@ public final class WidgetDescriptor
 
     private final ImmutableList<String> interfaces;
 
+    private final ImmutableList<String> behaviorPatterns;
+
     private static final String URL_PREFIX = "_/widgets/";
 
     private WidgetDescriptor( final Builder builder )
@@ -29,6 +31,7 @@ public final class WidgetDescriptor
         this.key = builder.key;
         this.displayName = builder.displayName;
         this.interfaces = ImmutableList.copyOf( builder.interfaces );
+        this.behaviorPatterns = ImmutableList.copyOf( builder.behaviorPatterns );
     }
 
     public DescriptorKey getKey()
@@ -58,6 +61,11 @@ public final class WidgetDescriptor
         return interfaces;
     }
 
+    public ImmutableList<String> getBehaviorPatterns()
+    {
+        return behaviorPatterns;
+    }
+
     @JsonIgnore
     public String getName()
     {
@@ -76,6 +84,8 @@ public final class WidgetDescriptor
         private String displayName;
 
         public List<String> interfaces = new LinkedList<>();
+
+        public List<String> behaviorPatterns = new LinkedList<>();
 
         private Builder()
         {
@@ -96,6 +106,12 @@ public final class WidgetDescriptor
         public Builder addInterface( final String interfaceName )
         {
             this.interfaces.add( interfaceName );
+            return this;
+        }
+
+        public Builder addBehaviorPattern( final String behaviorPattern )
+        {
+            this.behaviorPatterns.add( behaviorPattern );
             return this;
         }
 

@@ -12,4 +12,6 @@ public final class WidgetDescriptorJson
     public String url;
 
     public Set<String> interfaces;
+
+    public Set<String> behaviorPatterns;
 }

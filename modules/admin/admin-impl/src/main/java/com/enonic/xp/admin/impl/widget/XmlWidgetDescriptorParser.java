@@ -33,5 +33,15 @@ final class XmlWidgetDescriptorParser
                 this.builder.addInterface( anInterface.getValue() );
             }
         }
+
+        final DomElement behaviorPatterns = root.getChild( "behavior_patterns" );
+        if ( behaviorPatterns != null )
+        {
+            final List<DomElement> behaviorPatternList = behaviorPatterns.getChildren( "pattern" );
+            for ( DomElement pattern : behaviorPatternList )
+            {
+                this.builder.addBehaviorPattern( pattern.getValue() );
+            }
+        }
     }
 }
