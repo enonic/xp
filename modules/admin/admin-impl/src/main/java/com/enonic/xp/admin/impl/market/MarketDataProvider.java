@@ -1,8 +1,13 @@
 package com.enonic.xp.admin.impl.market;
 
-import com.squareup.okhttp.Response;
+import java.util.List;
+
+import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 
 public interface MarketDataProvider
 {
-    Response fetch( String url, String version, int start, int count );
+
+    MarketApplicationsJson search( String version, int start, int count );
+
+    MarketApplicationsJson get( List<String> ids );
 }
