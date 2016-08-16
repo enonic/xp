@@ -55,7 +55,7 @@ public final class FindUsersHandler
 
         final UserQueryResult result = this.securityService.get().query( query.build() );
 
-        return new PrincipalsResultMapper( result.getUsers(), result.getTotalSize() );
+        return new PrincipalsResultMapper( result.getUsers(), result.getTotalSize(), true );
     }
 
     @Override

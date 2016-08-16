@@ -12,10 +12,19 @@ public final class PrincipalMapper
 {
     private final Principal value;
 
+    private final boolean detailed;
+
     public PrincipalMapper( final Principal value )
     {
-        this.value = value;
+        this( value, false );
     }
+
+    public PrincipalMapper( final Principal value, final boolean detailed )
+    {
+        this.value = value;
+        this.detailed = detailed;
+    }
+
 
     private void serialize( final MapGenerator gen, final Principal value )
     {
@@ -38,11 +47,14 @@ public final class PrincipalMapper
         }
     }
 
-    private static void serializeProfile( final MapGenerator gen, final PropertyTree value )
+    private void serializeProfile( final MapGenerator gen, final PropertyTree value )
     {
-        gen.map( "profile" );
-        new PropertyTreeMapper( value ).serialize( gen );
-        gen.end();
+        if ( this.detailed )
+        {
+            gen.map( "profile" );
+            new PropertyTreeMapper( value ).serialize( gen );
+            gen.end();
+        }
     }
 
     @Override

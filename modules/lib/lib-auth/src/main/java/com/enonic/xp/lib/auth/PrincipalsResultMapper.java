@@ -12,10 +12,18 @@ public final class PrincipalsResultMapper
 
     private final long total;
 
+    private final boolean detailed;
+
     public PrincipalsResultMapper( final Principals principals, final long total )
+    {
+        this( principals, total, false );
+    }
+
+    public PrincipalsResultMapper( final Principals principals, final long total, final boolean detailed )
     {
         this.principals = principals;
         this.total = total;
+        this.detailed = detailed;
     }
 
     @Override
@@ -32,7 +40,7 @@ public final class PrincipalsResultMapper
         for ( final Principal principal : principals )
         {
             gen.map();
-            new PrincipalMapper( principal ).serialize( gen );
+            new PrincipalMapper( principal, detailed ).serialize( gen );
             gen.end();
         }
         gen.end();
