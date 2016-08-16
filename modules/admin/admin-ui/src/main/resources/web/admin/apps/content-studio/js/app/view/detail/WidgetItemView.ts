@@ -50,19 +50,6 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     private stripOffAssets(html: string): string {
-
-        var findScriptsRegex = /(?:<script\b[^>]*>[\s\S]*?<\/script>)|(?:<link\b[^<>]*[\\/]?>)/gm;
-        var match, matches: string[] = [];
-        while (match = findScriptsRegex.exec(html)) {
-            var script = match[0];
-            console.log(script);
-            matches.push(script);
-        }
-
-        for (let i = 0; i < matches.length; i++) {
-            html = html.replace(matches[i], "");
-        }
-
-        return html;
+        return html.replace(/(?:<script\b[^>]*>[\s\S]*?<\/script>)|(?:<link\b[^<>]*[\\/]?>)/gm, "");
     }
 }
