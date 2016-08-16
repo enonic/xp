@@ -30,10 +30,12 @@ export class WidgetItemView extends api.dom.DivEl {
             linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync(),
             el = this.getEl(),
             onLinkLoaded = ((event: UIEvent) => {
-                var mainContainer = wemjq(event.target["import"]).find("div")[0];
+                var mainContainer = event.target["import"].body;
                 if (mainContainer) {
-                    el.appendChild(document.importNode(<Node>mainContainer, true));
+                    var html = this.stripOffAssets(mainContainer.innerHTML);
+                    el.getHTMLElement().insertAdjacentHTML('beforeend', html);
                 }
+
                 linkEl.unLoaded(onLinkLoaded);
                 deferred.resolve(null);
             });
@@ -45,5 +47,22 @@ export class WidgetItemView extends api.dom.DivEl {
         this.appendChild(linkEl);
 
         return deferred.promise;
+    }
+
+    private stripOffAssets(html: string): string {
+
+        var findScriptsRegex = /(?:<script\b[^>]*>[\s\S]*?<\/script>)|(?:<link\b[^<>]*[\\/]?>)/gm;
+        var match, matches: string[] = [];
+        while (match = findScriptsRegex.exec(html)) {
+            var script = match[0];
+            console.log(script);
+            matches.push(script);
+        }
+
+        for (let i = 0; i < matches.length; i++) {
+            html = html.replace(matches[i], "");
+        }
+
+        return html;
     }
 }
