@@ -113,8 +113,9 @@ function startApplication() {
     ContentPublishPromptEvent.on((event) => {
         contentPublishDialog
             .setContentToPublish(event.getModels())
-            .setIncludeChildItems(event.isIncludeChildItems(), true)
             .open();
+
+        contentPublishDialog.setIncludeChildItems(event.isIncludeChildItems(), true);
     });
 
     var contentUnpublishDialog = new ContentUnpublishDialog();
