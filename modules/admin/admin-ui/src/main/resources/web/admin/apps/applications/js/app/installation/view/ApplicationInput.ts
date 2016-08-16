@@ -8,7 +8,6 @@ import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 import ApplicationInstallResult = api.application.ApplicationInstallResult;
 import Action = api.ui.Action;
 import Application = api.application.Application;
-import {MarketAppsTreeGrid} from "./MarketAppsTreeGrid";
 
 export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
