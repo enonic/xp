@@ -8,9 +8,8 @@ import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 
-public class LikeExpressionBuilder
+class LikeExpressionBuilder
 {
-
 
     public static QueryBuilder build( final CompareExpr compareExpr, final QueryFieldNameResolver resolver )
     {

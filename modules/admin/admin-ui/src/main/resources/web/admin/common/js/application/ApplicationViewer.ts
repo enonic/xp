@@ -11,6 +11,10 @@ module api.application {
             if (object && object.isLocal()) {
                 this.getNamesAndIconView().setIconToolTip("Local application");
             }
+
+            if (object && object.getIconUrl()) {
+                this.getNamesAndIconView().setIconUrl(object.getIconUrl());
+            }
         }
 
         resolveDisplayName(object: Application): string {
@@ -19,6 +23,10 @@ module api.application {
         }
 
         resolveSubName(object: Application, relativePath: boolean = false): string {
+            if (object.getDescription()) {
+                return object.getDescription();
+            }
+            
             return object.getName();
         }
 

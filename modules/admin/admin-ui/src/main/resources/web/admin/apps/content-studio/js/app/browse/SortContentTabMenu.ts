@@ -2,9 +2,7 @@ import "../../api.ts";
 import {SortContentTabMenuItem} from "./SortContentTabMenuItem";
 import {SortContentTabMenuItems} from "./SortContentTabMenuItems";
 
-import ChildOrder = api.content.ChildOrder;
-import FieldOrderExpr = api.content.FieldOrderExpr;
-import FieldOrderExprBuilder = api.content.FieldOrderExprBuilder;
+import ChildOrder = api.content.order.ChildOrder;
 import ContentSummary = api.content.ContentSummary;
 import DropdownHandle = api.ui.button.DropdownHandle;
 

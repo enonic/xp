@@ -2,12 +2,9 @@ package com.enonic.xp.repo.impl.index;
 
 public enum IndexValueType
 {
-
     DATETIME( "_datetime" ),
 
     NUMBER( "_number" ),
-
-    LONG( "_long" ),
 
     NGRAM( "_ngram" ),
 
@@ -19,9 +16,7 @@ public enum IndexValueType
 
     PATH( "_path" ),
 
-    STRING( "" ),
-
-    NODE( "" );
+    STRING( "" );
 
     public static final String INDEX_VALUE_TYPE_SEPARATOR = ".";
 

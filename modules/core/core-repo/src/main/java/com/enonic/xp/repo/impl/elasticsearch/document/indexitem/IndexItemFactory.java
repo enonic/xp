@@ -10,7 +10,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 
-public class IndexItemFactory
+class IndexItemFactory
 {
     public static List<IndexItem> create( final Property property, final IndexConfig indexConfig )
     {

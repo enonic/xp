@@ -215,7 +215,7 @@ module api.content.form.inputtype.contentselector {
                     }
                 }
             });
-            return new api.content.GetContentSummaryByIds(contentIds).sendAndParse().
+            return new api.content.resource.GetContentSummaryByIds(contentIds).sendAndParse().
                 then((result: api.content.ContentSummary[]) => {
                     return result;
                 });

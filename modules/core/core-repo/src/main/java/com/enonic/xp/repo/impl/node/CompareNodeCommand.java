@@ -49,7 +49,6 @@ public class CompareNodeCommand
             Preconditions.checkNotNull( nodeId );
         }
 
-        @Override
         public CompareNodeCommand build()
         {
             this.validate();

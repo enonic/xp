@@ -901,7 +901,7 @@ module api.dom {
             if (deep) {
                 this.children.forEach((child: Element) => {
                     if (child.isVisible()) {
-                        child.notifyShown(shownEvent.getTarget());
+                        child.notifyShown(shownEvent.getTarget(), deep);
                     }
                 });
             }

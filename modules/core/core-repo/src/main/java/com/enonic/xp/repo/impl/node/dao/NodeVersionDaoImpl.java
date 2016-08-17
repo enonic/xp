@@ -18,7 +18,6 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 
@@ -27,8 +26,6 @@ public class NodeVersionDaoImpl
     implements NodeVersionDao
 {
     private final NodeVersionJsonSerializer nodeVersionJsonSerializer = NodeVersionJsonSerializer.create( false );
-
-    private RepoConfiguration configuration;
 
     private BlobStore blobStore;
 
@@ -109,12 +106,6 @@ public class NodeVersionDaoImpl
         {
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }
-    }
-
-    @Reference
-    public void setConfiguration( final RepoConfiguration configuration )
-    {
-        this.configuration = configuration;
     }
 
     @Reference

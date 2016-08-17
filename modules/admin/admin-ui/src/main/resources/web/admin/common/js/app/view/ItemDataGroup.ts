@@ -4,11 +4,15 @@ module api.app.view {
 
         private header: api.dom.H2El;
 
+        private empty: boolean;
+
         constructor(title: string, className?: string) {
             super(!!className ? className + " item-data-group" : "item-data-group");
             this.header = new api.dom.H2El();
             this.header.getEl().setInnerHtml(title);
             this.appendChild(this.header);
+
+            this.empty = true;
         }
 
         addDataList(header: string, ...datas: string[]) {
@@ -30,9 +34,14 @@ module api.app.view {
                 var dataElement = new api.dom.LiEl();
                 dataElement.getEl().setInnerHtml(data, false);
                 dataList.appendChild(dataElement);
+                this.empty = false;
             });
 
             this.appendChild(dataList);
+        }
+
+        isEmpty(): boolean {
+            return this.empty;
         }
     }
 }

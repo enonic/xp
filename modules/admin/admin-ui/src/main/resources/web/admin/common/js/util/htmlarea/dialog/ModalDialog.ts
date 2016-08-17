@@ -58,6 +58,10 @@ module api.util.htmlarea.dialog {
             return [];
         }
 
+        protected getMainForm(): Form {
+            return this.mainForm;
+        }
+
         protected createMainForm(): Form {
             return this.mainForm = this.createForm(this.getMainFormItems());
         }

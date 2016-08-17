@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -23,7 +22,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
@@ -55,7 +53,6 @@ public class PushNodesCommand
         return new Builder();
     }
 
-
     public PushNodesResult execute()
     {
         final Context context = ContextAccessor.current();
@@ -83,10 +80,8 @@ public class PushNodesCommand
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
 
-        final Stopwatch sortTimer = Stopwatch.createStarted();
         final ArrayList<NodeBranchEntry> list = new ArrayList<>( nodeBranchEntries.getSet() );
         Collections.sort( list, ( e1, e2 ) -> e1.getNodePath().compareTo( e2.getNodePath() ) );
-        System.out.println( "Ordering collection of NodeBranchEntries: " + sortTimer.stop() );
 
         for ( final NodeBranchEntry branchEntry : list )
         {
@@ -126,7 +121,6 @@ public class PushNodesCommand
                 nodeVersionId( nodeBranchEntry.getVersionId() ).
                 build() );
 
-            //doPushNode( context, nodeBranchEntry, nodeBranchEntry.getVersionId() );
             builder.addSuccess( nodeBranchEntry );
             pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.PUSHED );
 
@@ -136,9 +130,7 @@ public class PushNodesCommand
             }
         }
 
-        final Stopwatch timer = Stopwatch.createStarted();
         this.storageService.publish( publishBuilder.build(), InternalContext.from( context ) );
-        System.out.println( "publish-time: " + timer.stop() );
 
         return builder;
     }
@@ -204,13 +196,6 @@ public class PushNodesCommand
                 updateTargetChildrenMetaData( child, resultBuilder );
             }
         }
-    }
-
-    private void doPushNode( final Context context, final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId )
-    {
-        this.storageService.publish( nodeBranchEntry, nodeVersionId, InternalContext.create( context ).
-            branch( this.target ).
-            build(), context.getBranch() );
     }
 
     private boolean targetParentExists( final NodePath nodePath, final PushNodesResult.Builder builder, final Context currentContext )

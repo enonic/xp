@@ -17,7 +17,7 @@ module api.util.htmlarea.dialog {
 
         private imagePreviewContainer: api.dom.DivEl;
         private imageCaptionField: FormItem;
-        private imageUploaderEl: api.content.ImageUploaderEl;
+        private imageUploaderEl: api.content.image.ImageUploaderEl;
         private imageElement: HTMLImageElement;
         private content: api.content.ContentSummary;
         private imageSelector: api.content.ContentComboBox;
@@ -29,6 +29,7 @@ module api.util.htmlarea.dialog {
         private imageToolbar: ImageToolbar;
         private imagePreviewScrollHandler: ImagePreviewScrollHandler;
         private imageLoadMask: api.ui.mask.LoadMask;
+        private dropzoneContainer: api.ui.uploader.DropzoneContainer;
 
         static imagePrefix = "image://";
         static maxImageWidth = 640;
@@ -55,7 +56,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageSelector(id: string): FormItem {
-            let loader = new api.content.ContentSummaryLoader();
+            let loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(this.content.getPath());
 
             let imageSelector = api.content.ContentComboBox.create().
@@ -128,6 +129,7 @@ module api.util.htmlarea.dialog {
             var imageSelectorContainer = imageSelector.getInput().getParentElement();
 
             imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
+            this.initDragAndDropUploaderEvents();
 
             this.createImagePreviewContainer();
 
@@ -210,7 +212,8 @@ module api.util.htmlarea.dialog {
         }
 
         private generateDefaultImgSrc(contentId): string {
-            return new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(true).setSize(
+            return new api.content.util.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(
+                true).setSize(
                 ImageModalDialog.maxImageWidth).resolve();
         }
 
@@ -267,12 +270,12 @@ module api.util.htmlarea.dialog {
             }
         }
 
-        private createImageUploader(): api.content.ImageUploaderEl {
-            var uploader = new api.content.ImageUploaderEl({
+        private createImageUploader(): api.content.image.ImageUploaderEl {
+            var uploader = new api.content.image.ImageUploaderEl({
                 params: {
                     parent: this.content.getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.create,
+                operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showResult: false,
                 maximumOccurrences: 1,
@@ -282,7 +285,11 @@ module api.util.htmlarea.dialog {
                 selfIsDropzone: false
             });
 
-            uploader.addDropzone(this.imageSelector.getId());
+            this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
+            this.dropzoneContainer.hide();
+            this.appendChild(this.dropzoneContainer);
+
+            uploader.addDropzone(this.dropzoneContainer.getDropzone().getId());
 
             uploader.hide();
 
@@ -311,6 +318,23 @@ module api.util.htmlarea.dialog {
             });
 
             return uploader;
+        }
+
+        private initDragAndDropUploaderEvents() {
+            var dragOverEl;
+            this.onDragEnter((event: DragEvent) => {
+                if (this.imageUploaderEl.isEnabled()) {
+                    var target = <HTMLElement> event.target;
+
+                    if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+                        this.dropzoneContainer.show();
+                    }
+                    dragOverEl = target;
+                }
+            });
+
+            this.imageUploaderEl.onDropzoneDragLeave(() => this.dropzoneContainer.hide());
+            this.imageUploaderEl.onDropzoneDrop(() => this.dropzoneContainer.hide());
         }
 
         private setProgress(value: number) {

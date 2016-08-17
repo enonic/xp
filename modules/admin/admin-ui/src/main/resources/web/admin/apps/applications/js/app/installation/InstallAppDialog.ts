@@ -19,6 +19,8 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     private marketAppPanel: MarketAppPanel;
 
+    private dropzoneContainer: api.ui.uploader.DropzoneContainer;
+
     private onMarketLoaded;
 
     constructor() {
@@ -54,6 +56,14 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
                     });
 
                     this.initUploaderListeners(this.uploadAppPanel);
+
+                    this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
+                    this.dropzoneContainer.hide();
+                    this.appendChild(this.dropzoneContainer);
+
+                    this.uploadAppPanel.getApplicationInput().getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
+
+                    this.initDragAndDropUploaderEvents();
                 });
             }
 
@@ -63,11 +73,31 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
                 this.dockedPanel.addItem("Enonic Market", true, this.marketAppPanel);
                 this.dockedPanel.addItem("Upload", true, this.uploadAppPanel);
 
+                this.dockedPanel.getNavigator().onNavigationItemSelected(() => this.centerMyself());
+
                 this.appendChildToContentPanel(this.dockedPanel);
             }
 
             return rendered;
         });
+    }
+
+    // in order to toggle appropriate handlers during drag event
+    // we catch drag enter on this element and trigger uploader to appear,
+    // then catch drag leave on uploader's dropzone to get back to previous state
+    private initDragAndDropUploaderEvents() {
+        var dragOverEl;
+        this.onDragEnter((event: DragEvent) => {
+            var target = <HTMLElement> event.target;
+
+            if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+                this.dropzoneContainer.show();
+            }
+            dragOverEl = target;
+        });
+
+        this.uploadAppPanel.getApplicationInput().getUploader().onDropzoneDragLeave(() => this.dropzoneContainer.hide());
+        this.uploadAppPanel.getApplicationInput().getUploader().onDropzoneDrop(() => this.dropzoneContainer.hide());
     }
 
     private initUploaderListeners(uploadAppPanel: UploadAppPanel) {

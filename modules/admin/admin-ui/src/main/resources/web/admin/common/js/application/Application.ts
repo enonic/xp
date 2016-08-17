@@ -9,6 +9,8 @@ module api.application {
 
         private displayName: string;
 
+        private description: string;
+
         private vendorName: string;
 
         private vendorUrl: string;
@@ -35,10 +37,13 @@ module api.application {
 
         private maxSystemVersion: string;
 
+        private iconUrl: string;
+
         constructor(builder: ApplicationBuilder) {
             super(builder);
             this.applicationKey = builder.applicationKey;
             this.displayName = builder.displayName;
+            this.description = builder.description;
             this.vendorName = builder.vendorName;
             this.vendorUrl = builder.vendorUrl;
             this.url = builder.url;
@@ -52,10 +57,15 @@ module api.application {
             this.metaSteps = builder.metaSteps;
             this.minSystemVersion = builder.minSystemVersion;
             this.maxSystemVersion = builder.maxSystemVersion;
+            this.iconUrl = builder.iconUrl;
         }
 
         getDisplayName(): string {
             return this.displayName;
+        }
+
+        getDescription(): string {
+            return this.description;
         }
 
         getApplicationKey(): ApplicationKey {
@@ -126,6 +136,10 @@ module api.application {
             return this.metaSteps;
         }
 
+        getIconUrl(): string {
+            return this.iconUrl;
+        }
+
         static fromJson(json: api.application.json.ApplicationJson): Application {
             return new ApplicationBuilder().fromJson(json).build();
         }
@@ -146,6 +160,7 @@ module api.application {
 
             return this.applicationKey.equals(other.applicationKey) &&
                    this.displayName == other.displayName &&
+                   this.description == other.description &&
                    this.vendorName == other.vendorName &&
                    this.vendorUrl == other.vendorUrl &&
                    this.url == other.url &&
@@ -156,7 +171,8 @@ module api.application {
                    api.ObjectHelper.arrayEquals(this.contentTypeDependencies, other.contentTypeDependencies) &&
                    api.ObjectHelper.equals(this.metaSteps, other.metaSteps) &&
                    this.minSystemVersion == other.minSystemVersion &&
-                   this.maxSystemVersion == other.maxSystemVersion;
+                   this.maxSystemVersion == other.maxSystemVersion &&
+                   this.iconUrl == other.iconUrl;
         }
     }
 
@@ -165,6 +181,8 @@ module api.application {
         applicationKey: ApplicationKey;
 
         displayName: string;
+
+        description: string;
 
         vendorName: string;
 
@@ -192,15 +210,17 @@ module api.application {
 
         maxSystemVersion: string;
 
+        iconUrl: string;
+
 
         constructor(source?: Application) {
             this.applicationDependencies = [];
             this.contentTypeDependencies = [];
-            this.metaSteps;
             if (source) {
                 super(source);
                 this.applicationKey = source.getApplicationKey();
                 this.displayName = source.getDisplayName();
+                this.description = source.getDescription();
                 this.vendorName = source.getVendorName();
                 this.vendorUrl = source.getVendorUrl();
                 this.url = source.getUrl();
@@ -213,6 +233,7 @@ module api.application {
                 this.metaSteps = source.getMetaSteps();
                 this.minSystemVersion = source.getMinSystemVersion();
                 this.maxSystemVersion = source.getMaxSystemVersion();
+                this.iconUrl = source.getIconUrl();
             }
         }
 
@@ -222,6 +243,7 @@ module api.application {
 
             this.applicationKey = ApplicationKey.fromString(json.key);
             this.displayName = json.displayName;
+            this.description = json.description;
             this.vendorName = json.vendorName;
             this.vendorUrl = json.vendorUrl;
             this.url = json.url;
@@ -233,6 +255,7 @@ module api.application {
             this.authConfig = json.authConfig != null ? api.form.Form.fromJson(json.authConfig) : null;
             this.minSystemVersion = json.minSystemVersion;
             this.maxSystemVersion = json.maxSystemVersion;
+            this.iconUrl = json.iconUrl;
 
             if (json.applicationDependencies != null) {
                 json.applicationDependencies.forEach((dependency: string) => {

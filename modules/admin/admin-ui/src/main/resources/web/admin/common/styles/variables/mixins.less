@@ -123,27 +123,6 @@
   .animation(pulsate, 4s);
 }
 
-.hide-inputs-placeholder() {
-  input {
-    &::-webkit-input-placeholder {
-      /* Chrome/Opera/Safari */
-      color: transparent;
-    }
-    &::-moz-placeholder {
-      /* Firefox 19+ */
-      color: transparent;
-    }
-    &:-ms-input-placeholder {
-      /* IE 10+ */
-      color: transparent;
-    }
-    &:-moz-placeholder {
-      /* Firefox 18- */
-      color: transparent;
-    }
-  }
-}
-
 .transition (@value1,@value2:X,...) {
   @params: ~`"@{arguments}".replace(/[\[\]]|\,\sX/g, '')`;
 

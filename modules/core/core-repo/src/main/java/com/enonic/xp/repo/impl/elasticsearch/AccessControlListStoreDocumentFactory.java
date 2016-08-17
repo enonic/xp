@@ -13,7 +13,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-public class AccessControlListStoreDocumentFactory
+class AccessControlListStoreDocumentFactory
 {
     static List<IndexItem> create( final AccessControlList accessControlList )
     {

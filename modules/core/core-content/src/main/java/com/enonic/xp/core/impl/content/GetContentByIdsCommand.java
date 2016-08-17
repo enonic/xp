@@ -1,10 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -57,14 +56,9 @@ final class GetContentByIdsCommand
 
     private NodeIds getAsNodeIds( final ContentIds contentIds )
     {
-        final Set<NodeId> nodeIds = Sets.newHashSet();
+        final List<NodeId> nodeIds = Lists.newArrayList();
 
-        final Iterator<ContentId> iterator = contentIds.iterator();
-
-        while ( iterator.hasNext() )
-        {
-            nodeIds.add( NodeId.from( iterator.next().toString() ) );
-        }
+        contentIds.forEach( contentId -> nodeIds.add( NodeId.from( contentId.toString() ) ) );
 
         return NodeIds.from( nodeIds );
     }

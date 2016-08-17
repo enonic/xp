@@ -7,6 +7,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
@@ -25,7 +26,7 @@ public final class ContextHandlerBean
     public Object run( final ContextRunParams params )
     {
         final ContextBuilder builder = ContextBuilder.from( this.context.get() );
-        applyUser( builder, params.username, params.userStore );
+        applyAuthInfo( builder, params.username, params.userStore, params.principals );
         applyBranch( builder, params.branch );
 
         return builder.build().
@@ -42,14 +43,22 @@ public final class ContextHandlerBean
         return new ContextRunParams();
     }
 
-    private void applyUser( final ContextBuilder builder, final String username, final String userStore )
+    private void applyAuthInfo( final ContextBuilder builder, final String username, final String userStore,
+                                final PrincipalKey[] principals )
     {
-        if ( username == null )
+        AuthenticationInfo authInfo = this.context.get().getAuthInfo();
+        if ( username != null )
         {
-            return;
+            authInfo = runAsAuthenticated( () -> getAuthenticationInfo( username, userStore ) );
+        }
+        if ( principals != null )
+        {
+            authInfo = AuthenticationInfo.
+                copyOf( authInfo ).
+                principals( principals ).
+                build();
         }
 
-        final AuthenticationInfo authInfo = runAsAuthenticated( () -> getAuthenticationInfo( username, userStore ) );
         builder.authInfo( authInfo );
     }
 

@@ -40,7 +40,7 @@ public final class MappingHandler
     public final boolean canHandle( final WebRequest req )
     {
         return req instanceof PortalRequest &&
-            new ControllerMappingsResolver( siteService, contentService ).resolve( (PortalRequest) req ) != null;
+            new ControllerMappingsResolver( siteService, contentService ).canHandle( (PortalRequest) req );
     }
 
     @Override

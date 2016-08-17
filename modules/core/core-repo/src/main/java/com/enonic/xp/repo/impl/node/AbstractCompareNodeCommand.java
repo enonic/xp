@@ -11,11 +11,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StorageService;
 
-public class AbstractCompareNodeCommand
+class AbstractCompareNodeCommand
 {
-    protected final Branch target;
+    final Branch target;
 
-    protected final StorageService storageService;
+    final StorageService storageService;
 
     AbstractCompareNodeCommand( Builder builder )
     {
@@ -65,11 +65,6 @@ public class AbstractCompareNodeCommand
         {
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( storageService );
-        }
-
-        public AbstractCompareNodeCommand build()
-        {
-            return new AbstractCompareNodeCommand( this );
         }
     }
 }

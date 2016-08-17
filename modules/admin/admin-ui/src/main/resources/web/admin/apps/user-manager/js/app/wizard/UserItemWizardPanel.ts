@@ -71,7 +71,13 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
                 }
             });
 
+            this.updateHash();
             this.onRemoved((event) => ResponsiveManager.unAvailableSizeChanged(this));
+
+            this.onShown((event: api.dom.ElementShownEvent) => {
+                this.updateHash();
+                responsiveItem.update();
+            });
 
             return rendered;
         });
@@ -121,5 +127,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
         return this.wizardActions.getCloseAction();
     }
 
-
+    protected updateHash() {
+        throw new Error("Must be implemented by inheritors");
+    }
 }

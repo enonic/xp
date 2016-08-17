@@ -8,7 +8,7 @@ import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.ValueHelper;
 
-public class TermExpressionBuilder
+class TermExpressionBuilder
 {
     public static QueryBuilder build( final CompareExpr compareExpr, final QueryFieldNameResolver resolver )
     {

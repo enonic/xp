@@ -10,7 +10,6 @@ module api.content.site.inputtype.siteconfigurator {
     import SiteConfig = api.content.site.SiteConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import ContentFormContext = api.content.form.ContentFormContext;
-    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
 
     export class SiteConfiguratorSelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<Application> {
 
@@ -44,19 +43,18 @@ module api.content.site.inputtype.siteconfigurator {
             var header = new api.dom.DivEl('header');
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
-                api.app.NamesAndIconViewSize.large)).setMainName(this.application.getDisplayName()).setSubName(
+                api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
                 this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
+            
+            if (this.application.getIconUrl()) {
+                namesAndIconView.setIconUrl(this.application.getIconUrl());
+            }
+
+            if (this.application.getDescription()) {
+                namesAndIconView.setSubName(this.application.getDescription());
+            }
 
             header.appendChild(namesAndIconView);
-
-            var removeButton = new api.dom.AEl("remove-button icon-close");
-            removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveClicked();
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-            header.appendChild(removeButton);
 
             this.appendChild(header);
 
@@ -70,6 +68,15 @@ module api.content.site.inputtype.siteconfigurator {
             if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
             }
+
+            var removeButton = new api.dom.AEl("remove-button icon-close");
+            removeButton.onClicked((event: MouseEvent) => {
+                this.notifyRemoveClicked();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
+            header.appendChild(removeButton);
 
             return wemQ(true);
         }
@@ -107,7 +114,7 @@ module api.content.site.inputtype.siteconfigurator {
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.siteConfig)) {
                         this.applyTemporaryConfig(tempSiteConfig);
-                        new ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
+                        new api.content.event.ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
                     }
                 };
 
@@ -118,8 +125,7 @@ module api.content.site.inputtype.siteconfigurator {
                     }
                 };
 
-                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application.getDisplayName(),
-                    this.application.getName() + "-" + this.application.getVersion(),
+                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
                     this.formView,
                     okCallback,
                     cancelCallback);

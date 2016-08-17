@@ -11,8 +11,6 @@ export class MarketAppPanel extends api.ui.panel.Panel {
 
     private isGridLoadingData: boolean = false;
 
-    private installApplications: Application[] = [];
-
     constructor(className?: string) {
         super(className);
     }
@@ -21,7 +19,6 @@ export class MarketAppPanel extends api.ui.panel.Panel {
         return super.doRender().then((rendered) => {
 
             this.marketAppsTreeGrid = new MarketAppsTreeGrid();
-            this.marketAppsTreeGrid.updateInstallApplications(this.installApplications);
             this.appendChild(this.marketAppsTreeGrid);
 
             this.initDataLoadListener();
@@ -49,7 +46,7 @@ export class MarketAppPanel extends api.ui.panel.Panel {
     }
 
     public updateInstallApplications(installApplications: api.application.Application[]) {
-        this.installApplications = installApplications;
+        this.marketAppsTreeGrid.updateInstallApplications(installApplications);
     }
 
     private initAvailableSizeChangeListener() {

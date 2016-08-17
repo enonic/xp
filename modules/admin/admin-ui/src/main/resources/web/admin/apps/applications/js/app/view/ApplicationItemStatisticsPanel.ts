@@ -9,6 +9,7 @@ import PageDescriptor = api.content.page.PageDescriptor;
 import PartDescriptor = api.content.page.region.PartDescriptor;
 import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
 import ItemDataGroup = api.app.view.ItemDataGroup;
+import ApplicationKey = api.application.ApplicationKey;
 
 export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
@@ -38,6 +39,15 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         super.setItem(item);
         var currentApplication = item.getModel();
+
+        if (currentApplication.getIconUrl()) {
+            this.getHeader().setIconUrl(currentApplication.getIconUrl());
+        }
+
+        if (currentApplication.getDescription()) {
+            this.getHeader().setHeaderSubtitle(currentApplication.getDescription(), "app-description");
+        }
+
         this.actionMenu.setLabel(api.util.StringHelper.capitalize(currentApplication.getState()));
 
         if (currentApplication.isStarted()) {
@@ -48,6 +58,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             ApplicationBrowseActions.get().STOP_APPLICATION.setEnabled(false);
         }
 
+
         this.applicationDataContainer.removeChildren();
 
         var infoGroup = new ItemDataGroup("Info", "info");
@@ -57,38 +68,63 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         infoGroup.addDataList("System Required",
             ">= " + currentApplication.getMinSystemVersion() + " and < " + currentApplication.getMaxSystemVersion());
 
-        var schemasGroup = new ItemDataGroup("Schemas", "schemas");
 
-        var applicationKey = currentApplication.getApplicationKey();
-        var schemaPromises = [
-            new api.schema.content.GetContentTypesByApplicationRequest(applicationKey).sendAndParse(),
-            new api.schema.mixin.GetMixinsByApplicationRequest(applicationKey).sendAndParse(),
-            new api.schema.relationshiptype.GetRelationshipTypesByApplicationRequest(applicationKey).sendAndParse()
-        ];
+        var descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
+        var schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
+        var macroResponse = this.initMacros(currentApplication.getApplicationKey());
 
-        wemQ.all(schemaPromises).spread((contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
-            var contentTypeNames = contentTypes.map(
-                (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-            schemasGroup.addDataArray("Content Types", contentTypeNames);
 
-            var mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-            schemasGroup.addDataArray("Mixins", mixinsNames);
+        wemQ.all([descriptorResponse, schemaResponse, macroResponse]).spread((descriptorsGroup, schemasGroup, macrosGroup) => {
+            if (!infoGroup.isEmpty()) {
+                this.applicationDataContainer.appendChild(infoGroup);
+            }
+            if (descriptorsGroup && !descriptorsGroup.isEmpty()) {
+                this.applicationDataContainer.appendChild(descriptorsGroup);
+            }
 
-            var relationshipTypeNames = relationshipTypes.map(
-                (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
-                this.sortAlphabeticallyAsc);
-            schemasGroup.addDataArray("RelationshipTypes", relationshipTypeNames);
-        }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
+            if (schemasGroup && !schemasGroup.isEmpty()) {
+                this.applicationDataContainer.appendChild(schemasGroup);
+            }
 
-        var descriptorsGroup = new ItemDataGroup("Descriptors", "descriptors");
+            if (macrosGroup && !macrosGroup.isEmpty()) {
+                this.applicationDataContainer.appendChild(macrosGroup);
+            }
+        })
+
+    }
+
+    private initMacros(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+        var macroPromises = [new api.macro.resource.GetMacrosRequest([applicationKey]).sendAndParse()]
+
+        return wemQ.all(macroPromises).spread((macros: api.macro.MacroDescriptor[])=> {
+
+            var macrosGroup = new ItemDataGroup("Macros", "macros");
+
+            var macroNames = macros.
+            filter((macro: MacroDescriptor) => {
+                return !ApplicationKey.SYSTEM.equals(macro.getKey().getApplicationKey());
+            }).map((macro: MacroDescriptor) => {
+                return macro.getDisplayName();
+            });
+            macrosGroup.addDataArray("Macros", macroNames);
+
+            return macrosGroup;
+        }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+    }
+
+    private initDescriptors(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+
         var descriptorPromises = [
             new api.content.page.GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
             new api.content.page.region.GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
             new api.content.page.region.GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse()
         ];
 
-        wemQ.all(descriptorPromises).spread(
+        return wemQ.all(descriptorPromises).spread(
             (pageDescriptors: PageDescriptor[], partDescriptors: PartDescriptor[], layoutDescriptors: LayoutDescriptor[]) => {
+
+                var descriptorsGroup = new ItemDataGroup("Descriptors", "descriptors");
+
                 var pageNames = pageDescriptors.map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
                     this.sortAlphabeticallyAsc);
                 descriptorsGroup.addDataArray("Page", pageNames);
@@ -100,11 +136,39 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
                 var layoutNames = layoutDescriptors.map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
                     this.sortAlphabeticallyAsc);
                 descriptorsGroup.addDataArray("Layout", layoutNames);
-            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
 
-        this.applicationDataContainer.appendChild(infoGroup);
-        this.applicationDataContainer.appendChild(schemasGroup);
-        this.applicationDataContainer.appendChild(descriptorsGroup);
+                return descriptorsGroup;
+            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+    }
+
+    private initSchemas(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+
+        var schemaPromises = [
+            new api.schema.content.GetContentTypesByApplicationRequest(applicationKey).sendAndParse(),
+            new api.schema.mixin.GetMixinsByApplicationRequest(applicationKey).sendAndParse(),
+            new api.schema.relationshiptype.GetRelationshipTypesByApplicationRequest(applicationKey).sendAndParse()
+        ]
+
+        return wemQ.all(schemaPromises).spread(
+            (contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
+                var schemasGroup = new ItemDataGroup("Schemas", "schemas");
+
+
+                var contentTypeNames = contentTypes.map(
+                    (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
+                schemasGroup.addDataArray("Content Types", contentTypeNames);
+
+                var mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName()).sort(this.sortAlphabeticallyAsc);
+                schemasGroup.addDataArray("Mixins", mixinsNames);
+
+                var relationshipTypeNames = relationshipTypes.map(
+                    (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
+                    this.sortAlphabeticallyAsc);
+                schemasGroup.addDataArray("RelationshipTypes", relationshipTypeNames);
+
+                return schemasGroup;
+
+            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason))
     }
 
     private sortAlphabeticallyAsc(a: string, b: string): number {

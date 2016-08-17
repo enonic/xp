@@ -130,8 +130,11 @@
       width: 60%;
 
       .file-input {
-        width: 100%;
         margin-bottom: 20px;
+
+        > input.text {
+          width: calc(~'100% - 37px');
+        }
 
         @media screen and (max-height: 360px) {
           margin-bottom: 5px;

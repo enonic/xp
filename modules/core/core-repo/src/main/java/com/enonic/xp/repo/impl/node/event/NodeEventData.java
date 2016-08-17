@@ -14,7 +14,7 @@ class NodeEventData
     private final NodePath nodePath;
 
 
-    public NodeEventData( final NodeId nodeId, final NodePath nodePath )
+    private NodeEventData( final NodeId nodeId, final NodePath nodePath )
     {
         this.nodeId = nodeId;
         this.nodePath = nodePath;

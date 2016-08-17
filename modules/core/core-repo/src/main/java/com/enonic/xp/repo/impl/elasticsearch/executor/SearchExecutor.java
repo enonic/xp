@@ -45,7 +45,7 @@ public class SearchExecutor
         {
             if ( anyAggregations )
             {
-                LOG.debug( "Query with size [" + query.getSize() + "] > threshold [" + this.SCROLL_THRESHOLD +
+                LOG.debug( "Query with size [" + query.getSize() + "] > threshold [" + SCROLL_THRESHOLD +
                                "] but with aggregations. Scan not possible." );
             }
             else

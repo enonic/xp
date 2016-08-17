@@ -2,19 +2,21 @@ module api.application.json {
 
     export interface ApplicationJson extends api.item.ItemJson {
 
-        key:string;
+        key: string;
 
-        version:string;
+        version: string;
 
-        displayName:string;
+        displayName: string;
 
-        info:string;
+        description: string;
 
-        url:string;
+        info: string;
 
-        vendorName:string;
+        url: string;
 
-        vendorUrl:string;
+        vendorName: string;
+
+        vendorUrl: string;
 
         state: string;
 
@@ -33,5 +35,7 @@ module api.application.json {
         maxSystemVersion: string;
 
         local: boolean;
+
+        iconUrl: string;
     }
 }
