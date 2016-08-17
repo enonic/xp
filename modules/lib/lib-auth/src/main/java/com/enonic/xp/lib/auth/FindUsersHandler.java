@@ -1,8 +1,10 @@
 package com.enonic.xp.lib.auth;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.enonic.xp.query.expr.ConstraintExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.script.bean.BeanContext;
@@ -21,6 +23,8 @@ public final class FindUsersHandler
     private int count = 10;
 
     private String query;
+
+    private String sort;
 
     public void setStart( final Integer start )
     {
@@ -43,10 +47,16 @@ public final class FindUsersHandler
         this.query = query;
     }
 
+    public void setSort( final String sort )
+    {
+        this.sort = sort;
+    }
+
     public PrincipalsResultMapper execute()
     {
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( this.query == null ? "" : this.query );
-        final QueryExpr queryExpr = QueryExpr.from( constraintExpr );
+        final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
+        final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpressions );
 
         final UserQuery.Builder query = UserQuery.create();
         query.from( this.start );

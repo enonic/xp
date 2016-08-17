@@ -5,8 +5,9 @@ var assert = require('/lib/xp/assert');
 // Find users with the specified email.
 var result = authLib.findUsers({
     start: 0,
-    count: 10,
-    query: "email = 'user1@enonic.com'"
+    count: 1,
+    query: "email = 'user1@enonic.com'",
+    sort: "modifiedTime DESC"
 });
 // END
 
@@ -24,7 +25,14 @@ var expected = {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "userStore": "enonic",
+            "profile": {
+                "myApp": {
+                    "subString": "subStringValue",
+                    "subLong": 123
+                },
+                "string": "stringValue"
+            }
         }
     ]
 };

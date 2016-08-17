@@ -379,6 +379,7 @@ exports.modifyProfile = function (params) {
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} params.query Query expression.
+ * @param {string} [params.sort] Sorting expression.
  *
  * @returns {boolean} Result of query.
  */
@@ -387,5 +388,6 @@ exports.findUsers = function (params) {
     bean.start = params.start;
     bean.count = params.count;
     bean.query = nullOrValue(params.query);
+    bean.sort = nullOrValue(params.sort);
     return __.toNativeObject(bean.execute());
 };
