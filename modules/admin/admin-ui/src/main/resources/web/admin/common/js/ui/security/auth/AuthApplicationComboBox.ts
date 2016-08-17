@@ -84,8 +84,7 @@ module api.ui.security.auth {
                     }
                 };
 
-                var siteConfiguratorDialog = new api.content.site.inputtype.siteconfigurator.SiteConfiguratorDialog(this.application.getDisplayName(),
-                    this.application.getName() + "-" + this.application.getVersion(),
+                var siteConfiguratorDialog = new api.content.site.inputtype.siteconfigurator.SiteConfiguratorDialog(this.application,
                     this.formView,
                     okCallback,
                     () => {
