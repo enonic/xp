@@ -372,6 +372,23 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 console.debug("ContentWizardPanel.doRenderOnDataLoaded");
             }
 
+            var liveFormPanel = this.getLivePanel();
+            if (liveFormPanel) {
+
+                if (!this.liveEditModel) {
+                    var site = this.getPersistedItem().isSite() ? <Site>this.getPersistedItem() : this.site;
+                    this.siteModel = new SiteModel(site);
+
+                    this.initLiveEditModel(this.getPersistedItem(), this.siteModel, this.createFormContext(this.getPersistedItem())).then(
+                        () => {
+                            liveFormPanel.setModel(this.liveEditModel);
+                            liveFormPanel.loadPage();
+                            this.updatePreviewActionVisibility();
+
+                        }).done();
+                }
+            }
+
             this.initPublishButtonForMobile();
 
             if (this.contentType.hasContentDisplayNameScript()) {
@@ -898,7 +915,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions.getPreviewAction().setVisible(false);
         this.wizardActions.getPreviewAction().setEnabled(false);
 
-        this.setupWizardLiveEdit(content.isSite() || this.site && !content.getType().isShortcut());
+        this.setupWizardLiveEdit();
 
         return this.createSteps().then((schemas: Mixin[]) => {
 
@@ -946,23 +963,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
-                var liveFormPanel = this.getLivePanel();
-                if (liveFormPanel) {
-
-                    if (!this.liveEditModel) {
-                        var site = content.isSite() ? <Site>content : this.site;
-                        this.siteModel = new SiteModel(site);
-                        return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
-                            liveFormPanel.setModel(this.liveEditModel);
-                            liveFormPanel.loadPage();
-                            this.updatePreviewActionVisibility();
-                            return wemQ(null);
-                        });
-                    }
-                    else {
-                        liveFormPanel.loadPage();
-                    }
-                }
                 if (!this.siteModel && content.isSite()) {
                     this.siteModel = new SiteModel(<Site>content);
                 }
@@ -974,17 +974,19 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
     }
 
-    private setupWizardLiveEdit(renderable: boolean) {
-        this.toggleClass("rendered", renderable);
+    private setupWizardLiveEdit() {
 
-        this.wizardActions.getShowLiveEditAction().setEnabled(renderable);
-        this.wizardActions.getShowSplitEditAction().setEnabled(renderable);
-        this.wizardActions.getPreviewAction().setVisible(renderable);
+        let editorEnabled = this.expandEditorByDefault();
 
-        this.getCycleViewModeButton().setVisible(renderable);
+        this.toggleClass("rendered", editorEnabled);
 
-        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
+        this.wizardActions.getShowLiveEditAction().setEnabled(editorEnabled);
+        this.wizardActions.getShowSplitEditAction().setEnabled(editorEnabled);
+        this.wizardActions.getPreviewAction().setVisible(editorEnabled);
 
+        this.getCycleViewModeButton().setVisible(editorEnabled);
+
+        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && editorEnabled) {
             this.wizardActions.getShowSplitEditAction().execute();
         } else if (!!this.getSplitPanel()) {
 
@@ -1529,10 +1531,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private isContentRenderable(): boolean {
-        var isPageTemplateWithNoController = this.contentType.getContentTypeName().isPageTemplate() &&
-                                             !this.liveEditModel.getPageModel().getController();
+        return this.liveEditModel && this.liveEditModel.isPageRenderable();
+    }
 
-        return this.liveEditModel && (this.liveEditModel.isPageRenderable() || isPageTemplateWithNoController);
+    private expandEditorByDefault(): boolean {
+
+        let isTemplate = this.contentType.getContentTypeName().isPageTemplate();
+        let isSite = this.contentType.getContentTypeName().isSite();
+
+        return this.isContentRenderable() || isSite || isTemplate;
     }
 
     private updatePreviewActionVisibility() {
