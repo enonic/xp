@@ -320,6 +320,27 @@ public final class ApplicationResource
         return this.marketService.get( version, start, count );
     }
 
+
+    @GET
+    @Path("getIdProvider")
+    public ApplicationJson getIdProvider(@QueryParam("applicationKey") String key)
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
+
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+
+        if ( authDescriptor != null )
+        {
+            final Application application = this.applicationService.getInstalledApplication( applicationKey );
+            final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+
+            final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
+
+            return new ApplicationJson (application, localApplication, siteDescriptor, authDescriptor );
+        }
+        return null;
+    }
+
     @GET
     @Path("getIdProviderApplications")
     public ListApplicationJson getIdProviderApplications()

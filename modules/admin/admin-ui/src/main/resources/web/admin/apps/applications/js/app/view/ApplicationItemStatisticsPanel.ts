@@ -10,6 +10,7 @@ import PartDescriptor = api.content.page.region.PartDescriptor;
 import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
 import ItemDataGroup = api.app.view.ItemDataGroup;
 import ApplicationKey = api.application.ApplicationKey;
+import Application = api.application.Application;
 
 export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
@@ -72,9 +73,10 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         var descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
         var schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
         var macroResponse = this.initMacros(currentApplication.getApplicationKey());
+        var providerResponse = this.initProviders(currentApplication.getApplicationKey());
 
 
-        wemQ.all([descriptorResponse, schemaResponse, macroResponse]).spread((descriptorsGroup, schemasGroup, macrosGroup) => {
+        wemQ.all([descriptorResponse, schemaResponse, macroResponse, providerResponse]).spread((descriptorsGroup, schemasGroup, macrosGroup, providersGroup) => {
             if (!infoGroup.isEmpty()) {
                 this.applicationDataContainer.appendChild(infoGroup);
             }
@@ -88,6 +90,10 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
             if (macrosGroup && !macrosGroup.isEmpty()) {
                 this.applicationDataContainer.appendChild(macrosGroup);
+            }
+
+            if (providersGroup && !providersGroup.isEmpty()) {
+                this.applicationDataContainer.appendChild(providersGroup);
             }
         })
 
@@ -106,7 +112,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             }).map((macro: MacroDescriptor) => {
                 return macro.getDisplayName();
             });
-            macrosGroup.addDataArray("Macros", macroNames);
+            macrosGroup.addDataArray("Name", macroNames);
 
             return macrosGroup;
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
@@ -169,6 +175,23 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
                 return schemasGroup;
 
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason))
+    }
+
+    private initProviders(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+        var providersPromises = [new api.application.AuthApplicationRequest(applicationKey).sendAndParse()];
+
+        return wemQ.all(providersPromises).spread(
+            (application: Application) => {
+                if(application) {
+                    var providersGroup = new ItemDataGroup("ID Providers", "providers");
+
+                    providersGroup.addDataList("Key", application.getApplicationKey().toString());
+                    providersGroup.addDataList("Name", application.getDisplayName());
+
+                    return providersGroup;
+                }
+                return null;
+            });
     }
 
     private sortAlphabeticallyAsc(a: string, b: string): number {
