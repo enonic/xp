@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.auth;
 
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.Principal;
@@ -10,10 +12,19 @@ public final class PrincipalMapper
 {
     private final Principal value;
 
+    private final boolean detailed;
+
     public PrincipalMapper( final Principal value )
     {
-        this.value = value;
+        this( value, false );
     }
+
+    public PrincipalMapper( final Principal value, final boolean detailed )
+    {
+        this.value = value;
+        this.detailed = detailed;
+    }
+
 
     private void serialize( final MapGenerator gen, final Principal value )
     {
@@ -28,10 +39,21 @@ public final class PrincipalMapper
             gen.value( "email", user.getEmail() );
             gen.value( "login", user.getLogin() );
             gen.value( "userStore", value.getKey() != null ? value.getKey().getUserStore() : null );
+            serializeProfile( gen, user.getProfile() );
         }
         else
         {
             gen.value( "description", value.getDescription() );
+        }
+    }
+
+    private void serializeProfile( final MapGenerator gen, final PropertyTree value )
+    {
+        if ( this.detailed )
+        {
+            gen.map( "profile" );
+            new PropertyTreeMapper( value ).serialize( gen );
+            gen.end();
         }
     }
 

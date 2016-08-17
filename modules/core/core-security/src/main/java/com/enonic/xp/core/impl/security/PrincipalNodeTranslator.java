@@ -66,7 +66,8 @@ abstract class PrincipalNodeTranslator
         final PropertySet nodeAsSet = node.data().getRoot();
         if ( nodeAsSet.isNull( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) )
         {
-            throw new IllegalArgumentException( "Property " + PrincipalPropertyNames.PRINCIPAL_TYPE_KEY + " not found on node with id " + node.id() );
+            throw new IllegalArgumentException(
+                "Property " + PrincipalPropertyNames.PRINCIPAL_TYPE_KEY + " not found on node with id " + node.id() );
         }
 
         final PrincipalType principalType = PrincipalType.valueOf( nodeAsSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
@@ -228,6 +229,7 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
+        data.setSet( PrincipalPropertyNames.PROFILE_KEY, user.getProfile().getRoot() );
     }
 
     private static void populateRoleData( final PropertySet data, final Role role )
@@ -246,13 +248,23 @@ abstract class PrincipalNodeTranslator
 
         final PropertyTree nodeAsTree = node.data();
 
-        return User.create().
+        final User.Builder user = User.create().
             email( nodeAsTree.getString( PrincipalPropertyNames.EMAIL_KEY ) ).
             login( nodeAsTree.getString( PrincipalPropertyNames.LOGIN_KEY ) ).
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
-            authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) ).
-            build();
+            authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) );
+
+        createUserProfileFromNode( nodeAsTree, user );
+
+        return user.build();
+    }
+
+    private static void createUserProfileFromNode( final PropertyTree nodeAsTree, final User.Builder user )
+    {
+        final PropertySet nodeProfile = nodeAsTree.getSet( PrincipalPropertyNames.PROFILE_KEY );
+        final PropertyTree profile = nodeProfile == null ? new PropertyTree() : nodeProfile.toTree();
+        user.profile( profile );
     }
 
     private static Group createGroupFromNode( final Node node )
