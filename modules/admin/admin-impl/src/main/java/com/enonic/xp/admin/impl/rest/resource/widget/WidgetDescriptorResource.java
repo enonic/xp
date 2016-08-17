@@ -58,6 +58,7 @@ public class WidgetDescriptorResource
         jsonEntry.displayName = widgetDescriptor.getDisplayName();
         jsonEntry.url = widgetDescriptor.getUrl();
         jsonEntry.interfaces = ImmutableSet.copyOf( widgetDescriptor.getInterfaces() );
+        jsonEntry.config = widgetDescriptor.getConfig();
         return jsonEntry;
     }
 }
