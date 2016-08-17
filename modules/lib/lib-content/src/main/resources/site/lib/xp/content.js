@@ -169,6 +169,7 @@ exports.getChildren = function (params) {
  * @param {string} params.parentPath Path to place content under.
  * @param {string} [params.displayName] Display name. Default is same as `name`.
  * @param {boolean} [params.requireValid=true] The content has to be valid, according to the content type, to be created. If requireValid=true and the content is not strictly valid, an error will be thrown.
+ * @param {boolean} [params.refresh=true] If refresh is true, the created content will to be searchable through queries immediately, else within 1 second. Since there is a performance penalty doing this refresh, refresh should be set to false for bulk operations.
  * @param {string} params.contentType Content type to use.
  * @param {string} [params.language] The language tag representing the content’s locale.
  * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
@@ -184,6 +185,7 @@ exports.create = function (params) {
     bean.displayName = nullOrValue(params.displayName);
     bean.contentType = nullOrValue(params.contentType);
     bean.requireValid = nullOrValue(params.requireValid);
+    bean.refresh = nullOrValue(params.refresh);
     bean.language = nullOrValue(params.language);
     bean.branch = nullOrValue(params.branch);
 
