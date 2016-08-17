@@ -284,10 +284,11 @@ public class ContentServiceImpl
     }
 
     @Override
-    public DeleteContentsResult delete( final DeleteContentParams params )
+    public Contents delete( final DeleteContentParams params )
     {
         return DeleteAndFetchContentCommand.create().
             nodeService( this.nodeService ).
+            contentService( this ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).

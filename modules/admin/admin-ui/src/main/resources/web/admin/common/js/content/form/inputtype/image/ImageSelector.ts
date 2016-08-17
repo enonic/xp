@@ -7,7 +7,7 @@ module api.content.form.inputtype.image {
     import ValueTypes = api.data.ValueTypes;
     import ContentId = api.content.ContentId;
     import ContentSummary = api.content.ContentSummary;
-    import ContentSummaryLoader = api.content.ContentSummaryLoader;
+    import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
     import ContentComboBox = api.content.form.inputtype.image.ImageContentComboBox;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -44,7 +44,7 @@ module api.content.form.inputtype.image {
 
         private contentRequestsAllowed: boolean;
 
-        private uploader: ImageUploaderEl;
+        private uploader: api.content.image.ImageUploaderEl;
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
@@ -204,7 +204,7 @@ module api.content.form.inputtype.image {
 
             var contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
-                                   [ContentTypeName.IMAGE.toString()];
+                                   [ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()];
 
             var contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
                 setInputName(inputName).
@@ -310,7 +310,8 @@ module api.content.form.inputtype.image {
             for (let i = 0; i < length; i++) {
                 if (this.getPropertyArray().get(i).getValue().getString() == id) {
                     this.getPropertyArray().remove(i);
-                    api.notify.NotifyManager.get().showWarning('Removed reference with id=' + id);
+                    api.notify.NotifyManager.get().showWarning("Failed to load image with id " + id +
+                                                               ". The reference will be removed upon save.");
                     break;
                 }
             }
@@ -324,21 +325,19 @@ module api.content.form.inputtype.image {
             });
         }
 
-        private createUploader(): ImageUploaderEl {
+        private createUploader(): api.content.image.ImageUploaderEl {
             var multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
 
-            this.uploader = new api.content.ImageUploaderEl({
+            this.uploader = new api.content.image.ImageUploaderEl({
                 params: {
                     parent: this.config.content.getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.create,
+                operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showCancel: false,
-                showReset: false,
                 showResult: false,
                 maximumOccurrences: this.getRemainingOccurrences(),
                 allowMultiSelection: multiSelection,
-                scaleWidth: false,
                 deferred: true
             });
 
@@ -403,37 +402,24 @@ module api.content.form.inputtype.image {
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
-            /*
-             * Drag N' Drop
-             */
-            var body = api.dom.Body.get();
-
-            this.uploader.addClass("minimized");
-            var dragOverEl;
-            // make use of the fact that when dragging
-            // first drag enter occurs on the child element and after that
-            // drag leave occurs on the parent element that we came from
-            // meaning that to know when we left some element
-            // we need to compare it to the one currently dragged over
+            //Drag N' Drop
+            // in order to toggle appropriate class during drag event
+            // we catch drag enter on this element and trigger uploader to appear,
+            // then catch drag leave on uploader's dropzone to get back to previous state
             this.onDragEnter((event: DragEvent) => {
-                var target = <HTMLElement> event.target;
+                event.stopPropagation();
                 this.uploader.giveFocus();
-                this.uploader.toggleClass("minimized", false);
-                dragOverEl = target;
+                this.uploader.setDefaultDropzoneVisible(true, true);
             });
 
-            body.onDragLeave((event: DragEvent) => {
-                var targetEl = <HTMLElement> event.target;
-                if (dragOverEl == targetEl) {
-                    this.uploader.giveBlur();
-                    this.uploader.toggleClass("minimized", true);
-                    dragOverEl = null;
-                }
+            this.uploader.onDropzoneDragLeave((event: DragEvent) => {
+                this.uploader.giveBlur();
+                this.uploader.setDefaultDropzoneVisible(false);
             });
 
-            body.onDrop((event: DragEvent) => {
+            this.uploader.onDropzoneDrop((event) => {
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
-                this.uploader.toggleClass("minimized", true);
+                this.uploader.setDefaultDropzoneVisible(false);
             });
 
             return this.uploader;
@@ -447,7 +433,7 @@ module api.content.form.inputtype.image {
                     contentIds.push(ContentId.fromReference(property.getReference()));
                 }
             });
-            return new api.content.GetContentSummaryByIds(contentIds).sendAndParse();
+            return new api.content.resource.GetContentSummaryByIds(contentIds).sendAndParse();
         }
 
         protected getNumberOfValids(): number {

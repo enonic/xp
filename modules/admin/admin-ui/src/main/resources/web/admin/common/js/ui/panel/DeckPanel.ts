@@ -35,8 +35,12 @@ module api.ui.panel {
             return this.panels.push(panel) - 1;
         }
 
-        getPanel(index: number) {
+        getPanel(index: number): Panel {
             return this.panels[index];
+        }
+
+        getPanels(): Panel[]{
+            return this.panels;
         }
 
         getLastPanel(): Panel {

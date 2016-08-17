@@ -4,17 +4,17 @@ final class JavaVersion
 {
     private final String value;
 
-    public JavaVersion( final SystemProperties props )
+    JavaVersion( final SystemProperties props )
     {
         this.value = props.get( "java.version" );
     }
 
-    public boolean isJava8()
+    boolean isJava8()
     {
         return this.value.startsWith( "1.8" );
     }
 
-    public int getUpdate()
+    int getUpdate()
     {
         final String version = getVersion();
         final int index = version.indexOf( '_' );

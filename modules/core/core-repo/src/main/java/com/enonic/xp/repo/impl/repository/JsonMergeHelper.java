@@ -5,7 +5,7 @@ import java.util.Iterator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class JsonMergeHelper
+class JsonMergeHelper
 {
     static JsonNode merge( JsonNode mainNode, JsonNode updateNode )
     {

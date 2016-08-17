@@ -121,7 +121,7 @@ module api.ui.selector {
         }
 
         renderGrid() {
-            this.grid.render();
+            this.grid.renderGrid();
         }
 
         isVisible(): boolean {

@@ -8,12 +8,9 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.repo.impl.elasticsearch.IndexConstants;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItem;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValue;
-import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValueString;
 import com.enonic.xp.repo.impl.index.IndexException;
-import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 
 public class StoreDocumentXContentBuilderFactory
     extends AbstractXContentBuilderFactory
@@ -61,20 +58,6 @@ public class StoreDocumentXContentBuilderFactory
             addField( result, key, indexItems.get( key ).stream().
                 map( IndexValue::getValue ).
                 collect( Collectors.toList() ) );
-        }
-    }
-
-    private static Object normalizeValueIfString( final IndexItem item )
-    {
-        final IndexValue value = item.getValue();
-
-        if ( value instanceof IndexValueString )
-        {
-            return IndexValueNormalizer.normalize( ( (IndexValueString) value ).getValue() );
-        }
-        else
-        {
-            return value;
         }
     }
 

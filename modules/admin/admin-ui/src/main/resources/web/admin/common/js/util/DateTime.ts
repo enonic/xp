@@ -139,8 +139,11 @@ module api.util {
             var date, timezone;
 
             if(DateHelper.isUTCdate(s)) {
-                date = DateHelper.parseUTCDateTime(s);
+                date = DateHelper.makeDateFromUTCString(s);
                 timezone = Timezone.getLocalTimezone();
+                if (DateHelper.isDST(date)) { // when converting from UTC date, Date object may have an extra hour added due to DST
+                    date.setHours(date.getHours() - 1);
+                }
             } else {
                 var withoutTZ = DateTime.trimTZ(s);
                 date = DateHelper.parseLongDateTime(withoutTZ, DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
@@ -178,7 +181,7 @@ module api.util {
                 .setMinutes(s.getMinutes())
                 .setSeconds(s.getSeconds())
                 .setFractions(s.getMilliseconds())
-                .setTimezone(Timezone.fromOffset(DateHelper.getTZOffsetFromDate(s))) // replace with timezone picker value
+                .setTimezone(Timezone.getLocalTimezone())// replace with timezone picker value if implemented tz selection
                 .build();
         }
 

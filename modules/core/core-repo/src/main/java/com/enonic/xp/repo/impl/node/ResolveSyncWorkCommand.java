@@ -4,6 +4,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
@@ -33,8 +36,6 @@ public class ResolveSyncWorkCommand
 {
     private final Branch target;
 
-    private final NodePath repositoryRoot;
-
     private final boolean includeChildren;
 
     private final boolean checkDependencies;
@@ -47,18 +48,16 @@ public class ResolveSyncWorkCommand
 
     private final ResolveSyncWorkResult.Builder result;
 
-    private boolean allPossibleNodesAreIncluded;
+    private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
     {
         super( builder );
         this.target = builder.target;
         this.includeChildren = builder.includeChildren;
-        this.repositoryRoot = builder.repositoryRoot;
         this.result = ResolveSyncWorkResult.create();
         this.processedIds = Sets.newHashSet();
         this.excludedIds = builder.excludedIds;
-        this.allPossibleNodesAreIncluded = builder.allPossibleNodesAreIncluded;
         this.checkDependencies = builder.checkDependencies;
 
         final Node publishRootNode = doGetById( builder.nodeId );
@@ -69,11 +68,6 @@ public class ResolveSyncWorkCommand
         }
 
         this.publishRootNode = publishRootNode;
-
-        if ( this.repositoryRoot.equals( this.publishRootNode.path() ) )
-        {
-            this.allPossibleNodesAreIncluded = true;
-        }
     }
 
     public static Builder create()
@@ -91,7 +85,7 @@ public class ResolveSyncWorkCommand
 
         final String speed = timer.elapsed( TimeUnit.SECONDS ) == 0 ? "N/A" : result.getSize() / timer.elapsed( TimeUnit.SECONDS ) + "/s";
 
-        System.out.println( "ResolveSyncWorkCommand: " + timer + ", found " + result.getSize() + ", speed: " + speed );
+        LOG.debug( "ResolveSyncWorkCommand: " + timer + ", found " + result.getSize() + ", speed: " + speed );
         return result;
     }
 
@@ -128,7 +122,7 @@ public class ResolveSyncWorkCommand
 
         final NodeVersionDiffResult nodesWithVersionDifference = findNodesWithVersionDifference( this.publishRootNode.path() );
 
-        System.out.println( "Diff-query result in " + timer.stop() );
+        LOG.debug( "Diff-query result in " + timer.stop() );
 
         return NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
@@ -305,20 +299,10 @@ public class ResolveSyncWorkCommand
 
         private boolean includeChildren = true;
 
-        private NodePath repositoryRoot = NodePath.ROOT;
-
-        private boolean allPossibleNodesAreIncluded = false;
-
         private boolean checkDependencies = true;
 
         private Builder()
         {
-        }
-
-        public Builder repositoryRoot( final NodePath repositoryRoot )
-        {
-            this.repositoryRoot = repositoryRoot;
-            return this;
         }
 
         public Builder nodeId( final NodeId nodeId )
@@ -345,19 +329,6 @@ public class ResolveSyncWorkCommand
         public Builder includeChildren( final boolean includeChildren )
         {
             this.includeChildren = includeChildren;
-            return this;
-        }
-
-        public Builder checkDependencies( final boolean checkDependencies )
-        {
-            this.checkDependencies = checkDependencies;
-            return this;
-        }
-
-
-        public Builder allPossibleNodesAreIncluded( final boolean allPossibleNodesAreIncluded )
-        {
-            this.allPossibleNodesAreIncluded = allPossibleNodesAreIncluded;
             return this;
         }
 

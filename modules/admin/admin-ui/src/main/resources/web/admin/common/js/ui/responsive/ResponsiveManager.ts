@@ -11,9 +11,13 @@ module api.ui.responsive {
         }): ResponsiveItem {
             var responsiveItem: ResponsiveItem = new ResponsiveItem(el, handler),
                 listener = () => {
-                    responsiveItem.update();
+                    if (el.isVisible()) {
+                        responsiveItem.update();
+                    }
                 },
                 responsiveListener = new ResponsiveListener(responsiveItem, listener);
+
+            this.updateItemOnShown(el, responsiveItem);
 
             ResponsiveManager.responsiveListeners.push(responsiveListener);
 
@@ -23,32 +27,44 @@ module api.ui.responsive {
             return responsiveItem;
         }
 
+        private static updateItemOnShown(el: api.dom.Element, responsiveItem: ResponsiveItem) {
+            if (el.isVisible()) {
+                responsiveItem.update();
+            } else {
+                var renderedHandler = (event) => {
+                    responsiveItem.update();
+                    el.unShown(renderedHandler); // update needs
+                };
+                el.onShown(renderedHandler);
+            }
+        }
+
         static unAvailableSizeChanged(el: api.dom.Element) {
 
             ResponsiveManager.responsiveListeners =
-            ResponsiveManager.responsiveListeners.filter((curr) => {
-                if (curr.getItem().getElement() === el) {
-                    ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
-                    ResponsiveManager.window.unResized(curr.getListener());
-                    return false;
-                } else {
-                    return true;
-                }
-            });
+                ResponsiveManager.responsiveListeners.filter((curr) => {
+                    if (curr.getItem().getElement() === el) {
+                        ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
+                        ResponsiveManager.window.unResized(curr.getListener());
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
         }
 
         static unAvailableSizeChangedByItem(item: ResponsiveItem) {
 
             ResponsiveManager.responsiveListeners =
-            ResponsiveManager.responsiveListeners.filter((curr) => {
-                if (curr.getItem() === item) {
-                    ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
-                    ResponsiveManager.window.unResized(curr.getListener());
-                    return false;
-                } else {
-                    return true;
-                }
-            });
+                ResponsiveManager.responsiveListeners.filter((curr) => {
+                    if (curr.getItem() === item) {
+                        ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
+                        ResponsiveManager.window.unResized(curr.getListener());
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
         }
 
         // Manual event triggering

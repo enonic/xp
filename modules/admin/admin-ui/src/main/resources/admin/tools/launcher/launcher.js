@@ -29,7 +29,7 @@ function handleGet(req) {
     var userIconUrl = portal.assetUrl({path: "icons/user.svg"});
     var launcherCss = portal.assetUrl({path: "styles/_launcher.css"});
     var logoutUrl = portal.logoutUrl({
-        redirect: portal.url({path: "/admin/tool"})
+        redirect: portal.url({path: "/admin/tool", type: "absolute"})
     });
     var user = auth.getUser();
 

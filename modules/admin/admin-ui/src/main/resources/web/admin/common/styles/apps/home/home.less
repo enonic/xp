@@ -1,5 +1,4 @@
 @panel-outer-width: 320px;
-@header-height: 44px;
 @panel-indent: 30px;
 
 //Variables
@@ -22,63 +21,315 @@
   .home-main-container-mixin();
 
   background-color: @admin-dark-gray;
-  .header {
-    position: absolute;
-    display: table;
-    top: 0;
-    height: @header-height;
+
+  .shader {
     width: 100%;
-    padding-left: @panel-indent;
-    z-index: 1;
-    background-color: rgba(0, 0, 0, 0.3);
-    .box-sizing(border-box);
-
-    span {
-      .container-title-mixin(24px, 6px);
-      font-weight: 400;
-      color: lightgray;
-    }
-
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
   }
 
+  .home-main-dashboard {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    color: @admin-white;
+
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .dashboard-item {
+      text-align: center;
+      display: inline-block;
+      margin: 15px;
+      cursor: pointer;
+      font-family: "Open Sans", sans-serif;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+
+      img {
+        width: 32px;
+        height: 32px; // For IE
+      }
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
 }
 
-.home-main-footer {
-  position: absolute;
-  display: table;
-  left: 40px;
-  bottom: 14px;
-  text-align: left;
-  z-index: calc(@z-index-launcher-panel - 1);
-  background-color: transparent;
-  font-family: @admin-font-family;
-  font-size: @admin-font-size;
-  font-weight: 700;
+.xp-about-dialog {
+  max-width: 440px;
 
-  & > * {
+  .dialog-header {
+    margin-bottom: 0px;
+  }
+
+  .xp-about-dialog-app-icon {
+    float: left;
+    margin-right: 25px;
+
+    img {
+      height: 175px;
+    }
+  }
+
+  a {
+    color: blue;
+  }
+
+  h1 {
+    margin: 10px 0 5px 0;
+  }
+
+  .xp-about-dialog-version-block {
+    font-size: 14px;
+    margin-bottom: 15px;
+
+    .xp-about-dialog-version {
+      font-weight: bold;
+    }
+  }
+
+  .xp-about-dialog-text {
+    font-size: 13px;
+    text-align: justify;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  a {
-    display: table-cell;
-    color: @admin-white;
-    padding-right: 20px;
-    text-decoration: none;
+  .xp-about-dialog-button-close {
+    background-color: #DB4437;
   }
+
+  .dialog-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .modal-dialog-footer {
+    display: none;
+  }
+
 }
 
-._240-360 {
-  .home-main-container {
-    .header {
-      padding-left: 40px;
+.xp-tour-dialog {
+  max-width: 560px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  .dialog-header h2 {
+    font-size: 26px;
+  }
+
+  &._0-240, &._240-360, &._360-540 {
+    height: calc(~'100% - 60px');
+    top: 0px;
+    z-index: 2502;
+    max-height: none;
+    margin-top: 0px !important;
+  }
+
+  @media screen and (max-height: 472px) {
+    height: calc(~'100% - 60px');
+    top: 0px;
+    z-index: 2502;
+    max-height: none;
+    margin-top: 0px !important;
+  }
+
+
+  .dialog-content {
+    overflow: auto;
+    max-height: calc(~'100% - 85px');
+
+    .subtitle {
+      padding: 10px;
+      color: @admin-white;
+      background-color: @form-button-bg;
+      margin-bottom: 10px;
+      font-weight: bold;
+
+      .subtitle-part-1 {
+        font-size: 13px;
+      }
+    }
+
+    .caption {
+      font-size: 22px;
+      padding: 10px 0px 15px 0px;
+    }
+
+    img {
+      float: left;
+      height: 196px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    li {
+      list-style: inside;
+    }
+
+    .text {
+      .paragraph2, .paragraph3 {
+        margin-top: 15px;
+      }
+
+      div {
+        text-align: justify;
+      }
+    }
+
+    .step-1 {
+      img {
+        margin-right: 10px;
+      }
+    }
+
+    .step-2 {
+      img {
+        float: right;
+        margin-left: 10px;
+      }
+    }
+
+    .step-3 {
+      img {
+        margin-right: 10px;
+        box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
+        0px 2px 3px 0px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    .step-4 {
+      img {
+        float: right;
+        margin-left: 10px;
+        box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3),
+        0px 2px 3px 0px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    .step-5 {
+      .demo-apps {
+        margin: 10px 0px 10px 0px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        .demo-app {
+          display: inline-block;
+          text-align: center;
+          position: relative;
+
+          img {
+            float: none;
+            height: 82px;
+          }
+
+          .demo-app-title {
+            text-transform: uppercase;
+          }
+
+          .progress-bar {
+            position: absolute;
+            width: 100%;
+            bottom: -23px;
+
+            .progress-indicator {
+              background-color: @admin-green;
+            }
+          }
+
+          .demo-app-status {
+            position: absolute;
+            width: 100%;
+            bottom: -23px;
+            font-size: 16px;
+            color: @admin-green;
+
+            &.failure {
+              color: @input-red-text;
+            }
+          }
+        }
+
+      }
+
+      .install-apps {
+        display: flex;
+        justify-content: space-around;
+
+        .install-apps-button {
+          margin-top: 15px;
+          display: flex;
+          justify-content: space-around;
+          background-color: @admin-green;
+
+          &:hover {
+            background-color: #79c82d;
+          }
+        }
+      }
+
     }
   }
+
+  .dialog-buttons {
+    .button-container {
+      width: 100%;
+
+      button {
+        width: 130px;
+        height: 36px;
+        text-align: center;
+        margin-left: 0px;
+
+        span {
+          font-weight: bold;
+        }
+
+        &:first-child {
+          float: left;
+          background-color: @form-button-bg;
+
+          &:hover {
+            background-color: #b3b3b3;
+          }
+        }
+
+        &:last-child {
+          float: right;
+          background-color: @admin-green;
+
+          &:hover {
+            background-color: #79c82d;
+          }
+
+          &.last-step {
+            background-color: @form-button-bg;
+
+            &:hover {
+              background-color: #b3b3b3;
+            }
+          }
+        }
+      }
+
+    }
+  }
+
 }
 
-._0-240, ._240-360, ._360-540 {
-  .home-main-container .header span {
-    .container-title-mixin(22px, 8px);
-    color: lightgray;
-  }
+.notification-container {
+  z-index: 2500;
 }

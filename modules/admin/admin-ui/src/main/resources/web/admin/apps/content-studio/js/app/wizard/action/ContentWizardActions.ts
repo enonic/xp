@@ -36,6 +36,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private showSplitEditAction: api.ui.Action;
 
+    private deleteOnlyMode: boolean = false;
+
     constructor(wizardPanel: ContentWizardPanel) {
         this.save = new api.app.wizard.SaveAction(wizardPanel, "Save draft");
         this.duplicate = new DuplicateContentAction(wizardPanel);
@@ -58,22 +60,41 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     enableActionsForNew() {
         this.save.setEnabled(true);
-        this.duplicate.setEnabled(false);
         this.delete.setEnabled(true)
     }
 
     enableActionsForExisting(existing: api.content.Content) {
         this.save.setEnabled(existing.isEditable());
-        this.duplicate.setEnabled(true);
         this.delete.setEnabled(existing.isDeletable());
 
         this.enableActionsForExistingByPermissions(existing);
     }
 
-    enableDeleteOnly() {
-        this.save.setEnabled(false);
-        this.duplicate.setEnabled(false);
-        this.delete.setEnabled(true)
+    setDeleteOnlyMode(content: api.content.Content, valueOn: boolean = true) {
+        if (this.deleteOnlyMode == valueOn) {
+            return;
+        }
+        this.deleteOnlyMode = valueOn;
+
+        this.save.setEnabled(!valueOn);
+        this.duplicate.setEnabled(!valueOn);
+        this.publish.setEnabled(!valueOn);
+
+        if (valueOn) {
+            this.enableDeleteIfAllowed(content);
+        }
+        else {
+            this.delete.setEnabled(true);
+            this.enableActionsForExistingByPermissions(content);
+        }
+    }
+
+    private enableDeleteIfAllowed(content: api.content.Content) {
+        new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+            var hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
+                loginResult, content.getPermissions());
+            this.delete.setEnabled(hasDeletePermission);
+        });
     }
 
     private enableActionsForExistingByPermissions(existing: api.content.Content) {
@@ -98,7 +119,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                 this.publishTree.setEnabled(false);
             } else {
                 // check if already published to show unpublish button
-                api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
                     .then((contentAndCompare: api.content.ContentSummaryAndCompareStatus) => {
 
                         var status = contentAndCompare.getCompareStatus();
@@ -110,9 +131,9 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
 
             if (existing.hasParent()) {
-                new api.content.GetContentByPathRequest(existing.getPath().getParentPath()).sendAndParse().then(
+                new api.content.resource.GetContentByPathRequest(existing.getPath().getParentPath()).sendAndParse().then(
                     (parent: api.content.Content) => {
-                        new api.content.GetContentPermissionsByIdRequest(parent.getContentId()).sendAndParse().then(
+                        new api.content.resource.GetContentPermissionsByIdRequest(parent.getContentId()).sendAndParse().then(
                             (accessControlList: api.security.acl.AccessControlList) => {
                                 var hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(
                                     api.security.acl.Permission.CREATE,
@@ -125,7 +146,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                             })
                     })
             } else {
-                new api.content.GetContentRootPermissionsRequest().sendAndParse().then(
+                new api.content.resource.GetContentRootPermissionsRequest().sendAndParse().then(
                     (accessControlList: api.security.acl.AccessControlList) => {
                         var hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
                             loginResult,

@@ -28,8 +28,6 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
     private partComponent: PartComponent;
 
-    private partSelector: PartDescriptorDropdown;
-
     private partForm: DescriptorBasedDropdownForm;
 
     private handleSelectorEvents: boolean = true;
@@ -42,19 +40,18 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         });
     }
 
-    setModel(liveEditModel: LiveEditModel) {
-        super.setModel(liveEditModel);
+    protected layout() {
 
-        var descriptorsRequest = new GetPartDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
+        this.removeChildren();
+
+        var descriptorsRequest = new GetPartDescriptorsByApplicationsRequest(this.liveEditModel.getSiteModel().getApplicationKeys());
         var loader = new PartDescriptorLoader(descriptorsRequest);
         loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
-        this.partSelector = new PartDescriptorDropdown("", loader);
-        this.partForm = new DescriptorBasedDropdownForm(this.partSelector, "Part");
-        loader.load();
 
-        liveEditModel.getSiteModel().onApplicationUnavailable(() => {
-            this.partSelector.hideDropdown();
-        });
+        this.selector = new PartDescriptorDropdown("", loader);
+        this.partForm = new DescriptorBasedDropdownForm(this.selector, "Part");
+
+        loader.load();
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
@@ -68,21 +65,20 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
         this.initSelectorListeners();
         this.appendChild(this.partForm);
-
-        liveEditModel.getSiteModel().onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(liveEditModel, descriptorsRequest));
-        liveEditModel.getSiteModel().onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(liveEditModel, descriptorsRequest));
-
     }
 
-    private reloadDescriptorsOnApplicationChange(liveEditModel: LiveEditModel, request: GetPartDescriptorsByApplicationsRequest) {
-        request.setApplicationKeys(liveEditModel.getSiteModel().getApplicationKeys());
-        this.partSelector.getLoader().load();
+    protected reloadDescriptorsOnApplicationChange() {
+        if(this.selector) {
+            (<GetPartDescriptorsByApplicationsRequest>this.selector.getLoader().getRequest()).
+                setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
+            super.reloadDescriptorsOnApplicationChange();
+        }
     }
 
     setComponent(component: PartComponent, descriptor?: PartDescriptor) {
 
         super.setComponent(component);
-        this.partSelector.setDescriptor(descriptor);
+        this.selector.setDescriptor(descriptor);
     }
 
     private setSelectorValue(descriptor: PartDescriptor, silent: boolean = true) {
@@ -90,7 +86,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
             this.handleSelectorEvents = false;
         }
 
-        this.partSelector.setDescriptor(descriptor);
+        this.selector.setDescriptor(descriptor);
         this.setupComponentForm(this.partComponent, descriptor);
 
         this.handleSelectorEvents = true;
@@ -116,7 +112,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.setComponent(this.partComponent);
         var key: DescriptorKey = this.partComponent.getDescriptor();
         if (key) {
-            var descriptor: PartDescriptor = this.partSelector.getDescriptor(key);
+            var descriptor: PartDescriptor = this.selector.getDescriptor(key);
             if (descriptor) {
                 this.setSelectorValue(descriptor);
             } else {
@@ -139,7 +135,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
     private initSelectorListeners() {
 
-        this.partSelector.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
+        this.selector.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
             if (this.handleSelectorEvents) {
                 var option: Option<PartDescriptor> = event.getOption();
                 var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();

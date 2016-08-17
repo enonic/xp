@@ -535,7 +535,8 @@ tinymce.ThemeManager.add('modern', function (editor) {
             panel.add({
                 type: 'panel', name: 'statusbar', classes: 'statusbar', layout: 'flow', border: '1 0 0 0', ariaRoot: true, items: [
                     {type: 'elementpath'},
-                    resizeHandleCtrl
+                    editor.buttons.code,
+                    editor.buttons.fullscreen
                 ]
             });
         }

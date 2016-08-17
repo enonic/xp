@@ -6,8 +6,7 @@ module api.ui.panel {
 
         private deck: NavigatedDeckPanel;
         private navigator: TabBar;
-        private items: any[] = [];
-
+        private items: api.ui.tab.TabBarItem[] = [];
 
         constructor() {
             super("docked-panel");
@@ -15,14 +14,22 @@ module api.ui.panel {
             this.navigator = new TabBar();
             this.deck = new NavigatedDeckPanel(this.navigator);
 
-            this.appendChild(this.navigator);
-            this.appendChild(this.deck);
             this.setDoOffset(false);
+            this.deck.setDoOffset(false);
+        }
+
+        doRender(): Q.Promise<boolean> {
+            return super.doRender().then((rendered) => {
+
+                this.appendChildren<api.dom.Element>(this.navigator, this.deck);
+
+                return rendered;
+            });
         }
 
         addItem<T extends Panel>(label: string, addLabelTitleAttribute: boolean, panel: T, select?: boolean): number {
             var item = new api.ui.tab.TabBarItemBuilder().setLabel(label).setAddLabelTitleAttribute(addLabelTitleAttribute).build();
-            this.addItemArray(item);
+            this.items.push(item);
 
             this.deck.addNavigablePanel(item, panel, select || this.items.length == 1);
 
@@ -39,10 +46,6 @@ module api.ui.panel {
 
         getDeck(): DeckPanel {
             return this.deck;
-        }
-
-        private addItemArray(item: any) {
-            this.items.push(item);
         }
 
     }

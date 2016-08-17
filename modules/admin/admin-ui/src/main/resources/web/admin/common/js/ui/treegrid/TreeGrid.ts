@@ -162,7 +162,7 @@ module api.ui.treegrid {
                         this.root.clearStashedSelection();
                         let repeatedSelection = this.grid.selectRow(data.row) === -1;
                         if (!elem.hasClass("sort-dialog-trigger")) {
-                            new api.content.TreeGridItemClickedEvent(repeatedSelection).fire();
+                            new TreeGridItemClickedEvent(repeatedSelection).fire();
                         }
                     }
                 }
@@ -195,7 +195,7 @@ module api.ui.treegrid {
 
                 this.loadBufferSize = builder.getLoadBufferSize();
                 var interval;
-                this.onShown(() => {
+                this.onRendered(() => {
                     if (interval) {
                         clearInterval(interval);
                     }
@@ -879,7 +879,7 @@ module api.ui.treegrid {
         appendNode(data: DATA, nextToSelection: boolean = false, prepend: boolean = true,
                    stashedParentNode?: TreeNode<DATA>): wemQ.Promise<void> {
             var parentNode = this.getParentNode(nextToSelection, stashedParentNode);
-            var index = prepend ? 0 : parentNode.getChildren().length - 1;
+            var index = prepend ? 0 :  Math.max(0, parentNode.getChildren().length - 1);
             return this.insertNode(data, nextToSelection, index, stashedParentNode);
         }
 

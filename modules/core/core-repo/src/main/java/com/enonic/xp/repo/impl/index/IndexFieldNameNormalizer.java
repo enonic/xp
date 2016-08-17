@@ -22,7 +22,7 @@ public class IndexFieldNameNormalizer
 
     public static String[] normalize( final Collection<String> paths )
     {
-        return Collections2.transform( paths, str -> doNormalize( str ) ).toArray( new String[paths.size()] );
+        return Collections2.transform( paths, IndexFieldNameNormalizer::doNormalize ).toArray( new String[paths.size()] );
     }
 
 }

@@ -59,14 +59,17 @@ module api.form {
 
         }
 
-        public layout(): wemQ.Promise<void> {
+        public layout(validate: boolean = true): wemQ.Promise<void> {
 
-            if (this.input.getLabel()) {
-                var label = new InputLabel(this.input);
-                this.appendChild(label);
-            } else {
-                this.addClass("no-label");
+            if (this.input.getInputType().getName() !== "Checkbox") { //checkbox input type generates clickable label itself
+                if (this.input.getLabel()) {
+                    var label = new InputLabel(this.input);
+                    this.appendChild(label);
+                } else {
+                    this.addClass("no-label");
+                }
             }
+
 
             if (this.input.isMaximizeUIInputWidth()) {
                 this.addClass("label-over-input");
@@ -82,6 +85,10 @@ module api.form {
             var inputTypeViewLayoutPromise = this.inputTypeView.layout(this.input, this.propertyArray);
             inputTypeViewLayoutPromise.then(() => {
                 this.appendChild(this.inputTypeView.getElement());
+
+                if (this.input.getHelpText()) {
+                    this.appendHelpText(this.input.getHelpText());
+                }
 
                 if (!this.inputTypeView.isManagingAdd()) {
 
@@ -117,10 +124,34 @@ module api.form {
                     this.handleInputValidationRecording(event.getRecording(), false);
                 });
 
-                this.refresh();
+                this.refresh(validate);
             });
 
             return inputTypeViewLayoutPromise;
+        }
+        
+        private appendHelpText(helpText: string) {
+            var helpTextDiv = new api.dom.DivEl("help-text overflow");
+            var pEl = new api.dom.PEl();
+            pEl.getEl().setText(helpText);
+
+            var spanEl = new api.dom.SpanEl();
+            spanEl.getEl().setText("More");
+
+            spanEl.onClicked(() => {
+                helpTextDiv.removeClass("overflow");
+            });
+
+            helpTextDiv.appendChild(pEl);
+            helpTextDiv.appendChild(spanEl);
+
+            helpTextDiv.onRendered(() => {
+                if (pEl.getEl().isOverflown()) {
+                    helpTextDiv.addClass("collapsed");
+                }
+            });
+
+            this.appendChild(helpTextDiv);
         }
 
         private getPropertyArray(propertySet: PropertySet): PropertyArray {
@@ -180,12 +211,14 @@ module api.form {
             }
         }
 
-        refresh() {
+        refresh(validate: boolean = true) {
             if (!this.inputTypeView.isManagingAdd()) {
                 var inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
             }
-            this.validate(false);
+            if (validate) {
+                this.validate(false);
+            }
         }
 
         private resolveValidationRecordingPath(): ValidationRecordingPath {
@@ -213,9 +246,9 @@ module api.form {
         private handleInputValidationRecording(inputRecording: api.form.inputtype.InputValidationRecording,
                                                silent: boolean = true): ValidationRecording {
 
-            var recording = new ValidationRecording();
-            var validationRecordingPath = this.resolveValidationRecordingPath();
-            var hasValidInput = this.hasValidUserInput();
+            var recording = new ValidationRecording(),
+                validationRecordingPath = this.resolveValidationRecordingPath(),
+                hasValidInput = this.hasValidUserInput();
 
             if (inputRecording.isMinimumOccurrencesBreached()) {
                 recording.breaksMinimumOccurrences(validationRecordingPath);
@@ -224,16 +257,24 @@ module api.form {
                 recording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
+            if (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput)) {
+                if (!silent) {
+                    this.notifyValidityChanged(new RecordingValidityChangedEvent(recording,
+                        validationRecordingPath).setInputValueBroken(!hasValidInput));
+                }
+                this.toggleClass("highlight-validity-change", this.highlightOnValidityChange());
+            }
+
             if (!silent && (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput) )) {
-                this.notifyFormValidityChanged(new RecordingValidityChangedEvent(recording,
+                this.notifyValidityChanged(new RecordingValidityChangedEvent(recording,
                     validationRecordingPath).setInputValueBroken(!hasValidInput));
             }
-            this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
 
             this.previousValidityRecording = recording;
             this.userInputValid = hasValidInput;
-            return recording;
 
+            this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
+            return recording;
         }
 
         userInputValidityChanged(currentState: boolean): boolean {
@@ -254,16 +295,7 @@ module api.form {
             });
         }
 
-        private notifyFormValidityChanged(event: RecordingValidityChangedEvent) {
-
-            /*console.log("InputView[ " + event.getOrigin().toString() + " ] validity changed");
-             if (event.getRecording().isValid()) {
-             console.log(" valid!");
-             }
-             else {
-             console.log(" invalid:");
-             event.getRecording().print();
-             }*/
+        private notifyValidityChanged(event: RecordingValidityChangedEvent) {
 
             this.validityChangedListeners.forEach((listener: (event: RecordingValidityChangedEvent)=>void) => {
                 listener(event);
@@ -271,7 +303,11 @@ module api.form {
         }
 
         private renderValidationErrors(recording: ValidationRecording, additionalValidationRecord: AdditionalValidationRecord) {
-            if (recording.isValid()) {
+            if (!this.mayRenderValidationError()) {
+                return;
+            }
+
+            if (recording.isValid() && this.hasValidUserInput()) {
                 this.removeClass("invalid");
                 this.addClass("valid");
             }
@@ -285,6 +321,10 @@ module api.form {
             if (additionalValidationRecord && additionalValidationRecord.isOverwriteDefault()) {
                 this.validationViewer.appendValidationMessage(additionalValidationRecord.getMessage());
             }
+        }
+
+        private mayRenderValidationError(): boolean {
+            return this.input.getInputType().getName() !== "SiteConfigurator";
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

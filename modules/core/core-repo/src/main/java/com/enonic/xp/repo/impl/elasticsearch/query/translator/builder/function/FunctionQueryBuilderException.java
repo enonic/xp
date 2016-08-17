@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function;
 
-public class FunctionQueryBuilderException
+class FunctionQueryBuilderException
     extends RuntimeException
 {
 
@@ -22,13 +22,12 @@ public class FunctionQueryBuilderException
 
     private static String createMessage( final String functionName, final int position, final String illegalValue )
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "Illegal argument '" ).
-            append( illegalValue ).
-            append( "' in function '" ).
-            append( functionName ).
-            append( "', positon " ).
-            append( position );
-        return builder.toString();
+        final String builder = "Illegal argument '" +
+            illegalValue +
+            "' in function '" +
+            functionName +
+            "', positon " +
+            position;
+        return builder;
     }
 }

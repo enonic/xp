@@ -30,6 +30,8 @@ module api.form {
 
         private editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
 
+        private highlightOnValidityChanged: boolean;
+
         constructor(config: FormItemViewConfig) {
             super(config.className);
             api.util.assertNotNull(config.context, "context cannot be null");
@@ -37,6 +39,11 @@ module api.form {
             this.context = config.context;
             this.formItem = config.formItem;
             this.parent = config.parent;
+            this.highlightOnValidityChanged = false;
+        }
+
+        public setHighlightOnValidityChange(highlight: boolean) {
+            this.highlightOnValidityChanged = highlight;
         }
 
         broadcastFormSizeChanged() {
@@ -79,6 +86,10 @@ module api.form {
 
         giveFocus(): boolean {
             return false;
+        }
+
+        highlightOnValidityChange(): boolean {
+            return this.highlightOnValidityChanged;
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {

@@ -94,14 +94,17 @@ module api.dom {
 
         private rendered: boolean;
 
+        private rendering: boolean;
+
+        private childrenAddedDuringInit: boolean;
+
         public static debug: boolean = false;
 
-        private addedListeners: {(event: ElementAddedEvent) : void}[] = [];
-        private removedListeners: {(event: ElementRemovedEvent) : void}[] = [];
-        private renderedListeners: {(event: ElementRenderedEvent) : void}[] = [];
-        private shownListeners: {(event: ElementShownEvent) : void}[] = [];
-        private hiddenListeners: {(event: ElementHiddenEvent) : void}[] = [];
-        private resizedListeners: {(event: ElementResizedEvent) : void}[] = [];
+        private addedListeners: {(event: ElementAddedEvent): void}[] = [];
+        private removedListeners: {(event: ElementRemovedEvent): void}[] = [];
+        private renderedListeners: {(event: ElementRenderedEvent): void}[] = [];
+        private shownListeners: {(event: ElementShownEvent): void}[] = [];
+        private hiddenListeners: {(event: ElementHiddenEvent): void}[] = [];
 
         constructor(builder: ElementBuilder) {
             this.children = [];
@@ -206,40 +209,134 @@ module api.dom {
             return null;
         }
 
-        init() {
-            if (!this.isRendered()) {
-                this.render(false);
+        /**
+         * Inits element by rendering element first,
+         * then all its children,
+         * and then throwing the rendered (and shown) events
+         * @returns {Promise<boolean>}
+         */
+        protected init(): wemQ.Promise<boolean> {
+            if (Element.debug) {
+                console.debug("Element.init started", api.ClassHelper.getClassName(this));
             }
-            this.children.forEach((child: Element) => {
-                child.init();
-            });
+
             if (this.isVisible()) {
-                this.notifyShown();
+                this.notifyShown(this);
             }
+
+            var renderPromise;
+            if (this.isRendered() || this.isRendering()) {
+                renderPromise = wemQ(true);
+            } else {
+                renderPromise = this.doRender();
+            }
+            this.rendering = true;
+            return renderPromise.then((rendered) => {
+
+                return this.initChildren(rendered);
+            }).catch((reason) => {
+
+                api.DefaultErrorHandler.handle(reason);
+                return false;
+            });
         }
 
-        render(deep: boolean = true) {
-            if (deep) {
-                this.children.forEach((child: Element) => {
-                    child.render();
-                });
+        private initChildren(rendered): wemQ.Promise<boolean> {
+            this.childrenAddedDuringInit = false;
+            var childPromises = [];
+
+            this.children.forEach((child: Element) => {
+                if (!child.isRendered()) {
+                    childPromises.push(child.init());
+                }
+            });
+
+            return wemQ.all(childPromises).then((childResults) => {
+
+                if (this.childrenAddedDuringInit) {
+                    if (Element.debug) {
+                        console.debug("Element.init: initing children that were added during init", api.ClassHelper.getClassName(this));
+                    }
+                    return this.initChildren(rendered);
+                } else {
+                    if (Element.debug) {
+                        console.log("Element.init done", api.ClassHelper.getClassName(this));
+                    }
+
+                    this.rendering = false;
+                    this.rendered = rendered;
+                    this.notifyRendered();
+
+                    return rendered;
+                }
+            }).catch((reason) => {
+                api.DefaultErrorHandler.handle(reason);
+                return false;
+            });
+        }
+
+        /**
+         * Renders the element,
+         * then all its children,
+         * and throws rendered event after that
+         * @param deep tells if all the children should be rendered as well
+         * @returns {Promise<boolean>}
+         */
+        render(deep: boolean = true): wemQ.Promise<boolean> {
+            if (Element.debug) {
+                console.log('Element.render started', api.ClassHelper.getClassName(this));
             }
-            this.rendered = this.doRender();
-            this.notifyRendered();
+            this.rendering = true;
+            return this.doRender().then((rendered) => {
+
+                var childPromises = [];
+                if (deep) {
+                    this.children.forEach((child: Element) => {
+                        childPromises.push(child.render(deep));
+                    });
+                }
+                return wemQ.all(childPromises).then((childResults) => {
+                    if (Element.debug) {
+                        console.log('Element.render done', api.ClassHelper.getClassName(this));
+                    }
+
+                    this.rendering = false;
+                    this.rendered = rendered;
+                    this.notifyRendered();
+
+                    return rendered;
+                }).catch((reason) => {
+                    api.DefaultErrorHandler.handle(reason);
+                    return false;
+                });
+            })
+        }
+
+        isRendering(): boolean {
+            return this.rendering;
         }
 
         isRendered(): boolean {
             return this.rendered;
         }
 
-        doRender(): boolean {
-            return true;
+        isAdded(): boolean {
+            return !!this.getHTMLElement().parentNode;
+        }
+
+        /**
+         * Do all the element rendering here
+         * Return false to tell that rendering failed
+         * @returns {Q.Promise<boolean>}
+         */
+        doRender(): wemQ.Promise<boolean> {
+            return wemQ(true);
         }
 
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             wemjq(this.el.getHTMLElement()).show();
-            this.notifyShown(this);
+            this.notifyShown(this, true);
         }
 
         hide() {
@@ -480,8 +577,13 @@ module api.dom {
 
             if (parent.isRendered()) {
                 child.init();
+            } else if (parent.isRendering()) {
+                this.childrenAddedDuringInit = true;
             }
-            child.notifyAdded();
+            // notify added if I am added to dom only, otherwise do it on added to dom
+            if (this.isAdded()) {
+                child.notifyAdded();
+            }
             return this;
         }
 
@@ -565,6 +667,8 @@ module api.dom {
             // Run init of replacement if parent is rendered
             if (parent.isRendered()) {
                 replacement.init();
+            } else if (parent.isRendering()) {
+                this.childrenAddedDuringInit = true;
             }
 
             // Remove this from DOM completely
@@ -579,12 +683,8 @@ module api.dom {
                 return;
             }
 
-            var childPos = parent.children.indexOf(this);
-            parent.removeChild(this);
+            this.replaceWith(wrapperElement);
             wrapperElement.appendChild(this);
-            // add wrapper to parent in the same position of the current element
-            parent.el.appendChild(wrapperElement.getEl().getHTMLElement());
-            parent.insertChildElement(this, wrapperElement, childPos);
         }
 
         getParentElement(): Element {
@@ -739,7 +839,10 @@ module api.dom {
             this.addedListeners.forEach((listener) => {
                 listener(addedEvent);
             });
-            // Each child throw its own added
+
+            this.children.forEach((child: Element) => {
+                child.notifyAdded();
+            })
         }
 
         onRemoved(listener: (event: ElementRemovedEvent) => void) {
@@ -790,16 +893,18 @@ module api.dom {
             })
         }
 
-        private notifyShown(target?: Element) {
+        private notifyShown(target?: Element, deep?: boolean) {
             var shownEvent = new ElementShownEvent(this, target);
             this.shownListeners.forEach((listener) => {
                 listener(shownEvent);
             });
-            this.children.forEach((child: Element) => {
-                if (child.isVisible()) {
-                    child.notifyShown(shownEvent.getTarget());
-                }
-            })
+            if (deep) {
+                this.children.forEach((child: Element) => {
+                    if (child.isVisible()) {
+                        child.notifyShown(shownEvent.getTarget(), deep);
+                    }
+                });
+            }
         }
 
         onHidden(listener: (event: ElementHiddenEvent) => void) {
@@ -1041,10 +1146,8 @@ module api.dom {
 
 
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
-            return new Element(new ElementFromHelperBuilder().
-                setHelper(new ElementHelper(element)).
-                setLoadExistingChildren(loadExistingChildren).
-                setParentElement(parent));
+            return new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(element)).setLoadExistingChildren(
+                loadExistingChildren).setParentElement(parent));
         }
 
         static fromString(s: string, loadExistingChildren: boolean = true): Element {

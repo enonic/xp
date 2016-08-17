@@ -1,4 +1,21 @@
 import "../../../api.ts";
+import {ContentWizardPanel} from "../ContentWizardPanel";
+import {DefaultModels} from "./DefaultModels";
+import {EmulatorPanel} from "./contextwindow/EmulatorPanel";
+import {LiveEditPageProxy} from "./LiveEditPageProxy";
+import {TextInspectionPanel} from "./contextwindow/inspect/region/TextInspectionPanel";
+import {ContentInspectionPanel} from "./contextwindow/inspect/ContentInspectionPanel";
+import {RegionInspectionPanel} from "./contextwindow/inspect/region/RegionInspectionPanel";
+import {ImageInspectionPanel} from "./contextwindow/inspect/region/ImageInspectionPanel";
+import {LayoutInspectionPanel} from "./contextwindow/inspect/region/LayoutInspectionPanel";
+import {FragmentInspectionPanel} from "./contextwindow/inspect/region/FragmentInspectionPanel";
+import {PartInspectionPanel} from "./contextwindow/inspect/region/PartInspectionPanel";
+import {PageInspectionPanel} from "./contextwindow/inspect/page/PageInspectionPanel";
+import {InspectionsPanel, InspectionsPanelConfig} from "./contextwindow/inspect/InspectionsPanel";
+import {InsertablesPanel} from "./contextwindow/insert/InsertablesPanel";
+import {ContextWindowController} from "./contextwindow/ContextWindowController";
+import {ContextWindow, ContextWindowConfig} from "./contextwindow/ContextWindow";
+import {ShowContentFormEvent} from "../ShowContentFormEvent";
 
 import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateKey = api.content.page.PageTemplateKey;
@@ -57,29 +74,13 @@ import HtmlAreaDialogShownEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogE
 import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
 
 import Panel = api.ui.panel.Panel;
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {DefaultModels} from "./DefaultModels";
-import {EmulatorPanel} from "./contextwindow/EmulatorPanel";
-import {LiveEditPageProxy} from "./LiveEditPageProxy";
-import {TextInspectionPanel} from "./contextwindow/inspect/region/TextInspectionPanel";
-import {ContentInspectionPanel} from "./contextwindow/inspect/ContentInspectionPanel";
-import {RegionInspectionPanel} from "./contextwindow/inspect/region/RegionInspectionPanel";
-import {ImageInspectionPanel} from "./contextwindow/inspect/region/ImageInspectionPanel";
-import {LayoutInspectionPanel} from "./contextwindow/inspect/region/LayoutInspectionPanel";
-import {FragmentInspectionPanel} from "./contextwindow/inspect/region/FragmentInspectionPanel";
-import {PartInspectionPanel} from "./contextwindow/inspect/region/PartInspectionPanel";
-import {PageInspectionPanel} from "./contextwindow/inspect/page/PageInspectionPanel";
-import {InspectionsPanel, InspectionsPanelConfig} from "./contextwindow/inspect/InspectionsPanel";
-import {InsertablesPanel} from "./contextwindow/insert/InsertablesPanel";
-import {ContextWindowController} from "./contextwindow/ContextWindowController";
-import {ContextWindow, ContextWindowConfig} from "./contextwindow/ContextWindow";
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
+import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 
 export interface LiveFormPanelConfig {
 
-    contentType:ContentTypeName;
+    contentType: ContentTypeName;
 
-    contentWizardPanel:ContentWizardPanel;
+    contentWizardPanel: ContentWizardPanel;
 
     defaultModels: DefaultModels;
 }
@@ -133,22 +134,37 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy = new LiveEditPageProxy();
 
-        this.contentInspectionPanel = new ContentInspectionPanel();
-        this.pageInspectionPanel = new PageInspectionPanel();
-        this.regionInspectionPanel = new RegionInspectionPanel();
-        this.imageInspectionPanel = new ImageInspectionPanel();
-        this.partInspectionPanel = new PartInspectionPanel();
-        this.layoutInspectionPanel = new LayoutInspectionPanel();
-        this.fragmentInspectionPanel = new FragmentInspectionPanel();
-        this.textInspectionPanel = new TextInspectionPanel();
+        this.contextWindow = this.createContextWindow(this.liveEditPageProxy, this.liveEditModel);
 
-        api.dom.WindowDOM.get().onBeforeUnload((event) => {
-            console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
-            // the reload is triggered by the main frame,
-            // so let the live edit know it to skip the popup
-            this.liveEditPageProxy.skipNextReloadConfirmation(true);
+        // constructor to listen to live edit events during wizard rendering
+        this.contextWindowController = new ContextWindowController(
+            this.contextWindow,
+            this.contentWizardPanel
+        );
+    }
+
+    private createContextWindow(proxy: LiveEditPageProxy, model: LiveEditModel): ContextWindow {
+        this.emulatorPanel = new EmulatorPanel({
+            liveEditPage: proxy
         });
 
+        this.inspectionsPanel = this.createInspectionsPanel(model);
+
+        this.insertablesPanel = new InsertablesPanel({
+            liveEditPage: proxy,
+            content: this.content
+        });
+
+        return new ContextWindow(<ContextWindowConfig>{
+            liveEditPage: proxy,
+            liveFormPanel: this,
+            inspectionPanel: this.inspectionsPanel,
+            emulatorPanel: this.emulatorPanel,
+            insertablesPanel: this.insertablesPanel
+        });
+    }
+
+    private createInspectionsPanel(model: LiveEditModel): InspectionsPanel {
         var saveAction = new api.ui.Action('Apply');
         saveAction.onExecuted(() => {
             if (!this.pageView) {
@@ -164,7 +180,18 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             }
         });
 
-        this.inspectionsPanel = new InspectionsPanel(<InspectionsPanelConfig>{
+        this.contentInspectionPanel = new ContentInspectionPanel(this.content);
+
+        this.pageInspectionPanel = new PageInspectionPanel(model);
+        this.partInspectionPanel = new PartInspectionPanel(model);
+        this.layoutInspectionPanel = new LayoutInspectionPanel(model);
+        this.imageInspectionPanel = new ImageInspectionPanel(model);
+        this.fragmentInspectionPanel = new FragmentInspectionPanel(model);
+
+        this.textInspectionPanel = new TextInspectionPanel();
+        this.regionInspectionPanel = new RegionInspectionPanel();
+
+        return new InspectionsPanel(<InspectionsPanelConfig>{
             contentInspectionPanel: this.contentInspectionPanel,
             pageInspectionPanel: this.pageInspectionPanel,
             regionInspectionPanel: this.regionInspectionPanel,
@@ -175,48 +202,47 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             textInspectionPanel: this.textInspectionPanel,
             saveAction: saveAction
         });
+    }
 
-        this.emulatorPanel = new EmulatorPanel({
-            liveEditPage: this.liveEditPageProxy
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
+
+            api.dom.WindowDOM.get().onBeforeUnload((event) => {
+                console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
+                // the reload is triggered by the main frame,
+                // so let the live edit know it to skip the popup
+                this.liveEditPageProxy.skipNextReloadConfirmation(true);
+            });
+
+            this.frameContainer = new Panel("frame-container");
+            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(), this.liveEditPageProxy.getDragMask());
+
+            // append mask here in order for the context window to be above
+            this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow);
+
+
+            this.contextWindow.onDisplayModeChanged(() => {
+                if (!this.contextWindow.isFloating()) {
+                    this.contentWizardPanel.getContextWindowToggler().setActive(true);
+                    this.contextWindow.slideIn();
+                }
+            });
+
+            this.liveEditListen();
+
+            // delay rendered event until live edit page is fully loaded
+            var liveEditDeferred = wemQ.defer();
+
+            this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
+                liveEditDeferred.resolve(rendered);
+            });
+
+            this.liveEditPageProxy.onLiveEditPageInitializationError((event: LiveEditPageInitializationErrorEvent) => {
+                liveEditDeferred.reject(event.getMessage());
+            });
+
+            return liveEditDeferred.promise;
         });
-
-        this.insertablesPanel = new InsertablesPanel({
-            liveEditPage: this.liveEditPageProxy,
-            contentWizardPanel: config.contentWizardPanel,
-        });
-
-        this.frameContainer = new Panel("frame-container");
-        this.appendChild(this.frameContainer);
-        this.frameContainer.appendChild(this.liveEditPageProxy.getIFrame());
-        this.frameContainer.appendChild(this.liveEditPageProxy.getDragMask());
-
-        // append it here in order for the context window to be above
-        this.appendChild(this.liveEditPageProxy.getLoadMask());
-
-        this.contextWindow = new ContextWindow(<ContextWindowConfig>{
-            liveEditPage: this.liveEditPageProxy,
-            liveFormPanel: this,
-            inspectionPanel: this.inspectionsPanel,
-            emulatorPanel: this.emulatorPanel,
-            insertablesPanel: this.insertablesPanel
-        });
-
-        this.appendChild(this.contextWindow);
-
-        this.contextWindowController = new ContextWindowController(
-            this.contextWindow,
-            this.contentWizardPanel.getContextWindowToggler(),
-            this.contentWizardPanel.getComponentsViewToggler()
-        );
-
-        this.contextWindow.onDisplayModeChanged(() => {
-            if (!this.contextWindow.isFloating()) {
-                this.contentWizardPanel.getContextWindowToggler().setActive(true);
-                this.contextWindow.slideIn();
-            }
-        });
-
-        this.liveEditListen();
     }
 
     remove(): LiveFormPanel {
@@ -227,7 +253,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     public getPage(): Page {
-        return this.pageModel.getPage();
+        return this.pageModel ? this.pageModel.getPage() : null;
     }
 
     setModel(liveEditModel: LiveEditModel) {
@@ -241,7 +267,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.pageModel.setIgnorePropertyChanges(true);
 
         this.liveEditPageProxy.setModel(liveEditModel);
-        this.imageInspectionPanel.setModel(liveEditModel);
         this.pageInspectionPanel.setModel(liveEditModel);
         this.partInspectionPanel.setModel(liveEditModel);
         this.layoutInspectionPanel.setModel(liveEditModel);
@@ -320,10 +345,12 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.liveEditPageProxy.skipNextReloadConfirmation(skip);
     }
 
-    loadPage() {
+    loadPage(clearInspection: boolean = true) {
         if (this.pageSkipReload == false && !this.pageLoading) {
 
-            this.clearSelection();
+            if (clearInspection) {
+                this.clearSelection();
+            }
 
             this.pageLoading = true;
             this.liveEditPageProxy.load();
@@ -379,7 +406,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         }
     }
 
-
     private liveEditListen() {
 
         this.liveEditPageProxy.onPageLocked((event: api.liveedit.PageLockedEvent) => {
@@ -394,10 +420,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.pageView = event.getPageView();
             if (this.pageView) {
                 this.insertablesPanel.setPageView(this.pageView);
-            }
-            else {
-                this.contentWizardPanel.getContextWindowToggler().hide();
-                this.contentWizardPanel.getComponentsViewToggler().hide();
             }
         });
 
@@ -558,7 +580,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         if (this.pageView && this.pageView.hasSelectedView()) {
             this.pageView.getSelectedView().deselect();
         }
-        this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
+        this.inspectPage();
     }
 
     private inspectRegion(regionView: RegionView) {

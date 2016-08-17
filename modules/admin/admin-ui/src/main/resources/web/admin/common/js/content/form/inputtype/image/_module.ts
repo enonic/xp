@@ -2,7 +2,6 @@
 ///<reference path='ImageSelectorSelectedOptionsView.ts' />
 ///<reference path='ImageSelector.ts' />
 ///<reference path='UploadDialogCancelAction.ts' />
-///<reference path='ImageUploadDialog.ts' />
 ///<reference path='SelectionToolbar.ts' />
 ///<reference path='FocusChangedEvent.ts' />
 ///<reference path='ImageSelectorDisplayValue.ts' />

@@ -1,16 +1,22 @@
-.image-uploader-el {
-  .reset();
+.image-uploader-input {
+  .image-uploader-input-dz-dragover();
 
-  &.dragover {
-    &:after {
-      .dropcircle(140px);
-      z-index: @z-index-drag-helper;
-      margin-top: -111px; // -140 + 58/2 ( half of the sticky toolbar to be centered over image )
-      font-size: 25px;
-      text-align: center;
-      content: 'Drop image here!';
+  > .uploader-el > .upload-button {
+    background-image: url("../../../../common/images/upload_white.png");
+    background-color: @form-button-bg;
+  }
+}
+
+.upload-dialog {
+  .image-uploader-el.dz-dragover {
+    &:not([disabled]) {
+      .box-shadow(0px 0px 5px darken(@admin-input-blue, 10%));
     }
   }
+}
+
+.image-uploader-el {
+  .reset();
 
   .result-container {
 

@@ -17,6 +17,8 @@ module api.ui.security.acl {
         private valueChangedListeners: {(item: UserStoreAccessControlEntry): void}[] = [];
         private editable: boolean = true;
 
+        public static debug: boolean = false;
+
         constructor(ace: UserStoreAccessControlEntry) {
             super();
             this.setClass('userstore-access-control-entry');
@@ -26,22 +28,6 @@ module api.ui.security.acl {
             if (isNaN(this.ace.getAccess())) {
                 this.ace.setAccess(UserStoreAccess[UserStoreAccess.CREATE_USERS]);
             }
-
-
-            this.accessSelector = new UserStoreAccessSelector();
-            this.accessSelector.onValueChanged((event: ValueChangedEvent) => {
-                this.ace.setAccess(event.getNewValue());
-            });
-
-            this.removeButton = new api.dom.AEl("icon-close");
-            this.removeButton.onClicked((event: MouseEvent) => {
-                if (this.editable) {
-                    this.notifyRemoveClicked(event);
-                }
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
 
             this.setUserStoreAccessControlEntry(this.ace, true);
 
@@ -92,10 +78,7 @@ module api.ui.security.acl {
                 ace.getPrincipal().getDisplayName()).setModifiedTime(ace.getPrincipal().getModifiedTime()).build();
             this.setObject(principal);
 
-            this.accessSelector.setValue(ace.getAccess(), silent);
-
-
-            // permissions will be set on access selector value change
+            this.doLayout(principal);
         }
 
         public getUserStoreAccessControlEntry(): UserStoreAccessControlEntry {
@@ -103,11 +86,36 @@ module api.ui.security.acl {
             return ace;
         }
 
-        doRender() {
-            super.doRender();
-            this.appendChild(this.accessSelector);
-            this.appendChild(this.removeButton);
-            return true;
+        doLayout(object: Principal) {
+            super.doLayout(object);
+
+            if (UserStoreAccessControlEntryView.debug) {
+                console.debug("UserStoreAccessControlEntryView.doLayout");
+            }
+
+            // permissions will be set on access selector value change
+
+            if (!this.accessSelector) {
+                this.accessSelector = new UserStoreAccessSelector();
+                this.accessSelector.onValueChanged((event: ValueChangedEvent) => {
+                    this.ace.setAccess(event.getNewValue());
+                });
+                this.appendChild(this.accessSelector);
+            }
+            this.accessSelector.setValue(this.ace.getAccess(), true);
+
+            if (!this.removeButton) {
+                this.removeButton = new api.dom.AEl("icon-close");
+                this.removeButton.onClicked((event: MouseEvent) => {
+                    if (this.editable) {
+                        this.notifyRemoveClicked(event);
+                    }
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                });
+                this.appendChild(this.removeButton);
+            }
         }
     }
 

@@ -53,7 +53,7 @@ public class SearchHits
 
     public static class Builder
     {
-        private List<SearchHit> hits;
+        private final List<SearchHit> hits;
 
         private long totalHits = 0L;
 

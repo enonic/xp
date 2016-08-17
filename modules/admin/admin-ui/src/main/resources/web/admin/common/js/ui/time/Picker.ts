@@ -27,6 +27,13 @@ module api.ui.time {
             this.wrapChildrenAndAppend();
 
             this.setupListeners(builder);
+
+            this.setupCommonListeners();
+        }
+
+        private setupCommonListeners() {
+            this.popup.onShown(e => this.addClass("expanded"));
+            this.popup.onHidden(e => this.removeClass("expanded"));
         }
 
         protected handleShownEvent() {

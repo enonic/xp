@@ -1,29 +1,27 @@
 import "../../api.ts";
+import {PrincipalDescriptionWizardStepForm} from "./PrincipalDescriptionWizardStepForm";
+import {PrincipalWizardPanel} from "./PrincipalWizardPanel";
+import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
+import {PrincipalMembersWizardStepForm} from "./PrincipalMembersWizardStepForm";
 
 import Principal = api.security.Principal;
 
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import WizardStep = api.app.wizard.WizardStep;
-import {PrincipalDescriptionWizardStepForm} from "./PrincipalDescriptionWizardStepForm";
-import {PrincipalWizardPanel} from "./PrincipalWizardPanel";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
-import {PrincipalMembersWizardStepForm} from "./PrincipalMembersWizardStepForm";
 
 export class GroupRoleWizardPanel extends PrincipalWizardPanel {
 
     private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
     private membersWizardStepForm: PrincipalMembersWizardStepForm;
 
-    constructor(membersWizardStepForm: PrincipalMembersWizardStepForm,
-                params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
+    constructor(membersWizardStepForm: PrincipalMembersWizardStepForm, params: PrincipalWizardPanelParams) {
 
         this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
         this.membersWizardStepForm = membersWizardStepForm;
 
-        super(params, () => {
-            this.addClass("group-role-wizard-panel");
-            callback(this);
-        });
+        super(params);
+
+        this.addClass("group-role-wizard-panel");
     }
 
     getDescriptionWizardStepForm(): PrincipalDescriptionWizardStepForm {
@@ -34,60 +32,50 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
         return this.membersWizardStepForm;
     }
 
-    giveInitialFocus() {
-        this.wizardHeader.giveFocus();
-        this.startRememberFocus();
-    }
+    doLayout(persistedPrincipal: Principal): wemQ.Promise<void> {
 
-    preLayoutNew(): wemQ.Promise<void> {
-        var deferred = wemQ.defer<void>();
+        return super.doLayout(persistedPrincipal).then(() => {
 
-        this.doLayoutPersistedItem(null);
+            if (this.isRendered()) {
 
-        deferred.resolve(null);
+                var viewedPrincipal = this.assembleViewedItem();
+                if (!this.isPersistedEqualsViewed()) {
 
-        return deferred.promise;
-    }
+                    console.warn("Received Principal from server differs from what's viewed:");
+                    console.warn(" viewedPrincipal: ", viewedPrincipal);
+                    console.warn(" persistedPrincipal: ", persistedPrincipal);
 
-    postLayoutNew(): wemQ.Promise<void> {
-        var deferred = wemQ.defer<void>();
+                    ConfirmationDialog.get().setQuestion(
+                        "Received Principal from server differs from what you have. Would you like to load changes from server?").setYesCallback(
+                        () => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null)).setNoCallback(
+                        () => {/* Do nothing */
+                        }).show();
+                }
 
-        this.wizardHeader.initNames("", "", false);
-
-        deferred.resolve(null);
-        return deferred.promise;
-    }
-
-    layoutPersistedItem(persistedPrincipal: Principal): wemQ.Promise<void> {
-        if (!this.constructing) {
-
-            var deferred = wemQ.defer<void>();
-            var viewedPrincipal = this.assembleViewedItem();
-
-            if (!this.isPersistedEqualsViewed()) {
-
-                console.warn("Received Principal from server differs from what's viewed:");
-                console.warn(" viewedPrincipal: ", viewedPrincipal);
-                console.warn(" persistedPrincipal: ", persistedPrincipal);
-
-                ConfirmationDialog.get().setQuestion(
-                    "Received Principal from server differs from what you have. Would you like to load changes from server?").setYesCallback(
-                    () => this.doLayoutPersistedItem(persistedPrincipal.clone())).setNoCallback(() => {/* Do nothing */
-                }).show();
+                return wemQ<void>(null);
+            } else {
+                return this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null);
             }
 
-            deferred.resolve(null);
-            return deferred.promise;
-        } else {
-            return this.doLayoutPersistedItem(persistedPrincipal.clone());
-        }
+        });
+    }
+
+    protected doLayoutPersistedItem(principal: Principal): wemQ.Promise<void> {
+
+        return super.doLayoutPersistedItem(principal).then(() => {
+            if (!!principal) {
+                this.getDescriptionWizardStepForm().layout(principal);
+                this.getMembersWizardStepForm().layout(principal);
+            }
+        });
     }
 
     hasUnsavedChanges(): boolean {
         var persistedPrincipal = this.getPersistedItem();
+        var wizardHeader = this.getWizardHeader();
         if (persistedPrincipal == undefined) {
-            return this.wizardHeader.getName() !== "" ||
-                   this.wizardHeader.getDisplayName() !== "" ||
+            return wizardHeader.getName() !== "" ||
+                   wizardHeader.getDisplayName() !== "" ||
                    this.membersWizardStepForm.getMembers().length !== 0;
         } else {
             return !this.isPersistedEqualsViewed();

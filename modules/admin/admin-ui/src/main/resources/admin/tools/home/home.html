@@ -5,28 +5,33 @@
     <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no">
     <meta name="theme-color" content="#ffffff">
 
-    <title>Enonic XP Admin</title>
+    <title>Enonic XP Home</title>
 
     <!-- favicons -->
 
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/login/icons/favicons/apple-touch-icon-60x60.png" sizes="60x60">
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/login/icons/favicons/apple-touch-icon-76x76.png" sizes="76x76">
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/login/icons/favicons/apple-touch-icon-120x120.png" sizes="120x120">
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/login/icons/favicons/apple-touch-icon-152x152.png" sizes="152x152">
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/login/icons/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/common/images/favicons/apple-touch-icon-60x60.png" sizes="60x60">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/common/images/favicons/apple-touch-icon-76x76.png" sizes="76x76">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/common/images/favicons/apple-touch-icon-120x120.png" sizes="120x120">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/common/images/favicons/apple-touch-icon-152x152.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/common/images/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/login/icons/favicons/android-128x128.png" sizes="128x128">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/login/icons/favicons/android-196x196.png" sizes="196x196">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/common/images/favicons/android-128x128.png" sizes="128x128">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/common/images/favicons/android-196x196.png" sizes="196x196">
 
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/login/icons/favicons/favicon-16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/login/icons/favicons/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/login/icons/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/common/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/common/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/common/images/favicons/favicon-48x48.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/common/images/favicons/favicon-64x64.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/common/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/common/images/favicons/favicon-128x128.png" sizes="32x32">
 
-    <link rel="manifest" href="{{assetsUri}}/apps/login/icons/favicons/manifest.json">
-    <link rel="mask-icon" href="{{assetsUri}}/apps/login/icons/icon-transparent-black.svg" color="#5bbad5">
+    <link rel="manifest" href="{{assetsUri}}/common/images/favicons/manifest.json">
+    <link rel="mask-icon" href="{{assetsUri}}/common/images/xp-logo-black.svg" color="#5bbad5">
 
     <!-- Styles -->
+    <link rel="stylesheet" type="text/css" href="{{assetsUri}}/common/styles/_all.css">
     <link rel="stylesheet" type="text/css" href="{{assetsUri}}/common/styles/_home.css">
+    <script type="text/javascript" src="{{assetsUri}}/common/lib/_all.js"></script>
 
 </head>
 <body>
@@ -36,23 +41,51 @@
     var CONFIG = {
         adminUrl: '{{adminUrl}}',
         autoOpenLauncher: true,
-        appId: 'home'
+        appId: 'home',
+        xpVersion: '{{xpVersion}}',
+        docLinkPrefix: '{{docLinkPrefix}}'
+
     };
 </script>
 
+<script type="text/javascript" src="{{assetsUri}}/common/js/_all.js"></script>
 <script type="text/javascript" src="{{assetsUri}}/apps/home/js/_all.js"></script>
 
 <div class="home-main-container" tabindex="100" style="">
     <div id="background-image" class="lazy-image empty"
          style="background-image: url(&quot;{{backgroundUri}}&quot;);"></div>
-    <div class="header">
-        <span>Welcome to Enonic XP</span>
+
+    <div class="shader"></div>
+
+    <div class="home-main-dashboard">
+        <div class="xp-tour dashboard-item">
+            <img src="{{busIconUrl}}">
+            <div>XP Tour</div>
+        </div>
+        <div class="xp-about dashboard-item">
+            <img src="{{infoIconUrl}}">
+            <div>About</div>
+        </div>
+        <div class="dashboard-item">
+            <a href="{{docLinkPrefix}}/" target="_blank">
+                <img src="{{docsIconUrl}}">
+                <div>Docs</div>
+            </a>
+        </div>
+        <div class="dashboard-item">
+            <a href="https://discuss.enonic.com/" target="_blank">
+                <img src="{{forumIconUrl}}">
+                <div>Discuss</div>
+            </a>
+        </div>
+        <div class="dashboard-item">
+            <a href="https://market.enonic.com/" target="_blank">
+                <img src="{{marketIconUrl}}">
+                <div>Market</div>
+            </a>
+        </div>
     </div>
-</div>
-<div class="home-main-footer">
-    <a href="{{docLinkPrefix}}/appendix/release-notes/" target="_blank">Enonic XP v{{xpVersion}}</a>
-    <a href="https://discuss.enonic.com/" target="_blank">Forum</a>
-    <a href="{{docLinkPrefix}}/" target="_blank">Documentation</a>
+
 </div>
 
 <script type="text/javascript">

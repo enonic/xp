@@ -4,11 +4,9 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
-import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.StorageService;
@@ -18,19 +16,13 @@ import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class FindNodesWithVersionDifferenceCommand
 {
-    private final NodeId nodeId;
-
     private final NodePath nodePath;
 
     private final Branch source;
 
     private final Branch target;
 
-    private final OrderExpr orderExpr;
-
     private final int size;
-
-    private final int from;
 
     private final NodeIds excludes;
 
@@ -42,13 +34,10 @@ public class FindNodesWithVersionDifferenceCommand
 
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
     {
-        nodeId = builder.nodeId;
         nodePath = builder.nodePath;
         source = builder.source;
         target = builder.target;
-        orderExpr = builder.orderExpr;
         size = builder.size;
-        from = builder.from;
         searchService = builder.searchService;
         this.storageService = builder.storageService;
         this.excludes = builder.excludes;
@@ -100,21 +89,15 @@ public class FindNodesWithVersionDifferenceCommand
 
         private StorageService storageService;
 
-        private NodeId nodeId;
-
         private NodePath nodePath;
 
         private Branch source;
 
         private Branch target;
 
-        private OrderExpr orderExpr;
-
         private NodeIds excludes = NodeIds.empty();
 
         private int size = SearchService.GET_ALL_SIZE_FLAG;
-
-        private int from;
 
         private Builder()
         {
@@ -136,12 +119,6 @@ public class FindNodesWithVersionDifferenceCommand
         public FindNodesWithVersionDifferenceCommand build()
         {
             return new FindNodesWithVersionDifferenceCommand( this );
-        }
-
-        public Builder nodeId( final NodeId val )
-        {
-            nodeId = val;
-            return this;
         }
 
         public Builder nodePath( final NodePath val )
@@ -168,21 +145,9 @@ public class FindNodesWithVersionDifferenceCommand
             return this;
         }
 
-        public Builder orderExpr( final OrderExpr val )
-        {
-            orderExpr = val;
-            return this;
-        }
-
         public Builder size( final int val )
         {
             size = val;
-            return this;
-        }
-
-        public Builder from( final int val )
-        {
-            from = val;
             return this;
         }
     }

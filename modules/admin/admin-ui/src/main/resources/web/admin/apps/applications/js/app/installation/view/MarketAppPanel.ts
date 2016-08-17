@@ -11,24 +11,21 @@ export class MarketAppPanel extends api.ui.panel.Panel {
 
     private isGridLoadingData: boolean = false;
 
-    private installApplications: Application[] = [];
-
     constructor(className?: string) {
         super(className);
+    }
 
-        var gridInitialized = false;
-
-        this.onShown(() => {
-            if (gridInitialized) {
-                return;
-            }
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
 
             this.marketAppsTreeGrid = new MarketAppsTreeGrid();
-            this.marketAppsTreeGrid.updateInstallApplications(this.installApplications);
-            this.initDataLoadListener();
-            this.initAvailableSizeChangeListener();
             this.appendChild(this.marketAppsTreeGrid);
-            gridInitialized = true;
+
+            this.initDataLoadListener();
+
+            this.initAvailableSizeChangeListener();
+
+            return rendered;
         });
     }
 
@@ -49,7 +46,7 @@ export class MarketAppPanel extends api.ui.panel.Panel {
     }
 
     public updateInstallApplications(installApplications: api.application.Application[]) {
-        this.installApplications = installApplications;
+        this.marketAppsTreeGrid.updateInstallApplications(installApplications);
     }
 
     private initAvailableSizeChangeListener() {

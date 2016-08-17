@@ -1,4 +1,7 @@
 import "../../../api.ts";
+import {ShowContentFormEvent} from "../ShowContentFormEvent";
+import {ShowLiveEditEvent} from "../ShowLiveEditEvent";
+import {ShowSplitEditEvent} from "../ShowSplitEditEvent";
 
 declare var CONFIG;
 
@@ -8,13 +11,10 @@ import PageModel = api.content.page.PageModel;
 import SiteModel = api.content.site.SiteModel;
 import LiveEditModel = api.liveedit.LiveEditModel;
 import Component = api.content.page.region.Component;
-import ImageUploadDialog = api.content.form.inputtype.image.ImageUploadDialog;
 import RenderingMode = api.rendering.RenderingMode;
 import Workspace = api.content.Branch;
 
 import ComponentView = api.liveedit.ComponentView;
-import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
-import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
 import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;
 import ComponentViewDragStoppedEvent = api.liveedit.ComponentViewDragStoppedEvent;
@@ -46,10 +46,6 @@ import RegionView = api.liveedit.RegionView;
 import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEvent;
 import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
-
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
-import {ShowLiveEditEvent} from "../ShowLiveEditEvent";
-import {ShowSplitEditEvent} from "../ShowSplitEditEvent";
 
 export class LiveEditPageProxy {
 
@@ -137,9 +133,7 @@ export class LiveEditPageProxy {
         this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
         this.hideLoadMaskHandler = () => {
-            if (this.loadMask.isVisible()) {
-                this.loadMask.hide();
-            }
+            this.loadMask.hide();
         };
         this.onLiveEditPageViewReady(() => {
             this.liveEditPageViewReady = true;
@@ -317,8 +311,6 @@ export class LiveEditPageProxy {
 
     public stopListening(contextWindow: any) {
 
-        ImageOpenUploadDialogEvent.un(null, contextWindow);
-
         ComponentViewDragStartedEvent.un(null, contextWindow);
 
         ComponentViewDragStoppedEvent.un(null, contextWindow);
@@ -369,18 +361,6 @@ export class LiveEditPageProxy {
     }
 
     public listenToPage(contextWindow: any) {
-
-        ImageOpenUploadDialogEvent.on((openDialogEvent: ImageOpenUploadDialogEvent) => {
-            var imageUploadDialog = new ImageUploadDialog(this.liveEditModel.getContent().getContentId());
-            imageUploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                new ImageUploadedEvent(event.getUploadItem().getModel(),
-                    openDialogEvent.getTargetImagePlaceholder()).fire(contextWindow);
-
-                imageUploadDialog.close();
-                imageUploadDialog.remove();
-            });
-            imageUploadDialog.open();
-        }, contextWindow);
 
         MinimizeWizardPanelEvent.on(() => {
             new MinimizeWizardPanelEvent().fire(contextWindow);

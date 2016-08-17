@@ -7,29 +7,6 @@
   font-size: 15px;
 }
 
-.input-error(@color: @input-light-red) {
-  background-color: @color;
-
-  &:focus {
-    .box-shadow(0px 0px 5px @color);
-  }
-}
-
-.input-glow(@color: @admin-input-blue) {
-  &:hover {
-    &:not([disabled]) {
-      border: 1px solid @color;
-    }
-    &[disabled] {
-      border: 1px solid greyscale(@color);
-    }
-  }
-  &:focus {
-    .box-shadow(0px 0px 5px @color);
-    border: 1px solid @color;
-  }
-}
-
 ::-ms-clear {
   display: none;
 }
@@ -42,18 +19,11 @@
     margin-bottom: @form-field-spacing;
   }
 
-  //  padding: 10px 10px 0;
   border-bottom-width: 0;
 
   select, input, textarea {
     .input-glow();
   }
-
-  .display-validation-errors &.invalid {
-    .input-error();
-    padding: 10px;
-  }
-;
 
   .error {
     display: none;
@@ -138,7 +108,6 @@
     }
   }
 
-
   .input-wrapper .form-input {
     width: 100%;
   }
@@ -157,6 +126,47 @@
 
     button {
       margin-top: 7px;
+    }
+  }
+
+  .help-text {
+    padding-top: 8px;
+
+    p {
+      color: @admin-font-gray1;
+      font-style: italic;
+      text-align: justify;
+    }
+
+    span {
+      display: none;
+      float: right;
+      color: @admin-button-blue2;
+    }
+
+    &.overflow {
+      p {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+    }
+
+    &.overflow.collapsed {
+      p {
+        width: 93%;
+        float: left;
+      }
+      span {
+        display: block;
+        float: right;
+        cursor: pointer;
+
+        &:hover {
+          font-weight: bold;
+        }
+      }
     }
   }
 

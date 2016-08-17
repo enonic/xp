@@ -2,12 +2,11 @@ import "../../api.ts";
 import {StatusSelectionItem} from "./StatusSelectionItem";
 import {DependantItemViewer} from "./DependantItemViewer";
 
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentSummary = api.content.ContentSummary;
 import ContentIds = api.content.ContentIds;
 import ContentId = api.content.ContentId;
-import GetDescendantsOfContents = api.content.GetDescendantsOfContents;
-import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+import GetDescendantsOfContents = api.content.resource.GetDescendantsOfContentsRequest;
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -142,6 +141,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.remove();
         this.itemList.clearItems(true);
         this.dependantList.clearItems(true);
+        this.dependantsContainer.setVisible(false);
     }
 
     setAutoUpdateTitle(value: boolean) {
@@ -174,7 +174,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     protected loadDescendantIds(filterStatuses?: CompareStatus[]) {
         let contents = this.getItemList().getItems();
 
-        return new api.content.GetDescendantsOfContents().
+        return new api.content.resource.GetDescendantsOfContentsRequest().
             setContentPaths(contents.map(content => content.getContentSummary().getPath())).
             setFilterStatuses(filterStatuses).sendAndParse()
             .then((result: ContentId[]) => {
@@ -186,7 +186,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
                               size: number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
         let ids = this.dependantIds.slice(from, from+size);
-        return api.content.ContentSummaryAndCompareStatusFetcher.fetchByIds(ids);
+        return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByIds(ids);
     }
 
     protected countTotal(): number {
@@ -270,15 +270,16 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
 
         itemViewer.setObject(item);
 
-        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).
-            setId(item.getId()).
-            setDisplayName(item.getDisplayName()).
-            setPath(item.getPath().toString()).
-            setIconUrl(new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
+        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).setId(item.getId()).setDisplayName(
+            item.getDisplayName()).setPath(item.getPath().toString()).setIconUrl(
+            new api.content.util.ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
-        return new StatusSelectionItem(itemViewer, browseItem, () => {
+        var statusItem = new StatusSelectionItem(itemViewer, browseItem);
+        statusItem.onRemoveClicked((e: MouseEvent) => {
             this.removeItem(item);
         });
+
+        return statusItem;
     }
 
     getItemId(item: ContentSummaryAndCompareStatus): string {
@@ -299,11 +300,9 @@ export class DialogDependantList extends ListBox<ContentSummaryAndCompareStatus>
 
         dependantViewer.setObject(item);
 
-        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).
-            setId(item.getId()).
-            setDisplayName(item.getDisplayName()).
-            setPath(item.getPath().toString()).
-            setIconUrl(new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
+        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).setId(item.getId()).setDisplayName(
+            item.getDisplayName()).setPath(item.getPath().toString()).setIconUrl(
+            new api.content.util.ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
         let selectionItem = new StatusSelectionItem(dependantViewer, browseItem);
 

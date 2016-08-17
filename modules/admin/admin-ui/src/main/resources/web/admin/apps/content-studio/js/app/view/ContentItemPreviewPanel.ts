@@ -2,7 +2,6 @@ import "../../api.ts";
 import {ContentPreviewPathChangedEvent} from "./ContentPreviewPathChangedEvent";
 
 import RenderingMode = api.rendering.RenderingMode;
-import ContentImageUrlResolver = api.content.ContentImageUrlResolver;
 import ViewItem = api.app.view.ViewItem;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -42,6 +41,12 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         this.onShown((event) => {
             if (this.item && this.hasClass("image-preview")) {
                 this.addImageSizeToUrl(this.item);
+            }
+        });
+
+        this.onHidden((event) => {
+            if (this.mask.isVisible()) {
+                this.mask.hide();
             }
         });
 
@@ -104,7 +109,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
     public addImageSizeToUrl(item: ViewItem<ContentSummaryAndCompareStatus>) {
         var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
-        var imgUrl = new ContentImageUrlResolver().setContentId(item.getModel().getContentId()).setTimestamp(
+        var imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(item.getModel().getContentId()).setTimestamp(
             item.getModel().getContentSummary().getModifiedTime()).setSize(imgSize).resolve();
         this.image.setSrc(imgUrl);
     }
@@ -120,7 +125,8 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                 if (this.isVisible()) {
                     if (item.getModel().getContentSummary().getType().equals(ContentTypeName.MEDIA_VECTOR)) {
                         this.getEl().addClass("svg-preview");
-                        var imgUrl = new ContentImageUrlResolver().setContentId(item.getModel().getContentId()).setTimestamp(
+                        var imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(
+                            item.getModel().getContentId()).setTimestamp(
                             item.getModel().getContentSummary().getModifiedTime()).resolve();
                         this.image.setSrc(imgUrl);
                     } else {

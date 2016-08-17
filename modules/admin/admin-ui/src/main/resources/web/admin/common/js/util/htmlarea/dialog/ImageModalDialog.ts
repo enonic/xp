@@ -3,7 +3,6 @@ module api.util.htmlarea.dialog {
     import FormItemBuilder = api.ui.form.FormItemBuilder;
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
-    import UploadItem = api.ui.uploader.UploadItem;
     import FileUploadedEvent = api.ui.uploader.FileUploadedEvent;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
@@ -18,7 +17,7 @@ module api.util.htmlarea.dialog {
 
         private imagePreviewContainer: api.dom.DivEl;
         private imageCaptionField: FormItem;
-        private imageUploaderEl: api.content.ImageUploaderEl;
+        private imageUploaderEl: api.content.image.ImageUploaderEl;
         private imageElement: HTMLImageElement;
         private content: api.content.ContentSummary;
         private imageSelector: api.content.ContentComboBox;
@@ -30,6 +29,7 @@ module api.util.htmlarea.dialog {
         private imageToolbar: ImageToolbar;
         private imagePreviewScrollHandler: ImagePreviewScrollHandler;
         private imageLoadMask: api.ui.mask.LoadMask;
+        private dropzoneContainer: api.ui.uploader.DropzoneContainer;
 
         static imagePrefix = "image://";
         static maxImageWidth = 640;
@@ -56,19 +56,25 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageSelector(id: string): FormItem {
-            let loader = new api.content.ContentSummaryLoader();
+            let loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(this.content.getPath());
 
-            let imageSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
+            let imageSelector = api.content.ContentComboBox.create().
+                    setLoader(loader).
+                    setMaximumOccurrences(1).
+                    build(),
+
                 formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>imageSelector),
                 imageSelectorComboBox = imageSelector.getComboBox();
+
+            imageSelector.getComboBox().getInput().setPlaceholder("Type to search or drop image here...");
 
             this.imageSelector = imageSelector;
 
             formItem.addClass("image-selector");
 
-            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE]);
+            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE, api.schema.content.ContentTypeName.MEDIA_VECTOR]);
 
             if (this.imageElement) {
                 var singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
@@ -123,6 +129,7 @@ module api.util.htmlarea.dialog {
             var imageSelectorContainer = imageSelector.getInput().getParentElement();
 
             imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
+            this.initDragAndDropUploaderEvents();
 
             this.createImagePreviewContainer();
 
@@ -205,7 +212,8 @@ module api.util.htmlarea.dialog {
         }
 
         private generateDefaultImgSrc(contentId): string {
-            return new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(true).setSize(
+            return new api.content.util.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(
+                true).setSize(
                 ImageModalDialog.maxImageWidth).resolve();
         }
 
@@ -262,22 +270,27 @@ module api.util.htmlarea.dialog {
             }
         }
 
-        private createImageUploader(): api.content.ImageUploaderEl {
-            var uploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
+        private createImageUploader(): api.content.image.ImageUploaderEl {
+            var uploader = new api.content.image.ImageUploaderEl({
                 params: {
                     parent: this.content.getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.create,
+                operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
-                showButtons: false,
                 showResult: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                scaleWidth: false,
-                deferred: true
+                deferred: true,
+                showCancel: false,
+                selfIsDropzone: false
             });
 
-            uploader.addClass("minimized");
+            this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
+            this.dropzoneContainer.hide();
+            this.appendChild(this.dropzoneContainer);
+
+            uploader.addDropzone(this.dropzoneContainer.getDropzone().getId());
+
             uploader.hide();
 
             uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
@@ -305,6 +318,23 @@ module api.util.htmlarea.dialog {
             });
 
             return uploader;
+        }
+
+        private initDragAndDropUploaderEvents() {
+            var dragOverEl;
+            this.onDragEnter((event: DragEvent) => {
+                if (this.imageUploaderEl.isEnabled()) {
+                    var target = <HTMLElement> event.target;
+
+                    if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+                        this.dropzoneContainer.show();
+                    }
+                    dragOverEl = target;
+                }
+            });
+
+            this.imageUploaderEl.onDropzoneDragLeave(() => this.dropzoneContainer.hide());
+            this.imageUploaderEl.onDropzoneDrop(() => this.dropzoneContainer.hide());
         }
 
         private setProgress(value: number) {
@@ -374,7 +404,7 @@ module api.util.htmlarea.dialog {
             api.util.htmlarea.editor.HTMLAreaHelper.updateImageParentAlignment(this.image.getHTMLElement());
             this.setImageWidthConstraint();
 
-            var img = this.callback(figure.getHTMLElement().outerHTML);
+            var img = this.callback(figure.getHTMLElement());
             api.util.htmlarea.editor.HTMLAreaHelper.changeImageParentAlignmentOnImageAlignmentChange(img);
         }
 
@@ -457,7 +487,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createKeepOriginalSizeCheckbox(): api.ui.Checkbox {
-            var keepOriginalSizeCheckbox = new api.ui.Checkbox();
+            var keepOriginalSizeCheckbox = api.ui.Checkbox.create().build();
             keepOriginalSizeCheckbox.addClass('keep-size-check');
             keepOriginalSizeCheckbox.onValueChanged(() => {
                 this.imageLoadMask.show();

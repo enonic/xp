@@ -43,6 +43,10 @@ module api.ui.text {
         }
 
         private updateSize() {
+            if (!this.isVisible()) {
+                return;
+            }
+
             var inputEl = this.getEl(),
                 cloneEl = this.clone.getEl();
 
@@ -60,7 +64,6 @@ module api.ui.text {
             } else {
                 inputEl.setWidthPx(cloneEl.getWidthWithBorder());
             }
-
 
             this.attendant.remove();
         }

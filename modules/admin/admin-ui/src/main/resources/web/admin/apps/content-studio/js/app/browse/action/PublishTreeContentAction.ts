@@ -4,7 +4,7 @@ import {ContentTreeGrid} from "../ContentTreeGrid";
 
 import Action = api.ui.Action;
 import ContentSummary = api.content.ContentSummary;
-import PublishContentRequest = api.content.PublishContentRequest;
+import PublishContentRequest = api.content.resource.PublishContentRequest;
 
 export class PublishTreeContentAction extends Action {
 

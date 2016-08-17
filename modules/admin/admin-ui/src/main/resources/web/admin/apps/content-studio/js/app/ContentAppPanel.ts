@@ -1,6 +1,15 @@
 import "../api.ts";
+import {NewContentEvent} from "./create/NewContentEvent";
+import {ContentWizardPanel} from "./wizard/ContentWizardPanel";
+import {ViewContentEvent} from "./browse/ViewContentEvent";
+import {SortContentEvent} from "./browse/SortContentEvent";
+import {MoveContentEvent} from "./browse/MoveContentEvent";
+import {ContentBrowsePanel} from "./browse/ContentBrowsePanel";
+import {ContentItemViewPanel} from "./view/ContentItemViewPanel";
+import {OpenSortDialogEvent} from "./browse/OpenSortDialogEvent";
+import {OpenMoveDialogEvent} from "./browse/OpenMoveDialogEvent";
+import {ContentWizardPanelParams} from "./wizard/ContentWizardPanelParams";
 
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Content = api.content.Content;
@@ -11,17 +20,6 @@ import AppBarTabId = api.app.bar.AppBarTabId;
 import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
 import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
-import {NewContentEvent} from "./create/NewContentEvent";
-import {ContentWizardPanel} from "./wizard/ContentWizardPanel";
-import {ViewContentEvent} from "./browse/ViewContentEvent";
-import {SortContentEvent} from "./browse/SortContentEvent";
-import {MoveContentEvent} from "./browse/MoveContentEvent";
-import {ContentBrowsePanel} from "./browse/ContentBrowsePanel";
-import {ContentDeletePromptEvent} from "./browse/ContentDeletePromptEvent";
-import {ContentWizardPanelFactory} from "./wizard/ContentWizardPanelFactory";
-import {ContentItemViewPanel} from "./view/ContentItemViewPanel";
-import {OpenSortDialogEvent} from "./browse/OpenSortDialogEvent";
-import {OpenMoveDialogEvent} from "./browse/OpenMoveDialogEvent";
 
 export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<ContentSummaryAndCompareStatus> {
 
@@ -42,16 +40,24 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
 
     addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<Content>) {
         super.addWizardPanel(tabMenuItem, wizardPanel);
-        wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-            if (event.getPropertyName() === "displayName") {
-                var contentType = (<ContentWizardPanel>wizardPanel).getContentType(),
-                    name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
-                tabMenuItem.setLabel(name, !<string>event.getNewValue(), false);
-            }
+
+        wizardPanel.onRendered((event) => {
+            // header will be ready after rendering is complete
+            wizardPanel.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() === "displayName") {
+                    var contentType = (<ContentWizardPanel>wizardPanel).getContentType(),
+                        name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
+
+                    tabMenuItem.setLabel(name, !<string>event.getNewValue(), false);
+                }
+            });
         });
 
         var contentWizardPanel = <ContentWizardPanel>wizardPanel;
-        tabMenuItem.markInvalid(!contentWizardPanel.getPersistedItem().isValid());
+
+        contentWizardPanel.onDataLoaded((content) => {
+            tabMenuItem.markInvalid(!content.isValid());
+        });
 
         contentWizardPanel.onValidityChanged((event: api.ValidityChangedEvent) => {
             tabMenuItem.markInvalid(!contentWizardPanel.isValid());
@@ -65,7 +71,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         case 'edit':
             var id = path.getElement(1);
             if (id) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
                         new api.content.event.EditContentEvent([content]).fire();
                     });
@@ -74,7 +80,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         case 'view' :
             var id = path.getElement(1);
             if (id) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
                         new ViewContentEvent([content]).fire();
                     });
@@ -136,96 +142,100 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
         if (tabMenuItem != null) {
+
             this.selectPanel(tabMenuItem);
+
         } else {
-            this.mask.show();
-            var contentWizardPanelFactory = new ContentWizardPanelFactory().setAppBarTabId(tabId).setParentContent(
-                newContentEvent.getParentContent()).setContentTypeName(contentTypeSummary.getContentTypeName());
 
-            contentWizardPanelFactory.setCreateSite(newContentEvent.getContentType().isSite());
-            contentWizardPanelFactory.createForNew().then((wizard: ContentWizardPanel) => {
-                if (!wizard.getPersistedItem()) {
-                    wizard.close(); // content could not be created
-                    return;
-                }
+            var wizardParams = new ContentWizardPanelParams()
+                .setTabId(tabId)
+                .setContentTypeName(contentTypeSummary.getContentTypeName())
+                .setParentContent(newContentEvent.getParentContent())
+                .setCreateSite(newContentEvent.getContentType().isSite());
 
-                var newTabId = AppBarTabId.forNew(wizard.getPersistedItem().getContentId().toString());
+            var wizard = new ContentWizardPanel(wizardParams);
 
-                tabMenuItem = new AppBarTabMenuItemBuilder().setLabel(
-                    api.content.ContentUnnamed.prettifyUnnamed(contentTypeSummary.getDisplayName())).setTabId(newTabId).setCloseAction(
-                    wizard.getCloseAction()).build();
-
+            wizard.onDataLoaded((loadedContent: Content) => {
+                var newTabId = AppBarTabId.forNew(loadedContent.getContentId().toString());
+                tabMenuItem.setTabId(newTabId);
                 wizard.setTabId(newTabId);
+            });
 
-                wizard.onContentNamed((event: ContentNamedEvent) => {
-                    this.handleContentNamedEvent(event);
-                });
+            wizard.onContentNamed(this.handleContentNamedEvent.bind(this));
 
-                this.addWizardPanel(tabMenuItem, wizard);
+            tabMenuItem = new AppBarTabMenuItemBuilder()
+                .setLabel(api.content.ContentUnnamed.prettifyUnnamed(contentTypeSummary.getDisplayName()))
+                .setTabId(tabId).setCloseAction(wizard.getCloseAction())
+                .build();
 
-                if (newContentEvent.getContentType().isSite() && this.getBrowsePanel()) {
-                    var content: Content = newContentEvent.getParentContent();
-                    if (!!content) { // refresh site's node
-                        this.getBrowsePanel().getTreeGrid().refreshNodeById(content.getId());
-                    }
+            this.addWizardPanel(tabMenuItem, wizard);
+
+            if (newContentEvent.getContentType().isSite() && this.getBrowsePanel()) {
+                var content: Content = newContentEvent.getParentContent();
+                if (!!content) { // refresh site's node
+                    this.getBrowsePanel().getTreeGrid().refreshNodeById(content.getId());
                 }
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).finally(() => {
-                this.mask.hide();
-            }).done();
+            }
+
         }
     }
 
 
     private handleEdit(event: api.content.event.EditContentEvent) {
 
-        var contents: ContentSummaryAndCompareStatus[] = event.getModels();
-        contents.forEach((content: ContentSummaryAndCompareStatus) => {
+        event.getModels().forEach((content: ContentSummaryAndCompareStatus) => {
+
             if (!content || !content.getContentSummary()) {
                 return;
             }
-            var closeViewPanelMenuItem = this.resolveTabMenuItemForContentBeingViewed(content.getContentSummary());
-            var tabMenuItem = this.resolveTabMenuItemForContentBeingEdited(content.getContentSummary());
+
+            var contentSummary = content.getContentSummary(),
+                contentTypeName = contentSummary.getType();
+
+            var closeViewPanelMenuItem = this.resolveTabMenuItemForContentBeingViewed(contentSummary);
+            var tabMenuItem = this.resolveTabMenuItemForContentBeingEdited(contentSummary);
 
             if (tabMenuItem != null) {
                 this.selectPanel(tabMenuItem);
             } else {
-                this.mask.show();
-                var tabId = AppBarTabId.forEdit(content.getId());
 
-                new ContentWizardPanelFactory().setAppBarTabId(tabId).setContentIdToEdit(content.getContentId()).createForEdit(
-                    content.getContentSummary()).then((wizard: ContentWizardPanel) => {
-                    if (closeViewPanelMenuItem != null) {
-                        this.getAppBarTabMenu().deselectNavigationItem();
-                        this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
-                        this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
-                    }
+                var tabId = AppBarTabId.forEdit(contentSummary.getId());
 
-                    var contentType = (<ContentWizardPanel>wizard).getContentType(),
-                        name = content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
+                var wizardParams = new ContentWizardPanelParams()
+                    .setTabId(tabId)
+                    .setContentTypeName(contentTypeName)
+                    .setContentSummary(contentSummary);
 
-                    tabMenuItem = new AppBarTabMenuItemBuilder().setLabel(name).setMarkUnnamed(!content.getDisplayName()).setMarkInvalid(
-                        !content.getContentSummary().isValid()).setTabId(tabId).setEditing(true).setCloseAction(
-                        wizard.getCloseAction()).build();
-                    this.addWizardPanel(tabMenuItem, wizard);
+                var wizard = new ContentWizardPanel(wizardParams);
 
-                    var viewTabId = AppBarTabId.forView(content.getId());
-                    var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
-                    if (viewTabMenuItem != null) {
-                        this.removePanelByIndex(viewTabMenuItem.getIndex());
-                    }
-                }).catch((reason: any) => {
-                    if (tabId) {
-                        var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
-                        if (tabMenuItem) {
-                            this.removePanelByIndex(tabMenuItem.getIndex());
-                        }
-                    }
-                    api.DefaultErrorHandler.handle(reason);
-                }).finally(() => {
-                    this.mask.hide();
-                }).done();
+                if (closeViewPanelMenuItem != null) {
+                    this.getAppBarTabMenu().deselectNavigationItem();
+                    this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
+                    this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
+                }
+
+                var name = contentSummary.getDisplayName();
+                if (api.util.StringHelper.isBlank(name)) {
+                    wizard.onDataLoaded((loadedContent) => {
+                        tabMenuItem.setLabel(api.content.ContentUnnamed.prettifyUnnamed(wizard.getContentType().getDisplayName()));
+                    })
+                }
+
+                tabMenuItem = new AppBarTabMenuItemBuilder()
+                    .setLabel(name)
+                    .setMarkUnnamed(!contentSummary.getDisplayName())
+                    .setMarkInvalid(!contentSummary.isValid())
+                    .setTabId(tabId)
+                    .setEditing(true)
+                    .setCloseAction(wizard.getCloseAction()).build();
+
+                this.addWizardPanel(tabMenuItem, wizard);
+
+                var viewTabId = AppBarTabId.forView(contentSummary.getId());
+                var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
+                if (viewTabMenuItem != null) {
+                    this.removePanelByIndex(viewTabMenuItem.getIndex());
+                }
 
             }
         });
@@ -260,7 +270,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
                 var contentItem = new api.app.view.ViewItem(content)
                     .setDisplayName(content.getDisplayName())
                     .setPath(content.getPath().toString())
-                    .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
+                    .setIconUrl(new api.content.util.ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
 
                 contentItemViewPanel.setItem(contentItem);
 

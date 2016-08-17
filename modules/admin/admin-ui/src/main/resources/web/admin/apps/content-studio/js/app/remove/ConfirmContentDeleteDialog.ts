@@ -5,7 +5,7 @@ export interface ConfirmContentDeleteDialogConfig {
 
     totalItemsToDelete: number;
 
-    deleteRequest: api.content.DeleteContentRequest;
+    deleteRequest: api.content.resource.DeleteContentRequest;
 
     yesCallback: (exclude?: api.content.CompareStatus[]) => void;
 }
@@ -69,7 +69,7 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
                     : this.deleteConfig.yesCallback();
             }
 
-            this.deleteConfig.deleteRequest.sendAndParse().then((result: api.content.DeleteContentResult) => {
+            this.deleteConfig.deleteRequest.sendAndParse().then((result: api.content.resource.result.DeleteContentResult) => {
                 this.close();
                 DeleteAction.showDeleteResult(result);
             }).catch((reason: any) => {

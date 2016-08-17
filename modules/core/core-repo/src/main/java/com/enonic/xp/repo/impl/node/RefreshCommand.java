@@ -12,9 +12,9 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 
 public class RefreshCommand
 {
-    private RefreshMode refreshMode;
+    private final RefreshMode refreshMode;
 
-    private IndexServiceInternal indexServiceInternal;
+    private final IndexServiceInternal indexServiceInternal;
 
     private RefreshCommand( Builder builder )
     {

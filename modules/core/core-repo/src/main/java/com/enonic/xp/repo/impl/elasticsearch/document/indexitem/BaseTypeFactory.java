@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexPath;
 
-public class BaseTypeFactory
+class BaseTypeFactory
 {
     public static List<IndexItem> create( final IndexPath indexPath, final Value value )
     {

@@ -1,7 +1,5 @@
 module api.liveedit.image {
 
-    import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
-    import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import PageItemType = api.liveedit.PageItemType;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ImageComponent = api.content.page.region.ImageComponent;
@@ -13,39 +11,24 @@ module api.liveedit.image {
 
         private comboBox: api.content.ContentComboBox;
 
-        private uploadButton: api.dom.ButtonEl;
-
         private comboboxWrapper: api.dom.DivEl;
+
+        private imageUploader: api.content.image.ImageUploaderEl;
 
         constructor(imageView: ImageComponentView) {
             super();
             this.addClassEx("image-placeholder");
             this.imageComponentView = imageView;
 
-            var imageUploadHandler = (event: ImageUploadedEvent) => {
-                if (event.getTargetImagePlaceholder() === this) {
-                    var createdImage = event.getUploadedItem();
+            this.initImageCombobox(imageView);
+            this.initImageUploader(imageView);
+            this.initImageComboboxWrapper();
+        }
 
-                    var component: ImageComponent = this.imageComponentView.getComponent();
-                    component.setImage(createdImage.getContentId(), createdImage.getDisplayName());
-                }
-            };
-            ImageUploadedEvent.on(imageUploadHandler);
-            this.onRemoved((event: api.dom.ElementRemovedEvent) => ImageUploadedEvent.un(imageUploadHandler));
-
-            this.comboboxWrapper = new api.dom.DivEl('rich-combobox-wrapper');
-            this.uploadButton = new api.dom.ButtonEl("button upload-button");
-            this.uploadButton.addClass("upload-button");
-            this.uploadButton.onClicked((event: MouseEvent) => {
-                event.preventDefault();
-                event.stopPropagation();
-
-                new ImageOpenUploadDialogEvent(this).fire();
-            });
-
-            var loader = new api.content.ContentSummaryLoader();
+        private initImageCombobox(imageView: ImageComponentView) {
+            var loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(imageView.getLiveEditModel().getContent().getPath());
-            loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
+            loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
 
             this.comboBox = api.content.ContentComboBox.create().
                 setMaximumOccurrences(1).
@@ -53,19 +36,49 @@ module api.liveedit.image {
                 setMinWidth(270).
                 build();
 
-            this.comboboxWrapper.appendChildren(this.comboBox, this.uploadButton);
-            this.appendChild(this.comboboxWrapper);
-
+            this.comboBox.getComboBox().getInput().setPlaceholder("Type to search or drop image here...");
             this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
                 var component: ImageComponent = this.imageComponentView.getComponent();
                 var imageContent = event.getSelectedOption().getOption().displayValue;
 
                 component.setImage(imageContent.getContentId(), imageContent.getDisplayName());
-                
-                this.uploadButton.hide();
+
                 this.imageComponentView.showLoadingSpinner();
             });
+        }
+
+        private initImageUploader(imageView: ImageComponentView) {
+            this.imageUploader = new api.content.image.ImageUploaderEl({
+                params: {
+                    parent: imageView.getLiveEditModel().getContent().getContentId().toString()
+                },
+                operation: api.ui.uploader.MediaUploaderElOperation.create,
+                name: 'image-selector-placeholder-upload',
+                showCancel: false,
+                showResult: false,
+                allowMultiSelection: false,
+                hideDefaultDropZone: true,
+                deferred: true
+            });
+
+            this.imageUploader.getUploadButton().onClicked(() => this.comboboxWrapper.show());
+
+            this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+                var createdImage = event.getUploadItem().getModel();
+
+                var component: ImageComponent = this.imageComponentView.getComponent();
+                component.setImage(createdImage.getContentId(), createdImage.getDisplayName());
+            });
+
+            this.imageUploader.addDropzone(this.comboBox.getId());
+        }
+
+        private initImageComboboxWrapper() {
+            this.comboboxWrapper = new api.dom.DivEl('rich-combobox-wrapper');
+            this.comboboxWrapper.appendChild(this.comboBox);
+            this.comboboxWrapper.appendChild(<any>this.imageUploader);
+            this.appendChild(this.comboboxWrapper);
         }
 
         select() {

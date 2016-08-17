@@ -13,7 +13,8 @@ var result = contextLib.run({
     user: {
         login: 'su',
         userStore: 'system'
-    }
+    },
+    principals: ["role:system.admin"]
 }, callback);
 
 log.info('Callback says "%s"', result);

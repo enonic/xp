@@ -5,6 +5,7 @@ module api.content.page {
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
     import DescriptorBasedDropdown = api.content.page.region.DescriptorBasedDropdown;
+    import ApplicationRemovedEvent = api.content.site.ApplicationRemovedEvent;
 
     export class PageDescriptorDropdown extends DescriptorBasedDropdown<PageDescriptor> {
 
@@ -50,9 +51,18 @@ module api.content.page {
                 this.load();
             }
 
-            var onApplicationRemovedHandler = () => {
+            var onApplicationRemovedHandler = (event: ApplicationRemovedEvent) => {
+
                 this.updateRequestApplicationKeys();
                 this.load();
+
+                let currentController = this.liveEditModel.getPageModel().getController();
+                if (currentController) {
+                    let removedApp = event.getApplicationKey();
+                    if (removedApp.equals(currentController.getKey().getApplicationKey())) {
+                        this.liveEditModel.getPageModel().reset();
+                    }
+                }
             }
 
             this.liveEditModel.getSiteModel().onApplicationAdded(onApplicationAddedHandler);

@@ -1,6 +1,5 @@
 package com.enonic.xp.script.impl.value;
 
-import javax.script.Bindings;
 import javax.script.ScriptEngine;
 
 import org.junit.Before;
@@ -10,9 +9,9 @@ import org.mockito.Mockito;
 import com.google.common.base.Joiner;
 
 import jdk.nashorn.api.scripting.JSObject;
-import jdk.nashorn.internal.runtime.Undefined;
 
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.util.JavascriptHelperFactory;
 import com.enonic.xp.script.impl.util.NashornHelper;
 
 import static org.junit.Assert.*;
@@ -21,16 +20,15 @@ public class ScriptValueFactoryImplTest
 {
     private ScriptValueFactory factory;
 
-    private ScriptMethodInvoker invoker;
-
     private ScriptEngine engine;
 
     @Before
     public void setup()
     {
-        this.invoker = Mockito.mock( ScriptMethodInvoker.class );
-        this.factory = new ScriptValueFactoryImpl( this.invoker );
         this.engine = NashornHelper.getScriptEngine( getClass().getClassLoader() );
+
+        final JavascriptHelperFactory factory = new JavascriptHelperFactory( this.engine );
+        this.factory = new ScriptValueFactoryImpl( factory.create() );
     }
 
     @Test
@@ -60,13 +58,6 @@ public class ScriptValueFactoryImplTest
     }
 
     @Test
-    public void newValue_undefined()
-    {
-        final ScriptValue value = this.factory.newValue( Undefined.getEmpty() );
-        assertNull( value );
-    }
-
-    @Test
     public void newValue_function()
     {
         final JSObject obj = Mockito.mock( JSObject.class );
@@ -83,20 +74,13 @@ public class ScriptValueFactoryImplTest
         assertNonValue( value );
         assertNonArray( value );
         assertNonObject( value );
-
-        Mockito.when( this.invoker.invoke( Mockito.same( obj ), Mockito.any() ) ).thenReturn( "a+b" );
-
-        final ScriptValue result = value.call( "a", "b" );
-        assertNotNull( result );
-        assertEquals( true, result.isValue() );
-        assertEquals( "a+b", result.getValue() );
     }
 
     @Test
     public void newValue_array()
         throws Exception
     {
-        final Object obj = execute( "result = ['1', '2'];" );
+        final Object obj = execute( "var result = ['1', '2']; result;" );
         final ScriptValue value = this.factory.newValue( obj );
 
         assertNotNull( value );
@@ -123,7 +107,7 @@ public class ScriptValueFactoryImplTest
     public void newValue_object()
         throws Exception
     {
-        final Object obj = execute( "result = {'a':1, 'b':2};" );
+        final Object obj = execute( "var result = {'a':1, 'b':2}; result;" );
         final ScriptValue value = this.factory.newValue( obj );
 
         assertNotNull( value );
@@ -180,8 +164,6 @@ public class ScriptValueFactoryImplTest
     private Object execute( final String script )
         throws Exception
     {
-        final Bindings bindings = this.engine.createBindings();
-        this.engine.eval( script, bindings );
-        return bindings.get( "result" );
+        return this.engine.eval( script );
     }
 }

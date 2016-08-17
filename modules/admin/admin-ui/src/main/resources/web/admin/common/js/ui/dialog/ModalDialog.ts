@@ -1,6 +1,7 @@
 module api.ui.dialog {
 
     import DivEl = api.dom.DivEl;
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     export interface ModalDialogConfig {
         title: api.ui.dialog.ModalDialogHeader;
     }
@@ -21,8 +22,6 @@ module api.ui.dialog {
 
         private mouseClickListener: {(MouseEvent): void};
 
-        private responsiveItem: api.ui.responsive.ResponsiveItem;
-
         private cancelButton: api.dom.DivEl;
 
         private static openDialogsCounter: number = 0;
@@ -30,6 +29,8 @@ module api.ui.dialog {
         private buttonRowIsFocused: boolean = false;
 
         private tabbable: api.dom.Element[];
+
+        public static debug: boolean = false;
 
         constructor(config: ModalDialogConfig) {
             super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
@@ -78,14 +79,12 @@ module api.ui.dialog {
             this.onAdded(() => {
                 api.dom.Body.get().onMouseDown(this.mouseClickListener);
             });
-            this.onShown(() => api.ui.responsive.ResponsiveManager.fireResizeEvent());
 
-            this.responsiveItem =
-                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-                    if (this.isVisible()) {
-                        this.centerMyself();
-                    }
-                });
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => {
+                if (this.isVisible()) {
+                    this.centerMyself();
+                }
+            });
 
             let buttonRowFocusOutTimeout;
 
@@ -135,8 +134,8 @@ module api.ui.dialog {
             return this.cancelAction;
         }
 
-        addCancelButtonToBottom() {
-            var cancelAction = new api.ui.Action("Cancel");
+        addCancelButtonToBottom(buttonLabel: string = "Cancel") {
+            var cancelAction = new api.ui.Action(buttonLabel);
             cancelAction.setIconClass("cancel-button-bottom");
             cancelAction.onExecuted(() => this.cancelAction.execute());
             this.buttonRow.addAction(cancelAction);
@@ -164,25 +163,30 @@ module api.ui.dialog {
         }
 
         show() {
+            this.centerMyself();
             super.show();
             this.buttonRow.focusDefaultAction();
         }
 
         protected centerMyself() {
+            if (ModalDialog.debug) {
+                console.debug("ModalDialog.centerMyself", api.ClassHelper.getClassName(this));
+            }
             var el = this.getEl();
             el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
 
-            if (this.responsiveItem.isInRangeOrBigger(api.ui.responsive.ResponsiveRanges._540_720)) {
-                el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px");
-                el.addClass("centered_horizontally");
+            if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
+                this.centerHorisontally();
             } else {
                 el.setMarginLeft("0px");
                 el.removeClass("centered_horizontally");
             }
         }
 
-        protected getResponsiveItem(): api.ui.responsive.ResponsiveItem {
-            return this.responsiveItem;
+        centerHorisontally() {
+            var el = this.getEl();
+            el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px");
+            el.addClass("centered_horizontally");
         }
 
         getButtonRow(): ModalDialogButtonRow {

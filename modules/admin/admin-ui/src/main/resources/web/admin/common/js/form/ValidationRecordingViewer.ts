@@ -9,18 +9,26 @@ module api.form {
 
         constructor() {
             super('validation-viewer');
-            this.list = new api.dom.UlEl();
-            this.appendChild(this.list);
         }
 
-        setObject(recording: ValidationRecording) {
-            this.list.removeChildren();
-            recording.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
-                this.list.appendChild(this.createItemView(path, true));
-            });
-            recording.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
-                this.list.appendChild(this.createItemView(path, false));
-            })
+        doLayout(object: ValidationRecording) {
+            super.doLayout(object);
+
+            if (!this.list) {
+                this.list = new api.dom.UlEl();
+                this.appendChild(this.list);
+            } else {
+                this.list.removeChildren();
+            }
+
+            if (object) {
+                object.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
+                    this.list.appendChild(this.createItemView(path, true));
+                });
+                object.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
+                    this.list.appendChild(this.createItemView(path, false));
+                });
+            }
         }
 
         appendValidationMessage(message: string, removeExisting: boolean = true) {

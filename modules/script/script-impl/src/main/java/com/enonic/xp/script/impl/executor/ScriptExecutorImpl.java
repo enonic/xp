@@ -3,7 +3,6 @@ package com.enonic.xp.script.impl.executor;
 import java.util.Map;
 
 import javax.script.Bindings;
-import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
@@ -17,11 +16,12 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.impl.function.CallFunction;
 import com.enonic.xp.script.impl.function.ScriptFunctions;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.ErrorHelper;
-import com.enonic.xp.script.impl.util.NashornHelper;
+import com.enonic.xp.script.impl.util.JavascriptHelper;
+import com.enonic.xp.script.impl.util.JavascriptHelperFactory;
+import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
@@ -32,8 +32,6 @@ final class ScriptExecutorImpl
     private ScriptEngine engine;
 
     private ScriptSettings scriptSettings;
-
-    private Bindings global;
 
     private ScriptExportsCache exportsCache;
 
@@ -48,6 +46,10 @@ final class ScriptExecutorImpl
     private Map<String, Object> mocks;
 
     private RunMode runMode;
+
+    private ScriptValueFactory scriptValueFactory;
+
+    private JavascriptHelper javascriptHelper;
 
     public void setEngine( final ScriptEngine engine )
     {
@@ -88,9 +90,15 @@ final class ScriptExecutorImpl
     {
         this.mocks = Maps.newHashMap();
         this.exportsCache = new ScriptExportsCache();
-        this.global = this.engine.createBindings();
-        this.global.putAll( this.scriptSettings.getGlobalVariables() );
-        new CallFunction().register( this.global );
+
+        final Bindings global = new SimpleBindings();
+        global.putAll( this.scriptSettings.getGlobalVariables() );
+        this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
+
+        final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
+        this.javascriptHelper = javascriptHelperFactory.create();
+
+        this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
     }
 
     @Override
@@ -109,15 +117,24 @@ final class ScriptExecutorImpl
             return cached;
         }
 
-        final ScriptContextImpl context = new ScriptContextImpl( resource, this.scriptSettings );
-        context.setEngineScope( this.global );
-        context.setGlobalScope( new SimpleBindings() );
+        final SimpleBindings bindings = new SimpleBindings();
+        bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
 
-        final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( context, resource );
+        final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( bindings, resource );
         final Object result = executeRequire( key, func );
 
         this.exportsCache.put( resource, result );
         return result;
+    }
+
+    private String getFileName( final Resource resource )
+    {
+        if ( this.scriptSettings.getDebug() != null )
+        {
+            return this.scriptSettings.getDebug().scriptName( resource );
+        }
+
+        return resource.getKey().toString();
     }
 
     private Object executeRequire( final ResourceKey script, final ScriptObjectMirror func )
@@ -125,9 +142,7 @@ final class ScriptExecutorImpl
         try
         {
             final ScriptFunctions functions = new ScriptFunctions( script, this );
-            final Object result =
-                func.call( null, functions.getApp(), functions.getLog(), functions.getRequire(), functions.getResolve(), functions );
-            return NashornHelper.unwrap( result );
+            return func.call( null, functions.getApp(), functions.getLog(), functions.getRequire(), functions.getResolve(), functions );
         }
         catch ( final Exception e )
         {
@@ -138,15 +153,15 @@ final class ScriptExecutorImpl
     @Override
     public ScriptValue newScriptValue( final Object value )
     {
-        return new ScriptValueFactoryImpl( this::invokeMethod ).newValue( value );
+        return this.scriptValueFactory.newValue( value );
     }
 
-    private Object doExecute( final ScriptContext context, final Resource script )
+    private Object doExecute( final Bindings bindings, final Resource script )
     {
         try
         {
             final String source = InitScriptReader.getScript( script.readString() );
-            return this.engine.eval( source, context );
+            return this.engine.eval( source, bindings );
         }
         catch ( final Exception e )
         {
@@ -157,18 +172,6 @@ final class ScriptExecutorImpl
     private Resource loadResource( final ResourceKey key )
     {
         return this.resourceService.getResource( key );
-    }
-
-    private Object invokeMethod( final Object func, final Object... args )
-    {
-        try
-        {
-            return ( (Invocable) this.engine ).invokeMethod( this.global, CallFunction.NAME, func, args );
-        }
-        catch ( final Exception e )
-        {
-            throw ErrorHelper.handleError( e );
-        }
     }
 
     private Resource loadIfNeeded( final ResourceKey key, final Object cached )
@@ -226,5 +229,11 @@ final class ScriptExecutorImpl
     public void registerMock( final String name, final Object value )
     {
         this.mocks.put( name, value );
+    }
+
+    @Override
+    public JavascriptHelper getJavascriptHelper()
+    {
+        return this.javascriptHelper;
     }
 }

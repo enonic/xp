@@ -1,10 +1,8 @@
 var adminUrl = window.CONFIG && window.CONFIG.adminUrl || "/admin";
 var launcherUrl = adminUrl + (adminUrl.slice(-1) == '/' ? "" : "/" ) + "tool/com.enonic.xp.admin.ui/launcher";
 var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
-var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
 var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
 var appId = window.CONFIG ? window.CONFIG.appId : "";
-var minWidthForTip = 900;
 
 function appendLauncherButton() {
     launcherButton = document.createElement("button");
@@ -44,6 +42,16 @@ function appendLauncherPanel() {
     launcherPanel = div;
 }
 
+function onLauncherClick(e) {
+    if (!launcherPanel || !launcherMainContainer) {
+        return;
+    }
+    var isClickOutside = !launcherPanel.contains(e.target) && !launcherButton.contains(e.target);
+    if (isClickOutside && !launcherMainContainer.getAttribute("hidden")) {
+        closeLauncherPanel();
+    }
+}
+
 function createLauncherLink(container) {
     var link = document.createElement("link");
 
@@ -63,9 +71,6 @@ function createLauncherLink(container) {
         if (autoOpenLauncher) {
             openLauncherPanel();
             launcherButton.focus();
-            if (getBodyWidth() > minWidthForTip) {
-                setTipVisibility("table");
-            }
         }
         else {
             var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
@@ -96,7 +101,7 @@ function addLongClickHandler(container) {
     var toolWindows = [];
     
     var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
-    for (let i = 0; i < appTiles.length; i++) {
+    for (var i = 0; i < appTiles.length; i++) {
         appTiles[i].addEventListener("click", function (e) {
             if (window.CONFIG.appId == e.currentTarget.getAttribute("data-id") && window.CONFIG.appId == "home") {
                 e.preventDefault();
@@ -122,44 +127,6 @@ function addLongClickHandler(container) {
     }
 }
 
-function getBodyWidth() {
-    return document.getElementsByTagName("body")[0].clientWidth;
-}
-
-function setTipVisibility(display) {
-    var launcherTip = document.querySelector('.launcher-tip');
-    if (launcherTip) {
-        launcherTip.style.display = display;
-    }
-}
-
-function getBodyMask() {
-    return document.querySelector('.xp-admin-common-mask.body-mask');
-}
-
-function createBodyMaskDiv() {
-    var div = document.createElement("div");
-    div.classList.add("xp-admin-common-mask", "body-mask");
-    if (isHomeApp) {
-        div.classList.add("app-home");
-    }
-    div.style.display = "none";
-
-    document.getElementsByTagName("body")[0].appendChild(div);
-
-    return div;
-}
-
-function showBodyMask() {
-    bodyMask.style.display = "block";
-    bodyMask.classList.add("launcher");
-}
-
-function hideBodyMask() {
-    bodyMask.style.display = "none";
-    bodyMask.classList.remove("launcher");
-}
-
 function isPanelExpanded() {
     return launcherPanel.classList.contains("visible");
 }
@@ -168,28 +135,19 @@ function openLauncherPanel() {
     launcherMainContainer.removeAttribute("hidden");
     listenToKeyboardEvents();
     toggleButton();
-    showBodyMask();
     launcherPanel.classList.remove("hidden", "slideout");
     launcherPanel.classList.add("visible");
+    document.addEventListener('click', onLauncherClick);
 }
 
 function closeLauncherPanel(skipTransition) {
+    document.removeEventListener('click', onLauncherClick);
     launcherMainContainer.setAttribute("hidden", "true");
-    setTipVisibility("none");
     unlistenToKeyboardEvents();
     launcherPanel.classList.remove("visible");
     launcherPanel.classList.add((skipTransition == true) ? "hidden" : "slideout");
-    hideBodyMask();
     toggleButton();
     unselectCurrentApp();
-}
-
-function initBodyMask() {
-    bodyMask = getBodyMask();
-    if (!bodyMask) {
-        bodyMask = createBodyMaskDiv();
-    }
-    bodyMask.addEventListener("click", closeLauncherPanel);
 }
 
 function listenToKeyboardEvents() {
@@ -235,19 +193,10 @@ function onKeyPressed(e) {
         // esc key pressed
         closeLauncherPanel();
         break;
-    case 13:
-        // enter key pressed
-        var selectedApp = getSelectedApp();
-        if (selectedApp) {
-            setTipVisibility("none");
-        }
-        break;
     }
 }
 
 exports.init = function () {
-    initBodyMask();
-
     appendLauncherButton();
     appendLauncherPanel();
 };

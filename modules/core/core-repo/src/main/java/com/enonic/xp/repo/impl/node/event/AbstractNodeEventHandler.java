@@ -12,11 +12,11 @@ import com.enonic.xp.node.NodePath;
 abstract class AbstractNodeEventHandler
     implements NodeEventHandler
 {
-    protected final static String ID = "id";
+    private final static String ID = "id";
 
-    protected final static String PATH = "path";
+    private final static String PATH = "path";
 
-    protected final static String NEW_PATH = "newPath";
+    final static String NEW_PATH = "newPath";
 
     @SuppressWarnings("unchecked")
     List<Map<Object, Object>> getValueMapList( final Event event )
@@ -50,12 +50,12 @@ abstract class AbstractNodeEventHandler
         return mapList;
     }
 
-    protected NodePath getPath( final Map<Object, Object> map )
+    NodePath getPath( final Map<Object, Object> map )
     {
         return NodePath.create( map.get( PATH ).toString() ).build();
     }
 
-    protected NodeId getId( final Map<Object, Object> map )
+    NodeId getId( final Map<Object, Object> map )
     {
         return NodeId.from( map.get( ID ).toString() );
     }

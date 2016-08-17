@@ -52,22 +52,22 @@ module api.data {
          */
         private property: Property = null;
 
-        private propertyArrayByName: {[s:string] : PropertyArray;} = {};
+        private propertyArrayByName: {[s: string]: PropertyArray;} = {};
 
         /**
          * If true, do not add property if it's value is null.
          */
         private _ifNotNull: boolean = false;
 
-        private changedListeners: {(event: PropertyEvent):void}[] = [];
+        private changedListeners: {(event: PropertyEvent): void}[] = [];
 
-        private propertyAddedListeners: {(event: PropertyAddedEvent):void}[] = [];
+        private propertyAddedListeners: {(event: PropertyAddedEvent): void}[] = [];
 
-        private propertyRemovedListeners: {(event: PropertyRemovedEvent):void}[] = [];
+        private propertyRemovedListeners: {(event: PropertyRemovedEvent): void}[] = [];
 
-        private propertyIndexChangedListeners: {(event: PropertyIndexChangedEvent):void}[] = [];
+        private propertyIndexChangedListeners: {(event: PropertyIndexChangedEvent): void}[] = [];
 
-        private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
+        private propertyValueChangedListeners: {(event: PropertyValueChangedEvent): void}[] = [];
 
         private propertyAddedEventHandler: (event: PropertyAddedEvent) => void;
 
@@ -189,11 +189,7 @@ module api.data {
 
             var array = this.propertyArrayByName[name];
             if (!array) {
-                array = PropertyArray.create().
-                    setParent(this).
-                    setName(name).
-                    setType(type).
-                    build();
+                array = PropertyArray.create().setParent(this).setName(name).setType(type).build();
                 this.propertyArrayByName[name] = array;
                 this.registerPropertyArrayListeners(array);
             }
@@ -273,13 +269,13 @@ module api.data {
                 }
             });
             this.removeProperties(toRemove);
-            this.removeEmptyArrays();
+            this.removeEmptyArrays(propertySet);
         }
 
-        private removeEmptyArrays() {
-            api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, propertyArray: PropertyArray) => {
+        private removeEmptyArrays(propertySet: PropertySet) {
+            api.ObjectHelper.objectPropertyIterator(propertySet.propertyArrayByName, (name: string, propertyArray: PropertyArray) => {
                 if (propertyArray.isEmpty()) {
-                    delete this.propertyArrayByName[name];
+                    delete propertySet.propertyArrayByName[name];
                 }
             });
         }

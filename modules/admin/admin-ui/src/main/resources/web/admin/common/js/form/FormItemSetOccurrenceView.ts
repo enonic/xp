@@ -68,7 +68,7 @@ module api.form {
             return this.propertySet.getProperty().getPath();
         }
 
-        public layout(): wemQ.Promise<void> {
+        public layout(validate: boolean = true): wemQ.Promise<void> {
 
             var deferred = wemQ.defer<void>();
 
@@ -92,12 +92,14 @@ module api.form {
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
                 setParent(this).
-                layout(this.propertySet);
+                layout(this.propertySet, validate);
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
                 this.formItemViews = formItemViews;
-                this.validate(true);
+                if (validate) {
+                    this.validate(true);
+                }
 
                 this.formItemViews.forEach((formItemView: FormItemView) => {
                     formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
@@ -193,6 +195,12 @@ module api.form {
             });
         }
 
+        public setHighlightOnValidityChange(highlight: boolean) {
+            this.formItemViews.forEach((view: FormItemView) => {
+                view.setHighlightOnValidityChange(highlight);
+            });
+        }
+
         hasValidUserInput(): boolean {
 
             var result = true;
@@ -234,16 +242,6 @@ module api.form {
         }
 
         private notifyValidityChanged(event: RecordingValidityChangedEvent) {
-
-            /*console.log("FormItemSetOccurrenceView " + event.getOrigin().toString() + " validity changed: ");
-             if (event.getRecording().isValid()) {
-             console.log(" valid! ");
-             }
-             else {
-             console.log(" invalid: ");
-             event.getRecording().print();
-             }*/
-
             this.validityChangedListeners.forEach((listener: (event: RecordingValidityChangedEvent)=>void) => {
                 listener(event);
             });

@@ -41,7 +41,7 @@ module api.content {
 
         private editable: boolean;
 
-        private childOrder: ChildOrder;
+        private childOrder: api.content.order.ChildOrder;
 
         private language: string;
 
@@ -165,7 +165,7 @@ module api.content {
             return this.editable;
         }
 
-        getChildOrder(): ChildOrder {
+        getChildOrder(): api.content.order.ChildOrder {
             return this.childOrder;
         }
 
@@ -303,7 +303,7 @@ module api.content {
 
         editable: boolean;
 
-        childOrder: ChildOrder;
+        childOrder: api.content.order.ChildOrder;
 
         language: string;
 
@@ -362,7 +362,7 @@ module api.content {
             this.deletable = json.deletable;
             this.editable = json.editable;
 
-            this.childOrder = ChildOrder.fromJson(json.childOrder);
+            this.childOrder = api.content.order.ChildOrder.fromJson(json.childOrder);
 
             this.contentState = ContentState.fromString(json.contentState);
 

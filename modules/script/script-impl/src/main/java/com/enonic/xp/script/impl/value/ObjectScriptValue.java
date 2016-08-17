@@ -6,6 +6,7 @@ import java.util.Set;
 import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.util.JsObjectConverter;
 
 final class ObjectScriptValue
     extends AbstractScriptValue
@@ -14,7 +15,7 @@ final class ObjectScriptValue
 
     private final JSObject value;
 
-    public ObjectScriptValue( final ScriptValueFactory factory, final JSObject value )
+    ObjectScriptValue( final ScriptValueFactory factory, final JSObject value )
     {
         this.factory = factory;
         this.value = value;
@@ -47,6 +48,7 @@ final class ObjectScriptValue
     @Override
     public Map<String, Object> getMap()
     {
-        return JsObjectConverter.toMap( this.value );
+        final JsObjectConverter converter = new JsObjectConverter( this.factory.getJavascriptHelper() );
+        return converter.toMap( this.value );
     }
 }

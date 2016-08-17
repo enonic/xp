@@ -32,8 +32,6 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
 
     private layoutComponent: LayoutComponent;
 
-    private layoutSelector: LayoutDescriptorDropdown;
-
     private layoutForm: DescriptorBasedDropdownForm;
 
     private handleSelectorEvents: boolean = true;
@@ -46,20 +44,18 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         });
     }
 
-    setModel(liveEditModel: LiveEditModel) {
+    protected layout() {
 
-        super.setModel(liveEditModel);
+        this.removeChildren();
 
-        var descriptorsRequest = new GetLayoutDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
+        var descriptorsRequest = new GetLayoutDescriptorsByApplicationsRequest(this.liveEditModel.getSiteModel().getApplicationKeys());
         var loader = new LayoutDescriptorLoader(descriptorsRequest);
         loader.setComparator(new DescriptorByDisplayNameComparator());
-        this.layoutSelector = new LayoutDescriptorDropdown("", loader);
-        this.layoutForm = new DescriptorBasedDropdownForm(this.layoutSelector, "Layout");
-        loader.load();
 
-        liveEditModel.getSiteModel().onApplicationUnavailable(() => {
-            this.layoutSelector.hideDropdown();
-        });
+        this.selector = new LayoutDescriptorDropdown("", loader);
+        this.layoutForm = new DescriptorBasedDropdownForm(this.selector, "Layout");
+
+        loader.load();
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
@@ -74,13 +70,18 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.initSelectorListeners();
         this.appendChild(this.layoutForm);
 
-        liveEditModel.getSiteModel().onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(liveEditModel, descriptorsRequest));
-        liveEditModel.getSiteModel().onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(liveEditModel, descriptorsRequest));
     }
 
-    private reloadDescriptorsOnApplicationChange(liveEditModel: LiveEditModel, request: GetLayoutDescriptorsByApplicationsRequest) {
-        request.setApplicationKeys(liveEditModel.getSiteModel().getApplicationKeys());
-        this.layoutSelector.getLoader().load();
+    protected reloadDescriptorsOnApplicationChange() {
+        if(this.selector) {
+            (<GetLayoutDescriptorsByApplicationsRequest>this.selector.getLoader().getRequest()).
+                setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
+            super.reloadDescriptorsOnApplicationChange();
+        }
+    }
+
+    protected applicationUnavailableHandler() {
+        this.selector.hideDropdown();
     }
 
     private registerComponentListeners(component: LayoutComponent) {
@@ -94,7 +95,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
     setComponent(component: LayoutComponent, descriptor?: LayoutDescriptor) {
 
         super.setComponent(component);
-        this.layoutSelector.setDescriptor(descriptor);
+        this.selector.setDescriptor(descriptor);
     }
 
     setLayoutComponent(layoutView: LayoutComponentView) {
@@ -109,7 +110,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.setComponent(this.layoutComponent);
         var key: DescriptorKey = this.layoutComponent.getDescriptor();
         if (key) {
-            var descriptor: LayoutDescriptor = this.layoutSelector.getDescriptor(key);
+            var descriptor: LayoutDescriptor = this.selector.getDescriptor(key);
             if (descriptor) {
                 this.setSelectorValue(descriptor);
             } else {
@@ -135,14 +136,14 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
             this.handleSelectorEvents = false;
         }
 
-        this.layoutSelector.setDescriptor(descriptor);
+        this.selector.setDescriptor(descriptor);
         this.setupComponentForm(this.layoutComponent, descriptor);
 
         this.handleSelectorEvents = true;
     }
 
     private initSelectorListeners() {
-        this.layoutSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
+        this.selector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
             if (this.handleSelectorEvents) {
 
                 var option: Option<LayoutDescriptor> = event.getOption();

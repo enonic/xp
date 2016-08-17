@@ -124,84 +124,12 @@ module api.content.form.inputtype.image {
                 optionView.showError("No access to image.");
             }
 
-            optionView.onClicked((event: MouseEvent) => {
-                if (this.clickDisabled) {
-                    return;
-                }
-
-                this.uncheckOthers(selectedOption);
-
-                if (document.activeElement == optionView.getEl().getHTMLElement() || this.activeOption == selectedOption) {
-                    optionView.getCheckbox().toggleChecked();
-                } else {
-                    optionView.getCheckbox().setChecked(true);
-                }
-                optionView.getCheckbox().giveFocus();
-            });
-
-            optionView.getCheckbox().onKeyDown((event: KeyboardEvent) => {
-                var checkbox = optionView.getCheckbox();
-
-                switch (event.which) {
-                case 32: // Spacebar
-                    checkbox.toggleChecked();
-                    break;
-                case 8: // Backspace
-                    checkbox.setChecked(false);
-                    this.removeOptionViewAndRefocus(selectedOption);
-                    event.preventDefault();
-                    break;
-                case 46: // Delete
-                    checkbox.setChecked(false);
-                    this.removeOptionViewAndRefocus(selectedOption);
-                    break;
-                case 13: // Enter
-                    this.notifyEditSelectedOptions([selectedOption]);
-                    break;
-                case 9: // tab
-                    this.resetActiveOption();
-                    break;
-                }
-                event.stopPropagation();
-            });
-
-            optionView.getCheckbox().onFocus((event: FocusEvent) => this.setActiveOption(selectedOption));
-
-            optionView.onChecked((view: ImageSelectorSelectedOptionView, checked: boolean) => {
-                if (checked) {
-                    if (this.selection.indexOf(selectedOption) < 0) {
-                        this.selection.push(selectedOption);
-                    }
-                } else {
-                    var index = this.selection.indexOf(selectedOption);
-                    if (index > -1) {
-                        this.selection.splice(index, 1);
-                    }
-                }
-                optionView.getCheckbox().giveFocus();
-                this.updateSelectionToolbarLayout();
-            });
-
-            var optionImg = optionView.getIcon();
-            optionImg.onLoaded((event: UIEvent) => {
-                var loadedListener = () => {
-                    optionView.updateProportions();
-                    this.refreshSortable();
-                };
-                if (optionImg.isVisible()) {
-                    loadedListener();
-                } else {
-                    // execute listener on shown in case it's hidden now to correctly calc proportions
-                    var shownListener = () => {
-                        loadedListener();
-                        optionImg.unShown(shownListener);
-                    };
-                    optionImg.onShown(shownListener);
-                }
-            });
+            optionView.onRendered(() => this.handleOptionViewRendered(selectedOption, optionView));
 
             optionView.insertBeforeEl(this.toolbar);
 
+            optionView.setOption(option);
+            
             if (!silent) {
                 this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
             }
@@ -224,7 +152,8 @@ module api.content.form.inputtype.image {
         makeEmptyOption(id: string): Option<ImageSelectorDisplayValue> {
             return <Option<ImageSelectorDisplayValue>>{
                 value: id,
-                displayValue: ImageSelectorDisplayValue.makeEmpty()
+                displayValue: ImageSelectorDisplayValue.makeEmpty(),
+                empty: true
             };
         }
 
@@ -300,6 +229,95 @@ module api.content.form.inputtype.image {
             };
 
             api.dom.Body.get().onClicked(this.mouseClickListener);
+        }
+
+        private handleOptionViewRendered(option: SelectedOption<ImageSelectorDisplayValue>, optionView: ImageSelectorSelectedOptionView) {
+            optionView.onClicked((event: MouseEvent) => this.handleOptionViewClicked(option, optionView));
+
+            optionView.getCheckbox().onKeyDown((event: KeyboardEvent) => this.handleOptionViewKeyDownEvent(event, option, optionView));
+
+            optionView.getCheckbox().onFocus((event: FocusEvent) => this.setActiveOption(option));
+
+            optionView.onChecked(
+                (view: ImageSelectorSelectedOptionView, checked: boolean) => this.handleOptionViewChecked(checked, option, optionView));
+
+            optionView.getIcon().onLoaded((event: UIEvent) => this.handleOptionViewImageLoaded(optionView));
+        }
+
+        private handleOptionViewClicked(option: SelectedOption<ImageSelectorDisplayValue>, optionView: ImageSelectorSelectedOptionView) {
+            if (this.clickDisabled) {
+                return;
+            }
+
+            this.uncheckOthers(option);
+
+            if (document.activeElement == optionView.getEl().getHTMLElement() || this.activeOption == option) {
+                optionView.getCheckbox().toggleChecked();
+            } else {
+                optionView.getCheckbox().setChecked(true);
+            }
+            optionView.getCheckbox().giveFocus();
+        }
+
+        private handleOptionViewKeyDownEvent(event: KeyboardEvent, option: SelectedOption<ImageSelectorDisplayValue>,
+                                             optionView: ImageSelectorSelectedOptionView) {
+            var checkbox = optionView.getCheckbox();
+
+            switch (event.which) {
+            case 32: // Spacebar
+                checkbox.toggleChecked();
+                break;
+            case 8: // Backspace
+                checkbox.setChecked(false);
+                this.removeOptionViewAndRefocus(option);
+                event.preventDefault();
+                break;
+            case 46: // Delete
+                checkbox.setChecked(false);
+                this.removeOptionViewAndRefocus(option);
+                break;
+            case 13: // Enter
+                this.notifyEditSelectedOptions([option]);
+                break;
+            case 9: // tab
+                this.resetActiveOption();
+                break;
+            }
+            event.stopPropagation();
+        }
+
+        private handleOptionViewChecked(checked: boolean, option: SelectedOption<ImageSelectorDisplayValue>,
+                                        optionView: ImageSelectorSelectedOptionView) {
+            if (checked) {
+                if (this.selection.indexOf(option) < 0) {
+                    this.selection.push(option);
+                }
+            } else {
+                var index = this.selection.indexOf(option);
+                if (index > -1) {
+                    this.selection.splice(index, 1);
+                }
+            }
+            optionView.getCheckbox().giveFocus();
+            this.updateSelectionToolbarLayout();
+        }
+
+        private handleOptionViewImageLoaded(optionView: ImageSelectorSelectedOptionView) {
+            var loadedListener = () => {
+                optionView.updateProportions();
+                this.refreshSortable();
+            };
+
+            if (optionView.getIcon().isVisible()) {
+                loadedListener();
+            } else {
+                // execute listener on shown in case it's hidden now to correctly calc proportions
+                var shownListener = () => {
+                    loadedListener();
+                    optionView.getIcon().unShown(shownListener);
+                };
+                optionView.getIcon().onShown(shownListener);
+            }
         }
 
         private isFirstInRow(index: number): boolean {

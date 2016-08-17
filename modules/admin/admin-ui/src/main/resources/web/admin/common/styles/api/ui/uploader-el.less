@@ -1,24 +1,33 @@
 .uploader-el {
   position: relative;
+  min-height: 1px;
+  min-width: 1px;
 
   input[type=text] {
     width: 100%;
     margin-bottom: 4px;
   }
 
-  .dropzone-container {
+  > .upload-button {
+    background: url("../../../images/upload.png") no-repeat center;
+    background-color: @admin-white;
+    position: absolute;
+    right: 0;
 
-    .dropzone {
-      text-decoration: none;
-      display: block;
-      height: 250px;
-      width: 100%;
-      line-height: 250px;
+    width: 37px;
+    height: 37px;
 
-      @media screen and (max-height: 360px) {
-        height: 140px;
-        line-height: 125px;
-      }
+    z-index: 1;
+    display: inline-block;
+
+    cursor: pointer;
+
+    .box-sizing(border-box);
+    border: 1px solid @admin-medium-gray-border;
+
+    &:hover {
+      box-shadow: 0 0 5px @admin-input-blue;
+      border: 1px solid @admin-input-blue;
     }
   }
 
@@ -26,16 +35,11 @@
     display: none;
     margin: 25px 0;
     height: 32px;
-    //.linear-gradient(top, #444, #666);
 
     .progress-indicator {
       background-color: #8db800;
-      //.linear-gradient(top, #a7d200, #8db800);
     }
 
-  }
-
-  .result-container {
   }
 
   > .close-button {
@@ -44,4 +48,8 @@
     right: -1px;
   }
 
+  &.attachment-uploader-el.dz-dragover {
+    .dropzone-dragover-glow();
+    margin: -2px;
+  }
 }

@@ -9,10 +9,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class NodeConstants
 {
-    public final static String BINARY_BLOB_STORE_DIR = "binary";
-
-    public final static String NODE_VERSION_BLOB_STORE_DIR = "node";
-
     private static final PrincipalKey NODE_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "node-su" );
 
     private static final User NODE_SUPER_USER = User.create().key( NODE_SUPER_USER_KEY ).login( "node" ).build();

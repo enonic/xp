@@ -1,0 +1,17 @@
+{
+  "name": "Enonic XP",
+  "icons": [
+    {
+      "src": "./android-128x128.png",
+      "sizes": "128x128",
+      "type": "image\/png",
+      "density": "1.0"
+    },
+    {
+      "src": "./android-196x196.png",
+      "sizes": "196x196",
+      "type": "image\/png",
+      "density": "1.5"
+    }
+  ]
+}

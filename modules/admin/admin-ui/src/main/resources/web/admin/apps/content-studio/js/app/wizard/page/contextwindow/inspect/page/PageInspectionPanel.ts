@@ -49,12 +49,21 @@ export class PageInspectionPanel extends BaseInspectionPanel {
         this.pageModel = liveEditModel.getPageModel();
         this.siteModel = liveEditModel.getSiteModel();
 
+        this.layout();
+    }
+
+    private layout() {
+
+        this.pageModel.unReset(this.modelResetListener.bind(this));
+
+        this.removeChildren();
+
         this.pageTemplateSelector = new PageTemplateSelector();
         this.pageTemplateForm = new PageTemplateForm(this.pageTemplateSelector);
         this.pageTemplateForm.hide();
         this.appendChild(this.pageTemplateForm);
 
-        this.pageControllerSelector = new PageControllerSelector(liveEditModel);
+        this.pageControllerSelector = new PageControllerSelector(this.liveEditModel);
         this.pageControllerForm = new PageControllerForm(this.pageControllerSelector);
         this.pageControllerForm.hide();
         this.appendChild(this.pageControllerForm);
@@ -75,9 +84,9 @@ export class PageInspectionPanel extends BaseInspectionPanel {
         }
 
         this.inspectionHandler.setPageModel(this.pageModel).setPageInspectionPanel(this).setPageControllerForm(
-            this.pageControllerForm).setPageTemplateForm(this.pageTemplateForm).setModel(liveEditModel);
+            this.pageControllerForm).setPageTemplateForm(this.pageTemplateForm).setModel(this.liveEditModel);
 
-        this.pageTemplateForm.getSelector().onSelection((pageTemplate: PageTemplate) => {
+        this.pageTemplateSelector.onSelection((pageTemplate: PageTemplate) => {
                 this.removeClass("customized");
                 this.pageModel.setCustomized(false);
 
@@ -100,19 +109,23 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             }
         );
 
-        this.pageTemplateForm.getSelector().onCustomizedSelected(() => {
+        this.pageTemplateSelector.onCustomizedSelected(() => {
             this.addClass("customized");
             this.pageControllerForm.getSelector().reset();
             this.pageControllerForm.show();
             this.pageModel.setCustomized(true);
         });
 
-        this.pageModel.onReset(() => {
+        this.pageModel.onReset(this.modelResetListener.bind(this));
+    }
+
+    modelResetListener() {
+        if(this.pageControllerForm) {
             this.pageControllerForm.getSelector().reset();
-            if (!this.pageModel.isPageTemplate() && !(this.pageModel.isCustomized() && this.pageModel.hasController())) {
-                this.pageControllerForm.hide()
-            }
-        });
+        }
+        if (!this.pageModel.isPageTemplate() && !(this.pageModel.isCustomized() && this.pageModel.hasController())) {
+            this.pageControllerForm.hide()
+        }
     }
 
     refreshInspectionHandler(liveEditModel: LiveEditModel) {

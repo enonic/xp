@@ -23,7 +23,7 @@ public class Media
 
     public boolean isImage()
     {
-        return getType().isImageMedia();
+        return getType().isImageMedia() || getType().isVectorMedia();
     }
 
     public Attachment getMediaAttachment()

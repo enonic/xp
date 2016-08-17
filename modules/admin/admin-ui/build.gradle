@@ -1,5 +1,5 @@
 apply from: "$rootDir/gradle/osgi.gradle"
-apply plugin: 'com.moowork.grunt'
+apply plugin: 'com.moowork.gulp'
 
 node {
     download = true
@@ -19,23 +19,22 @@ dependencies {
 }
 
 task cleanSourceFiles( type: Delete ) {
-    description = 'Clean source files that is used by Grunt.'
+    description = 'Clean source files that is used by Gulp.'
     delete fileTree( dir: 'src/main/resources', includes: ['**/_all.*'] )
     delete fileTree( dir: '.', includes: ['*.tmp.txt'] )
 }
 
-task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
+task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
     description = 'Build admin UI resources (ts, css, etc).'
     inputs.files fileTree( dir: 'src/main/resources', exclude: '**/_all.*' )
     outputs.files fileTree( dir: 'src/main/resources', include: '**/_all.*' )
     args = ['all']
 }
 
-task copyAll( type: Copy, dependsOn: gruntAll ) {
+task copyAll( type: Copy, dependsOn: gulpAll ) {
     from 'src/main/resources'
     into "$buildDir/resources/main"
 }
 
 jar.dependsOn += copyAll
-
 clean.dependsOn += cleanSourceFiles

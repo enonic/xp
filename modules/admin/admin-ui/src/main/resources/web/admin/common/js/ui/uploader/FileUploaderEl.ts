@@ -49,10 +49,7 @@ module api.ui.uploader {
                     console.log('Initing uploader', this);
                 }
                 if (!this.uploader && this.config.url) {
-                    this.uploader = this.initUploader(
-                        this.dropzone.getId(),
-                        this.config.dropAlwaysAllowed ? this.getId() : this.dropzone.getId()
-                    );
+                    this.uploader = this.initUploader();
                 }
             }
         }
@@ -60,10 +57,10 @@ module api.ui.uploader {
         private refreshVisibility() {
             if (this.config.showResult) {
                 this.setResultVisible();
-                this.getDropzoneContainer().setVisible(false);
+                this.getDefaultDropzoneContainer().setVisible(false);
                 this.getDropzone().setVisible(false);
             } else {
-                this.setDropzoneVisible();
+                this.setDefaultDropzoneVisible();
             }
         }
 

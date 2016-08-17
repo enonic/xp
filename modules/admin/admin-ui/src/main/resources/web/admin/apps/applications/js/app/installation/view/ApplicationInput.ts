@@ -8,7 +8,6 @@ import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 import ApplicationInstallResult = api.application.ApplicationInstallResult;
 import Action = api.ui.Action;
 import Application = api.application.Application;
-import {MarketAppsTreeGrid} from "./MarketAppsTreeGrid";
 
 export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
@@ -29,11 +28,12 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
         this.applicationUploaderEl = new ApplicationUploaderEl({
             name: 'application-input-uploader',
-            allowDrop: false,
+            allowDrop: true,
             showResult: false,
             allowMultiSelection: true,
-            deferred: true,  // wait till it's shown
-            value: originalValue
+            deferred: false,
+            value: originalValue,
+            showCancel: false
         });
 
         super(this.textInput, this.applicationUploaderEl);

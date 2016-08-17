@@ -10,7 +10,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 public class CheckNodeExistsCommand
     extends AbstractNodeCommand
 {
-    private NodePath nodePath;
+    private final NodePath nodePath;
 
     private CheckNodeExistsCommand( Builder builder )
     {
@@ -57,7 +57,8 @@ public class CheckNodeExistsCommand
             return this;
         }
 
-        protected void validate()
+        @Override
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( this.nodePath, "Nodepath must be set" );

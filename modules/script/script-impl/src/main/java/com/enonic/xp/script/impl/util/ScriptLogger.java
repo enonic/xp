@@ -7,16 +7,17 @@ import com.enonic.xp.resource.ResourceKey;
 
 public final class ScriptLogger
 {
-    private final static LogArgConverter ARG_CONVERTER = new LogArgConverter();
+    private final LogArgConverter converter;
 
     private final ResourceKey source;
 
     private final Logger log;
 
-    public ScriptLogger( final ResourceKey source )
+    public ScriptLogger( final ResourceKey source, final JavascriptHelper helper )
     {
         this.source = source;
         this.log = LoggerFactory.getLogger( this.source.getApplicationKey().toString() );
+        this.converter = new LogArgConverter( helper );
     }
 
     public void debug( final String message, final Object arg )
@@ -73,7 +74,7 @@ public final class ScriptLogger
         }
         else
         {
-            final Object[] converted = ARG_CONVERTER.convertArgs( args );
+            final Object[] converted = this.converter.convertArgs( args );
             return prefix + String.format( message, converted );
         }
     }

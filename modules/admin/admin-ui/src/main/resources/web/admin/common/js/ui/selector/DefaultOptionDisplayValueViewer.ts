@@ -7,8 +7,9 @@ module api.ui.selector {
         }
 
         setObject(object: any) {
-            super.setObject(object);
             this.getEl().setInnerHtml(object.toString());
+
+            return super.setObject(object);
         }
 
         getPreferredHeight(): number {

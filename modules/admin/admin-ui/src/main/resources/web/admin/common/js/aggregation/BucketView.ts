@@ -20,7 +20,7 @@ module api.aggregation {
             this.parentAggregationView = parentAggregationView;
             this.displayName = displayName;
 
-            this.checkbox = new api.ui.Checkbox(this.resolveLabelValue(), select);
+            this.checkbox = api.ui.Checkbox.create().setLabelText(this.resolveLabelValue()).setChecked(select).build();
 
             this.checkbox.onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifySelectionChanged(eval(event.getOldValue()), eval(event.getNewValue()));
@@ -36,7 +36,16 @@ module api.aggregation {
                 return this.displayName + ' (' + this.bucket.getDocCount() + ')';
             }
 
-            return this.bucket.getKey() + ' (' + this.bucket.getDocCount() + ')';
+            return this.resolveKey() + ' (' + this.bucket.getDocCount() + ')';
+        }
+
+        private resolveKey(): string {
+            var key = this.bucket.getKey();
+            if (key.indexOf(":") > 0) {
+                return api.util.StringHelper.capitalize(key.substring(key.indexOf(":") + 1));
+            }
+
+            return key;
         }
 
         setDisplayName(displayName: string) {

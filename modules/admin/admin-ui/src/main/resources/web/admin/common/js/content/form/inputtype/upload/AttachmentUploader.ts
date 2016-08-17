@@ -6,14 +6,12 @@ module api.content.form.inputtype.upload {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
-    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
-    import PluploadFile = api.ui.uploader.PluploadFile;
 
-    import AttachmentUploaderEl = api.content.AttachmentUploaderEl;
     import Content = api.content.Content;
     import Attachment = api.content.attachment.Attachment;
     import UploaderEl = api.ui.uploader.UploaderEl;
     import FileUploaderEl = api.ui.uploader.FileUploaderEl;
+    import AttachmentUploaderEl = api.content.attachment.AttachmentUploaderEl;
 
 
     export class AttachmentUploader extends FileUploader {
@@ -41,7 +39,7 @@ module api.content.form.inputtype.upload {
                     this.uploaderWrapper.removeClass("empty");
                 });
 
-                this.uploaderEl.onFileUploaded((event:api.ui.uploader.FileUploadedEvent<Attachment>) => {
+                this.uploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<Attachment>) => {
 
                     var attachment = <Attachment>event.getUploadItem().getModel();
 
@@ -54,7 +52,7 @@ module api.content.form.inputtype.upload {
                 this.uploaderEl.onUploadCompleted(() => {
 
                     this.validate(false);
-                    new ContentRequiresSaveEvent(this.getContext().content.getContentId()).fire();
+                    new api.content.event.ContentRequiresSaveEvent(this.getContext().content.getContentId()).fire();
 
                 });
 
@@ -78,19 +76,19 @@ module api.content.form.inputtype.upload {
 
         protected createUploader(): FileUploaderEl<any> {
 
-            return new api.content.AttachmentUploaderEl({
+            return new AttachmentUploaderEl({
                 params: {
                     id: this.getContext().content.getContentId().toString()
                 },
-                operation: api.content.MediaUploaderElOperation.update,
+                operation: api.ui.uploader.MediaUploaderElOperation.update,
                 name: this.getContext().input.getName(),
-                showReset: false,
                 showCancel: false,
-                allowMultiSelection: true,
-                hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
+                allowMultiSelection: this.getInput().getOccurrences().getMaximum() != 1,
+                hideDefaultDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true,
                 maximumOccurrences: this.getInput().getOccurrences().getMaximum(),
-                attachmentRemoveCallback: this.removeItem.bind(this)
+                attachmentRemoveCallback: this.removeItem.bind(this),
+                hasUploadButton: false
             });
         }
 
@@ -104,7 +102,7 @@ module api.content.form.inputtype.upload {
             this.getPropertyArray().remove(index);
             this.attachmentNames = this.getFileNamesFromProperty(this.getPropertyArray());
 
-            new ContentRequiresSaveEvent(this.getContext().content.getContentId()).fire();
+            new api.content.event.ContentRequiresSaveEvent(this.getContext().content.getContentId()).fire();
         }
 
     }

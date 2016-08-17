@@ -1,5 +1,7 @@
 .install-application-dialog {
 
+  .transition(margin-top 0.2s ease-in-out);
+
   .modal-dialog-content-push {
     display: none;
   }
@@ -42,60 +44,32 @@
   }
 
   .file-input {
-    width: 100%;
+    > input.text {
+      width: calc(~'100% - 37px');
+    }
 
     @media screen and (max-height: 360px) {
       margin-bottom: 5px;
     }
   }
 
-  .uploader-container {
-    display: none;
+  .uploader-el {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+  }
 
-    .uploader-mask {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #fff;
-      .opacity(.9);
-      z-index: @z-index-modal-dialog + 2;
-    }
-
-    .uploader-el {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: @z-index-modal-dialog + 3;
-
-      .dropzone-container {
-        height: 100%;
-
-        .dropzone {
-          width: 100%;
-          height: 100%;
-          overflow: visible;
-          border: 0 none;
-          background-color: transparent;
-
-          &:before {
-            .dropcircle();
-          }
-        }
-      }
+  .dropzone-container {
+    .dialog-dropzone-container(90px);
+    .dropzone {
+      font-size: 16px;
     }
   }
 
   .upload-app-panel {
     margin-top: 20px;
+    overflow: visible;
+    padding: 1px;
   }
 
   .validation-viewer {
@@ -182,6 +156,7 @@
             color: @admin-green;
             cursor: pointer !important;
             font-size: 16px;
+            padding: 0px 15px;
           }
           .installed {
             opacity: 0.6;

@@ -3,7 +3,7 @@ import "../../api.ts";
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
-import ContentResponse = api.content.ContentResponse;
+import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
@@ -11,7 +11,7 @@ import ContentSummaryViewer = api.content.ContentSummaryViewer;
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
-import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
@@ -47,7 +47,7 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
 
     fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
         var parentContentId = parentNode && parentNode.getData() ? parentNode.getData().getContentId() : null;
-        return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId).then(
+        return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId).then(
             (data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                 return data.getContents();
             });
@@ -73,9 +73,9 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
     sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
         var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
         if (this.getRoot().getCurrentRoot() == node) {
-            comparator = new api.content.ContentNodeByDisplayNameComparator();
+            comparator = new api.content.util.ContentNodeByDisplayNameComparator();
         } else {
-            comparator = new api.content.ContentNodeByModifiedTimeComparator();
+            comparator = new api.content.util.ContentNodeByModifiedTimeComparator();
         }
         var children: TreeNode<ContentSummaryAndCompareStatus>[] = node.getChildren().sort(comparator.compare);
         node.setChildren(children);

@@ -2,34 +2,13 @@
   position: relative;
 
   .combobox-wrapper {
-    margin-right: 36px;
+    margin-right: 37px;
   }
 
   .image-uploader-el {
     position: absolute;
     top: 0;
     right: 0;
-
-    &.dragover:after {
-      display: none; // hide standard image-uploader-el dropcircle
-    }
-
-    .dropzone-container {
-      display: block !important;
-
-      .dropzone {
-        min-height: 37px;
-        height: 37px;
-        line-height: 30px;
-        font-size: 14px;
-        background-color: @admin-white;
-        border: 1px solid @admin-medium-gray-border;
-
-        .box-sizing(border-box);
-        .input-border();
-        .input-glow();
-      }
-    }
 
     .progress-bar {
       display: none !important;
@@ -44,37 +23,10 @@
       }
     }
 
-    &:not(.minimized) {
-      width: 100%;
-      max-width: initial !important;
-      .dropzone {
-        overflow: visible;
-        z-index: @z-index-mask !important;
-        &:before {
-          .dropcircle(60px);
-          padding: 40px 5px 0;
-          line-height: 20px;
-        }
-      }
-    }
+    width: 100%;
+    max-width: initial !important;
 
-    &.minimized {
-      .dropzone-container {
-        position: absolute;
-        display: block !important;
-        right: 0;
-        .dropzone {
-          width: 37px;
-          &:before {
-            display: inline-block;
-            content: "";
-            width: 31px;
-            height: 35px;
-            background: url("../../../../../images/upload.png") no-repeat center;
-          }
-        }
-      }
-    }
+    .image-selector-dropzone()
   }
 
   .selected-options {

@@ -186,20 +186,6 @@
   max-width: 640px;
   max-height: 100%;
 
-  .image-selector {
-    .input-wrapper {
-
-      .image-uploader-el {
-        max-width: 37px;
-        position: static;
-
-        .dropzone-container {
-          position: static;
-        }
-      }
-    }
-  }
-
   .scroll-up-div, .scroll-down-div {
     position: absolute;
     height: 50px;
@@ -233,6 +219,13 @@
 
     .preview-panel-scrollbar-wrapper {
       overflow: hidden;
+    }
+  }
+
+  > .dropzone-container {
+    .dialog-dropzone-container(120px);
+    .dropzone {
+      font-size: 18px;
     }
   }
 }

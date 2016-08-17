@@ -34,8 +34,6 @@ module api.form {
 
         private collapseButton: api.dom.AEl;
 
-        private validationViewer: api.form.ValidationRecordingViewer;
-
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
@@ -71,9 +69,8 @@ module api.form {
             return propertyArray;
         }
 
-        public layout(): wemQ.Promise<void> {
+        public layout(validate: boolean = true): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
-
 
             this.occurrenceViewsContainer = new api.dom.DivEl("occurrence-views-container");
 
@@ -103,7 +100,7 @@ module api.form {
                 propertyArray: propertyArray
             });
 
-            this.formItemSetOccurrences.layout().then(() => {
+            this.formItemSetOccurrences.layout(validate).then(() => {
 
                 this.formItemSetOccurrences.onOccurrenceRendered(() => {
                     this.validate(false);
@@ -144,7 +141,10 @@ module api.form {
                 this.addButton = new api.ui.button.Button("Add " + this.formItemSet.getLabel());
                 this.addButton.addClass("small");
                 this.addButton.onClicked((event: MouseEvent) => {
-                    this.formItemSetOccurrences.createAndAddOccurrence();
+                    this.formItemSetOccurrences.createAndAddOccurrence(this.formItemSetOccurrences.countOccurrences(),
+                        false).then((occurenceView: FormItemOccurrenceView) => {
+                            console.log("view added");
+                        });
                     if (this.formItemSetOccurrences.isCollapsed()) {
                         this.collapseButton.getHTMLElement().click();
                     }
@@ -168,11 +168,11 @@ module api.form {
                 this.bottomButtonRow.appendChild(this.addButton);
                 this.bottomButtonRow.appendChild(this.collapseButton);
 
-                this.validationViewer = new api.form.ValidationRecordingViewer();
-                this.appendChild(this.validationViewer);
-
                 this.refresh();
-                this.validate(true);
+
+                if (validate) {
+                    this.validate(true);
+                }
 
                 deferred.resolve(null);
             });
@@ -264,6 +264,12 @@ module api.form {
             });
         }
 
+        public setHighlightOnValidityChange(highlight: boolean) {
+            this.formItemSetOccurrences.getOccurrenceViews().forEach((view: FormItemSetOccurrenceView) => {
+                view.setHighlightOnValidityChange(highlight);
+            });
+        }
+
         hasValidUserInput(): boolean {
 
             var result = true;
@@ -341,7 +347,6 @@ module api.form {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }
-            this.validationViewer.setObject(recording);
         }
 
         giveFocus(): boolean {

@@ -55,16 +55,17 @@ module api.content.form.inputtype.image {
             }
         }
 
-        layout() {
+        doRender(): wemQ.Promise<boolean> {
+
             this.icon = new api.dom.ImgEl();
             this.label = new api.dom.DivEl("label");
-            this.check = new api.ui.Checkbox();
+            this.check = api.ui.Checkbox.create().build();
             this.progress = new api.ui.ProgressBar();
             this.error = new api.dom.DivEl("error");
             this.loadMask = new LoadMask(this);
 
             var squaredContent = new api.dom.DivEl('squared-content');
-            squaredContent.appendChildren(this.icon, this.label, this.check, this.progress, this.error, this.loadMask);
+            squaredContent.appendChildren<api.dom.Element>(this.icon, this.label, this.check, this.progress, this.error, this.loadMask);
 
             this.appendChild(squaredContent);
 
@@ -97,6 +98,8 @@ module api.content.form.inputtype.image {
                     this.showResult();
                 }
             });
+
+            return wemQ(true);
         }
 
         private showProgress() {

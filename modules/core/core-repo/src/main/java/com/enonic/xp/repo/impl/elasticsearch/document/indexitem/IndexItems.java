@@ -42,7 +42,7 @@ public class IndexItems
 
     public static final class Builder
     {
-        private Multimap<String, IndexValue> indexItemsMap = ArrayListMultimap.create();
+        private final Multimap<String, IndexValue> indexItemsMap = ArrayListMultimap.create();
 
         private Builder()
         {

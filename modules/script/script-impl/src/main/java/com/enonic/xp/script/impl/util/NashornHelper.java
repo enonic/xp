@@ -1,76 +1,56 @@
 package com.enonic.xp.script.impl.util;
 
+import java.util.Date;
+
 import javax.script.ScriptEngine;
 
+import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import jdk.nashorn.api.scripting.ScriptUtils;
-import jdk.nashorn.internal.objects.Global;
-import jdk.nashorn.internal.objects.NativeArray;
-import jdk.nashorn.internal.runtime.ScriptObject;
-import jdk.nashorn.internal.runtime.Undefined;
+import jdk.nashorn.internal.runtime.ScriptRuntime;
 
 public final class NashornHelper
 {
     private final static NashornScriptEngineFactory FACTORY = new NashornScriptEngineFactory();
 
-    public static ScriptEngine getScriptEngine( final ClassLoader loader, final String... args )
+    public static ScriptEngine getScriptEngine( final ClassLoader loader )
     {
-        return FACTORY.getScriptEngine( args, loader );
-    }
-
-    public static Object newNativeObject()
-    {
-        return Global.newEmptyInstance();
-    }
-
-    public static Object newNativeArray()
-    {
-        return Global.allocate( new Object[0] );
+        return FACTORY.getScriptEngine( new String[]{"--global-per-engine", "-strict"}, loader );
     }
 
     public static boolean isUndefined( final Object value )
     {
-        return ( value instanceof Undefined );
+        return value == null || ScriptRuntime.UNDEFINED == value;
     }
 
-    public static boolean isNativeArray( final Object value )
+    static boolean isNativeArray( final Object value )
     {
-        return ( value instanceof ScriptObject ) && ( (ScriptObject) value ).isArray();
+        return ( value instanceof ScriptObjectMirror ) && ( (ScriptObjectMirror) value ).isArray();
     }
 
-    public static boolean isNativeObject( final Object value )
+    static boolean isNativeObject( final Object value )
     {
-        return ( value instanceof ScriptObject ) && !isNativeArray( value );
+        return ( value instanceof ScriptObjectMirror ) && !isNativeArray( value );
     }
 
-    public static void addToNativeObject( final Object object, final String key, final Object value )
+    static void addToNativeObject( final Object object, final String key, final Object value )
     {
-        ( (ScriptObject) object ).put( key, value, false );
+        ( (ScriptObjectMirror) object ).put( key, value );
     }
 
-    public static void addToNativeArray( final Object array, final Object value )
+    static void addToNativeArray( final Object array, final Object value )
     {
-        NativeArray.push( array, new Object[] { value } );
+        ( (ScriptObjectMirror) array ).callMember( "push", value );
     }
 
-    public static Object wrap( final Object source )
+    public static boolean isDateType( final JSObject value )
     {
-        if ( source instanceof ScriptObject )
-        {
-            return ScriptUtils.wrap( (ScriptObject) source );
-        }
-
-        return source;
+        return "Date".equalsIgnoreCase( value.getClassName() );
     }
 
-    public static Object unwrap( final Object source )
+    public static Date toDate( final JSObject value )
     {
-        if ( source instanceof ScriptObjectMirror )
-        {
-            return ScriptUtils.unwrap( source );
-        }
-
-        return source;
+        final Number time = (Number) ( (ScriptObjectMirror) value ).callMember( "getTime" );
+        return new Date( time.longValue() );
     }
 }

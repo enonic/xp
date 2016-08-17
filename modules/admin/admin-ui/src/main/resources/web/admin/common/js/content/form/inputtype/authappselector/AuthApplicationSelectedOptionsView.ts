@@ -35,8 +35,10 @@ module api.content.site.inputtype.siteconfigurator {
             this.siteConfigProvider.onPropertyChanged(() => {
 
                 this.items.forEach((optionView) => {
-                    let newConfig = this.siteConfigProvider.getConfig(optionView.getSiteConfig().getApplicationKey());
-                    optionView.setSiteConfig(newConfig);
+                    let newConfig = this.siteConfigProvider.getConfig(optionView.getSiteConfig().getApplicationKey(), false);
+                    if (newConfig) {
+                        optionView.setSiteConfig(newConfig);
+                    }
                 });
 
             });

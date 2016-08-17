@@ -1,4 +1,11 @@
 import "../../../../api.ts";
+import {LiveEditPageProxy} from "../LiveEditPageProxy";
+import {LiveFormPanel} from "../LiveFormPanel";
+import {InspectionsPanel} from "./inspect/InspectionsPanel";
+import {BaseInspectionPanel} from "./inspect/BaseInspectionPanel";
+import {EmulatorPanel} from "./EmulatorPanel";
+import {InsertablesPanel} from "./insert/InsertablesPanel";
+import {PageComponentsView} from "../../PageComponentsView";
 
 import PageTemplateKey = api.content.page.PageTemplateKey;
 import PageTemplate = api.content.page.PageTemplate;
@@ -8,25 +15,18 @@ import ImageComponent = api.content.page.region.ImageComponent;
 import ImageComponentBuilder = api.content.page.region.ImageComponentBuilder;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import {LiveEditPageProxy} from "../LiveEditPageProxy";
-import {LiveFormPanel} from "../LiveFormPanel";
-import {InspectionsPanel} from "./inspect/InspectionsPanel";
-import {BaseInspectionPanel} from "./inspect/BaseInspectionPanel";
-import {EmulatorPanel} from "./EmulatorPanel";
-import {InsertablesPanel} from "./insert/InsertablesPanel";
-import {PageComponentsView} from "../../PageComponentsView";
 
 export interface ContextWindowConfig {
 
     liveEditPage: LiveEditPageProxy;
 
-    liveFormPanel:LiveFormPanel;
+    liveFormPanel: LiveFormPanel;
 
-    inspectionPanel:InspectionsPanel;
+    inspectionPanel: InspectionsPanel;
 
-    emulatorPanel:EmulatorPanel;
+    emulatorPanel: EmulatorPanel;
 
-    insertablesPanel:InsertablesPanel;
+    insertablesPanel: InsertablesPanel;
 }
 
 export class ContextWindow extends api.ui.panel.DockedPanel {
@@ -53,7 +53,7 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
 
     private parentMinWidth: number = 15;
 
-    private displayModeChangedListeners: {() : void}[] = [];
+    private displayModeChangedListeners: {(): void}[] = [];
 
     private animationTimer;
 
@@ -66,29 +66,42 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
         this.emulatorPanel = config.emulatorPanel;
         this.insertablesPanel = config.insertablesPanel;
 
-        this.addClass("context-window");
-
-        this.ghostDragger = new api.dom.DivEl("ghost-dragger");
-        this.splitter = new api.dom.DivEl("splitter");
-
-        ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: ResponsiveItem) => {
-            this.updateFrameSize();
+        this.onRendered((event) => {
+            // hide itself after all calculations have been made
+            this.addClass('hidden');
         });
-
-        this.appendChild(this.splitter);
-        this.addItem("Insert", false, this.insertablesPanel);
-        this.addItem("Inspect", false, this.inspectionsPanel);
-        this.addItem("Emulator", false, this.emulatorPanel);
-
-        this.onRendered(() => this.onRenderedHandler());
 
         this.onRemoved((event) => {
             ResponsiveManager.unAvailableSizeChanged(this);
             ResponsiveManager.unAvailableSizeChanged(this.liveFormPanel);
         });
+    }
 
-        this.insertablesPanel.getComponentsView().onBeforeInsertAction(() => {
-            this.fixed = true;
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
+
+            this.addClass("context-window");
+
+            this.ghostDragger = new api.dom.DivEl("ghost-dragger");
+            this.splitter = new api.dom.DivEl("splitter");
+
+            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: ResponsiveItem) => {
+                this.updateFrameSize();
+            });
+
+            this.appendChild(this.splitter);
+            this.addItem("Insert", false, this.insertablesPanel);
+            this.addItem("Inspect", false, this.inspectionsPanel);
+            this.addItem("Emulator", false, this.emulatorPanel);
+
+
+            this.insertablesPanel.getComponentsView().onBeforeInsertAction(() => {
+                this.fixed = true;
+            });
+
+            this.bindDragListeners();
+
+            return rendered;
         });
     }
 
@@ -96,7 +109,7 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
         return this.insertablesPanel.getComponentsView();
     }
 
-    private onRenderedHandler() {
+    private bindDragListeners() {
         var initialPos = 0;
         var splitterPosition = 0;
         var parent = this.getParentElement();
@@ -122,9 +135,6 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
             this.stopDrag(dragListener);
             ResponsiveManager.fireResizeEvent();
         });
-
-        // hide itself after all calculations have been made
-        this.addClass('hidden');
     }
 
     private splitterWithinBoundaries(offset: number) {
@@ -132,14 +142,14 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
         return (newWidth >= this.minWidth) && (newWidth <= this.getParentElement().getEl().getWidth() - this.parentMinWidth);
     }
 
-    private startDrag(dragListener: {(e: MouseEvent):void}) {
+    private startDrag(dragListener: {(e: MouseEvent): void}) {
         this.mask.show();
         this.mask.onMouseMove(dragListener);
         this.ghostDragger.insertBeforeEl(this.splitter);
         this.ghostDragger.getEl().setLeftPx(this.splitter.getEl().getOffsetLeftRelativeToParent()).setTop(null);
     }
 
-    private stopDrag(dragListener: {(e: MouseEvent):void}) {
+    private stopDrag(dragListener: {(e: MouseEvent): void}) {
         this.getEl().setWidthPx(this.actualWidth);
         this.mask.unMouseMove(dragListener);
         this.mask.hide();

@@ -17,9 +17,9 @@ module api.ui.locale {
         }
 
         setObject(locale: Locale) {
-            super.setObject(locale);
-
             this.namesView.setMainName(api.util.StringHelper.format(this.displayNamePattern, locale.getDisplayName(), locale.getTag()));
+
+            return super.setObject(locale);
         }
 
         getPreferredHeight(): number {

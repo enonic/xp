@@ -22,13 +22,49 @@
 
   .validation-viewer {
     display: none;
-    color: @input-red-text;
+  }
+
+  &.panel-may-display-validation-errors {
+    .input-view {
+      padding-top: 10px;
+    }
+    &.display-validation-errors .input-view {
+      padding: 10px 10px 10px 10px;
+      margin: 0px -10px 5px -10px;
+    }
   }
 
   &.display-validation-errors {
-    .validation-viewer {
-      display: block;
+
+    .input-view {
+      padding: 10px 10px 0px 10px;
+
+      &.invalid {
+        padding: 10px 10px 10px 10px;
+        .input-view-error();
+
+        .upload-button {
+          background-color: @admin-white;
+        }
+
+        .help-text p {
+          color: @admin-black;
+        }
+      }
     }
+
+    .show-validation-viewer();
+  }
+
+  &:not(.display-validation-errors) .input-view.highlight-validity-change {
+
+    &.invalid {
+      padding: 10px 10px 10px 10px;
+      margin: 0px -10px 5px -10px;
+      .input-view-error();
+    }
+
+    .show-validation-viewer();
   }
 
   .form-element-spacing(@form-field-set-spacing);
