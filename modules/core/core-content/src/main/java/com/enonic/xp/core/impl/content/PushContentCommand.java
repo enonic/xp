@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -150,7 +148,7 @@ public class PushContentCommand
             return;
         }
 
-        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
+        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
 
         this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
     }
