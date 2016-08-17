@@ -121,8 +121,7 @@ module api.content.site.inputtype.siteconfigurator {
                     }
                 };
 
-                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application.getDisplayName(),
-                    this.application.getName() + "-" + this.application.getVersion(),
+                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
                     this.formView,
                     okCallback,
                     cancelCallback);
