@@ -229,11 +229,6 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
-        populateProfile( data, user );
-    }
-
-    private static void populateProfile( final PropertySet data, final User user )
-    {
         data.setSet( PrincipalPropertyNames.PROFILE_KEY, user.getProfile().getRoot() );
     }
 
@@ -260,12 +255,12 @@ abstract class PrincipalNodeTranslator
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
             authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) );
 
-        extractProfile( nodeAsTree, user );
+        createUserProfileFromNode( nodeAsTree, user );
 
         return user.build();
     }
 
-    private static void extractProfile( final PropertyTree nodeAsTree, final User.Builder user )
+    private static void createUserProfileFromNode( final PropertyTree nodeAsTree, final User.Builder user )
     {
         final PropertySet nodeProfile = nodeAsTree.getSet( PrincipalPropertyNames.PROFILE_KEY );
         final PropertyTree profile = nodeProfile == null ? new PropertyTree() : nodeProfile.toTree();

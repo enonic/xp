@@ -58,12 +58,14 @@ public final class FindUsersHandler
         final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( this.sort == null ? "" : this.sort );
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpressions );
 
-        final UserQuery.Builder query = UserQuery.create();
-        query.from( this.start );
-        query.size( this.count );
-        query.queryExpr( queryExpr );
+        final UserQuery userQuery = UserQuery.create().
+            from( this.start ).
+            size( this.count ).
+            queryExpr( queryExpr ).
+            build();
 
-        final UserQueryResult result = this.securityService.get().query( query.build() );
+        final UserQueryResult result = this.securityService.get().
+            query( userQuery );
 
         return new PrincipalsResultMapper( result.getUsers(), result.getTotalSize(), true );
     }
