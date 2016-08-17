@@ -7,7 +7,8 @@ var result = authLib.findUsers({
     start: 0,
     count: 1,
     query: "email = 'user1@enonic.com'",
-    sort: "modifiedTime DESC"
+    sort: "modifiedTime DESC",
+    includeProfile: true
 });
 // END
 
