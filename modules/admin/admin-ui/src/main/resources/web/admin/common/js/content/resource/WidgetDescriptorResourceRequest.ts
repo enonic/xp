@@ -20,7 +20,8 @@ module api.content.resource {
                 result.push(new Widget(widgetDescriptor.url,
                     widgetDescriptor.displayName,
                     widgetDescriptor.interfaces,
-                    widgetDescriptor.key));
+                    widgetDescriptor.key,
+                    widgetDescriptor.behaviorPatterns));
             });
             return result;
         }
