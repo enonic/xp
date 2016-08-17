@@ -323,7 +323,7 @@ public final class ApplicationResource
 
     @GET
     @Path("getIdProvider")
-    public ApplicationJson getIdProvider(@QueryParam("applicationKey") String key)
+    public ApplicationJson getIdProvider( @QueryParam("applicationKey") String key )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 
@@ -336,7 +336,8 @@ public final class ApplicationResource
 
             final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
 
-            return new ApplicationJson (application, localApplication, siteDescriptor, authDescriptor );
+            final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( applicationKey );
+            return new ApplicationJson( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
         }
         return null;
     }
