@@ -55,7 +55,7 @@ public final class FindUsersHandler
     public PrincipalsResultMapper execute()
     {
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( this.query == null ? "" : this.query );
-        final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
+        final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( this.sort == null ? "" : this.sort );
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpressions );
 
         final UserQuery.Builder query = UserQuery.create();
