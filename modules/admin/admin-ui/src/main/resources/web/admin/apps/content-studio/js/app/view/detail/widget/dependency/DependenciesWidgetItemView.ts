@@ -63,7 +63,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
         return button;
     }
 
-    public setItem(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
         if (DependenciesWidgetItemView.debug) {
             console.debug('DependenciesWidgetItemView.setItem: ', item);
         }
