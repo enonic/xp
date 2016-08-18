@@ -981,6 +981,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private setupWizardLiveEdit() {
 
         let editorEnabled = this.isEditorEnabled();
+        let isRenderable = this.isContentRenderable();
 
         this.toggleClass("rendered", editorEnabled);
 
@@ -990,7 +991,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.getCycleViewModeButton().setVisible(editorEnabled);
 
-        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && editorEnabled) {
+        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && isRenderable) {
             this.wizardActions.getShowSplitEditAction().execute();
         } else if (!!this.getSplitPanel()) {
 
