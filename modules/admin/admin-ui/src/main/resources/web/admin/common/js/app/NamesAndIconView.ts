@@ -37,6 +37,8 @@ module api.app {
 
         private iconDivEl: api.dom.DivEl;
 
+        private iconEl: api.dom.Element;
+
         private namesView: api.app.NamesView;
 
         private iconLabelEl: api.dom.SpanEl;
@@ -84,9 +86,12 @@ module api.app {
         }
 
         setIconClass(value: string): NamesAndIconView {
-            this.iconDivEl.setClass("font-icon-default " + value);
-            this.iconDivEl.getEl().setDisplay('inline-block');
+            this.iconDivEl
+                .setClass("font-icon-default " + value)
+                .removeChildren()
+                .getEl().setDisplay('inline-block');
             this.iconImageEl.hide();
+
             return this;
         }
 
@@ -94,6 +99,16 @@ module api.app {
             this.iconImageEl.setSrc(value);
             this.iconDivEl.hide();
             this.iconImageEl.show();
+            return this;
+        }
+
+        setIconEl(value: api.dom.Element): NamesAndIconView {
+            if (this.iconEl) {
+                this.iconEl.remove();
+            }
+            this.iconEl = value;
+            this.iconDivEl.appendChild(value).show();
+            this.iconImageEl.hide();
             return this;
         }
 

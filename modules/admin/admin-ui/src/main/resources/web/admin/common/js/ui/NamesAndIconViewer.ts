@@ -43,16 +43,26 @@ module api.ui {
                 const displayName = this.resolveDisplayName(object) || this.normalizeDisplayName(this.resolveUnnamedDisplayName(object));
                 const subName = this.resolveSubName(object, this.relativePath) || api.content.ContentUnnamed.prettifyUnnamed();
                 const subTitle = this.resolveSubTitle(object);
-                const iconClass = this.resolveIconClass(object);
-                const iconUrl = this.resolveIconUrl(object);
+
+                let iconUrl, iconClass,
+                    iconEl = this.resolveIconEl(object);
+
+                if (iconEl) {
+                    this.namesAndIconView.setIconEl(iconEl);
+                } else {
+                    iconUrl = this.resolveIconUrl(object);
+                    if (!api.util.StringHelper.isBlank(iconUrl)) {
+                        this.namesAndIconView.setIconUrl(iconUrl);
+                    } else {
+                        iconClass = this.resolveIconClass(object);
+                        if (!api.util.StringHelper.isBlank(iconClass)) {
+                            this.namesAndIconView.setIconClass(iconClass);
+                        }
+                    }
+                }
 
                 this.namesAndIconView.setMainName(displayName)
-                    .setSubName(subName, subTitle)
-                    .setIconClass(iconClass);
-
-                if (iconUrl) {
-                    this.namesAndIconView.setIconUrl(iconUrl);
-                }
+                    .setSubName(subName, subTitle);
             }
         }
 
@@ -86,6 +96,10 @@ module api.ui {
 
         resolveIconUrl(object: OBJECT): string {
             return "";
+        }
+
+        resolveIconEl(object: OBJECT): api.dom.Element {
+            return null;
         }
 
         getPreferredHeight(): number {

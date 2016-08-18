@@ -101,7 +101,6 @@
 ///<reference path='form/inputtype/long/_module.ts' />
 ///<reference path='form/inputtype/double/_module.ts' />
 ///<reference path='form/inputtype/time/_module.ts' />
-///<reference path='form/inputtype/customselector/_module.ts' />
 
 ///<reference path='util/htmlarea/_module.ts' />
 ///<reference path='form/inputtype/text/_module.ts' />
@@ -151,6 +150,7 @@
 ///<reference path='content/form/inputtype/geo/_module.ts' />
 ///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
 ///<reference path='content/form/inputtype/authappselector/_module.ts' />
+///<reference path='content/form/inputtype/customselector/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 
