@@ -88,12 +88,10 @@ export class WidgetView extends api.dom.DivEl {
         return url + "/" + this.detailsPanel.getEl().getWidth();
     }
 
-    private updateCustomWidgetItemViews(content: ContentSummaryAndCompareStatus,
-                                        force: boolean = false): wemQ.Promise<any>[] {
+    private updateCustomWidgetItemViews(force: boolean = false): wemQ.Promise<any>[] {
         var promises = [];
 
         this.url = this.getWidgetUrl();
-        this.contentId = content.getId();
         this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
             promises.push(widgetItemView.setUrl(this.getFullUrl(this.url), this.contentId, force));
         });
@@ -105,11 +103,12 @@ export class WidgetView extends api.dom.DivEl {
         var content = this.detailsPanel.getItem(),
             promises = [];
 
-        if (content && this.detailsPanel.isVisiblieOrAboutToBeVisible() &&
-            (force || this.contentId !== content.getId() || this.url !== this.getWidgetUrl())) {
+        if (this.widgetShouldBeUpdated(force)) {
             this.detailsPanel.showLoadMask();
+            this.contentId = content.getId();
+
             if (this.isUrlBased()) {
-                promises = promises.concat(this.updateCustomWidgetItemViews(content, force));
+                promises = promises.concat(this.updateCustomWidgetItemViews(force));
             } else {
                 this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
                     promises.push(widgetItemView.setContentAndUpdateView(content));
@@ -119,6 +118,12 @@ export class WidgetView extends api.dom.DivEl {
 
         this.containerWidth = this.detailsPanel.getEl().getWidth();
         return wemQ.all(promises).finally(() => this.detailsPanel.hideLoadMask());
+    }
+
+    private widgetShouldBeUpdated(force: boolean = false): boolean {
+        var content = this.detailsPanel.getItem();
+        return content && this.detailsPanel.isVisibleOrAboutToBeVisible() &&
+               (force || this.contentId !== content.getId() || (this.isUrlBased() && this.url !== this.getWidgetUrl()));
     }
 
     private createDefaultWidgetItemView() {

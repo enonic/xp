@@ -26,7 +26,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private splitter: api.dom.DivEl;
     private ghostDragger: api.dom.DivEl;
     private mask: api.ui.mask.DragMask;
-    private loadMask: api.ui.mask.LoadMask = new api.ui.mask.LoadMask(this);
+    private loadMask: api.ui.mask.LoadMask;
     private divForNoSelection: api.dom.DivEl;
 
     private actualWidth: number;
@@ -57,6 +57,9 @@ export class DetailsPanel extends api.ui.panel.Panel {
         this.setDoOffset(false);
         this.initSlideFunctions(builder.getSlideFrom());
         this.useSplitter = builder.isUseSplitter();
+
+        this.appendChild(this.loadMask = new api.ui.mask.LoadMask(this));
+        this.loadMask.addClass("details-panel-mask");
 
         this.ghostDragger = new api.dom.DivEl("ghost-dragger");
 
@@ -210,7 +213,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
             this.item = item;
             if (item) {
                 this.layout(false);
-                if (this.isVisiblieOrAboutToBeVisible() && !!this.activeWidget) {
+                if (this.isVisibleOrAboutToBeVisible() && !!this.activeWidget) {
                     return this.updateActiveWidget();
                 }
             } else {
@@ -224,7 +227,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
         return this.item;
     }
 
-    public isVisiblieOrAboutToBeVisible(): boolean {
+    public isVisibleOrAboutToBeVisible(): boolean {
         return this.isSlidedIn() || (this.isVisible() && this.getHTMLElement().clientWidth > 0);
     }
 
