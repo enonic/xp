@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Multimap;
+import com.google.common.net.UrlEscapers;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -31,6 +34,8 @@ final class ControllerMappingsResolver
     private Content contentResolved;
 
     private Site siteResolved;
+
+    private String queryParams;
 
     ControllerMappingsResolver( final SiteService siteService, final ContentService contentService )
     {
@@ -215,6 +220,40 @@ final class ControllerMappingsResolver
         return appsOrder;
     }
 
+    private String normalizedQueryParams( final PortalRequest request )
+    {
+        if ( queryParams != null )
+        {
+            return queryParams;
+        }
+
+        final Multimap<String, String> params = request.getParams();
+        if ( params.isEmpty() )
+        {
+            queryParams = "";
+            return queryParams;
+        }
+
+        final List<String> paramList = new ArrayList<>( params.size() );
+        params.keySet().stream().
+            sorted().
+            map( this::urlEscape ).
+            forEach( ( key ) ->
+                     {
+                         for ( String value : params.get( key ) )
+                         {
+                             paramList.add( key + "=" + urlEscape( value ) );
+                         }
+                     } );
+        queryParams = paramList.stream().collect( Collectors.joining( "&", "?", "" ) );
+        return queryParams;
+    }
+
+    private String urlEscape( final String value )
+    {
+        return UrlEscapers.urlFormParameterEscaper().escape( value );
+    }
+
     private String getSiteRelativePath( final PortalRequest request )
     {
         final String contentPath = request.getContentPath().toString();
@@ -223,7 +262,12 @@ final class ControllerMappingsResolver
 
     private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request )
     {
-        final String siteRelativePath = getSiteRelativePath( request );
+        String siteRelativePath = getSiteRelativePath( request );
+        final boolean patternWithQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
+        if ( patternWithQueryParameters )
+        {
+            siteRelativePath += normalizedQueryParams( request );
+        }
 
         final boolean patternMatches = descriptor.getPattern().
             matcher( siteRelativePath ).
