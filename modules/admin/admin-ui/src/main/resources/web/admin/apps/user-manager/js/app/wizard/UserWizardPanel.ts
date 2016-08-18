@@ -128,19 +128,14 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     }
 
     updatePersistedItem(): wemQ.Promise<Principal> {
-        return this.produceUpdateUserRequest(this.assembleViewedItem()).sendAndParse().then((principal: Principal) => {
-            if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
-                this.notifyPrincipalNamed(principal);
-            }
-            this.userEmailWizardStepForm.layout(principal);
-            api.notify.showFeedback('User was updated!');
-            new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
-
+        return super.updatePersistedItem().then((principal:Principal) => {
+            //remove after users event handling is configured and layout is updated on receiving upd from server
+            this.userMembershipsWizardStepForm.layout(principal);
             return principal;
         });
     }
 
-    produceUpdateUserRequest(viewedPrincipal: Principal): UpdateUserRequest {
+    produceUpdateRequest(viewedPrincipal:Principal):UpdateUserRequest {
         var user = viewedPrincipal.asUser(),
             key = user.getKey(),
             displayName = user.getDisplayName(),
