@@ -677,7 +677,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     this.updateWizard(content, unchangedOnly);
                     if (versionChanged) {
                         this.updateLiveFormOnVersionChange();
-                    } else if (this.isContentRenderable()) {
+                    } else if (this.isEditorEnabled()) {
                         // also update live form panel for renderable content without asking
                         let liveFormPanel = this.getLivePanel();
                         liveFormPanel.skipNextReloadConfirmation(true);
@@ -976,7 +976,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private setupWizardLiveEdit() {
 
-        let editorEnabled = this.expandEditorByDefault();
+        let editorEnabled = this.isEditorEnabled();
 
         this.toggleClass("rendered", editorEnabled);
 
@@ -1534,7 +1534,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.liveEditModel && this.liveEditModel.isPageRenderable();
     }
 
-    private expandEditorByDefault(): boolean {
+    private isEditorEnabled(): boolean {
 
         let isTemplate = this.contentType.getContentTypeName().isPageTemplate();
         let isSite = this.contentType.getContentTypeName().isSite();
