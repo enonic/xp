@@ -2,6 +2,7 @@ import "../../../../../api.ts";
 
 import CompareStatus = api.content.CompareStatus;
 import CompareStatusFormatter = api.content.CompareStatusFormatter;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import {WidgetItemView} from "../../WidgetItemView";
 
 export class StatusWidgetItemView extends WidgetItemView {
@@ -14,7 +15,8 @@ export class StatusWidgetItemView extends WidgetItemView {
         super("status-widget-item-view");
     }
 
-    public setStatus(status: CompareStatus) {
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+        var status = item.getCompareStatus();
         if (StatusWidgetItemView.debug) {
             console.debug('StatusWidgetItemView.setStatus: ', status);
         }
