@@ -38,6 +38,7 @@ import Site = api.content.site.Site;
 import SiteModel = api.content.site.SiteModel;
 import LiveEditModel = api.liveedit.LiveEditModel;
 import ContentType = api.schema.content.ContentType;
+import ContentTypeName = api.schema.content.ContentTypeName;
 import PageTemplate = api.content.page.PageTemplate;
 import PageDescriptor = api.content.page.PageDescriptor;
 import AccessControlList = api.security.acl.AccessControlList;
@@ -138,6 +139,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private applicationRemovedListener: (event: api.content.site.ApplicationRemovedEvent) => void;
 
     private applicationUnavailableListener: (event: ApplicationEvent) => void;
+
+    private static EDITOR_DISABLED_TYPES = [ContentTypeName.FOLDER, ContentTypeName.TEMPLATE_FOLDER, ContentTypeName.SHORTCUT,
+        ContentTypeName.UNSTRUCTURED];
 
     /**
      * Whether constructor is being currently executed or not.
@@ -1539,7 +1543,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         let isTemplate = this.contentType.getContentTypeName().isPageTemplate();
         let isSite = this.contentType.getContentTypeName().isSite();
 
-        return this.isContentRenderable() || isSite || isTemplate;
+        return this.isContentRenderable() || isSite || isTemplate ||
+               (!api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES, this.contentType.getContentTypeName()));
     }
 
     private updatePreviewActionVisibility() {
