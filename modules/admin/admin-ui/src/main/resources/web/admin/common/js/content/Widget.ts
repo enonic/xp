@@ -8,12 +8,14 @@ module api.content {
         private displayName: string;
         private interfaces: string[];
         private widgetDescriptorKey: WidgetDescriptorKey;
+        private config: { [key: string]: string };
 
-        constructor(url: string, displayName: string, interfaces: string[], key: string) {
+        constructor(url: string, displayName: string, interfaces: string[], key: string, config: { [key: string]: string }) {
             this.url = url;
             this.displayName = displayName;
             this.interfaces = interfaces;
             this.widgetDescriptorKey = this.makeWidgetDescriptorKey(key);
+            this.config = config;
         }
 
         private makeWidgetDescriptorKey(key: string): WidgetDescriptorKey {
@@ -36,6 +38,10 @@ module api.content {
 
         public getWidgetDescriptorKey(): api.content.WidgetDescriptorKey {
             return this.widgetDescriptorKey;
+        }
+
+        public getConfig(): { [key: string]: string } {
+            return this.config;
         }
     }
 
