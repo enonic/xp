@@ -26,6 +26,8 @@ public final class FindUsersHandler
 
     private String sort;
 
+    private boolean includeProfile;
+
     public void setStart( final Integer start )
     {
         if ( start != null )
@@ -52,6 +54,11 @@ public final class FindUsersHandler
         this.sort = sort;
     }
 
+    public void setIncludeProfile( final boolean includeProfile )
+    {
+        this.includeProfile = includeProfile;
+    }
+
     public PrincipalsResultMapper execute()
     {
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( this.query == null ? "" : this.query );
@@ -67,7 +74,7 @@ public final class FindUsersHandler
         final UserQueryResult result = this.securityService.get().
             query( userQuery );
 
-        return new PrincipalsResultMapper( result.getUsers(), result.getTotalSize(), true );
+        return new PrincipalsResultMapper( result.getUsers(), result.getTotalSize(), this.includeProfile );
     }
 
     @Override

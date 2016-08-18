@@ -70,10 +70,15 @@ exports.logout = function () {
  *
  * @example-ref examples/auth/getUser.js
  *
+ * @param {object} [params] JSON parameters.
+ * @param {boolean} [params.includeProfile=false] Include profile.
+ *
  * @returns {object} Information for logged-in user.
  */
-exports.getUser = function () {
+exports.getUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetUserHandler');
+
+    bean.includeProfile = params && params.includeProfile;
 
     return __.toNativeObject(bean.getUser());
 };
@@ -380,6 +385,7 @@ exports.modifyProfile = function (params) {
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} params.query Query expression.
  * @param {string} [params.sort] Sorting expression.
+ * @param {boolean} [params.includeProfile=false] Include profile.
  *
  * @returns {boolean} Result of query.
  */
@@ -389,5 +395,6 @@ exports.findUsers = function (params) {
     bean.count = params.count;
     bean.query = nullOrValue(params.query);
     bean.sort = nullOrValue(params.sort);
+    bean.includeProfile = !!params.includeProfile;
     return __.toNativeObject(bean.execute());
 };
