@@ -3,6 +3,7 @@ import "../../../api.ts";
 import Element = api.dom.Element;
 import LabelEl = api.dom.LabelEl;
 import LinkEl = api.dom.LinkEl;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class WidgetItemView extends api.dom.DivEl {
 
@@ -17,6 +18,10 @@ export class WidgetItemView extends api.dom.DivEl {
         if (WidgetItemView.debug) {
             console.debug('WidgetItemView.layout: ', this);
         }
+        return wemQ<any>(null);
+    }
+
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
         return wemQ<any>(null);
     }
 

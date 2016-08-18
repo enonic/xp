@@ -3,7 +3,10 @@ import {WidgetView} from "./WidgetView";
 import {WidgetsSelectionRow} from "./WidgetsSelectionRow";
 import {VersionsWidgetItemView} from "./widget/version/VersionsWidgetItemView";
 import {DependenciesWidgetItemView} from "./widget/dependency/DependenciesWidgetItemView";
-import {InfoWidgetView} from "./widget/info/InfoWidgetView";
+import {StatusWidgetItemView} from "./widget/info/StatusWidgetItemView";
+import {PropertiesWidgetItemView} from "./widget/info/PropertiesWidgetItemView";
+import {AttachmentsWidgetItemView} from "./widget/info/AttachmentsWidgetItemView";
+import {UserAccessWidgetItemView} from "./widget/info/UserAccessWidgetItemView";
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -23,6 +26,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private splitter: api.dom.DivEl;
     private ghostDragger: api.dom.DivEl;
     private mask: api.ui.mask.DragMask;
+    private loadMask: api.ui.mask.LoadMask;
     private divForNoSelection: api.dom.DivEl;
 
     private actualWidth: number;
@@ -30,6 +34,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private parentMinWidth: number = 15;
 
     private sizeChangedListeners: {() : void}[] = [];
+    private slidedInListeners: {() : void}[] = [];
 
     private item: ContentSummaryAndCompareStatus;
 
@@ -39,12 +44,11 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private slideOutFunction: () => void;
 
     private activeWidget: WidgetView;
-    private defaultWidgetView: InfoWidgetView;
+    private defaultWidgetView: WidgetView;
 
     private alreadyFetchedCustomWidgets: boolean;
 
-    private versionsWidgetItemView: VersionsWidgetItemView;
-    private dependenciesWidgetItemView: DependenciesWidgetItemView;
+    private slidedIn: boolean;
 
     public static debug = false;
 
@@ -54,6 +58,9 @@ export class DetailsPanel extends api.ui.panel.Panel {
         this.initSlideFunctions(builder.getSlideFrom());
         this.useSplitter = builder.isUseSplitter();
 
+        this.appendChild(this.loadMask = new api.ui.mask.LoadMask(this));
+        this.loadMask.addClass("details-panel-mask");
+
         this.ghostDragger = new api.dom.DivEl("ghost-dragger");
 
         if (this.useSplitter) {
@@ -61,8 +68,6 @@ export class DetailsPanel extends api.ui.panel.Panel {
             this.appendChild(this.splitter);
             this.onRendered(() => this.onRenderedHandler());
         }
-
-        this.managePublishEvent();
 
         this.initViewer(builder.isUseViewer());
         this.initDefaultWidgetView();
@@ -73,28 +78,19 @@ export class DetailsPanel extends api.ui.panel.Panel {
         this.appendChild(this.detailsContainer);
         this.appendChild(this.divForNoSelection);
 
-        this.onPanelSizeChanged(() => {
-            this.setDetailsContainerHeight();
-        });
+        this.subscribeOnEvents();
 
         this.layout();
     }
 
-    private managePublishEvent() {
+    private subscribeOnEvents() {
+        this.onPanelSizeChanged(() => this.setDetailsContainerHeight());
 
-        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+        this.onSlidedIn(() => !!this.item ? this.updateActiveWidget() : null);
 
-        serverEvents.onContentPublished((contents: ContentSummaryAndCompareStatus[]) => {
-            if (this.getItem()) {
-                // check for item because it can be null after publishing pending for delete item
-                var itemId = this.getItem().getContentId();
-                var isPublished = contents.some((content, index, array) => {
-                    return itemId.equals(content.getContentId());
-                });
-
-                if (isPublished) {
-                    this.versionsWidgetItemView.reloadActivePanel();
-                }
+        this.onShown(() => {
+            if (!!this.item) {
+                setTimeout(() =>  this.updateActiveWidget(), 50); // small delay so that isVisiblieOrAboutToBeVisible() check detects width change
             }
         });
     }
@@ -217,7 +213,9 @@ export class DetailsPanel extends api.ui.panel.Panel {
             this.item = item;
             if (item) {
                 this.layout(false);
-                return this.updateWidgetsForItem();
+                if (this.isVisibleOrAboutToBeVisible() && !!this.activeWidget) {
+                    return this.updateActiveWidget();
+                }
             } else {
                 this.layout();
             }
@@ -229,46 +227,40 @@ export class DetailsPanel extends api.ui.panel.Panel {
         return this.item;
     }
 
+    public isVisibleOrAboutToBeVisible(): boolean {
+        return this.isSlidedIn() || (this.isVisible() && this.getHTMLElement().clientWidth > 0);
+    }
+
     private getWidgetsInterfaceNames(): string[] {
         return ["com.enonic.xp.content-manager.context-widget", "contentstudio.detailpanel"];
     }
 
-    private updateWidgetsForItem(): wemQ.Promise<any> {
+    private updateActiveWidget(): wemQ.Promise<any> {
         if (DetailsPanel.debug) {
             console.debug('DetailsPanel.updateWidgetsForItem');
         }
 
+        if (!this.activeWidget) {
+            return wemQ<any>(null);
+        }
+
         this.updateViewer();
 
-        var defaultPromise = this.defaultWidgetView.updateWidgetViews();
-        var commonPromise = this.updateCommonWidgetViews();
-        var customPromise = this.updateCustomWidgetViews();
+        this.showLoadMask();
 
-        return wemQ.all([defaultPromise, commonPromise, customPromise]).then(() => {
+        return this.activeWidget.updateWidgetItemViews().then(() => {
             // update active widget's height
             this.setDetailsContainerHeight();
             this.activeWidget.slideIn();
-        });
+        }).finally(() => this.hideLoadMask());
     }
 
-    private updateCommonWidgetViews(): wemQ.Promise<any> {
-        var promises = [];
-
-        promises.push(this.versionsWidgetItemView.setItem(this.item));
-        promises.push(this.dependenciesWidgetItemView.setItem(this.item));
-
-        return wemQ.all(promises);
+    public showLoadMask() {
+        this.loadMask.show();
     }
 
-    private updateCustomWidgetViews(): wemQ.Promise<any> {
-        var promises = [];
-        this.widgetViews.forEach((widgetView: WidgetView) => {
-            if (widgetView.isUrlBased()) {
-                promises.push(widgetView.setContent(this.item));
-            }
-        })
-
-        return wemQ.all(promises);
+    public hideLoadMask() {
+        this.loadMask.hide();
     }
 
     private initWidgetsDropdownForSelectedItem() {
@@ -277,21 +269,26 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     private initDefaultWidgetView() {
-        this.defaultWidgetView = new InfoWidgetView(this);
+        var builder = WidgetView.create()
+            .setName("Info")
+            .setDetailsPanel(this)
+            .setWidgetItemViews([
+                new StatusWidgetItemView(),
+                new UserAccessWidgetItemView(),
+                new PropertiesWidgetItemView(),
+                new AttachmentsWidgetItemView()
+            ]);
 
-        this.detailsContainer.appendChild(this.defaultWidgetView);
+        this.detailsContainer.appendChild(this.defaultWidgetView = builder.build());
     }
 
     private initCommonWidgetViews() {
 
-        this.versionsWidgetItemView = new VersionsWidgetItemView();
-        this.dependenciesWidgetItemView = new DependenciesWidgetItemView();
-
         var versionsWidgetView = WidgetView.create().setName("Version history").setDetailsPanel(this)
-                                    .addWidgetItemView(this.versionsWidgetItemView).build();
+            .addWidgetItemView(new VersionsWidgetItemView()).build();
 
         var dependenciesWidgetView = WidgetView.create().setName("Dependencies").setDetailsPanel(this)
-                                    .addWidgetItemView(this.dependenciesWidgetItemView).build();
+            .addWidgetItemView(new DependenciesWidgetItemView()).build();
 
         dependenciesWidgetView.addClass("dependency-widget");
 
@@ -405,17 +402,23 @@ export class DetailsPanel extends api.ui.panel.Panel {
 
     updateViewer() {
         if (this.useViewer && this.item) {
-            //#
             this.viewer.setObject(this.item.getContentSummary());
         }
     }
 
     slideIn() {
         this.slideInFunction();
+        this.slidedIn = true;
+        this.notifySlidedIn();
     }
 
     slideOut() {
         this.slideOutFunction();
+        this.slidedIn = false;
+    }
+
+    public isSlidedIn(): boolean {
+        return this.slidedIn;
     }
 
     public resetWidgetsWidth() {
@@ -473,6 +476,14 @@ export class DetailsPanel extends api.ui.panel.Panel {
 
     onPanelSizeChanged(listener: () => void) {
         this.sizeChangedListeners.push(listener);
+    }
+
+    notifySlidedIn() {
+        this.slidedInListeners.forEach((listener: ()=> void) => listener());
+    }
+
+    onSlidedIn(listener: () => void) {
+        this.slidedInListeners.push(listener);
     }
 
     static create(): Builder {
