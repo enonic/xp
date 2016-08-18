@@ -981,7 +981,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private setupWizardLiveEdit() {
 
         let editorEnabled = this.isEditorEnabled();
-        let isRenderable = this.isContentRenderable();
+        let isEditorOpened = this.shouldEditorOpenByDefault();
 
         this.toggleClass("rendered", editorEnabled);
 
@@ -991,7 +991,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.getCycleViewModeButton().setVisible(editorEnabled);
 
-        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && isRenderable) {
+        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && isEditorOpened) {
             this.wizardActions.getShowSplitEditAction().execute();
         } else if (!!this.getSplitPanel()) {
 
@@ -1539,14 +1539,20 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.liveEditModel && this.liveEditModel.isPageRenderable();
     }
 
-    private isEditorEnabled(): boolean {
-
+    private shouldEditorOpenByDefault(): boolean {
         let isTemplate = this.contentType.getContentTypeName().isPageTemplate();
         let isSite = this.contentType.getContentTypeName().isSite();
 
-        return this.isContentRenderable() || isSite || isTemplate ||
+        return this.isContentRenderable() || isSite || isTemplate;
+    }
+
+    private isEditorEnabled(): boolean {
+
+        return this.shouldEditorOpenByDefault() ||
                (!api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES, this.contentType.getContentTypeName()));
     }
+
+
 
     private updatePreviewActionVisibility() {
         this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
