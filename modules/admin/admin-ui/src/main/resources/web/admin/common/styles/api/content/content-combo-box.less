@@ -1,11 +1,20 @@
 .wizard-step-form .content-combo-box {
   .selected-option {
 
-    padding: 0 8px 8px 8px;
+    position: relative;
+    padding: 0 20px 8px 8px;
 
     .edit, .remove {
-      position: relative;
+      float: none;
+      margin: 0;
+      position: absolute;
       top: 8px;
+    }
+    .edit {
+      right: 30px;
+    }
+    .remove {
+      right: 0px;
     }
   }
 }
