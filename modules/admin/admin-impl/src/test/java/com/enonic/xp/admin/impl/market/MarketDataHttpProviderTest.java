@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.market;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Protocol;
@@ -14,13 +13,9 @@ import com.enonic.xp.market.MarketException;
 
 import static org.junit.Assert.*;
 
-public class MarketServiceImplTest
+public class MarketDataHttpProviderTest
 {
-    private MarketDataProviderImpl provider;
-
-    private MarketConfig marketConfig;
-
-    private MarketServiceImpl marketService;
+    private MarketDataHttpProvider provider;
 
     private String marketUrl = "https://market.enonic.com/applications";
 
@@ -28,16 +23,7 @@ public class MarketServiceImplTest
     public void setUp()
         throws Exception
     {
-        marketConfig = Mockito.mock( MarketConfig.class );
-
-        Mockito.when( marketConfig.marketUrl() ).
-            thenReturn( this.marketUrl );
-
-        this.provider = Mockito.mock( MarketDataProviderImpl.class );
-
-        this.marketService = new MarketServiceImpl();
-        marketService.activate( marketConfig );
-        marketService.setProvider( provider );
+        this.provider = new MarketDataHttpProvider();
     }
 
     @Test
@@ -63,15 +49,11 @@ public class MarketServiceImplTest
 
     private void testStatus( final int code )
     {
-        final String version = "6.3.0";
         final Response response = createResponse( code );
-
-        Mockito.when( provider.fetch( this.marketUrl, version, 0, 10 ) ).
-            thenReturn( response );
 
         try
         {
-            marketService.get( version, 0, 10 );
+            provider.parseResponse( response );
         }
         catch ( MarketException e )
         {

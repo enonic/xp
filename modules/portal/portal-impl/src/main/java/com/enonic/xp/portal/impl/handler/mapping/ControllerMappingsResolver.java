@@ -1,10 +1,15 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Multimap;
+import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
@@ -30,6 +35,8 @@ final class ControllerMappingsResolver
 
     private Site siteResolved;
 
+    private String queryParams;
+
     ControllerMappingsResolver( final SiteService siteService, final ContentService contentService )
     {
         this.siteService = siteService;
@@ -37,6 +44,16 @@ final class ControllerMappingsResolver
     }
 
     public ControllerMappingDescriptor resolve( final PortalRequest request )
+    {
+        return resolve( request, true );
+    }
+
+    public boolean canHandle( final PortalRequest request )
+    {
+        return resolve( request, false ) != null;
+    }
+
+    private ControllerMappingDescriptor resolve( final PortalRequest request, final boolean updateRequest )
     {
         if ( request.getMode() == RenderMode.ADMIN )
         {
@@ -59,7 +76,7 @@ final class ControllerMappingsResolver
         }
 
         final ControllerMappingDescriptor mappingDescriptor = getFirstMatchingDescriptor( request, siteResolved, descriptors );
-        if ( mappingDescriptor != null )
+        if ( updateRequest && mappingDescriptor != null )
         {
             request.setContent( contentResolved );
             request.setSite( siteResolved );
@@ -75,19 +92,20 @@ final class ControllerMappingsResolver
         return descriptors.stream().
             filter( ( d ) -> matchesUrlPattern( d, request ) ).
             filter( this::matchesContent ).
-            sorted( ( d1, d2 ) -> {
-                if ( d2.compareTo( d1 ) == 0 )
-                {
-                    // if same order, use the apps order
-                    int d1AppIndex = appsOrder.get( d1.getApplication() );
-                    int d2AppIndex = appsOrder.get( d2.getApplication() );
-                    return Integer.compare( d1AppIndex, d2AppIndex );
-                }
-                else
-                {
-                    return d2.compareTo( d1 );
-                }
-            } ).
+            sorted( ( d1, d2 ) ->
+                    {
+                        if ( d2.compareTo( d1 ) == 0 )
+                        {
+                            // if same order, use the apps order
+                            int d1AppIndex = appsOrder.get( d1.getApplication() );
+                            int d2AppIndex = appsOrder.get( d2.getApplication() );
+                            return Integer.compare( d1AppIndex, d2AppIndex );
+                        }
+                        else
+                        {
+                            return d2.compareTo( d1 );
+                        }
+                    } ).
             findFirst().
             orElse( null );
     }
@@ -202,12 +220,57 @@ final class ControllerMappingsResolver
         return appsOrder;
     }
 
+    private String normalizedQueryParams( final PortalRequest request )
+    {
+        if ( queryParams != null )
+        {
+            return queryParams;
+        }
+
+        final Multimap<String, String> params = request.getParams();
+        if ( params.isEmpty() )
+        {
+            queryParams = "";
+            return queryParams;
+        }
+
+        final List<String> paramList = new ArrayList<>( params.size() );
+        params.keySet().stream().
+            sorted().
+            map( this::urlEscape ).
+            forEach( ( key ) ->
+                     {
+                         for ( String value : params.get( key ) )
+                         {
+                             paramList.add( key + "=" + urlEscape( value ) );
+                         }
+                     } );
+        queryParams = paramList.stream().collect( Collectors.joining( "&", "?", "" ) );
+        return queryParams;
+    }
+
+    private String urlEscape( final String value )
+    {
+        return UrlEscapers.urlFormParameterEscaper().escape( value );
+    }
+
+    private String getSiteRelativePath( final PortalRequest request )
+    {
+        final String contentPath = request.getContentPath().toString();
+        return Arrays.stream( contentPath.split( "/" ) ).skip( 2 ).collect( Collectors.joining( "/", "/", "" ) );
+    }
+
     private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request )
     {
-        final String internalPath = request.getRawRequest().
-            getRequestURI();
+        String siteRelativePath = getSiteRelativePath( request );
+        final boolean patternWithQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
+        if ( patternWithQueryParameters )
+        {
+            siteRelativePath += normalizedQueryParams( request );
+        }
+
         final boolean patternMatches = descriptor.getPattern().
-            matcher( internalPath ).
+            matcher( siteRelativePath ).
             matches();
         return descriptor.invertPattern() ? !patternMatches : patternMatches;
     }

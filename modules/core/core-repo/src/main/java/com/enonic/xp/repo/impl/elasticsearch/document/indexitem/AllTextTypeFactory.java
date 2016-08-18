@@ -8,7 +8,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.node.NodeIndexPath;
 
-public class AllTextTypeFactory
+class AllTextTypeFactory
 {
     static List<IndexItem> create( final Value propertyValue, final IndexConfig indexConfig )
     {

@@ -58,6 +58,7 @@ function generateLoginPage(redirectUrl) {
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
     var appLoginBackgroundUrl = portalLib.assetUrl({path: "common/images/background-1920.jpg"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
+    var imageUrl = portalLib.assetUrl({path: "common/images/"});
 
     var configView = resolve('idprovider-config.txt');
     var config = mustacheLib.render(configView, {
@@ -72,6 +73,7 @@ function generateLoginPage(redirectUrl) {
         appLoginJsUrl: appLoginJsUrl,
         appLoginCssUrl: appLoginCssUrl,
         appLoginBackgroundUrl: appLoginBackgroundUrl,
+        imageUrl: imageUrl,
         config: config
     };
     return mustacheLib.render(view, params);

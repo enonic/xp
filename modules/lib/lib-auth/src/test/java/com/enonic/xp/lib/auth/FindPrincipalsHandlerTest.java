@@ -33,7 +33,7 @@ public class FindPrincipalsHandlerTest
             totalSize( 3 ).
             build();
 
-        Mockito.when( securityService.query( Mockito.any() ) ).thenReturn( result );
+        Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( result );
 
         runScript( "/site/lib/xp/examples/auth/findPrincipals.js" );
     }

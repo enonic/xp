@@ -59,23 +59,14 @@ public class NodeQueryResultSet
         return first;
     }
 
-    public NodeId last()
-    {
-        return last;
-    }
-
     public boolean isEmpty()
     {
         return nodeIds.isEmpty();
     }
 
-    public NodeIds asNodeIds()
+    NodeIds asNodeIds()
     {
         return NodeIds.from( nodeIds );
     }
 
-    public int size()
-    {
-        return this.nodeIds.size();
-    }
 }

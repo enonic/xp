@@ -10,17 +10,17 @@ public abstract class IndexItem<T extends IndexValue>
 {
     public final static String INDEX_VALUE_TYPE_SEPARATOR = ".";
 
-    private IndexPath indexPath;
+    private final IndexPath indexPath;
 
-    private T value;
+    private final T value;
 
-    public IndexItem( final IndexPath indexPath, final T value )
+    IndexItem( final IndexPath indexPath, final T value )
     {
         this.indexPath = indexPath;
         this.value = value;
     }
 
-    protected String getBasePath()
+    private String getBasePath()
     {
         return IndexFieldNameNormalizer.normalize( indexPath.getPath() );
     }
@@ -37,7 +37,7 @@ public abstract class IndexItem<T extends IndexValue>
         return getBasePath() + getTypeContextPostfix();
     }
 
-    protected String getTypeContextPostfix()
+    private String getTypeContextPostfix()
     {
         return Strings.isNullOrEmpty( valueType().getPostfix() ) ? "" : INDEX_VALUE_TYPE_SEPARATOR + valueType().getPostfix();
 

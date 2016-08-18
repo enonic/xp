@@ -40,7 +40,7 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("image", "icon-xlarge")
         });
         this.loader = new api.content.resource.ContentSummaryLoader();
-        this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
+        this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
         this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(this.loader).build();
 
         this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, "Image");

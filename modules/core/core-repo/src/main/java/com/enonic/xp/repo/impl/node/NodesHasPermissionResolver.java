@@ -20,9 +20,9 @@ import com.enonic.xp.security.acl.Permission;
 public class NodesHasPermissionResolver
     extends AbstractNodeCommand
 {
-    private NodeIds nodeIds;
+    private final NodeIds nodeIds;
 
-    private Permission permission;
+    private final Permission permission;
 
     private NodesHasPermissionResolver( final Builder builder )
     {
@@ -125,7 +125,7 @@ public class NodesHasPermissionResolver
             return this;
         }
 
-        protected void validate()
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( this.permission, "Permission must be set" );

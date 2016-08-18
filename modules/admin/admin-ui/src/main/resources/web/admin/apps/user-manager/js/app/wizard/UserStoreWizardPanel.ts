@@ -138,26 +138,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
             this.getFormIcon().addClass("icon-address-book");
 
-            var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                if (this.isVisible()) {
-                    this.updateStickyToolbar();
-                }
-            });
-
-            this.onRemoved((event) => {
-                ResponsiveManager.unAvailableSizeChanged(this);
-            });
-
-            this.onShown((event: api.dom.ElementShownEvent) => {
-                if (this.getPersistedItem()) {
-                    Router.setHash("edit/" + this.getPersistedItem().getKey());
-                } else {
-                    Router.setHash("new/");
-                }
-
-                responsiveItem.update();
-            });
-
             return rendered;
         });
     }
@@ -338,6 +318,14 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             api.security.UserItemDeletedEvent.un(principalDeletedHandler);
         });
 
+    }
+
+    protected updateHash() {
+        if (this.getPersistedItem()) {
+            Router.setHash("edit/" + this.getPersistedItem().getKey());
+        } else {
+            Router.setHash("new/");
+        }
     }
 
 }

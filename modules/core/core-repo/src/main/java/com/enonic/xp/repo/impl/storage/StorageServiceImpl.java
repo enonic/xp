@@ -22,8 +22,6 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
@@ -234,18 +232,6 @@ public class StorageServiceImpl
     }
 
     @Override
-    public ReturnValues getIndexedData( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
-    {
-        return this.indexDataService.get( nodeId, returnFields, context );
-    }
-
-    @Override
-    public ReturnValues getIndexedData( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context )
-    {
-        return this.indexDataService.get( nodeIds, returnFields, context );
-    }
-
-    @Override
     public NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
     {
         return this.branchService.get( nodeId, context );
@@ -269,14 +255,6 @@ public class StorageServiceImpl
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodePath, context );
 
         return nodeBranchEntry != null ? nodeBranchEntry.getNodeId() : null;
-    }
-
-    @Override
-    public NodePath getParentPath( final NodeId nodeId, final InternalContext context )
-    {
-        final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodeId, context );
-
-        return nodeBranchEntry != null ? nodeBranchEntry.getNodePath().getParentPath() : null;
     }
 
     @Override

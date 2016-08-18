@@ -186,19 +186,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.wizardActions.getShowSplitEditAction().onExecuted(() => {
             if (!this.inMobileViewMode) {
-                if (!this.isContentRenderable() && !this.getPersistedItem().isSite()) {
-                    this.closeLiveEdit();
-                    this.getContextWindowToggler().setEnabled(false);
-                } else {
-                    this.getCycleViewModeButton()
-                        .selectActiveAction(this.wizardActions.getShowLiveEditAction());
-                }
+                this.getCycleViewModeButton()
+                    .selectActiveAction(this.wizardActions.getShowLiveEditAction());
             }
         });
     }
 
     private initListeners() {
-
+        
         let shownAndLoadedHandler = () => {
             if (this.getPersistedItem()) {
                 Router.setHash("edit/" + this.getPersistedItem().getId());

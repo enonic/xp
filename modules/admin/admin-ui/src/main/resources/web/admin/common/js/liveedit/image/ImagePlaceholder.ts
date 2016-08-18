@@ -28,7 +28,7 @@ module api.liveedit.image {
         private initImageCombobox(imageView: ImageComponentView) {
             var loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(imageView.getLiveEditModel().getContent().getPath());
-            loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
+            loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
 
             this.comboBox = api.content.ContentComboBox.create().
                 setMaximumOccurrences(1).

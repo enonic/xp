@@ -11,6 +11,8 @@ import org.osgi.framework.Version;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptor;
+import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
@@ -26,6 +28,8 @@ public class ApplicationResourceTest
     extends AdminResourceTestSupport
 {
     private ApplicationService applicationService;
+
+    private ApplicationDescriptorService applicationDescriptorService;
 
     private SiteService siteService;
 
@@ -44,6 +48,8 @@ public class ApplicationResourceTest
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final AuthDescriptor authDescriptor = createAuthDescriptor();
         Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         String response = request().
             path( "application/list" ).
@@ -62,6 +68,8 @@ public class ApplicationResourceTest
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final AuthDescriptor authDescriptor = createAuthDescriptor();
         Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         String response = request().
             path( "application/list" ).
@@ -81,6 +89,8 @@ public class ApplicationResourceTest
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final AuthDescriptor authDescriptor = createAuthDescriptor();
         Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         String response = request().
             path( "application/list" ).
@@ -99,6 +109,8 @@ public class ApplicationResourceTest
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final AuthDescriptor authDescriptor = createAuthDescriptor();
         Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         String response = request().
             path( "application" ).
@@ -140,6 +152,8 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final AuthDescriptor authDescriptor = createAuthDescriptor();
         Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         String response = request().
             path( "application/getIdProviderApplications" ).
@@ -163,6 +177,14 @@ public class ApplicationResourceTest
         Mockito.when( application.hasSiteDescriptor() ).thenReturn( true );
 
         return application;
+    }
+
+    private ApplicationDescriptor createApplicationDescriptor()
+    {
+        return ApplicationDescriptor.create().
+            key( ApplicationKey.from( "testapplication" ) ).
+            description( "Application description" ).
+            build();
     }
 
     private Application createEmptyApplication()
@@ -196,6 +218,7 @@ public class ApplicationResourceTest
     protected Object getResourceInstance()
     {
         this.applicationService = Mockito.mock( ApplicationService.class );
+        this.applicationDescriptorService = Mockito.mock( ApplicationDescriptorService.class );
         this.siteService = Mockito.mock( SiteService.class );
         this.marketService = Mockito.mock( MarketService.class );
         this.authDescriptorService = Mockito.mock( AuthDescriptorService.class );
@@ -205,6 +228,7 @@ public class ApplicationResourceTest
         resource.setSiteService( this.siteService );
         resource.setMarketService( this.marketService );
         resource.setAuthDescriptorService( this.authDescriptorService );
+        resource.setApplicationDescriptorService( this.applicationDescriptorService );
 
         return resource;
     }

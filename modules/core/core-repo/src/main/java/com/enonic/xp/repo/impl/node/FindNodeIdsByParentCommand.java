@@ -159,12 +159,6 @@ public class FindNodeIdsByParentCommand
             super( source );
         }
 
-        @Override
-        void validate()
-        {
-            super.validate();
-        }
-
         public FindNodeIdsByParentCommand build()
         {
             this.validate();

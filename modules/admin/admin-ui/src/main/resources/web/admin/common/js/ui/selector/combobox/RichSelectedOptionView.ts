@@ -57,8 +57,9 @@ module api.ui.selector.combobox {
             });
 
             var buttons: api.dom.Element[] = this.createActionButtons(this.optionDisplayValue);
+            buttons.push(removeButton);
 
-            this.appendChildren<api.dom.Element>(new api.dom.DivEl("drag-control"), removeButton);
+            this.appendChildren<api.dom.Element>(new api.dom.DivEl("drag-control"));
             this.appendChildren(...buttons);
             this.appendChild(namesAndIconView);
 

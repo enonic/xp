@@ -12,6 +12,7 @@ module api.content.site.inputtype.siteconfigurator {
     import ImageSelector = api.content.form.inputtype.image.ImageSelector;
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
+    import Application = api.application.Application;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -23,9 +24,9 @@ module api.content.site.inputtype.siteconfigurator {
 
         private cancelCallback: () => void;
 
-        constructor(name: string, subName: string, formView: FormView, okCallback?: () => void, cancelCallback?: () => void) {
+        constructor(application:Application, formView:FormView, okCallback?:() => void, cancelCallback?:() => void) {
             super({
-                title: this.initHeader(name, subName)
+                title: this.initHeader(application)
             });
 
             this.formView = formView;
@@ -82,12 +83,20 @@ module api.content.site.inputtype.siteconfigurator {
             });
         }
 
-        private initHeader(name: string, subName: string): ModalDialogHeader {
+        private initHeader(application:Application):ModalDialogHeader {
             var dialogHeader = new ModalDialogHeader("");
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
-                api.app.NamesAndIconViewSize.large)).setMainName(name).setSubName(subName).setIconClass("icon-xlarge icon-puzzle");
+                api.app.NamesAndIconViewSize.large)).setMainName(application.getDisplayName()).setSubName(application.getName() + "-" + application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
 
+            if (application.getIconUrl()) {
+                namesAndIconView.setIconUrl(application.getIconUrl());
+            }
+
+            if (application.getDescription()) {
+                namesAndIconView.setSubName(application.getDescription());
+            }
+            
             dialogHeader.appendChild(namesAndIconView);
             return dialogHeader;
         }

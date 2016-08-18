@@ -132,34 +132,18 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 break;
             }
 
-            var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                if (this.isVisible()) {
-                    this.updateStickyToolbar();
-                }
-            });
-
             var deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
                 event.getDeletedItems().forEach((path: string) => {
                     if (!!this.getPersistedItem() && this.getPersistedItem().getKey().toPath() == path) {
                         this.close();
                     }
                 });
-            }).bind(this);
-
-            this.onRemoved((event) => {
-                ResponsiveManager.unAvailableSizeChanged(this);
-                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
             });
 
-            this.onShown((event: api.dom.ElementShownEvent) => {
-                if (this.getPersistedItem()) {
-                    Router.setHash("edit/" + this.getPersistedItem().getKey());
-                } else {
-                    Router.setHash("new/" + PrincipalType[this.principalParams.persistedType].toLowerCase());
-                }
+            api.security.event.PrincipalDeletedEvent.on(deleteHandler);
 
-                responsiveItem.update();
-                api.security.event.PrincipalDeletedEvent.on(deleteHandler);
+            this.onRemoved((event) => {
+                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
             });
 
             return rendered;
@@ -276,5 +260,13 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         this.principalNamedListeners.forEach((listener: (event: PrincipalNamedEvent)=>void)=> {
             listener.call(this, new PrincipalNamedEvent(this, principal));
         });
+    }
+
+    protected updateHash() {
+        if (this.getPersistedItem()) {
+            Router.setHash("edit/" + this.getPersistedItem().getKey());
+        } else {
+            Router.setHash("new/" + PrincipalType[this.principalParams.persistedType].toLowerCase());
+        }
     }
 }

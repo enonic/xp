@@ -169,7 +169,6 @@ public class AbstractContentServiceTest
         this.indexService.setClient( client );
 
         this.nodeDao = new NodeVersionDaoImpl();
-        this.nodeDao.setConfiguration( repoConfig );
         this.nodeDao.setBlobStore( blobStore );
 
         this.contentService = new ContentServiceImpl();

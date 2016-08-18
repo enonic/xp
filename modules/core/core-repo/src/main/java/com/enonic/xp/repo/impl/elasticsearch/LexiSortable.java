@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-public final class LexiSortable
+final class LexiSortable
 {
     private final static char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
@@ -25,12 +25,12 @@ public final class LexiSortable
     }
 
 
-    public static String toLexiSortable( final long l )
+    static String toLexiSortable( final long l )
     {
         return toHexString( 'l', l ^ SIGN_MASK );
     }
 
-    public static String toLexiSortable( final double d )
+    static String toLexiSortable( final double d )
     {
         long tmp = Double.doubleToRawLongBits( d );
         return toHexString( 'd', ( tmp < 0 ) ? ~tmp : ( tmp ^ SIGN_MASK ) );

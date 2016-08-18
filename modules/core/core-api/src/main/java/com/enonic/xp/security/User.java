@@ -6,6 +6,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -31,6 +32,8 @@ public final class User
 
     private final boolean loginDisabled;
 
+    private final PropertyTree profile;
+
     private User( final Builder builder )
     {
         super( builder );
@@ -45,6 +48,7 @@ public final class User
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
+        this.profile = builder.profile;
     }
 
     public String getEmail()
@@ -65,6 +69,11 @@ public final class User
     public boolean isDisabled()
     {
         return loginDisabled;
+    }
+
+    public PropertyTree getProfile()
+    {
+        return profile;
     }
 
     public static Builder create()
@@ -88,9 +97,12 @@ public final class User
 
         private boolean loginDisabled;
 
+        private PropertyTree profile;
+
         private Builder()
         {
             super();
+            this.profile = new PropertyTree();
         }
 
         private Builder( final User user )
@@ -100,6 +112,7 @@ public final class User
             this.login = user.getLogin();
             this.authenticationHash = user.getAuthenticationHash();
             this.loginDisabled = user.isDisabled();
+            this.profile = user.profile == null ? new PropertyTree() : user.profile.copy();
         }
 
         public Builder login( final String value )
@@ -117,6 +130,12 @@ public final class User
         public Builder authenticationHash( final String value )
         {
             this.authenticationHash = value;
+            return this;
+        }
+
+        public Builder profile( final PropertyTree profile )
+        {
+            this.profile = profile;
             return this;
         }
 
@@ -138,7 +157,8 @@ public final class User
                 Objects.equals( email, other.email ) &&
                 Objects.equals( authenticationHash, other.authenticationHash ) &&
                 Objects.equals( login, other.login ) &&
-                Objects.equals( loginDisabled, other.loginDisabled );
+                Objects.equals( loginDisabled, other.loginDisabled ) &&
+                Objects.equals( profile, other.profile );
 
         }
 

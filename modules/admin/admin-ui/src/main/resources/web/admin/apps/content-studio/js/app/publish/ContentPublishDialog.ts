@@ -88,6 +88,11 @@ export class ContentPublishDialog extends DependantItemsDialog {
         super.open();
     }
 
+    close() {
+        super.close()
+        this.childrenCheckbox.setChecked(false);
+    }
+
     private getStashedItems(): ContentSummaryAndCompareStatus[] {
         return this.stash[String(this.childrenCheckbox.isChecked())];
     }

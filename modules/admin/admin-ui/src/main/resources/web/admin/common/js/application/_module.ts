@@ -27,3 +27,4 @@
 ///<reference path='ListMarketApplicationsRequest.ts' />
 ///<reference path='UninstallApplicationRequest.ts' />
 ///<reference path='ListAuthApplicationsRequest.ts' />
+///<reference path='AuthApplicationRequest.ts' />

@@ -18,21 +18,21 @@ import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
 import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
-public abstract class AbstractExecutor
+abstract class AbstractExecutor
 {
     static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
 
-    protected final String storeTimeout = "10s";
+    final String storeTimeout = "10s";
 
-    protected final String deleteTimeout = "5s";
+    final String deleteTimeout = "5s";
 
-    protected final Client client;
+    final Client client;
 
     final String searchPreference = "_local";
 
     private final String searchTimeout = "30s";
 
-    protected AbstractExecutor( final Builder builder )
+    AbstractExecutor( final Builder builder )
     {
         client = builder.client;
     }
@@ -102,10 +102,7 @@ public abstract class AbstractExecutor
         {
             searchType = SearchType.DEFAULT;
 
-            for ( final SortBuilder sortBuilder : sortBuilders )
-            {
-                searchRequestBuilder.addSort( sortBuilder );
-            }
+            sortBuilders.forEach( searchRequestBuilder::addSort );
         }
 
         searchRequestBuilder.
@@ -125,7 +122,7 @@ public abstract class AbstractExecutor
     {
         private final Client client;
 
-        protected Builder( final Client client )
+        Builder( final Client client )
         {
             this.client = client;
         }

@@ -24,6 +24,11 @@ abstract class AbstractQueryFieldNameResolver
 
         final ValueExpr firstValue = compareExpr.getFirstValue();
 
+        if ( firstValue == null )
+        {
+            return "";
+        }
+
         return createValueTypeAwareFieldName( baseFieldName, firstValue.getValue() );
     }
 
