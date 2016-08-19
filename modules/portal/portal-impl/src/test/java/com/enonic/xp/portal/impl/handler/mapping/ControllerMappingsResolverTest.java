@@ -89,7 +89,113 @@ public class ControllerMappingsResolverTest
 
         assertNotNull( mapping );
         assertEquals( "/site/controllers/controller2.js", mapping.getController().getPath() );
+    }
 
+    @Test
+    public void testResolveWithParameters()
+        throws Exception
+    {
+        final Content content = newContent();
+        final Site site = newSite();
+
+        this.request.setContentPath( ContentPath.from( content.getPath(), "api" ) );
+        this.request.getParams().put( "key", "123" );
+        this.request.getParams().put( "category", "foo" );
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
+        final SiteDescriptor siteDescriptor = newSiteDescriptor3();
+        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
+        final boolean mappingCanHandleRequest = resolver.canHandle( request );
+        final boolean mappingCanHandleRequest2 = resolver.canHandle( request );
+
+        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+
+        assertTrue( mappingCanHandleRequest );
+        assertTrue( mappingCanHandleRequest2 );
+        assertNotNull( mapping );
+        assertEquals( "/other/controller1.js", mapping.getController().getPath() );
+    }
+
+    @Test
+    public void testResolvePatternWithParametersNoMatch()
+        throws Exception
+    {
+        final Content content = newContent();
+        final Site site = newSite();
+
+        this.request.setContentPath( ContentPath.from( content.getPath(), "api" ) );
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
+        final SiteDescriptor siteDescriptor = newSiteDescriptor3();
+        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
+        final boolean mappingCanHandleRequest = resolver.canHandle( request );
+
+        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+
+        assertFalse( mappingCanHandleRequest );
+        assertNull( mapping );
+    }
+
+
+    @Test
+    public void testResolveUrlEditModeWithContentId()
+        throws Exception
+    {
+        final Content content = newContent();
+        final Site site = newSite();
+
+        this.request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+        this.request.setMode( RenderMode.EDIT );
+        Mockito.when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( content );
+        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
+        final SiteDescriptor siteDescriptor = newSiteDescriptor();
+        Mockito.when( this.siteService.getDescriptor( getAppKey() ) ).thenReturn( siteDescriptor );
+        final SiteDescriptor siteDescriptor2 = newSiteDescriptor2();
+        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor2 );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
+        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+
+        assertNotNull( mapping );
+        assertEquals( "/site/controllers/controller2.js", mapping.getController().getPath() );
+    }
+
+    @Test
+    public void testResolveUrlAdminMode()
+        throws Exception
+    {
+        final Content content = newContent();
+        this.request.setContentPath( content.getPath() );
+        this.request.setMode( RenderMode.ADMIN );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
+        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+
+        assertNull( mapping );
+    }
+
+    @Test
+    public void testResolveContentNotInSite()
+        throws Exception
+    {
+        final Content content = newContent();
+
+        this.request.setContentPath( content.getPath() );
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( null );
+        final SiteDescriptor siteDescriptor = newSiteDescriptor();
+        Mockito.when( this.siteService.getDescriptor( getAppKey() ) ).thenReturn( siteDescriptor );
+        final SiteDescriptor siteDescriptor2 = newSiteDescriptor2();
+        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor2 );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
+        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+
+        assertNull( mapping );
     }
 
     private SiteDescriptor newSiteDescriptor()
@@ -134,6 +240,19 @@ public class ControllerMappingsResolverTest
             order( 5 ).
             build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1, mapping2 );
+        return SiteDescriptor.create().
+            mappingDescriptors( mappings ).
+            build();
+    }
+
+    private SiteDescriptor newSiteDescriptor3()
+    {
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) ).
+            pattern( "/.*api.*\\?category=.*&key=\\d+" ).
+            order( 10 ).
+            build();
+        final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
         return SiteDescriptor.create().
             mappingDescriptors( mappings ).
             build();

@@ -38,6 +38,8 @@ public final class CreateContentHandler
 
     private boolean requireValid = true;
 
+    private boolean refresh = true;
+
     private Map<String, Object> data;
 
     private Map<String, Object> x;
@@ -78,6 +80,7 @@ public final class CreateContentHandler
             contentData( createPropertyTree( data, contentTypeName ) ).
             extraDatas( createExtraDatas( x ) ).
             language( language != null ? Locale.forLanguageTag( language ) : null ).
+            refresh( this.refresh ).
             build();
     }
 
@@ -200,6 +203,14 @@ public final class CreateContentHandler
         if ( requireValid != null )
         {
             this.requireValid = requireValid;
+        }
+    }
+
+    public void setRefresh( final Boolean refresh )
+    {
+        if ( refresh != null )
+        {
+            this.refresh = refresh;
         }
     }
 

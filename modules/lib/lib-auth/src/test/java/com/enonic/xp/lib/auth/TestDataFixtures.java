@@ -31,11 +31,26 @@ public class TestDataFixtures
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
             login( "user1" ).
+            profile( getProfile() ).
             build();
+    }
+
+    private static PropertyTree getProfile()
+    {
+        final PropertySet appPropertySet = new PropertySet();
+        appPropertySet.setString( "subString", "subStringValue" );
+        appPropertySet.setLong( "subLong", 123l );
+
+        final PropertyTree profile = new PropertyTree();
+        profile.setSet( "myApp", appPropertySet );
+        profile.setString( "string", "stringValue" );
+
+        return profile;
     }
 
     public static User getTestUser2()
     {
+
         return User.create().
             key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user2" ) ).
             displayName( "User 2" ).

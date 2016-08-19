@@ -115,7 +115,9 @@ function startApplication() {
             .setContentToPublish(event.getModels())
             .open();
 
-        contentPublishDialog.setIncludeChildItems(event.isIncludeChildItems(), true);
+        if (event.isIncludeChildItems()) {
+            contentPublishDialog.setIncludeChildItems(event.isIncludeChildItems());
+        }
     });
 
     var contentUnpublishDialog = new ContentUnpublishDialog();

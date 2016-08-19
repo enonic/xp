@@ -4,6 +4,8 @@ import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.data.PropertyTree;
+
 @Beta
 public final class EditableUser
 {
@@ -23,6 +25,8 @@ public final class EditableUser
 
     public Instant modifiedTime;
 
+    public PropertyTree profile;
+
     public EditableUser( final User source )
     {
         this.source = source;
@@ -33,6 +37,7 @@ public final class EditableUser
         this.loginDisabled = source.isDisabled();
         this.key = source.getKey();
         this.modifiedTime = source.getModifiedTime();
+        this.profile = source.getProfile().copy();
     }
 
     public User build()
@@ -44,6 +49,7 @@ public final class EditableUser
             authenticationHash( authenticationHash ).
             key( key ).
             modifiedTime( modifiedTime ).
+            profile( profile ).
             build();
     }
 }

@@ -12,12 +12,19 @@ public final class GetUserHandler
 {
     private Supplier<Context> context;
 
+    private boolean includeProfile;
+
+    public void setIncludeProfile( final boolean includeProfile )
+    {
+        this.includeProfile = includeProfile;
+    }
+
     public PrincipalMapper getUser()
     {
         final AuthenticationInfo authInfo = this.context.get().getAuthInfo();
         if ( authInfo.isAuthenticated() )
         {
-            return new PrincipalMapper( authInfo.getUser() );
+            return new PrincipalMapper( authInfo.getUser(), this.includeProfile );
         }
         else
         {
