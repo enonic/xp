@@ -12,8 +12,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -51,7 +51,7 @@ public class PublishContentHandlerTest
         return builder.build();
     }
 
-    private static PushContentsResult exampleResult()
+    private static PublishContentResult exampleResult()
     {
         Contents published =
             Contents.from( exampleContent( PUB_ID_1, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" ),
@@ -60,9 +60,9 @@ public class PublishContentHandlerTest
         Contents deleted = Contents.from( exampleContent( DEL_ID, "nocontent", "No Content", "/mysite/leave", "myop", "Delete" ) );
         Contents failed = Contents.from( exampleContent( FAIL_ID, "badcontent", "Bad bad Content", "/mysite/fail", "myop", "Publish" ) );
 
-        return PushContentsResult.create().setPushed( published ).
-            setDeleted( deleted ).
-            setFailed( failed ).
+        return PublishContentResult.create().setPushed( published.getIds() ).
+            setDeleted( deleted.getIds() ).
+            setFailed( failed.getIds() ).
             build();
     }
 
@@ -80,7 +80,7 @@ public class PublishContentHandlerTest
             includeDependencies( false ).
             build();
 
-        Mockito.when( this.contentService.push( pushParams ) ).thenReturn( exampleResult() );
+        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
 
         runScript( "/site/lib/xp/examples/content/publish.js" );
     }
@@ -95,7 +95,7 @@ public class PublishContentHandlerTest
             target( Branch.from( "draft" ) ).
             build();
 
-        Mockito.when( this.contentService.push( pushParams ) ).thenReturn( exampleResult() );
+        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
 
         runFunction( "/site/test/PublishContentHandlerTest.js", "publishById" );
     }
@@ -115,7 +115,7 @@ public class PublishContentHandlerTest
             target( Branch.from( "master" ) ).
             build();
 
-        Mockito.when( this.contentService.push( pushParams ) ).thenReturn( exampleResult() );
+        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
 
         runFunction( "/site/test/PublishContentHandlerTest.js", "publishByPath" );
     }
@@ -125,8 +125,8 @@ public class PublishContentHandlerTest
     {
         Contents published =
             Contents.from( exampleContent( PUB_ID_3, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" ) );
-        PushContentsResult exampleResult = PushContentsResult.create().
-            setPushed( published ).
+        PublishContentResult exampleResult = PublishContentResult.create().
+            setPushed( published.getIds() ).
             build();
 
         ContentIds ids = ContentIds.from( PUB_ID_3 );
@@ -138,7 +138,7 @@ public class PublishContentHandlerTest
             includeDependencies( false ).
             build();
 
-        Mockito.when( this.contentService.push( pushParams ) ).thenReturn( exampleResult );
+        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult );
 
         runFunction( "/site/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
     }
