@@ -108,6 +108,10 @@ public final class SecurityServiceImpl
 
     private IndexService indexService;
 
+    private static final String SU_PASSWORD_KEY = "xp.suPassword";
+
+    private String suPassword;
+
     public SecurityServiceImpl()
     {
         this.clock = Clock.systemUTC();
@@ -116,6 +120,9 @@ public final class SecurityServiceImpl
     @Activate
     public void initialize()
     {
+        this.suPassword = Strings.emptyToNull( System.getProperty( SU_PASSWORD_KEY ) );
+        this.suPassword = this.suPassword == null ? null : this.suPassword.trim();
+
         if ( indexService.isMaster() )
         {
             new SecurityInitializer( this, this.nodeService ).initialize();
@@ -328,6 +335,11 @@ public final class SecurityServiceImpl
     {
         addRandomDelay();
 
+        if ( isSuAuthenticationEnabled( token ) )
+        {
+            return authenticateSu( (UsernamePasswordAuthToken) token );
+        }
+
         if ( token.getUserStore() != null )
         {
             return doAuthenticate( token );
@@ -344,6 +356,41 @@ public final class SecurityServiceImpl
                     return authInfo;
                 }
             }
+            return AuthenticationInfo.unAuthenticated();
+        }
+    }
+
+    private boolean isSuAuthenticationEnabled( final AuthenticationToken token )
+    {
+        if ( this.suPassword != null && token instanceof UsernamePasswordAuthToken )
+        {
+            UsernamePasswordAuthToken usernamePasswordAuthToken = (UsernamePasswordAuthToken) token;
+            if ( ( usernamePasswordAuthToken.getUserStore() == null ||
+                UserStoreKey.system().equals( usernamePasswordAuthToken.getUserStore() ) ) &&
+                SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private AuthenticationInfo authenticateSu( final UsernamePasswordAuthToken token )
+    {
+        if ( this.suPassword.equals( token.getPassword() ) )
+        {
+            final User admin = User.create().
+                key( SecurityInitializer.SUPER_USER ).
+                login( "su" ).
+                displayName( "Super User" ).
+                build();
+            return AuthenticationInfo.create().
+                principals( RoleKeys.ADMIN, RoleKeys.ADMIN_LOGIN ).
+                user( admin ).
+                build();
+        }
+        else
+        {
             return AuthenticationInfo.unAuthenticated();
         }
     }
