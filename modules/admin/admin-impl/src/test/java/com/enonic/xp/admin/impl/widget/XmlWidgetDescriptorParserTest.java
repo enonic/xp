@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
@@ -61,5 +62,11 @@ public class XmlWidgetDescriptorParserTest
         assertEquals( 2, interfaces.size() );
         assertTrue( interfaces.get( 0 ).startsWith( "com.enonic.xp.my-interface" ) );
         assertTrue( interfaces.get( 1 ).startsWith( "com.enonic.xp.my-interface" ) );
+
+        final ImmutableMap<String, String> config = result.getConfig();
+        assertNotNull( config );
+        assertEquals( 2, config.size() );
+        assertTrue( config.get( "someValue" ).equals( "value1" ) );
+        assertTrue( config.get( "someBooleanValue" ).equals( "true" ) );
     }
 }

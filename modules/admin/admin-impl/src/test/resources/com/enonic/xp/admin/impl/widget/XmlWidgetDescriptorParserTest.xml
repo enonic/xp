@@ -5,4 +5,8 @@
     <interface>com.enonic.xp.my-interface</interface>
     <interface>com.enonic.xp.my-interface-2</interface>
   </interfaces>
+  <config>
+    <property name="someValue" value="value1"/>
+    <property name="someBooleanValue" value="true"/>
+  </config>
 </widget>
