@@ -409,25 +409,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 thumbnailUploader.onFileUploaded(this.onFileUploaded.bind(this));
             }
 
-            var liveFormPanel = this.getLivePanel();
-            if (liveFormPanel) {
-
-                if (!this.liveEditModel) {
-                    var site = this.getPersistedItem().isSite() ? <Site>this.getPersistedItem() : this.site;
-                    this.siteModel = new SiteModel(site);
-
-                    return this.initLiveEditModel(this.getPersistedItem(), this.siteModel,
-                        this.createFormContext(this.getPersistedItem())).then(
-                        () => {
-                            liveFormPanel.setModel(this.liveEditModel);
-                            liveFormPanel.loadPage();
-
-                            return rendered;
-
-                        });
-                }
-            }
-
             return rendered;
         });
     }
@@ -909,6 +890,38 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         thumbnailUploader.toggleClass("invalid", !content.isValid());
     }
 
+    private initLiveEditor(formContext: ContentFormContext, content: Content): wemQ.Promise<void> {
+
+        var deferred = wemQ.defer();
+
+        this.wizardActions.getShowLiveEditAction().setEnabled(false);
+        this.wizardActions.getPreviewAction().setVisible(false);
+        this.wizardActions.getPreviewAction().setEnabled(false);
+
+        var liveFormPanel = this.getLivePanel();
+        if (liveFormPanel) {
+
+            if (!this.liveEditModel) {
+                var site = content.isSite() ? <Site>content : this.site;
+                this.siteModel = new SiteModel(site);
+                this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
+                    liveFormPanel.setModel(this.liveEditModel);
+                    liveFormPanel.loadPage();
+                    this.setupWizardLiveEdit();
+
+                    deferred.resolve(null);
+                });
+            }
+            else {
+                liveFormPanel.loadPage();
+                deferred.resolve(null);
+            }
+        } else {
+            deferred.resolve(null);
+        }
+        return deferred.promise;
+    }
+
     // Remember that content has been cloned here and it is not the persistedItem any more
     private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
         if (ContentWizardPanel.debug) {
@@ -917,65 +930,60 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.toggleClass("rendered", false);
 
-        this.wizardActions.getShowLiveEditAction().setEnabled(false);
-        this.wizardActions.getPreviewAction().setVisible(false);
-        this.wizardActions.getPreviewAction().setEnabled(false);
+        var formContext = this.createFormContext(content);
 
-        this.setupWizardLiveEdit();
+        return this.initLiveEditor(formContext, content).then(() => {
+            return this.createSteps().then((schemas: Mixin[]) => {
 
-        return this.createSteps().then((schemas: Mixin[]) => {
+                var contentData = content.getContentData();
 
-            var formContext = this.createFormContext(content);
+                contentData.onChanged(this.dataChangedListener);
 
-            var contentData = content.getContentData();
+                var formViewLayoutPromises: wemQ.Promise<void>[] = [];
+                formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
+                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                this.settingsWizardStepForm.layout(content);
+                this.settingsWizardStepForm.getModel().onPropertyChanged(this.dataChangedListener);
 
-            contentData.onChanged(this.dataChangedListener);
-
-            var formViewLayoutPromises: wemQ.Promise<void>[] = [];
-            formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
-            // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
-            this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-            this.settingsWizardStepForm.layout(content);
-            this.settingsWizardStepForm.getModel().onPropertyChanged(this.dataChangedListener);
-
-            if (this.isSecurityWizardStepFormAllowed) {
-                this.securityWizardStepForm.layout(content);
-            }
-
-
-            schemas.forEach((schema: Mixin, index: number) => {
-                var extraData = content.getExtraData(schema.getMixinName());
-                if (!extraData) {
-                    extraData = new ExtraData(schema.getMixinName(), new PropertyTree());
-                    content.getAllExtraData().push(extraData);
-                }
-                var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
-                var metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
-
-                var data = extraData.getData();
-                data.onChanged(this.dataChangedListener);
-
-                formViewLayoutPromises.push(metadataFormView.layout(formContext, data, metadataForm));
-            });
-
-            return wemQ.all(formViewLayoutPromises).spread<void>(() => {
-
-                this.contentWizardStepForm.getFormView().addClass("panel-may-display-validation-errors");
-                if (this.isNew) {
-                    this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
-                } else {
-                    this.displayValidationErrors();
+                if (this.isSecurityWizardStepFormAllowed) {
+                    this.securityWizardStepForm.layout(content);
                 }
 
-                this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+                schemas.forEach((schema: Mixin, index: number) => {
+                    var extraData = content.getExtraData(schema.getMixinName());
+                    if (!extraData) {
+                        extraData = new ExtraData(schema.getMixinName(), new PropertyTree());
+                        content.getAllExtraData().push(extraData);
+                    }
+                    var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
+                    var metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
 
-                if (!this.siteModel && content.isSite()) {
-                    this.siteModel = new SiteModel(<Site>content);
-                }
-                if (this.siteModel) {
-                    this.initSiteModelListeners();
-                }
-                return wemQ(null);
+                    var data = extraData.getData();
+                    data.onChanged(this.dataChangedListener);
+
+                    formViewLayoutPromises.push(metadataFormView.layout(formContext, data, metadataForm));
+                });
+
+                return wemQ.all(formViewLayoutPromises).spread<void>(() => {
+
+                    this.contentWizardStepForm.getFormView().addClass("panel-may-display-validation-errors");
+                    if (this.isNew) {
+                        this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
+                    } else {
+                        this.displayValidationErrors();
+                    }
+
+                    this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+
+                    if (!this.siteModel && content.isSite()) {
+                        this.siteModel = new SiteModel(<Site>content);
+                    }
+                    if (this.siteModel) {
+                        this.initSiteModelListeners();
+                    }
+                    return wemQ(null);
+                });
             });
         });
     }
@@ -1559,7 +1567,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private updatePreviewActionVisibility() {
         this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
 
-        if(this.liveEditModel && this.liveEditModel.getPageModel()) {
+        if (this.liveEditModel && this.liveEditModel.getPageModel()) {
             this.liveEditModel.getPageModel().onPageModeChanged(()=> {
                 this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
             });
