@@ -376,23 +376,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 console.debug("ContentWizardPanel.doRenderOnDataLoaded");
             }
 
-            var liveFormPanel = this.getLivePanel();
-            if (liveFormPanel) {
-
-                if (!this.liveEditModel) {
-                    var site = this.getPersistedItem().isSite() ? <Site>this.getPersistedItem() : this.site;
-                    this.siteModel = new SiteModel(site);
-
-                    this.initLiveEditModel(this.getPersistedItem(), this.siteModel, this.createFormContext(this.getPersistedItem())).then(
-                        () => {
-                            liveFormPanel.setModel(this.liveEditModel);
-                            liveFormPanel.loadPage();
-                            this.updatePreviewActionVisibility();
-
-                        }).done();
-                }
-            }
-
             this.initPublishButtonForMobile();
 
             if (this.contentType.hasContentDisplayNameScript()) {
@@ -424,6 +407,25 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (thumbnailUploader) {
                 thumbnailUploader.setEnabled(!this.contentType.isImage());
                 thumbnailUploader.onFileUploaded(this.onFileUploaded.bind(this));
+            }
+
+            var liveFormPanel = this.getLivePanel();
+            if (liveFormPanel) {
+
+                if (!this.liveEditModel) {
+                    var site = this.getPersistedItem().isSite() ? <Site>this.getPersistedItem() : this.site;
+                    this.siteModel = new SiteModel(site);
+
+                    return this.initLiveEditModel(this.getPersistedItem(), this.siteModel,
+                        this.createFormContext(this.getPersistedItem())).then(
+                        () => {
+                            liveFormPanel.setModel(this.liveEditModel);
+                            liveFormPanel.loadPage();
+
+                            return rendered;
+
+                        });
+                }
             }
 
             return rendered;
@@ -988,10 +990,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions.getShowLiveEditAction().setEnabled(editorEnabled);
         this.wizardActions.getShowSplitEditAction().setEnabled(editorEnabled);
         this.wizardActions.getPreviewAction().setVisible(editorEnabled);
+        this.updatePreviewActionVisibility();
 
         this.getCycleViewModeButton().setVisible(editorEnabled);
 
-        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && isEditorOpened) {
+        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && (editorEnabled && isEditorOpened)) {
             this.wizardActions.getShowSplitEditAction().execute();
         } else if (!!this.getSplitPanel()) {
 
@@ -1548,10 +1551,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isEditorEnabled(): boolean {
 
-        return this.shouldEditorOpenByDefault() ||
+        return ( this.shouldEditorOpenByDefault() || !!this.site) &&
                (!api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES, this.contentType.getContentTypeName()));
     }
-
 
 
     private updatePreviewActionVisibility() {
