@@ -1559,9 +1559,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private updatePreviewActionVisibility() {
         this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
 
-        this.liveEditModel.getPageModel().onPageModeChanged(()=> {
-            this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
-        });
+        if(this.liveEditModel && this.liveEditModel.getPageModel()) {
+            this.liveEditModel.getPageModel().onPageModeChanged(()=> {
+                this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
+            });
+        }
     }
 
 }
