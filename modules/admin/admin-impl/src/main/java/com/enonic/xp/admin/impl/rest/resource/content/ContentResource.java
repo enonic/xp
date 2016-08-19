@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -126,7 +127,7 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentsResult;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
@@ -183,6 +184,8 @@ public final class ContentResource
 {
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
+    public static final int GET_ALL_SIZE_FLAG = -1;
+
     private static final String DEFAULT_FROM_PARAM = "0";
 
     private static final String DEFAULT_SIZE_PARAM = "500";
@@ -196,8 +199,6 @@ public final class ContentResource
     private static final int MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS = 10;
 
     private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
-
-    public static final int GET_ALL_SIZE_FLAG = -1;
 
     private ContentService contentService;
 
@@ -479,7 +480,7 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
 
-        final PushContentsResult result = contentService.push( PushContentParams.create().
+        final PublishContentResult result = contentService.publish( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             excludedContentIds( excludeContentIds ).
@@ -795,8 +796,8 @@ public final class ContentResource
         final List<AccessControlList> contentsPermissions =
             params.getContentIds().getSize() > 0
                 ? contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) ).
-                stream().map( content -> content.getPermissions() ).collect( Collectors.toList() )
-                : Arrays.asList( contentService.getRootPermissions() );
+                stream().map( Content::getPermissions ).collect( Collectors.toList() )
+                : Collections.singletonList( contentService.getRootPermissions() );
 
         final List<String> result = new ArrayList<>();
 
@@ -962,7 +963,7 @@ public final class ContentResource
         }
         else
         {
-            return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
+            return result.getContentIds().stream().map( ContentIdJson::new ).collect( Collectors.toList() );
         }
     }
 

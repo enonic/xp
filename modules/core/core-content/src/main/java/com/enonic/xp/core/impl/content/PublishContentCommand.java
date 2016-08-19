@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Set;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -10,9 +8,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.content.PushContentsResult;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -21,7 +17,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 
-public class PushContentCommand
+public class PublishContentCommand
     extends AbstractContentCommand
 {
     private final ContentIds contentIds;
@@ -32,11 +28,11 @@ public class PushContentCommand
 
     private final boolean resolveSyncWork;
 
-    private final PushContentsResult.Builder resultBuilder;
+    private final PublishContentResult.Builder resultBuilder;
 
     private final boolean includeChildren;
 
-    private PushContentCommand( final Builder builder )
+    private PublishContentCommand( final Builder builder )
     {
         super( builder );
         this.contentIds = builder.contentIds;
@@ -44,7 +40,7 @@ public class PushContentCommand
         this.target = builder.target;
         this.resolveSyncWork = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
-        this.resultBuilder = PushContentsResult.create();
+        this.resultBuilder = PublishContentResult.create();
     }
 
     public static Builder create()
@@ -52,7 +48,7 @@ public class PushContentCommand
         return new Builder();
     }
 
-    PushContentsResult execute()
+    PublishContentResult execute()
     {
         this.nodeService.refresh( RefreshMode.ALL );
 
@@ -143,27 +139,12 @@ public class PushContentCommand
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
 
-        final Contents contents = getContents( pushNodesResult.getSuccessful().getKeys() );
-
-        this.resultBuilder.setPushed( contents );
-    }
-
-    private Contents getContents( final Set<NodeId> successfull )
-    {
-        final ContentIds successful = ContentNodeHelper.toContentIds( NodeIds.from( successfull ) );
-
-        return GetContentByIdsCommand.create( new GetContentByIdsParams( successful ) ).
-            contentTypeService( this.contentTypeService ).
-            eventPublisher( this.eventPublisher ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            build().
-            execute();
+        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
     }
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
-        this.resultBuilder.setDeleted( getContents( nodeIdsToDelete.getSet() ) );
+        this.resultBuilder.setDeleted( ContentNodeHelper.toContentIds( NodeIds.from( nodeIdsToDelete ) ) );
 
         final Context currentContext = ContextAccessor.current();
         deleteNodesInContext( nodeIdsToDelete, currentContext );
@@ -232,10 +213,10 @@ public class PushContentCommand
             Preconditions.checkNotNull( contentIds );
         }
 
-        public PushContentCommand build()
+        public PublishContentCommand build()
         {
             validate();
-            return new PushContentCommand( this );
+            return new PublishContentCommand( this );
         }
 
     }
