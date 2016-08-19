@@ -3,21 +3,28 @@ package com.enonic.xp.core.impl.security;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
 
 import com.enonic.xp.context.Context;
@@ -92,7 +99,7 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static com.enonic.xp.core.impl.security.PrincipalKeyNodeTranslator.toNodeId;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.security")
 public final class SecurityServiceImpl
     implements SecurityService
 {
@@ -108,18 +115,22 @@ public final class SecurityServiceImpl
 
     private IndexService indexService;
 
+    private SecurityConfig securityConfig;
+
     public SecurityServiceImpl()
     {
         this.clock = Clock.systemUTC();
     }
 
     @Activate
-    public void initialize()
+    public void initialize( final SecurityConfig config )
     {
         if ( indexService.isMaster() )
         {
             new SecurityInitializer( this, this.nodeService ).initialize();
         }
+
+        this.securityConfig = config;
     }
 
     @Override
@@ -401,6 +412,12 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
     {
+        if ( this.isAlternateSUPassword( token ) )
+        {
+            final User su = this.createSuperUser( token );
+            return this.createSUAuthInfo( su );
+        }
+
         final User user = findByUsername( token.getUserStore(), token.getUsername() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
@@ -443,6 +460,63 @@ public final class SecurityServiceImpl
         final PrincipalKeys principals = resolveMemberships( user.getKey() );
         return AuthenticationInfo.create().principals( principals ).
             principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
+            user( user ).build();
+    }
+
+    private boolean isAlternateSUPassword( final UsernamePasswordAuthToken token )
+    {
+        if ( token.getUsername().equals( this.securityConfig.suUsername() ) && StringUtils.isNotEmpty( this.securityConfig.suPassword() ) )
+        {
+            String password, formattedPassword;
+
+            final Matcher matcher = Pattern.compile( this.securityConfig.suPasswordFormat() ).matcher( this.securityConfig.suPassword() );
+            if ( matcher.find() )
+            {
+                password = matcher.group( 2 );
+
+                final String hashType = matcher.group( 1 );
+                HashFunction hashedFunction;
+                switch ( hashType )
+                {
+                    case "SHA1":
+                        hashedFunction = Hashing.sha1();
+                        break;
+                    case "SHA2":
+                        hashedFunction = Hashing.sha256();
+                        break;
+                    case "MD5":
+                        hashedFunction = Hashing.md5();
+                        break;
+                    default:
+                        throw new IllegalArgumentException( "Incorrect type of encryption: " + hashType );
+                }
+                formattedPassword =
+                    Base64.getEncoder().encodeToString( hashedFunction.hashString( token.getPassword(), Charsets.UTF_8 ).asBytes() );
+            }
+            else
+            {
+                formattedPassword = token.getPassword();
+                password = this.securityConfig.suPassword();
+            }
+
+            return password.equals( formattedPassword );
+        }
+        return false;
+    }
+
+    private User createSuperUser( final UsernamePasswordAuthToken token )
+    {
+        return User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), token.getUsername() ) ).
+            authenticationHash( this.passwordEncoder.encodePassword( token.getPassword() ) ).
+            displayName( "Super User" ).
+            login( token.getUsername() ).
+            build();
+    }
+
+    private AuthenticationInfo createSUAuthInfo( final User user )
+    {
+        return AuthenticationInfo.create().
+            principals( RoleKeys.ADMIN, RoleKeys.ADMIN_LOGIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
             user( user ).build();
     }
 
