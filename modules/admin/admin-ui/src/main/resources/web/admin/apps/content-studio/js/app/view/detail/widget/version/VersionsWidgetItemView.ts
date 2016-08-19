@@ -14,6 +14,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
 
     constructor() {
         super("version-widget-item-view");
+        this.managePublishEvent();
     }
 
     public layout(): wemQ.Promise<any> {
@@ -35,7 +36,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
         });
     }
 
-    public setItem(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
         if (VersionsWidgetItemView.debug) {
             console.debug('VersionsWidgetItemView.setItem: ', item);
         }
@@ -45,6 +46,25 @@ export class VersionsWidgetItemView extends WidgetItemView {
             return this.reloadActivePanel();
         }
         return wemQ<any>(null);
+    }
+
+    private managePublishEvent() {
+
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+
+        serverEvents.onContentPublished((contents: ContentSummaryAndCompareStatus[]) => {
+            if (this.getItem()) {
+                // check for item because it can be null after publishing pending for delete item
+                var itemId = this.getItem().getContentId();
+                var isPublished = contents.some((content, index, array) => {
+                    return itemId.equals(content.getContentId());
+                });
+
+                if (isPublished) {
+                    this.versionsWidgetItemView.reloadActivePanel();
+                }
+            }
+        });
     }
 
     public reloadActivePanel(): wemQ.Promise<any> {
