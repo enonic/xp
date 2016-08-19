@@ -47,21 +47,19 @@ module api.content.site.inputtype.siteconfigurator {
             var header = new api.dom.DivEl('header');
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
-                api.app.NamesAndIconViewSize.large)).setMainName(this.application.getDisplayName()).setSubName(
+                api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
                 this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
+            
+            if (this.application.getIconUrl()) {
+                namesAndIconView.setIconUrl(this.application.getIconUrl());
+            }
+
+            if (this.application.getDescription()) {
+                namesAndIconView.setSubName(this.application.getDescription());
+            }
 
             header.appendChild(namesAndIconView);
 
-            if (!this.readOnly) {
-                var removeButton = new api.dom.AEl("remove-button icon-close");
-                removeButton.onClicked((event: MouseEvent) => {
-                    this.notifyRemoveClicked();
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return false;
-                });
-                header.appendChild(removeButton);
-            }
             this.appendChild(header);
 
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
@@ -73,6 +71,17 @@ module api.content.site.inputtype.siteconfigurator {
 
             if (!this.readOnly && this.application.getAuthForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
+            }
+
+            if (!this.readOnly) {
+                var removeButton = new api.dom.AEl("remove-button icon-close");
+                removeButton.onClicked((event: MouseEvent) => {
+                    this.notifyRemoveClicked();
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                });
+                header.appendChild(removeButton);
             }
 
             return wemQ(true);
