@@ -84,6 +84,9 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
     private selectMembership(): void {
         if (!!this.principal && this.groupsLoaded && this.rolesLoaded) {
 
+            this.groups.clearSelection();
+            this.roles.clearSelection();
+
             var groups = this.principal.asUser().getMemberships().filter((el) => {
                 return el.isGroup()
             }).map((el) => {
