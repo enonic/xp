@@ -3,6 +3,10 @@ package com.enonic.xp.repo.impl.index;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
@@ -20,6 +24,7 @@ import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.security.SystemConstants;
 
 import static org.junit.Assert.*;
 
@@ -174,6 +179,101 @@ public class IndexServiceImplTest
 
         assertNull( queryForNode( node.id() ) );
         assertNotNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
+    }
+
+    @Test
+    public void reindex_cms_repo()
+        throws Exception
+    {
+
+        final Context cmsRepoContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            branch( ContentConstants.BRANCH_DRAFT ).
+            build();
+
+        cmsRepoContext.callWith( this::createDefaultRootNode );
+
+        cmsRepoContext.
+            callWith( () -> createNode( CreateNodeParams.create().
+                setNodeId( NodeId.from( "su" ) ).
+                name( "su" ).
+                parent( NodePath.ROOT ).
+                build() ) );
+
+        refresh();
+
+        assertEquals( 2, cmsRepoContext.
+            callWith( this::findAllNodes ).getHits() );
+
+        this.indexService.purgeSearchIndex( new PurgeIndexParams( cmsRepoContext.getRepositoryId() ) );
+
+        assertEquals( 0, cmsRepoContext.
+            callWith( this::findAllNodes ).getHits() );
+
+        this.indexService.reindex( ReindexParams.create().
+            addBranch( cmsRepoContext.getBranch() ).
+            repositoryId( cmsRepoContext.getRepositoryId() ).
+            initialize( true ).
+            build() );
+
+        refresh();
+
+        assertEquals( 2, cmsRepoContext.
+            callWith( this::findAllNodes ).getHits() );
+    }
+
+
+    @Test
+    public void reindex_system_repo()
+        throws Exception
+    {
+
+        final Context systemRepoContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build();
+
+        systemRepoContext.callWith( this::createDefaultRootNode );
+
+        systemRepoContext.
+            callWith( () -> createNode( CreateNodeParams.create().
+                setNodeId( NodeId.from( "su" ) ).
+                name( "su" ).
+                parent( NodePath.ROOT ).
+                build() ) );
+
+        refresh();
+
+        assertEquals( 2, systemRepoContext.
+            callWith( this::findAllNodes ).getHits() );
+
+        this.indexService.purgeSearchIndex( new PurgeIndexParams( systemRepoContext.getRepositoryId() ) );
+
+        assertEquals( 0, systemRepoContext.
+            callWith( this::findAllNodes ).getHits() );
+
+        this.indexService.reindex( ReindexParams.create().
+            addBranch( systemRepoContext.getBranch() ).
+            repositoryId( systemRepoContext.getRepositoryId() ).
+            initialize( true ).
+            build() );
+
+        refresh();
+
+        assertEquals( 2, systemRepoContext.
+            callWith( this::findAllNodes ).getHits() );
+
+    }
+
+    private FindNodesByQueryResult findAllNodes()
+    {
+        return FindNodesByQueryCommand.create().
+            query( NodeQuery.create().build() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            build().
+            execute();
     }
 
     private Node queryForNode( final NodeId nodeId )

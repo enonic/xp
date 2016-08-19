@@ -45,6 +45,7 @@ import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -162,7 +163,8 @@ public abstract class AbstractNodeTest
         this.snapshotService = new ElasticsearchSnapshotService();
         this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
 
-        createContentRepository();
+        createRepository( TEST_REPO );
+        createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
     }
 
@@ -206,12 +208,6 @@ public abstract class AbstractNodeTest
             build().
             execute();
     }
-
-    void createContentRepository()
-    {
-        createRepository( TEST_REPO );
-    }
-
 
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {

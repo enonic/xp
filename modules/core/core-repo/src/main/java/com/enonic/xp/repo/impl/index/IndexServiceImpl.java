@@ -8,7 +8,9 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PurgeIndexParams;
@@ -69,12 +71,15 @@ public class IndexServiceImpl
                 CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
                                     ValueExpr.string( branch.getName() ) );
 
+            final Context reindexContext = ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( params.getRepositoryId() ).
+                branch( branch ).
+                build();
+
             final NodeBranchQueryResult results = this.searchService.query( NodeBranchQuery.create().
                 query( QueryExpr.from( compareExpr ) ).
                 size( SearchService.GET_ALL_SIZE_FLAG ).
-                build(), InternalContext.create( ContextAccessor.current() ).
-                branch( branch ).
-                build() );
+                build(), InternalContext.from( reindexContext ) );
 
             for ( final NodeBranchMetadata nodeBranchMetadata : results )
             {
