@@ -737,7 +737,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 liveFormPanel.setModel(this.liveEditModel);
                 liveFormPanel.skipNextReloadConfirmation(true);
                 liveFormPanel.loadPage(false);
-                this.updatePreviewActionVisibility();
+
+                this.pageModeChangeHandler();
+                if (this.liveEditModel.getPageModel()) {
+                    this.liveEditModel.getPageModel().onPageModeChanged(this.pageModeChangeHandler.bind(this));
+                }
                 return wemQ(null);
             });
 
@@ -909,6 +913,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     liveFormPanel.loadPage();
                     this.setupWizardLiveEdit();
 
+                    this.pageModeChangeHandler();
+                    if (this.liveEditModel.getPageModel()) {
+                        this.liveEditModel.getPageModel().onPageModeChanged(this.pageModeChangeHandler.bind(this));
+                    }
+
                     deferred.resolve(null);
                 });
             }
@@ -998,7 +1007,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions.getShowLiveEditAction().setEnabled(editorEnabled);
         this.wizardActions.getShowSplitEditAction().setEnabled(editorEnabled);
         this.wizardActions.getPreviewAction().setVisible(editorEnabled);
-        this.updatePreviewActionVisibility();
 
         this.getCycleViewModeButton().setVisible(editorEnabled);
 
@@ -1563,15 +1571,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                (!api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES, this.contentType.getContentTypeName()));
     }
 
-
-    private updatePreviewActionVisibility() {
+    private pageModeChangeHandler() {
         this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
 
-        if (this.liveEditModel && this.liveEditModel.getPageModel()) {
-            this.liveEditModel.getPageModel().onPageModeChanged(()=> {
-                this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
-            });
-        }
+        this.getComponentsViewToggler().setVisible(this.isContentRenderable());
+        this.getContextWindowToggler().setVisible(this.isContentRenderable());
     }
 
 }
