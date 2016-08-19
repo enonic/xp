@@ -16,6 +16,7 @@ module api.content.form.inputtype.customselector {
     import NamesAndIconViewer = api.ui.NamesAndIconViewer;
     import JsonRequest = api.rest.JsonRequest;
     import StringHelper = api.util.StringHelper;
+    import UriHelper = api.util.UriHelper;
     import Path = api.rest.Path;
     import JsonResponse = api.rest.JsonResponse;
     import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
@@ -41,9 +42,9 @@ module api.content.form.inputtype.customselector {
 
     export class CustomSelector extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<string> {
 
-        public static debug: boolean = true;
+        public static debug: boolean = false;
 
-        private static portalUrl: string = '/admin/portal/edit/draft{0}/_/service/{1}';
+        private static portalUrl: string = UriHelper.getPortalUri('/edit/draft{0}/_/service/{1}');
 
         private serviceUrl: string;
 
