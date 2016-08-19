@@ -23,11 +23,7 @@ module api.app.view {
             var dataList = new api.dom.UlEl("data-list");
 
             if (header) {
-                var headerElement = new api.dom.LiEl();
-                headerElement.addClass("list-header");
-
-                headerElement.getEl().setInnerHtml(header, false);
-                dataList.appendChild(headerElement);
+                this.addHeader(header, dataList);
             }
 
             datas.forEach((data) => {
@@ -38,6 +34,31 @@ module api.app.view {
             });
 
             this.appendChild(dataList);
+        }
+
+        addDataElements(header:string, datas:api.dom.Element[]) {
+            var dataList = new api.dom.UlEl("data-list");
+
+            if (header) {
+                this.addHeader(header, dataList);
+            }
+
+            datas.forEach((data) => {
+                var dataElement = new api.dom.LiEl();
+                dataElement.appendChild(data);
+                dataList.appendChild(dataElement);
+                this.empty = false;
+            });
+
+            this.appendChild(dataList);
+        }
+
+        private addHeader(header:string, dataList:api.dom.UlEl) {
+            var headerElement = new api.dom.LiEl();
+            headerElement.addClass("list-header");
+
+            headerElement.getEl().setInnerHtml(header, false);
+            dataList.appendChild(headerElement);
         }
 
         isEmpty(): boolean {
