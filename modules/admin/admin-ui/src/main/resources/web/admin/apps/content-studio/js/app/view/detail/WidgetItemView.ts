@@ -50,6 +50,16 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     private stripOffAssets(html: string): string {
-        return html.replace(/(?:<script\b[^>]*>[\s\S]*?<\/script>)|(?:<link\b[^<>]*[\\/]?>)/gm, "");
+        var result = this.stripOffScripts(html);
+        result = (api.BrowserHelper.isFirefox() || api.BrowserHelper.isSafari()) ? result : this.stripOffLinks(result); // leave stylesheet links for FF & Safari due to bug in processing them
+        return result;
+    }
+
+    private stripOffScripts(html: string): string {
+        return html.replace(/(?:<script\b[^>]*>[\s\S]*?<\/script>)/gm, "");
+    }
+
+    private stripOffLinks(html: string): string {
+        return html.replace(/(?:<link\b[^<>]*[\\/]?>)/gm, "");
     }
 }
