@@ -449,7 +449,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private handleSiteConfigApply() {
         var siteConfigApplyHandler = (event: ContentRequiresSaveEvent) => {
             if (this.isCurrentContentId(event.getContentId())) {
-                this.saveChanges();
+                this.getLivePanel().saveAndReloadPage();
             }
         };
 
@@ -651,28 +651,36 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         };
 
         var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true, versionChanged: boolean = false) => {
-            var isCurrent = this.isCurrentContentId(contentId);
 
-            // Find all html areas in form
-            var htmlAreas = this.getHtmlAreasInForm(this.getContentType().getForm());
-            // And check if html area actually contains event.getContentId() that was updated
-            var areasContainId = this.doAreasContainId(htmlAreas, contentId.toString());
-
-            if (isCurrent || areasContainId) {
+            if (this.isCurrentContentId(contentId)) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
+                    let isAlreadyUpdated = content.equals(this.getPersistedItem());
+                    
                     this.setPersistedItem(content);
                     this.updateWizard(content, unchangedOnly);
+
                     if (versionChanged) {
                         this.updateLiveFormOnVersionChange();
-                    } else if (this.isEditorEnabled()) {
+                    } else if (this.isEditorEnabled() && !isAlreadyUpdated) {
                         // also update live form panel for renderable content without asking
                         let liveFormPanel = this.getLivePanel();
                         liveFormPanel.skipNextReloadConfirmation(true);
                         liveFormPanel.loadPage(false);
                     }
+
                     this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
                 });
+            } else if (this.doHtmlAreasContainId(contentId.toString())) {   // Check if there are html areas in form that contain event.getContentId() that was updated
+                new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
+                    this.updateWizard(content, unchangedOnly);
+                    if (this.isEditorEnabled()) {
+                        let liveFormPanel = this.getLivePanel();
+                        liveFormPanel.skipNextReloadConfirmation(true);
+                        liveFormPanel.loadPage(false);
+                    }
+                });
             }
+
         };
 
         var sortedHandler = (data: ContentSummaryAndCompareStatus[]) => {
@@ -754,8 +762,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         }
     }
 
-    private doAreasContainId(areas: string[], id: string): boolean {
-        var data: api.data.PropertyTree = this.getPersistedItem().getContentData();
+    private doHtmlAreasContainId(id: string): boolean {
+        var areas = this.getHtmlAreasInForm(this.getContentType().getForm()),
+            data: api.data.PropertyTree = this.getPersistedItem().getContentData();
 
         return areas.some((area) => {
             var property = data.getProperty(area);
