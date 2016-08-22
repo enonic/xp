@@ -44,3 +44,4 @@
 ///<reference path='GetWidgetsByInterfaceRequest.ts' />
 ///<reference path='ResolveDependenciesRequest.ts' />
 ///<reference path='GetDescendantsOfContentsRequest.ts' />
+///<reference path='GetEffectivePermissionsRequest.ts' />

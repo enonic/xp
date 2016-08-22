@@ -33,5 +33,15 @@ final class XmlWidgetDescriptorParser
                 this.builder.addInterface( anInterface.getValue() );
             }
         }
+
+        final DomElement config = root.getChild( "config" );
+        if ( config != null )
+        {
+            final List<DomElement> properties = config.getChildren( "property" );
+            for ( DomElement property : properties )
+            {
+                this.builder.addProperty( property.getAttribute( "name" ), property.getAttribute( "value" ) );
+            }
+        }
     }
 }

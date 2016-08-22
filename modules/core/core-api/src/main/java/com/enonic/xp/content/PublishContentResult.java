@@ -3,15 +3,15 @@ package com.enonic.xp.content;
 import com.google.common.annotations.Beta;
 
 @Beta
-public class PushContentsResult
+public class PublishContentResult
 {
-    private final Contents pushedContents;
+    private final ContentIds pushedContents;
 
-    private final Contents deletedContents;
+    private final ContentIds deletedContents;
 
-    private final Contents failedContents;
+    private final ContentIds failedContents;
 
-    private PushContentsResult( Builder builder )
+    private PublishContentResult( Builder builder )
     {
         this.pushedContents = builder.pushedContents;
         this.deletedContents = builder.deletedContents;
@@ -23,55 +23,55 @@ public class PushContentsResult
         return new Builder();
     }
 
-    public Contents getPushedContents()
+    public ContentIds getPushedContents()
     {
         return pushedContents;
     }
 
-    public Contents getDeletedContents()
+    public ContentIds getDeletedContents()
     {
         return deletedContents;
     }
 
-    public Contents getFailedContents()
+    public ContentIds getFailedContents()
     {
         return failedContents;
     }
 
     public static final class Builder
     {
-        private Contents pushedContents = Contents.empty();
+        private ContentIds pushedContents = ContentIds.empty();
 
-        private Contents deletedContents = Contents.empty();
+        private ContentIds deletedContents = ContentIds.empty();
 
-        private Contents failedContents = Contents.empty();
+        private ContentIds failedContents = ContentIds.empty();
 
         private Builder()
         {
         }
 
-        public Builder setPushed( final Contents pushedContents )
+        public Builder setPushed( final ContentIds pushedContents )
         {
             this.pushedContents = pushedContents;
             return this;
         }
 
-        public Builder setFailed( final Contents failedContents )
+        public Builder setFailed( final ContentIds failedContents )
         {
             this.failedContents = failedContents;
             return this;
         }
 
-        public Builder setDeleted( final Contents deletedContents )
+        public Builder setDeleted( final ContentIds deletedContents )
         {
             this.deletedContents = deletedContents;
             return this;
         }
 
 
-        public PushContentsResult build()
+        public PublishContentResult build()
         {
-            return new PushContentsResult( this );
+            return new PublishContentResult( this );
         }
     }
 }

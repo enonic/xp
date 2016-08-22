@@ -92,7 +92,9 @@ final class AssetUrlBuilder
         //For each element of the content path, closes the corresponding optional group and encapsulates the previous groups
         for ( int i = 0; i < contentPath.elementCount(); i++ )
         {
-            regexp.append( contentPath.getElement( i ) ).append( "/" ).append( ")?" );
+            final String elementPath = Pattern.quote( contentPath.getElement( i ) );
+            regexp.append( elementPath ).
+                append( "/)?" );
         }
 
         //The content path is located before "/_/asset" in the case of an asset

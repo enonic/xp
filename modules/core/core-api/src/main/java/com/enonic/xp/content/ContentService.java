@@ -32,7 +32,10 @@ public interface ContentService
 
     DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
+    @Deprecated
     PushContentsResult push( PushContentParams params );
+
+    PublishContentResult publish( PushContentParams params );
 
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 

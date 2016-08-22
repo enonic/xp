@@ -1,14 +1,17 @@
 package com.enonic.xp.admin.widget;
 
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.page.DescriptorKey;
 
@@ -21,6 +24,8 @@ public final class WidgetDescriptor
 
     private final ImmutableList<String> interfaces;
 
+    private final ImmutableMap<String, String> config;
+
     private static final String URL_PREFIX = "_/widgets/";
 
     private WidgetDescriptor( final Builder builder )
@@ -29,6 +34,7 @@ public final class WidgetDescriptor
         this.key = builder.key;
         this.displayName = builder.displayName;
         this.interfaces = ImmutableList.copyOf( builder.interfaces );
+        this.config = ImmutableMap.copyOf( builder.config );
     }
 
     public DescriptorKey getKey()
@@ -58,6 +64,11 @@ public final class WidgetDescriptor
         return interfaces;
     }
 
+    public ImmutableMap<String, String> getConfig()
+    {
+        return config;
+    }
+
     @JsonIgnore
     public String getName()
     {
@@ -76,6 +87,8 @@ public final class WidgetDescriptor
         private String displayName;
 
         public List<String> interfaces = new LinkedList<>();
+
+        public Map<String, String> config = new HashMap<>();
 
         private Builder()
         {
@@ -96,6 +109,12 @@ public final class WidgetDescriptor
         public Builder addInterface( final String interfaceName )
         {
             this.interfaces.add( interfaceName );
+            return this;
+        }
+
+        public Builder addProperty( final String key, final String value )
+        {
+            this.config.put( key, value );
             return this;
         }
 

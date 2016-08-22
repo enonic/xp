@@ -22,13 +22,10 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
                     this.nameFormatter).setMinWidth(250).build(),
 
                 new GridColumnBuilder<TreeNode<Application>>().setName("Version").setId("version").setField("version").setCssClass(
-                    "version").setMinWidth(50).setMaxWidth(70).build(),
+                    "version").setMinWidth(50).setMaxWidth(130).build(),
 
                 new GridColumnBuilder<TreeNode<Application>>().setName("State").setId("state").setField("state").setCssClass(
-                    "state").setMinWidth(80).setMaxWidth(100).setFormatter(this.stateFormatter).build(),
-
-                new GridColumnBuilder<TreeNode<Application>>().setName("ModifiedTime").setId("modifiedTime").setField(
-                    "modifiedTime").setCssClass("modified").setMinWidth(150).setMaxWidth(170).setFormatter(DateTimeFormatter.format).build()
+                    "state").setMinWidth(80).setMaxWidth(100).setFormatter(this.stateFormatter).build()
 
             ]).prependClasses("application-grid").setShowContextMenu(new TreeGridContextMenu(new ApplicationBrowseActions(this)))
         );

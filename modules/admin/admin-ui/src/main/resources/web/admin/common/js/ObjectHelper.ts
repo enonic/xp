@@ -117,7 +117,7 @@ module api {
             return true;
         }
 
-        static mapEquals(mapA: {[s:string] : Equitable;}, mapB: {[s:string] : Equitable;}) {
+        static mapEquals(mapA: {[s: string]: Equitable;}, mapB: {[s: string]: Equitable;}) {
 
             if (!mapA && !mapB) {
                 return true;
@@ -278,6 +278,16 @@ module api {
             return aString == bString;
 
         }
+
+        static contains(array: Equitable[], el: Equitable): boolean {
+            if (array && array.length > 0) {
+                return array.some((curEl) => {
+                    return curEl.equals(el);
+                })
+            }
+            return false;
+        }
+
 
         static objectPropertyIterator(object: any, callback: {(name: string, property: any, index?: number): void;}) {
 
