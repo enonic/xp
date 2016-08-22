@@ -1,21 +1,15 @@
 import "../../../../../api.ts";
 import {WidgetItemView} from "../../WidgetItemView";
 
-import CompareStatus = api.content.CompareStatus;
-import ContentSummary = api.content.ContentSummary;
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
-import CompareStatusFormatter = api.content.CompareStatusFormatter;
-import AccessControlList = api.security.acl.AccessControlList;
 import Access = api.ui.security.acl.Access;
-import AccessControlEntry = api.security.acl.AccessControlEntry;
 import AccessControlEntryView = api.ui.security.acl.AccessControlEntryView;
 import UserAccessListView = api.ui.security.acl.UserAccessListView;
 import UserAccessListItemView = api.ui.security.acl.UserAccessListItemView;
 import Permission = api.security.acl.Permission;
-import Principal = api.security.Principal;
-import PrincipalKey = api.security.PrincipalKey;
 import User = api.security.User;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class UserAccessWidgetItemView extends WidgetItemView {
 
@@ -47,14 +41,14 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         this.accessListView = new UserAccessListView();
     }
 
-    public setContentId(contentId: ContentId): wemQ.Promise<any> {
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+        var contentId = item.getContentId();
         if (UserAccessWidgetItemView.debug) {
             console.debug('UserAccessWidgetItemView.setContentId: ', contentId);
         }
         this.contentId = contentId;
         return this.layout();
     }
-
 
     private layoutHeader(content: Content) {
         var entry = content.getPermissions().getEntry(api.security.RoleKeys.EVERYONE);
