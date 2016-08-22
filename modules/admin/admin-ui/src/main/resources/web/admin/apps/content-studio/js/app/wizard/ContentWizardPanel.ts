@@ -393,7 +393,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
-                let isThisValid = event.isValid() && this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
+                let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
                 this.isContentFormValid = isThisValid;
                 var thumbnailUploader = this.getFormIcon();
                 thumbnailUploader.toggleClass("invalid", isThisValid);
