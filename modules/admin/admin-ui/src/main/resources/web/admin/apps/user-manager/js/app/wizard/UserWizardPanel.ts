@@ -178,10 +178,10 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         var viewedPrincipal = this.assembleViewedItem().asUser();
         // Group/User order can be different for viewed and persisted principal
         viewedPrincipal.getMemberships().sort((a, b) => {
-            return a.getKey().getId().localeCompare(b.getKey().getId());
+            return a.getKey().toString().localeCompare(b.getKey().toString());
         });
         persistedPrincipal.getMemberships().sort((a, b) => {
-            return a.getKey().getId().localeCompare(b.getKey().getId());
+            return a.getKey().toString().localeCompare(b.getKey().toString());
         });
 
         // #hack - The newly added members will have different modifiedData

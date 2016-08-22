@@ -63,10 +63,10 @@ export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepFor
     private selectMembers(): void {
         if (!!this.principal) {
             var principalKeys = this.getPrincipalMembers().map((key: PrincipalKey) => {
-                return key.getId();
+                return key.toString();
             });
             var selected = this.principals.getDisplayValues().filter((principal: Principal) => {
-                return principalKeys.indexOf(principal.getKey().getId()) >= 0;
+                return principalKeys.indexOf(principal.getKey().toString()) >= 0;
             });
             selected.forEach((selection) => {
                 this.principals.select(selection);
