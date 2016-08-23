@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -160,7 +160,7 @@ class NodeServiceMock
     }
 
     @Override
-    public PushNodesResult push( final NodeIds ids, final Branch target )
+    public PushNodesResult push( final NodeIds ids, final BranchId target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -269,13 +269,13 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeComparison compare( final NodeId id, final Branch target )
+    public NodeComparison compare( final NodeId id, final BranchId target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
-    public NodeComparisons compare( final NodeIds ids, final Branch target )
+    public NodeComparisons compare( final NodeIds ids, final BranchId target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

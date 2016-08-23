@@ -61,14 +61,14 @@ public class GetContentVersionsForViewResultJson
         final List<String> result = new ArrayList<>();
         activeVersions.getActiveContentVersions().stream().filter(
             activeVersion -> activeVersion.getContentVersion().getId().equals( contentVersion.getId() ) ).
-            forEach( activeVersion -> result.add( activeVersion.getBranch().toString() ) );
+            forEach( activeVersion -> result.add( activeVersion.getBranchId().toString() ) );
         return result;
     }
 
     private ActiveContentVersionEntry getActiveContentVersion( final GetActiveContentVersionsResult activeVersions )
     {
         return activeVersions.getActiveContentVersions().stream().filter(
-            activeVersion -> ContentConstants.BRANCH_DRAFT.equals( activeVersion.getBranch() ) ).findFirst().orElse( null );
+            activeVersion -> ContentConstants.BRANCH_ID_DRAFT.equals( activeVersion.getBranchId() ) ).findFirst().orElse( null );
     }
 
     private ContentVersions filterContentVersions( final FindContentVersionsResult allVersions )

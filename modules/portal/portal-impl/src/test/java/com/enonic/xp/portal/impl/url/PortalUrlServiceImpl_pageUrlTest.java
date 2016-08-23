@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.portal.impl.ContentFixtures;
@@ -85,7 +85,7 @@ public class PortalUrlServiceImpl_pageUrlTest
     {
         final Content content = ContentFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), Branch.from( "draft" ) ) );
+            new ContentNotFoundException( content.getId(), BranchId.from( "draft" ) ) );
 
         final PageUrlParams params = new PageUrlParams().
             portalRequest( this.portalRequest ).

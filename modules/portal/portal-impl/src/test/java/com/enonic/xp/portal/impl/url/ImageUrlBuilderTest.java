@@ -8,7 +8,7 @@ import com.google.common.collect.HashMultimap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
@@ -32,7 +32,7 @@ public class ImageUrlBuilderTest
     public void init()
     {
         final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setBranch( Branch.from( "draft" ) );
+        portalRequest.setBranchId( BranchId.from( "draft" ) );
         portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         portalRequest.setBaseUri( "/portal" );
         portalRequest.setContentPath( ContentPath.from( "context/path" ) );

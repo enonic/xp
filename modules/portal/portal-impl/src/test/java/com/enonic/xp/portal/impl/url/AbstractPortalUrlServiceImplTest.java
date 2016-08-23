@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
@@ -33,7 +33,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         Mockito.when( application.getModifiedTime() ).thenReturn( Instant.MAX );
 
         this.portalRequest = new PortalRequest();
-        this.portalRequest.setBranch( Branch.from( "draft" ) );
+        this.portalRequest.setBranchId( BranchId.from( "draft" ) );
         this.portalRequest.setApplicationKey( applicationKey );
         this.portalRequest.setBaseUri( "/portal" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );

@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -14,7 +14,7 @@ public interface Context
 {
     RepositoryId getRepositoryId();
 
-    Branch getBranch();
+    BranchId getBranch();
 
     AuthenticationInfo getAuthInfo();
 

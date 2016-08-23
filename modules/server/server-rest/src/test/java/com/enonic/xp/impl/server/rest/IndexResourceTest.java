@@ -8,8 +8,8 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
@@ -30,7 +30,7 @@ public class IndexResourceTest
     {
         final ReindexResult reindexResult = ReindexResult.create().
             repositoryId( RepositoryId.from( "repoId" ) ).
-            branches( Branches.from( Branch.from( "branch1" ) ) ).
+            branches( BranchIds.from( BranchId.from( "branch1" ) ) ).
             duration( Duration.ofMillis( 41416 ) ).
             startTime( Instant.ofEpochMilli( 1438866915875L ) ).
             endTime( Instant.ofEpochMilli( 1438866957291L ) ).

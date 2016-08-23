@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
@@ -163,9 +163,9 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         final Content content = ContentFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenThrow(
-            new ContentNotFoundException( content.getPath(), Branch.from( "draft" ) ) );
+            new ContentNotFoundException( content.getPath(), BranchId.from( "draft" ) ) );
         Mockito.when( this.contentService.getById( content.getId() ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), Branch.from( "draft" ) ) );
+            new ContentNotFoundException( content.getId(), BranchId.from( "draft" ) ) );
         return content;
     }
 }

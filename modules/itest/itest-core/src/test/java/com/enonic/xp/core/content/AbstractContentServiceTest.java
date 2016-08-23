@@ -23,7 +23,7 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -90,12 +90,12 @@ public class AbstractContentServiceTest
         user( TEST_DEFAULT_USER ).
         build();
 
-    protected static final Branch WS_DEFAULT = Branch.create().
-        name( "draft" ).
+    protected static final BranchId WS_DEFAULT = BranchId.create().
+        value( "draft" ).
         build();
 
-    protected static final Branch WS_OTHER = Branch.create().
-        name( "master" ).
+    protected static final BranchId WS_OTHER = BranchId.create().
+        value( "master" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().

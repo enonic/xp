@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
@@ -34,7 +34,7 @@ import com.enonic.xp.repo.impl.search.SearchService;
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
 {
-    private final Branch target;
+    private final BranchId target;
 
     private final boolean includeChildren;
 
@@ -295,7 +295,7 @@ public class ResolveSyncWorkCommand
 
         private NodeIds excludedIds = NodeIds.empty();
 
-        private Branch target;
+        private BranchId target;
 
         private boolean includeChildren = true;
 
@@ -320,7 +320,7 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
-        public Builder target( final Branch target )
+        public Builder target( final BranchId target )
         {
             this.target = target;
             return this;

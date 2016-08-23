@@ -572,7 +572,7 @@ public class ContentResourceTest
         Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
-            thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.BRANCH_DRAFT ) );
+            thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.BRANCH_ID_DRAFT ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
@@ -659,7 +659,7 @@ public class ContentResourceTest
     public void update_content_failure()
         throws Exception
     {
-        Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
+        Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_ID_DRAFT );
 
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
@@ -736,7 +736,7 @@ public class ContentResourceTest
         throws Exception
     {
 
-        final Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
+        final Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_ID_DRAFT );
 
         Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
             thenThrow( e );

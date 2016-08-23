@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 
 @Beta
 public class PushContentParams
@@ -13,7 +13,7 @@ public class PushContentParams
 
     private final ContentIds excludedContentIds;
 
-    private final Branch target;
+    private final BranchId target;
 
     private final boolean includeChildren;
 
@@ -43,7 +43,7 @@ public class PushContentParams
         return excludedContentIds;
     }
 
-    public Branch getTarget()
+    public BranchId getTarget()
     {
         return target;
     }
@@ -89,7 +89,7 @@ public class PushContentParams
 
         private ContentIds excludedContentIds;
 
-        private Branch target;
+        private BranchId target;
 
         private boolean includeChildren = true;
 
@@ -111,7 +111,7 @@ public class PushContentParams
             return this;
         }
 
-        public Builder target( Branch target )
+        public Builder target( BranchId target )
         {
             this.target = target;
             return this;

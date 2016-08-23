@@ -67,6 +67,6 @@ public final class DeleteContentHandler
 
     private boolean isMasterBranch()
     {
-        return ContextAccessor.current().getBranch().equals( ContentConstants.BRANCH_MASTER );
+        return ContextAccessor.current().getBranch().equals( ContentConstants.BRANCH_ID_MASTER );
     }
 }

@@ -24,7 +24,7 @@ public final class ContextFilter
         throws Exception
     {
         final Context context = ContextBuilder.create().build();
-        context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
+        context.getLocalScope().setAttribute( ContentConstants.BRANCH_ID_DRAFT );
         context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
 
         final HttpSession session = req.getSession( true );

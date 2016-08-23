@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
@@ -16,14 +16,14 @@ import com.enonic.xp.node.RefreshMode;
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand
 {
-    private final Branches branches;
+    private final BranchIds branchIds;
 
     private final ContentId contentId;
 
     private GetActiveContentVersionsCommand( final Builder builder )
     {
         super( builder );
-        branches = builder.branches;
+        branchIds = builder.branchIds;
         contentId = builder.contentId;
     }
 
@@ -40,18 +40,18 @@ public class GetActiveContentVersionsCommand
 
         final GetActiveNodeVersionsResult activeNodeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
             nodeId( nodeId ).
-            branches( this.branches ).
+            branches( this.branchIds ).
             build() );
 
         final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
         final GetActiveContentVersionsResult.Builder builder = GetActiveContentVersionsResult.create();
 
-        final ImmutableMap<Branch, NodeVersionMetadata> nodeVersionsMap = activeNodeVersions.getNodeVersions();
-        for ( final Branch branch : nodeVersionsMap.keySet() )
+        final ImmutableMap<BranchId, NodeVersionMetadata> nodeVersionsMap = activeNodeVersions.getNodeVersions();
+        for ( final BranchId branchId : nodeVersionsMap.keySet() )
         {
-            final NodeVersionMetadata nodeVersionMetadata = nodeVersionsMap.get( branch );
-            builder.add( ActiveContentVersionEntry.from( branch, contentVersionFactory.create( nodeVersionMetadata ) ) );
+            final NodeVersionMetadata nodeVersionMetadata = nodeVersionsMap.get( branchId );
+            builder.add( ActiveContentVersionEntry.from( branchId, contentVersionFactory.create( nodeVersionMetadata ) ) );
         }
 
         return builder.build();
@@ -60,7 +60,7 @@ public class GetActiveContentVersionsCommand
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private Branches branches;
+        private BranchIds branchIds;
 
         private ContentId contentId;
 
@@ -68,9 +68,9 @@ public class GetActiveContentVersionsCommand
         {
         }
 
-        public Builder branches( final Branches branches )
+        public Builder branches( final BranchIds branchIds )
         {
-            this.branches = branches;
+            this.branchIds = branchIds;
             return this;
         }
 

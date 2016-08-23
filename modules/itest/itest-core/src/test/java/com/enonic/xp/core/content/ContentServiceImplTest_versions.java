@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
@@ -96,7 +96,7 @@ public class ContentServiceImplTest_versions
         final GetActiveContentVersionsResult activeVersions =
             this.contentService.getActiveVersions( GetActiveContentVersionsParams.create().
                 contentId( content.getId() ).
-                branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
+                branches( BranchIds.from( WS_DEFAULT, WS_OTHER ) ).
                 build() );
 
         final ImmutableSortedSet<ActiveContentVersionEntry> activeContentVersions = activeVersions.getActiveContentVersions();

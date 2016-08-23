@@ -1,84 +1,56 @@
 package com.enonic.xp.branch;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-
-import com.enonic.xp.util.CharacterChecker;
 
 @Beta
-public final class Branch
+public class Branch
 {
-    private final String name;
+    private final BranchId branchId;
+
+    private final boolean master;
+
+    private final BranchId masterBranchId;
 
     private Branch( final Builder builder )
     {
-        this.name = CharacterChecker.check( builder.name, "Not a valid name for Branch [" + builder.name + "]" );
+        masterBranchId = builder.masterBranchId;
+        master = builder.master;
+        branchId = builder.branchId;
     }
-
-    public static Branch from( final String name )
-    {
-        return Branch.create().
-            name( name ).
-            build();
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
 
     public static Builder create()
     {
         return new Builder();
     }
 
-    @Override
-    public String toString()
-    {
-        return name;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final Branch branch = (Branch) o;
-        return name.equals( branch.name );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return name.hashCode();
-    }
-
     public static final class Builder
     {
-        private String name;
+        private BranchId masterBranchId;
+
+        private boolean master;
+
+        private BranchId branchId;
 
         private Builder()
         {
         }
 
-        public Builder name( String name )
+        public Builder masterBranchId( final BranchId val )
         {
-            this.name = name;
+            masterBranchId = val;
             return this;
         }
 
-        private void validate()
+        public Builder master( final boolean val )
         {
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( this.name ) );
+            master = val;
+            return this;
+        }
+
+        public Builder branchId( final BranchId val )
+        {
+            branchId = val;
+            return this;
         }
 
         public Branch build()
@@ -87,5 +59,3 @@ public final class Branch
         }
     }
 }
-
-

@@ -3,7 +3,7 @@ package com.enonic.xp.node;
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.util.BinaryReference;
 
 @Beta
@@ -15,7 +15,7 @@ public interface NodeService
 
     Node rename( RenameNodeParams params );
 
-    PushNodesResult push( NodeIds ids, Branch target );
+    PushNodesResult push( NodeIds ids, BranchId target );
 
     NodeIds deleteById( NodeId id );
 
@@ -39,9 +39,9 @@ public interface NodeService
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
-    NodeComparison compare( NodeId id, Branch target );
+    NodeComparison compare( NodeId id, BranchId target );
 
-    NodeComparisons compare( NodeIds ids, Branch target );
+    NodeComparisons compare( NodeIds ids, BranchId target );
 
     NodeVersionQueryResult findVersions( GetNodeVersionsParams params );
 

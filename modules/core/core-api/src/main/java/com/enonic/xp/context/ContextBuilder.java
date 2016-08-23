@@ -6,7 +6,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -34,10 +34,10 @@ public final class ContextBuilder
 
     public ContextBuilder branch( final String value )
     {
-        return branch( Branch.from( value ) );
+        return branch( BranchId.from( value ) );
     }
 
-    public ContextBuilder branch( final Branch value )
+    public ContextBuilder branch( final BranchId value )
     {
         return attribute( value );
     }

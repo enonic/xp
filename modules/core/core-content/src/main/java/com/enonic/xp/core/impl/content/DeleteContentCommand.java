@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
@@ -163,7 +163,7 @@ final class DeleteContentCommand
         final Context currentContext = ContextAccessor.current();
         final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, currentContext );
         final NodeIds masterNodes = deleteNodeInContext( nodeToDelete, ContextBuilder.from( currentContext ).
-            branch( ContentConstants.BRANCH_MASTER ).
+            branch( ContentConstants.BRANCH_ID_MASTER ).
             build() );
         return masterNodes != null ? masterNodes : draftNodes;
     }
@@ -181,16 +181,16 @@ final class DeleteContentCommand
     private CompareStatus getCompareStatus( final NodeId nodeToDelete )
     {
         final Context context = ContextAccessor.current();
-        final Branch currentBranch = context.getBranch();
+        final BranchId currentBranchId = context.getBranch();
 
         final NodeComparison compare;
-        if ( currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
+        if ( currentBranchId.equals( ContentConstants.BRANCH_ID_DRAFT ) )
         {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_MASTER );
+            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_ID_MASTER );
         }
         else
         {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_DRAFT );
+            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_ID_DRAFT );
         }
         return compare.getCompareStatus();
     }

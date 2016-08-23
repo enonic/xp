@@ -14,7 +14,7 @@ public final class ContextAccessor
     protected Context initialValue()
     {
         final Context context = ContextBuilder.create().build();
-        context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
+        context.getLocalScope().setAttribute( ContentConstants.BRANCH_ID_DRAFT );
         context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
         return context;
     }

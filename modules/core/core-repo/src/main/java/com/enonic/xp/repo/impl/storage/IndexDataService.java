@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -21,5 +21,5 @@ public interface IndexDataService
 
     void store( final Node node, final InternalContext context );
 
-    void push( final NodeIds nodeIds, final Branch targetBranch, final RepositoryId targetRepo, final InternalContext context );
+    void push( final NodeIds nodeIds, final BranchId targetBranchId, final RepositoryId targetRepo, final InternalContext context );
 }

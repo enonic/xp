@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -124,7 +124,7 @@ public class ContextImplTest
         final ContextImpl context = createContext();
         assertNull( context.getBranch() );
 
-        final Branch value = Branch.from( "branch" );
+        final BranchId value = BranchId.from( "branch" );
         context.getLocalScope().setAttribute( value );
         assertSame( value, context.getBranch() );
     }

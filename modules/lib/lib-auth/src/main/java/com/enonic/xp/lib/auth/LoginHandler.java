@@ -169,7 +169,7 @@ public final class LoginHandler
         return ContextBuilder.from( this.context.get() ).
             authInfo( authInfo ).
             repositoryId( SecurityConstants.SECURITY_REPO.getId() ).
-            branch( SecurityConstants.BRANCH_SECURITY ).build().
+            branch( SecurityConstants.BRANCH_ID_SECURITY ).build().
             callWith( runnable );
     }
 

@@ -40,19 +40,19 @@ public class ContentServiceImplTest_unpublish
             build() );
 
         this.contentService.push( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
+            target( ContentConstants.BRANCH_ID_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
         final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_MASTER ).
+            branch( ContentConstants.BRANCH_ID_MASTER ).
             build();
 
         assertTrue( masterContext.callWith( () -> contentService.contentExists( content.getId() ) ) );
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
+            unpublishBranch( ContentConstants.BRANCH_ID_MASTER ).
             build() );
 
         assertNotNull( contentService.contentExists( content.getId() ) );
@@ -79,13 +79,13 @@ public class ContentServiceImplTest_unpublish
             build() );
 
         this.contentService.push( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
+            target( ContentConstants.BRANCH_ID_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
             includeChildren( true ).
             build() );
 
         final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_MASTER ).
+            branch( ContentConstants.BRANCH_ID_MASTER ).
             build();
 
         assertTrue( masterContext.callWith( () -> contentService.contentExists( content.getId() ) ) );
@@ -93,7 +93,7 @@ public class ContentServiceImplTest_unpublish
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
+            unpublishBranch( ContentConstants.BRANCH_ID_MASTER ).
             build() );
 
         assertNotNull( contentService.contentExists( content.getId() ) );

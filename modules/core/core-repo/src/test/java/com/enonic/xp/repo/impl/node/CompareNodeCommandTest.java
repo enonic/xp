@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import org.junit.Test;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.CreateNodeParams;
@@ -182,12 +182,12 @@ public class CompareNodeCommandTest
     }
 
 
-    private NodeComparison doCompare( final Branch branch, final Node createdNode )
+    private NodeComparison doCompare( final BranchId branchId, final Node createdNode )
     {
         return CompareNodeCommand.create().
             storageService( this.storageService ).
             nodeId( createdNode.id() ).
-            target( branch ).
+            target( branchId ).
             build().
             execute();
     }
@@ -209,11 +209,11 @@ public class CompareNodeCommandTest
             execute();
     }
 
-    private PushNodesResult doPushNode( final Branch branch, final Node createdNode )
+    private PushNodesResult doPushNode( final BranchId branchId, final Node createdNode )
     {
         return PushNodesCommand.create().
             ids( NodeIds.from( createdNode.id() ) ).
-            target( branch ).
+            target( branchId ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

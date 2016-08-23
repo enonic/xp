@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.mockito.Mockito;
 
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -70,12 +70,12 @@ public abstract class AbstractNodeTest
         user( TEST_DEFAULT_USER ).
         build();
 
-    protected static final Branch WS_DEFAULT = Branch.create().
-        name( "draft" ).
+    protected static final BranchId WS_DEFAULT = BranchId.create().
+        value( "draft" ).
         build();
 
-    protected static final Branch WS_OTHER = Branch.create().
-        name( "master" ).
+    protected static final BranchId WS_OTHER = BranchId.create().
+        value( "master" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
@@ -296,12 +296,12 @@ public abstract class AbstractNodeTest
 
     protected void printContentRepoIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getValue() );
     }
 
-    protected void printContentRepoIndex( final RepositoryId repositoryId, final Branch branch )
+    protected void printContentRepoIndex( final RepositoryId repositoryId, final BranchId branchId )
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getName() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branchId.getValue() );
     }
 
     protected void printBranchIndex()
@@ -314,17 +314,17 @@ public abstract class AbstractNodeTest
         printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
-    protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
+    protected PushNodesResult pushNodes( final BranchId target, final NodeId... nodeIds )
     {
         return doPushNodes( NodeIds.from( Arrays.asList( nodeIds ) ), target );
     }
 
-    protected PushNodesResult pushNodes( final NodeIds nodeIds, final Branch target )
+    protected PushNodesResult pushNodes( final NodeIds nodeIds, final BranchId target )
     {
         return doPushNodes( nodeIds, target );
     }
 
-    private PushNodesResult doPushNodes( final NodeIds nodeIds, final Branch target )
+    private PushNodesResult doPushNodes( final NodeIds nodeIds, final BranchId target )
     {
         return PushNodesCommand.create().
             ids( nodeIds ).

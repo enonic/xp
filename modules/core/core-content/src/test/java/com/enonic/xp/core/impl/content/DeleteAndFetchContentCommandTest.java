@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -79,7 +79,7 @@ public class DeleteAndFetchContentCommandTest
                 totalHits( 0 ).
                 build() );
 
-        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
+        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( BranchId.class ) ) ).
             thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.NEW ) );
 
         Mockito.when( this.nodeService.deleteById( node.id() ) ).
@@ -139,7 +139,7 @@ public class DeleteAndFetchContentCommandTest
                 totalHits( 0 ).
                 build() );
 
-        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
+        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( BranchId.class ) ) ).
             thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.EQUAL ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).

@@ -2,7 +2,7 @@ package com.enonic.xp.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 
 public class UnpublishContentParams
 {
@@ -10,12 +10,12 @@ public class UnpublishContentParams
 
     private final boolean includeChildren;
 
-    private final Branch unpublishBranch;
+    private final BranchId unpublishBranchId;
 
     private UnpublishContentParams( final Builder builder )
     {
         contentIds = builder.contentIds;
-        unpublishBranch = builder.unpublishBranch;
+        unpublishBranchId = builder.unpublishBranchId;
         includeChildren = builder.includeChildren;
     }
 
@@ -24,9 +24,9 @@ public class UnpublishContentParams
         return contentIds;
     }
 
-    public Branch getUnpublishBranch()
+    public BranchId getUnpublishBranchId()
     {
-        return unpublishBranch;
+        return unpublishBranchId;
     }
 
     public boolean isIncludeChildren()
@@ -44,7 +44,7 @@ public class UnpublishContentParams
     {
         private ContentIds contentIds;
 
-        private Branch unpublishBranch;
+        private BranchId unpublishBranchId;
 
         private boolean includeChildren;
 
@@ -58,9 +58,9 @@ public class UnpublishContentParams
             return this;
         }
 
-        public Builder unpublishBranch( final Branch val )
+        public Builder unpublishBranch( final BranchId val )
         {
-            unpublishBranch = val;
+            unpublishBranchId = val;
             return this;
         }
 
@@ -73,7 +73,7 @@ public class UnpublishContentParams
         private void validate()
         {
             Preconditions.checkNotNull( contentIds, "contentId must be set" );
-            Preconditions.checkNotNull( unpublishBranch, "unpublish-branch must be set" );
+            Preconditions.checkNotNull( unpublishBranchId, "unpublish-branch must be set" );
         }
 
         public UnpublishContentParams build()

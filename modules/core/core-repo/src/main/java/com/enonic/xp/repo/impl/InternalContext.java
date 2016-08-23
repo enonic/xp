@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
@@ -12,14 +12,14 @@ public class InternalContext
 {
     private final RepositoryId repositoryId;
 
-    private final Branch branch;
+    private final BranchId branchId;
 
     private final PrincipalKeys principalsKeys;
 
     private InternalContext( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
-        this.branch = builder.branch;
+        this.branchId = builder.branchId;
         this.principalsKeys = builder.principalsKeys;
     }
 
@@ -37,9 +37,9 @@ public class InternalContext
         return repositoryId;
     }
 
-    public Branch getBranch()
+    public BranchId getBranchId()
     {
-        return branch;
+        return branchId;
     }
 
     public PrincipalKeys getPrincipalsKeys()
@@ -64,7 +64,7 @@ public class InternalContext
     {
         return create().
             principalsKeys( context.getPrincipalsKeys() ).
-            branch( context.getBranch() ).
+            branch( context.getBranchId() ).
             repositoryId( context.getRepositoryId() );
     }
 
@@ -86,7 +86,7 @@ public class InternalContext
         {
             return false;
         }
-        if ( branch != null ? !branch.equals( that.branch ) : that.branch != null )
+        if ( branchId != null ? !branchId.equals( that.branchId ) : that.branchId != null )
         {
             return false;
         }
@@ -98,7 +98,7 @@ public class InternalContext
     public int hashCode()
     {
         int result = repositoryId != null ? repositoryId.hashCode() : 0;
-        result = 31 * result + ( branch != null ? branch.hashCode() : 0 );
+        result = 31 * result + ( branchId != null ? branchId.hashCode() : 0 );
         return result;
     }
 
@@ -106,7 +106,7 @@ public class InternalContext
     {
         private RepositoryId repositoryId;
 
-        private Branch branch;
+        private BranchId branchId;
 
         private PrincipalKeys principalsKeys;
 
@@ -120,9 +120,9 @@ public class InternalContext
             return this;
         }
 
-        public Builder branch( final Branch branch )
+        public Builder branch( final BranchId branchId )
         {
-            this.branch = branch;
+            this.branchId = branchId;
             return this;
         }
 
@@ -141,7 +141,7 @@ public class InternalContext
         private void verify()
         {
             Preconditions.checkNotNull( repositoryId, "Repository must be set in internalContext" );
-            Preconditions.checkNotNull( branch, "Branch must be set in internalContext" );
+            Preconditions.checkNotNull( branchId, "Branch must be set in internalContext" );
         }
 
         public InternalContext build()

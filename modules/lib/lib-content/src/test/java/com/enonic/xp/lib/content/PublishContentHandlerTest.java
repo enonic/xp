@@ -6,7 +6,7 @@ import java.util.Locale;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -75,7 +75,7 @@ public class PublishContentHandlerTest
         ContentIds ids = ContentIds.from( PUB_ID_1, FAIL_ID );
         PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
-            target( Branch.from( "master" ) ).
+            target( BranchId.from( "master" ) ).
             includeChildren( true ).
             includeDependencies( false ).
             build();
@@ -92,7 +92,7 @@ public class PublishContentHandlerTest
 
         PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
-            target( Branch.from( "draft" ) ).
+            target( BranchId.from( "draft" ) ).
             build();
 
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
@@ -112,7 +112,7 @@ public class PublishContentHandlerTest
         ContentIds ids = ContentIds.from( PUB_ID_2, PUB_ID_3 );
         PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
-            target( Branch.from( "master" ) ).
+            target( BranchId.from( "master" ) ).
             build();
 
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
@@ -133,7 +133,7 @@ public class PublishContentHandlerTest
 
         PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
-            target( Branch.from( "master" ) ).
+            target( BranchId.from( "master" ) ).
             includeChildren( false ).
             includeDependencies( false ).
             build();

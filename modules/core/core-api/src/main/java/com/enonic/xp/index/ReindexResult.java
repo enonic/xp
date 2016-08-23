@@ -7,7 +7,7 @@ import java.util.Set;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repository.RepositoryId;
@@ -23,7 +23,7 @@ public class ReindexResult
 
     private final NodeIds reindexNodes;
 
-    private final Branches branches;
+    private final BranchIds branchIds;
 
     private final RepositoryId repositoryId;
 
@@ -34,7 +34,7 @@ public class ReindexResult
         this.endTime = builder.endTime;
         this.reindexNodes = NodeIds.from( builder.nodeIds );
         this.repositoryId = builder.repositoryId;
-        this.branches = builder.branches;
+        this.branchIds = builder.branchIds;
     }
 
     public static Builder create()
@@ -62,9 +62,9 @@ public class ReindexResult
         return reindexNodes;
     }
 
-    public Branches getBranches()
+    public BranchIds getBranchIds()
     {
-        return branches;
+        return branchIds;
     }
 
     public RepositoryId getRepositoryId()
@@ -82,7 +82,7 @@ public class ReindexResult
 
         private Instant endTime;
 
-        private Branches branches;
+        private BranchIds branchIds;
 
         private RepositoryId repositoryId;
 
@@ -114,9 +114,9 @@ public class ReindexResult
             return this;
         }
 
-        public Builder branches( final Branches branches )
+        public Builder branches( final BranchIds branchIds )
         {
-            this.branches = branches;
+            this.branchIds = branchIds;
             return this;
         }
 

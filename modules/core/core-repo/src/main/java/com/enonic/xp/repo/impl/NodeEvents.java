@@ -163,7 +163,7 @@ public class NodeEvents
         return ImmutableMap.builder().
             put( "id", node.getNodeId().toString() ).
             put( "path", node.getNodePath().toString() ).
-            put( "branch", ContextAccessor.current().getBranch().getName() ).
+            put( "branch", ContextAccessor.current().getBranch().getValue() ).
             build();
     }
 
@@ -172,7 +172,7 @@ public class NodeEvents
         return ImmutableMap.builder().
             put( "id", node.id().toString() ).
             put( "path", node.path().toString() ).
-            put( "branch", ContextAccessor.current().getBranch().getName() ).
+            put( "branch", ContextAccessor.current().getBranch().getValue() ).
             build();
 
 

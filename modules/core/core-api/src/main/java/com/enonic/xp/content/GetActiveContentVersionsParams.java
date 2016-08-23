@@ -2,19 +2,19 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchIds;
 
 @Beta
 public class GetActiveContentVersionsParams
 {
     private final ContentId contentId;
 
-    private final Branches branches;
+    private final BranchIds branchIds;
 
     private GetActiveContentVersionsParams( Builder builder )
     {
         contentId = builder.contentId;
-        branches = builder.branches;
+        branchIds = builder.branchIds;
     }
 
     public static Builder create()
@@ -27,16 +27,16 @@ public class GetActiveContentVersionsParams
         return contentId;
     }
 
-    public Branches getBranches()
+    public BranchIds getBranchIds()
     {
-        return branches;
+        return branchIds;
     }
 
     public static final class Builder
     {
         private ContentId contentId;
 
-        private Branches branches;
+        private BranchIds branchIds;
 
         private Builder()
         {
@@ -48,9 +48,9 @@ public class GetActiveContentVersionsParams
             return this;
         }
 
-        public Builder branches( Branches branches )
+        public Builder branches( BranchIds branchIds )
         {
-            this.branches = branches;
+            this.branchIds = branchIds;
             return this;
         }
 

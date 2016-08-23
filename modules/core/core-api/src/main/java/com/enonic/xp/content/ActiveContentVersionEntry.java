@@ -2,24 +2,24 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 
 @Beta
 public class ActiveContentVersionEntry
     implements Comparable<ActiveContentVersionEntry>
 {
-    private final Branch branch;
+    private final BranchId branchId;
 
     private final ContentVersion contentVersion;
 
-    public final static ActiveContentVersionEntry from( final Branch branch, final ContentVersion contentVersion )
+    public final static ActiveContentVersionEntry from( final BranchId branchId, final ContentVersion contentVersion )
     {
-        return new ActiveContentVersionEntry( branch, contentVersion );
+        return new ActiveContentVersionEntry( branchId, contentVersion );
     }
 
-    private ActiveContentVersionEntry( final Branch branch, final ContentVersion contentVersion )
+    private ActiveContentVersionEntry( final BranchId branchId, final ContentVersion contentVersion )
     {
-        this.branch = branch;
+        this.branchId = branchId;
         this.contentVersion = contentVersion;
     }
 
@@ -28,9 +28,9 @@ public class ActiveContentVersionEntry
         return contentVersion;
     }
 
-    public Branch getBranch()
+    public BranchId getBranchId()
     {
-        return branch;
+        return branchId;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ActiveContentVersionEntry
     {
         if ( this.contentVersion.equals( o.contentVersion ) )
         {
-            return this.branch.getName().compareTo( o.branch.getName() );
+            return this.branchId.getValue().compareTo( o.branchId.getValue() );
         }
 
         return this.contentVersion.compareTo( o.contentVersion );

@@ -2,7 +2,7 @@ package com.enonic.xp.portal.handler;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
@@ -43,7 +43,7 @@ public abstract class BasePortalHandler
         try
         {
             PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
-            ContextAccessor.current().getLocalScope().setAttribute( portalRequest.getBranch() );
+            ContextAccessor.current().getLocalScope().setAttribute( portalRequest.getBranchId() );
 
             final WebResponse returnedWebResponse = webHandlerChain.handle( portalRequest, webResponse );
             exceptionMapper.throwIfNeeded( returnedWebResponse );
@@ -66,7 +66,7 @@ public abstract class BasePortalHandler
         return webResponse;
     }
 
-    protected static Branch findBranch( final String baseSubPath )
+    protected static BranchId findBranch( final String baseSubPath )
     {
         final int index = baseSubPath.indexOf( '/' );
         final String result = baseSubPath.substring( 0, index > 0 ? index : baseSubPath.length() );
@@ -74,7 +74,7 @@ public abstract class BasePortalHandler
         {
             throw WebException.notFound( "Branch needs to be specified" );
         }
-        return Branch.from( result );
+        return BranchId.from( result );
     }
 
     protected static ContentPath findContentPath( final String baseSubPath )

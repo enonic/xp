@@ -7,21 +7,21 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public class PushNodeEntries
     extends AbstractImmutableEntitySet<PushNodeEntry>
 {
-    private Branch targetBranch;
+    private BranchId targetBranchId;
 
     private RepositoryId targetRepo;
 
     private PushNodeEntries( final Builder builder )
     {
         super( ImmutableSet.copyOf( builder.entries ) );
-        targetBranch = builder.targetBranch;
+        targetBranchId = builder.targetBranchId;
         targetRepo = builder.targetRepo;
     }
 
@@ -37,9 +37,9 @@ public class PushNodeEntries
             collect( Collectors.toSet() ) );
     }
 
-    public Branch getTargetBranch()
+    public BranchId getTargetBranchId()
     {
-        return targetBranch;
+        return targetBranchId;
     }
 
     public RepositoryId getTargetRepo()
@@ -51,7 +51,7 @@ public class PushNodeEntries
     {
         private Set<PushNodeEntry> entries = Sets.newHashSet();
 
-        private Branch targetBranch;
+        private BranchId targetBranchId;
 
         private RepositoryId targetRepo;
 
@@ -77,9 +77,9 @@ public class PushNodeEntries
             return new PushNodeEntries( this );
         }
 
-        public Builder targetBranch( final Branch val )
+        public Builder targetBranch( final BranchId val )
         {
-            targetBranch = val;
+            targetBranchId = val;
             return this;
         }
 

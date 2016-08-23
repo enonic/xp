@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 
 import org.junit.Test;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.StorageSettings;
@@ -28,7 +28,7 @@ public class NodeQueryTranslatorTest
             acl( PrincipalKeys.empty() ).
             settings( StorageSettings.create().
                 storageName( SearchStorageName.from( RepositoryId.from( "myRepo" ) ) ).
-                storageType( SearchStorageType.from( Branch.from( "myBranch" ) ) ).
+                storageType( SearchStorageType.from( BranchId.from( "myBranch" ) ) ).
                 build() ).
             build() );
 

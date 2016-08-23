@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -36,7 +36,7 @@ public class UnpublishContentCommand
         final Context context = ContextAccessor.current();
 
         final Context unpublishContext = ContextBuilder.from( context ).
-            branch( params.getUnpublishBranch() ).
+            branch( params.getUnpublishBranchId() ).
             build();
 
         return unpublishContext.callWith( this::unpublish );
@@ -57,7 +57,7 @@ public class UnpublishContentCommand
         if ( contentIds.getSize() == 1 )
         {
             final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
-                branch( ContentConstants.BRANCH_DRAFT ).
+                branch( ContentConstants.BRANCH_ID_DRAFT ).
                 build();
 
             draftContext.callWith( () -> {
@@ -91,11 +91,11 @@ public class UnpublishContentCommand
 
     private void removePendingDeleteFromDraft( final UnpublishContentsResult result )
     {
-        final Branch currentBranch = ContextAccessor.current().getBranch();
-        if ( !currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
+        final BranchId currentBranchId = ContextAccessor.current().getBranch();
+        if ( !currentBranchId.equals( ContentConstants.BRANCH_ID_DRAFT ) )
         {
             final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
-                branch( ContentConstants.BRANCH_DRAFT ).
+                branch( ContentConstants.BRANCH_ID_DRAFT ).
                 build();
             draftContext.callWith( () -> {
                 final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( result.getUnpublishedContents().asStrings() ) );

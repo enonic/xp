@@ -5,8 +5,8 @@ import java.util.Set;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.repository.RepositoryId;
 
 @Beta
@@ -16,13 +16,13 @@ public class ReindexParams
 
     private final RepositoryId repositoryId;
 
-    private final Branches branches;
+    private final BranchIds branchIds;
 
     private ReindexParams( Builder builder )
     {
         initialize = builder.initialize;
         repositoryId = builder.repositoryId;
-        branches = Branches.from( builder.branches );
+        branchIds = BranchIds.from( builder.branchIds );
     }
 
     public static Builder create()
@@ -40,15 +40,15 @@ public class ReindexParams
         return repositoryId;
     }
 
-    public Branches getBranches()
+    public BranchIds getBranchIds()
     {
-        return branches;
+        return branchIds;
     }
 
 
     public static final class Builder
     {
-        private final Set<Branch> branches = Sets.newHashSet();
+        private final Set<BranchId> branchIds = Sets.newHashSet();
 
         private boolean initialize;
 
@@ -70,15 +70,15 @@ public class ReindexParams
             return this;
         }
 
-        public Builder addBranch( final Branch branch )
+        public Builder addBranch( final BranchId branchId )
         {
-            this.branches.add( branch );
+            this.branchIds.add( branchId );
             return this;
         }
 
-        public Builder setBranches( final Branches branches )
+        public Builder setBranchIds( final BranchIds branchIds )
         {
-            this.branches.addAll( branches.getSet() );
+            this.branchIds.addAll( branchIds.getSet() );
             return this;
         }
 

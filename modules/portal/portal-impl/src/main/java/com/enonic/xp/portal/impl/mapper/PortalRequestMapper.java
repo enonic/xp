@@ -34,9 +34,9 @@ public final class PortalRequestMapper
             gen.value( "validTicket", this.request.isValidTicket() );
         }
 
-        if ( this.request.getBranch() != null )
+        if ( this.request.getBranchId() != null )
         {
-            gen.value( "branch", this.request.getBranch().getName() );
+            gen.value( "branch", this.request.getBranchId().getValue() );
         }
 
         serializeBody( gen );

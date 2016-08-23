@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.controller;
 
 import org.junit.Test;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -35,7 +35,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.setPort( 80 );
         this.portalRequest.setPath( "/my/page" );
         this.portalRequest.setUrl( "http://enonic.com/my/page?debug=true" );
-        this.portalRequest.setBranch( Branch.from( "master" ) );
+        this.portalRequest.setBranchId( BranchId.from( "master" ) );
         this.portalRequest.setMode( RenderMode.EDIT );
         this.portalRequest.getParams().put( "debug", "true" );
         this.portalRequest.getHeaders().put( "Language", "en" );
@@ -59,7 +59,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.setPort( 80 );
         this.portalRequest.setPath( "/my/page" );
         this.portalRequest.setUrl( "http://enonic.com/my/page?debug=true" );
-        this.portalRequest.setBranch( Branch.from( "master" ) );
+        this.portalRequest.setBranchId( BranchId.from( "master" ) );
         this.portalRequest.setMode( RenderMode.EDIT );
         this.portalRequest.getParams().put( "debug", "true" );
         this.portalRequest.getHeaders().put( "Language", "en" );

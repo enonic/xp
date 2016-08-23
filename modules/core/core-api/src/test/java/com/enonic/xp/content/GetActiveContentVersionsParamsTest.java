@@ -2,8 +2,8 @@ package com.enonic.xp.content;
 
 import org.junit.Test;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.BranchIds;
 
 import static org.junit.Assert.*;
 
@@ -15,17 +15,17 @@ public class GetActiveContentVersionsParamsTest
     @Test
     public void testEquals()
     {
-        Branch branch = Branch.create().name( "branchName" ).build();
-        Branches branches = Branches.from( branch );
+        BranchId branchId = BranchId.create().value( "branchName" ).build();
+        BranchIds branchIds = BranchIds.from( branchId );
 
         GetActiveContentVersionsParams params = GetActiveContentVersionsParams.create().
             contentId( contentId ).
-            branches( branches ).
+            branches( branchIds ).
             build();
 
         assertEquals( params, params );
         assertEquals( params.getContentId(), contentId );
-        assertEquals( params.getBranches().getSet(), branches.getSet() );
+        assertEquals( params.getBranchIds().getSet(), branchIds.getSet() );
 
     }
 

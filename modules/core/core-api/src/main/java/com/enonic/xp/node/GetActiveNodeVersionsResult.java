@@ -6,12 +6,12 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 
 @Beta
 public class GetActiveNodeVersionsResult
 {
-    private final ImmutableMap<Branch, NodeVersionMetadata> nodeVersions;
+    private final ImmutableMap<BranchId, NodeVersionMetadata> nodeVersions;
 
     private GetActiveNodeVersionsResult( Builder builder )
     {
@@ -23,7 +23,7 @@ public class GetActiveNodeVersionsResult
         return new Builder();
     }
 
-    public ImmutableMap<Branch, NodeVersionMetadata> getNodeVersions()
+    public ImmutableMap<BranchId, NodeVersionMetadata> getNodeVersions()
     {
         return nodeVersions;
     }
@@ -31,15 +31,15 @@ public class GetActiveNodeVersionsResult
 
     public static final class Builder
     {
-        private final Map<Branch, NodeVersionMetadata> nodeVersions = Maps.newHashMap();
+        private final Map<BranchId, NodeVersionMetadata> nodeVersions = Maps.newHashMap();
 
         private Builder()
         {
         }
 
-        public Builder add( final Branch branch, final NodeVersionMetadata nodeVersionMetadata )
+        public Builder add( final BranchId branchId, final NodeVersionMetadata nodeVersionMetadata )
         {
-            this.nodeVersions.put( branch, nodeVersionMetadata );
+            this.nodeVersions.put( branchId, nodeVersionMetadata );
             return this;
         }
 

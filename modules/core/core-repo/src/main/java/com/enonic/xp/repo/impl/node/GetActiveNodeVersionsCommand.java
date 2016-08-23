@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
@@ -15,14 +15,14 @@ import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand
 {
-    private final Branches branches;
+    private final BranchIds branchIds;
 
     private final NodeId nodeId;
 
     private GetActiveNodeVersionsCommand( final Builder builder )
     {
         super( builder );
-        this.branches = builder.branches;
+        this.branchIds = builder.branchIds;
         this.nodeId = builder.nodeId;
     }
 
@@ -40,18 +40,18 @@ public class GetActiveNodeVersionsCommand
     {
         final GetActiveNodeVersionsResult.Builder builder = GetActiveNodeVersionsResult.create();
 
-        for ( final Branch branch : branches )
+        for ( final BranchId branchId : branchIds )
         {
             final Context context = ContextAccessor.current();
 
             final NodeBranchEntry nodeBranchEntry =
                 this.storageService.getBranchNodeVersion( this.nodeId, InternalContext.create( context ).
-                    branch( branch ).
+                    branch( branchId ).
                     build() );
 
             if ( nodeBranchEntry != null )
             {
-                builder.add( branch, this.storageService.getVersion(
+                builder.add( branchId, this.storageService.getVersion(
                     new NodeVersionDocumentId( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId() ),
                     InternalContext.from( context ) ) );
             }
@@ -62,7 +62,7 @@ public class GetActiveNodeVersionsCommand
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private Branches branches;
+        private BranchIds branchIds;
 
         private NodeId nodeId;
 
@@ -75,9 +75,9 @@ public class GetActiveNodeVersionsCommand
         {
         }
 
-        public Builder branches( final Branches branches )
+        public Builder branches( final BranchIds branchIds )
         {
-            this.branches = branches;
+            this.branchIds = branchIds;
             return this;
         }
 
@@ -91,7 +91,7 @@ public class GetActiveNodeVersionsCommand
         void validate()
         {
             Preconditions.checkNotNull( this.nodeId );
-            Preconditions.checkNotNull( this.branches );
+            Preconditions.checkNotNull( this.branchIds );
         }
 
         public GetActiveNodeVersionsCommand build()

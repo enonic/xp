@@ -94,7 +94,7 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
@@ -481,7 +481,7 @@ public final class ContentResource
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
 
         final PublishContentResult result = contentService.publish( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
+            target( ContentConstants.BRANCH_ID_MASTER ).
             contentIds( contentIds ).
             excludedContentIds( excludeContentIds ).
             includeChildren( params.isIncludeChildren() ).
@@ -524,7 +524,7 @@ public final class ContentResource
 
         //Resolves the publish dependencies
         final CompareContentResults results = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
+            target( ContentConstants.BRANCH_ID_MASTER ).
             contentIds( requestedContentIds ).
             excludedContentIds( excludeContentIds ).
             includeChildren( params.includeChildren() ).
@@ -550,7 +550,7 @@ public final class ContentResource
     private Boolean isAnyContentRemovableFromPublish( final ContentIds contentIds )
     {
         final CompareContentResults compareContentResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_ID_MASTER ) );
 
         return compareContentResults.getCompareContentResultsMap().values().stream().anyMatch(
             result -> CompareStatus.NEWER == result.getCompareStatus() );
@@ -563,7 +563,7 @@ public final class ContentResource
 
         //Retrieves the compare contents
         final CompareContentResults compareContentResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_ID_MASTER ) );
         final Map<ContentId, CompareContentResult> compareContentResultsMap = compareContentResults.getCompareContentResultsMap();
 
         // Sorts the contents by path and for each
@@ -952,7 +952,7 @@ public final class ContentResource
         if ( isFilterNeeded )
         {
             final CompareContentResults compareResults =
-                contentService.compare( new CompareContentsParams( result.getContentIds(), ContentConstants.BRANCH_MASTER ) );
+                contentService.compare( new CompareContentsParams( result.getContentIds(), ContentConstants.BRANCH_ID_MASTER ) );
             final Map<ContentId, CompareContentResult> compareResultMap = compareResults.getCompareContentResultsMap();
 
             return compareResultMap.entrySet().
@@ -1038,7 +1038,7 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_ID_MASTER ) );
 
         return new CompareContentResultsJson( compareResults );
     }
@@ -1063,7 +1063,7 @@ public final class ContentResource
     public GetActiveContentVersionsResultJson getActiveVersions( @QueryParam("id") final String id )
     {
         final GetActiveContentVersionsResult result = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            branches( BranchIds.from( ContentConstants.BRANCH_ID_DRAFT, ContentConstants.BRANCH_ID_MASTER ) ).
             contentId( ContentId.from( id ) ).
             build() );
 
@@ -1083,7 +1083,7 @@ public final class ContentResource
             build() );
 
         final GetActiveContentVersionsResult activeVersions = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            branches( BranchIds.from( ContentConstants.BRANCH_ID_DRAFT, ContentConstants.BRANCH_ID_MASTER ) ).
             contentId( contentId ).
             build() );
 
@@ -1117,7 +1117,7 @@ public final class ContentResource
         final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( params.getIds() ) ).
             includeChildren( params.isIncludeChildren() ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
+            unpublishBranch( ContentConstants.BRANCH_ID_MASTER ).
             build() );
 
         return new UnpublishContentResultJson( result.getUnpublishedContents().getSize(), result.getContentName() );

@@ -14,7 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -116,7 +116,7 @@ public final class SystemDumpResource
     private Context getContext( final String branchName, final String repositoryName )
     {
         return ContextBuilder.from( ContextAccessor.current() ).
-            branch( Branch.from( branchName ) ).
+            branch( BranchId.from( branchName ) ).
             repositoryId( RepositoryId.from( repositoryName ) ).
             build();
     }

@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -13,15 +13,15 @@ public class RepoPath
 {
     private final static String SEPARATOR = ":";
 
-    private final Branch branch;
+    private final BranchId branchId;
 
     private final RepositoryId repositoryId;
 
     private final NodePath nodePath;
 
-    private RepoPath( final Branch branch, final RepositoryId repositoryId, final NodePath nodePath )
+    private RepoPath( final BranchId branchId, final RepositoryId repositoryId, final NodePath nodePath )
     {
-        this.branch = branch;
+        this.branchId = branchId;
         this.repositoryId = repositoryId;
         this.nodePath = nodePath;
     }
@@ -32,7 +32,7 @@ public class RepoPath
         Preconditions.checkArgument( !Strings.isNullOrEmpty( repositoryId ), "repositoryId cannot be empty" );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( nodePath ), "nodePath cannot be empty" );
 
-        return new RepoPath( Branch.from( branch ), RepositoryId.from( repositoryId ), NodePath.create( nodePath ).build() );
+        return new RepoPath( BranchId.from( branch ), RepositoryId.from( repositoryId ), NodePath.create( nodePath ).build() );
     }
 
     public static RepoPath from( final String repoPath )
@@ -46,9 +46,9 @@ public class RepoPath
         return RepoPath.from( elements[0], elements[1], elements[2] );
     }
 
-    public Branch getBranch()
+    public BranchId getBranchId()
     {
-        return branch;
+        return branchId;
     }
 
     public RepositoryId getRepositoryId()

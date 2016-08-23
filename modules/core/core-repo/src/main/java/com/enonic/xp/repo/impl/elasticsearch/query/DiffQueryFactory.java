@@ -13,7 +13,7 @@ import org.elasticsearch.index.query.WildcardQueryBuilder;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.repo.impl.StorageType;
@@ -24,9 +24,9 @@ import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class DiffQueryFactory
 {
-    private final Branch source;
+    private final BranchId source;
 
-    private final Branch target;
+    private final BranchId target;
 
     private final NodePath nodePath;
 
@@ -69,14 +69,14 @@ public class DiffQueryFactory
         return wrapInPathQueryIfNecessary( sourceTargetCompares );
     }
 
-    private BoolFilterBuilder deletedOnlyQuery( final Branch source, final Branch target )
+    private BoolFilterBuilder deletedOnlyQuery( final BranchId source, final BranchId target )
     {
         return new BoolFilterBuilder().
             must( deletedInBranch( source ) ).
             mustNot( deletedInBranch( target ) );
     }
 
-    private BoolFilterBuilder onlyInQuery( final Branch source, final Branch target )
+    private BoolFilterBuilder onlyInQuery( final BranchId source, final BranchId target )
     {
         return new BoolFilterBuilder().
             must( isInBranch( source ) ).
@@ -138,11 +138,11 @@ public class DiffQueryFactory
         return new HasChildQueryBuilder( childStorageType.getName(), pathQuery );
     }
 
-    private HasChildFilterBuilder deletedInBranch( final Branch sourceBranch )
+    private HasChildFilterBuilder deletedInBranch( final BranchId sourceBranchId )
     {
         return new HasChildFilterBuilder( childStorageType.getName(), new BoolFilterBuilder().
             must( isDeleted() ).
-            must( new TermFilterBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranch.getName() ) ) );
+            must( new TermFilterBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranchId.getValue() ) ) );
     }
 
     private TermFilterBuilder isDeleted()
@@ -150,14 +150,14 @@ public class DiffQueryFactory
         return new TermFilterBuilder( BranchIndexPath.STATE.toString(), NodeState.PENDING_DELETE.value() );
     }
 
-    private HasChildFilterBuilder isInBranch( final Branch source )
+    private HasChildFilterBuilder isInBranch( final BranchId source )
     {
         return new HasChildFilterBuilder( childStorageType.getName(), createWsConstraint( source ) );
     }
 
-    private TermFilterBuilder createWsConstraint( final Branch branch )
+    private TermFilterBuilder createWsConstraint( final BranchId branchId )
     {
-        return new TermFilterBuilder( BranchIndexPath.BRANCH_NAME.toString(), branch );
+        return new TermFilterBuilder( BranchIndexPath.BRANCH_NAME.toString(), branchId );
     }
 
     public static final class Builder

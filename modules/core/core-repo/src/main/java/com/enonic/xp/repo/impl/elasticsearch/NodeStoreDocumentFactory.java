@@ -6,7 +6,7 @@ import java.util.Set;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.data.ValueFactory;
@@ -25,7 +25,7 @@ public class NodeStoreDocumentFactory
 {
     private final Node node;
 
-    private final Branch branch;
+    private final BranchId branchId;
 
     private final RepositoryId repositoryId;
 
@@ -34,7 +34,7 @@ public class NodeStoreDocumentFactory
     private NodeStoreDocumentFactory( final Builder builder )
     {
         node = builder.node;
-        branch = builder.branch;
+        branchId = builder.branchId;
         repositoryId = builder.repositoryId;
         this.refresh = builder.refresh;
     }
@@ -62,7 +62,7 @@ public class NodeStoreDocumentFactory
         final IndexDocument.Builder builder = IndexDocument.create().
             id( this.node.id().toString() ).
             indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
-            indexTypeName( this.branch.getName() ).
+            indexTypeName( this.branchId.getValue() ).
             analyzer( indexConfigDocument.getAnalyzer() ).
             indexItems( createIndexItems() ).
             refreshAfterOperation( this.refresh );
@@ -208,7 +208,7 @@ public class NodeStoreDocumentFactory
     {
         private Node node;
 
-        private Branch branch;
+        private BranchId branchId;
 
         private RepositoryId repositoryId;
 
@@ -224,9 +224,9 @@ public class NodeStoreDocumentFactory
             return this;
         }
 
-        public Builder branch( Branch branch )
+        public Builder branch( BranchId branchId )
         {
-            this.branch = branch;
+            this.branchId = branchId;
             return this;
         }
 

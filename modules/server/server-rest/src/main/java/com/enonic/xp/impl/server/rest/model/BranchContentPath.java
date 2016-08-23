@@ -6,20 +6,20 @@ import java.util.regex.Pattern;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.ContentPath;
 
 public class BranchContentPath
 {
     private final static String SEPARATOR = ":";
 
-    private final Branch branch;
+    private final BranchId branchId;
 
     private final ContentPath contentPath;
 
-    private BranchContentPath( final Branch branch, final ContentPath contentPath )
+    private BranchContentPath( final BranchId branchId, final ContentPath contentPath )
     {
-        this.branch = branch;
+        this.branchId = branchId;
         this.contentPath = contentPath;
     }
 
@@ -28,7 +28,7 @@ public class BranchContentPath
         Preconditions.checkArgument( !Strings.isNullOrEmpty( branch ), "Branch cannot be empty" );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( contentPath ), "ContentPath cannot be empty" );
 
-        return new BranchContentPath( Branch.from( branch ), ContentPath.from( contentPath ) );
+        return new BranchContentPath( BranchId.from( branch ), ContentPath.from( contentPath ) );
     }
 
     public static BranchContentPath from( final String repoPath )
@@ -42,9 +42,9 @@ public class BranchContentPath
         return BranchContentPath.from( elements[0], elements[1] );
     }
 
-    public Branch getBranch()
+    public BranchId getBranchId()
     {
-        return branch;
+        return branchId;
     }
 
     public ContentPath getContentPath()

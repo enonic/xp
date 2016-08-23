@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.branch.storage;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.node.NodeId;
 
 public class BranchDocumentId
@@ -14,28 +14,28 @@ public class BranchDocumentId
 
     private final NodeId nodeId;
 
-    private final Branch branch;
+    private final BranchId branchId;
 
-    public BranchDocumentId( final NodeId nodeId, final Branch branch )
+    public BranchDocumentId( final NodeId nodeId, final BranchId branchId )
     {
         Preconditions.checkNotNull( nodeId );
-        Preconditions.checkNotNull( branch );
+        Preconditions.checkNotNull( branchId );
 
-        this.value = nodeId + SEPARATOR + branch.getName();
+        this.value = nodeId + SEPARATOR + branchId.getValue();
         this.nodeId = nodeId;
-        this.branch = branch;
+        this.branchId = branchId;
     }
 
     private BranchDocumentId( final String value, final String nodeIdsAsString, final String branchName )
     {
         this.value = value;
         this.nodeId = NodeId.from( nodeIdsAsString );
-        this.branch = Branch.from( branchName );
+        this.branchId = BranchId.from( branchName );
     }
 
-    public static BranchDocumentId from( final NodeId nodeId, final Branch branch )
+    public static BranchDocumentId from( final NodeId nodeId, final BranchId branchId )
     {
-        return new BranchDocumentId( nodeId, branch );
+        return new BranchDocumentId( nodeId, branchId );
     }
 
     public static BranchDocumentId from( final String value )
@@ -65,9 +65,9 @@ public class BranchDocumentId
         return nodeId;
     }
 
-    public Branch getBranch()
+    public BranchId getBranchId()
     {
-        return branch;
+        return branchId;
     }
 
     @Override

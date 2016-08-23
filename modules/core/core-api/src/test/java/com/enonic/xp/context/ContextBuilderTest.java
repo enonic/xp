@@ -2,7 +2,7 @@ package com.enonic.xp.context;
 
 import org.junit.Test;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.Assert.*;
@@ -71,7 +71,7 @@ public class ContextBuilderTest
             attribute( "key1", "value1" ).
             build();
 
-        final Branch newWS = Branch.from( "new" );
+        final BranchId newWS = BranchId.from( "new" );
         final Context newContext = ContextBuilder.from( old ).
             branch( newWS ).
             build();

@@ -54,7 +54,7 @@ public class SearchServiceImpl
 
     private NodeQueryResult doQuery( final NodeQuery query, final ReturnFields returnFields, final InternalContext context )
     {
-        final StorageType storageType = SearchStorageType.from( context.getBranch() );
+        final StorageType storageType = SearchStorageType.from( context.getBranchId() );
 
         final StorageName storageName = SearchStorageName.from( context.getRepositoryId() );
 

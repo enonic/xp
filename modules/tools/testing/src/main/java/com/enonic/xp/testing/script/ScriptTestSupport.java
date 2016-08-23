@@ -14,7 +14,7 @@ import org.osgi.framework.Version;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.Context;
@@ -89,7 +89,7 @@ public abstract class ScriptTestSupport
         final PortalRequest request = new PortalRequest();
 
         request.setMode( RenderMode.LIVE );
-        request.setBranch( Branch.from( "draft" ) );
+        request.setBranchId( BranchId.from( "draft" ) );
         request.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         request.setBaseUri( "/portal" );
 

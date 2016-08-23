@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -323,13 +323,13 @@ public class FindNodesWithVersionDifferenceCommandTest
             execute();
     }
 
-    private NodeVersionDiffResult getDiff( final Branch source, final Branch target )
+    private NodeVersionDiffResult getDiff( final BranchId source, final BranchId target )
     {
         return getDiff( source, target, null );
     }
 
 
-    private NodeVersionDiffResult getDiff( final Branch source, final Branch target, final NodePath nodePath )
+    private NodeVersionDiffResult getDiff( final BranchId source, final BranchId target, final NodePath nodePath )
     {
         refresh();
 
@@ -365,7 +365,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             execute();
     }
 
-    private PushNodesResult doPushNode( final Branch target, final Node createdNode )
+    private PushNodesResult doPushNode( final BranchId target, final Node createdNode )
     {
         return PushNodesCommand.create().
             ids( NodeIds.from( createdNode.id() ) ).

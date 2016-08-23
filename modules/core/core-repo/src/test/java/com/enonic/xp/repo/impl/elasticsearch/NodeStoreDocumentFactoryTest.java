@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -37,7 +37,7 @@ public class NodeStoreDocumentFactoryTest
 
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
-            branch( Branch.from( "myBranch" ) ).
+            branch( BranchId.from( "myBranch" ) ).
             repositoryId( RepositoryId.from( "myRepo" ) ).
             build().
             create();

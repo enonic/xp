@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -47,7 +47,7 @@ public class GetActiveNodeVersionsCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             nodeId( node.id() ).
-            branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
+            branches( BranchIds.from( WS_DEFAULT, WS_OTHER ) ).
             build().
             execute();
 
@@ -62,7 +62,7 @@ public class GetActiveNodeVersionsCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             nodeId( node.id() ).
-            branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
+            branches( BranchIds.from( WS_DEFAULT, WS_OTHER ) ).
             build().
             execute();
 

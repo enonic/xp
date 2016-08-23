@@ -175,7 +175,7 @@ public final class MacroResource
         portalRequest.setContentType( req.getContentType() );
         portalRequest.setBaseUri( "/admin/portal/edit" );
         portalRequest.setMode( RenderMode.EDIT );
-        portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
+        portalRequest.setBranchId( ContentConstants.BRANCH_ID_DRAFT );
         portalRequest.setScheme( ServletRequestUrlHelper.getScheme( req ) );
         portalRequest.setHost( ServletRequestUrlHelper.getHost( req ) );
         portalRequest.setPort( ServletRequestUrlHelper.getPort( req ) );
@@ -194,7 +194,7 @@ public final class MacroResource
             path( contentPath.toString() );
         portalRequest.setPath( portalUrlService.pageUrl( pageUrlParams ) );
         portalRequest.setRawPath(
-            "/admin/portal/" + RenderMode.EDIT.toString() + "/" + ContentConstants.BRANCH_DRAFT.toString() + contentPath.toString() );
+            "/admin/portal/" + RenderMode.EDIT.toString() + "/" + ContentConstants.BRANCH_ID_DRAFT.toString() + contentPath.toString() );
 
         portalRequest.setApplicationKey( appKey );
         final Content content = getContent( contentPath );

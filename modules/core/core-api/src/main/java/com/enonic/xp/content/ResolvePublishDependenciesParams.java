@@ -2,7 +2,7 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 
 @Beta
 public class ResolvePublishDependenciesParams
@@ -11,7 +11,7 @@ public class ResolvePublishDependenciesParams
 
     private final ContentIds excludedContentIds;
 
-    private final Branch target;
+    private final BranchId target;
 
     private final boolean includeChildren;
 
@@ -38,7 +38,7 @@ public class ResolvePublishDependenciesParams
         return excludedContentIds;
     }
 
-    public Branch getTarget()
+    public BranchId getTarget()
     {
         return target;
     }
@@ -54,7 +54,7 @@ public class ResolvePublishDependenciesParams
 
         private ContentIds excludedContentIds;
 
-        private Branch target;
+        private BranchId target;
 
         private boolean includeChildren = true;
 
@@ -74,7 +74,7 @@ public class ResolvePublishDependenciesParams
             return this;
         }
 
-        public Builder target( Branch target )
+        public Builder target( BranchId target )
         {
             this.target = target;
             return this;

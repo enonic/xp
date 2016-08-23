@@ -590,7 +590,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
-            branches( params.getBranches() ).
+            branches( params.getBranchIds() ).
             build().
             execute();
     }

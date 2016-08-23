@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 
 import static org.junit.Assert.*;
 
@@ -23,8 +23,8 @@ public class GetActiveContentVersionsResultTest
             modified( now ).
             build();
 
-        final Branch draft = Branch.from( "draft" );
-        final Branch master = Branch.from( "master" );
+        final BranchId draft = BranchId.from( "draft" );
+        final BranchId master = BranchId.from( "master" );
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
             add( ActiveContentVersionEntry.from( draft, version ) ).
@@ -45,8 +45,8 @@ public class GetActiveContentVersionsResultTest
             modified( now ).
             build();
 
-        final Branch draft = Branch.from( "draft" );
-        final Branch master = Branch.from( "master" );
+        final BranchId draft = BranchId.from( "draft" );
+        final BranchId master = BranchId.from( "master" );
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
             add( ActiveContentVersionEntry.from( draft, version ) ).
@@ -64,9 +64,9 @@ public class GetActiveContentVersionsResultTest
         final Instant middle = Instant.parse( "2014-09-25T11:00:00.00Z" );
         final Instant newest = Instant.parse( "2014-09-25T12:00:00.00Z" );
 
-        final Branch archive = Branch.from( "archive" );
-        final Branch draft = Branch.from( "draft" );
-        final Branch master = Branch.from( "master" );
+        final BranchId archive = BranchId.from( "archive" );
+        final BranchId draft = BranchId.from( "draft" );
+        final BranchId master = BranchId.from( "master" );
 
         final ContentVersion oldVersion = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).
@@ -91,8 +91,8 @@ public class GetActiveContentVersionsResultTest
 
         final UnmodifiableIterator<ActiveContentVersionEntry> iterator = result.getActiveContentVersions().iterator();
 
-        assertEquals( draft, iterator.next().getBranch() );
-        assertEquals( master, iterator.next().getBranch() );
-        assertEquals( archive, iterator.next().getBranch() );
+        assertEquals( draft, iterator.next().getBranchId() );
+        assertEquals( master, iterator.next().getBranchId() );
+        assertEquals( archive, iterator.next().getBranchId() );
     }
 }

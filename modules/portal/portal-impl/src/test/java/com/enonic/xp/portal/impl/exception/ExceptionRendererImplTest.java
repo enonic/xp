@@ -11,7 +11,7 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -154,7 +154,7 @@ public class ExceptionRendererImplTest
         final Site site = newSite();
         when( contentService.getByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
         when( contentService.getByPath( not( Matchers.eq( ContentPath.from( "/mysite" ) ) ) ) ).thenThrow(
-            new ContentNotFoundException( ContentPath.from( "/" ), Branch.from( "draft" ) ) );
+            new ContentNotFoundException( ContentPath.from( "/" ), BranchId.from( "draft" ) ) );
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript =

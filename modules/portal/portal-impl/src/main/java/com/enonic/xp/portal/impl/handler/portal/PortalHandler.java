@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.handler.portal;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.handler.BasePortalHandler;
@@ -31,12 +31,12 @@ public class PortalHandler
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
         final String baseSubPath = webRequest.getRawPath().substring( BRANCH_PREFIX.length() );
-        final Branch branch = findBranch( baseSubPath );
+        final BranchId branchId = findBranch( baseSubPath );
         final ContentPath contentPath = findContentPath( baseSubPath );
 
         final PortalRequest portalRequest = new PortalRequest( webRequest );
         portalRequest.setBaseUri( BASE_URI );
-        portalRequest.setBranch( branch );
+        portalRequest.setBranchId( branchId );
         portalRequest.setContentPath( contentPath );
 
         return portalRequest;

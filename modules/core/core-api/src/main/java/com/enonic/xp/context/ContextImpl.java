@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
@@ -30,9 +30,9 @@ final class ContextImpl
     }
 
     @Override
-    public final Branch getBranch()
+    public final BranchId getBranch()
     {
-        return getAttribute( Branch.class );
+        return getAttribute( BranchId.class );
     }
 
     @Override

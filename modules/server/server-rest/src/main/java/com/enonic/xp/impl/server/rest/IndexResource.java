@@ -15,8 +15,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.BranchIds;
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
@@ -45,7 +45,7 @@ public final class IndexResource
     public ReindexResultJson reindex( final ReindexRequestJson request )
     {
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
-            setBranches( parseBranches( request.branches ) ).
+            setBranchIds( parseBranches( request.branches ) ).
             initialize( request.initialize ).
             repositoryId( parseRepositoryId( request.repository ) ).
             build() );
@@ -71,11 +71,11 @@ public final class IndexResource
         this.indexService = indexService;
     }
 
-    private static Branches parseBranches( final String branches )
+    private static BranchIds parseBranches( final String branches )
     {
         final Iterable<String> split = Splitter.on( "," ).split( branches );
-        final Iterable<Branch> parsed = Lists.newArrayList( split ).stream().map( Branch::from ).collect( Collectors.toList() );
-        return Branches.from( parsed );
+        final Iterable<BranchId> parsed = Lists.newArrayList( split ).stream().map( BranchId::from ).collect( Collectors.toList() );
+        return BranchIds.from( parsed );
     }
 
     private static RepositoryId parseRepositoryId( final String repository )

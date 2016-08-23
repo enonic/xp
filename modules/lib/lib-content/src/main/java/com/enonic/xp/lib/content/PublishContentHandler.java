@@ -3,7 +3,7 @@ package com.enonic.xp.lib.content;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchId;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -72,7 +72,7 @@ public final class PublishContentHandler
 
         final PushContentParams.Builder builder = PushContentParams.create();
         builder.contentIds( ContentIds.from( contentIds ) );
-        builder.target( Branch.from( targetBranch ) );
+        builder.target( BranchId.from( targetBranch ) );
         if ( this.includeChildren != null )
         {
             builder.includeChildren( this.includeChildren );
