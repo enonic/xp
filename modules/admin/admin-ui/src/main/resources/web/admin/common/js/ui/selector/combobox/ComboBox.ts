@@ -679,10 +679,10 @@ module api.ui.selector.combobox {
             }
 
             if (!this.isDropdownShown()) {
+                this.showDropdown();
 
                 if (event.which === 40) { // down
 
-                    this.showDropdown();
                     this.loadOptionsAfterShowDropdown().then(() => {
 
                         this.comboBoxDropdown.navigateToRowIfNotActive();
@@ -693,7 +693,6 @@ module api.ui.selector.combobox {
                     }).done();
 
                 } else {
-                    this.showDropdown();
                     this.input.setReadOnly(false);
                 }
                 return;
@@ -711,8 +710,6 @@ module api.ui.selector.combobox {
                         this.input.setReadOnly(true);
                     }
                 }
-                event.stopPropagation();
-                event.preventDefault();
                 break;
             case 40: // down
                 if (this.comboBoxDropdown.hasActiveRow()) {
@@ -721,13 +718,9 @@ module api.ui.selector.combobox {
                     this.comboBoxDropdown.nagivateToFirstRow();
                 }
                 this.input.setReadOnly(true);
-                event.stopPropagation();
-                event.preventDefault();
                 break;
             case 13: // Enter
                 this.selectRowOrApplySelection(this.comboBoxDropdown.getActiveRow(), 13);
-                event.stopPropagation();
-                event.preventDefault();
                 break;
             case 32: // Spacebar
                 if (this.input.isReadOnly() && this.applySelectionsButton) {
@@ -753,6 +746,12 @@ module api.ui.selector.combobox {
 
             if (event.which !== 13) {
                 this.input.giveFocus();
+            }
+
+
+            if (event.which == 38 || event.which == 40 || event.which == 13) {
+                event.stopPropagation();
+                event.preventDefault();
             }
         }
 

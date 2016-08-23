@@ -337,8 +337,12 @@ module api.ui.selector.dropdown {
                 }
             });
 
-            this.input.onKeyDown((event: KeyboardEvent) => {
+            this.input.onClicked((event: MouseEvent) => {
+                this.giveFocus();
+                this.input.setReadOnly(false);
+            });
 
+            this.input.onKeyDown((event: KeyboardEvent) => {
                 if (event.which == 9) { // tab
                     this.hideDropdown();
                     return;
@@ -346,14 +350,19 @@ module api.ui.selector.dropdown {
                 else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
                     return;
                 }
-
-                //this.dropdownList.navigateToFirstRowIfNotActive();
-
+                
                 if (!this.isDropdownShown()) {
-                    this.showDropdown();
+                    if (event.which == 40) { // down
+                        this.input.setReadOnly(true);
+                        this.showDropdown();
+                        this.dropdownList.navigateToRowIfNotActive();
+                        event.stopPropagation();
+                        event.preventDefault();
+                    }
+
                     return;
                 }
-
+                
                 if (event.which == 38) { // up
                     this.dropdownList.navigateToPreviousRow();
                 } else if (event.which == 40) { // down
@@ -361,12 +370,15 @@ module api.ui.selector.dropdown {
                 } else if (event.which == 13) { // enter
                     this.selectRow(this.dropdownList.getActiveRow(), false, 13);
                     this.input.getEl().setValue("");
-                    event.preventDefault();
-                    event.stopPropagation();
                 } else if (event.which == 27) { // esc
                     this.hideDropdown();
                 }
 
+                if (event.which == 38 || event.which == 40 || event.which == 13 || event.which == 27) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+                
                 this.input.getHTMLElement().focus();
             });
         }

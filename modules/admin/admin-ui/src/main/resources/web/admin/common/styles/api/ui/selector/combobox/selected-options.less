@@ -33,11 +33,12 @@
 
     .edit {
       .icon-pencil2;
-      margin: 0px 20px;
+      right: 24px;
     }
 
     .remove {
       .icon-close;
+      right: 0px;
     }
 
     .remove, .edit {
@@ -45,10 +46,11 @@
       .focusable();
 
       border: 1px solid transparent;
-      float: right;
+      position: absolute;
       font-size: 12px;
       text-decoration: none;
       cursor: pointer;
+      top: 9px;
     }
 
     &.non-editable {
