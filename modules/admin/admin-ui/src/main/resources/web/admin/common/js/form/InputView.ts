@@ -61,7 +61,7 @@ module api.form {
 
         public layout(validate: boolean = true): wemQ.Promise<void> {
 
-            if (this.input.getInputType().getName() !== "Checkbox") { //checkbox input type generates clickable label itself
+            if (this.input.getInputType().getName().toLowerCase() !== "checkbox") { //checkbox input type generates clickable label itself
                 if (this.input.getLabel()) {
                     var label = new InputLabel(this.input);
                     this.appendChild(label);
