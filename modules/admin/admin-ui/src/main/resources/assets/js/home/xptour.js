@@ -46,18 +46,36 @@ function initNavigation() {
 
     nextStepAction.onExecuted(function () {
         if (currentStep === tourSteps.length) {
-            tourDialog.close();
-            nextStepActionButton.setLabel("Next");
-            nextStepActionButton.removeClass("last-step");
-            previousStepActionButton.setLabel("Skip Tour");
-            currentStep = 1;
-            setTourStep(currentStep);
+            if (canInstallDemoApps) {
+                nextStepActionButton.setLabel("Installing...");
+                nextStepActionButton.setEnabled(false);
+
+                wemQ.all(loadDemoApps()).spread(function () {
+                    nextStepActionButton.setLabel("Finish");
+                    nextStepActionButton.addClass("last-step");
+                    nextStepActionButton.setEnabled(true);
+                    canInstallDemoApps = false;
+                });
+            } else {
+                tourDialog.close();
+                nextStepActionButton.setLabel("Next");
+                nextStepActionButton.removeClass("last-step");
+                previousStepActionButton.setLabel("Skip Tour");
+                currentStep = 1;
+                setTourStep(currentStep);
+            }
+
         }
         else {
             currentStep++;
             if (currentStep === tourSteps.length) {
-                nextStepActionButton.setLabel("Finish");
-                nextStepActionButton.addClass("last-step");
+                if (canInstallDemoApps) {
+                    nextStepActionButton.setLabel("Install Apps");
+                } else {
+                    nextStepActionButton.setLabel("Finish");
+                    nextStepActionButton.addClass("last-step");
+                }
+
             }
             previousStepActionButton.setLabel("Previous");
             setTourStep(currentStep);
@@ -190,10 +208,7 @@ function createStep5() {
                '    </div>' +
                '    <div class="demo-apps">' +
                getDemoAppsHtml() +
-               '    </div>' +
-               '    <div class="install-apps">' +
-               '        <button class="xp-admin-common-button action-button install-apps-button"><span>Install Demo Apps</span></button>    ' +
-               '    </div>';
+               '    </div>'
     '</div>';
 
     var element = api.dom.Element.fromString(html);
@@ -231,26 +246,22 @@ function getDemoAppsHtml() {
     return html;
 }
 
-function setupInstallAppsButton() {
-    var installButton = document.querySelector(".install-apps-button");
-    installButton.addEventListener("click", function () {
-        loadDemoApps();
-        installButton.style.visibility = "hidden";
-    });
-}
-
 function loadDemoApps() {
     enableApplicationServerEventsListener();
 
+    var loadingAppsPromises = [];
+    
     demoApps.forEach(function (demoApp, index) {
         if (!demoApp["isInstalled"]) {
-            loadApp(demoApp.installUrl, document.querySelector(".demo-app-" + index));
+            loadingAppsPromises.push(loadApp(demoApp.installUrl, document.querySelector(".demo-app-" + index)));
         }
         else {
             document.querySelector(".demo-app-" + index).appendChild(
                 new api.dom.DivEl("demo-app-status").setHtml("Installed").getHTMLElement());
         }
     });
+
+    return loadingAppsPromises;
 }
 
 // Required to update progress bar
@@ -275,7 +286,7 @@ function loadApp(url, container) {
     api.application.ApplicationEvent.on(progressHandler);
     container.appendChild(progressBar.getHTMLElement());
 
-    new api.application.InstallUrlApplicationRequest(url).sendAndParse().then(function (result) {
+    return new api.application.InstallUrlApplicationRequest(url).sendAndParse().then(function (result) {
         api.application.ApplicationEvent.un(progressHandler);
         progressBar.remove();
         var status = new api.dom.DivEl("demo-app-status");
@@ -300,15 +311,4 @@ function setTourStep(step) {
     updateHeaderStep(step);
     tourDialog.getContentPanel().removeChildren();
     tourDialog.appendChildToContentPanel(tourSteps[step - 1]);
-
-    if (step === tourSteps.length) {
-        if (canInstallDemoApps) {
-            setupInstallAppsButton();
-        }
-        else {
-            document.querySelector(".install-apps-button").style.visibility = "hidden";
-        }
-
-    }
-
 }
