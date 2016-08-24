@@ -163,11 +163,17 @@ module api.ui.dialog {
         }
 
         show() {
+            document.body.classList.add("modal-dialog");
             this.centerMyself();
             super.show();
             this.buttonRow.focusDefaultAction();
         }
 
+        hide() {
+            super.hide();
+            document.body.classList.remove("modal-dialog");
+        }
+        
         protected centerMyself() {
             if (ModalDialog.debug) {
                 console.debug("ModalDialog.centerMyself", api.ClassHelper.getClassName(this));
