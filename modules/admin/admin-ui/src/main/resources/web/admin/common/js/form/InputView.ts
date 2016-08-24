@@ -82,8 +82,7 @@ module api.form {
 
             this.propertyArray = this.getPropertyArray(this.parentPropertySet);
 
-            var inputTypeViewLayoutPromise = this.inputTypeView.layout(this.input, this.propertyArray);
-            inputTypeViewLayoutPromise.then(() => {
+            return this.inputTypeView.layout(this.input, this.propertyArray).then(() => {
                 this.appendChild(this.inputTypeView.getElement());
 
                 if (this.input.getHelpText()) {
@@ -126,8 +125,6 @@ module api.form {
 
                 this.refresh(validate);
             });
-
-            return inputTypeViewLayoutPromise;
         }
         
         private appendHelpText(helpText: string) {
