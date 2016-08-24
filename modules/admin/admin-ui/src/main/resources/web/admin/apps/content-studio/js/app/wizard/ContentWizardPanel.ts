@@ -392,6 +392,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 ResponsiveManager.unAvailableSizeChanged(this);
             });
 
+            this.onShown(() => {
+                this.updateButtonsState();
+            })
+
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
                 let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
                 this.isContentFormValid = isThisValid;
@@ -746,9 +750,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 liveFormPanel.skipNextReloadConfirmation(true);
                 liveFormPanel.loadPage(false);
 
-                this.pageModeChangeHandler();
+                this.updateButtonsState();
                 if (this.liveEditModel.getPageModel()) {
-                    this.liveEditModel.getPageModel().onPageModeChanged(this.pageModeChangeHandler.bind(this));
+                    this.liveEditModel.getPageModel().onPageModeChanged(this.updateButtonsState.bind(this));
                 }
                 return wemQ(null);
             });
@@ -922,9 +926,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     liveFormPanel.loadPage();
                     this.setupWizardLiveEdit();
 
-                    this.pageModeChangeHandler();
+                    this.updateButtonsState();
                     if (this.liveEditModel.getPageModel()) {
-                        this.liveEditModel.getPageModel().onPageModeChanged(this.pageModeChangeHandler.bind(this));
+                        this.liveEditModel.getPageModel().onPageModeChanged(this.updateButtonsState.bind(this));
                     }
 
                     deferred.resolve(null);
@@ -1580,8 +1584,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                (!api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES, this.contentType.getContentTypeName()));
     }
 
-    private pageModeChangeHandler() {
+    private updateButtonsState() {
         this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
+        this.getContextWindowToggler().setEnabled(this.isContentRenderable());
+        this.getComponentsViewToggler().setEnabled(this.isContentRenderable());
 
         this.getComponentsViewToggler().setVisible(this.isContentRenderable());
         this.getContextWindowToggler().setVisible(this.isContentRenderable());
