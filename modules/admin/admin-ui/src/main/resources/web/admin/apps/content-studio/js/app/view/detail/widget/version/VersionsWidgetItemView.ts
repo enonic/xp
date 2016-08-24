@@ -53,15 +53,15 @@ export class VersionsWidgetItemView extends WidgetItemView {
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
 
         serverEvents.onContentPublished((contents: ContentSummaryAndCompareStatus[]) => {
-            if (this.getItem()) {
+            if (this.versionsView && this.versionsView.getContentId()) {
                 // check for item because it can be null after publishing pending for delete item
-                var itemId = this.getItem().getContentId();
-                var isPublished = contents.some((content, index, array) => {
+                var itemId = this.versionsView.getContentId();
+                var isPublished = contents.some((content) => {
                     return itemId.equals(content.getContentId());
                 });
 
                 if (isPublished) {
-                    this.versionsWidgetItemView.reloadActivePanel();
+                    this.reloadActivePanel();
                 }
             }
         });
