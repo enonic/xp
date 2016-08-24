@@ -44,10 +44,6 @@ module api.content.resource {
             return this.load();
         }
 
-        sendRequest(): wemQ.Promise<ContentSummary[]> {
-            return this.contentSummaryRequest.sendAndParse();
-        }
-
     }
 
 

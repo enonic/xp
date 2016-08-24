@@ -4,6 +4,7 @@ module api.ui.selector.combobox {
     import Viewer = api.ui.Viewer;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Option = api.ui.selector.Option;
+    import PostLoader = api.util.loader.PostLoader;
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.dom.CompositeFormInputEl {
 
@@ -15,9 +16,9 @@ module api.ui.selector.combobox {
 
         private identifierMethod: string;
 
-        private loadingListeners: {():void;}[];
+        private loadingListeners: {(): void;}[];
 
-        private loadedListeners: {(items: OPTION_DISPLAY_VALUE[]):void;}[];
+        private loadedListeners: {(items: OPTION_DISPLAY_VALUE[]): void;}[];
 
         private setNextInputFocusWhenMaxReached: boolean;
 
@@ -67,6 +68,10 @@ module api.ui.selector.combobox {
             }
 
             this.addClass('rich-combobox');
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(builder.loader, PostLoader)) {
+                this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>builder.loader).postLoad.bind(builder.loader));
+            }
         }
 
         handleLastRange(handler: () => void) {
@@ -226,12 +231,11 @@ module api.ui.selector.combobox {
 
             this.comboBox.onOptionFilterInputValueChanged((event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => {
 
-                this.loader.search(event.getNewValue()).
-                    then((result: OPTION_DISPLAY_VALUE[]) => {
-                        return result;
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
+                this.loader.search(event.getNewValue()).then((result: OPTION_DISPLAY_VALUE[]) => {
+                    return result;
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
 
             });
 

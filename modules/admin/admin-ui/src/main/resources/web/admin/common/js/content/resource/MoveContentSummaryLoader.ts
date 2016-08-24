@@ -86,10 +86,6 @@ module api.content.resource {
             });
         }
 
-        sendRequest(): wemQ.Promise<ContentSummary[]> {
-            return this.contentSummaryRequest.sendAndParse();
-        }
-
     }
 
 }

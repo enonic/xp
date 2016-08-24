@@ -1,4 +1,4 @@
-module api.content.form.inputtype.customselector {
+module api.content.form.inputtype.contentselector {
 
     import PropertyArray = api.data.PropertyArray;
     import Property = api.data.Property;
@@ -22,65 +22,36 @@ module api.content.form.inputtype.customselector {
     import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
     import ElementBuilder = api.dom.ElementBuilder;
     import NewElementBuilder = api.dom.NewElementBuilder;
+    import RichComboBox = api.ui.selector.combobox.RichComboBox;
 
-    export interface CustomSelectorResponse {
-        total: number,
-        count: number,
-        hits: CustomSelectorItem[]
-    }
-
-    export interface CustomSelectorItem {
-        id: string;
-        displayName: string;
-        description: string;
-        iconUrl?: string;
-        icon?: {
-            data: string;
-            type: string;
-        };
-    }
-
-    export class CustomSelector extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<string> {
+    export class CustomSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<CustomSelectorItem> {
 
         public static debug: boolean = false;
 
         private static portalUrl: string = UriHelper.getPortalUri('/edit/draft{0}/_/service/{1}');
 
-        private serviceUrl: string;
+        private requestPath: string;
 
-        private contentPath: string;
+        private context: ContentInputTypeViewContext;
+
+        private comboBox: RichComboBox<CustomSelectorItem>;
 
         constructor(context: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super(context);
+            super('custom-selector');
 
             if (CustomSelector.debug) {
                 console.debug("CustomSelector: config", context.inputConfig);
             }
 
-            this.serviceUrl = context.inputConfig['service'][0]['value'];
-            this.contentPath = context.contentPath.toString();
+            this.context = context;
+            this.readConfig(context);
         }
 
-        private loadOptionsFor(dropdown: Dropdown<CustomSelectorItem>): wemQ.Promise<void> {
+        private readConfig(context: ContentInputTypeViewContext): void {
+            let serviceUrl = context.inputConfig['service'][0]['value'],
+                contentPath = context.contentPath.toString();
 
-            let path = StringHelper.format(CustomSelector.portalUrl, this.contentPath, this.serviceUrl);
-
-            return new JsonRequest<CustomSelectorResponse>()
-                .setPath(Path.fromString(path))
-                .send().then((response: JsonResponse<CustomSelectorResponse>) => {
-                    return response.getResult().hits;
-                }).then((items) => {
-                    var options = items.map((item) => {
-                        return {
-                            value: String(item.id),
-                            displayValue: item
-                        }
-                    });
-                    dropdown.setOptions(options);
-                }).catch((reason) => {
-                    dropdown.setEmptyDropdownText("Could not load options");
-                    api.DefaultErrorHandler.handle(reason);
-                });
+            this.requestPath = StringHelper.format(CustomSelector.portalUrl, contentPath, serviceUrl);
         }
 
         getValueType(): ValueType {
@@ -91,86 +62,94 @@ module api.content.form.inputtype.customselector {
             return ValueTypes.STRING.newNullValue();
         }
 
-        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
-            if (!ValueTypes.STRING.equals(property.getType())) {
-                property.convertValueType(ValueTypes.STRING);
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            if (!ValueTypes.STRING.equals(propertyArray.getType())) {
+                propertyArray.convertValues(ValueTypes.STRING);
             }
+            super.layout(input, propertyArray);
 
-            let dropdown = this.createDropdown(property);
+            this.comboBox = this.createComboBox(input, propertyArray);
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateInputOccurrenceElement(dropdown, property, true);
-            });
+            this.appendChild(this.comboBox);
 
-            return dropdown;
+            this.setLayoutInProgress(false);
+
+            return wemQ<void>(null);
         }
 
-        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly?: boolean): any {
-            var customSelector = <api.ui.selector.combobox.ComboBox<string>> occurrence;
+        update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
 
-            if (!unchangedOnly || !customSelector.isDirty()) {
-                customSelector.setValue(property.getString());
+            if (!unchangedOnly || !this.comboBox.isDirty()) {
+                return superPromise.then(() => {
+                    this.comboBox.setValue(this.getValueFromPropertyArray(propertyArray));
+                });
+            } else {
+                return superPromise;
             }
         }
 
-        createDropdown(property: Property): Dropdown<CustomSelectorItem> {
+        createComboBox(input: api.form.Input, propertyArray: PropertyArray): RichComboBox<CustomSelectorItem> {
 
-            var dropdown = new Dropdown<CustomSelectorItem>('custom-selector', {
-                optionDisplayValueViewer: new CustomSelectorItemViewer(),
-                dataIdProperty: "value",
-                value: property.getString()
-            });
-
-            dropdown.onOptionSelected((event: OptionSelectedEvent<CustomSelectorItem>) => {
+            var comboBox = new CustomSelectorComboBox(input, this.requestPath, this.getValueFromPropertyArray(propertyArray));
+            /*
+             comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {
+             comboBox.setFilterArgs({searchString: event.getNewValue()});
+             });
+             */
+            comboBox.onOptionSelected((event: SelectedOptionEvent<CustomSelectorItem>) => {
                 this.ignorePropertyChange = true;
 
-                let value = new Value(event.getOption().value, ValueTypes.STRING);
-                property.setValue(value);
+                const option = event.getSelectedOption();
+                var value = new Value(String(option.getOption().value), ValueTypes.STRING);
+                if (option.getIndex() >= 0) {
+                    this.getPropertyArray().set(option.getIndex(), value);
+                } else {
+                    this.getPropertyArray().add(value);
+                }
+
+                this.ignorePropertyChange = false;
+                this.validate(false);
+
+                this.fireFocusSwitchEvent(event);
+            });
+            comboBox.onOptionDeselected((event: SelectedOptionEvent<CustomSelectorItem>) => {
+                this.ignorePropertyChange = true;
+
+                this.getPropertyArray().remove(event.getSelectedOption().getIndex());
 
                 this.ignorePropertyChange = false;
                 this.validate(false);
             });
 
-            this.loadOptionsFor(dropdown);
-
-            return dropdown;
+            return comboBox;
         }
 
-        hasInputElementValidUserInput(inputElement: api.dom.Element): boolean {
-            var dropdown = <Dropdown<CustomSelectorItem>>inputElement;
-            return dropdown.isValid();
+        protected getNumberOfValids(): number {
+            return this.comboBox.countSelected();
         }
 
-        valueBreaksRequiredContract(value: Value): boolean {
-            return value.isNull() || !value.getType().equals(ValueTypes.STRING);
-        }
-
-    }
-
-    class CustomSelectorItemViewer extends NamesAndIconViewer<CustomSelectorItem> {
-
-        constructor() {
-            super("custom-selector-item-viewer");
-        }
-
-        resolveDisplayName(object: CustomSelectorItem): string {
-            return object.displayName;
-        }
-
-
-        resolveSubName(object: CustomSelectorItem): string {
-            return object.description;
-        }
-
-        resolveIconEl(object: CustomSelectorItem): api.dom.Element {
-            if (object.icon && object.icon.data) {
-                return api.dom.Element.fromString(object.icon.data);
+        giveFocus(): boolean {
+            if (this.comboBox.maximumOccurrencesReached()) {
+                return false;
             }
-            return null;
+            return this.comboBox.giveFocus();
         }
 
-        resolveIconUrl(object: CustomSelectorItem): string {
-            return object.iconUrl;
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.comboBox.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.comboBox.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.comboBox.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.comboBox.unBlur(listener);
         }
     }
 
