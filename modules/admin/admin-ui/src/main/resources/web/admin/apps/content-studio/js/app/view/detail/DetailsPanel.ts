@@ -110,7 +110,8 @@ export class DetailsPanel extends api.ui.panel.Panel {
         var deferred = wemQ.defer<void>();
         if (!this.alreadyFetchedCustomWidgets) {
             this.getAndInitCustomWidgetViews().done(() => {
-                this.initWidgetsDropdownForSelectedItem();
+                this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
+                this.updateActiveWidget();
                 this.alreadyFetchedCustomWidgets = true;
                 deferred.resolve(null);
             });
@@ -136,9 +137,17 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     setActiveWidgetWithName(value: string) {
+        if (this.activeWidget && value == this.activeWidget.getWidgetName()) {
+            return;
+        }
+
+        if (this.activeWidget) {
+            this.activeWidget.setInactive();
+        }
+
         var widgetFound = false;
         this.widgetViews.forEach((widgetView: WidgetView) => {
-            if (widgetView.getWidgetName() == value && widgetView != this.activeWidget) {
+            if (widgetView.getWidgetName() == value) {
                 widgetView.setActive();
                 widgetFound = true;
             }
@@ -263,11 +272,6 @@ export class DetailsPanel extends api.ui.panel.Panel {
         this.loadMask.hide();
     }
 
-    private initWidgetsDropdownForSelectedItem() {
-        this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
-        this.activateDefaultWidget();
-    }
-
     private initDefaultWidgetView() {
         var builder = WidgetView.create()
             .setName("Info")
@@ -279,7 +283,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
                 new AttachmentsWidgetItemView()
             ]);
 
-        this.detailsContainer.appendChild(this.defaultWidgetView = builder.build());
+        this.detailsContainer.appendChild(this.activeWidget = this.defaultWidgetView = builder.build());
     }
 
     private initCommonWidgetViews() {
