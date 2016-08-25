@@ -67,7 +67,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
         });
     }
 
-    public reloadActivePanel(): wemQ.Promise<any> {
+    private reloadActivePanel(): wemQ.Promise<any> {
         if (VersionsWidgetItemView.debug) {
             console.debug('VersionsWidgetItemView.reloadActivePanel');
         }
