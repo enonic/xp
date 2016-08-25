@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
@@ -28,7 +28,7 @@ public class PushContentCommand
 
     private final ContentIds excludedContentIds;
 
-    private final BranchId target;
+    private final Branch target;
 
     private final boolean resolveSyncWork;
 
@@ -188,7 +188,7 @@ public class PushContentCommand
 
         private ContentIds excludedContentIds;
 
-        private BranchId target;
+        private Branch target;
 
         private boolean includeDependencies = true;
 
@@ -206,7 +206,7 @@ public class PushContentCommand
             return this;
         }
 
-        public Builder target( final BranchId target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;

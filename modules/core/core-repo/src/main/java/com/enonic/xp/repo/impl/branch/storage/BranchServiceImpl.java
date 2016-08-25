@@ -106,7 +106,7 @@ public class BranchServiceImpl
         storageDao.delete( DeleteRequests.create().
             forceRefresh( false ).
             ids( nodeIds.stream().
-                map( nodeId -> new BranchDocumentId( nodeId, context.getBranchId() ).toString() ).
+                map( nodeId -> new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
                 collect( Collectors.toSet() ) ).
             settings( createStorageSettings( context ) ).
             build() );
@@ -177,18 +177,18 @@ public class BranchServiceImpl
     @Override
     public void evictPath( final NodePath nodePath, final InternalContext context )
     {
-        pathCache.evict( new BranchPath( context.getBranchId(), nodePath ) );
+        pathCache.evict( new BranchPath( context.getBranch(), nodePath ) );
     }
 
     private BranchPath createPath( final NodePath nodePath, final InternalContext context )
     {
-        return new BranchPath( context.getBranchId(), nodePath );
+        return new BranchPath( context.getBranch(), nodePath );
     }
 
 
     private NodeBranchEntry doGetByPathNew( final NodePath nodePath, final InternalContext context )
     {
-        final String id = this.pathCache.get( new BranchPath( context.getBranchId(), nodePath ) );
+        final String id = this.pathCache.get( new BranchPath( context.getBranch(), nodePath ) );
 
         if ( id != null )
         {
@@ -202,7 +202,7 @@ public class BranchServiceImpl
                 addValue( ValueFactory.newString( nodePath.toString() ) ).build() ).
             addQueryFilter( ValueFilter.create().
                 fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
-                addValue( ValueFactory.newString( context.getBranchId().getValue() ) ).
+                addValue( ValueFactory.newString( context.getBranch().getValue() ) ).
                 build() ).
             size( 1 ).
             build();
@@ -249,12 +249,12 @@ public class BranchServiceImpl
 
     private void doCache( final InternalContext context, final NodePath nodePath, final NodeId nodeId )
     {
-        doCache( context, nodePath, new BranchDocumentId( nodeId, context.getBranchId() ) );
+        doCache( context, nodePath, new BranchDocumentId( nodeId, context.getBranch() ) );
     }
 
     private void doCache( final InternalContext context, final NodePath nodePath, final BranchDocumentId branchDocumentId )
     {
-        pathCache.cache( new BranchPath( context.getBranchId(), nodePath ), branchDocumentId );
+        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), branchDocumentId );
     }
 
     private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
@@ -290,7 +290,7 @@ public class BranchServiceImpl
             query( NodeBranchQuery.create().
                 addQueryFilter( ValueFilter.create().
                     fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
-                    addValue( ValueFactory.newString( context.getBranchId().getValue() ) ).
+                    addValue( ValueFactory.newString( context.getBranch().getValue() ) ).
                     build() ).
                 addQueryFilter( ValueFilter.create().
                     fieldName( BranchIndexPath.NODE_ID.getPath() ).
@@ -318,7 +318,7 @@ public class BranchServiceImpl
     private GetByIdRequest createGetByIdRequest( final NodeId nodeId, final InternalContext context )
     {
         return GetByIdRequest.create().
-            id( new BranchDocumentId( nodeId, context.getBranchId() ).toString() ).
+            id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
             storageSettings( createStorageSettings( context ) ).
             returnFields( BRANCH_RETURN_FIELDS ).
             routing( nodeId.toString() ).

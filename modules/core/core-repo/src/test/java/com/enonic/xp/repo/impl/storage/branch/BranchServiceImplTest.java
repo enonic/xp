@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -51,7 +51,7 @@ public class BranchServiceImplTest
         this.branchService.setSearchDao( searchDao );
 
         context = InternalContext.create().
-            branch( BranchId.from( "myBranch" ) ).
+            branch( Branch.from( "myBranch" ) ).
             authInfo( AuthenticationInfo.unAuthenticated() ).
             repositoryId( RepositoryId.from( "myRepo" ) ).
             build();
@@ -63,7 +63,7 @@ public class BranchServiceImplTest
         throws Exception
     {
         final InternalContext context = InternalContext.create().
-            branch( BranchId.from( "myBranch" ) ).
+            branch( Branch.from( "myBranch" ) ).
             repositoryId( RepositoryId.from( "myRepo" ) ).
             build();
 

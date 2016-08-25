@@ -8,7 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -33,11 +33,14 @@ import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
+import com.enonic.xp.repo.impl.repository.IndexMappingProvider;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.repository.RepositoryIndexMappingProvider;
-import com.enonic.xp.repo.impl.repository.RepositorySearchIndexSettingsProvider;
+import com.enonic.xp.repo.impl.repository.IndexResourceClasspathProvider;
+import com.enonic.xp.repo.impl.repository.IndexResourceProvider;
+import com.enonic.xp.repo.impl.repository.IndexSettingsProvider;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
+import com.enonic.xp.repository.IndexResource;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
@@ -59,6 +62,8 @@ public class IndexServiceImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
 
+    private final static String INDEX_RESOURCE_BASE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
+
     @Override
     public ReindexResult reindex( final ReindexParams params )
     {
@@ -66,7 +71,7 @@ public class IndexServiceImpl
 
         final long start = System.currentTimeMillis();
         builder.startTime( Instant.ofEpochMilli( start ) );
-        builder.branches( params.getBranchIds() );
+        builder.branches( params.getBranches() );
         builder.repositoryId( params.getRepositoryId() );
 
         if ( params.isInitialize() )
@@ -74,15 +79,15 @@ public class IndexServiceImpl
             doInitializeSearchIndex( params.getRepositoryId() );
         }
 
-        for ( final BranchId branchId : params.getBranchIds() )
+        for ( final Branch branch : params.getBranches() )
         {
             final CompareExpr compareExpr =
                 CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
-                                    ValueExpr.string( branchId.getValue() ) );
+                                    ValueExpr.string( branch.getValue() ) );
 
             final Context reindexContext = ContextBuilder.from( ContextAccessor.current() ).
                 repositoryId( params.getRepositoryId() ).
-                branch( branchId ).
+                branch( branch ).
                 build();
 
             final NodeBranchQueryResult results = this.searchService.query( NodeBranchQuery.create().
@@ -95,16 +100,16 @@ public class IndexServiceImpl
             final long total = results.getSize();
             final long logStep = total < 10 ? 1 : total < 100 ? 10 : total < 1000 ? 100 : 1000;
 
-            LOG.info( "Starting reindexing '" + branchId + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
+            LOG.info( "Starting reindexing '" + branch + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
                           " items to process" );
 
             for ( final NodeBranchEntry nodeBranchEntry : results )
             {
                 if ( nodeIndex % logStep == 0 )
                 {
-                    LOG.info(
-                        "Reindexing '" + branchId + "' in '" + params.getRepositoryId() + "'" + ": processed " + nodeIndex + " of " + total +
-                            "..." );
+                    LOG.info( "Reindexing '" + branch + "' in '" + params.getRepositoryId() + "'" + ": processed " + nodeIndex + " of " +
+                                  total +
+                                  "..." );
                 }
 
                 final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchEntry.getVersionId() );
@@ -113,7 +118,7 @@ public class IndexServiceImpl
 
                 this.indexDataService.store( node, InternalContext.create( ContextAccessor.current() ).
                     repositoryId( params.getRepositoryId() ).
-                    branch( branchId ).
+                    branch( branch ).
                     build() );
 
                 builder.add( node.id() );
@@ -121,7 +126,7 @@ public class IndexServiceImpl
                 nodeIndex++;
             }
 
-            LOG.info( "Finished reindexing '" + branchId + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
+            LOG.info( "Finished reindexing '" + branch + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
                           " items reindexed" );
         }
 
@@ -189,14 +194,22 @@ public class IndexServiceImpl
         indexServiceInternal.deleteIndices( searchIndexName );
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        final IndexSettings searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
+        final IndexResourceProvider indexResourceProvider = new IndexResourceClasspathProvider( INDEX_RESOURCE_BASE_FOLDER );
+        final IndexResource indexMapping = IndexMappingProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider );
+        final IndexResource indexSettings = IndexSettingsProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider );
 
-        indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
+        indexServiceInternal.createIndex( CreateIndexRequest.create().
+            indexName( searchIndexName ).
+            indexSettings( indexSettings ).
+            build() );
 
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        indexServiceInternal.applyMapping( searchIndexName, IndexType.SEARCH,
-                                           RepositoryIndexMappingProvider.getSearchMappings( repositoryId ) );
+        indexServiceInternal.applyMapping( ApplyMappingRequest.create().
+            indexName( searchIndexName ).
+            indexType( IndexType.SEARCH ).
+            mapping( indexMapping ).
+            build() );
 
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
     }

@@ -22,6 +22,7 @@ import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
+import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
@@ -79,6 +80,8 @@ public class SecurityServiceImplTest
 
     private IndexServiceInternalImpl indexServiceInternal;
 
+    private RepositoryServiceImpl repositoryService;
+
     @Override
     @Before
     public void setUp()
@@ -122,11 +125,15 @@ public class SecurityServiceImplTest
         storageService.setIndexServiceInternal( this.indexServiceInternal );
         storageService.setIndexDataService( indexedDataService );
 
+        this.repositoryService = new RepositoryServiceImpl();
+        this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setSearchService( searchService );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setConfiguration( repoConfig );
+        this.nodeService.setRepositoryService( repositoryService );
 
         this.nodeService.setBlobStore( blobStore );
         this.nodeService.initialize();
@@ -167,7 +174,7 @@ public class SecurityServiceImplTest
 
     void createRepository( final Repository repository )
     {
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal, this.repositoryService );
         repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();
@@ -898,7 +905,7 @@ public class SecurityServiceImplTest
         return ContextBuilder.create().
             authInfo( authInfo ).
             repositoryId( SecurityConstants.SECURITY_REPO.getId() ).
-            branch( SecurityConstants.BRANCH_ID_SECURITY ).
+            branch( SecurityConstants.BRANCH_SECURITY ).
             build();
     }
 

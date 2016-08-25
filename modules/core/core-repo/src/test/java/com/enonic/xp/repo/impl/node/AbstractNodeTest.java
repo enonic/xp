@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.mockito.Mockito;
 
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -41,6 +41,7 @@ import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
+import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
@@ -70,11 +71,11 @@ public abstract class AbstractNodeTest
         user( TEST_DEFAULT_USER ).
         build();
 
-    protected static final BranchId WS_DEFAULT = BranchId.create().
+    protected static final Branch WS_DEFAULT = Branch.create().
         value( "draft" ).
         build();
 
-    protected static final BranchId WS_OTHER = BranchId.create().
+    protected static final Branch WS_OTHER = Branch.create().
         value( "master" ).
         build();
 
@@ -109,6 +110,8 @@ public abstract class AbstractNodeTest
     protected SearchDaoImpl searchDao;
 
     protected IndexDataServiceImpl indexedDataService;
+
+    private RepositoryServiceImpl repositoryService;
 
     @Before
     public void setUp()
@@ -166,6 +169,9 @@ public abstract class AbstractNodeTest
         this.snapshotService.setClient( this.client );
         this.snapshotService.setConfiguration( repoConfig );
 
+        this.repositoryService = new RepositoryServiceImpl();
+        this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+
         createRepository( TEST_REPO );
         createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
@@ -178,7 +184,7 @@ public abstract class AbstractNodeTest
         nodeService.setSnapshotService( this.snapshotService );
         nodeService.setStorageService( this.storageService );
 
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal, repositoryService );
         repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();
@@ -299,9 +305,9 @@ public abstract class AbstractNodeTest
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getValue() );
     }
 
-    protected void printContentRepoIndex( final RepositoryId repositoryId, final BranchId branchId )
+    protected void printContentRepoIndex( final RepositoryId repositoryId, final Branch branch )
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branchId.getValue() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getValue() );
     }
 
     protected void printBranchIndex()
@@ -314,17 +320,17 @@ public abstract class AbstractNodeTest
         printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
-    protected PushNodesResult pushNodes( final BranchId target, final NodeId... nodeIds )
+    protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
     {
         return doPushNodes( NodeIds.from( Arrays.asList( nodeIds ) ), target );
     }
 
-    protected PushNodesResult pushNodes( final NodeIds nodeIds, final BranchId target )
+    protected PushNodesResult pushNodes( final NodeIds nodeIds, final Branch target )
     {
         return doPushNodes( nodeIds, target );
     }
 
-    private PushNodesResult doPushNodes( final NodeIds nodeIds, final BranchId target )
+    private PushNodesResult doPushNodes( final NodeIds nodeIds, final Branch target )
     {
         return PushNodesCommand.create().
             ids( nodeIds ).

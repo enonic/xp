@@ -2,19 +2,19 @@ package com.enonic.xp.repository;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.BranchId;
-import com.enonic.xp.branch.BranchIds;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 
 @Beta
 public final class Repository
 {
     private final RepositoryId id;
 
-    private final BranchIds branchIds;
+    private final Branches branches;
 
     private Repository( Builder builder )
     {
-        this.branchIds = builder.branchIds;
+        this.branches = builder.branches;
         this.id = builder.id;
     }
 
@@ -23,9 +23,9 @@ public final class Repository
         return id;
     }
 
-    public BranchIds getBranchIds()
+    public Branches getBranches()
     {
-        return branchIds;
+        return branches;
     }
 
     public static Builder create()
@@ -65,21 +65,21 @@ public final class Repository
     {
         private RepositoryId id;
 
-        private BranchIds branchIds;
+        private Branches branches;
 
         private Builder()
         {
         }
 
-        public Builder branches( final BranchIds branchIds )
+        public Builder branches( final Branches branches )
         {
-            this.branchIds = branchIds;
+            this.branches = branches;
             return this;
         }
 
-        public Builder branches( final BranchId... branchIds )
+        public Builder branches( final Branch... branches )
         {
-            this.branchIds = BranchIds.from( branchIds );
+            this.branches = Branches.from( branches );
             return this;
         }
 

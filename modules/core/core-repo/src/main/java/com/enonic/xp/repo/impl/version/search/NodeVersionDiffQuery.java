@@ -1,15 +1,15 @@
 package com.enonic.xp.repo.impl.version.search;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.AbstractQuery;
 import com.enonic.xp.node.NodePath;
 
 public class NodeVersionDiffQuery
     extends AbstractQuery
 {
-    private final BranchId source;
+    private final Branch source;
 
-    private final BranchId target;
+    private final Branch target;
 
     private final NodePath nodePath;
 
@@ -24,12 +24,12 @@ public class NodeVersionDiffQuery
         this.excludes = builder.excludes;
     }
 
-    public BranchId getSource()
+    public Branch getSource()
     {
         return source;
     }
 
-    public BranchId getTarget()
+    public Branch getTarget()
     {
         return target;
     }
@@ -52,9 +52,9 @@ public class NodeVersionDiffQuery
     public static class Builder
         extends AbstractQuery.Builder<Builder>
     {
-        private BranchId source;
+        private Branch source;
 
-        private BranchId target;
+        private Branch target;
 
         private NodePath nodePath;
 
@@ -66,13 +66,13 @@ public class NodeVersionDiffQuery
             super();
         }
 
-        public Builder source( final BranchId source )
+        public Builder source( final Branch source )
         {
             this.source = source;
             return this;
         }
 
-        public Builder target( final BranchId target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;

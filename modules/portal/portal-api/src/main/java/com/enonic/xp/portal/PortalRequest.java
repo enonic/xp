@@ -3,7 +3,7 @@ package com.enonic.xp.portal;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
@@ -19,11 +19,11 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class PortalRequest
     extends WebRequest
 {
-    private final static BranchId DEFAULT_BRANCH_ID = ContentConstants.BRANCH_ID_DRAFT;
+    private final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
     private RenderMode mode;
 
-    private BranchId branchId;
+    private Branch branch;
 
     private ContentPath contentPath;
 
@@ -50,7 +50,7 @@ public final class PortalRequest
         this.baseUri = "";
         this.contentPath = ContentPath.from( "/" );
         this.mode = RenderMode.LIVE;
-        this.branchId = DEFAULT_BRANCH_ID;
+        this.branch = DEFAULT_BRANCH;
     }
 
     public PortalRequest( final WebRequest webRequest )
@@ -59,12 +59,12 @@ public final class PortalRequest
         this.baseUri = "";
         this.contentPath = ContentPath.from( "/" );
         this.mode = RenderMode.LIVE;
-        this.branchId = DEFAULT_BRANCH_ID;
+        this.branch = DEFAULT_BRANCH;
     }
 
-    public BranchId getBranchId()
+    public Branch getBranch()
     {
-        return branchId;
+        return branch;
     }
 
     public RenderMode getMode()
@@ -77,9 +77,9 @@ public final class PortalRequest
         this.mode = mode;
     }
 
-    public void setBranchId( final BranchId branchId )
+    public void setBranch( final Branch branch )
     {
-        this.branchId = branchId;
+        this.branch = branch;
     }
 
     public String rewriteUri( final String uri )

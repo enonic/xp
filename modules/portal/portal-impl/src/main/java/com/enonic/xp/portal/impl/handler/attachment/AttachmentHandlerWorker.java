@@ -58,7 +58,7 @@ final class AttachmentHandlerWorker
         {
             final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            final boolean masterBranch = ContentConstants.BRANCH_ID_MASTER.equals( request.getBranchId() );
+            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
             setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
         }
 

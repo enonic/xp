@@ -7,8 +7,11 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.index.IndexSettings;
+import com.enonic.xp.repository.IndexConfig;
+import com.enonic.xp.repository.IndexConfigs;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.RepositorySettings;
 
 public final class RepositoryInitializer
 {
@@ -18,13 +21,20 @@ public final class RepositoryInitializer
 
     private final IndexServiceInternal indexServiceInternal;
 
-    public RepositoryInitializer( final IndexServiceInternal indexServiceInternal )
+    private final RepositoryService repositoryService;
+
+    private final static String INDEX_RESOURCE_BASE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
+
+    public RepositoryInitializer( final IndexServiceInternal indexServiceInternal, final RepositoryService repositoryService )
     {
         this.indexServiceInternal = indexServiceInternal;
+        this.repositoryService = repositoryService;
     }
 
     public void initializeRepositories( final RepositoryId... repositoryIds )
     {
+        final IndexResourceProvider indexResourceProvider = new IndexResourceClasspathProvider( INDEX_RESOURCE_BASE_FOLDER );
+
         if ( !checkClusterHealth() )
         {
             throw new RepositoryException( "Unable to initialize repositories" );
@@ -36,14 +46,31 @@ public final class RepositoryInitializer
         {
             if ( !isInitialized( repositoryId ) && isMaster )
             {
-                doInitializeRepo( repositoryId );
+                final RepositorySettings repoSettings = RepositorySettings.create().
+                    repositoryId( repositoryId ).
+                    indexConfigs( IndexConfigs.create().
+                        add( IndexType.SEARCH, IndexConfig.create().
+                            indexMapping( IndexMappingProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider ) ).
+                            indexSettings( IndexSettingsProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider ) ).
+                            build() ).
+                        add( IndexType.BRANCH, IndexConfig.create().
+                            indexMapping( IndexMappingProvider.get( repositoryId, IndexType.BRANCH, indexResourceProvider ) ).
+                            indexSettings( IndexSettingsProvider.get( repositoryId, IndexType.BRANCH, indexResourceProvider ) ).
+                            build() ).
+                        add( IndexType.VERSION, IndexConfig.create().
+                            indexMapping( IndexMappingProvider.get( repositoryId, IndexType.VERSION, indexResourceProvider ) ).
+                            indexSettings( IndexSettingsProvider.get( repositoryId, IndexType.VERSION, indexResourceProvider ) ).
+                            build() ).
+                        build() ).
+                    build();
+
+                this.repositoryService.create( repoSettings );
             }
             else
             {
                 waitForInitialized( repositoryId );
             }
         }
-
     }
 
     private boolean checkClusterHealth()
@@ -69,27 +96,6 @@ public final class RepositoryInitializer
         return false;
     }
 
-    private void doInitializeRepo( final RepositoryId repositoryId )
-    {
-        LOG.info( "Initializing repositoryId {}", repositoryId );
-
-        createIndexes( repositoryId );
-
-        final String storageIndexName = getStoreIndexName( repositoryId );
-        final String searchIndexName = getSearchIndexName( repositoryId );
-
-        indexServiceInternal.applyMapping( storageIndexName, IndexType.BRANCH,
-                                           RepositoryIndexMappingProvider.getBranchMapping( repositoryId ) );
-
-        indexServiceInternal.applyMapping( storageIndexName, IndexType.VERSION,
-                                           RepositoryIndexMappingProvider.getVersionMapping( repositoryId ) );
-
-        indexServiceInternal.applyMapping( searchIndexName, IndexType.SEARCH,
-                                           RepositoryIndexMappingProvider.getSearchMappings( repositoryId ) );
-
-        indexServiceInternal.refresh( storageIndexName, searchIndexName );
-    }
-
     private void waitForInitialized( final RepositoryId repositoryId )
     {
         LOG.info( "Waiting for repository '{}' to be initialized", repositoryId );
@@ -98,30 +104,6 @@ public final class RepositoryInitializer
         final String searchIndexName = getSearchIndexName( repositoryId );
 
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE, storageIndexName, searchIndexName );
-    }
-
-    private void createIndexes( final RepositoryId repositoryId )
-    {
-        createStorageIndex( repositoryId );
-        createSearchIndex( repositoryId );
-    }
-
-    private void createSearchIndex( final RepositoryId repositoryId )
-    {
-        LOG.info( "Create search-index for repositoryId {}", repositoryId );
-        final String searchIndexName = getSearchIndexName( repositoryId );
-        final IndexSettings searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
-        LOG.debug( "Applying search-index settings for repo {}: {}", repositoryId, searchIndexSettings.getSettingsAsString() );
-        indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
-    }
-
-    private void createStorageIndex( final RepositoryId repositoryId )
-    {
-        LOG.info( "Create storage-index for repositoryId {}", repositoryId );
-        final String storageIndexName = getStoreIndexName( repositoryId );
-        final IndexSettings storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repositoryId );
-        LOG.debug( "Applying storage-index settings for repo {}: {}", repositoryId, storageIndexSettings.getSettingsAsString() );
-        indexServiceInternal.createIndex( storageIndexName, storageIndexSettings );
     }
 
     private boolean isInitialized( final RepositoryId repositoryId )
@@ -141,4 +123,6 @@ public final class RepositoryInitializer
     {
         return IndexNameResolver.resolveSearchIndexName( repositoryId );
     }
+
+
 }

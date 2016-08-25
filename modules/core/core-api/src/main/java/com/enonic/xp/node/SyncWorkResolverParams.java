@@ -2,12 +2,12 @@ package com.enonic.xp.node;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 
 @Beta
 public class SyncWorkResolverParams
 {
-    private BranchId branchId;
+    private Branch branch;
 
     private NodeId nodeId;
 
@@ -17,15 +17,15 @@ public class SyncWorkResolverParams
 
     private SyncWorkResolverParams( Builder builder )
     {
-        branchId = builder.branchId;
+        branch = builder.branch;
         nodeId = builder.nodeId;
         excludedNodeIds = builder.excludedNodeIds;
         includeChildren = builder.includeChildren;
     }
 
-    public BranchId getBranchId()
+    public Branch getBranch()
     {
-        return branchId;
+        return branch;
     }
 
     public NodeId getNodeId()
@@ -51,7 +51,7 @@ public class SyncWorkResolverParams
 
     public static final class Builder
     {
-        private BranchId branchId;
+        private Branch branch;
 
         private NodeId nodeId;
 
@@ -63,9 +63,9 @@ public class SyncWorkResolverParams
         {
         }
 
-        public Builder branch( final BranchId branchId )
+        public Builder branch( final Branch branch )
         {
-            this.branchId = branchId;
+            this.branch = branch;
             return this;
         }
 

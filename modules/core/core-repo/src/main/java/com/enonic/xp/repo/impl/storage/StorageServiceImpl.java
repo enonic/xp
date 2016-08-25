@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.storage;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -109,7 +109,7 @@ public class StorageServiceImpl
 
         if ( nodeBranchEntry == null )
         {
-            throw new NodeNotFoundException( "Cannot find node with id: " + node.id() + " in branch " + context.getBranchId() );
+            throw new NodeNotFoundException( "Cannot find node with id: " + node.id() + " in branch " + context.getBranch() );
         }
 
         final NodeVersionId nodeVersionId = nodeBranchEntry.getVersionId();
@@ -139,7 +139,7 @@ public class StorageServiceImpl
 
     @Override
     public void publish( final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId, final InternalContext context,
-                         final BranchId source )
+                         final Branch source )
     {
         this.branchService.store( NodeBranchEntry.create().
             nodeVersionId( nodeVersionId ).
@@ -149,7 +149,7 @@ public class StorageServiceImpl
             nodePath( nodeBranchEntry.getNodePath() ).
             build(), context );
 
-        this.indexServiceInternal.copy( nodeBranchEntry.getNodeId(), context.getRepositoryId(), source, context.getBranchId() );
+        this.indexServiceInternal.copy( nodeBranchEntry.getNodeId(), context.getRepositoryId(), source, context.getBranch() );
     }
 
     @Override
@@ -166,11 +166,11 @@ public class StorageServiceImpl
                 timestamp( nodeBranchEntry.getTimestamp() ).
                 nodePath( nodeBranchEntry.getNodePath() ).
                 build(), InternalContext.create( context ).
-                branch( entries.getTargetBranchId() ).
+                branch( entries.getTargetBranch() ).
                 build() );
         }
 
-        this.indexDataService.push( entries.getNodeIds(), entries.getTargetBranchId(), entries.getTargetRepo(), context );
+        this.indexDataService.push( entries.getNodeIds(), entries.getTargetBranch(), entries.getTargetRepo(), context );
     }
 
     @Override

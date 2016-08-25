@@ -2,7 +2,7 @@ package com.enonic.xp.security;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -12,7 +12,7 @@ import com.enonic.xp.security.acl.Permission;
 @Beta
 public final class SystemConstants
 {
-    public static final BranchId BRANCH_ID_SYSTEM = BranchId.create().
+    public static final Branch BRANCH_SYSTEM = Branch.create().
         value( "master" ).
         build();
 

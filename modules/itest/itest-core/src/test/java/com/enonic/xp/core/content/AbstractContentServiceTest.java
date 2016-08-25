@@ -23,7 +23,7 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -59,6 +59,7 @@ import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
+import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
@@ -90,11 +91,11 @@ public class AbstractContentServiceTest
         user( TEST_DEFAULT_USER ).
         build();
 
-    protected static final BranchId WS_DEFAULT = BranchId.create().
+    protected static final Branch WS_DEFAULT = Branch.create().
         value( "draft" ).
         build();
 
-    protected static final BranchId WS_OTHER = BranchId.create().
+    protected static final Branch WS_OTHER = Branch.create().
         value( "master" ).
         build();
 
@@ -135,6 +136,8 @@ public class AbstractContentServiceTest
     private SearchServiceImpl searchService;
 
     private IndexDataServiceImpl indexedDataService;
+
+    private RepositoryServiceImpl repositoryService;
 
     private SearchDaoImpl searchDao;
 
@@ -186,6 +189,9 @@ public class AbstractContentServiceTest
         this.searchService = new SearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
 
+        this.repositoryService = new RepositoryServiceImpl();
+        this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
+
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setStorageService( storageService );
@@ -193,6 +199,7 @@ public class AbstractContentServiceTest
         this.nodeService.setEventPublisher( eventPublisher );
         this.nodeService.setConfiguration( repoConfig );
         this.nodeService.setBlobStore( blobStore );
+        this.nodeService.setRepositoryService( this.repositoryService );
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
@@ -249,8 +256,9 @@ public class AbstractContentServiceTest
         nodeService.setIndexServiceInternal( indexService );
         nodeService.setSearchService( searchService );
         nodeService.setStorageService( storageService );
+        nodeService.setRepositoryService( this.repositoryService );
 
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService, this.repositoryService );
         repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();

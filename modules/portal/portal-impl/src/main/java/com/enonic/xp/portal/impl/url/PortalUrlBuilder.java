@@ -13,7 +13,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
@@ -41,9 +41,9 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         return this.portalRequest.getBaseUri();
     }
 
-    private BranchId getBranch()
+    private Branch getBranch()
     {
-        return this.portalRequest.getBranchId();
+        return this.portalRequest.getBranch();
     }
 
     public final void setParams( final T params )

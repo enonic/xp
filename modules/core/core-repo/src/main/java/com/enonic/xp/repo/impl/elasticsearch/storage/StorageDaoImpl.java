@@ -208,7 +208,7 @@ public class StorageDaoImpl
         CopyExecutor.create( this.client ).
             query( esQuery ).
             targetIndex( IndexNameResolver.resolveSearchIndexName( request.getTargetRepo() ) ).
-            targetType( SearchStorageType.from( request.getTargetBranchId() ).getName() ).
+            targetType( SearchStorageType.from( request.getTargetBranch() ).getName() ).
             build().
             execute();
     }

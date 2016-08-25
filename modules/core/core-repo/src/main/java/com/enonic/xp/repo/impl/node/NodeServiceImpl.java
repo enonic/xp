@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
@@ -68,6 +68,7 @@ import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
 import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.BinaryReference;
 
@@ -89,10 +90,12 @@ public class NodeServiceImpl
 
     private BlobStore blobStore;
 
+    private RepositoryService repositoryService;
+
     @Activate
     public void initialize()
     {
-        final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal );
+        final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal, this.repositoryService );
         repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
     }
 
@@ -306,7 +309,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public PushNodesResult push( final NodeIds ids, final BranchId target )
+    public PushNodesResult push( final NodeIds ids, final Branch target )
     {
         final PushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
@@ -378,7 +381,7 @@ public class NodeServiceImpl
 
 
     @Override
-    public NodeComparison compare( final NodeId nodeId, final BranchId target )
+    public NodeComparison compare( final NodeId nodeId, final Branch target )
     {
         return CompareNodeCommand.create().
             nodeId( nodeId ).
@@ -389,7 +392,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeComparisons compare( final NodeIds nodeIds, final BranchId target )
+    public NodeComparisons compare( final NodeIds nodeIds, final Branch target )
     {
         return CompareNodesCommand.create().
             nodeIds( nodeIds ).
@@ -416,7 +419,7 @@ public class NodeServiceImpl
     {
         return GetActiveNodeVersionsCommand.create().
             nodeId( params.getNodeId() ).
-            branches( params.getBranchIds() ).
+            branches( params.getBranches() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -448,7 +451,7 @@ public class NodeServiceImpl
     public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         return ResolveSyncWorkCommand.create().
-            target( params.getBranchId() ).
+            target( params.getBranch() ).
             nodeId( params.getNodeId() ).
             excludedNodeIds( params.getExcludedNodeIds() ).
             includeChildren( params.isIncludeChildren() ).
@@ -726,5 +729,11 @@ public class NodeServiceImpl
     public void setBlobStore( final BlobStore blobStore )
     {
         this.blobStore = blobStore;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
     }
 }

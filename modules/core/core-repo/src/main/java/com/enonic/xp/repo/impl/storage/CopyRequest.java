@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repository.RepositoryId;
@@ -11,7 +11,7 @@ public class CopyRequest
 
     private final NodeIds nodeIds;
 
-    private final BranchId targetBranchId;
+    private final Branch targetBranch;
 
     private final RepositoryId targetRepo;
 
@@ -19,7 +19,7 @@ public class CopyRequest
     {
         storageSettings = builder.storageSettings;
         nodeIds = builder.nodeIds;
-        targetBranchId = builder.targetBranchId;
+        targetBranch = builder.targetBranch;
         targetRepo = builder.targetRepo;
     }
 
@@ -33,9 +33,9 @@ public class CopyRequest
         return nodeIds;
     }
 
-    public BranchId getTargetBranchId()
+    public Branch getTargetBranch()
     {
-        return targetBranchId;
+        return targetBranch;
     }
 
     public RepositoryId getTargetRepo()
@@ -55,7 +55,7 @@ public class CopyRequest
 
         private NodeIds nodeIds;
 
-        private BranchId targetBranchId;
+        private Branch targetBranch;
 
         private RepositoryId targetRepo;
 
@@ -75,9 +75,9 @@ public class CopyRequest
             return this;
         }
 
-        public Builder targetBranch( final BranchId val )
+        public Builder targetBranch( final Branch val )
         {
-            targetBranchId = val;
+            targetBranch = val;
             return this;
         }
 

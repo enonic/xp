@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.search;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.StorageType;
 
 public class SearchStorageType
@@ -13,9 +13,9 @@ public class SearchStorageType
         this.name = name;
     }
 
-    public static StorageType from( final BranchId branchId )
+    public static StorageType from( final Branch branch )
     {
-        return new SearchStorageType( branchId.getValue() );
+        return new SearchStorageType( branch.getValue() );
     }
 
     @Override

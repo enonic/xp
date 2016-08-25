@@ -2,16 +2,16 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 
 @Beta
 public class CompareContentParams
 {
     private final ContentId contentId;
 
-    private final BranchId target;
+    private final Branch target;
 
-    public CompareContentParams( final ContentId contentId, final BranchId target )
+    public CompareContentParams( final ContentId contentId, final Branch target )
     {
         this.contentId = contentId;
         this.target = target;
@@ -22,7 +22,7 @@ public class CompareContentParams
         return contentId;
     }
 
-    public BranchId getTarget()
+    public Branch getTarget()
     {
         return target;
     }

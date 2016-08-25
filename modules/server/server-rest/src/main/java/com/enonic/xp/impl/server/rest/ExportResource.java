@@ -85,7 +85,7 @@ public final class ExportResource
     private Context getContext( final RepoPath repoPath )
     {
         return ContextBuilder.from( ContextAccessor.current() ).
-            branch( repoPath.getBranchId() ).
+            branch( repoPath.getBranch() ).
             repositoryId( repoPath.getRepositoryId() ).
             build();
     }

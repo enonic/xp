@@ -2,19 +2,19 @@ package com.enonic.xp.node;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.BranchIds;
+import com.enonic.xp.branch.Branches;
 
 @Beta
 public class GetActiveNodeVersionsParams
 {
     private final NodeId nodeId;
 
-    private final BranchIds branchIds;
+    private final Branches branches;
 
     private GetActiveNodeVersionsParams( Builder builder )
     {
         nodeId = builder.nodeId;
-        branchIds = builder.branchIds;
+        branches = builder.branches;
     }
 
     public static Builder create()
@@ -27,16 +27,16 @@ public class GetActiveNodeVersionsParams
         return nodeId;
     }
 
-    public BranchIds getBranchIds()
+    public Branches getBranches()
     {
-        return branchIds;
+        return branches;
     }
 
     public static final class Builder
     {
         private NodeId nodeId;
 
-        private BranchIds branchIds;
+        private Branches branches;
 
         private Builder()
         {
@@ -48,9 +48,9 @@ public class GetActiveNodeVersionsParams
             return this;
         }
 
-        public Builder branches( final BranchIds branchIds )
+        public Builder branches( final Branches branches )
         {
-            this.branchIds = branchIds;
+            this.branches = branches;
             return this;
         }
 

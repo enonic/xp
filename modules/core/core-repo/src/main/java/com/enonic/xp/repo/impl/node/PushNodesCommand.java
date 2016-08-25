@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -32,7 +32,7 @@ import com.enonic.xp.security.acl.Permission;
 public class PushNodesCommand
     extends AbstractNodeCommand
 {
-    private final BranchId target;
+    private final Branch target;
 
     private final NodeIds ids;
 
@@ -226,7 +226,7 @@ public class PushNodesCommand
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private BranchId target;
+        private Branch target;
 
         private NodeIds ids;
 
@@ -235,7 +235,7 @@ public class PushNodesCommand
             super();
         }
 
-        public Builder target( final BranchId target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;

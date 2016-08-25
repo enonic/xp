@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import org.junit.Test;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -27,7 +27,7 @@ public class BranchStorageRequestFactoryTest
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             build(), InternalContext.create().
-            branch( BranchId.from( "myBranch" ) ).
+            branch( Branch.from( "myBranch" ) ).
             repositoryId( RepositoryId.from( "myRepoId" ) ).
             build() );
 

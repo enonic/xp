@@ -5,9 +5,21 @@ import com.google.common.annotations.Beta;
 @Beta
 public enum IndexType
 {
-    SEARCH,
-    BRANCH,
-    VERSION;
+    SEARCH( true ),
+    VERSION( false ),
+    BRANCH( false );
+
+    private final boolean dynamicTypes;
+
+    IndexType( final boolean dynamicTypes )
+    {
+        this.dynamicTypes = dynamicTypes;
+    }
+
+    public boolean isDynamicTypes()
+    {
+        return dynamicTypes;
+    }
 
     public String getName()
     {

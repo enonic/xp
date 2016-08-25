@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.ReindexResult;
 
 public final class ReindexResultJson
@@ -32,9 +32,9 @@ public final class ReindexResultJson
         json.numberReindexed = result.getReindexNodes().getSize();
 
         json.branches = Lists.newArrayList();
-        for ( final BranchId branchId : result.getBranchIds() )
+        for ( final Branch branch : result.getBranches() )
         {
-            json.branches.add( branchId.getValue() );
+            json.branches.add( branch.getValue() );
         }
 
         return json;

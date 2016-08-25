@@ -33,7 +33,7 @@ public class SetActiveVersionCommand
         if ( node == null )
         {
             throw new NodeNotFoundException(
-                "Cannot find nodeVersion [" + this.nodeVersionId + "] in branch " + context.getBranchId().getValue() );
+                "Cannot find nodeVersion [" + this.nodeVersionId + "] in branch " + context.getBranch().getValue() );
         }
 
         if ( !node.id().equals( nodeId ) )

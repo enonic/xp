@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -13,7 +13,7 @@ import com.enonic.xp.repo.impl.storage.StorageService;
 
 class AbstractCompareNodeCommand
 {
-    final BranchId target;
+    final Branch target;
 
     final StorageService storageService;
 
@@ -43,12 +43,12 @@ class AbstractCompareNodeCommand
 
     public static class Builder<B extends Builder>
     {
-        private BranchId target;
+        private Branch target;
 
         private StorageService storageService;
 
         @SuppressWarnings("unchecked")
-        public B target( final BranchId target )
+        public B target( final Branch target )
         {
             this.target = target;
             return (B) this;

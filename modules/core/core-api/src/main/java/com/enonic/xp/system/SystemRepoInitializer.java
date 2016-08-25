@@ -28,7 +28,7 @@ public class SystemRepoInitializer
                 permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
                 build() );
 
-            nodeService.push( NodeIds.from( rootNode.id() ), SecurityConstants.BRANCH_ID_SECURITY );
+            nodeService.push( NodeIds.from( rootNode.id() ), SecurityConstants.BRANCH_SECURITY );
 
             return rootNode;
         }

@@ -2,14 +2,14 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
@@ -102,7 +102,7 @@ final class DeleteAndFetchContentCommand
             final Context currentContext = ContextAccessor.current();
             deleteNodeInContext( nodeToDelete, currentContext );
             final NodeIds deletedNodeIds = deleteNodeInContext( nodeToDelete, ContextBuilder.from( currentContext ).
-                branch( ContentConstants.BRANCH_ID_MASTER ).
+                branch( ContentConstants.BRANCH_MASTER ).
                 build() );
             deletedNodes.addDeleted( ContentIds.from( deletedNodeIds.getAsStrings() ) );
             return;
@@ -119,16 +119,16 @@ final class DeleteAndFetchContentCommand
     private CompareStatus getCompareStatus( final NodeId nodeToDelete )
     {
         final Context context = ContextAccessor.current();
-        final BranchId currentBranchId = context.getBranch();
+        final Branch currentBranch = context.getBranch();
 
         final NodeComparison compare;
-        if ( currentBranchId.equals( ContentConstants.BRANCH_ID_DRAFT ) )
+        if ( currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
         {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_ID_MASTER );
+            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_MASTER );
         }
         else
         {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_ID_DRAFT );
+            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_DRAFT );
         }
         return compare.getCompareStatus();
     }

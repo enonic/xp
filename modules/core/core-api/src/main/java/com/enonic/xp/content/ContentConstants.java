@@ -2,7 +2,7 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
@@ -18,11 +18,11 @@ public class ContentConstants
 {
     public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";
 
-    public static final BranchId BRANCH_ID_DRAFT = BranchId.create().
+    public static final Branch BRANCH_DRAFT = Branch.create().
         value( "draft" ).
         build();
 
-    public static final BranchId BRANCH_ID_MASTER = BranchId.create().
+    public static final Branch BRANCH_MASTER = Branch.create().
         value( "master" ).
         build();
 
@@ -31,12 +31,12 @@ public class ContentConstants
         build();
 
     public static final Context CONTEXT_DRAFT = ContextBuilder.create().
-        branch( BRANCH_ID_DRAFT ).
+        branch( BRANCH_DRAFT ).
         repositoryId( CONTENT_REPO.getId() ).
         build();
 
     public static final Context CONTEXT_MASTER = ContextBuilder.create().
-        branch( BRANCH_ID_MASTER ).
+        branch( BRANCH_MASTER ).
         repositoryId( CONTENT_REPO.getId() ).
         build();
 

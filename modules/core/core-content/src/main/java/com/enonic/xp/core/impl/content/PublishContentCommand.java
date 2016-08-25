@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
@@ -24,7 +24,7 @@ public class PublishContentCommand
 
     private final ContentIds excludedContentIds;
 
-    private final BranchId target;
+    private final Branch target;
 
     private final boolean resolveSyncWork;
 
@@ -169,7 +169,7 @@ public class PublishContentCommand
 
         private ContentIds excludedContentIds;
 
-        private BranchId target;
+        private Branch target;
 
         private boolean includeDependencies = true;
 
@@ -187,7 +187,7 @@ public class PublishContentCommand
             return this;
         }
 
-        public Builder target( final BranchId target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;

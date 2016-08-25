@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.BranchId;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -20,7 +20,7 @@ public class ResolveContentsToBePublishedCommand
 
     private final ContentIds excludedContentIds;
 
-    private final BranchId target;
+    private final Branch target;
 
     private final CompareContentResults.Builder resultBuilder;
 
@@ -81,7 +81,7 @@ public class ResolveContentsToBePublishedCommand
 
         private ContentIds excludedContentIds;
 
-        private BranchId target;
+        private Branch target;
 
         private boolean includeChildren = true;
 
@@ -97,7 +97,7 @@ public class ResolveContentsToBePublishedCommand
             return this;
         }
 
-        public Builder target( final BranchId target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;
