@@ -18,7 +18,7 @@ module api.ui.selector.combobox {
 
         private loadingListeners: {(): void;}[];
 
-        private loadedListeners: {(items: OPTION_DISPLAY_VALUE[]): void;}[];
+        private loadedListeners: {(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean): void;}[];
 
         private setNextInputFocusWhenMaxReached: boolean;
 
@@ -250,7 +250,7 @@ module api.ui.selector.combobox {
                 var options = this.createOptions(event.getData());
                 // check if postLoad and save selection
                 this.comboBox.setOptions(options, event.isPostLoaded());
-                this.notifyLoaded(event.getData());
+                this.notifyLoaded(event.getData(), event.isPostLoaded());
             });
         }
 
@@ -310,19 +310,27 @@ module api.ui.selector.combobox {
             this.loadedListeners.splice(index, 1);
         }
 
-        onLoaded(listener: {(items: OPTION_DISPLAY_VALUE[]): void;}) {
+        onLoaded(listener: {(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean): void;}) {
             this.loadedListeners.push(listener);
         }
 
-        unLoaded(listenerToBeRemoved: {(items: OPTION_DISPLAY_VALUE[]): void;}) {
+        unLoaded(listenerToBeRemoved: {(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean): void;}) {
             var index = this.loadedListeners.indexOf(listenerToBeRemoved);
             this.loadedListeners.splice(index, 1);
         }
 
-        private notifyLoaded(items: OPTION_DISPLAY_VALUE[]) {
+        private notifyLoaded(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean) {
             this.loadedListeners.forEach((listener) => {
-                listener(items);
+                listener(items, postLoaded);
             });
+        }
+
+        onValueLoaded(listener: (options: Option<OPTION_DISPLAY_VALUE>[]) => void) {
+            this.comboBox.onValueLoaded(listener);
+        }
+
+        unValueLoaded(listener: (options: Option<OPTION_DISPLAY_VALUE>[]) => void) {
+            this.comboBox.unValueLoaded(listener);
         }
 
         giveFocus(): boolean {

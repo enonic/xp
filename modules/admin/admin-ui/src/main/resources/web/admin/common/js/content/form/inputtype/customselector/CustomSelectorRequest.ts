@@ -15,7 +15,7 @@ module api.content.form.inputtype.contentselector {
         private requestPath: string;
         private ids: string[] = [];
         private query: string;
-        private start: number;
+        private start: number = 0;
         private count: number = CustomSelectorRequest.DEFAULT_SIZE;
 
         private results: CustomSelectorItem[];
@@ -38,7 +38,7 @@ module api.content.form.inputtype.contentselector {
 
         getParams(): Object {
             return {
-                ids: this.ids,
+                ids: JSON.stringify(this.ids),
                 query: this.query || null,
                 start: this.start || null,
                 count: this.count || null

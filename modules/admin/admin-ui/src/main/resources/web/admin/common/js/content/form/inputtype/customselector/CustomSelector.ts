@@ -122,6 +122,10 @@ module api.content.form.inputtype.contentselector {
                 this.validate(false);
             });
 
+            comboBox.onValueLoaded((options) => {
+                this.validate(false);
+            });
+
             return comboBox;
         }
 
