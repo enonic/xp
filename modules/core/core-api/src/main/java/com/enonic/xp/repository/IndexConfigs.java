@@ -2,10 +2,12 @@ package com.enonic.xp.repository;
 
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.index.IndexType;
 
+@Beta
 public class IndexConfigs
 {
     private final Map<IndexType, IndexConfig> configs;

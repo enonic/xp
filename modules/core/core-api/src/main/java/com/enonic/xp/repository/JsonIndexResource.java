@@ -1,7 +1,9 @@
 package com.enonic.xp.repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.annotations.Beta;
 
+@Beta
 public class JsonIndexResource
     implements IndexResource
 {

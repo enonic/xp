@@ -1,5 +1,8 @@
 package com.enonic.xp.repository;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class IndexMapping
 {
     private final IndexResource resource;
