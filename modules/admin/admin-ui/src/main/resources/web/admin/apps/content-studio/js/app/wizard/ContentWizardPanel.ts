@@ -453,7 +453,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private handleSiteConfigApply() {
         var siteConfigApplyHandler = (event: ContentRequiresSaveEvent) => {
             if (this.isCurrentContentId(event.getContentId())) {
-                this.getLivePanel().saveAndReloadPage();
+                this.saveChanges();
             }
         };
 
@@ -598,7 +598,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             liveFormPanel.skipNextReloadConfirmation(true);
         }
         this.setRequireValid(false);
-        return super.saveChanges();
+        return super.saveChanges().then((content: Content) => {
+            if (liveFormPanel) {
+                liveFormPanel.loadPage();
+            }
+
+            return content;
+        });
     }
 
     private isCurrentContentId(id: api.content.ContentId): boolean {
