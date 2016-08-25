@@ -2,14 +2,24 @@ package com.enonic.xp.repository;
 
 public class IndexConfig
 {
-    private final IndexResource settings;
+    private final IndexSettings settings;
 
-    private final IndexResource mapping;
+    private final IndexMapping mapping;
 
     private IndexConfig( final Builder builder )
     {
-        mapping = builder.mapping;
         settings = builder.settings;
+        mapping = builder.mapping;
+    }
+
+    public IndexSettings getSettings()
+    {
+        return settings;
+    }
+
+    public IndexMapping getMapping()
+    {
+        return mapping;
     }
 
     public static Builder create()
@@ -17,35 +27,25 @@ public class IndexConfig
         return new Builder();
     }
 
-    public IndexResource getSettings()
-    {
-        return settings;
-    }
-
-    public IndexResource getMapping()
-    {
-        return mapping;
-    }
-
     public static final class Builder
     {
-        private IndexResource mapping;
+        private IndexSettings settings;
 
-        private IndexResource settings;
+        private IndexMapping mapping;
 
         private Builder()
         {
         }
 
-        public Builder indexMapping( final IndexResource val )
+        public Builder settings( final IndexSettings val )
         {
-            mapping = val;
+            settings = val;
             return this;
         }
 
-        public Builder indexSettings( final IndexResource val )
+        public Builder mapping( final IndexMapping val )
         {
-            settings = val;
+            mapping = val;
             return this;
         }
 

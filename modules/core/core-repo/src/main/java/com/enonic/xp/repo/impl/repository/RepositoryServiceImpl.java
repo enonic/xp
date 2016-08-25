@@ -9,7 +9,6 @@ import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.IndexConfig;
 import com.enonic.xp.repository.IndexConfigs;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
@@ -21,23 +20,18 @@ public class RepositoryServiceImpl
     private IndexServiceInternal indexServiceInternal;
 
     @Override
-    public Repository create( final RepositorySettings repositorySettings )
+    public RepositoryId create( final RepositorySettings repositorySettings )
     {
         doCreateIndexes( repositorySettings.getRepositoryId(), repositorySettings.getIndexConfigs() );
         applyMappings( repositorySettings.getRepositoryId(), repositorySettings.getIndexConfigs() );
 
-        return null;
-    }
-
-    public void createIndex( final RepositoryId repositoryId, final IndexType indexType, final IndexConfig indexConfig )
-    {
-        doCreateIndex( repositoryId, indexType, indexConfig );
+        return repositorySettings.getRepositoryId();
     }
 
     private void doCreateIndexes( final RepositoryId repositoryId, final IndexConfigs indexConfigs )
     {
-        createIndex( repositoryId, IndexType.SEARCH, indexConfigs.get( IndexType.SEARCH ) );
-        createIndex( repositoryId, IndexType.VERSION, indexConfigs.get( IndexType.VERSION ) );
+        doCreateIndex( repositoryId, IndexType.SEARCH, indexConfigs.get( IndexType.SEARCH ) );
+        doCreateIndex( repositoryId, IndexType.VERSION, indexConfigs.get( IndexType.VERSION ) );
     }
 
     private void applyMappings( final RepositoryId repositoryId, final IndexConfigs indexConfigs )

@@ -9,7 +9,7 @@ public interface IndexServiceInternal
 {
     void createIndex( final CreateIndexRequest request );
 
-    void updateIndex( final String indexName, final IndexSettings settings );
+    void updateIndex( final String indexName, final UpdateIndexSettings settings );
 
     void deleteIndices( final String... indexNames );
 

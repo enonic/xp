@@ -19,7 +19,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 import static org.mockito.Matchers.isA;
 
-public class IndexResourceTest
+public class JsonIndexResourceTest
     extends ServerRestTestSupport
 {
     private IndexService indexService;

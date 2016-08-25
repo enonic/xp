@@ -17,6 +17,7 @@ public class RepositorySettings
         return new Builder();
     }
 
+
     public RepositoryId getRepositoryId()
     {
         return repositoryId;

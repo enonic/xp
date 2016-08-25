@@ -3,13 +3,13 @@ package com.enonic.xp.repo.impl.index;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.repository.IndexResource;
+import com.enonic.xp.repository.IndexSettings;
 
 public class CreateIndexRequest
 {
     private final String indexName;
 
-    private final IndexResource indexSettings;
+    private final IndexSettings indexSettings;
 
     private CreateIndexRequest( final Builder builder )
     {
@@ -22,7 +22,7 @@ public class CreateIndexRequest
         return indexName;
     }
 
-    public IndexResource getIndexSettings()
+    public IndexSettings getIndexSettings()
     {
         return indexSettings;
     }
@@ -36,7 +36,7 @@ public class CreateIndexRequest
     {
         private String indexName;
 
-        private IndexResource indexSettings;
+        private IndexSettings indexSettings;
 
         private Builder()
         {
@@ -48,7 +48,7 @@ public class CreateIndexRequest
             return this;
         }
 
-        public Builder indexSettings( final IndexResource val )
+        public Builder indexSettings( final IndexSettings val )
         {
             indexSettings = val;
             return this;
@@ -62,6 +62,7 @@ public class CreateIndexRequest
 
         public CreateIndexRequest build()
         {
+            this.validate();
             return new CreateIndexRequest( this );
         }
     }

@@ -40,7 +40,8 @@ import com.enonic.xp.repo.impl.repository.IndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.IndexSettingsProvider;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
-import com.enonic.xp.repository.IndexResource;
+import com.enonic.xp.repository.IndexMapping;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
@@ -143,34 +144,34 @@ public class IndexServiceImpl
         final UpdateIndexSettingsResult.Builder result = UpdateIndexSettingsResult.create();
 
         final String indexName = params.getIndexName();
-        final IndexSettings indexSettings = IndexSettings.from( params.getSettings() );
+        final UpdateIndexSettings updateIndexSettings = UpdateIndexSettings.from( params.getSettings() );
 
         if ( indexName != null )
         {
-            updateIndexSettings( indexName, indexSettings, result );
+            updateIndexSettings( indexName, updateIndexSettings, result );
         }
         else
         {
-            updateIndexSettings( ContentConstants.CONTENT_REPO.getId(), indexSettings, result );
-            updateIndexSettings( SystemConstants.SYSTEM_REPO.getId(), indexSettings, result );
+            updateIndexSettings( ContentConstants.CONTENT_REPO.getId(), updateIndexSettings, result );
+            updateIndexSettings( SystemConstants.SYSTEM_REPO.getId(), updateIndexSettings, result );
         }
 
         return result.build();
     }
 
-    private void updateIndexSettings( final RepositoryId repositoryId, final IndexSettings indexSettings,
+    private void updateIndexSettings( final RepositoryId repositoryId, final UpdateIndexSettings updateIndexSettings,
                                       final UpdateIndexSettingsResult.Builder result )
     {
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
         final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        updateIndexSettings( searchIndexName, indexSettings, result );
-        updateIndexSettings( storageIndexName, indexSettings, result );
+        updateIndexSettings( searchIndexName, updateIndexSettings, result );
+        updateIndexSettings( storageIndexName, updateIndexSettings, result );
     }
 
-    private void updateIndexSettings( final String indexName, final IndexSettings indexSettings,
+    private void updateIndexSettings( final String indexName, final UpdateIndexSettings updateIndexSettings,
                                       final UpdateIndexSettingsResult.Builder result )
     {
-        indexServiceInternal.updateIndex( indexName, indexSettings );
+        indexServiceInternal.updateIndex( indexName, updateIndexSettings );
         result.addUpdatedIndex( indexName );
     }
 
@@ -195,9 +196,8 @@ public class IndexServiceImpl
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
         final IndexResourceProvider indexResourceProvider = new IndexResourceClasspathProvider( INDEX_RESOURCE_BASE_FOLDER );
-        final IndexResource indexMapping = IndexMappingProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider );
-        final IndexResource indexSettings = IndexSettingsProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider );
 
+        final IndexSettings indexSettings = IndexSettingsProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider );
         indexServiceInternal.createIndex( CreateIndexRequest.create().
             indexName( searchIndexName ).
             indexSettings( indexSettings ).
@@ -205,6 +205,7 @@ public class IndexServiceImpl
 
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
+        final IndexMapping indexMapping = IndexMappingProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider );
         indexServiceInternal.applyMapping( ApplyMappingRequest.create().
             indexName( searchIndexName ).
             indexType( IndexType.SEARCH ).

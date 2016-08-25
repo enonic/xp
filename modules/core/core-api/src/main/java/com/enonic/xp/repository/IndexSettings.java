@@ -1,37 +1,21 @@
 package com.enonic.xp.repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 public class IndexSettings
 {
-    private final JsonNode jsonNode;
+    private final IndexResource resource;
 
-    private final boolean includeDefaultSettings;
-
-    public IndexSettings( final JsonNode jsonNode )
+    public IndexSettings( final IndexResource resource )
     {
-        this.jsonNode = jsonNode;
-        includeDefaultSettings = true;
+        this.resource = resource;
     }
 
-    public IndexSettings( final JsonNode jsonNode, final boolean includeDefaultSettings )
+    public IndexResource getResource()
     {
-        this.jsonNode = jsonNode;
-        this.includeDefaultSettings = includeDefaultSettings;
-    }
-
-    public boolean includeDefaultSettings()
-    {
-        return includeDefaultSettings;
-    }
-
-    public JsonNode get()
-    {
-        return this.jsonNode;
+        return resource;
     }
 
     public String getAsString()
     {
-        return this.jsonNode.toString();
+        return resource.getAsString();
     }
 }

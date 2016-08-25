@@ -35,9 +35,9 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.index.IndexSettings;
+import com.enonic.xp.repo.impl.index.UpdateIndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repository.IndexResource;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
 
@@ -124,7 +124,7 @@ public class IndexServiceInternalImpl
     public void createIndex( final com.enonic.xp.repo.impl.index.CreateIndexRequest request )
     {
         final String indexName = request.getIndexName();
-        final IndexResource indexSettings = request.getIndexSettings();
+        final IndexSettings indexSettings = request.getIndexSettings();
         LOG.info( "creating index {}", indexName );
 
         CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
@@ -148,7 +148,7 @@ public class IndexServiceInternalImpl
 
 
     @Override
-    public void updateIndex( final String indexName, final IndexSettings settings )
+    public void updateIndex( final String indexName, final UpdateIndexSettings settings )
     {
         LOG.info( "updating index {}", indexName );
 

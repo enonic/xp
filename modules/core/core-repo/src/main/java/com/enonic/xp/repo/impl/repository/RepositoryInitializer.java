@@ -50,16 +50,16 @@ public final class RepositoryInitializer
                     repositoryId( repositoryId ).
                     indexConfigs( IndexConfigs.create().
                         add( IndexType.SEARCH, IndexConfig.create().
-                            indexMapping( IndexMappingProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider ) ).
-                            indexSettings( IndexSettingsProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider ) ).
+                            mapping( IndexMappingProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider ) ).
+                            settings( IndexSettingsProvider.get( repositoryId, IndexType.SEARCH, indexResourceProvider ) ).
                             build() ).
                         add( IndexType.BRANCH, IndexConfig.create().
-                            indexMapping( IndexMappingProvider.get( repositoryId, IndexType.BRANCH, indexResourceProvider ) ).
-                            indexSettings( IndexSettingsProvider.get( repositoryId, IndexType.BRANCH, indexResourceProvider ) ).
+                            mapping( IndexMappingProvider.get( repositoryId, IndexType.BRANCH, indexResourceProvider ) ).
+                            settings( IndexSettingsProvider.get( repositoryId, IndexType.BRANCH, indexResourceProvider ) ).
                             build() ).
                         add( IndexType.VERSION, IndexConfig.create().
-                            indexMapping( IndexMappingProvider.get( repositoryId, IndexType.VERSION, indexResourceProvider ) ).
-                            indexSettings( IndexSettingsProvider.get( repositoryId, IndexType.VERSION, indexResourceProvider ) ).
+                            mapping( IndexMappingProvider.get( repositoryId, IndexType.VERSION, indexResourceProvider ) ).
+                            settings( IndexSettingsProvider.get( repositoryId, IndexType.VERSION, indexResourceProvider ) ).
                             build() ).
                         build() ).
                     build();

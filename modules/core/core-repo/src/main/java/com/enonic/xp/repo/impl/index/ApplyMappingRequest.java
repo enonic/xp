@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.index;
 
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repository.IndexResource;
+import com.enonic.xp.repository.IndexMapping;
 
 public class ApplyMappingRequest
 {
-    private final IndexResource mapping;
+    private final IndexMapping mapping;
 
     private final String indexName;
 
@@ -23,7 +23,7 @@ public class ApplyMappingRequest
         return new Builder();
     }
 
-    public IndexResource getMapping()
+    public IndexMapping getMapping()
     {
         return mapping;
     }
@@ -40,7 +40,7 @@ public class ApplyMappingRequest
 
     public static final class Builder
     {
-        private IndexResource mapping;
+        private IndexMapping mapping;
 
         private String indexName;
 
@@ -50,7 +50,7 @@ public class ApplyMappingRequest
         {
         }
 
-        public Builder mapping( final IndexResource val )
+        public Builder mapping( final IndexMapping val )
         {
             mapping = val;
             return this;
