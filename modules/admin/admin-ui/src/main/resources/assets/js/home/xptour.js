@@ -9,14 +9,16 @@ exports.init = function () {
     initTourSteps();
     setTourStep(1);
     api.dom.Body.get().appendChild(tourDialog);
+    
+    return tourDialog;
 };
 
 function initDialog() {
-    tourDialog = new api.ui.dialog.ModalDialog({title: new api.ui.dialog.ModalDialogHeader("Welcome Tour - Step 1 of 5")});
-    tourDialog.addClass("xp-tour-dialog")
-    document.querySelector(".xp-tour").addEventListener("click", function () {
-        tourDialog.open()
+    tourDialog = new api.ui.dialog.ModalDialog({
+        title: new api.ui.dialog.ModalDialogHeader("Welcome Tour - Step 1 of 5"),
+        ignoreClickOutside: true
     });
+    tourDialog.addClass("xp-tour-dialog");
 
     initNavigation();
 }

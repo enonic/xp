@@ -58,30 +58,43 @@
 .xp-about-dialog {
   max-width: 440px;
 
+  background-color: #404040;
+  border: 3px solid black;
+
+  .cancel-button-top, .cancel-button-top:hover {
+    background-color: #404040;
+    &:before {
+      color: #bfbfbf;
+    }
+  }
+
+  .xp-about-dialog-content {
+    color: #bfbfbf;
+  }
+
   .dialog-header {
     margin-bottom: 0px;
   }
 
   .xp-about-dialog-app-icon {
     float: left;
-    margin-right: 25px;
+    margin: 0 14px 40px -10px;
 
     img {
-      height: 175px;
+      height: 135px;
     }
   }
 
-  a {
-    color: blue;
-  }
-
   h1 {
-    margin: 10px 0 5px 0;
+    margin: 10px 0 12px 0;
   }
 
   .xp-about-dialog-version-block {
     font-size: 14px;
     margin-bottom: 15px;
+    a {
+      color: #70879e;
+    }
 
     .xp-about-dialog-version {
       font-weight: bold;
@@ -90,6 +103,7 @@
 
   .xp-about-dialog-text {
     font-size: 13px;
+    font-weight: 700;
     text-align: justify;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -107,6 +121,26 @@
 
   .modal-dialog-footer {
     display: none;
+  }
+
+  .xp-about-dialog-footer {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    width: 100%;
+    background-color: #7d7b7b;
+
+    a {
+      flex: 33%;
+      margin-top: 10px;
+      text-align: center;
+      color: #0d0d6b;
+      font-weight: 500;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
   }
 
 }
