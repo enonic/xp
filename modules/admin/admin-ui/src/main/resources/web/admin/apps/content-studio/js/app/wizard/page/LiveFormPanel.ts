@@ -152,7 +152,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.insertablesPanel = new InsertablesPanel({
             liveEditPage: proxy,
-            content: this.content
+            contentWizardPanel: this.contentWizardPanel
         });
 
         return new ContextWindow(<ContextWindowConfig>{
@@ -168,7 +168,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         var saveAction = new api.ui.Action('Apply');
         saveAction.onExecuted(() => {
             if (!this.pageView) {
-                this.saveAndReloadPage();
+                this.contentWizardPanel.saveChanges();
                 return;
             }
 
@@ -176,17 +176,17 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                 this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
             } else if (this.pageView.isLocked() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
-                this.saveAndReloadPage();
+                this.contentWizardPanel.saveChanges();
             }
         });
 
-        this.contentInspectionPanel = new ContentInspectionPanel(this.content);
+        this.contentInspectionPanel = new ContentInspectionPanel();
 
-        this.pageInspectionPanel = new PageInspectionPanel(model);
-        this.partInspectionPanel = new PartInspectionPanel(model);
-        this.layoutInspectionPanel = new LayoutInspectionPanel(model);
-        this.imageInspectionPanel = new ImageInspectionPanel(model);
-        this.fragmentInspectionPanel = new FragmentInspectionPanel(model);
+        this.pageInspectionPanel = new PageInspectionPanel();
+        this.partInspectionPanel = new PartInspectionPanel();
+        this.layoutInspectionPanel = new LayoutInspectionPanel();
+        this.imageInspectionPanel = new ImageInspectionPanel();
+        this.fragmentInspectionPanel = new FragmentInspectionPanel();
 
         this.textInspectionPanel = new TextInspectionPanel();
         this.regionInspectionPanel = new RegionInspectionPanel();
@@ -280,7 +280,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
 
             if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
-                this.saveAndReloadPage(false);
+                this.contentWizardPanel.saveChanges();
             }
             else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
 
@@ -290,7 +290,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                       !this.pageModel.hasController())) {
                     this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
                     this.lockPageAfterProxyLoad = true;
-                    this.saveAndReloadPage(false);
+                    this.contentWizardPanel.saveChanges();
                 }
             }
         });
@@ -362,17 +362,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 }
             });
         }
-    }
-
-    saveAndReloadPage(clearInspection: boolean = false) {
-        this.pageSkipReload = true;
-        this.contentWizardPanel.saveChanges().then(() => {
-            this.pageSkipReload = false;
-            if (clearInspection) {
-                this.contextWindow.clearSelection();
-            }
-            this.liveEditPageProxy.load();
-        }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
     }
 
     saveAndReloadOnlyComponent(componentView: ComponentView<Component>) {
