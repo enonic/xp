@@ -21,7 +21,7 @@ export class WidgetView extends api.dom.DivEl {
 
     private url: string = "";
 
-    private contentId: string = "";
+    private content: ContentSummaryAndCompareStatus;
 
     private activationListeners: {() : void}[] = [];
 
@@ -93,7 +93,7 @@ export class WidgetView extends api.dom.DivEl {
 
         this.url = this.getWidgetUrl();
         this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
-            promises.push(widgetItemView.setUrl(this.getFullUrl(this.url), this.contentId, force));
+            promises.push(widgetItemView.setUrl(this.getFullUrl(this.url), this.content.getContentId().toString(), force));
         });
 
         return promises;
@@ -105,7 +105,7 @@ export class WidgetView extends api.dom.DivEl {
 
         if (this.widgetShouldBeUpdated(force)) {
             this.detailsPanel.showLoadMask();
-            this.contentId = content.getId();
+            this.content = content;
 
             if (this.isUrlBased()) {
                 promises = promises.concat(this.updateCustomWidgetItemViews(force));
@@ -123,7 +123,7 @@ export class WidgetView extends api.dom.DivEl {
     private widgetShouldBeUpdated(force: boolean = false): boolean {
         var content = this.detailsPanel.getItem();
         return content && this.detailsPanel.isVisibleOrAboutToBeVisible() &&
-               (force || this.contentId !== content.getId() || (this.isUrlBased() && this.url !== this.getWidgetUrl()));
+               (force || !api.ObjectHelper.equals(this.content, content) || (this.isUrlBased() && this.url !== this.getWidgetUrl()));
     }
 
     private createDefaultWidgetItemView() {

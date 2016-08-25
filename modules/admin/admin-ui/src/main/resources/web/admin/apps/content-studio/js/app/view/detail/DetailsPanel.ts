@@ -104,6 +104,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private initWidgetsSelectionRow() {
         this.widgetsSelectionRow = new WidgetsSelectionRow(this);
         this.appendChild(this.widgetsSelectionRow);
+        this.widgetsSelectionRow.updateState(this.activeWidget);
     }
 
     getCustomWidgetViewsAndUpdateDropdown(): wemQ.Promise<void> {
