@@ -149,6 +149,10 @@ module api.form.inputtype.text {
                         keyCode: e.keyCode,
                         charCode: e.charCode
                     });
+                } else if ((e.altKey) && e.keyCode === 9) {  // alt+tab for OSX
+                    e.preventDefault();
+                    api.dom.FormEl.moveFocusToNextFocusable(api.dom.Element.fromHtmlElement(<HTMLElement>document.activeElement),
+                        "iframe, input, select");
                 }
             };
 
