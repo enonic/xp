@@ -31,30 +31,22 @@ export class DeleteAction extends api.ui.Action {
     }
 
     public static showDeleteResult(result: api.content.resource.result.DeleteContentResult) {
-        if(result.getPendings() + result.getDeleted() == 1) {
-            if (result.getPendings() == 1) {
-                api.notify.showFeedback(`"${result.getContentName()}" marked for deletion`);
-            } else if (result.getPendings() > 1) {
-                api.notify.showFeedback(`${result.getPendings()} items marked for deletion`);
-            }
 
-            else if (result.getDeleted() == 1) {
-                let name = result.getContentName() ||
-                           `Unnamed ${api.util.StringHelper.capitalizeAll(result.getContentType().replace(/-/g, " ").trim())}`;
-                api.notify.showFeedback(name + " deleted");
-            } else if (result.getDeleted() > 1) {
-                api.notify.showFeedback(result.getDeleted() + ' items deleted');
-            }
-
-
-        } else {
-            if (result.getDeleted() > 0) {
+        if (result.getDeleted() > 0) {
+            if (result.getDeleted() == 1) {
+                api.notify.showSuccess(result.getDeleted() + ' item was deleted');
+            } else {
                 api.notify.showSuccess(result.getDeleted() + ' items were deleted');
             }
-            if (result.getPendings() > 0) {
+        }
+        if (result.getPendings() > 0) {
+            if (result.getPendings() == 1) {
+                api.notify.showSuccess(result.getPendings() + ' item was marked for deletion');
+            } else {
                 api.notify.showSuccess(result.getPendings() + ' items were marked for deletion');
             }
         }
+
         if (result.getFailureReason()) {
             api.notify.showWarning(`Content could not be deleted. ${result.getFailureReason()}`);
         }

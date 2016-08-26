@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -10,8 +8,6 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
@@ -25,10 +21,7 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.SetNodeStateParams;
-import com.enonic.xp.node.SetNodeStateResult;
 
 
 final class DeleteContentCommand
@@ -87,42 +80,17 @@ final class DeleteContentCommand
 
         if ( rootNodeStatus == CompareStatus.NEW )
         {
-            // Root node is new, just delete all children
-            final Node node = this.nodeService.getById( nodeToDelete );
-
             final NodeIds nodes = this.nodeService.deleteById( nodeToDelete );
-
             result.addDeleted( ContentIds.from( nodes.getAsStrings() ) );
-
-            if ( nodes.contains( node.id() ) )
-            {
-                this.fillResult( result, node.name().toString(), node.data().getRoot().getString( ContentPropertyNames.TYPE ) );
-            }
-
         }
         else if ( this.params.isDeleteOnline() )
         {
-            final Node node = this.nodeService.getById( nodeToDelete );
-
             final NodeIds nodes = deleteNodeInDraftAndMaster( nodeToDelete );
-
             result.addDeleted( ContentIds.from( nodes.getAsStrings() ) );
-
-            if ( nodes.contains( node.id() ) )
-            {
-                this.fillResult( result, node.name().toString(), node.data().getRoot().getString( ContentPropertyNames.TYPE ) );
-            }
         }
         else
         {
-            SetNodeStateResult stateResult = this.nodeService.setNodeState( SetNodeStateParams.create().
-                nodeId( nodeToDelete ).
-                nodeState( NodeState.PENDING_DELETE ).
-                build() );
-
             result.addPending( ContentId.from( nodeToDelete.toString() ) );
-
-            result.setContentName( stateResult.getUpdatedNodes().first().name().toString() );
 
             for ( final NodeId child : children )
             {
@@ -130,32 +98,9 @@ final class DeleteContentCommand
 
                 result.addDeleted( childDeleteResult.getDeletedContents() );
                 result.addPending( childDeleteResult.getPendingContents() );
-
-                if ( StringUtils.isNotEmpty( childDeleteResult.getContentName() ) )
-                {
-                    result.setContentName( childDeleteResult.getContentName() );
-                }
-
-                if ( StringUtils.isNotEmpty( childDeleteResult.getContentType() ) )
-                {
-                    result.setContentType( childDeleteResult.getContentType() );
-                }
             }
         }
         return result.build();
-    }
-
-    private void fillResult( final DeleteContentsResult.Builder result, final String name, final String type )
-    {
-        final ContentName contentName = ContentName.from( name );
-        if ( !contentName.isUnnamed() )
-        {
-            result.setContentName( name );
-        }
-        else
-        {
-            result.setContentType( type );
-        }
     }
 
     private NodeIds deleteNodeInDraftAndMaster( final NodeId nodeToDelete )
