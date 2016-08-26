@@ -600,6 +600,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.setRequireValid(false);
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
+                this.liveEditModel.setContent(content);
                 liveFormPanel.loadPage();
             }
 
@@ -673,6 +674,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         this.updateLiveFormOnVersionChange();
                     } else if (this.isEditorEnabled() && !isAlreadyUpdated) {
                         // also update live form panel for renderable content without asking
+                        this.liveEditModel.setContent(content);
                         let liveFormPanel = this.getLivePanel();
                         liveFormPanel.skipNextReloadConfirmation(true);
                         liveFormPanel.loadPage(false);
