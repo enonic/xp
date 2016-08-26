@@ -32,6 +32,7 @@ module api.content.form.inputtype.contentselector {
         }
 
         resetParams() {
+            this.ids = [];
             this.start = 0;
             this.loaded = false;
         }

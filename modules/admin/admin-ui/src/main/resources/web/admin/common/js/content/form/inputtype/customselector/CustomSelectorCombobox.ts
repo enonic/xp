@@ -43,7 +43,17 @@ module api.content.form.inputtype.contentselector {
             let viewer = new CustomSelectorItemViewer();
             viewer.setObject(this.getOption().displayValue);
 
-            this.appendChild(viewer);
+            var removeButtonEl = new api.dom.AEl("remove");
+
+            removeButtonEl.onClicked((event: Event) => {
+                this.notifyRemoveClicked();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
+
+            this.appendChildren<api.dom.Element>(removeButtonEl, viewer);
 
             return wemQ(true);
         }

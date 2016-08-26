@@ -17,23 +17,13 @@ module api.content.form.inputtype.contentselector {
             return this.load();
         }
 
-        preLoad(ids: string): wemQ.Promise<CustomSelectorItem[]> {
-            this.notifyLoadingData(false);
+        protected sendPreLoadRequest(ids: string): Q.Promise<CustomSelectorItem[]> {
 
-            return this.customSelectorRequest.setIds(ids.split(";")).sendAndParse().then((results: CustomSelectorItem[]) => {
-                // reset ids
-                this.customSelectorRequest.setIds(null);
-
-                if (this.getComparator()) {
-                    this.setResults(results.sort(this.getComparator().compare));
-                } else {
-                    this.setResults(results);
-                }
-                this.notifyLoadedData(results);
-                return this.getResults();
+            return this.customSelectorRequest.setIds(ids.split(";")).sendAndParse().then((results) => {
+                this.customSelectorRequest.setIds([]);
+                return results;
             });
         }
-        
 
         resetParams() {
             return this.customSelectorRequest.resetParams();

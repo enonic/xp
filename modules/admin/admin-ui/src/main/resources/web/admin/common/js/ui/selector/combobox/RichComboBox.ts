@@ -5,6 +5,7 @@ module api.ui.selector.combobox {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Option = api.ui.selector.Option;
     import PostLoader = api.util.loader.PostLoader;
+    import LoaderErrorEvent = api.util.loader.event.LoaderErrorEvent;
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.dom.CompositeFormInputEl {
 
@@ -13,6 +14,8 @@ module api.ui.selector.combobox {
         private selectedOptionsView: SelectedOptionsView<OPTION_DISPLAY_VALUE>;
 
         private comboBox: RichComboBoxComboBox<OPTION_DISPLAY_VALUE>;
+
+        private errorContainer: api.dom.DivEl;
 
         private identifierMethod: string;
 
@@ -57,7 +60,9 @@ module api.ui.selector.combobox {
                 this.comboBox.giveFocus();
             });
 
-            super(this.comboBox, this.selectedOptionsView);
+            this.errorContainer = new api.dom.DivEl('error-container');
+
+            super(this.comboBox, this.errorContainer, this.selectedOptionsView);
 
             if (!api.util.StringHelper.isBlank(builder.comboBoxName)) {
                 this.setName(builder.comboBoxName);
@@ -247,10 +252,16 @@ module api.ui.selector.combobox {
             });
 
             this.loader.onLoadedData((event: api.util.loader.event.LoadedDataEvent<OPTION_DISPLAY_VALUE>) => {
+                this.errorContainer.hide();
                 var options = this.createOptions(event.getData());
                 // check if postLoad and save selection
-                this.comboBox.setOptions(options, event.isPostLoaded());
-                this.notifyLoaded(event.getData(), event.isPostLoaded());
+                this.comboBox.setOptions(options, event.isPostLoad());
+                this.notifyLoaded(event.getData(), event.isPostLoad());
+            });
+
+            this.loader.onErrorOccurred((event: LoaderErrorEvent) => {
+                this.comboBox.hideDropdown();
+                this.errorContainer.setHtml(event.getTextStatus()).show();
             });
         }
 

@@ -6,21 +6,12 @@ module api.content.resource {
             super(request);
         }
 
-        preLoad(ids: string): wemQ.Promise<ContentSummary[]> {
-            this.notifyLoadingData(false);
-
+        protected sendPreLoadRequest(ids: string): Q.Promise<api.content.ContentSummary[]> {
             let contentIds = ids.split(";").map((id) => {
                 return new api.content.ContentId(id);
             });
-            return new GetContentSummaryByIds(contentIds).sendAndParse().then((results: ContentSummary[]) => {
-                if (this.getComparator()) {
-                    this.setResults(results.sort(this.getComparator().compare));
-                } else {
-                    this.setResults(results);
-                }
-                this.notifyLoadedData(results);
-                return this.getResults();
-            });
+
+            return new GetContentSummaryByIds(contentIds).sendAndParse();
         }
     }
 
