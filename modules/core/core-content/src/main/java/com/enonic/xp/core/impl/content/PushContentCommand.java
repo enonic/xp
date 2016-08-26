@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -144,7 +145,10 @@ public class PushContentCommand
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
 
         final Contents contents = getContents( pushNodesResult.getSuccessful().getKeys() );
+        final Contents failedContents = getContents(
+            pushNodesResult.getFailed().stream().map( failed -> failed.getNodeBranchEntry().getNodeId() ).collect( Collectors.toSet() ) );
 
+        this.resultBuilder.setFailed( failedContents );
         this.resultBuilder.setPushed( contents );
     }
 
