@@ -422,7 +422,7 @@ module api.ui.selector.combobox {
             if (this.maximumOccurrencesReached()) {
                 this.input.setMaximumReached();
                 if (this.setNextInputFocusWhenMaxReached && !this.ignoreNextFocus) {
-                    api.dom.FormEl.moveFocusToNextFocusable(this.input);
+                    api.dom.FormEl.moveFocusToNextFocusable(this.input, "input, select");
                 }
                 this.dropdownHandle.setEnabled(false);
             }
