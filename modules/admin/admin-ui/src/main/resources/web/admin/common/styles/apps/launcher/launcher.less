@@ -38,6 +38,12 @@
   }
 }
 
+body.modal-dialog {
+  .launcher-panel, .launcher-button {
+    z-index: @z-index-mask - 1;
+  }
+}
+
 .launcher-panel {
   position: fixed;
   top: 0;
@@ -86,7 +92,7 @@
       color: @admin-white;
     }
   }
- 
+   
   &.keyboard-navigation {
     .launcher-app-container .app-row.selected {
       .app-row-selected;
@@ -360,3 +366,4 @@
     }
   }
 }
+
