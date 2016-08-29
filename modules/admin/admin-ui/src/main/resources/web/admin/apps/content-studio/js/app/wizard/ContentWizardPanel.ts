@@ -217,7 +217,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.dataChangedListener = () => {
             var publishControls = this.getContentWizardToolbarPublishControls();
             if (this.isContentFormValid && publishControls.isOnline()) {
-                publishControls.setCompareStatus(CompareStatus.NEWER);
+                this.contentCompareStatus = CompareStatus.NEWER;
+                publishControls.setCompareStatus(this.contentCompareStatus);
             }
         };
 
