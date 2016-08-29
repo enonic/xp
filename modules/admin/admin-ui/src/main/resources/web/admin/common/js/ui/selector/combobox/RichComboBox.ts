@@ -4,6 +4,8 @@ module api.ui.selector.combobox {
     import Viewer = api.ui.Viewer;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Option = api.ui.selector.Option;
+    import PostLoader = api.util.loader.PostLoader;
+    import LoaderErrorEvent = api.util.loader.event.LoaderErrorEvent;
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.dom.CompositeFormInputEl {
 
@@ -13,11 +15,13 @@ module api.ui.selector.combobox {
 
         private comboBox: RichComboBoxComboBox<OPTION_DISPLAY_VALUE>;
 
+        private errorContainer: api.dom.DivEl;
+
         private identifierMethod: string;
 
-        private loadingListeners: {():void;}[];
+        private loadingListeners: {(): void;}[];
 
-        private loadedListeners: {(items: OPTION_DISPLAY_VALUE[]):void;}[];
+        private loadedListeners: {(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean): void;}[];
 
         private setNextInputFocusWhenMaxReached: boolean;
 
@@ -56,7 +60,9 @@ module api.ui.selector.combobox {
                 this.comboBox.giveFocus();
             });
 
-            super(this.comboBox, this.selectedOptionsView);
+            this.errorContainer = new api.dom.DivEl('error-container');
+
+            super(this.comboBox, this.errorContainer, this.selectedOptionsView);
 
             if (!api.util.StringHelper.isBlank(builder.comboBoxName)) {
                 this.setName(builder.comboBoxName);
@@ -67,6 +73,10 @@ module api.ui.selector.combobox {
             }
 
             this.addClass('rich-combobox');
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(builder.loader, PostLoader)) {
+                this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>builder.loader).postLoad.bind(builder.loader));
+            }
         }
 
         handleLastRange(handler: () => void) {
@@ -226,12 +236,11 @@ module api.ui.selector.combobox {
 
             this.comboBox.onOptionFilterInputValueChanged((event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => {
 
-                this.loader.search(event.getNewValue()).
-                    then((result: OPTION_DISPLAY_VALUE[]) => {
-                        return result;
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
+                this.loader.search(event.getNewValue()).then((result: OPTION_DISPLAY_VALUE[]) => {
+                    return result;
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
 
             });
 
@@ -243,10 +252,16 @@ module api.ui.selector.combobox {
             });
 
             this.loader.onLoadedData((event: api.util.loader.event.LoadedDataEvent<OPTION_DISPLAY_VALUE>) => {
+                this.errorContainer.hide();
                 var options = this.createOptions(event.getData());
                 // check if postLoad and save selection
-                this.comboBox.setOptions(options, event.isPostLoaded());
-                this.notifyLoaded(event.getData());
+                this.comboBox.setOptions(options, event.isPostLoad());
+                this.notifyLoaded(event.getData(), event.isPostLoad());
+            });
+
+            this.loader.onErrorOccurred((event: LoaderErrorEvent) => {
+                this.comboBox.hideDropdown();
+                this.errorContainer.setHtml(event.getTextStatus()).show();
             });
         }
 
@@ -306,19 +321,27 @@ module api.ui.selector.combobox {
             this.loadedListeners.splice(index, 1);
         }
 
-        onLoaded(listener: {(items: OPTION_DISPLAY_VALUE[]): void;}) {
+        onLoaded(listener: {(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean): void;}) {
             this.loadedListeners.push(listener);
         }
 
-        unLoaded(listenerToBeRemoved: {(items: OPTION_DISPLAY_VALUE[]): void;}) {
+        unLoaded(listenerToBeRemoved: {(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean): void;}) {
             var index = this.loadedListeners.indexOf(listenerToBeRemoved);
             this.loadedListeners.splice(index, 1);
         }
 
-        private notifyLoaded(items: OPTION_DISPLAY_VALUE[]) {
+        private notifyLoaded(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean) {
             this.loadedListeners.forEach((listener) => {
-                listener(items);
+                listener(items, postLoaded);
             });
+        }
+
+        onValueLoaded(listener: (options: Option<OPTION_DISPLAY_VALUE>[]) => void) {
+            this.comboBox.onValueLoaded(listener);
+        }
+
+        unValueLoaded(listener: (options: Option<OPTION_DISPLAY_VALUE>[]) => void) {
+            this.comboBox.unValueLoaded(listener);
         }
 
         giveFocus(): boolean {

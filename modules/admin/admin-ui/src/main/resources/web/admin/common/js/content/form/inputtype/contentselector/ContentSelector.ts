@@ -123,7 +123,6 @@ module api.content.form.inputtype.contentselector {
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setLoader(contentSelectorLoader)
                 .setValue(value)
-                .setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader))
                 .setRemoveMissingSelectedOptions(true)
                 .build();
 

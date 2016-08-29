@@ -12,20 +12,21 @@ module api.content {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
 
-            var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>().setComboBoxName(
-                builder.name ? builder.name : 'contentSelector').setLoader(loader).setSelectedOptionsView(
-                new ContentSelectedOptionsView()).setMaximumOccurrences(builder.maximumOccurrences).setOptionDisplayValueViewer(
-                new api.content.ContentSummaryViewer()).setDelayedInputValueChangedHandling(750).setValue(
-                builder.value).setDisplayMissingSelectedOptions(builder.displayMissingSelectedOptions).setRemoveMissingSelectedOptions(
-                builder.removeMissingSelectedOptions).setMinWidth(builder.minWidth);
+            var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>()
+                .setComboBoxName(builder.name ? builder.name : 'contentSelector')
+                .setLoader(loader)
+                .setSelectedOptionsView(new ContentSelectedOptionsView())
+                .setMaximumOccurrences(builder.maximumOccurrences)
+                .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
+                .setDelayedInputValueChangedHandling(750)
+                .setValue(builder.value)
+                .setDisplayMissingSelectedOptions(builder.displayMissingSelectedOptions)
+                .setRemoveMissingSelectedOptions(builder.removeMissingSelectedOptions)
+                .setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
 
             this.addClass('content-combo-box');
-
-            if (builder.postLoad) {
-                this.handleLastRange(builder.postLoad);
-            }
         }
 
         getContent(contentId: ContentId): ContentSummary {
@@ -142,8 +143,6 @@ module api.content {
 
         value: string;
 
-        postLoad: () => void;
-
         displayMissingSelectedOptions: boolean;
 
         removeMissingSelectedOptions: boolean;
@@ -180,11 +179,6 @@ module api.content {
 
         setRemoveMissingSelectedOptions(value: boolean): ContentComboBoxBuilder {
             this.removeMissingSelectedOptions = value;
-            return this;
-        }
-
-        setPostLoad(postLoad: () => void) {
-            this.postLoad = postLoad;
             return this;
         }
 
