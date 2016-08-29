@@ -33,12 +33,12 @@ import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
+import com.enonic.xp.repo.impl.repository.DefaultIndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.repository.IndexResourceClasspathProvider;
+import com.enonic.xp.repo.impl.repository.IndexResourceProvider;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.IndexMapping;
-import com.enonic.xp.repository.IndexResourceProvider;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
@@ -193,7 +193,7 @@ public class IndexServiceImpl
         indexServiceInternal.deleteIndices( searchIndexName );
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        final IndexResourceProvider indexResourceProvider = new IndexResourceClasspathProvider( INDEX_RESOURCE_BASE_FOLDER );
+        final IndexResourceProvider indexResourceProvider = new DefaultIndexResourceProvider( INDEX_RESOURCE_BASE_FOLDER );
 
         final IndexSettings indexSettings = indexResourceProvider.getSettings( repositoryId, IndexType.SEARCH );
         indexServiceInternal.createIndex( CreateIndexRequest.create().

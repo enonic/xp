@@ -11,12 +11,12 @@ import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repository.IndexConfig;
-import com.enonic.xp.repository.IndexConfigs;
-import com.enonic.xp.repository.IndexResourceProvider;
+import com.enonic.xp.repository.IndexMapping;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
+import com.enonic.xp.util.JsonHelper;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
@@ -31,7 +31,7 @@ public class RepositoryServiceImpl
     private final static String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
     private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
-        new IndexResourceClasspathProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
+        new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
 
     @Override
     public RepositoryId create( final RepositorySettings repositorySettings )
@@ -41,11 +41,8 @@ public class RepositoryServiceImpl
             throw new RepositoryException( "Only master-nodes can initialize repositories" );
         }
 
-        final IndexConfigs indexConfigs = createIndexConfigs( repositorySettings.getRepositoryId(), DEFAULT_INDEX_RESOURCE_PROVIDER );
-
-        doCreateIndexes( repositorySettings.getRepositoryId(), indexConfigs );
-        applyMappings( repositorySettings.getRepositoryId(), indexConfigs );
-
+        createIndexes( repositorySettings );
+        applyMappings( repositorySettings );
         checkClusterHealth();
 
         return repositorySettings.getRepositoryId();
@@ -65,52 +62,68 @@ public class RepositoryServiceImpl
         return indexServiceInternal.indicesExists( storageIndexName, searchIndexName );
     }
 
-    private void doCreateIndexes( final RepositoryId repositoryId, final IndexConfigs indexConfigs )
+    private void createIndexes( final RepositorySettings repositorySettings )
     {
-        doCreateIndex( repositoryId, IndexType.SEARCH, indexConfigs.get( IndexType.SEARCH ) );
-        doCreateIndex( repositoryId, IndexType.VERSION, indexConfigs.get( IndexType.VERSION ) );
+        doCreateIndex( repositorySettings, IndexType.SEARCH );
+        doCreateIndex( repositorySettings, IndexType.VERSION );
     }
 
-    private IndexConfigs createIndexConfigs( final RepositoryId repositoryId, final IndexResourceProvider indexResourceProvider )
+
+    private void doCreateIndex( final RepositorySettings repositorySettings, final IndexType indexType )
     {
-        return IndexConfigs.create().
-            add( IndexType.SEARCH, IndexConfig.create().
-                mapping( indexResourceProvider.getMapping( repositoryId, IndexType.SEARCH ) ).
-                settings( indexResourceProvider.getSettings( repositoryId, IndexType.SEARCH ) ).
-                build() ).
-            add( IndexType.BRANCH, IndexConfig.create().
-                mapping( indexResourceProvider.getMapping( repositoryId, IndexType.BRANCH ) ).
-                settings( indexResourceProvider.getSettings( repositoryId, IndexType.BRANCH ) ).
-                build() ).
-            add( IndexType.VERSION, IndexConfig.create().
-                mapping( indexResourceProvider.getMapping( repositoryId, IndexType.VERSION ) ).
-                settings( indexResourceProvider.getSettings( repositoryId, IndexType.VERSION ) ).
-                build() ).
-            build();
+        final RepositoryId repositoryId = repositorySettings.getRepositoryId();
+        final IndexSettings mergedSettings = mergeWithDefaultSettings( repositorySettings, indexType );
+
+        indexServiceInternal.createIndex( CreateIndexRequest.create().
+            indexName( resolveIndexName( repositoryId, indexType ) ).
+            indexSettings( mergedSettings ).
+            build() );
     }
 
-    private void applyMappings( final RepositoryId repositoryId, final IndexConfigs indexConfigs )
+
+    private IndexSettings mergeWithDefaultSettings( final RepositorySettings repositorySettings, final IndexType indexType )
     {
-        applyMapping( repositoryId, IndexType.SEARCH, indexConfigs.get( IndexType.SEARCH ) );
-        applyMapping( repositoryId, IndexType.VERSION, indexConfigs.get( IndexType.VERSION ) );
-        applyMapping( repositoryId, IndexType.BRANCH, indexConfigs.get( IndexType.BRANCH ) );
+        final IndexSettings defaultSetting = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( repositorySettings.getRepositoryId(), indexType );
+
+        if ( repositorySettings.getIndexSettings( indexType ) != null )
+        {
+            return new IndexSettings(
+                JsonHelper.merge( defaultSetting.getNode(), repositorySettings.getIndexSettings( indexType ).getNode() ) );
+        }
+
+        return defaultSetting;
     }
 
-    private void applyMapping( final RepositoryId repositoryId, final IndexType indexType, final IndexConfig indexConfig )
+    private void applyMappings( final RepositorySettings repositorySettings )
     {
+        applyMapping( repositorySettings, IndexType.SEARCH );
+        applyMapping( repositorySettings, IndexType.VERSION );
+        applyMapping( repositorySettings, IndexType.BRANCH );
+    }
+
+    private void applyMapping( final RepositorySettings repositorySettings, final IndexType indexType )
+    {
+        final RepositoryId repositoryId = repositorySettings.getRepositoryId();
+        final IndexMapping mergedMapping = mergeWithDefaultMapping( repositorySettings, indexType );
+
         this.indexServiceInternal.applyMapping( ApplyMappingRequest.create().
             indexName( resolveIndexName( repositoryId, indexType ) ).
             indexType( indexType ).
-            mapping( indexConfig.getMapping() ).
+            mapping( mergedMapping ).
             build() );
     }
 
-    private void doCreateIndex( final RepositoryId repositoryId, final IndexType indexType, final IndexConfig indexConfig )
+    private IndexMapping mergeWithDefaultMapping( final RepositorySettings repositorySettings, final IndexType indexType )
     {
-        indexServiceInternal.createIndex( CreateIndexRequest.create().
-            indexName( resolveIndexName( repositoryId, indexType ) ).
-            indexSettings( indexConfig.getSettings() ).
-            build() );
+        final IndexMapping defaultMapping = DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( repositorySettings.getRepositoryId(), indexType );
+
+        if ( repositorySettings.getIndexMappings( indexType ) != null )
+        {
+            return new IndexMapping(
+                JsonHelper.merge( defaultMapping.getNode(), repositorySettings.getIndexMappings( indexType ).getNode() ) );
+        }
+
+        return defaultMapping;
     }
 
     private String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )

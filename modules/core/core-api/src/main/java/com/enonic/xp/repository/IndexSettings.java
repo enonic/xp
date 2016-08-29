@@ -1,24 +1,46 @@
 package com.enonic.xp.repository;
 
+import java.net.URL;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.annotations.Beta;
+
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.util.JsonHelper;
 
 @Beta
 public class IndexSettings
 {
-    private final IndexResource resource;
+    private final JsonNode jsonNode;
 
-    public IndexSettings( final IndexResource resource )
+    public static IndexSettings from( final PropertyTree propertyTree )
     {
-        this.resource = resource;
+        return new IndexSettings( JsonHelper.from( propertyTree ) );
     }
 
-    public IndexResource getResource()
+    public static IndexSettings from( final URL url )
     {
-        return resource;
+        return new IndexSettings( JsonHelper.from( url ) );
+    }
+
+    public static IndexSettings from( final String string )
+    {
+        return new IndexSettings( JsonHelper.from( string ) );
+    }
+
+    public IndexSettings( final JsonNode resourceNode )
+    {
+        this.jsonNode = resourceNode;
+    }
+
+    public JsonNode getNode()
+    {
+        return jsonNode;
     }
 
     public String getAsString()
     {
-        return resource.getAsString();
+        return this.jsonNode.toString();
     }
+
 }
