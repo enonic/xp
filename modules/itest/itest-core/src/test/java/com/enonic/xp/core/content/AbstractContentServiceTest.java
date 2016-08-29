@@ -50,7 +50,6 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -58,13 +57,11 @@ import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
-import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -147,8 +144,6 @@ public class AbstractContentServiceTest
     {
         super.setUp();
 
-        final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
         this.blobStore = new MemoryBlobStore();
@@ -197,10 +192,7 @@ public class AbstractContentServiceTest
         this.nodeService.setStorageService( storageService );
         this.nodeService.setSearchService( searchService );
         this.nodeService.setEventPublisher( eventPublisher );
-        this.nodeService.setConfiguration( repoConfig );
         this.nodeService.setBlobStore( blobStore );
-        this.nodeService.setRepositoryService( this.repositoryService );
-        this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
 
@@ -238,30 +230,10 @@ public class AbstractContentServiceTest
         this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
 
-        createContentRepository();
         waitForClusterHealth();
 
-        final ContentInitializer contentInitializer = new ContentInitializer( this.nodeService );
+        final ContentInitializer contentInitializer = new ContentInitializer( this.nodeService, this.repositoryService );
         contentInitializer.initialize();
-    }
-
-    void createContentRepository()
-    {
-        createRepository( TEST_REPO );
-    }
-
-    void createRepository( final Repository repository )
-    {
-        NodeServiceImpl nodeService = new NodeServiceImpl();
-        nodeService.setIndexServiceInternal( indexService );
-        nodeService.setSearchService( searchService );
-        nodeService.setStorageService( storageService );
-        nodeService.setRepositoryService( this.repositoryService );
-
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService, this.repositoryService );
-        repositoryInitializer.initializeRepositories( repository.getId() );
-
-        refresh();
     }
 
     protected ByteSource loadImage( final String name )
@@ -293,13 +265,6 @@ public class AbstractContentServiceTest
         throws Exception
     {
         return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree() );
-    }
-
-    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
-        throws Exception
-    {
-
-        return doCreateContent( parentPath, displayName, data );
     }
 
     private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
@@ -336,7 +301,7 @@ public class AbstractContentServiceTest
         PropertyTree data = new PropertyTree();
         data.addString( "textLine", "textLine" );
         data.addDouble( "double", 1.4d );
-        data.addLong( "long", 2l );
+        data.addLong( "long", 2L );
         data.addString( "color", "FFFFFF" );
         data.addString( "comboBox", "value2" );
         data.addBoolean( "checkbox", false );

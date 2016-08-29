@@ -63,9 +63,7 @@ public class NodeServiceImplTest
 
         final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
         Mockito.when( config.getSnapshotsDir() ).thenReturn( xpHome.newFolder() );
-        this.nodeService.setConfiguration( config );
 
-        this.nodeService.initialize();
         this.createDefaultRootNode();
     }
 

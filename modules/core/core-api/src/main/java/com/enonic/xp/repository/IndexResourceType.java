@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.repository;
+package com.enonic.xp.repository;
 
 public enum IndexResourceType
 {

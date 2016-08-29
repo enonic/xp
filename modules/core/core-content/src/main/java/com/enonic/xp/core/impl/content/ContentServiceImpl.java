@@ -90,6 +90,7 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -138,6 +139,8 @@ public class ContentServiceImpl
 
     private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+    private RepositoryService repositoryService;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -148,12 +151,13 @@ public class ContentServiceImpl
         this.contentProcessors = new ContentProcessors();
     }
 
+    @SuppressWarnings("unused")
     @Activate
     public void initialize()
     {
         if ( this.indexService.isMaster() )
         {
-            new ContentInitializer( this.nodeService ).initialize();
+            new ContentInitializer( this.nodeService, this.repositoryService ).initialize();
         }
     }
 
@@ -824,5 +828,11 @@ public class ContentServiceImpl
     public void setFormDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
     {
         this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
     }
 }

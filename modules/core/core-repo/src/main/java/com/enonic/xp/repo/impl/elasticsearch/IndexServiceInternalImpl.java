@@ -33,10 +33,10 @@ import com.google.common.base.Stopwatch;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
-import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.index.UpdateIndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 

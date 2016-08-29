@@ -20,6 +20,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.util.BinaryReference;
 
 @Component
@@ -30,14 +31,17 @@ public class ApplicationRepoServiceImpl
 
     private NodeService nodeService;
 
+    private RepositoryService repositoryService;
+
     private IndexService indexService;
 
+    @SuppressWarnings("unused")
     @Activate
-    public void activate( final BundleContext context )
+    public void initialize( final BundleContext context )
     {
         if ( indexService.isMaster() )
         {
-            new ApplicationRepoInitializer( this.nodeService ).initialize();
+            new ApplicationRepoInitializer( this.nodeService, this.repositoryService ).initialize();
         }
     }
 
@@ -126,5 +130,9 @@ public class ApplicationRepoServiceImpl
         this.indexService = indexService;
     }
 
-
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
+    }
 }

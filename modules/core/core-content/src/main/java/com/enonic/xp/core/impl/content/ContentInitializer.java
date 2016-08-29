@@ -20,6 +20,9 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -33,11 +36,10 @@ public final class ContentInitializer
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
 
-    public static final User SUPER_USER = User.create().
+    private static final User SUPER_USER = User.create().
         key( PrincipalKey.ofUser( UserStoreKey.system(), "su" ) ).
         login( "su" ).
         build();
-
 
     private static final AccessControlList CONTENT_REPO_DEFAULT_ACL = AccessControlList.create().
         add( AccessControlEntry.create().
@@ -71,15 +73,34 @@ public final class ContentInitializer
 
     private final NodeService nodeService;
 
-    public ContentInitializer( final NodeService nodeService )
+    private final RepositoryService repositoryService;
+
+    public ContentInitializer( final NodeService nodeService, final RepositoryService repositoryService )
     {
         this.nodeService = nodeService;
+        this.repositoryService = repositoryService;
     }
 
     public final void initialize()
     {
-        final Node rootNode = runAsAdmin( this::doInitNodeRoot );
-        runAsAdmin( () -> this.doInitContentRootNode( rootNode ) );
+        final boolean initialized = repositoryService.isInitialized( ContentConstants.CONTENT_REPO.getId() );
+
+        if ( !initialized )
+        {
+            initializeRepository();
+
+            final Node rootNode = runAsAdmin( this::doInitNodeRoot );
+            runAsAdmin( () -> this.doInitContentRootNode( rootNode ) );
+        }
+    }
+
+    private void initializeRepository()
+    {
+        final RepositorySettings repoSettings = RepositorySettings.create().
+            repositoryId( RepositoryId.from( "cms-repo" ) ).
+            build();
+
+        this.repositoryService.create( repoSettings );
     }
 
     private void doInitContentRootNode( final Node rootNode )

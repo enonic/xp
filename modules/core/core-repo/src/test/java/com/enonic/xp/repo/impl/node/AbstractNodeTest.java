@@ -40,7 +40,6 @@ import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
@@ -48,6 +47,7 @@ import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
@@ -184,8 +184,9 @@ public abstract class AbstractNodeTest
         nodeService.setSnapshotService( this.snapshotService );
         nodeService.setStorageService( this.storageService );
 
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal, repositoryService );
-        repositoryInitializer.initializeRepositories( repository.getId() );
+        this.repositoryService.create( RepositorySettings.create().
+            repositoryId( repository.getId() ).
+            build() );
 
         refresh();
     }
@@ -217,12 +218,6 @@ public abstract class AbstractNodeTest
             build().
             execute();
     }
-
-    void createContentRepository()
-    {
-        createRepository( TEST_REPO );
-    }
-
 
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {

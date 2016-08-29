@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.stream.Collectors;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -10,7 +9,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
@@ -62,22 +60,16 @@ import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
 import com.enonic.xp.repo.impl.storage.StorageService;
-import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
 public class NodeServiceImpl
     implements NodeService
 {
-    private RepoConfiguration configuration;
-
     private IndexServiceInternal indexServiceInternal;
 
     private SnapshotService snapshotService;
@@ -89,15 +81,6 @@ public class NodeServiceImpl
     private EventPublisher eventPublisher;
 
     private BlobStore blobStore;
-
-    private RepositoryService repositoryService;
-
-    @Activate
-    public void initialize()
-    {
-        final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal, this.repositoryService );
-        repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
-    }
 
     @Override
     public Node getById( final NodeId id )
@@ -720,20 +703,9 @@ public class NodeServiceImpl
     }
 
     @Reference
-    public void setConfiguration( final RepoConfiguration configuration )
-    {
-        this.configuration = configuration;
-    }
-
-    @Reference
     public void setBlobStore( final BlobStore blobStore )
     {
         this.blobStore = blobStore;
     }
 
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
 }

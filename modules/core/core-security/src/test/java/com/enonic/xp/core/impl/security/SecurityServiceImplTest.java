@@ -9,10 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -21,13 +18,11 @@ import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
-import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
@@ -49,9 +44,6 @@ import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationException;
@@ -90,8 +82,6 @@ public class SecurityServiceImplTest
         super.setUp();
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
-
-        final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
@@ -132,11 +122,7 @@ public class SecurityServiceImplTest
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setSearchService( searchService );
         this.nodeService.setStorageService( storageService );
-        this.nodeService.setConfiguration( repoConfig );
-        this.nodeService.setRepositoryService( repositoryService );
-
         this.nodeService.setBlobStore( blobStore );
-        this.nodeService.initialize();
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.nodeService.setEventPublisher( this.eventPublisher );
@@ -148,44 +134,9 @@ public class SecurityServiceImplTest
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
         securityService.setIndexService( indexService );
+        securityService.setRepositoryService( this.repositoryService );
 
-        runAsAdmin( () -> {
-
-            createRepository( SecurityConstants.SECURITY_REPO );
-            waitForClusterHealth();
-
-            nodeService.create( CreateNodeParams.create().
-                parent( UserStoreNodeTranslator.getUserStoresParentPath().getParentPath() ).
-                name( UserStoreNodeTranslator.getUserStoresParentPath().getLastElement().toString() ).
-                build() );
-
-            final CreateUserStoreParams createParams = CreateUserStoreParams.create().
-                key( UserStoreKey.system() ).
-                displayName( SecurityInitializer.SYSTEM_USER_STORE_DISPLAY_NAME ).
-                build();
-            securityService.createUserStore( createParams );
-
-            nodeService.create( CreateNodeParams.create().
-                parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
-                name( PrincipalKey.ROLES_NODE_NAME ).
-                build() );
-        } );
-    }
-
-    void createRepository( final Repository repository )
-    {
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal, this.repositoryService );
-        repositoryInitializer.initializeRepositories( repository.getId() );
-
-        refresh();
-
-        final CreateRootNodeParams createRoot =
-            CreateRootNodeParams.create().permissions( AccessControlList.of( AccessControlEntry.create().
-                principal( RoleKeys.ADMIN ).
-                allowAll().build(), AccessControlEntry.create().
-                principal( RoleKeys.AUTHENTICATED ).
-                allow( Permission.READ ).build() ) ).build();
-        nodeService.createRootNode( createRoot );
+        runAsAdmin( () -> securityService.initialize() );
     }
 
     @Test
@@ -874,7 +825,7 @@ public class SecurityServiceImplTest
             PrincipalQueryResult queryResult = securityService.query( query );
 
             queryResult = securityService.query( query );
-            assertEquals( queryResult.getTotalSize(), 0 );
+            assertEquals( 2, queryResult.getTotalSize() );
 
             final User user1 = securityService.createUser( createUser1 );
 
@@ -882,8 +833,8 @@ public class SecurityServiceImplTest
 
             queryResult = securityService.query( query );
 
-            assertEquals( queryResult.getTotalSize(), 1 );
-            assertEquals( queryResult.getPrincipals().getPrincipal( userKey1 ), user1 );
+            assertEquals( 3, queryResult.getTotalSize() );
+            assertEquals( user1, queryResult.getPrincipals().getPrincipal( userKey1 ) );
         } );
 
     }

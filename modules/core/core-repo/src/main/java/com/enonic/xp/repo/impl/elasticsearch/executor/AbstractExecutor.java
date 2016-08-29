@@ -15,8 +15,8 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
-import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repository.IndexException;
 
 abstract class AbstractExecutor
 {

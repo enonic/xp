@@ -8,6 +8,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
@@ -29,7 +30,6 @@ import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 final class SecurityInitializer
 {
-
     static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
 
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
@@ -42,17 +42,21 @@ final class SecurityInitializer
 
     private final NodeService nodeService;
 
-    public SecurityInitializer( final SecurityService securityService, final NodeService nodeService )
+    private final RepositoryService repositoryService;
+
+    public SecurityInitializer( final SecurityService securityService, final NodeService nodeService,
+                                final RepositoryService repositoryService )
     {
         this.securityService = securityService;
         this.nodeService = nodeService;
+        this.repositoryService = repositoryService;
     }
 
     public final void initialize()
     {
         runAsAdmin( () -> {
 
-            new SystemRepoInitializer( this.nodeService ).initialize();
+            new SystemRepoInitializer( this.nodeService, this.repositoryService ).initialize();
 
             if ( isInitialized() )
             {

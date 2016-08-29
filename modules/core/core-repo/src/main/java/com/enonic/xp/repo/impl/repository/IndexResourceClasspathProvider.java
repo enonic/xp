@@ -6,8 +6,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repo.impl.index.IndexException;
+import com.enonic.xp.repository.IndexException;
+import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexResource;
+import com.enonic.xp.repository.IndexResourceProvider;
+import com.enonic.xp.repository.IndexResourceType;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.JsonIndexResource;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.JsonHelper;
@@ -23,16 +27,19 @@ public class IndexResourceClasspathProvider
     }
 
     @Override
-    public IndexResource get( final RepositoryId repositoryId, final IndexType indexType, final boolean includeDefault,
-                              final IndexResourceType indexResourceType )
+    public IndexMapping getMapping( final RepositoryId repositoryId, final IndexType indexType )
     {
-        return doGetResource( repositoryId, indexType, includeDefault, indexResourceType );
+        final IndexResource indexResource = doGetResource( repositoryId, indexType, true, IndexResourceType.MAPPING );
+
+        return new IndexMapping( indexResource );
     }
 
     @Override
-    public IndexResource get( final RepositoryId repositoryId, final IndexType indexType, final IndexResourceType resourceType )
+    public IndexSettings getSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        return doGetResource( repositoryId, indexType, true, resourceType );
+        final IndexResource indexResource = doGetResource( repositoryId, indexType, true, IndexResourceType.SETTINGS );
+
+        return new IndexSettings( indexResource );
     }
 
     private JsonNode getDefaultMapping( final IndexType indexType, final IndexResourceType type )
