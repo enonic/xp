@@ -136,7 +136,7 @@ module api.content.form.inputtype.upload {
                     this.uploaderWrapper.addClass("empty");
                     property.setValue(this.newInitialValue());
 
-                    DeleteAction.showDeleteResult(result);
+                    api.notify.showFeedback('\"' + result.getDeleted()[0].getName() + '\" deleted');
                 }).catch((reason: any) => {
                     if (reason && reason.message) {
                         api.notify.showError(reason.message);
