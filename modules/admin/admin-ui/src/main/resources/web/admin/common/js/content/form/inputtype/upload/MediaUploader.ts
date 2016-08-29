@@ -136,7 +136,13 @@ module api.content.form.inputtype.upload {
                     this.uploaderWrapper.addClass("empty");
                     property.setValue(this.newInitialValue());
 
-                    api.notify.showFeedback('\"' + result.getDeleted()[0].getName() + '\" deleted');
+                    if (result.getDeleted() > 0) {
+                        if (result.getDeleted() == 1) {
+                            api.notify.showSuccess(result.getDeleted() + ' item was deleted');
+                        } else {
+                            api.notify.showSuccess(result.getDeleted() + ' items were deleted');
+                        }
+                    }
                 }).catch((reason: any) => {
                     if (reason && reason.message) {
                         api.notify.showError(reason.message);
