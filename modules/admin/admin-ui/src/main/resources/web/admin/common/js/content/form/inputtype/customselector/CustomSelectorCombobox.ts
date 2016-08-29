@@ -14,6 +14,7 @@ module api.content.form.inputtype.contentselector {
 
             var builder = new RichComboBoxBuilder<CustomSelectorItem>()
                 .setComboBoxName(input.getName())
+                .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setOptionDisplayValueViewer(new CustomSelectorItemViewer())
                 .setSelectedOptionsView(new CustomSelectorSelectedOptionsView())
                 .setLoader(loader)
