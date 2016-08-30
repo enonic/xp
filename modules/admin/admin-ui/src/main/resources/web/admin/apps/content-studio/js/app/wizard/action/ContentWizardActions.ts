@@ -79,6 +79,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.save.setEnabled(!valueOn);
         this.duplicate.setEnabled(!valueOn);
         this.publish.setEnabled(!valueOn);
+        this.unpublish.setEnabled(!valueOn);
 
         if (valueOn) {
             this.enableDeleteIfAllowed(content);
@@ -116,6 +117,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
             if (!hasPublishPermission) {
                 this.publish.setEnabled(false);
+                this.unpublish.setEnabled(false);
                 this.publishTree.setEnabled(false);
             } else {
                 // check if already published to show unpublish button
