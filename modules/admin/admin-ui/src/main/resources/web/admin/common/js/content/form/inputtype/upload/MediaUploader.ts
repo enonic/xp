@@ -135,13 +135,10 @@ module api.content.form.inputtype.upload {
                     this.mediaUploaderEl.getResultContainer().removeChildren();
                     this.uploaderWrapper.addClass("empty");
                     property.setValue(this.newInitialValue());
-
+                    
                     if (result.getDeleted() > 0) {
-                        if (result.getDeleted() == 1) {
-                            api.notify.showSuccess(result.getDeleted() + ' item was deleted');
-                        } else {
-                            api.notify.showSuccess(result.getDeleted() + ' items were deleted');
-                        }
+                        var itemStr = (result.getDeleted() == 1) ? " item was" : " items were";
+                        api.notify.showSuccess(result.getDeleted() + itemStr + ' deleted');
                     }
                 }).catch((reason: any) => {
                     if (reason && reason.message) {
