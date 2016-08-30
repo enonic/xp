@@ -9,24 +9,24 @@ exports.refreshDefault = function () {
 
 exports.refreshAll = function () {
 
-    repoLib.refresh('all');
+    repoLib.refresh({mode: 'all'});
 
 };
 
 exports.refreshSearch = function () {
 
-    repoLib.refresh('search');
+    repoLib.refresh({mode: 'search'});
 
 };
 
 exports.refreshStorage = function () {
 
-    repoLib.refresh('storage');
+    repoLib.refresh({mode: 'storage'});
 
 };
 
 exports.refreshInvalid = function () {
 
-    repoLib.refresh('stuff');
+    repoLib.refresh({mode: 'stuff'});
 
 };

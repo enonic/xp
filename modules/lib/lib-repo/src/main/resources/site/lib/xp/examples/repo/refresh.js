@@ -1,16 +1,19 @@
 var repoLib = require('/lib/xp/repo.js');
 
 // BEGIN
-// Refresh all
+// Refresh all for default repository
 repoLib.refresh();
 // END
 
 // BEGIN
-// Refresh storage
-repoLib.refresh('storage');
+// Refresh storage for default repository
+repoLib.refresh({mode: 'storage'});
 // END
 
 // BEGIN
-// Refresh search
-repoLib.refresh('search');
+// Refresh search for 'system-repo' repository
+repoLib.refresh({
+    mode: 'search',
+    repo: 'system-repo'
+});
 // END

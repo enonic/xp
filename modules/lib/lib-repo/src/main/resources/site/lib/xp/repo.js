@@ -12,14 +12,17 @@
  *
  * @example-ref examples/repo/refresh.js
  *
- * @param {string} [mode='all'] Index type to be refreshed. Possible values: 'all' | 'search' | 'storage'.
+ * @param {object} params JSON with the parameters.
+ * @param {string} [params.mode='all'] Index type to be refreshed. Possible values: 'all' | 'search' | 'storage'.
+ * @param {string} [params.repo='cms-repo'] Repository id: 'cms-repo' | 'system-repo'. Default is the current repository set in portal.
  *
  */
-exports.refresh = function (mode) {
+exports.refresh = function (params) {
 
     var bean = __.newBean('com.enonic.xp.lib.repo.RefreshHandler');
-
-    bean.mode = __.nullOrValue(mode);
+    params = params || {};
+    bean.mode = __.nullOrValue(params.mode);
+    bean.repoId = __.nullOrValue(params.repo);
 
     bean.refresh();
 };
