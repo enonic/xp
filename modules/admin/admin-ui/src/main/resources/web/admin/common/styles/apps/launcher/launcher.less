@@ -133,16 +133,18 @@ body.modal-dialog {
     color: @admin-white;
     font-size: 25px;
     display: table;
-    overflow: hidden;
     table-layout: fixed;
 
     .container-title {
-      .ellipsis();
       .container-title-mixin(32px, 0);
+      overflow-y: visible;
+      overflow-x: hidden;
+      white-space: pre;
+      text-overflow: ellipsis;
+      top: 8px;
       position: relative;
       display: table-cell;
       vertical-align: bottom;
-      line-height: 25px;
       &::first-letter {
         text-transform: uppercase;
       }
