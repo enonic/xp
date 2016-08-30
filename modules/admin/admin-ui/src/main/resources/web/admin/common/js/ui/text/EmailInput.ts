@@ -24,7 +24,7 @@ module api.ui.text {
             this.focusListeners = [];
             this.blurListeners = [];
             this.input = new InputEl(undefined, 'email');
-            this.input.setPattern("^[a-zA-Z0-9\_\-\.]+@[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]{2,})*(?:\.[a-zA-Z]{2,4})$");
+            this.input.setPattern("^[a-zA-Z0-9_\\\-\\\.]+@[a-zA-Z0-9\\\-]+(?:\\\.[a-zA-Z0-9\\\-]{2,})*(?:\\\.[a-zA-Z]{2,4})$");
 
             this.input.onFocus((event: FocusEvent) => {
                 this.notifyFocused(event);
