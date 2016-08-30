@@ -9,7 +9,6 @@
 ///<reference path='ApplicationListResult.ts' />
 ///<reference path='ApplicationLoader.ts' />
 ///<reference path='ApplicationViewer.ts' />
-///<reference path='ApplicationComboBox.ts' />
 ///<reference path='StopApplicationRequest.ts' />
 ///<reference path='StartApplicationRequest.ts' />
 ///<reference path='ApplicationEvent.ts' />

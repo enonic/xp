@@ -36,6 +36,8 @@ module api.content.form.inputtype.contentselector {
 
         private comboBox: RichComboBox<CustomSelectorItem>;
 
+        private draggingIndex: number;
+        
         constructor(context: api.content.form.inputtype.ContentInputTypeViewContext) {
             super('custom-selector');
 
@@ -69,9 +71,10 @@ module api.content.form.inputtype.contentselector {
             super.layout(input, propertyArray);
 
             this.comboBox = this.createComboBox(input, propertyArray);
-
+            
             this.appendChild(this.comboBox);
 
+            this.setupSortable();
             this.setLayoutInProgress(false);
 
             return wemQ<void>(null);
@@ -107,7 +110,8 @@ module api.content.form.inputtype.contentselector {
                 } else {
                     this.getPropertyArray().add(value);
                 }
-
+                this.refreshSortable();
+                
                 this.ignorePropertyChange = false;
                 this.validate(false);
 
@@ -118,6 +122,7 @@ module api.content.form.inputtype.contentselector {
 
                 this.getPropertyArray().remove(event.getSelectedOption().getIndex());
 
+                this.refreshSortable();
                 this.ignorePropertyChange = false;
                 this.validate(false);
             });
@@ -154,6 +159,51 @@ module api.content.form.inputtype.contentselector {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.comboBox.unBlur(listener);
+        }
+
+        private setupSortable() {
+            this.updateSelectedOptionStyle();
+            wemjq(this.getHTMLElement()).find(".selected-options").sortable({
+                axis: "y",
+                containment: 'parent',
+                handle: '.drag-control',
+                tolerance: 'pointer',
+                start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
+            });
+        }
+
+        private refreshSortable() {
+            this.updateSelectedOptionStyle();
+            wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
+        }
+
+        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+
+            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            this.draggingIndex = draggedElement.getSiblingIndex();
+
+            ui.placeholder.html("Drop form item set here");
+        }
+
+        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
+
+            if (this.draggingIndex >= 0) {
+                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                var draggedToIndex = draggedElement.getSiblingIndex();
+                this.getPropertyArray().move(this.draggingIndex, draggedToIndex);
+            }
+
+            this.draggingIndex = -1;
+        }
+
+        private updateSelectedOptionStyle() {
+            if (this.getPropertyArray().getSize() > 1) {
+                this.addClass("multiple-occurrence").removeClass("single-occurrence");
+            }
+            else {
+                this.addClass("single-occurrence").removeClass("multiple-occurrence");
+            }
         }
     }
 
