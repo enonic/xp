@@ -681,16 +681,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     this.updateWizard(content, unchangedOnly);
 
                     if (versionChanged) {
-                        this.updateLiveFormOnVersionChange();
+                        this.updateLiveForm();
                         if (!isDisplayNameUpdated) {
                             this.getWizardHeader().resetBaseValues(content.getDisplayName());
                         }
                     } else if (this.isEditorEnabled() && !isAlreadyUpdated) {
                         // also update live form panel for renderable content without asking
-                        this.liveEditModel.setContent(content);
-                        let liveFormPanel = this.getLivePanel();
-                        liveFormPanel.skipNextReloadConfirmation(true);
-                        liveFormPanel.loadPage(false);
+                        this.updateLiveForm();
                     }
 
                     this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
@@ -753,7 +750,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
     }
 
-    private updateLiveFormOnVersionChange() {
+    private updateLiveForm() {
         var content = this.getPersistedItem(),
             formContext = this.createFormContext(content);
 
