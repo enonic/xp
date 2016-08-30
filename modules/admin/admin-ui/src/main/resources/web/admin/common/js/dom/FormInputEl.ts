@@ -129,6 +129,11 @@ module api.dom {
             return api.ClassHelper.getClassName(this) + '[' + this.getId() + ']';
         }
 
+        resetBaseValues(value: string) {
+            this.originalValue = value;
+            this.oldValue = value;
+        }
+
         private setDirty(dirty: boolean, silent?: boolean) {
             if (this.dirty != dirty) {
                 this.dirty = dirty;
