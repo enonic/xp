@@ -610,7 +610,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
-                liveFormPanel.loadPage();
+                liveFormPanel.loadPage(false);
             }
 
             return content;
