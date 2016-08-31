@@ -5,16 +5,17 @@ import CycleButton = api.ui.button.CycleButton;
 import TogglerButton = api.ui.button.TogglerButton;
 
 export interface ContentWizardToolbarParams {
-    saveAction:api.ui.Action;
-    duplicateAction:api.ui.Action;
-    deleteAction:api.ui.Action;
-    publishAction:api.ui.Action;
-    publishTreeAction:api.ui.Action;
-    unpublishAction:api.ui.Action;
-    previewAction:api.ui.Action;
-    showLiveEditAction:api.ui.Action;
-    showFormAction:api.ui.Action;
-    showSplitEditAction:api.ui.Action;
+    saveAction: api.ui.Action;
+    duplicateAction: api.ui.Action;
+    deleteAction: api.ui.Action;
+    publishAction: api.ui.Action;
+    publishTreeAction: api.ui.Action;
+    unpublishAction: api.ui.Action;
+    previewAction: api.ui.Action;
+    showLiveEditAction: api.ui.Action;
+    showFormAction: api.ui.Action;
+    showSplitEditAction: api.ui.Action;
+    publishMobileAction: api.ui.Action;
 }
 
 export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
@@ -38,7 +39,7 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
         this.contextWindowToggler = new TogglerButton("icon-cog", "Show Inspection Panel");
 
         this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(
-            params.publishAction, params.publishTreeAction, params.unpublishAction
+            params.publishAction, params.publishTreeAction, params.unpublishAction, params.publishMobileAction
         );
 
         super.addElement(this.contentWizardToolbarPublishControls);
