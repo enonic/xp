@@ -1,4 +1,4 @@
-module api.content.form.inputtype.contentselector {
+module api.content.form.inputtype.customselector {
 
     import RichComboBox = api.ui.selector.combobox.RichComboBox;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
@@ -11,12 +11,13 @@ module api.content.form.inputtype.contentselector {
 
         constructor(input: api.form.Input, requestPath: string, value: string) {
             var loader = new CustomSelectorLoader(requestPath);
-
+            
             var builder = new RichComboBoxBuilder<CustomSelectorItem>()
                 .setComboBoxName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setOptionDisplayValueViewer(new CustomSelectorItemViewer())
                 .setSelectedOptionsView(new CustomSelectorSelectedOptionsView())
+                .setDelayedInputValueChangedHandling(300)
                 .setLoader(loader)
                 .setValue(value);
 
@@ -25,38 +26,24 @@ module api.content.form.inputtype.contentselector {
     }
 
     class CustomSelectorSelectedOptionsView extends BaseSelectedOptionsView<CustomSelectorItem> {
-
         createSelectedOption(option: Option<CustomSelectorItem>): SelectedOption<CustomSelectorItem> {
             return new SelectedOption<CustomSelectorItem>(new CustomSelectorSelectedOptionView(option), this.count());
         }
 
     }
 
-    class CustomSelectorSelectedOptionView extends BaseSelectedOptionView<CustomSelectorItem> {
-
+    class CustomSelectorSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<CustomSelectorItem> {
 
         constructor(option: Option<CustomSelectorItem>) {
             super(option);
+            this.setIsDraggable(true);
         }
 
-        doRender(): wemQ.Promise<boolean> {
-
+        protected createView(content: CustomSelectorItem): CustomSelectorItemViewer {
             let viewer = new CustomSelectorItemViewer();
             viewer.setObject(this.getOption().displayValue);
-
-            var removeButtonEl = new api.dom.AEl("remove");
-
-            removeButtonEl.onClicked((event: Event) => {
-                this.notifyRemoveClicked();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-
-            this.appendChildren<api.dom.Element>(removeButtonEl, viewer);
-
-            return wemQ(true);
+            
+            return viewer;
         }
 
     }

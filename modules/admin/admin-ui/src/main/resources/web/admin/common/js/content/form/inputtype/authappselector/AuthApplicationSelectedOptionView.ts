@@ -1,4 +1,4 @@
-module api.content.site.inputtype.siteconfigurator {
+module api.content.site.inputtype.authappselector {
 
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
@@ -10,6 +10,7 @@ module api.content.site.inputtype.siteconfigurator {
     import SiteConfig = api.content.site.SiteConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import ContentFormContext = api.content.form.ContentFormContext;
+    import SiteConfiguratorDialog = api.content.site.inputtype.siteconfigurator.SiteConfiguratorDialog;
 
     export class AuthApplicationSelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<Application> {
 
@@ -74,7 +75,7 @@ module api.content.site.inputtype.siteconfigurator {
             }
 
             if (!this.readOnly) {
-                var removeButton = new api.dom.AEl("remove-button icon-close");
+                var removeButton = new api.dom.AEl("remove");
                 removeButton.onClicked((event: MouseEvent) => {
                     this.notifyRemoveClicked();
                     event.stopPropagation();
@@ -92,7 +93,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private createEditButton(): api.dom.AEl {
-            var editButton = new api.dom.AEl('edit-button');
+            var editButton = new api.dom.AEl('edit');
 
             editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked(event);

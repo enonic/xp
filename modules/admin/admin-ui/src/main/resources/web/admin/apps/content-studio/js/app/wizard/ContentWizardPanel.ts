@@ -217,7 +217,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.dataChangedListener = () => {
             var publishControls = this.getContentWizardToolbarPublishControls();
             if (this.isContentFormValid && publishControls.isOnline()) {
-                publishControls.setCompareStatus(CompareStatus.NEWER);
+                this.contentCompareStatus = CompareStatus.NEWER;
+                publishControls.setCompareStatus(this.contentCompareStatus);
             }
         };
 
@@ -674,12 +675,16 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (this.isCurrentContentId(contentId)) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     let isAlreadyUpdated = content.equals(this.getPersistedItem());
+                    let isDisplayNameUpdated = this.isDisplayNameUpdated();
                     
                     this.setPersistedItem(content);
                     this.updateWizard(content, unchangedOnly);
 
                     if (versionChanged) {
                         this.updateLiveFormOnVersionChange();
+                        if (!isDisplayNameUpdated) {
+                            this.getWizardHeader().resetBaseValues(content.getDisplayName());
+                        }
                     } else if (this.isEditorEnabled() && !isAlreadyUpdated) {
                         // also update live form panel for renderable content without asking
                         this.liveEditModel.setContent(content);
@@ -808,7 +813,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     result.push(input.getPath().toString());
                 }
             }
-        })
+        });
 
         return result;
     }
@@ -1198,6 +1203,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                                    '\"' + content.getDisplayName() + '\"' : "Content";
             api.notify.showFeedback(contentToDisplay + ' saved');
             //new api.content.ContentUpdatedEvent(content.getContentId()).fire();
+            // Since event doesn't fire, update origin value for the display name
+            this.getWizardHeader().resetBaseValues(content.getDisplayName());
 
             return content;
         });
@@ -1211,6 +1218,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             viewedContent.getAllExtraData()).setOwner(viewedContent.getOwner()).setLanguage(viewedContent.getLanguage());
 
         return updateContentRequest;
+    }
+
+    private isDisplayNameUpdated(): boolean {
+        return this.getPersistedItem().getDisplayName() !== this.getWizardHeader().getDisplayName();
     }
 
     hasUnsavedChanges(): boolean {

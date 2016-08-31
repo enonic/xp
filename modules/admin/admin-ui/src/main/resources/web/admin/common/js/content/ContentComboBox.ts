@@ -101,6 +101,8 @@ module api.content {
 
         constructor(option: api.ui.selector.Option<ContentSummary>) {
             super(option);
+            this.setIsEditable(true);
+            this.setIsDraggable(true);
         }
 
         resolveIconUrl(content: ContentSummary): string {
@@ -115,20 +117,15 @@ module api.content {
             return content.getPath().toString();
         }
 
-        createActionButtons(content: ContentSummary): api.dom.Element[] {
-            let editButton = new api.dom.AEl("edit");
+        protected createEditButton(content: api.content.ContentSummary): api.dom.AEl {
+            let editButton = super.createEditButton(content);
             editButton.onClicked((event: Event) => {
-                let model = [ContentSummaryAndCompareStatus.fromContentSummary(content)];
+                let model = [api.content.ContentSummaryAndCompareStatus.fromContentSummary(content)];
                 new api.content.event.EditContentEvent(model).fire();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
             });
 
-            return [editButton];
+            return editButton;
         }
-
     }
 
     export class ContentComboBoxBuilder {
