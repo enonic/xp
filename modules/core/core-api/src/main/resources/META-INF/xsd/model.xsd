@@ -218,6 +218,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element minOccurs="0" name="config" type="config"/>
     </xs:sequence>
   </xs:complexType>
 

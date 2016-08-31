@@ -25,7 +25,7 @@ module api.util.htmlarea.editor {
                 imgSrcs;
 
             if (!processedContent) {
-                return value;
+                return "";
             }
 
             while (processedContent.search(" src=\"" + ImageModalDialog.imagePrefix) > -1) {

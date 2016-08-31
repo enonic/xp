@@ -1,17 +1,21 @@
 [
-    {
-      "displayName": "My widget",
-      "interfaces": [
-        "com.enonic.xp.my-interface",
-        "com.enonic.xp.my-interface-2"
-      ],
-      "key": "myapp:my-widget",
-      "url": "_/widgets/myapp/my-widget"
+  {
+    "config": {},
+    "displayName": "My widget",
+    "interfaces": [
+      "com.enonic.xp.my-interface",
+      "com.enonic.xp.my-interface-2"
+    ],
+    "key": "myapp:my-widget",
+    "url": "_/widgets/myapp/my-widget"
+  },
+  {
+    "config": {
+      "key1": "value1"
     },
-    {
-      "displayName": "My second widget",
-      "interfaces": [],
-      "key": "myapp:my-second-widget",
-      "url": "_/widgets/myapp/my-second-widget"
-    }
+    "displayName": "My second widget",
+    "interfaces": [],
+    "key": "myapp:my-second-widget",
+    "url": "_/widgets/myapp/my-second-widget"
+  }
 ]

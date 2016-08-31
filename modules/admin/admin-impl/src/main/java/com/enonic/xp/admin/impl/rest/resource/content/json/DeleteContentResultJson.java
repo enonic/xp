@@ -8,10 +8,6 @@ public class DeleteContentResultJson
 
     private String failureReason;
 
-    private String contentName;
-
-    private String contentType;
-
     @SuppressWarnings("unused")
     public Integer getSuccess()
     {
@@ -59,26 +55,5 @@ public class DeleteContentResultJson
     public void setFailureReason( final String failureReason )
     {
         this.failureReason = failureReason;
-    }
-
-    @SuppressWarnings("unused")
-    public String getContentName()
-    {
-        return contentName;
-    }
-
-    public void setContentName( final String contentName )
-    {
-        this.contentName = contentName;
-    }
-
-    public String getContentType()
-    {
-        return contentType;
-    }
-
-    public void setContentType( final String contentType )
-    {
-        this.contentType = contentType;
     }
 }

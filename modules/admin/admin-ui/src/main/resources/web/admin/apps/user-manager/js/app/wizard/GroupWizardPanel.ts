@@ -36,6 +36,7 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     persistNewItem(): wemQ.Promise<Principal> {
+
         return this.produceCreateGroupRequest().sendAndParse().then((principal: Principal) => {
 
             api.notify.showFeedback('Group was created!');
@@ -63,19 +64,7 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
             .setDescription(description);
     }
 
-    updatePersistedItem(): wemQ.Promise<Principal> {
-        return this.produceUpdateGroupRequest(this.assembleViewedItem()).sendAndParse().then((principal: Principal) => {
-            if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
-                this.notifyPrincipalNamed(principal);
-            }
-            api.notify.showFeedback('Group was updated!');
-            new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
-
-            return principal;
-        });
-    }
-
-    produceUpdateGroupRequest(viewedPrincipal: Principal): UpdateGroupRequest {
+    produceUpdateRequest(viewedPrincipal:Principal):UpdateGroupRequest {
         var group = viewedPrincipal.asGroup(),
             key = group.getKey(),
             displayName = group.getDisplayName(),

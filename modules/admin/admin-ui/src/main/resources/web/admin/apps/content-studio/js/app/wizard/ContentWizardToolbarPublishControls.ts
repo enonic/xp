@@ -65,7 +65,8 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     public refreshState() {
         let canBePublished = !this.isOnline() && this.contentCanBePublished && this.userCanPublish;
         let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
-        let canBeUnpublished = this.contentCompareStatus != CompareStatus.NEW && this.contentCompareStatus != CompareStatus.UNKNOWN;
+        let canBeUnpublished = this.contentCompareStatus != CompareStatus.NEW && this.contentCompareStatus != CompareStatus.UNKNOWN &&
+                               this.userCanPublish;
         
         this.publishAction.setEnabled(canBePublished);
         this.publishTreeAction.setEnabled(canTreeBePublished);

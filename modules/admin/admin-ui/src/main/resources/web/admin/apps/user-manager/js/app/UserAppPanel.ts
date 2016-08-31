@@ -416,7 +416,7 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
         var wizard = e.getWizard(),
             tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
         // update tab id so that new wizard for the same content type can be created
-        var newTabId = api.app.bar.AppBarTabId.forEdit(e.getPrincipal().getKey().getId());
+        var newTabId = api.app.bar.AppBarTabId.forEdit(e.getPrincipal().getKey().toString());
         tabMenuItem.setTabId(newTabId);
         wizard.setTabId(newTabId);
 
@@ -437,9 +437,9 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
     private getTabIdForUserItem(userItem: UserTreeGridItem): AppBarTabId {
         var appBarTabId: AppBarTabId;
         if (UserTreeGridItemType.PRINCIPAL == userItem.getType()) {
-            appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().getId());
+            appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().toString());
         } else if (UserTreeGridItemType.USER_STORE == userItem.getType()) {
-            appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().getId());
+            appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().toString());
         }
         return appBarTabId;
     }

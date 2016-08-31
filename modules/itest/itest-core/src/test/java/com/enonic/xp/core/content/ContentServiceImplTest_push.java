@@ -10,8 +10,8 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -26,9 +26,9 @@ public class ContentServiceImplTest_push
     extends AbstractContentServiceTest
 {
 
-    private Content content1, content2, content1_1, content2_1;
-
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
+
+    private Content content1, content2, content1_1, content2_1;
 
     @Override
     public void setUp()
@@ -52,7 +52,7 @@ public class ContentServiceImplTest_push
 
         refresh();
 
-        final PushContentsResult push = this.contentService.push( PushContentParams.create().
+        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             includeDependencies( false ).
@@ -87,7 +87,7 @@ public class ContentServiceImplTest_push
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PushContentsResult push = this.contentService.push( PushContentParams.create().
+        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( WS_OTHER ).
             includeDependencies( false ).
@@ -112,14 +112,14 @@ public class ContentServiceImplTest_push
             target( WS_OTHER ).
             build();
 
-        final PushContentsResult push = this.contentService.push( pushParams );
+        final PublishContentResult push = this.contentService.publish( pushParams );
         assertEquals( 1, push.getPushedContents().getSize() );
 
         contentService.delete( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
-        final PushContentsResult pushWithDeleted = this.contentService.push( pushParams );
+        final PublishContentResult pushWithDeleted = this.contentService.publish( pushParams );
         assertEquals( 1, pushWithDeleted.getDeletedContents().getSize() );
     }
 
@@ -135,7 +135,7 @@ public class ContentServiceImplTest_push
             target( WS_OTHER ).
             build();
 
-        final PushContentsResult result = this.contentService.push( pushParams );
+        final PublishContentResult result = this.contentService.publish( pushParams );
 
         assertEquals( 4, result.getPushedContents().getSize() );
     }
@@ -155,7 +155,7 @@ public class ContentServiceImplTest_push
 
         refresh();
 
-        final PushContentsResult result = this.contentService.push( pushParams );
+        final PublishContentResult result = this.contentService.publish( pushParams );
 
         assertEquals( 0, result.getPushedContents().getSize() );
     }
@@ -175,7 +175,7 @@ public class ContentServiceImplTest_push
 
         refresh();
 
-        final PushContentsResult result = this.contentService.push( pushParams );
+        final PublishContentResult result = this.contentService.publish( pushParams );
 
         assertEquals( 1, result.getPushedContents().getSize() );
     }
@@ -202,7 +202,7 @@ public class ContentServiceImplTest_push
             target( WS_OTHER ).
             build();
 
-        final PushContentsResult result = this.contentService.push( pushParams );
+        final PublishContentResult result = this.contentService.publish( pushParams );
 
         assertPushed( result, ContentIds.from( content1.getId(), content2.getId(), content2_1.getId() ) );
     }
@@ -220,7 +220,7 @@ public class ContentServiceImplTest_push
             target( WS_OTHER ).
             build();
 
-        final PushContentsResult result = this.contentService.push( pushParams );
+        final PublishContentResult result = this.contentService.publish( pushParams );
 
         assertEquals( 2, result.getPushedContents().getSize() );
         assertFalse( result.getPushedContents().contains( content1_1.getId() ) );
@@ -264,12 +264,12 @@ public class ContentServiceImplTest_push
         refresh();
     }
 
-    private void assertPushed( final PushContentsResult result, final ContentIds pushed )
+    private void assertPushed( final PublishContentResult result, final ContentIds pushed )
     {
         assertContent( result, pushed, ContentIds.empty(), ContentIds.empty() );
     }
 
-    private void assertContent( final PushContentsResult result, final ContentIds pushed, final ContentIds deleted,
+    private void assertContent( final PublishContentResult result, final ContentIds pushed, final ContentIds deleted,
                                 final ContentIds failed )
     {
 

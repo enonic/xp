@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
@@ -8,6 +9,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -18,6 +21,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
 
 import com.enonic.xp.context.Context;
@@ -96,7 +101,13 @@ import static com.enonic.xp.core.impl.security.PrincipalKeyNodeTranslator.toNode
 public final class SecurityServiceImpl
     implements SecurityService
 {
-    private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = ImmutableSet.of( RoleKeys.EVERYONE );
+    private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP =
+        ImmutableSet.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
+
+    private static final String SU_PASSWORD_PROPERTY_KEY = "xp.suPassword";
+
+    private static final Pattern SU_PASSWORD_PATTERN =
+        Pattern.compile( "(?:\\{(sha1|sha256|sha512|md5)\\})?(\\S+)", Pattern.CASE_INSENSITIVE );
 
     private final Clock clock;
 
@@ -108,6 +119,10 @@ public final class SecurityServiceImpl
 
     private IndexService indexService;
 
+    private String suPasswordHashing;
+
+    private String suPasswordValue;
+
     public SecurityServiceImpl()
     {
         this.clock = Clock.systemUTC();
@@ -116,9 +131,25 @@ public final class SecurityServiceImpl
     @Activate
     public void initialize()
     {
+        initializeSuPassword();
         if ( indexService.isMaster() )
         {
             new SecurityInitializer( this, this.nodeService ).initialize();
+        }
+    }
+
+    private void initializeSuPassword()
+    {
+        final String suPasswordPropertyValue = Strings.emptyToNull( System.getProperty( SU_PASSWORD_PROPERTY_KEY ) );
+        if ( suPasswordPropertyValue != null )
+        {
+            final Matcher suPasswordMatcher = SU_PASSWORD_PATTERN.matcher( suPasswordPropertyValue );
+            if ( suPasswordMatcher.find() )
+            {
+                this.suPasswordHashing = suPasswordMatcher.group( 1 );
+                this.suPasswordHashing = this.suPasswordHashing == null ? null : this.suPasswordHashing.toLowerCase();
+                this.suPasswordValue = suPasswordMatcher.group( 2 );
+            }
         }
     }
 
@@ -328,6 +359,11 @@ public final class SecurityServiceImpl
     {
         addRandomDelay();
 
+        if ( isSuAuthenticationEnabled( token ) )
+        {
+            return authenticateSu( (UsernamePasswordAuthToken) token );
+        }
+
         if ( token.getUserStore() != null )
         {
             return doAuthenticate( token );
@@ -346,6 +382,74 @@ public final class SecurityServiceImpl
             }
             return AuthenticationInfo.unAuthenticated();
         }
+    }
+
+    private boolean isSuAuthenticationEnabled( final AuthenticationToken token )
+    {
+        if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken )
+        {
+            UsernamePasswordAuthToken usernamePasswordAuthToken = (UsernamePasswordAuthToken) token;
+            if ( ( usernamePasswordAuthToken.getUserStore() == null ||
+                UserStoreKey.system().equals( usernamePasswordAuthToken.getUserStore() ) ) &&
+                SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private AuthenticationInfo authenticateSu( final UsernamePasswordAuthToken token )
+    {
+        final String hashedTokenPassword = hashSuPassword( token.getPassword() );
+        if ( this.suPasswordValue.equals( hashedTokenPassword ) )
+        {
+            final User admin = User.create().
+                key( SecurityInitializer.SUPER_USER ).
+                login( "su" ).
+                displayName( "Super User" ).
+                build();
+            return AuthenticationInfo.create().
+                principals( RoleKeys.ADMIN, RoleKeys.ADMIN_LOGIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
+                user( admin ).
+                build();
+        }
+        else
+        {
+            return AuthenticationInfo.unAuthenticated();
+        }
+    }
+
+    private String hashSuPassword( final String plainPassword )
+    {
+        if ( this.suPasswordHashing == null )
+        {
+            return plainPassword;
+        }
+
+        final HashFunction hashFunction;
+        switch ( this.suPasswordHashing )
+        {
+            case "sha1":
+                hashFunction = Hashing.sha1();
+                break;
+            case "sha256":
+                hashFunction = Hashing.sha256();
+                break;
+            case "sha512":
+                hashFunction = Hashing.sha512();
+                break;
+            case "md5":
+                hashFunction = Hashing.md5();
+                break;
+            default:
+                throw new IllegalArgumentException( "Incorrect type of encryption: " + this.suPasswordHashing );
+        }
+
+        return hashFunction.newHasher().
+            putString( plainPassword, Charset.defaultCharset() ).
+            hash().
+            toString();
     }
 
     private void addRandomDelay()

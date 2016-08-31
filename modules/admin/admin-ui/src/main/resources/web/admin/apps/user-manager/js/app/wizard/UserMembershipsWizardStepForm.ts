@@ -33,7 +33,8 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
         this.rolesLoaded = false;
 
         var groupsLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP]);
-        var rolesLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.ROLE]).skipPrincipals([RoleKeys.EVERYONE]);
+        var rolesLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.ROLE]).skipPrincipals([RoleKeys.EVERYONE,
+            RoleKeys.AUTHENTICATED]);
 
         this.groups = PrincipalComboBox.create().setLoader(groupsLoader).build();
         groupsLoader.load();
@@ -84,26 +85,29 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
     private selectMembership(): void {
         if (!!this.principal && this.groupsLoaded && this.rolesLoaded) {
 
+            this.groups.clearSelection();
+            this.roles.clearSelection();
+
             var groups = this.principal.asUser().getMemberships().filter((el) => {
                 return el.isGroup()
             }).map((el) => {
-                return el.getKey().getId();
+                return el.getKey().toString();
             });
 
             var roles = this.principal.asUser().getMemberships().filter((el) => {
                 return el.isRole()
             }).map((el) => {
-                return el.getKey().getId();
+                return el.getKey().toString();
             });
 
             this.groups.getDisplayValues().filter((principal: Principal) => {
-                return groups.indexOf(principal.getKey().getId()) >= 0;
+                return groups.indexOf(principal.getKey().toString()) >= 0;
             }).forEach((selection) => {
                 this.groups.select(selection);
             });
 
             this.roles.getDisplayValues().filter((principal: Principal) => {
-                return roles.indexOf(principal.getKey().getId()) >= 0;
+                return roles.indexOf(principal.getKey().toString()) >= 0;
             }).forEach((selection) => {
                 this.roles.select(selection);
             });

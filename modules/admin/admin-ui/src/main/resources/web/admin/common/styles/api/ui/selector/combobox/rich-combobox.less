@@ -18,13 +18,22 @@
     }
   }
 
+  .error-container {
+    display: none;
+    padding: 7px;
+    color: @input-red-text;
+    font-size: 14px;
+
+    .highlight-background();
+  }
+
   .selected-options {
 
     .selected-option {
-      height: 40px;
+      height: 45px;
 
       .names-and-icon-view {
-        margin-right: 25px;
+        margin-right: 45px;
 
         .main-name {
           font-weight: normal;
@@ -34,10 +43,6 @@
         .sub-name {
           color: @admin-font-gray1;
         }
-      }
-
-      .remove {
-        position: relative;
       }
 
     }

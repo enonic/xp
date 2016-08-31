@@ -29,12 +29,12 @@ import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
@@ -126,6 +126,7 @@ public final class ContentIconResource
                 setImageOrientation( getSourceAttachmentOrientation( media ) ).
                 setCropping( media.getCropping() ).
                 setMimeType( imageAttachment.getMimeType() ).
+                setFileName( imageAttachment.getName() ).
                 setSize( size ).
                 setCrop( crop );
 
@@ -143,7 +144,7 @@ public final class ContentIconResource
             if ( isSVG )
             {
                 final ByteSource binary = contentService.getBinary( params.id, params.binaryReference );
-                return new ResolvedImage( binary.read(), params.mimeType );
+                return new ResolvedImage( binary.read(), params.mimeType, params.fileName );
             }
             else
             {
@@ -186,6 +187,8 @@ public final class ContentIconResource
 
         private Boolean crop;
 
+        private String fileName;
+
         public ResolveIconParams setId( final ContentId id )
         {
             this.id = id;
@@ -225,6 +228,12 @@ public final class ContentIconResource
         public ResolveIconParams setCrop( final Boolean crop )
         {
             this.crop = crop;
+            return this;
+        }
+
+        public ResolveIconParams setFileName( final String fileName )
+        {
+            this.fileName = fileName;
             return this;
         }
     }

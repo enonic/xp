@@ -22,14 +22,6 @@
 
   background-color: @admin-dark-gray;
 
-  .shader {
-    width: 100%;
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.4);
-    top: 0;
-    bottom: 0;
-  }
-
   .home-main-dashboard {
     position: absolute;
     top: 30px;
@@ -66,30 +58,42 @@
 .xp-about-dialog {
   max-width: 440px;
 
+  background-color: rgba(0, 0, 0, 0.8);
+
+  .cancel-button-top, .cancel-button-top:hover {
+    background-color: rgba(0, 0, 0, 0);
+    &:before {
+      color: #bfbfbf;
+    }
+  }
+
+  .xp-about-dialog-content {
+    color: #bfbfbf;
+  }
+
   .dialog-header {
     margin-bottom: 0px;
   }
 
   .xp-about-dialog-app-icon {
     float: left;
-    margin-right: 25px;
+    margin: 0 14px 40px -10px;
 
     img {
-      height: 175px;
+      height: 135px;
     }
   }
 
-  a {
-    color: blue;
-  }
-
   h1 {
-    margin: 10px 0 5px 0;
+    margin: 10px 0 12px 0;
   }
 
   .xp-about-dialog-version-block {
     font-size: 14px;
     margin-bottom: 15px;
+    a {
+      color: #70879e;
+    }
 
     .xp-about-dialog-version {
       font-weight: bold;
@@ -98,6 +102,7 @@
 
   .xp-about-dialog-text {
     font-size: 13px;
+    font-weight: 700;
     text-align: justify;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -115,6 +120,26 @@
 
   .modal-dialog-footer {
     display: none;
+  }
+
+  .xp-about-dialog-footer {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+
+    a {
+      flex: 33%;
+      margin-top: 10px;
+      text-align: center;
+      color: #bfbfbf;
+      font-weight: 500;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
   }
 
 }
@@ -221,7 +246,7 @@
 
     .step-5 {
       .demo-apps {
-        margin: 10px 0px 10px 0px;
+        margin: 10px 0px 49px 0px;
         display: flex;
         align-items: center;
         justify-content: space-around;
@@ -253,9 +278,13 @@
           .demo-app-status {
             position: absolute;
             width: 100%;
-            bottom: -23px;
+            bottom: -28px;
             font-size: 16px;
             color: @admin-green;
+
+            &.install, &.update {
+              display: none;
+            }
 
             &.failure {
               color: @input-red-text;
@@ -328,6 +357,10 @@
     }
   }
 
+}
+.xp-tour-dialog + .body-mask,
+.xp-about-dialog + .body-mask {
+  background-color: @admin-white;
 }
 
 .notification-container {

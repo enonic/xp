@@ -1,13 +1,11 @@
 import "../../../../../api.ts";
 
-import CompareStatus = api.content.CompareStatus;
-import CompareStatusFormatter = api.content.CompareStatusFormatter;
 import ContentSummary = api.content.ContentSummary;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import {WidgetItemView} from "../../WidgetItemView";
-import {AttachmentsWidgetItemView} from "./AttachmentsWidgetItemView";
 
 export class PropertiesWidgetItemView extends WidgetItemView {
 
@@ -21,10 +19,8 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         super("properties-widget-item-view");
     }
 
-    public setContent(content: ContentSummary) {
-        if (AttachmentsWidgetItemView.debug) {
-            console.debug('PropertiesWidgetItemView.setContent: ', content);
-        }
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+        var content = item.getContentSummary();
         if (!api.ObjectHelper.equals(content, this.content)) {
             this.content = content;
             return this.layout();

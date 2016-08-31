@@ -10,13 +10,8 @@ module api.security {
         }
 
         sendAndParse(): wemQ.Promise<Principal[]> {
-            return this.request.send().
-                then((response: api.rest.JsonResponse<FindPrincipalsResultJson>) => {
-                    var principals: Principal[] = response.getResult().principals.map((principalJson: PrincipalJson) => {
-                        return this.fromJsonToPrincipal(principalJson);
-                    });
-
-                    return principals;
+            return this.request.sendAndParse().then((result: FindPrincipalsResult) => {
+                return result.getPrincipals();
                 });
         }
 

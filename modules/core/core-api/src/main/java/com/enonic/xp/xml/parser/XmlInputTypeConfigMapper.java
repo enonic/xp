@@ -85,6 +85,10 @@ final class XmlInputTypeConfigMapper
         }
 
         final String lowerCasedName = name.toLowerCase();
+        if ( lowerCasedName.endsWith( "service" ) )
+        {
+            return this.relativeResolver.toServiceUrl( value );
+        }
         if ( lowerCasedName.endsWith( "contenttype" ) )
         {
             return this.relativeResolver.toContentTypeName( value ).toString();

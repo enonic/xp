@@ -59,10 +59,14 @@ module api {
             return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         }
 
+        static isSafari(): boolean {
+            return navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+                   navigator.userAgent && !navigator.userAgent.match('CriOS');
+        }
+
         static isAndroid(): boolean {
             return /(android)/i.test(navigator.userAgent);
         }
-
         static isMobile(): boolean {
             return BrowserHelper.isIOS() || BrowserHelper.isAndroid();
         }

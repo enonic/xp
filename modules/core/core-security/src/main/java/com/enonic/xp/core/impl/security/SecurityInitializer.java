@@ -34,7 +34,7 @@ final class SecurityInitializer
 
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
 
-    private static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
+    public static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 

@@ -4,6 +4,7 @@ module api.util.loader {
     import LoaderEvent = api.util.loader.event.LoaderEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
+    import LoaderErrorEvent = api.util.loader.event.LoaderErrorEvent;
 
     enum LoaderStatus {
         NOT_STARTED,
@@ -21,9 +22,11 @@ module api.util.loader {
 
         private searchString: string;
 
-        private loadedDataListeners: {(event: LoadedDataEvent<OBJECT>):void}[] = [];
+        private loadedDataListeners: {(event: LoadedDataEvent<OBJECT>): void}[] = [];
 
-        private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
+        private loadingDataListeners: {(event: LoadingDataEvent): void}[] = [];
+
+        private loaderErrorListeners: {(event: LoaderErrorEvent): void}[] = [];
 
         private comparator: Comparator<OBJECT>;
 
@@ -36,24 +39,48 @@ module api.util.loader {
         }
 
         load(postLoad: boolean = false): wemQ.Promise<OBJECT[]> {
-
             this.notifyLoadingData(postLoad);
-            return this.sendRequest().then((results: OBJECT[]) => {
-                this.results = results;
-                if (this.comparator) {
-                    try {
-                        this.results = results.sort(this.comparator.compare);
-                    } catch (e) {
-                        console.error('Error sorting loaded elements with ' + api.ClassHelper.getClassName(this.comparator) + ': ', e);
-                    }
-                }
-                this.notifyLoadedData(results, postLoad);
-                return this.results;
-            });
+
+            return this.sendRequest()
+                .then<OBJECT[]>(this.handleLoadSuccess.bind(this, postLoad))
+                .catch<OBJECT[]>(this.handleLoadError.bind(this, postLoad));
         }
 
         preLoad(searchString: string = ""): wemQ.Promise<OBJECT[]> {
-            return this.load();
+            this.notifyLoadingData(false);
+
+            return this.sendPreLoadRequest(searchString)
+                .then<OBJECT[]>(this.handleLoadSuccess.bind(this, false))
+                .catch<OBJECT[]>(this.handleLoadError.bind(this, false));
+        }
+
+        protected sendPreLoadRequest(searchString?: string): wemQ.Promise<OBJECT[]> {
+            return this.sendRequest();
+        }
+
+        private handleLoadSuccess(postLoad: boolean = false, results: OBJECT[]): OBJECT[] {
+            this.results = results;
+
+            if (this.comparator) {
+                try {
+                    this.results = results.sort(this.comparator.compare);
+                } catch (e) {
+                    console.error('Error sorting loaded elements with ' + api.ClassHelper.getClassName(this.comparator) + ': ', e);
+                }
+            }
+            this.notifyLoadedData(results, postLoad);
+
+            return results;
+        }
+
+        private handleLoadError(postLoad: boolean = false, error: any): OBJECT[] {
+            let isObj = typeof error == 'object',
+                textMessage = isObj ? (error['message'] || 'Unknown error') : String(error),
+                statusCode = isObj && error['statusCode'] ? error['statusCode'] : 500;
+
+            this.notifyErrorOccurred(statusCode, 'Service error: ' + textMessage, postLoad);
+
+            return [];
         }
 
         isLoading(): boolean {
@@ -153,5 +180,21 @@ module api.util.loader {
             });
         }
 
+        onErrorOccurred(listener: (event: LoaderErrorEvent) => void) {
+            this.loaderErrorListeners.push(listener);
+        }
+
+        unErrorOccurred(listener: (event: LoaderErrorEvent) => void) {
+            this.loaderErrorListeners = this.loaderErrorListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        notifyErrorOccurred(statusCode: number, textStatus: string, postLoad?: boolean) {
+            let error = new LoaderErrorEvent(statusCode, textStatus, postLoad);
+            this.loaderErrorListeners.forEach((listener) => {
+                listener(error);
+            })
+        }
     }
 }

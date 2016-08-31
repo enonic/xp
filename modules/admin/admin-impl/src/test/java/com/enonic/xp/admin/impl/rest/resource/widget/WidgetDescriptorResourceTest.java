@@ -44,6 +44,7 @@ public class WidgetDescriptorResourceTest
         final WidgetDescriptor widgetDescriptor2 = WidgetDescriptor.create().
             displayName( "My second widget" ).
             key( DescriptorKey.from( "myapp:my-second-widget" ) ).
+            addProperty( "key1", "value1" ).
             build();
 
         WidgetDescriptors widgetDescriptors = WidgetDescriptors.from( widgetDescriptor1, widgetDescriptor2 );

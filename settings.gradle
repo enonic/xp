@@ -65,6 +65,7 @@ include 'lib:lib-io'
 include 'lib:lib-cache'
 include 'lib:lib-context'
 include 'lib:lib-websocket'
+include 'lib:lib-repo'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'

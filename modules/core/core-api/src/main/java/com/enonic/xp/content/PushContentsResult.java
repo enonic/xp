@@ -5,11 +5,11 @@ import com.google.common.annotations.Beta;
 @Beta
 public class PushContentsResult
 {
-    private final ContentIds pushedContents;
+    private final Contents pushedContents;
 
-    private final ContentIds deletedContents;
+    private final Contents deletedContents;
 
-    private final ContentIds failedContents;
+    private final Contents failedContents;
 
     private PushContentsResult( Builder builder )
     {
@@ -23,46 +23,46 @@ public class PushContentsResult
         return new Builder();
     }
 
-    public ContentIds getPushedContents()
+    public Contents getPushedContents()
     {
         return pushedContents;
     }
 
-    public ContentIds getDeletedContents()
+    public Contents getDeletedContents()
     {
         return deletedContents;
     }
 
-    public ContentIds getFailedContents()
+    public Contents getFailedContents()
     {
         return failedContents;
     }
 
     public static final class Builder
     {
-        private ContentIds pushedContents = ContentIds.empty();
+        private Contents pushedContents = Contents.empty();
 
-        private ContentIds deletedContents = ContentIds.empty();
+        private Contents deletedContents = Contents.empty();
 
-        private ContentIds failedContents = ContentIds.empty();
+        private Contents failedContents = Contents.empty();
 
         private Builder()
         {
         }
 
-        public Builder setPushed( final ContentIds pushedContents )
+        public Builder setPushed( final Contents pushedContents )
         {
             this.pushedContents = pushedContents;
             return this;
         }
 
-        public Builder setFailed( final ContentIds failedContents )
+        public Builder setFailed( final Contents failedContents )
         {
             this.failedContents = failedContents;
             return this;
         }
 
-        public Builder setDeleted( final ContentIds deletedContents )
+        public Builder setDeleted( final Contents deletedContents )
         {
             this.deletedContents = deletedContents;
             return this;

@@ -263,6 +263,12 @@ export class ContentPublishDialog extends DependantItemsDialog {
             (taskId: api.task.TaskId) => {
                 //this.close();
                 this.pollPublishTask(taskId);
+
+            }).catch((reason) => {
+                this.close();
+                if (reason && reason.message) {
+                    api.notify.showError(reason.message);
+                }
             }).finally(() => {
             this.hideLoadingSpinner();
             this.actionButton.setEnabled(true);

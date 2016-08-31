@@ -60,6 +60,10 @@ module api.schema.content {
             return new ContentTypeName(applicationKey.toString() + ":" + localName);
         }
 
+        isFolder(): boolean {
+            return ContentTypeName.FOLDER.equals(this);
+        }
+
         isSite(): boolean {
             return ContentTypeName.SITE.equals(this);
         }

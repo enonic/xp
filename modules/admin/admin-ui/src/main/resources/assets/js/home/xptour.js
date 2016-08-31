@@ -1,22 +1,25 @@
 var tourDialog;
 var tourSteps = [];
 var canInstallDemoApps = false;
-var demoApps = [];
+var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.xphoot", "com.enonic.app.googlemaps"];
+var marketDemoApps = [];
+var isInstallingNow = false;
 
 exports.init = function () {
     initDialog();
-    initDemoApps();
     initTourSteps();
     setTourStep(1);
     api.dom.Body.get().appendChild(tourDialog);
+    
+    return tourDialog;
 };
 
 function initDialog() {
-    tourDialog = new api.ui.dialog.ModalDialog({title: new api.ui.dialog.ModalDialogHeader("Welcome Tour - Step 1 of 5")});
-    tourDialog.addClass("xp-tour-dialog")
-    document.querySelector(".xp-tour").addEventListener("click", function () {
-        tourDialog.open()
+    tourDialog = new api.ui.dialog.ModalDialog({
+        title: new api.ui.dialog.ModalDialogHeader("Welcome Tour - Step 1 of 5"),
+        ignoreClickOutside: true
     });
+    tourDialog.addClass("xp-tour-dialog");
 
     initNavigation();
 }
@@ -38,6 +41,7 @@ function initNavigation() {
             if (currentStep === 1) {
                 previousStepActionButton.setLabel("Skip Tour");
             }
+            nextStepActionButton.setEnabled(true);
             nextStepActionButton.setLabel("Next");
             nextStepActionButton.removeClass("last-step");
             setTourStep(currentStep);
@@ -46,18 +50,43 @@ function initNavigation() {
 
     nextStepAction.onExecuted(function () {
         if (currentStep === tourSteps.length) {
-            tourDialog.close();
-            nextStepActionButton.setLabel("Next");
-            nextStepActionButton.removeClass("last-step");
-            previousStepActionButton.setLabel("Skip Tour");
-            currentStep = 1;
-            setTourStep(currentStep);
+            if (canInstallDemoApps) { // if install is hit
+                nextStepActionButton.setLabel("Installing...");
+                nextStepActionButton.setEnabled(false);
+                isInstallingNow = true;
+                
+                wemQ.all(loadDemoApps()).spread(function () {
+                    if (currentStep === tourSteps.length) { //if still on install apps page of xp tour
+                        nextStepActionButton.setLabel("Finish");
+                        nextStepActionButton.addClass("last-step");
+                        nextStepActionButton.setEnabled(true);
+                    }
+                    isInstallingNow = false;
+                    canInstallDemoApps = false;
+                });
+            } else { // Finish button was hit
+                tourDialog.close();
+                nextStepActionButton.setLabel("Next");
+                nextStepActionButton.removeClass("last-step");
+                previousStepActionButton.setLabel("Skip Tour");
+                currentStep = 1;
+                setTourStep(currentStep);
+            }
+
         }
         else {
             currentStep++;
             if (currentStep === tourSteps.length) {
-                nextStepActionButton.setLabel("Finish");
-                nextStepActionButton.addClass("last-step");
+                if (isInstallingNow) {
+                    nextStepActionButton.setLabel("Installing...");
+                    nextStepActionButton.setEnabled(false);
+                } else if (canInstallDemoApps) {
+                    nextStepActionButton.setLabel("Install Apps");
+                } else {
+                    nextStepActionButton.setLabel("Finish");
+                    nextStepActionButton.addClass("last-step");
+                }
+
             }
             previousStepActionButton.setLabel("Previous");
             setTourStep(currentStep);
@@ -68,38 +97,16 @@ function initNavigation() {
 function initTourSteps() {
     tourSteps = [createStep1(), createStep2(), createStep3(), createStep4()];
 
-    checkAllDemoAppsInstalled().then(function () {
+    fetchDemoAppsFromMarket().then(function () {
+        canInstallDemoApps = marketDemoApps.some(function (marketDemoApp) {
+            return marketDemoApp.getStatus() !== api.application.MarketAppStatus.INSTALLED;
+        });
+
         tourSteps.push(createStep5());
+    }).catch(function (err) {
+        api.DefaultErrorHandler.handle(err);
     });
 
-}
-
-function initDemoApps() {
-    var demoApp1 = {
-        id: "com.enonic.app.superhero",
-        name: "Superhero Blog",
-        url: "https://market.enonic.com/vendors/enonic/com.enonic.app.superhero",
-        installUrl: "http://repo.enonic.com/public/com/enonic/app/superhero/1.5.0/superhero-1.5.0.jar",
-        iconUrl: "https://market.enonic.com/applications/_/attachment/inline/0e282996-27df-4301-a1ba-29959f55595d:44e64fe5aea828f71c92b0d2d9ce96aa021b446b/superhero-blog_cleaned.svg"
-    }
-
-    var demoApp2 = {
-        id: "com.enonic.app.xphoot",
-        name: "XPHOOT",
-        url: "https://market.enonic.com/vendors/enonic/com.enonic.app.xphoot",
-        installUrl: "http://repo.enonic.com/public/com/enonic/app/xphoot/1.0.0/xphoot-1.0.0.jar",
-        iconUrl: "https://market.enonic.com/applications/_/attachment/inline/92c3d127-161d-45ac-bea1-c288875b27df:ba063aabcb55d5ae88ef1a469c2c60477b0e4d3a/xphoot.svg"
-    }
-
-    var demoApp3 = {
-        id: "com.enonic.app.googlemaps",
-        name: "Google Maps",
-        url: "https://market.enonic.com/vendors/enonic/com.enonic.app.googlemaps",
-        installUrl: "http://repo.enonic.com/public/com/enonic/app/googlemaps/1.0.1/googlemaps-1.0.1.jar",
-        iconUrl: "https://market.enonic.com/applications/_/attachment/inline/281b0da2-0130-4f75-8604-8b534713f456:71dcb89f3e40aa8415262a0d870aa419faab6a05/googlemap.svg"
-    }
-
-    demoApps = [demoApp1, demoApp2, demoApp3];
 }
 
 function createStep1() {
@@ -190,67 +197,79 @@ function createStep5() {
                '    </div>' +
                '    <div class="demo-apps">' +
                getDemoAppsHtml() +
-               '    </div>' +
-               '    <div class="install-apps">' +
-               '        <button class="xp-admin-common-button action-button install-apps-button"><span>Install Demo Apps</span></button>    ' +
-               '    </div>';
+               '    </div>'
     '</div>';
 
     var element = api.dom.Element.fromString(html);
     return element;
 }
 
-function checkAllDemoAppsInstalled() {
-    return new api.application.ListApplicationsRequest().sendAndParse().then(function (applications) {
-        demoApps.forEach(function (demoApp) {
-            demoApp["isInstalled"] = applications.some(function (application) {
-                return application.id === demoApp.id
+function fetchDemoAppsFromMarket() {
+    var appPromises = [];
+
+    appPromises.push(new api.application.ListApplicationsRequest().sendAndParse(), new api.application.ListMarketApplicationsRequest()
+        .setStart(0)
+        .setCount(40)
+        .setVersion(CONFIG.xpVersion)
+        .sendAndParse()
+        .then(function (response) {
+            return response.getApplications().filter(function (marketApp) {
+                return demoAppsNames.some(function (demoAppName) {
+                    if (marketApp.getName() === demoAppName) {
+                        marketDemoApps.push(marketApp);
+                        return true;
+                    }
+                })
             });
-        });
+        }));
 
-        canInstallDemoApps = demoApps.some(function (demoApp) {
-            return !demoApp["isInstalled"];
+    return wemQ.all(appPromises).spread(function (installedApplications, marketDemoApps) {
+        marketDemoApps.forEach(function (marketDemoApp) {
+            for (var i = 0; i < installedApplications.length; i++) {
+                if (marketDemoApp.getAppKey().equals(installedApplications[i].getApplicationKey())) {
+                    if (api.application.MarketApplicationsFetcher.installedAppCanBeUpdated(marketDemoApp, installedApplications[i])) {
+                        marketDemoApp.setStatus(api.application.MarketAppStatus.OLDER_VERSION_INSTALLED);
+                    } else {
+                        marketDemoApp.setStatus(api.application.MarketAppStatus.INSTALLED);
+                    }
+                    break;
+                }
+            }
         });
+    }).catch(function (err) {
+        api.DefaultErrorHandler.handle(err);
     });
-
 }
 
 function getDemoAppsHtml() {
     var html = "";
-    demoApps.forEach(function (demoApp, index) {
-        var installed = demoApp["isInstalled"] ? "Installed" : "";
-        html += '<div class="demo-app demo-app-' + index + '">' +
-                '    <a href="' + demoApps[index].url + '" target="_blank">' +
-                '    <img class="demo-app-superhero" src="' + demoApps[index].iconUrl + '">' +
-                '    <div class="demo-app-title">' + demoApps[index].name + '</div>' +
-                '    <div class="demo-app-status ' + installed.toLowerCase() + '">' + installed + '</div>   ' +
+    marketDemoApps.forEach(function (marketDemoApp) {
+        var status = api.application.MarketAppStatusFormatter.formatStatus(marketDemoApp.getStatus());
+
+        html += '<div class="demo-app" id="' + marketDemoApp.getName() + '">' +
+                '    <a href="' + marketDemoApp.getUrl() + '" target="_blank">' +
+                '    <img class="demo-app-icon" src="' + marketDemoApp.getIconUrl() + '">' +
+                '    <div class="demo-app-title">' + marketDemoApp.getDisplayName() + '</div>' +
                 '    </a>' +
+                '    <div class="demo-app-status ' + status.toLowerCase() + '">' + status + '</div>' +
                 '</div>'
     });
 
     return html;
 }
 
-function setupInstallAppsButton() {
-    var installButton = document.querySelector(".install-apps-button");
-    installButton.addEventListener("click", function () {
-        loadDemoApps();
-        installButton.style.visibility = "hidden";
-    });
-}
-
 function loadDemoApps() {
     enableApplicationServerEventsListener();
 
-    demoApps.forEach(function (demoApp, index) {
-        if (!demoApp["isInstalled"]) {
-            loadApp(demoApp.installUrl, document.querySelector(".demo-app-" + index));
-        }
-        else {
-            document.querySelector(".demo-app-" + index).appendChild(
-                new api.dom.DivEl("demo-app-status").setHtml("Installed").getHTMLElement());
+    var loadingAppsPromises = [];
+
+    marketDemoApps.forEach(function (marketDemoApp) {
+        if (marketDemoApp.getStatus() !== api.application.MarketAppStatus.INSTALLED) {
+            loadingAppsPromises.push(loadApp(marketDemoApp));
         }
     });
+
+    return loadingAppsPromises;
 }
 
 // Required to update progress bar
@@ -262,7 +281,10 @@ function enableApplicationServerEventsListener() {
     serverEventsListener.start();
 }
 
-function loadApp(url, container) {
+function loadApp(marketDemoApp) {
+    var url = marketDemoApp.getLatestVersionDownloadUrl();
+    var demoAppContainer = document.getElementById(marketDemoApp.getName());
+
     var progressBar = new api.ui.ProgressBar(0);
     var progressHandler = function (event) {
         if (event.getApplicationUrl() == url &&
@@ -273,21 +295,24 @@ function loadApp(url, container) {
     };
 
     api.application.ApplicationEvent.on(progressHandler);
-    container.appendChild(progressBar.getHTMLElement());
+    demoAppContainer.appendChild(progressBar.getHTMLElement());
 
-    new api.application.InstallUrlApplicationRequest(url).sendAndParse().then(function (result) {
+    return new api.application.InstallUrlApplicationRequest(url).sendAndParse().then(function (result) {
         api.application.ApplicationEvent.un(progressHandler);
         progressBar.remove();
-        var status = new api.dom.DivEl("demo-app-status");
+
+        var statusContainer = tourSteps[tourSteps.length - 1].findChildById(marketDemoApp.getName(), true).getHTMLElement().querySelector(
+            ".demo-app-status");
         if (!result.getFailure()) {
-            status.setHtml("Installed")
+            statusContainer.className = "demo-app-status installed";
+            statusContainer.textContent = "Installed";
         }
         else {
-            status.addClass("failure");
-            status.setHtml("Failed");
+            statusContainer.className = "demo-app-status failure";
+            statusContainer.textContent = "Failed";
         }
-
-        container.appendChild(status.getHTMLElement());
+    }).catch(function (err) {
+        api.DefaultErrorHandler.handle(err);
     });
 
 }
@@ -300,15 +325,4 @@ function setTourStep(step) {
     updateHeaderStep(step);
     tourDialog.getContentPanel().removeChildren();
     tourDialog.appendChildToContentPanel(tourSteps[step - 1]);
-
-    if (step === tourSteps.length) {
-        if (canInstallDemoApps) {
-            setupInstallAppsButton();
-        }
-        else {
-            document.querySelector(".install-apps-button").style.visibility = "hidden";
-        }
-
-    }
-
 }

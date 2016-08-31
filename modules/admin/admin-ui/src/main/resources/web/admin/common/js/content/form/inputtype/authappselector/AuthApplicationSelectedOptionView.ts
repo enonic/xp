@@ -1,4 +1,4 @@
-module api.content.site.inputtype.siteconfigurator {
+module api.content.site.inputtype.authappselector {
 
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
@@ -10,6 +10,7 @@ module api.content.site.inputtype.siteconfigurator {
     import SiteConfig = api.content.site.SiteConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import ContentFormContext = api.content.form.ContentFormContext;
+    import SiteConfiguratorDialog = api.content.site.inputtype.siteconfigurator.SiteConfiguratorDialog;
 
     export class AuthApplicationSelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<Application> {
 
@@ -47,21 +48,19 @@ module api.content.site.inputtype.siteconfigurator {
             var header = new api.dom.DivEl('header');
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
-                api.app.NamesAndIconViewSize.large)).setMainName(this.application.getDisplayName()).setSubName(
+                api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
                 this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
+            
+            if (this.application.getIconUrl()) {
+                namesAndIconView.setIconUrl(this.application.getIconUrl());
+            }
+
+            if (this.application.getDescription()) {
+                namesAndIconView.setSubName(this.application.getDescription());
+            }
 
             header.appendChild(namesAndIconView);
 
-            if (!this.readOnly) {
-                var removeButton = new api.dom.AEl("remove-button icon-close");
-                removeButton.onClicked((event: MouseEvent) => {
-                    this.notifyRemoveClicked();
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return false;
-                });
-                header.appendChild(removeButton);
-            }
             this.appendChild(header);
 
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
@@ -75,6 +74,17 @@ module api.content.site.inputtype.siteconfigurator {
                 header.appendChild(this.createEditButton());
             }
 
+            if (!this.readOnly) {
+                var removeButton = new api.dom.AEl("remove");
+                removeButton.onClicked((event: MouseEvent) => {
+                    this.notifyRemoveClicked();
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                });
+                header.appendChild(removeButton);
+            }
+
             return wemQ(true);
         }
 
@@ -83,7 +93,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private createEditButton(): api.dom.AEl {
-            var editButton = new api.dom.AEl('edit-button');
+            var editButton = new api.dom.AEl('edit');
 
             editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked(event);
