@@ -83,6 +83,7 @@ import DialogButton = api.ui.dialog.DialogButton;
 import Toolbar = api.ui.toolbar.Toolbar;
 import CycleButton = api.ui.button.CycleButton;
 
+import Permission = api.security.acl.Permission;
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -385,7 +386,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 console.debug("ContentWizardPanel.doRenderOnDataLoaded");
             }
 
-            this.initPublishButtonForMobile();
+            new api.content.resource.GetPermittedActionsRequest().
+                addPermissionsToBeChecked(Permission.PUBLISH).
+                addContentIds(this.getPersistedItem().getContentId()).
+                sendAndParse().
+                then((allowedPermissions: Permission[]) => {
+                    if (allowedPermissions.indexOf(Permission.PUBLISH) > -1) {
+                        this.initPublishButtonForMobile();
+                    }
+                });
 
             if (this.contentType.hasContentDisplayNameScript()) {
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
@@ -513,7 +522,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
             this.checkSecurityWizardStepFormAllowed(loginResult);
-            this.enablePublishIfAllowed(loginResult);
             return wemQ.all(applicationPromises);
         }).then((applications: Application[]) => {
             for (var i = 0; i < applications.length; i++) {
@@ -1430,7 +1438,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
 
-        if (this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), api.security.acl.Permission.WRITE_PERMISSIONS)) {
+        if (this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), Permission.WRITE_PERMISSIONS)) {
             this.isSecurityWizardStepFormAllowed = true;
         }
     }
@@ -1440,26 +1448,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         return accessEntriesToCheck.some((entry: AccessControlEntry) => {
             if (entry.getPrincipalKey().equals(principalKey)) {
-                return true;
-            }
-        });
-    }
-
-    /**
-     * Enables publish button if selected item has access entry with publish permission
-     * for at least one of user's principals or if user contains Admin principal.
-     * @param loginResult - user's authorisation state
-     */
-    private enablePublishIfAllowed(loginResult: api.security.auth.LoginResult) {
-        var entries = this.getPersistedItem().getPermissions().getEntries();
-        var accessEntriesWithPublishPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
-            return item.isAllowed(api.security.acl.Permission.PUBLISH);
-        });
-
-        loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
-            if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
-                this.isPrincipalPresent(principalKey, accessEntriesWithPublishPermissions)) {
-                this.wizardActions.getPublishAction().setEnabled(true);
                 return true;
             }
         });
@@ -1527,7 +1515,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private initPublishButtonForMobile() {
-
         var action: api.ui.Action = new api.ui.Action("Publish");
         action.setIconClass("publish-action");
         action.onExecuted(() => {

@@ -106,6 +106,11 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
             (jsonResponse: api.rest.JsonResponse<api.content.json.UnpublishContentJson>) => {
                 this.close();
                 UnpublishContentRequest.feedback(jsonResponse);
+            }).catch((reason) => {
+                this.close();
+                if (reason && reason.message) {
+                    api.notify.showError(reason.message);
+                }
             }).finally(() => {
                 this.hideLoadingSpinner();
                 this.actionButton.setEnabled(true);
