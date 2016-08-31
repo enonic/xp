@@ -28,6 +28,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private unpublish: api.ui.Action;
 
+    private publishMobile: api.ui.Action;
+
     private preview: api.ui.Action;
 
     private showLiveEditAction: api.ui.Action;
@@ -51,11 +53,12 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.showLiveEditAction = new ShowLiveEditAction(wizardPanel);
         this.showFormAction = new ShowFormAction(wizardPanel);
         this.showSplitEditAction = new ShowSplitEditAction(wizardPanel);
+        this.publishMobile = new PublishAction(wizardPanel);
 
         super(this.save, this.delete, this.duplicate, this.preview, 
             this.publish, this.publishTree, this.unpublish, this.close,
-            this.showLiveEditAction, this.showFormAction, 
-            this.showSplitEditAction, this.saveAndClose);
+            this.showLiveEditAction, this.showFormAction,
+            this.showSplitEditAction, this.saveAndClose, this.publishMobile);
     }
 
     enableActionsForNew() {
@@ -80,6 +83,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.duplicate.setEnabled(!valueOn);
         this.publish.setEnabled(!valueOn);
         this.unpublish.setEnabled(!valueOn);
+        this.publishMobile.setEnabled(!valueOn);
+        this.publishMobile.setVisible(!valueOn);
 
         if (valueOn) {
             this.enableDeleteIfAllowed(content);
@@ -119,6 +124,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                 this.publish.setEnabled(false);
                 this.unpublish.setEnabled(false);
                 this.publishTree.setEnabled(false);
+                this.publishMobile.setEnabled(false);
+                this.publishMobile.setVisible(false);
             } else {
                 // check if already published to show unpublish button
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
@@ -127,8 +134,6 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                         var status = contentAndCompare.getCompareStatus();
                         var isPublished = status !== api.content.CompareStatus.NEW &&
                                           status != api.content.CompareStatus.UNKNOWN;
-
-                        this.unpublish.setVisible(isPublished);
                     });
             }
 
@@ -205,5 +210,9 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     getShowSplitEditAction(): api.ui.Action {
         return this.showSplitEditAction;
+    }
+
+    getPublishMobileAction(): api.ui.Action {
+        return this.publishMobile;
     }
 }
