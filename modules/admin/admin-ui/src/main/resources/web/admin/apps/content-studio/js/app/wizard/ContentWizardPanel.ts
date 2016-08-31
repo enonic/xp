@@ -935,7 +935,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private initLiveEditor(formContext: ContentFormContext, content: Content): wemQ.Promise<void> {
 
-        var deferred = wemQ.defer();
+        var deferred = wemQ.defer<void>();
 
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getPreviewAction().setVisible(false);

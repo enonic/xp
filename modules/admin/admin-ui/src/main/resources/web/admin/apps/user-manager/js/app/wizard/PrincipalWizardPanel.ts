@@ -21,6 +21,7 @@ import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWi
 import WizardStep = api.app.wizard.WizardStep;
 import SecurityResourceRequest = api.security.SecurityResourceRequest;
 import StringHelper = api.util.StringHelper;
+import PrincipalJson = api.security.PrincipalJson;
 
 export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
@@ -246,7 +247,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         }
     }
 
-    protected produceUpdateRequest(viewedPrincipal:Principal):SecurityResourceRequest {
+    protected produceUpdateRequest(viewedPrincipal: Principal): SecurityResourceRequest<PrincipalJson, Principal> {
         throw new Error("Must be implemented by inheritors");
     }
 

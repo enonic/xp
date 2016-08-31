@@ -11,6 +11,7 @@ import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
 import ItemDataGroup = api.app.view.ItemDataGroup;
 import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;
+import MacroDescriptor = api.macro.MacroDescriptor;
 
 export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
@@ -99,10 +100,10 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
     }
 
-    private initMacros(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+    private initMacros(applicationKey: ApplicationKey): wemQ.Promise<any> {
         var macroPromises = [new api.macro.resource.GetMacrosRequest([applicationKey]).sendAndParse()]
 
-        return wemQ.all(macroPromises).spread((macros: api.macro.MacroDescriptor[])=> {
+        return wemQ.all(macroPromises).spread((macros: MacroDescriptor[])=> {
 
             var macrosGroup = new ItemDataGroup("Macros", "macros");
 
@@ -118,7 +119,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
     }
 
-    private initDescriptors(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+    private initDescriptors(applicationKey: ApplicationKey): wemQ.Promise<any> {
 
         var descriptorPromises = [
             new api.content.page.GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
@@ -147,15 +148,15 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
     }
 
-    private initSchemas(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+    private initSchemas(applicationKey: ApplicationKey): wemQ.Promise<any> {
 
         var schemaPromises = [
             new api.schema.content.GetContentTypesByApplicationRequest(applicationKey).sendAndParse(),
             new api.schema.mixin.GetMixinsByApplicationRequest(applicationKey).sendAndParse(),
             new api.schema.relationshiptype.GetRelationshipTypesByApplicationRequest(applicationKey).sendAndParse()
-        ]
+        ];
 
-        return wemQ.all(schemaPromises).spread(
+        return wemQ.all(schemaPromises).spread<any>(
             (contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
                 var schemasGroup = new ItemDataGroup("Schemas", "schemas");
 
@@ -180,7 +181,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
     private initProviders(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
         var providersPromises = [new api.application.AuthApplicationRequest(applicationKey).sendAndParse()];
 
-        return wemQ.all(providersPromises).spread(
+        return wemQ.all(providersPromises).spread<ItemDataGroup>(
             (application: Application) => {
                 if(application) {
                     var providersGroup = new ItemDataGroup("ID Providers", "providers");
