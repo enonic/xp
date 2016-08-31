@@ -1,4 +1,4 @@
-module api.content.form.inputtype.contentselector {
+module api.content.form.inputtype.customselector {
 
     import PropertyArray = api.data.PropertyArray;
     import Property = api.data.Property;

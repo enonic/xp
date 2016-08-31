@@ -1,4 +1,4 @@
-module api.content.form.inputtype.contentselector {
+module api.content.form.inputtype.customselector {
 
     import RichComboBox = api.ui.selector.combobox.RichComboBox;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
@@ -17,6 +17,7 @@ module api.content.form.inputtype.contentselector {
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setOptionDisplayValueViewer(new CustomSelectorItemViewer())
                 .setSelectedOptionsView(new CustomSelectorSelectedOptionsView())
+                .setDelayedInputValueChangedHandling(300)
                 .setLoader(loader)
                 .setValue(value);
 
