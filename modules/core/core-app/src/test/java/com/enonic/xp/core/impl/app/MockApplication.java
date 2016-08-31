@@ -145,4 +145,10 @@ public class MockApplication
     {
         return true;
     }
+
+    @Override
+    public boolean hasApplicationDescriptor()
+    {
+        return true;
+    }
 }

@@ -109,10 +109,6 @@ public final class ApplicationResource
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
-            if ( !application.hasSiteDescriptor() )
-            {
-                continue;
-            }
             final ApplicationKey applicationKey = application.getKey();
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
                 !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
@@ -320,6 +316,29 @@ public final class ApplicationResource
         return this.marketService.get( version, start, count );
     }
 
+
+    @GET
+    @Path("getSiteApplications")
+    public ListApplicationJson getSiteApplications()
+    {
+        final ListApplicationJson json = new ListApplicationJson();
+
+        Applications applications = this.applicationService.getInstalledApplications();
+        for ( final Application application : applications )
+        {
+            final ApplicationKey applicationKey = application.getKey();
+            final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
+
+            if ( siteDescriptor != null )
+            {
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+                final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
+                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+            }
+        }
+        return json;
+    }
 
     @GET
     @Path("getIdProvider")

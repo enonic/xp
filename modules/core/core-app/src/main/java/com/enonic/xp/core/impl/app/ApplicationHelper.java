@@ -32,6 +32,8 @@ public final class ApplicationHelper
 
     public static final String SITE_XML = "site/site.xml";
 
+    public static final String APPLICATION_XML = "application.xml";
+
     public static final String BUNDLE_TYPE_HEADER = "X-Bundle-Type";
 
     public static final String APPLICATION_BUNDLE_TYPE = "application";
@@ -39,12 +41,12 @@ public final class ApplicationHelper
     public static boolean isApplication( final Bundle bundle )
     {
         return ( getHeader( bundle, BUNDLE_TYPE_HEADER, "default" ).equals( APPLICATION_BUNDLE_TYPE ) ||
-            bundle.getEntry( SITE_XML ) != null );
+            bundle.getEntry( APPLICATION_XML ) != null || bundle.getEntry( SITE_XML ) != null );
     }
 
     public static boolean isApplication( final JarFile jarFile )
     {
-        return hasApplicationHeader( jarFile ) || jarFile.getEntry( SITE_XML ) != null;
+        return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_XML ) != null || jarFile.getEntry( SITE_XML ) != null;
     }
 
     private static final boolean hasApplicationHeader( final JarFile jarFile )
