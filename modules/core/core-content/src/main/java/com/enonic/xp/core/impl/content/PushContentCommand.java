@@ -9,11 +9,12 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -178,7 +179,8 @@ public class PushContentCommand
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
-        this.resultBuilder.setDeleted( getContents( nodeIdsToDelete.getSet() ) );
+        final Contents deletedContents = getContents( nodeIdsToDelete.getSet() );
+        this.resultBuilder.setDeleted( deletedContents );
 
         final Context currentContext = ContextAccessor.current();
         deleteNodesInContext( nodeIdsToDelete, currentContext );
@@ -186,9 +188,9 @@ public class PushContentCommand
             branch( target ).
             build() );
 
-        for ( ContentId contentId : deletedContents )
+        for ( Content content : deletedContents )
         {
-            pushContentListener.contentPushed( contentId, PushContentListener.PushResult.DELETED );
+            pushContentListener.contentPushed( content.getId(), PushContentListener.PushResult.DELETED );
         }
     }
 
