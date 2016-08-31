@@ -29,7 +29,6 @@ import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -60,9 +59,6 @@ public class NodeServiceImplTest
         this.nodeService.setSearchService( this.searchService );
         this.nodeService.setBlobStore( new MemoryBlobStore() );
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
-
-        final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( config.getSnapshotsDir() ).thenReturn( xpHome.newFolder() );
 
         this.createDefaultRootNode();
     }

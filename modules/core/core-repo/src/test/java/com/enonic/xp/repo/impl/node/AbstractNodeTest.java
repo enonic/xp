@@ -14,6 +14,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
@@ -169,21 +170,29 @@ public abstract class AbstractNodeTest
         this.snapshotService.setClient( this.client );
         this.snapshotService.setConfiguration( repoConfig );
 
-        this.repositoryService = new RepositoryServiceImpl();
-        this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+        setUpRepositoryServices();
 
         createRepository( TEST_REPO );
         createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
     }
 
-    void createRepository( final Repository repository )
+    private void setUpRepositoryServices()
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexServiceInternal );
         nodeService.setSnapshotService( this.snapshotService );
         nodeService.setStorageService( this.storageService );
+        nodeService.setSearchService( this.searchService );
+        nodeService.setBlobStore( this.blobStore );
+        nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
+        this.repositoryService = new RepositoryServiceImpl();
+        this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+    }
+
+    void createRepository( final Repository repository )
+    {
         this.repositoryService.create( RepositorySettings.create().
             repositoryId( repository.getId() ).
             build() );
