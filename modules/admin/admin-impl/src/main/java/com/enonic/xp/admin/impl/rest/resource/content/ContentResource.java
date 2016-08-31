@@ -153,7 +153,6 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -427,13 +426,6 @@ public final class ContentResource
 
                 jsonResult.addPending( result.getPendingContents().getSize() );
                 jsonResult.addSuccess( result.getDeletedContents().getSize() );
-
-                jsonResult.setContentName( result.getContentName() );
-
-                if ( StringUtils.isNotEmpty( result.getContentType() ) )
-                {
-                    jsonResult.setContentType( ContentTypeName.from( result.getContentType() ).getLocalName() );
-                }
 
             }
             catch ( final Exception e )

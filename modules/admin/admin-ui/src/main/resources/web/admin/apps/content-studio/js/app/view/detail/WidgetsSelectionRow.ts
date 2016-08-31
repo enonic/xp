@@ -23,10 +23,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
         this.infoWidgetToggleButton = new InfoWidgetToggleButton(detailsPanel);
 
         this.widgetSelectorDropdown = new WidgetSelectorDropdown(detailsPanel);
-
         this.widgetSelectorDropdown.addClass("widget-selector");
-        this.widgetSelectorDropdown.getInput().getEl().setDisabled(true);
-        this.widgetSelectorDropdown.getInput().setPlaceholder("");
 
         this.widgetSelectorDropdown.onOptionSelected((event: OptionSelectedEvent<WidgetViewOption>) => {
             var widgetView = event.getOption().displayValue.getWidgetView();
@@ -91,7 +88,12 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
 export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
 
     constructor(detailsPanel: DetailsPanel) {
-        super("widgetSelector", <DropdownConfig<WidgetViewOption>>{disableFilter: true, skipExpandOnClick: true});
+        super("widgetSelector", {
+            disableFilter: true,
+            skipExpandOnClick: true,
+            inputPlaceholderText: "",
+            disableFilter: true
+        });
 
         this.onClicked((event) => {
             if (this.isDefaultOptionDisplayValueViewer(event.target)) {

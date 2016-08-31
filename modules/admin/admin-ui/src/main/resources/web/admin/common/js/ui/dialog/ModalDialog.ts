@@ -4,6 +4,8 @@ module api.ui.dialog {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     export interface ModalDialogConfig {
         title: api.ui.dialog.ModalDialogHeader;
+        forceHorizontalCentering?: boolean;
+        ignoreClickOutside?: boolean;
     }
 
     export class ModalDialog extends api.dom.DivEl {
@@ -61,7 +63,7 @@ module api.ui.dialog {
             footer.appendChild(this.buttonRow);
 
             this.mouseClickListener = (event: MouseEvent) => {
-                if (this.isVisible()) {
+                if (this.isVisible() && !!this.config.ignoreClickOutside == false) {
                     for (var element = event.target; element; element = (<any>element).parentNode) {
                         if (element == this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
@@ -163,11 +165,17 @@ module api.ui.dialog {
         }
 
         show() {
+            api.dom.Body.get().getHTMLElement().classList.add("modal-dialog");
             this.centerMyself();
             super.show();
             this.buttonRow.focusDefaultAction();
         }
 
+        hide() {
+            super.hide();
+            api.dom.Body.get().getHTMLElement().classList.remove("modal-dialog");
+        }
+        
         protected centerMyself() {
             if (ModalDialog.debug) {
                 console.debug("ModalDialog.centerMyself", api.ClassHelper.getClassName(this));
@@ -175,7 +183,7 @@ module api.ui.dialog {
             var el = this.getEl();
             el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
 
-            if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
+            if (this.config.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
                 this.centerHorisontally();
             } else {
                 el.setMarginLeft("0px");

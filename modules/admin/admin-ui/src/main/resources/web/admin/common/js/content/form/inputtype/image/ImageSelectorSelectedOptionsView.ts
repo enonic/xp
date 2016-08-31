@@ -120,10 +120,6 @@ module api.content.form.inputtype.image {
             var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView(),
                 isMissingContent = option.displayValue.isEmptyContent();
 
-            if (isMissingContent) {
-                optionView.showError("No access to image.");
-            }
-
             optionView.onRendered(() => this.handleOptionViewRendered(selectedOption, optionView));
 
             optionView.insertBeforeEl(this.toolbar);
@@ -242,6 +238,10 @@ module api.content.form.inputtype.image {
                 (view: ImageSelectorSelectedOptionView, checked: boolean) => this.handleOptionViewChecked(checked, option, optionView));
 
             optionView.getIcon().onLoaded((event: UIEvent) => this.handleOptionViewImageLoaded(optionView));
+
+            if (option.getOption().displayValue.isEmptyContent()) {
+                optionView.showError("No access to image.");
+            }
         }
 
         private handleOptionViewClicked(option: SelectedOption<ImageSelectorDisplayValue>, optionView: ImageSelectorSelectedOptionView) {

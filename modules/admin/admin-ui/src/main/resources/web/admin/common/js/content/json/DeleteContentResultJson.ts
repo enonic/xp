@@ -8,10 +8,6 @@ module api.content.json {
 
         failure: number;
 
-        contentName: string;
-
-        contentType: string;
-
         failureReason: string;
     }
 }

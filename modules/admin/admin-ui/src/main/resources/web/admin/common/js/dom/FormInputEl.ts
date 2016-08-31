@@ -2,9 +2,9 @@ module api.dom {
 
     export class FormInputEl extends FormItemEl {
 
-        private dirtyChangedListeners: {(dirty: boolean):void}[] = [];
+        private dirtyChangedListeners: {(dirty: boolean): void}[] = [];
 
-        private valueChangedListeners: {(event: api.ValueChangedEvent):void}[] = [];
+        private valueChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
 
         private originalValue: string;
 
@@ -17,6 +17,8 @@ module api.dom {
         constructor(tagName: string, className?: string, prefix?: string, originalValue?: string) {
             super(tagName, className, prefix);
             this.addClass('form-input');
+
+            this.originalValue = originalValue;
 
             if (FormInputEl.debug) {
                 console.groupCollapsed(this.toString() + ".constructor: setting originalValue = " +
@@ -47,6 +49,10 @@ module api.dom {
 
         getValue(): string {
             return this.doGetValue();
+        }
+
+        protected getOriginalValue(): string {
+            return String(this.originalValue); // returns copy of original value to avoid possible changing
         }
 
         /**
@@ -121,6 +127,11 @@ module api.dom {
 
         toString(): string {
             return api.ClassHelper.getClassName(this) + '[' + this.getId() + ']';
+        }
+
+        resetBaseValues(value: string) {
+            this.originalValue = value;
+            this.oldValue = value;
         }
 
         private setDirty(dirty: boolean, silent?: boolean) {

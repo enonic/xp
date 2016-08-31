@@ -221,7 +221,7 @@ module api.ui.tab {
             } else if (tab.getIndex() < this.selectedTab) {
                 // if removed tab was before selected tab than decrement selected index
                 this.selectedTab--;
-            } else if (tab.getIndex() > this.getSize() - 1) {
+            } else if (tab.getIndex() > this.getSize() - 1 && this.selectedTab != 0) {
                 // if selected index is more than tabs amount set last index as selected
                 this.selectedTab = this.getSize() - 1;
             }

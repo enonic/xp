@@ -102,7 +102,8 @@ import static com.enonic.xp.core.impl.security.PrincipalKeyNodeTranslator.toNode
 public final class SecurityServiceImpl
     implements SecurityService
 {
-    private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = ImmutableSet.of( RoleKeys.EVERYONE );
+    private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP =
+        ImmutableSet.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
 
     private static final String SU_PASSWORD_PROPERTY_KEY = "xp.suPassword";
 

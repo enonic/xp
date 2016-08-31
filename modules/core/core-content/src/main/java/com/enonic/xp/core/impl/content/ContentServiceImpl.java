@@ -233,6 +233,8 @@ public class ContentServiceImpl
                 requireValid( true ).
                 contentData( new PropertyTree() ).
                 build() );
+
+            return this.getById( content.getId() );
         }
 
         return content;

@@ -69,7 +69,7 @@ module api.content.site.inputtype.siteconfigurator {
                 header.appendChild(this.createEditButton());
             }
 
-            var removeButton = new api.dom.AEl("remove-button icon-close");
+            var removeButton = new api.dom.AEl("remove");
             removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
                 event.stopPropagation();
@@ -86,7 +86,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private createEditButton(): api.dom.AEl {
-            var editButton = new api.dom.AEl('edit-button');
+            var editButton = new api.dom.AEl('edit');
 
             editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked(event);

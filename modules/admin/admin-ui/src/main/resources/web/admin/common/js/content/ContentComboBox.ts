@@ -12,20 +12,21 @@ module api.content {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
 
-            var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>().setComboBoxName(
-                builder.name ? builder.name : 'contentSelector').setLoader(loader).setSelectedOptionsView(
-                new ContentSelectedOptionsView()).setMaximumOccurrences(builder.maximumOccurrences).setOptionDisplayValueViewer(
-                new api.content.ContentSummaryViewer()).setDelayedInputValueChangedHandling(750).setValue(
-                builder.value).setDisplayMissingSelectedOptions(builder.displayMissingSelectedOptions).setRemoveMissingSelectedOptions(
-                builder.removeMissingSelectedOptions).setMinWidth(builder.minWidth);
+            var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>()
+                .setComboBoxName(builder.name ? builder.name : 'contentSelector')
+                .setLoader(loader)
+                .setSelectedOptionsView(new ContentSelectedOptionsView())
+                .setMaximumOccurrences(builder.maximumOccurrences)
+                .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
+                .setDelayedInputValueChangedHandling(750)
+                .setValue(builder.value)
+                .setDisplayMissingSelectedOptions(builder.displayMissingSelectedOptions)
+                .setRemoveMissingSelectedOptions(builder.removeMissingSelectedOptions)
+                .setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
 
             this.addClass('content-combo-box');
-
-            if (builder.postLoad) {
-                this.handleLastRange(builder.postLoad);
-            }
         }
 
         getContent(contentId: ContentId): ContentSummary {
@@ -100,6 +101,8 @@ module api.content {
 
         constructor(option: api.ui.selector.Option<ContentSummary>) {
             super(option);
+            this.setIsEditable(true);
+            this.setIsDraggable(true);
         }
 
         resolveIconUrl(content: ContentSummary): string {
@@ -114,20 +117,15 @@ module api.content {
             return content.getPath().toString();
         }
 
-        createActionButtons(content: ContentSummary): api.dom.Element[] {
-            let editButton = new api.dom.AEl("edit");
+        protected createEditButton(content: api.content.ContentSummary): api.dom.AEl {
+            let editButton = super.createEditButton(content);
             editButton.onClicked((event: Event) => {
-                let model = [ContentSummaryAndCompareStatus.fromContentSummary(content)];
+                let model = [api.content.ContentSummaryAndCompareStatus.fromContentSummary(content)];
                 new api.content.event.EditContentEvent(model).fire();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
             });
 
-            return [editButton];
+            return editButton;
         }
-
     }
 
     export class ContentComboBoxBuilder {
@@ -141,8 +139,6 @@ module api.content {
         minWidth: number;
 
         value: string;
-
-        postLoad: () => void;
 
         displayMissingSelectedOptions: boolean;
 
@@ -180,11 +176,6 @@ module api.content {
 
         setRemoveMissingSelectedOptions(value: boolean): ContentComboBoxBuilder {
             this.removeMissingSelectedOptions = value;
-            return this;
-        }
-
-        setPostLoad(postLoad: () => void) {
-            this.postLoad = postLoad;
             return this;
         }
 

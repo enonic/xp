@@ -47,9 +47,18 @@ function onLauncherClick(e) {
         return;
     }
     var isClickOutside = !launcherPanel.contains(e.target) && !launcherButton.contains(e.target);
-    if (isClickOutside && !launcherMainContainer.getAttribute("hidden")) {
+    if (isClickOutside && !launcherMainContainer.getAttribute("hidden") && !isModalDialogActiveOnHomePage(e.target) && !isDashboardIcon(e.target)) {
         closeLauncherPanel();
     }
+}
+
+function isDashboardIcon(element) {
+    return (wemjq(element).closest(".dashboard-item").length > 0);
+}
+
+function isModalDialogActiveOnHomePage(element) {
+    return (window.CONFIG.appId == "home") &&
+           (document.body.classList.contains("modal-dialog") || (wemjq(element).closest(".xp-admin-common-modal-dialog").length > 0));
 }
 
 function createLauncherLink(container) {

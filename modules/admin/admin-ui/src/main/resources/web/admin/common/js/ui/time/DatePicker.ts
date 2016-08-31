@@ -100,7 +100,7 @@ module api.ui.time {
         }
 
         protected initInput(builder: DatePickerBuilder) {
-            var value;
+            var value = "";
             if (builder.selectedDate) {
                 value = this.formatDate(builder.selectedDate);
                 this.popup.setSelectedDate(builder.selectedDate);

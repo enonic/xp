@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -139,6 +141,8 @@ public class PublishContentCommand
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
 
+        this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getFailed().
+            stream().map( failed -> failed.getNodeBranchEntry().getNodeId() ).collect( Collectors.toList() ) ) ) );
         this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
     }
 

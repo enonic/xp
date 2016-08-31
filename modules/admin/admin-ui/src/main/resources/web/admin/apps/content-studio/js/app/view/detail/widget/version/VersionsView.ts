@@ -24,6 +24,10 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
         this.status = item.getCompareStatus();
     }
 
+    getContentId(): ContentId {
+        return this.contentId;
+    }
+
     reload(): wemQ.Promise<void> {
         return this.loadData().then((contentVersions: ContentVersion[]) => {
             this.updateView(contentVersions);

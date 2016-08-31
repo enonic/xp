@@ -1,6 +1,10 @@
 package com.enonic.xp.app;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import com.google.common.annotations.Beta;
+import com.google.common.base.Joiner;
 
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -14,6 +18,33 @@ public final class ApplicationRelativeResolver
     public ApplicationRelativeResolver( final ApplicationKey current )
     {
         this.current = current;
+    }
+
+    public String toServiceUrl( final String name )
+    {
+        if ( name.contains( "/" ) )
+        {
+            return name;
+        }
+
+        if ( this.current == null )
+        {
+            throw new IllegalArgumentException( "Unable to resolve application for Service [" + name + "]" );
+        }
+
+        if ( name.startsWith( "http" ) )
+        {
+            try
+            {
+                URL url = new URL( name );
+                return url.toString();
+            }
+            catch ( MalformedURLException e )
+            {
+            }
+        }
+
+        return Joiner.on( "/" ).join( current.toString(), name );
     }
 
     public ContentTypeName toContentTypeName( final String name )

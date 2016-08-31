@@ -1,4 +1,4 @@
-module api.content.site.inputtype.siteconfigurator {
+module api.content.site.inputtype.authappselector {
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
@@ -6,9 +6,10 @@ module api.content.site.inputtype.siteconfigurator {
     import FormView = api.form.FormView;
 
     import Option = api.ui.selector.Option;
-        import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
+    import SiteConfigProvider = api.content.site.inputtype.siteconfigurator.SiteConfigProvider;
 
     export class AuthApplicationSelectedOptionsView extends BaseSelectedOptionsView<Application> {
 

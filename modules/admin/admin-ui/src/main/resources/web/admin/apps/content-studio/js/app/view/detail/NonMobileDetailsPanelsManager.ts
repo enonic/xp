@@ -70,6 +70,7 @@ export class NonMobileDetailsPanelsManager {
 
     private doPanelAnimation(canSetActivePanel: boolean = true) {
         if (this.requiresFloatingPanelDueToShortWidth()) {
+            this.toggleButton.addClass("floating-mode");
             if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                 this.dockedToFloatingSync();
             }
@@ -88,7 +89,7 @@ export class NonMobileDetailsPanelsManager {
             this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
 
         } else {
-
+            this.toggleButton.removeClass("floating-mode");
             if (this.floatingPanelIsShown()) {
                 this.floatingToDockedSync();
             }
