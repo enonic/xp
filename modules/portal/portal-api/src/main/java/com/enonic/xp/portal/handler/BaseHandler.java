@@ -59,7 +59,6 @@ public abstract class BaseHandler
         throws Exception
     {
         checkAdminAccess( req );
-
         final HttpMethod method = req.getMethod();
         checkMethodAllowed( method );
 
