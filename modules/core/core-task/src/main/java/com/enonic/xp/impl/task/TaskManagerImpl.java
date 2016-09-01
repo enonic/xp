@@ -160,7 +160,6 @@ public final class TaskManagerImpl
         final Instant now = Instant.now( clock );
         for ( TaskContext taskCtx : tasks.values() )
         {
-            System.out.println( taskCtx.getDoneTime() );
             if ( taskCtx.getTaskInfo().isDone() && taskCtx.getDoneTime() != null &&
                 taskCtx.getDoneTime().until( now, SECONDS ) > KEEP_COMPLETED_MAX_TIME_SEC )
             {
