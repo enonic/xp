@@ -121,7 +121,7 @@ public class PushNodesCommand
             }
         }
 
-        this.storageService.publish( publishBuilder.build(), InternalContext.from( context ) );
+        this.nodeStorageService.publish( publishBuilder.build(), InternalContext.from( context ) );
 
         return builder;
     }
@@ -130,7 +130,7 @@ public class PushNodesCommand
     {
         return CompareNodesCommand.create().
             nodeIds( NodeIds.from( nodeBranchEntries.getKeys() ) ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             target( this.target ).
             build().
             execute();
@@ -163,12 +163,12 @@ public class PushNodesCommand
             execute();
 
         final NodeBranchEntries childEntries =
-            this.storageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
+            this.nodeStorageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
 
         for ( final NodeBranchEntry child : childEntries )
         {
             final NodeBranchEntry targetNodeEntry =
-                this.storageService.getBranchNodeVersion( child.getNodeId(), InternalContext.from( targetContext ) );
+                this.nodeStorageService.getBranchNodeVersion( child.getNodeId(), InternalContext.from( targetContext ) );
 
             if ( targetNodeEntry != null )
             {
@@ -177,7 +177,7 @@ public class PushNodesCommand
                     build().
                     execute();
 
-                this.storageService.move( MoveNodeParams.create().
+                this.nodeStorageService.move( MoveNodeParams.create().
                     updateMetadataOnly( true ).
                     node( childNode ).
                     build(), InternalContext.from( targetContext ) );

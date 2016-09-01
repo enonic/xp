@@ -47,8 +47,8 @@ public class ReorderChildNodesCommand
 
             final Node reorderedNode = ReorderChildNodeCommand.create().
                 indexServiceInternal( this.indexServiceInternal ).
-                searchService( this.searchService ).
-                storageService( this.storageService ).
+                searchService( this.nodeSearchService ).
+                storageService( this.nodeStorageService ).
                 parentNode( parentNode ).
                 nodeToMove( nodeToMove ).
                 nodeToMoveBefore( nodeToMoveBefore ).

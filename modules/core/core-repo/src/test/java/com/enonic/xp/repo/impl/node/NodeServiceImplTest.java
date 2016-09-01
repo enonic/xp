@@ -51,13 +51,14 @@ public class NodeServiceImplTest
     public void setUp()
         throws Exception
     {
+
         super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setSnapshotService( this.snapshotService );
-        this.nodeService.setStorageService( this.storageService );
-        this.nodeService.setSearchService( this.searchService );
-        this.nodeService.setBlobStore( new MemoryBlobStore() );
+        this.nodeService.setNodeStorageService( this.storageService );
+        this.nodeService.setNodeSearchService( this.searchService );
+        this.nodeService.setBinaryService( this.binaryService );
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         this.createDefaultRootNode();

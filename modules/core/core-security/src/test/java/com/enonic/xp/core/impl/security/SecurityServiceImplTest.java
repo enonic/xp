@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
@@ -17,11 +18,11 @@ import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
-import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
-import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
-import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
+import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
@@ -83,6 +84,9 @@ public class SecurityServiceImplTest
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
+        final BinaryServiceImpl binaryService = new BinaryServiceImpl();
+        binaryService.setBlobStore( blobStore );
+
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
 
@@ -96,22 +100,22 @@ public class SecurityServiceImplTest
         final VersionServiceImpl versionService = new VersionServiceImpl();
         versionService.setStorageDao( storageDao );
 
-        final NodeVersionDaoImpl nodeDao = new NodeVersionDaoImpl();
+        final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
         nodeDao.setBlobStore( blobStore );
 
         this.indexServiceInternal = new IndexServiceInternalImpl();
         this.indexServiceInternal.setClient( client );
 
-        final SearchServiceImpl searchService = new SearchServiceImpl();
+        final NodeSearchServiceImpl searchService = new NodeSearchServiceImpl();
         searchService.setSearchDao( searchDao );
 
         IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
         indexedDataService.setStorageDao( storageDao );
 
-        final StorageServiceImpl storageService = new StorageServiceImpl();
+        final NodeStorageServiceImpl storageService = new NodeStorageServiceImpl();
         storageService.setBranchService( branchService );
         storageService.setVersionService( versionService );
-        storageService.setNodeVersionDao( nodeDao );
+        storageService.setNodeVersionService( nodeDao );
         storageService.setIndexServiceInternal( this.indexServiceInternal );
         storageService.setIndexDataService( indexedDataService );
 
@@ -120,15 +124,15 @@ public class SecurityServiceImplTest
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
-        this.nodeService.setSearchService( searchService );
-        this.nodeService.setStorageService( storageService );
-        this.nodeService.setBlobStore( blobStore );
+        this.nodeService.setNodeSearchService( searchService );
+        this.nodeService.setNodeStorageService( storageService );
+        this.nodeService.setBinaryService( binaryService );
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.nodeService.setEventPublisher( this.eventPublisher );
 
         IndexServiceImpl indexService = new IndexServiceImpl();
-        indexService.setSearchService( searchService );
+        indexService.setNodeSearchService( searchService );
         indexService.setIndexServiceInternal( this.indexServiceInternal );
 
         securityService = new SecurityServiceImpl();

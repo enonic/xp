@@ -32,11 +32,11 @@ import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
-import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.repository.DefaultIndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.IndexResourceProvider;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
@@ -55,9 +55,9 @@ public class IndexServiceImpl
 
     private IndexDataService indexDataService;
 
-    private SearchService searchService;
+    private NodeSearchService nodeSearchService;
 
-    private NodeVersionDao nodeVersionDao;
+    private NodeVersionService nodeVersionService;
 
     private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
 
@@ -89,10 +89,10 @@ public class IndexServiceImpl
                 branch( branch ).
                 build();
 
-            final NodeBranchQueryResult results = this.searchService.query( NodeBranchQuery.create().
+            final NodeBranchQueryResult results = this.nodeSearchService.query( NodeBranchQuery.create().
                 query( QueryExpr.from( compareExpr ) ).
                 batchSize( BATCH_SIZE ).
-                size( SearchService.GET_ALL_SIZE_FLAG ).
+                size( NodeSearchService.GET_ALL_SIZE_FLAG ).
                 build(), InternalContext.from( reindexContext ) );
 
             long nodeIndex = 1;
@@ -111,7 +111,7 @@ public class IndexServiceImpl
                                   "..." );
                 }
 
-                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchEntry.getVersionId() );
+                final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getVersionId() );
 
                 final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
@@ -220,15 +220,15 @@ public class IndexServiceImpl
     }
 
     @Reference
-    public void setSearchService( final SearchService searchService )
+    public void setNodeSearchService( final NodeSearchService nodeSearchService )
     {
-        this.searchService = searchService;
+        this.nodeSearchService = nodeSearchService;
     }
 
     @Reference
-    public void setNodeVersionDao( final NodeVersionDao nodeVersionDao )
+    public void setNodeVersionService( final NodeVersionService nodeVersionService )
     {
-        this.nodeVersionDao = nodeVersionDao;
+        this.nodeVersionService = nodeVersionService;
     }
 
     @Reference

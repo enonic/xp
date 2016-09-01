@@ -1314,7 +1314,7 @@ public class ResolveSyncWorkCommandTest
         return DuplicateNodeCommand.create().
             id( node1.id() ).
             indexServiceInternal( indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
+            binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

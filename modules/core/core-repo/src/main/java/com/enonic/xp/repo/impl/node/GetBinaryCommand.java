@@ -3,15 +3,13 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.util.BinaryReference;
 
 public class GetBinaryCommand
@@ -19,7 +17,7 @@ public class GetBinaryCommand
 {
     private final BinaryReference binaryReference;
 
-    private final BlobStore binaryBlobStore;
+    private final BinaryService binaryService;
 
     private final PropertyPath propertyPath;
 
@@ -31,7 +29,7 @@ public class GetBinaryCommand
         this.binaryReference = builder.binaryReference;
         this.propertyPath = builder.propertyPath;
         this.nodeId = builder.nodeId;
-        this.binaryBlobStore = builder.binaryBlobStore;
+        this.binaryService = builder.binaryService;
     }
 
     public ByteSource execute()
@@ -88,9 +86,7 @@ public class GetBinaryCommand
 
     private ByteSource doGetByteSource( final AttachedBinary attachedBinary )
     {
-        final BlobKey blobKey = new BlobKey( attachedBinary.getBlobKey() );
-        final BlobRecord record = this.binaryBlobStore.getRecord( NodeConstants.BINARY_SEGMENT, blobKey );
-        return record != null ? record.getBytes() : null;
+        return this.binaryService.get( attachedBinary );
     }
 
     public static Builder create()
@@ -107,7 +103,7 @@ public class GetBinaryCommand
 
         private NodeId nodeId;
 
-        private BlobStore binaryBlobStore;
+        private BinaryService binaryService;
 
         public Builder binaryReference( final BinaryReference binaryReference )
         {
@@ -127,9 +123,9 @@ public class GetBinaryCommand
             return this;
         }
 
-        public Builder binaryBlobStore( final BlobStore blobStore )
+        public Builder binaryService( final BinaryService binaryService )
         {
-            this.binaryBlobStore = blobStore;
+            this.binaryService = binaryService;
             return this;
         }
 
@@ -138,7 +134,7 @@ public class GetBinaryCommand
         {
             super.validate();
 
-            Preconditions.checkNotNull( binaryBlobStore, "binaryBlobStore not set" );
+            Preconditions.checkNotNull( binaryService, "binaryBlobStore not set" );
             Preconditions.checkNotNull( nodeId, "nodeId not set" );
 
             Preconditions.checkArgument( propertyPath != null || binaryReference != null,

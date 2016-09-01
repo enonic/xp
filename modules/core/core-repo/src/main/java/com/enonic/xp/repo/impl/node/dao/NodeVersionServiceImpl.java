@@ -22,8 +22,8 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 
 @Component
-public class NodeVersionDaoImpl
-    implements NodeVersionDao
+public class NodeVersionServiceImpl
+    implements NodeVersionService
 {
     private final NodeVersionJsonSerializer nodeVersionJsonSerializer = NodeVersionJsonSerializer.create( false );
 

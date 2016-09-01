@@ -32,7 +32,7 @@ public class FindNodesByQueryCommand
 
     public FindNodesByQueryResult execute()
     {
-        final NodeQueryResult nodeQueryResult = searchService.query( query, InternalContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = nodeSearchService.query( query, InternalContext.from( ContextAccessor.current() ) );
 
         final FindNodesByQueryResult.Builder resultBuilder = FindNodesByQueryResult.create().
             hits( nodeQueryResult.getHits() ).

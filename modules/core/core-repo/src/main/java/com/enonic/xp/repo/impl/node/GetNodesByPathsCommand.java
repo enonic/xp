@@ -20,7 +20,7 @@ public class GetNodesByPathsCommand
 
     public Nodes execute()
     {
-        return this.storageService.get( nodePaths, InternalContext.from( ContextAccessor.current() ) );
+        return this.nodeStorageService.get( nodePaths, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()

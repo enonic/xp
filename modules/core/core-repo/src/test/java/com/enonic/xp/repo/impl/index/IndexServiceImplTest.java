@@ -43,9 +43,9 @@ public class IndexServiceImplTest
     {
         super.setUp();
         this.indexService = new IndexServiceImpl();
-        this.indexService.setSearchService( this.searchService );
+        this.indexService.setNodeSearchService( this.searchService );
         this.indexService.setIndexServiceInternal( this.indexServiceInternal );
-        this.indexService.setNodeVersionDao( this.nodeDao );
+        this.indexService.setNodeVersionService( this.nodeDao );
         this.indexService.setIndexDataService( this.indexedDataService );
 
         this.rootNode = this.createDefaultRootNode();

@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.storage;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -26,7 +25,7 @@ import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.security.RoleKeys;
@@ -35,14 +34,14 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component
-public class StorageServiceImpl
-    implements StorageService
+public class NodeStorageServiceImpl
+    implements NodeStorageService
 {
     private VersionService versionService;
 
     private BranchService branchService;
 
-    private NodeVersionDao nodeVersionDao;
+    private NodeVersionService nodeVersionService;
 
     private IndexServiceInternal indexServiceInternal;
 
@@ -51,7 +50,7 @@ public class StorageServiceImpl
     @Override
     public Node store( final Node node, final InternalContext context )
     {
-        final NodeVersionId nodeVersionId = nodeVersionDao.store( node );
+        final NodeVersionId nodeVersionId = nodeVersionService.store( node );
 
         storeVersionMetadata( node, context, nodeVersionId );
 
@@ -78,20 +77,12 @@ public class StorageServiceImpl
         }
         else
         {
-            nodeVersionId = nodeVersionDao.store( params.getNode() );
+            nodeVersionId = nodeVersionService.store( params.getNode() );
         }
 
         storeVersionMetadata( params.getNode(), context, nodeVersionId );
 
         return moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeBranchEntry.getNodePath(), context );
-    }
-
-    @Override
-    public void delete( final NodeId nodeId, final InternalContext context )
-    {
-        branchService.delete( nodeId, context );
-
-        indexDataService.delete( nodeId, context );
     }
 
     @Override
@@ -135,21 +126,6 @@ public class StorageServiceImpl
             build(), context );
 
         this.indexDataService.store( node, context );
-    }
-
-    @Override
-    public void publish( final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId, final InternalContext context,
-                         final Branch source )
-    {
-        this.branchService.store( NodeBranchEntry.create().
-            nodeVersionId( nodeVersionId ).
-            nodeId( nodeBranchEntry.getNodeId() ).
-            nodeState( nodeBranchEntry.getNodeState() ).
-            timestamp( nodeBranchEntry.getTimestamp() ).
-            nodePath( nodeBranchEntry.getNodePath() ).
-            build(), context );
-
-        this.indexServiceInternal.copy( nodeBranchEntry.getNodeId(), context.getRepositoryId(), source, context.getBranch() );
     }
 
     @Override
@@ -208,7 +184,7 @@ public class StorageServiceImpl
     @Override
     public Node get( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final NodeVersion nodeVersion = nodeVersionDao.get( nodeVersionId );
+        final NodeVersion nodeVersion = nodeVersionService.get( nodeVersionId );
 
         if ( nodeVersion == null )
         {
@@ -228,7 +204,7 @@ public class StorageServiceImpl
     @Override
     public NodeVersion get( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return this.nodeVersionDao.get( nodeVersionMetadata.getNodeVersionId() );
+        return this.nodeVersionService.get( nodeVersionMetadata.getNodeVersionId() );
     }
 
     @Override
@@ -283,7 +259,7 @@ public class StorageServiceImpl
             return null;
         }
 
-        final NodeVersion nodeVersion = nodeVersionDao.get( nodeBranchEntry.getVersionId() );
+        final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getVersionId() );
 
         return constructNode( nodeBranchEntry, nodeVersion );
     }
@@ -318,7 +294,7 @@ public class StorageServiceImpl
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
         nodeBranchEntries.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
 
-        final NodeVersions nodeVersions = nodeVersionDao.get( builder.build() );
+        final NodeVersions nodeVersions = nodeVersionService.get( builder.build() );
 
         final Nodes.Builder filteredNodes = Nodes.create();
 
@@ -385,9 +361,9 @@ public class StorageServiceImpl
     }
 
     @Reference
-    public void setNodeVersionDao( final NodeVersionDao nodeVersionDao )
+    public void setNodeVersionService( final NodeVersionService nodeVersionService )
     {
-        this.nodeVersionDao = nodeVersionDao;
+        this.nodeVersionService = nodeVersionService;
     }
 
     @Reference

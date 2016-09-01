@@ -7,7 +7,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
@@ -60,10 +59,11 @@ import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
@@ -74,13 +74,15 @@ public class NodeServiceImpl
 
     private SnapshotService snapshotService;
 
-    private StorageService storageService;
+    private NodeStorageService nodeStorageService;
 
-    private SearchService searchService;
+    private NodeSearchService nodeSearchService;
 
     private EventPublisher eventPublisher;
 
-    private BlobStore blobStore;
+    private BinaryService binaryService;
+
+    //private BlobStore blobStore;
 
     @Override
     public Node getById( final NodeId id )
@@ -101,8 +103,8 @@ public class NodeServiceImpl
         return GetNodeByIdCommand.create().
             id( id ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -118,8 +120,8 @@ public class NodeServiceImpl
         return GetNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -130,8 +132,8 @@ public class NodeServiceImpl
         return GetNodesByIdsCommand.create().
             ids( ids ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -142,8 +144,8 @@ public class NodeServiceImpl
         return GetNodesByPathsCommand.create().
             paths( paths ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -162,8 +164,8 @@ public class NodeServiceImpl
                 countOnly( params.isCountOnly() ).
                 childOrder( params.getChildOrder() ).
                 indexServiceInternal( this.indexServiceInternal ).
-                searchService( this.searchService ).
-                storageService( this.storageService ).
+                searchService( this.nodeSearchService ).
+                storageService( this.nodeStorageService ).
                 build().
                 execute();
         }
@@ -171,8 +173,8 @@ public class NodeServiceImpl
         return FindNodesByParentCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -183,8 +185,8 @@ public class NodeServiceImpl
         return FindNodesByQueryCommand.create().
             query( nodeQuery ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -200,9 +202,9 @@ public class NodeServiceImpl
         final Node createdNode = CreateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -219,9 +221,9 @@ public class NodeServiceImpl
         final Node updatedNode = UpdateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -238,8 +240,8 @@ public class NodeServiceImpl
         final MoveNodeResult moveNodeResult = RenameNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -260,8 +262,8 @@ public class NodeServiceImpl
         final NodeBranchEntries deletedNodes = DeleteNodeByIdCommand.create().
             nodeId( id ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -279,8 +281,8 @@ public class NodeServiceImpl
         final NodeBranchEntries deletedNodes = DeleteNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -296,8 +298,8 @@ public class NodeServiceImpl
     {
         final PushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             ids( ids ).
             target( target ).
             build().
@@ -318,9 +320,9 @@ public class NodeServiceImpl
             id( nodeId ).
             processor( processor ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -338,8 +340,8 @@ public class NodeServiceImpl
             id( nodeId ).
             newParent( parentNodePath ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -369,7 +371,7 @@ public class NodeServiceImpl
         return CompareNodeCommand.create().
             nodeId( nodeId ).
             target( target ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             build().
             execute();
     }
@@ -380,7 +382,7 @@ public class NodeServiceImpl
         return CompareNodesCommand.create().
             nodeIds( nodeIds ).
             target( target ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             build().
             execute();
     }
@@ -392,7 +394,7 @@ public class NodeServiceImpl
             nodeId( params.getNodeId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -404,8 +406,8 @@ public class NodeServiceImpl
             nodeId( params.getNodeId() ).
             branches( params.getBranches() ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -418,8 +420,8 @@ public class NodeServiceImpl
             nodeVersionId( nodeVersionId ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -427,7 +429,7 @@ public class NodeServiceImpl
     @Override
     public NodeVersion getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return this.storageService.get( nodeVersionMetadata );
+        return this.nodeStorageService.get( nodeVersionMetadata );
     }
 
     @Override
@@ -439,8 +441,8 @@ public class NodeServiceImpl
             excludedNodeIds( params.getExcludedNodeIds() ).
             includeChildren( params.isIncludeChildren() ).
             indexServiceInternal( indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -450,8 +452,8 @@ public class NodeServiceImpl
     {
         final Node sortedNode = SetNodeChildOrderCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
             build().
@@ -470,8 +472,8 @@ public class NodeServiceImpl
         final ReorderChildNodesResult reorderChildNodesResult = ReorderChildNodesCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -523,9 +525,9 @@ public class NodeServiceImpl
         final Nodes updatedNodes = ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -544,9 +546,9 @@ public class NodeServiceImpl
             binaryReference( reference ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -558,8 +560,8 @@ public class NodeServiceImpl
             binaryReference( reference ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -570,8 +572,8 @@ public class NodeServiceImpl
         final Node createdNode = CreateRootNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -588,8 +590,8 @@ public class NodeServiceImpl
         final SetNodeStateResult setNodeStateResult = SetNodeStateCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -623,10 +625,10 @@ public class NodeServiceImpl
             insertManualStrategy( params.getInsertManualStrategy() ).
             dryRun( params.isDryRun() ).
             importPermissions( params.isImportPermissions() ).
-            binaryBlobStore( this.blobStore ).
+            binaryBlobStore( this.binaryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -658,7 +660,7 @@ public class NodeServiceImpl
     public NodesHasChildrenResult hasChildren( final Nodes nodes )
     {
         return NodeHasChildResolver.create().
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
             build().
             resolve( nodes );
     }
@@ -667,7 +669,7 @@ public class NodeServiceImpl
     public boolean hasChildren( final Node node )
     {
         return NodeHasChildResolver.create().
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
             build().
             resolve( node );
     }
@@ -685,15 +687,15 @@ public class NodeServiceImpl
     }
 
     @Reference
-    public void setStorageService( final StorageService storageService )
+    public void setNodeStorageService( final NodeStorageService nodeStorageService )
     {
-        this.storageService = storageService;
+        this.nodeStorageService = nodeStorageService;
     }
 
     @Reference
-    public void setSearchService( final SearchService searchService )
+    public void setNodeSearchService( final NodeSearchService nodeSearchService )
     {
-        this.searchService = searchService;
+        this.nodeSearchService = nodeSearchService;
     }
 
     @Reference
@@ -703,9 +705,9 @@ public class NodeServiceImpl
     }
 
     @Reference
-    public void setBlobStore( final BlobStore blobStore )
+    public void setBinaryService( final BinaryService binaryService )
     {
-        this.blobStore = blobStore;
+        this.binaryService = binaryService;
     }
 
 }

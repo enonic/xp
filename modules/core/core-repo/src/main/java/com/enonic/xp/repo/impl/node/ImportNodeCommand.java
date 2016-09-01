@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 
 public class ImportNodeCommand
     extends AbstractNodeCommand
@@ -17,7 +17,7 @@ public class ImportNodeCommand
 
     private final Node importNode;
 
-    private final BlobStore binaryBlobStore;
+    private final BinaryService binaryService;
 
     private final boolean dryRun;
 
@@ -29,7 +29,7 @@ public class ImportNodeCommand
         this.insertManualStrategy = builder.insertManualStrategy;
         this.binaryAttachments = builder.binaryAttachments;
         this.importNode = builder.importNode;
-        this.binaryBlobStore = builder.binaryBlobStore;
+        this.binaryService = builder.binaryService;
         this.dryRun = builder.dryRun;
         this.importPermissions = builder.importPermissions;
 
@@ -87,7 +87,7 @@ public class ImportNodeCommand
         return CreateNodeCommand.create( this ).
             params( createNodeParams ).
             timestamp( this.importNode.getTimestamp() ).
-            binaryBlobStore( binaryBlobStore ).
+            binaryService( binaryService ).
             build().
             execute();
     }
@@ -109,7 +109,7 @@ public class ImportNodeCommand
 
         return UpdateNodeCommand.create( this ).
             params( updateNodeParams ).
-            binaryBlobStore( binaryBlobStore ).
+            binaryService( binaryService ).
             build().
             execute();
     }
@@ -123,7 +123,7 @@ public class ImportNodeCommand
 
         private Node importNode;
 
-        private BlobStore binaryBlobStore;
+        private BinaryService binaryService;
 
         private boolean dryRun;
 
@@ -152,9 +152,9 @@ public class ImportNodeCommand
             return this;
         }
 
-        public Builder binaryBlobStore( BlobStore binaryBlobStore )
+        public Builder binaryBlobStore( BinaryService binaryService )
         {
-            this.binaryBlobStore = binaryBlobStore;
+            this.binaryService = binaryService;
             return this;
         }
 

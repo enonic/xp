@@ -11,7 +11,6 @@ import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.storage.StorageService;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
@@ -34,8 +33,6 @@ public class RepositoryServiceImpl
 
     private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
-
-    private StorageService storageService;
 
     private RepositoryId store( final Repository repository )
     {

@@ -7,14 +7,14 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 public class NodeMovedHandler
     extends AbstractNodeEventHandler
 {
 
     @Override
-    public void handleEvent( StorageService storageService, final Event event, final InternalContext context )
+    public void handleEvent( NodeStorageService nodeStorageService, final Event event, final InternalContext context )
     {
         final List<Map<Object, Object>> valueMapList = getValueMapList( event );
 
@@ -24,7 +24,7 @@ public class NodeMovedHandler
             final NodeMovedParams nodeMovedParams =
                 new NodeMovedParams( getPath( map ), NodePath.create( map.get( NEW_PATH ).toString() ).build(), getId( map ) );
 
-            storageService.handleNodeMoved( nodeMovedParams, context );
+            nodeStorageService.handleNodeMoved( nodeMovedParams, context );
         }
     }
 }

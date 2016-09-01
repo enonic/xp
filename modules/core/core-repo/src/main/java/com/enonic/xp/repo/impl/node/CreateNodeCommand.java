@@ -5,8 +5,6 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -28,6 +26,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -39,16 +38,16 @@ public final class CreateNodeCommand
 {
     private final CreateNodeParams params;
 
-    private final BlobStore binaryBlobStore;
-
     private final Instant timestamp;
+
+    private final BinaryService binaryService;
 
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.binaryBlobStore = builder.binaryBlobStore;
         this.timestamp = builder.timestamp;
+        this.binaryService = builder.binaryService;
     }
 
     public static Builder create()
@@ -125,8 +124,8 @@ public final class CreateNodeCommand
                 throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " attached in createNodeParams" );
             }
 
-            final BlobRecord blob = this.binaryBlobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryAttachment.getByteSource() );
-            builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
+            final AttachedBinary attachedBinary = this.binaryService.store( binaryAttachment );
+            builder.add( attachedBinary );
         }
 
         return builder.build();
@@ -292,9 +291,9 @@ public final class CreateNodeCommand
     {
         private CreateNodeParams params;
 
-        private BlobStore binaryBlobStore;
-
         private Instant timestamp;
+
+        private BinaryService binaryService;
 
         private Builder()
         {
@@ -312,9 +311,9 @@ public final class CreateNodeCommand
             return this;
         }
 
-        public Builder binaryBlobStore( final BlobStore blobStore )
+        public Builder binaryService( final BinaryService binaryService )
         {
-            this.binaryBlobStore = blobStore;
+            this.binaryService = binaryService;
             return this;
         }
 

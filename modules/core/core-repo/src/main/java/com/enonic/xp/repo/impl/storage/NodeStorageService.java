@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -17,22 +16,17 @@ import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
-public interface StorageService
+public interface NodeStorageService
 {
     Node move( final MoveNodeParams params, final InternalContext context );
 
     Node store( final Node node, final InternalContext context );
-
-    void delete( final NodeId nodeId, final InternalContext context );
 
     void delete( final NodeIds nodeIds, final InternalContext context );
 
     Node updateMetadata( final Node node, final InternalContext context );
 
     void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
-
-    void publish( final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId, final InternalContext context,
-                  final Branch target );
 
     void publish( final PushNodeEntries entries, final InternalContext context );
 

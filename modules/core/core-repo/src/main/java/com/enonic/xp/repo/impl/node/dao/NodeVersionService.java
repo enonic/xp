@@ -6,7 +6,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
 
-public interface NodeVersionDao
+public interface NodeVersionService
 {
     NodeVersionId store( Node node );
 

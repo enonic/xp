@@ -9,7 +9,7 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.Permission;
 
 abstract class AbstractDeleteNodeCommand
@@ -39,7 +39,7 @@ abstract class AbstractDeleteNodeCommand
             throw new NodeAccessException( context.getAuthInfo().getUser(), node.path(), Permission.DELETE );
         }
 
-        this.storageService.delete( nodeIds, InternalContext.from( context ) );
+        this.nodeStorageService.delete( nodeIds, InternalContext.from( context ) );
 
         doRefresh();
 
@@ -62,7 +62,7 @@ abstract class AbstractDeleteNodeCommand
             parentPath( node.path() ).
             recursive( true ).
             childOrder( ChildOrder.path() ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             build();
 
         final FindNodesByParentResult result = command.execute();

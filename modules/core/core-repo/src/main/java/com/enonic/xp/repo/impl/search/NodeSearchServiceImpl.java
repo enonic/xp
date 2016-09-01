@@ -28,8 +28,8 @@ import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
 
 @Component
-public class SearchServiceImpl
-    implements SearchService
+public class NodeSearchServiceImpl
+    implements NodeSearchService
 {
     private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );

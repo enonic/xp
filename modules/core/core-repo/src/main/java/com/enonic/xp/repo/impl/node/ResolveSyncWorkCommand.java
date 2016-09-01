@@ -29,7 +29,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
@@ -136,9 +136,9 @@ public class ResolveSyncWorkCommand
             source( ContextAccessor.current().getBranch() ).
             nodePath( nodePath ).
             excludes( this.excludedIds ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
             build().
             execute();
     }
@@ -171,7 +171,7 @@ public class ResolveSyncWorkCommand
 
         for ( final NodePath parent : parentPaths )
         {
-            final NodeId parentId = this.storageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
+            final NodeId parentId = this.nodeStorageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
 
             if ( parentId == null )
             {
@@ -191,7 +191,7 @@ public class ResolveSyncWorkCommand
                 addAll( parentIds ).
                 build() ).
             target( this.target ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             build().
             execute() );
     }
@@ -216,7 +216,7 @@ public class ResolveSyncWorkCommand
         final NodeComparisons allNodesComparisons = CompareNodesCommand.create().
             target( this.target ).
             nodeIds( NodeIds.from( diffAndDependantsBuilder.build() ) ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             build().
             execute();
 
@@ -230,7 +230,7 @@ public class ResolveSyncWorkCommand
     private void markChildrenForDeletion( final NodeComparison comparison )
     {
         final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             parentId( comparison.getNodeId() ).
             childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
             recursive( true ).
@@ -238,7 +238,7 @@ public class ResolveSyncWorkCommand
             execute();
 
         final NodeBranchEntries brancEntries =
-            this.storageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
+            this.nodeStorageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
 
         addToResult( NodeComparisons.create().
             addAll( brancEntries.stream().

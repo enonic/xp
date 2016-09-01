@@ -28,7 +28,7 @@ public class SetActiveVersionCommand
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
-        final Node node = this.storageService.get( nodeVersionId, context );
+        final Node node = this.nodeStorageService.get( nodeVersionId, context );
 
         if ( node == null )
         {
@@ -43,7 +43,7 @@ public class SetActiveVersionCommand
 
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( REQUIRED_PERMISSION, node );
 
-        this.storageService.updateVersion( node, nodeVersionId, context );
+        this.nodeStorageService.updateVersion( node, nodeVersionId, context );
 
         return nodeVersionId;
     }

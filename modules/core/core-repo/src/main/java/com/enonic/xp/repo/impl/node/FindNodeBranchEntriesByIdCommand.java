@@ -46,7 +46,7 @@ public class FindNodeBranchEntriesByIdCommand
         final NodeIds nodeIds = getNodeIds( context );
 
         allResultsBuilder.addAll(
-            this.storageService.getBranchNodeVersions( nodeIds, !this.orderExpressions.isEmpty(), InternalContext.from( context ) ) );
+            this.nodeStorageService.getBranchNodeVersions( nodeIds, !this.orderExpressions.isEmpty(), InternalContext.from( context ) ) );
 
         return allResultsBuilder.build();
     }
@@ -70,7 +70,7 @@ public class FindNodeBranchEntriesByIdCommand
             queryBuilder.setOrderExpressions( this.orderExpressions );
         }
 
-        final NodeQueryResult result = this.searchService.query( queryBuilder.
+        final NodeQueryResult result = this.nodeSearchService.query( queryBuilder.
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         return result.getNodeIds();

@@ -22,7 +22,6 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -49,6 +48,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
@@ -56,11 +56,11 @@ import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
-import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
-import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
-import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
+import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -112,7 +112,7 @@ public class AbstractContentServiceTest
 
     protected NodeServiceImpl nodeService;
 
-    protected BlobStore blobStore;
+    protected BinaryServiceImpl binaryService;
 
     protected MixinService mixinService;
 
@@ -120,7 +120,7 @@ public class AbstractContentServiceTest
 
     protected ContentTypeServiceImpl contentTypeService;
 
-    private NodeVersionDaoImpl nodeDao;
+    private NodeVersionServiceImpl nodeDao;
 
     private VersionServiceImpl versionService;
 
@@ -128,9 +128,9 @@ public class AbstractContentServiceTest
 
     private IndexServiceInternalImpl indexService;
 
-    private StorageServiceImpl storageService;
+    private NodeStorageServiceImpl storageService;
 
-    private SearchServiceImpl searchService;
+    private NodeSearchServiceImpl searchService;
 
     private IndexDataServiceImpl indexedDataService;
 
@@ -146,7 +146,10 @@ public class AbstractContentServiceTest
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
-        this.blobStore = new MemoryBlobStore();
+        final MemoryBlobStore blobStore = new MemoryBlobStore();
+
+        this.binaryService = new BinaryServiceImpl();
+        this.binaryService.setBlobStore( blobStore );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
@@ -166,7 +169,7 @@ public class AbstractContentServiceTest
         this.indexService = new IndexServiceInternalImpl();
         this.indexService.setClient( client );
 
-        this.nodeDao = new NodeVersionDaoImpl();
+        this.nodeDao = new NodeVersionServiceImpl();
         this.nodeDao.setBlobStore( blobStore );
 
         this.contentService = new ContentServiceImpl();
@@ -174,14 +177,14 @@ public class AbstractContentServiceTest
         this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
-        this.storageService = new StorageServiceImpl();
+        this.storageService = new NodeStorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
-        this.storageService.setNodeVersionDao( this.nodeDao );
+        this.storageService.setNodeVersionService( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
         this.storageService.setIndexDataService( this.indexedDataService );
 
-        this.searchService = new SearchServiceImpl();
+        this.searchService = new NodeSearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
 
         this.repositoryService = new RepositoryServiceImpl();
@@ -189,10 +192,10 @@ public class AbstractContentServiceTest
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
-        this.nodeService.setStorageService( storageService );
-        this.nodeService.setSearchService( searchService );
+        this.nodeService.setNodeStorageService( storageService );
+        this.nodeService.setNodeSearchService( searchService );
         this.nodeService.setEventPublisher( eventPublisher );
-        this.nodeService.setBlobStore( blobStore );
+        this.nodeService.setBinaryService( this.binaryService );
 
         this.mixinService = Mockito.mock( MixinService.class );
 

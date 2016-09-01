@@ -11,10 +11,10 @@ public class AttachedBinary
 
     private final String blobKey;
 
-    public AttachedBinary( final BinaryReference binaryReference, final String blobKey )
+    public AttachedBinary( final BinaryReference binaryReference, final String key )
     {
         this.binaryReference = binaryReference;
-        this.blobKey = blobKey;
+        this.blobKey = key;
     }
 
     public BinaryReference getBinaryReference()
