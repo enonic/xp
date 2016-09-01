@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -314,10 +315,11 @@ public final class ApplicationResource
         throws Exception
     {
         final String version = params.getVersion() != null ? params.getVersion() : "1.0.0";
-        final int start = parseInt( params.getStart(), 0 );
-        final int count = parseInt( params.getCount(), 10 );
+        final int start = params.getStart();
+        final int count = params.getCount();
+        final List<String> ids = params.getIds();
 
-        return this.marketService.get( version, start, count );
+        return ( ids != null && ids.size() > 0 ) ? this.marketService.get( ids ) : this.marketService.get( version, start, count );
     }
 
 
@@ -364,18 +366,6 @@ public final class ApplicationResource
         }
 
         return json;
-    }
-
-    private int parseInt( final String value, final int defaultValue )
-    {
-        try
-        {
-            return Integer.parseInt( value );
-        }
-        catch ( NumberFormatException e )
-        {
-            return defaultValue;
-        }
     }
 
     private byte[] loadDefaultImage( final String imageName )

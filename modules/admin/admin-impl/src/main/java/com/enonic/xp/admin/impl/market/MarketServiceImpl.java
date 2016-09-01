@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.market;
 
+import java.util.List;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -15,6 +17,12 @@ public class MarketServiceImpl
     public MarketApplicationsJson get( final String version, final int from, final int count )
     {
         return this.provider.search( version, from, count );
+    }
+
+    @Override
+    public MarketApplicationsJson get( final List<String> ids )
+    {
+        return this.provider.get( ids );
     }
 
     @Reference
