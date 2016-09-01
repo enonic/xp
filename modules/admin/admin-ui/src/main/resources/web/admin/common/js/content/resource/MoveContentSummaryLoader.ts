@@ -72,6 +72,10 @@ module api.content.resource {
             });
         }
 
+        isPartiallyLoaded(): boolean {
+            return false;
+        }
+
         private filterContent(contents: ContentSummary[], contentTypes: ContentType[]): ContentSummary[] {
             var contentTypeAllowsChild: { [s: string]: boolean; } = {};
             contentTypes.forEach((contentType)=> contentTypeAllowsChild[contentType.getName()] = contentType.isAllowChildContent());
