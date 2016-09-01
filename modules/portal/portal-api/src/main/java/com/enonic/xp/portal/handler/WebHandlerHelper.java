@@ -12,7 +12,7 @@ public class WebHandlerHelper
     {
         if ( !isLiveMode( webRequest ) && !hasAdminRight( webRequest ) )
         {
-            throw WebException.forbidden( "You don't have permission to access" );
+            throw WebException.forbidden( "You don't have permission to access this resource" );
         }
     }
 
