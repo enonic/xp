@@ -1,27 +1,29 @@
 import "../../api.ts";
 
 import FoldButton = api.ui.toolbar.FoldButton;
-import {MobileContentTreeGridActions} from "./action/MobileContentTreeGridActions";
+import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
+import ActionButton = api.ui.button.ActionButton;
 
-export class MobileContentBrowseToolbar extends api.dom.DivEl implements api.ui.ActionContainer {
+export interface MobileContentBrowseToolbarActions {
+    newContentAction: api.ui.Action;
+    editContentAction: api.ui.Action;
+    publishAction: api.ui.Action;
+    unpublishAction: api.ui.Action;
+    duplicateAction: api.ui.Action;
+    deleteAction: api.ui.Action;
+    sortAction: api.ui.Action;
+    moveAction: api.ui.Action;
+}
 
-    private actions: api.ui.Action[] = [];
+export class MobileContentBrowseToolbar extends api.ui.toolbar.Toolbar {
 
-    constructor(actions: MobileContentTreeGridActions) {
+    constructor(actions: MobileContentBrowseToolbarActions) {
         super("toolbar");
 
-        var foldButton = this.initFoldButton();
+        super.addActions([actions.newContentAction, actions.publishAction, actions.unpublishAction, actions.duplicateAction,
+            actions.deleteAction, actions.sortAction, actions.moveAction]);
 
-        this.addActions(actions.getAllActions(), foldButton);
-
-        this.initEditButton(actions.EDIT_CONTENT);
-    }
-
-    private initFoldButton(): FoldButton {
-        var fold = new FoldButton();
-        fold.setLabel('More...');
-        this.appendChild(fold);
-        return fold;
+        this.initEditButton(actions.editContentAction);
     }
 
     private initEditButton(editAction: api.ui.Action) {
@@ -30,18 +32,15 @@ export class MobileContentBrowseToolbar extends api.dom.DivEl implements api.ui.
         this.appendChild(editButton);
     }
 
-    private addActions(actions: api.ui.Action[], foldButton: FoldButton) {
-        this.actions = this.actions.concat(actions);
-        actions.forEach((action) => {
-
-            var actionButton = new api.ui.button.ActionButton(action);
-            var buttonWidth = actionButton.getEl().getWidthWithBorder();
-            foldButton.push(actionButton, buttonWidth);
-        });
+    addElement(button: ActionButton): ActionButton {
+        var buttonWidth = button.getEl().getWidthWithBorder();
+        this.fold.push(button, buttonWidth);
+        return button;
     }
 
-    getActions(): api.ui.Action[] {
-        return this.actions;
+    protected foldOrExpand() {
+        if (!this.fold.isEmpty()) {
+            this.fold.show();
+        }
     }
-
 }
