@@ -32,6 +32,12 @@ public final class ErrorHandler
         return worker;
     }
 
+    @Override
+    protected void checkAdminAccess( final PortalRequest req )
+    {
+        //Error is accessible everywhere
+    }
+
     private HttpStatus parseStatus( final String value )
     {
         try

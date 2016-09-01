@@ -105,7 +105,7 @@ public abstract class BaseHandler
     {
         if ( RenderMode.LIVE != req.getMode() && !req.getRawRequest().isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) )
         {
-            throw PortalException.forbidden( "" );
+            throw PortalException.forbidden( "You don't have permission to access" );
         }
     }
 

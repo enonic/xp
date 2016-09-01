@@ -57,6 +57,12 @@ public final class ServiceHandler
         return worker;
     }
 
+    @Override
+    protected void checkAdminAccess( final PortalRequest req )
+    {
+        //Access rights will be handled by the worker
+    }
+
     @Reference
     public void setContentService( final ContentService contentService )
     {

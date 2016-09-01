@@ -51,6 +51,12 @@ public final class AssetHandler
         return worker;
     }
 
+    @Override
+    protected void checkAdminAccess( final PortalRequest req )
+    {
+        //Asset is accessible everywhere
+    }
+
     @Reference
     public void setResourceService( final ResourceService resourceService )
     {
