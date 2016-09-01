@@ -93,12 +93,8 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.updateSubTitle();
 
         this.manageInstantDeleteStatus(contents);
-
-        this.instantDeleteCheckbox.setChecked(false, true)
         
         this.manageDescendants();
-
-
 
         return this;
     }
