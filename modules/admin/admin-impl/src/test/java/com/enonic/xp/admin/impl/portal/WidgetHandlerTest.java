@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.portal;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -43,6 +45,8 @@ public class WidgetHandlerTest
 
     private ControllerScript controllerScript;
 
+    private HttpServletRequest rawRequest;
+
     @Before
     public final void setup()
         throws Exception
@@ -60,6 +64,10 @@ public class WidgetHandlerTest
         this.handler = new WidgetHandler();
         this.handler.setControllerScriptFactory( controllerScriptFactory );
         this.handler.setContentService( this.contentService );
+
+        this.rawRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( Boolean.TRUE );
+        this.request.setRawRequest( this.rawRequest );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );

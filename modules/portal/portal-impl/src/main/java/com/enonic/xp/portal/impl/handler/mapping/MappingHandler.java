@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
@@ -47,6 +48,8 @@ public final class MappingHandler
     protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
+        WebHandlerHelper.checkAdminAccess( webRequest );
+        
         PortalRequest portalRequest = (PortalRequest) webRequest;
         final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).resolve( portalRequest );
 
