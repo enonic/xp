@@ -9,8 +9,10 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
@@ -56,6 +58,8 @@ public abstract class BaseHandler
     public final PortalResponse handle( final PortalRequest req )
         throws Exception
     {
+        checkAdminAccess( req );
+
         final HttpMethod method = req.getMethod();
         checkMethodAllowed( method );
 
@@ -95,6 +99,14 @@ public abstract class BaseHandler
     protected final PortalException methodNotAllowed( final String message, final Object... args )
     {
         return new PortalException( HttpStatus.METHOD_NOT_ALLOWED, String.format( message, args ) );
+    }
+
+    protected void checkAdminAccess( final PortalRequest req )
+    {
+        if ( RenderMode.LIVE != req.getMode() && !req.getRawRequest().isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) )
+        {
+            throw PortalException.forbidden( "" );
+        }
     }
 
     private void checkMethodAllowed( final HttpMethod method )
