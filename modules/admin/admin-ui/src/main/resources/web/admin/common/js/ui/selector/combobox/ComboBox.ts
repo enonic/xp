@@ -573,7 +573,7 @@ module api.ui.selector.combobox {
             api.util.AppHelper.focusInOut(this, () => {
                 this.hideDropdown();
                 this.active = false;
-            }, 50, false);
+            });
 
             this.onScrolled((event: WheelEvent) => {
                 event.stopPropagation();
