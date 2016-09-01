@@ -69,6 +69,12 @@ public class IdentityHandler
         return worker;
     }
 
+    @Override
+    protected void checkAdminAccess( final PortalRequest req )
+    {
+        //ID Providers are accessible everywhere
+    }
+
     private void checkTicket( final PortalRequest req )
     {
         if ( getParameter( req, "redirect" ) != null )

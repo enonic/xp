@@ -1,6 +1,9 @@
 package com.enonic.xp.portal.handler;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
+import org.mockito.Mockito;
 
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
@@ -14,12 +17,19 @@ public abstract class BaseHandlerTest
 {
     protected PortalRequest request;
 
+    protected HttpServletRequest rawRequest;
+
     @Before
     public final void setup()
         throws Exception
     {
         this.request = new PortalRequest();
         this.request.setMode( RenderMode.LIVE );
+
+        this.rawRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( Boolean.TRUE );
+        this.request.setRawRequest( this.rawRequest );
+
         configure();
     }
 
