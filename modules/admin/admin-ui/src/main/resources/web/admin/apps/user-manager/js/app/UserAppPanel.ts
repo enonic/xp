@@ -169,7 +169,7 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
     }
 
     private getPrettyNameForWizardPanel(wizard: api.app.wizard.WizardPanel<api.Equitable>): string {
-        return api.content.ContentUnnamed.prettifyUnnamed((<UserItemWizardPanel>wizard).getUserItemType());
+        return api.content.ContentUnnamed.prettifyUnnamed((<UserItemWizardPanel<api.Equitable>>wizard).getUserItemType());
     }
 
     private handleWizardUpdated(wizard: UserItemWizardPanel<api.Equitable>, tabMenuItem: AppBarTabMenuItem) {

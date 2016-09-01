@@ -91,8 +91,7 @@ export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
         super("widgetSelector", {
             disableFilter: true,
             skipExpandOnClick: true,
-            inputPlaceholderText: "",
-            disableFilter: true
+            inputPlaceholderText: ""
         });
 
         this.onClicked((event) => {

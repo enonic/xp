@@ -2,6 +2,7 @@ module api.content.event {
 
     import ContentPath = api.content.ContentPath;
     import NodeServerChangeType = api.event.NodeServerChangeType;
+    import ContentId = api.content.ContentId;
 
     /**
      * Class that listens to server events and fires UI events
@@ -64,9 +65,6 @@ module api.content.event {
             }
 
             let changes = event.getEvents().map((change) => change.getNodeChange());
-            // use new paths in case content was renamed or moved
-            let useNewPaths = NodeServerChangeType.RENAME === event.getType() ||
-                              NodeServerChangeType.MOVE == event.getType();
 
             if (event.getType() == NodeServerChangeType.DELETE && this.hasDraftBranchChanges(changes)) {
                 // content has already been deleted so no need to fetch summaries
@@ -84,8 +82,13 @@ module api.content.event {
                         this.handleContentUnpublished(summaries);
                     });
 
+            } else if (event.getType() == NodeServerChangeType.MOVE) {
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractNewContentPaths(changes))
+                    .then((summaries) => {
+                        this.handleContentMoved(summaries, this.extractContentPaths(changes));
+                    });
             } else {
-                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractContentPaths(changes, useNewPaths))
+                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByIds(this.extractContentIds(changes))
                     .then((summaries) => {
                         if (ContentServerEventsHandler.debug) {
                             console.debug("ContentServerEventsHandler: fetched summaries", summaries);
@@ -115,10 +118,6 @@ module api.content.event {
                         case NodeServerChangeType.PUBLISH:
                             this.handleContentPublished(summaries);
                             break;
-                        case NodeServerChangeType.MOVE:
-                            // also supply old paths in case of move
-                            this.handleContentMoved(summaries, this.extractContentPaths(changes));
-                            break;
                         case NodeServerChangeType.SORT:
                             this.handleContentSorted(summaries);
                             break;
@@ -139,12 +138,38 @@ module api.content.event {
             })
         }
 
-        private extractContentPaths(changes: ContentServerChange[], useNewPaths?: boolean): ContentPath[] {
-            return changes.reduce<ContentPath[]>((prev, curr) => {
-                return prev.concat(useNewPaths
-                    ? curr.getNewPaths()
-                    : curr.getChangeItems().map((changeItem: ContentServerChangeItem) => changeItem.getPath()));
-            }, []);
+        private extractContentPaths(changes: ContentServerChange[]): ContentPath[] {
+            var contentPaths: ContentPath[] = [];
+
+            changes.forEach((change: ContentServerChange) => {
+                change.getChangeItems().forEach((changeItem: ContentServerChangeItem) => {
+                    contentPaths.push(changeItem.getPath());
+                })
+            });
+
+            return contentPaths;
+        }
+
+        private extractNewContentPaths(changes: ContentServerChange[]): ContentPath[] {
+            var contentPaths: ContentPath[] = [];
+
+            changes.forEach((change: ContentServerChange) => {
+                contentPaths.concat(change.getNewPaths());
+            });
+
+            return contentPaths;
+        }
+
+        private extractContentIds(changes: ContentServerChange[]): ContentId[] {
+            var contentIds: ContentId[] = [];
+
+            changes.forEach((change: ContentServerChange) => {
+                change.getChangeItems().forEach((changeItem: ContentServerChangeItem) => {
+                    contentIds.push(changeItem.getContentId());
+                })
+            });
+
+            return contentIds;
         }
 
         private handleContentCreated(data: ContentSummaryAndCompareStatus[]) {
