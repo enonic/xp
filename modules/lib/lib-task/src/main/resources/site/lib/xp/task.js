@@ -1,5 +1,5 @@
 /**
- * Task related functions.
+ * Functions for execution of asynchronous tasks.
  *
  * @example
  * var taskLib = require('/lib/xp/task');
@@ -26,7 +26,7 @@ function checkRequired(params, name) {
  */
 
 /**
- * Submits a task for execution and returns an id representing the task.
+ * Submits a task to be executed in the background and returns an id representing the task.
  * This function returns immediately. The callback function will be executed asynchronously.
  *
  * @example-ref examples/task/submit.js
