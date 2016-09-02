@@ -68,8 +68,6 @@ module api.ui.treegrid {
 
         private errorPanel: ValidationRecordingViewer;
 
-        private disableSelectionUpdates: boolean = false;
-
         constructor(builder: TreeGridBuilder<DATA>) {
 
             super(builder.getClasses());
@@ -298,9 +296,7 @@ module api.ui.treegrid {
             });
 
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
-                if (!this.disableSelectionUpdates) {
-                    this.notifySelectionChanged(event, rows.rows);
-                }
+                this.notifySelectionChanged(event, rows.rows);
             });
 
             this.onLoaded(() => this.unmask());
@@ -453,9 +449,7 @@ module api.ui.treegrid {
                     var needToCheckFetchedChildren = this.areAllOldChildrenSelected(oldChildren);
                     var newChildren = oldChildren.concat(fetchedChildren.slice(oldChildren.length));
                     node.getParent().setChildren(newChildren);
-                    this.disableSelectionUpdates = true;
                     this.initData(this.root.getCurrentRoot().treeToList());
-                    this.disableSelectionUpdates = false;
                     if (needToCheckFetchedChildren) {
                         this.select(fetchedChildren);
                     }
