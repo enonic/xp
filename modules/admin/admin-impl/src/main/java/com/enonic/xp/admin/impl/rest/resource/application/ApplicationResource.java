@@ -319,11 +319,22 @@ public final class ApplicationResource
 
     @GET
     @Path("getSiteApplications")
-    public ListApplicationJson getSiteApplications()
+    public ListApplicationJson getSiteApplications( @QueryParam("query") final String query )
     {
         final ListApplicationJson json = new ListApplicationJson();
 
         Applications applications = this.applicationService.getInstalledApplications();
+        if ( StringUtils.isNotBlank( query ) )
+        {
+            applications = Applications.from( applications.stream().
+                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
+                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
+                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
+                collect( Collectors.toList() ) );
+        }
+        
         for ( final Application application : applications )
         {
             final ApplicationKey applicationKey = application.getKey();
