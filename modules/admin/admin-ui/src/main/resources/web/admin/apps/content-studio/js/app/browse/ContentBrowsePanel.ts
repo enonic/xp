@@ -195,31 +195,46 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile() {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.browseActions);
 
-        let updateItem = () => {
-            if (ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
-                var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems();
-                if (browseItems.length == 1) {
-                    new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().then(
-                        (renderable: boolean) => {
-                            var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
-                            item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.setItem(item);
-                        });
-                }
+        let updatePreviewItem = () => {
+            if (this.isSingleItemSelectedInMobileMode()) {
+                var browseItem = this.getBrowseItemPanel().getItems()[0];
+                new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
+                    (renderable: boolean) => {
+                        var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItem.toViewItem();
+                        item.setRenderable(renderable);
+                        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                    });
             }
         };
 
-        // new selection
-        this.contentTreeGrid.onSelectionChanged(updateItem);
+        this.contentTreeGrid.onSelectionChanged(() => {
+            if (this.isSingleItemSelectedInMobileMode()) {
+                this.updateMobilePanel();
+            }
+        });
 
-        // repeated selection
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
-            if (event.isRepeatedSelection()) {
-                updateItem();
+            if (this.isSingleItemSelectedInMobileMode()) {
+                if (event.isRepeatedSelection()) {
+                    this.updateMobilePanel();
+                } else {
+                    updatePreviewItem();
+                }
             }
         });
 
         this.appendChild(this.mobileContentItemStatisticsPanel);
+    }
+
+    private updateMobilePanel() {
+        this.mobileContentItemStatisticsPanel.setItem(this.getBrowseItemPanel().getItems()[0].toViewItem());
+    }
+
+    private isSingleItemSelectedInMobileMode(): boolean {
+        if (ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
+            return this.getBrowseItemPanel().getItems().length == 1;
+        }
+        return false;
     }
 
     private setActiveDetailsPanel(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
@@ -271,10 +286,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.subscribeOnContentEvents();
-
-        ContentPreviewPathChangedEvent.on((event: ContentPreviewPathChangedEvent) => {
-            this.selectPreviewedContentInGrid(event.getPreviewPath());
-        });
 
         ContentPreviewPathChangedEvent.on((event: ContentPreviewPathChangedEvent) => {
             this.selectPreviewedContentInGrid(event.getPreviewPath());
