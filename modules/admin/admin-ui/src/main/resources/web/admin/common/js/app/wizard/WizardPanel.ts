@@ -45,7 +45,6 @@ module api.app.wizard {
 
         protected liveMask: api.ui.mask.LoadMask;
 
-        // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
 
         private dataLoaded: boolean = false;
@@ -77,6 +76,8 @@ module api.app.wizard {
         private toggleMinimizeListener: (event: api.ui.ActivatedEvent) => void;
 
         private scrollPosition: number = 0;
+
+        private wizardHeaderCreatedListeners: any[] = [];
 
         public static debug: boolean = false;
 
@@ -353,6 +354,7 @@ module api.app.wizard {
             this.wizardHeader = this.createWizardHeader();
             if (this.wizardHeader) {
                 headerAndNavigatorContainer.appendChild(this.wizardHeader);
+                this.notifyWizardHeaderCreated();
                 this.validityManager.setHeader(this.wizardHeader);
             }
 
@@ -759,6 +761,20 @@ module api.app.wizard {
 
         notifyValidityChanged(valid: boolean) {
             this.validityManager.notifyValidityChanged(valid);
+        }
+
+        onWizardHeaderCreated(listener: () => void) {
+            this.validityManager.onValidityChanged(listener);
+        }
+
+        unWizardHeaderCreated(listener: () => void) {
+            this.validityManager.onValidityChanged(listener);
+        }
+
+        notifyWizardHeaderCreated() {
+            this.wizardHeaderCreatedListeners.forEach((listener: () => void) => {
+                listener.call(this);
+            });
         }
 
         isValid() {

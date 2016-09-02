@@ -403,7 +403,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             this.onShown(() => {
                 this.updateButtonsState();
-            })
+            });
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
                 let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
