@@ -9,6 +9,7 @@ import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.ComponentPath;
@@ -46,6 +47,8 @@ public final class ComponentHandler
     protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
+        WebHandlerHelper.checkAdminAccess( webRequest );
+        
         final String restPath = findRestPath( webRequest );
 
         final ComponentHandlerWorker worker = new ComponentHandlerWorker( (PortalRequest) webRequest );

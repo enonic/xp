@@ -336,7 +336,7 @@ module api.liveedit {
         }
 
         getLockedMenuActions(): api.ui.Action[] {
-            var unlockAction = new api.ui.Action("Customize");
+            var unlockAction = new api.ui.Action("Customize Page");
 
             unlockAction.onExecuted(() => {
                 this.setLocked(false);

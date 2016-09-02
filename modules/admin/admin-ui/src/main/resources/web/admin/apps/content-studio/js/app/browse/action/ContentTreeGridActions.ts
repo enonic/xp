@@ -26,6 +26,7 @@ import AccessControlList = api.security.acl.AccessControlList;
 import ContentId = api.content.ContentId;
 import ContentAccessControlList = api.security.acl.ContentAccessControlList;
 import Permission = api.security.acl.Permission;
+import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -146,7 +147,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
         this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
-        this.DUPLICATE_CONTENT.setEnabled(contentSummaries.length == 1);
+        this.DUPLICATE_CONTENT.setEnabled(false);
         this.MOVE_CONTENT.setEnabled(true);
         this.SORT_CONTENT.setEnabled(contentSummaries.length == 1);
 
@@ -207,7 +208,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         var selectedItem = contentBrowseItems[0].getModel().getContentSummary();
 
         return this.checkIsChildrenAllowedByContentType(selectedItem).then((contentTypeAllowsChildren: boolean) => {
-            return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems, contentTypeAllowsChildren);
+            return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems, contentTypeAllowsChildren).then(() => {
+                return this.updateCanDuplicateActionSingleItemSelected(selectedItem);
+            });
         });
     }
 
@@ -228,7 +231,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
                 if (!contentTypesAllowChildren || !canCreate) {
                     this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                    this.DUPLICATE_CONTENT.setEnabled(false);
                     this.SORT_CONTENT.setEnabled(false);
                 }
 
@@ -266,5 +268,17 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return contentSummaries.some((content) => {
             return !!content && content.isDeletable();
         });
+    }
+
+    private updateCanDuplicateActionSingleItemSelected(selectedItem: ContentSummary) {
+        // Need to check if parent allows content creation
+        new GetContentByPathRequest(selectedItem.getPath().getParentPath()).sendAndParse().then((content: Content) => {
+            new api.content.resource.GetPermittedActionsRequest().addContentIds(content.getContentId()).addPermissionsToBeChecked(
+                Permission.CREATE).sendAndParse().then((allowedPermissions: Permission[]) => {
+                let canDuplicate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+                this.DUPLICATE_CONTENT.setEnabled(canDuplicate);
+            });
+
+        })
     }
 }

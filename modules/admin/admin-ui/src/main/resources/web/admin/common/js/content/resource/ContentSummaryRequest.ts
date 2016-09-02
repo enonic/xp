@@ -31,7 +31,7 @@ module api.content.resource {
                 new ContentQueryRequest<json.ContentSummaryJson, ContentSummary>(this.contentQuery).setExpand(api.rest.Expand.SUMMARY);
         }
 
-        getSearhchString(): string {
+        getSearchString(): string {
             return this.searchString;
         }
 

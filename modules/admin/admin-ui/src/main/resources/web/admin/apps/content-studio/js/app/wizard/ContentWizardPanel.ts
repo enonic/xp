@@ -83,6 +83,7 @@ import DialogButton = api.ui.dialog.DialogButton;
 import Toolbar = api.ui.toolbar.Toolbar;
 import CycleButton = api.ui.button.CycleButton;
 
+import Permission = api.security.acl.Permission;
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -123,8 +124,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private contentNamedListeners: {(event: ContentNamedEvent): void}[];
 
     private isSecurityWizardStepFormAllowed: boolean;
-
-    private publishButtonForMobile: api.ui.dialog.DialogButton;
 
     private inMobileViewMode: boolean;
 
@@ -326,7 +325,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             unpublishAction: this.wizardActions.getUnpublishAction(),
             showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
             showFormAction: this.wizardActions.getShowFormAction(),
-            showSplitEditAction: this.wizardActions.getShowSplitEditAction()
+            showSplitEditAction: this.wizardActions.getShowSplitEditAction(),
+            publishMobileAction: this.wizardActions.getPublishMobileAction()
         });
     }
 
@@ -385,7 +385,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 console.debug("ContentWizardPanel.doRenderOnDataLoaded");
             }
 
-            this.initPublishButtonForMobile();
+            this.appendChild(this.getContentWizardToolbarPublishControls().getPublishButtonForMobile());
 
             if (this.contentType.hasContentDisplayNameScript()) {
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
@@ -513,7 +513,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
             this.checkSecurityWizardStepFormAllowed(loginResult);
-            this.enablePublishIfAllowed(loginResult);
             return wemQ.all(applicationPromises);
         }).then((applications: Application[]) => {
             for (var i = 0; i < applications.length; i++) {
@@ -610,7 +609,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
-                liveFormPanel.loadPage();
+                liveFormPanel.loadPage(false);
             }
 
             return content;
@@ -681,16 +680,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     this.updateWizard(content, unchangedOnly);
 
                     if (versionChanged) {
-                        this.updateLiveFormOnVersionChange();
+                        this.updateLiveForm();
                         if (!isDisplayNameUpdated) {
                             this.getWizardHeader().resetBaseValues(content.getDisplayName());
                         }
                     } else if (this.isEditorEnabled() && !isAlreadyUpdated) {
                         // also update live form panel for renderable content without asking
-                        this.liveEditModel.setContent(content);
-                        let liveFormPanel = this.getLivePanel();
-                        liveFormPanel.skipNextReloadConfirmation(true);
-                        liveFormPanel.loadPage(false);
+                        this.updateLiveForm();
                     }
 
                     this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
@@ -753,7 +749,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
     }
 
-    private updateLiveFormOnVersionChange() {
+    private updateLiveForm() {
         var content = this.getPersistedItem(),
             formContext = this.createFormContext(content);
 
@@ -838,8 +834,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 publishControls.setCompareStatus(this.contentCompareStatus);
                 publishControls.setLeafContent(!this.getPersistedItem().hasChildren());
-
-                this.managePublishButtonStateForMobile(this.contentCompareStatus);
             });
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
@@ -930,7 +924,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private initLiveEditor(formContext: ContentFormContext, content: Content): wemQ.Promise<void> {
 
-        var deferred = wemQ.defer();
+        var deferred = wemQ.defer<void>();
 
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getPreviewAction().setVisible(false);
@@ -1430,7 +1424,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
 
-        if (this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), api.security.acl.Permission.WRITE_PERMISSIONS)) {
+        if (this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), Permission.WRITE_PERMISSIONS)) {
             this.isSecurityWizardStepFormAllowed = true;
         }
     }
@@ -1440,26 +1434,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         return accessEntriesToCheck.some((entry: AccessControlEntry) => {
             if (entry.getPrincipalKey().equals(principalKey)) {
-                return true;
-            }
-        });
-    }
-
-    /**
-     * Enables publish button if selected item has access entry with publish permission
-     * for at least one of user's principals or if user contains Admin principal.
-     * @param loginResult - user's authorisation state
-     */
-    private enablePublishIfAllowed(loginResult: api.security.auth.LoginResult) {
-        var entries = this.getPersistedItem().getPermissions().getEntries();
-        var accessEntriesWithPublishPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
-            return item.isAllowed(api.security.acl.Permission.PUBLISH);
-        });
-
-        loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
-            if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
-                this.isPrincipalPresent(principalKey, accessEntriesWithPublishPermissions)) {
-                this.wizardActions.getPublishAction().setEnabled(true);
                 return true;
             }
         });
@@ -1524,49 +1498,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         // case when content was moved
         this.getWizardHeader()
             .setPath(content.getPath().getParentPath().isRoot() ? "/" : content.getPath().getParentPath().toString() + "/");
-    }
-
-    private initPublishButtonForMobile() {
-
-        var action: api.ui.Action = new api.ui.Action("Publish");
-        action.setIconClass("publish-action");
-        action.onExecuted(() => {
-            this.wizardActions.getPublishAction().execute();
-        });
-
-        this.publishButtonForMobile = new DialogButton(action);
-        this.publishButtonForMobile.addClass("mobile-edit-publish-button");
-
-        this.subscribePublishButtonForMobileToPublishEvents();
-
-        this.appendChild(this.publishButtonForMobile);
-    }
-
-    private managePublishButtonStateForMobile(compareStatus: CompareStatus) {
-        var canBeShown = compareStatus !== CompareStatus.EQUAL;
-        this.publishButtonForMobile.toggleClass("visible", canBeShown);
-        this.publishButtonForMobile.setLabel("Publish " + api.content.CompareStatusFormatter.formatStatus(compareStatus) + " item");
-    }
-
-    private subscribePublishButtonForMobileToPublishEvents() {
-
-        var serverPublishOrUnpublishHandler = (contents: ContentSummaryAndCompareStatus[]) => {
-            contents.forEach(content => {
-                if (this.isCurrentContentId(content.getContentId())) {
-                    this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
-                }
-            });
-        };
-
-
-        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
-        serverEvents.onContentPublished(serverPublishOrUnpublishHandler);
-        serverEvents.onContentUnpublished(serverPublishOrUnpublishHandler);
-
-        this.onClosed(() => {
-            serverEvents.unContentPublished(serverPublishOrUnpublishHandler);
-            serverEvents.unContentUnpublished(serverPublishOrUnpublishHandler);
-        });
     }
 
     private openLiveEdit() {

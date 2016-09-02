@@ -59,11 +59,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
             this.loadDescendants(0, 20).
                 then((descendants: ContentSummaryAndCompareStatus[]) => {
                     this.setDependantItems(descendants);
-
-                    if (!this.isAnyOnline(this.getItemList().getItems())) {
-                        this.manageInstantDeleteStatus(descendants);
-                    }
-
+                this.manageInstantDeleteStatus(this.getItemList().getItems());
                     this.countItemsToDeleteAndUpdateButtonCounter();
                     this.centerMyself();
                 }).finally(() => {
@@ -93,12 +89,8 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.updateSubTitle();
 
         this.manageInstantDeleteStatus(contents);
-
-        this.instantDeleteCheckbox.setChecked(false, true)
         
         this.manageDescendants();
-
-
 
         return this;
     }

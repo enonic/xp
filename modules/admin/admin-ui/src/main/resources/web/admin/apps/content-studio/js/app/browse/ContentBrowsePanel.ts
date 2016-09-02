@@ -5,7 +5,6 @@ import {ContentTreeGrid} from "./ContentTreeGrid";
 import {ContentBrowseFilterPanel} from "./filter/ContentBrowseFilterPanel";
 import {ContentBrowseItemPanel} from "./ContentBrowseItemPanel";
 import {MobileContentItemStatisticsPanel} from "../view/MobileContentItemStatisticsPanel";
-import {MobileContentTreeGridActions} from "./action/MobileContentTreeGridActions";
 import {DetailsPanel} from "../view/detail/DetailsPanel";
 import {NonMobileDetailsPanelsManager, NonMobileDetailsPanelsManagerBuilder} from "../view/detail/NonMobileDetailsPanelsManager";
 import {Router} from "../Router";
@@ -53,8 +52,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private mobileContentItemStatisticsPanel: MobileContentItemStatisticsPanel;
 
-    private mobileBrowseActions: MobileContentTreeGridActions;
-
     private floatingDetailsPanel: DetailsPanel;
 
     private defaultDockedDetailsPanel: DetailsPanel;
@@ -63,7 +60,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         this.contentTreeGrid = new ContentTreeGrid();
 
-        // this.contentBrowseItemPanel = components.detailPanel = new ContentBrowseItemPanel();
         this.contentBrowseItemPanel = new ContentBrowseItemPanel(this.contentTreeGrid);
 
         this.contentFilterPanel = new ContentBrowseFilterPanel();
@@ -97,7 +93,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 this.getBrowseItemPanel().updateItemViewers(browseItems);
 
                 this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
-                this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
             }
         });
 
@@ -198,8 +193,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private initItemStatisticsPanelForMobile() {
-        this.mobileBrowseActions = new MobileContentTreeGridActions(this.contentTreeGrid);
-        this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.mobileBrowseActions);
+        this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.browseActions);
 
         let updateItem = () => {
             if (ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
@@ -210,7 +204,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                             var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
                             item.setRenderable(renderable);
                             this.mobileContentItemStatisticsPanel.setItem(item);
-                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
                         });
                 }
             }

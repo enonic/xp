@@ -59,7 +59,9 @@ module api.content.resource {
                         contents = this.filterContent(contents, contentTypes);
                     }
                     if (contents && contents.length > 0) {
-                        contents.sort(new api.content.util.ContentByPathComparator().compare);
+                        if (!this.contentSummaryRequest.getSearchString() || this.contentSummaryRequest.getSearchString().length == 0) {
+                            contents.sort(new api.content.util.ContentByPathComparator().compare);
+                        }
                         this.notifyLoadedData(contents);
                     } else {
                         this.notifyLoadedData([]);
@@ -70,6 +72,10 @@ module api.content.resource {
 
                 return deferred.promise;
             });
+        }
+
+        isPartiallyLoaded(): boolean {
+            return false;
         }
 
         private filterContent(contents: ContentSummary[], contentTypes: ContentType[]): ContentSummary[] {

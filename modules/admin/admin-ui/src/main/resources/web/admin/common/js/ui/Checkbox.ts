@@ -15,7 +15,7 @@ module api.ui {
             this.initCheckbox();
             this.initLabel(builder.text, builder.labelPosition);
 
-            this.appendChild(this.checkbox)
+            this.appendChild(this.checkbox);
             this.appendChild(this.label);
         }
 

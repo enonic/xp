@@ -9,6 +9,9 @@ import {PreviewAction} from "./PreviewAction";
 import {ShowLiveEditAction} from "./ShowLiveEditAction";
 import {ShowFormAction} from "./ShowFormAction";
 import {ShowSplitEditAction} from "./ShowSplitEditAction";
+import SaveAction = api.app.wizard.SaveAction;
+import CloseAction = api.app.wizard.CloseAction;
+import SaveAndCloseAction = api.app.wizard.SaveAndCloseAction;
 
 export class ContentWizardActions extends api.app.wizard.WizardActions<api.content.Content> {
 
@@ -28,6 +31,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private unpublish: api.ui.Action;
 
+    private publishMobile:api.ui.Action;
+
     private preview: api.ui.Action;
 
     private showLiveEditAction: api.ui.Action;
@@ -39,23 +44,35 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     private deleteOnlyMode: boolean = false;
 
     constructor(wizardPanel: ContentWizardPanel) {
-        this.save = new api.app.wizard.SaveAction(wizardPanel, "Save draft");
-        this.duplicate = new DuplicateContentAction(wizardPanel);
-        this.delete = new DeleteContentAction(wizardPanel);
-        this.close = new api.app.wizard.CloseAction(wizardPanel);
-        this.saveAndClose = new api.app.wizard.SaveAndCloseAction(wizardPanel);
-        this.publish = new PublishAction(wizardPanel);
-        this.publishTree = new PublishTreeAction(wizardPanel);
-        this.unpublish = new UnpublishAction(wizardPanel);
-        this.preview = new PreviewAction(wizardPanel);
-        this.showLiveEditAction = new ShowLiveEditAction(wizardPanel);
-        this.showFormAction = new ShowFormAction(wizardPanel);
-        this.showSplitEditAction = new ShowSplitEditAction(wizardPanel);
+        super(
+            new SaveAction(wizardPanel, "Save draft"),
+            new DeleteContentAction(wizardPanel),
+            new DuplicateContentAction(wizardPanel),
+            new PreviewAction(wizardPanel),
+            new PublishAction(wizardPanel),
+            new PublishTreeAction(wizardPanel),
+            new UnpublishAction(wizardPanel),
+            new CloseAction(wizardPanel),
+            new ShowLiveEditAction(wizardPanel),
+            new ShowFormAction(wizardPanel),
+            new ShowSplitEditAction(wizardPanel),
+            new SaveAndCloseAction(wizardPanel),
+            new PublishAction(wizardPanel)
+        );
 
-        super(this.save, this.delete, this.duplicate, this.preview, 
-            this.publish, this.publishTree, this.unpublish, this.close,
-            this.showLiveEditAction, this.showFormAction, 
-            this.showSplitEditAction, this.saveAndClose);
+        this.save = this.getActions()[0];
+        this.delete = this.getActions()[1];
+        this.duplicate = this.getActions()[2];
+        this.preview = this.getActions()[3];
+        this.publish = this.getActions()[4];
+        this.publishTree = this.getActions()[5];
+        this.unpublish = this.getActions()[6];
+        this.close = this.getActions()[7];
+        this.showLiveEditAction = this.getActions()[8];
+        this.showFormAction = this.getActions()[9];
+        this.showSplitEditAction = this.getActions()[10];
+        this.saveAndClose = this.getActions()[11];
+        this.publishMobile = this.getActions()[12];
     }
 
     enableActionsForNew() {
@@ -79,6 +96,9 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.save.setEnabled(!valueOn);
         this.duplicate.setEnabled(!valueOn);
         this.publish.setEnabled(!valueOn);
+        this.unpublish.setEnabled(!valueOn);
+        this.publishMobile.setEnabled(!valueOn);
+        this.publishMobile.setVisible(!valueOn);
 
         if (valueOn) {
             this.enableDeleteIfAllowed(content);
@@ -116,7 +136,10 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
             if (!hasPublishPermission) {
                 this.publish.setEnabled(false);
+                this.unpublish.setEnabled(false);
                 this.publishTree.setEnabled(false);
+                this.publishMobile.setEnabled(false);
+                this.publishMobile.setVisible(false);
             } else {
                 // check if already published to show unpublish button
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
@@ -125,8 +148,6 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                         var status = contentAndCompare.getCompareStatus();
                         var isPublished = status !== api.content.CompareStatus.NEW &&
                                           status != api.content.CompareStatus.UNKNOWN;
-
-                        this.unpublish.setVisible(isPublished);
                     });
             }
 
@@ -203,5 +224,9 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     getShowSplitEditAction(): api.ui.Action {
         return this.showSplitEditAction;
+    }
+
+    getPublishMobileAction():api.ui.Action {
+        return this.publishMobile;
     }
 }

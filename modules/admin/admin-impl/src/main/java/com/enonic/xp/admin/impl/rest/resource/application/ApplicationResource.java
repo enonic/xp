@@ -110,10 +110,6 @@ public final class ApplicationResource
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
-            if ( !application.hasSiteDescriptor() )
-            {
-                continue;
-            }
             final ApplicationKey applicationKey = application.getKey();
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
                 !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
@@ -322,6 +318,40 @@ public final class ApplicationResource
         return ( ids != null && ids.size() > 0 ) ? this.marketService.get( ids ) : this.marketService.get( version, start, count );
     }
 
+
+    @GET
+    @Path("getSiteApplications")
+    public ListApplicationJson getSiteApplications( @QueryParam("query") final String query )
+    {
+        final ListApplicationJson json = new ListApplicationJson();
+
+        Applications applications = this.applicationService.getInstalledApplications();
+        if ( StringUtils.isNotBlank( query ) )
+        {
+            applications = Applications.from( applications.stream().
+                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
+                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
+                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
+                collect( Collectors.toList() ) );
+        }
+        
+        for ( final Application application : applications )
+        {
+            final ApplicationKey applicationKey = application.getKey();
+            final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
+
+            if ( siteDescriptor != null )
+            {
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+                final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
+                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+            }
+        }
+        return json;
+    }
 
     @GET
     @Path("getIdProvider")
