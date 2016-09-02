@@ -52,6 +52,8 @@ module api.ui.selector.combobox {
                 removeMissingSelectedOptions: builder.removeMissingSelectedOptions
             };
 
+            comboBoxConfig.skipAutoDropShowOnValueChange = true;
+
             this.loader = builder.loader;
             this.comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(name, comboBoxConfig, this.loader);
             this.setupLoader();
@@ -485,6 +487,8 @@ module api.ui.selector.combobox {
 
         removeMissingSelectedOptions: boolean;
 
+        skipAutoDropShowOnValueChange: boolean;
+
         setComboBoxName(comboBoxName: string): RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
             return this;
@@ -557,6 +561,11 @@ module api.ui.selector.combobox {
 
         setRemoveMissingSelectedOptions(value: boolean): RichComboBoxBuilder<T> {
             this.removeMissingSelectedOptions = value;
+            return this;
+        }
+
+        setSkipAutoDropShowOnValueChange(value: boolean): RichComboBoxBuilder<T> {
+            this.skipAutoDropShowOnValueChange = value;
             return this;
         }
 
