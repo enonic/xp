@@ -9,8 +9,8 @@ module api.application {
 
         private filterObject: Object;
 
-        constructor(delay: number = 500, filterObject: Object = null) {
-            super(this.listApplicationsRequest = new ListApplicationsRequest());
+        constructor(filterObject: Object, request?: ListApplicationsRequest) {
+            super(this.listApplicationsRequest = request || new ListApplicationsRequest());
             if (filterObject) {
                 this.filterObject = filterObject;
             }
