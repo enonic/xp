@@ -22,13 +22,16 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
 
+    userItemParams: UserItemWizardPanelParams<USER_ITEM_TYPE>;
+
     constructor(params: UserItemWizardPanelParams<USER_ITEM_TYPE>) {
 
+        this.userItemParams = params;
         this.wizardActions = this.createWizardActions();
 
         super({
-            tabId: params.tabId,
-            persistedItem: params.persistedItem,
+            tabId: this.userItemParams.tabId,
+            persistedItem: this.userItemParams.persistedItem,
             actions: this.wizardActions
         });
     }
@@ -85,6 +88,10 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     getUserItemType(): string {
         throw new Error("Must be implemented by inheritors");
+    }
+
+    getPersistedDisplayName(): string {
+        return this.userItemParams.persistedDisplayName;
     }
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
