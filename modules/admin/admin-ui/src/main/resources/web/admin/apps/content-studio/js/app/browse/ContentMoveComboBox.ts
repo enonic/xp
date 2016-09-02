@@ -20,7 +20,8 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
             .setLoader(this.contentLoader)
             .setSelectedOptionsView(new ContentSelectedOptionsView())
             .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
-            .setDelayedInputValueChangedHandling(500);
+            .setDelayedInputValueChangedHandling(500)
+            .setSkipAutoDropShowOnValueChange(true);
 
         super(richComboBoxBuilder);
     }
