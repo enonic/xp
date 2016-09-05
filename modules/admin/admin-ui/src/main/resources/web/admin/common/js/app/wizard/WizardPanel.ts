@@ -768,7 +768,7 @@ module api.app.wizard {
         }
 
         unWizardHeaderCreated(listener: () => void) {
-            this.validityManager.onValidityChanged(listener);
+            this.validityManager.unValidityChanged(listener);
         }
 
         notifyWizardHeaderCreated() {
