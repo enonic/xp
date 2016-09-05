@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -309,11 +310,12 @@ public final class ApplicationResource
     public MarketApplicationsJson getMarketApplications( final GetMarketApplicationsJson params )
         throws Exception
     {
-        final String version = params.getVersion() != null ? params.getVersion() : "1.0.0";
-        final int start = parseInt( params.getStart(), 0 );
-        final int count = parseInt( params.getCount(), 10 );
+        final String version = params.getVersion();
+        final int start = params.getStart();
+        final int count = params.getCount();
+        final List<String> ids = params.getIds();
 
-        return this.marketService.get( version, start, count );
+        return this.marketService.get( ids, version, start, count );
     }
 
 
@@ -334,7 +336,7 @@ public final class ApplicationResource
                     containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
                 collect( Collectors.toList() ) );
         }
-        
+
         for ( final Application application : applications )
         {
             final ApplicationKey applicationKey = application.getKey();
@@ -394,18 +396,6 @@ public final class ApplicationResource
         }
 
         return json;
-    }
-
-    private int parseInt( final String value, final int defaultValue )
-    {
-        try
-        {
-            return Integer.parseInt( value );
-        }
-        catch ( NumberFormatException e )
-        {
-            return defaultValue;
-        }
     }
 
     private byte[] loadDefaultImage( final String imageName )

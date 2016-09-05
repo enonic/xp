@@ -38,9 +38,15 @@ public class MarketDataHttpProvider
         this.marketUrl = config.marketUrl();
     }
 
-    public MarketApplicationsJson search( String version, int start, int count )
+    public MarketApplicationsJson search( List<String> ids, String version, int start, int count )
     {
-        final Request request = MarketRequestFactory.create( marketUrl, version, start, count );
+        final Request request = MarketRequestFactory.create( marketUrl, ids, version, start, count );
+
+        return doRequest( request );
+    }
+
+    private MarketApplicationsJson doRequest( Request request )
+    {
 
         final OkHttpClient client = new OkHttpClient();
         client.setReadTimeout( readTimeout, TimeUnit.MILLISECONDS );
@@ -53,14 +59,8 @@ public class MarketDataHttpProvider
         }
         catch ( IOException e )
         {
-            throw new MarketException( "Cannot connect to marked", e );
+            throw new MarketException( "Cannot connect to market", e );
         }
-    }
-
-    public MarketApplicationsJson get( List<String> ids )
-    {
-        //TODO need to implement required functionality in market app first
-        throw new RuntimeException( "Not implemented yet!" );
     }
 
     protected MarketApplicationsJson parseResponse( final Response response )
