@@ -8,7 +8,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
@@ -23,7 +22,6 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.system.SystemRepoInitializer;
 
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.READ;
@@ -42,22 +40,15 @@ final class SecurityInitializer
 
     private final NodeService nodeService;
 
-    private final RepositoryService repositoryService;
-
-    public SecurityInitializer( final SecurityService securityService, final NodeService nodeService,
-                                final RepositoryService repositoryService )
+    public SecurityInitializer( final SecurityService securityService, final NodeService nodeService )
     {
         this.securityService = securityService;
         this.nodeService = nodeService;
-        this.repositoryService = repositoryService;
     }
 
     public final void initialize()
     {
         runAsAdmin( () -> {
-
-            new SystemRepoInitializer( this.nodeService, this.repositoryService ).initialize();
-
             if ( isInitialized() )
             {
                 LOG.info( "System-repo [security] layout already initialized" );
