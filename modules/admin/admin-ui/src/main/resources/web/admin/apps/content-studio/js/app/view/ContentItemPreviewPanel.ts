@@ -55,11 +55,6 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
             try {
                 if (frameWindow) {
-                    var pathname: string = frameWindow.location.pathname;
-                    // /blank is for IE
-                    if (pathname && pathname !== 'blank' && pathname !== '/blank') {
-                        new ContentPreviewPathChangedEvent(pathname).fire();
-                    }
                     frameWindow.addEventListener("click", this.frameClickHandler.bind(this));
                 }
             } catch (reason) {}
@@ -80,6 +75,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                     new ContentPreviewPathChangedEvent(contentPreviewPath).fire();
                     this.showMask();
                     setTimeout(() => {
+                        this.item = null; // we don't have ref to content under contentPreviewPath and there is no point in figuring it out
                         this.skipNextSetItemCall = false;
                         this.frame.setSrc(clickedLinkRelativePath);
                     }, 500)

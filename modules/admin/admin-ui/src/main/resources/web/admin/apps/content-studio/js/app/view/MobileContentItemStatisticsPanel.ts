@@ -101,8 +101,6 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
         if (!this.getItem() || !this.getItem().equals(item)) {
             super.setItem(item);
-            this.previewPanel.setItem(item);
-            this.detailsPanel.setItem(item ? item.getModel() : null);
             if (item) {
                 this.setName(this.makeDisplayName(item));
             }
@@ -119,6 +117,10 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
     getDetailsPanel(): DetailsPanel {
         return this.detailsPanel;
+    }
+
+    getPreviewPanel(): ContentItemPreviewPanel {
+        return this.previewPanel;
     }
 
     setName(name: string) {
