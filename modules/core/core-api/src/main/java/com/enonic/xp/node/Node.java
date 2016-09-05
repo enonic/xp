@@ -237,7 +237,7 @@ public final class Node
 
         private Instant timestamp;
 
-        private ChildOrder childOrder;
+        private ChildOrder childOrder = ChildOrder.defaultOrder();
 
         private Long manualOrderValue;
 

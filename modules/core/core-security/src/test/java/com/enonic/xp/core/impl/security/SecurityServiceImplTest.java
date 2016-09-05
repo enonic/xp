@@ -121,6 +121,7 @@ public class SecurityServiceImplTest
 
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+        this.repositoryService.setNodeStorageService( storageService );
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );

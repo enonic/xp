@@ -178,8 +178,8 @@ public abstract class AbstractNodeTest
 
         setUpRepositoryServices();
 
-        createRepository( TEST_REPO );
         createRepository( SystemConstants.SYSTEM_REPO );
+        createRepository( TEST_REPO );
         waitForClusterHealth();
     }
 
@@ -195,6 +195,7 @@ public abstract class AbstractNodeTest
 
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+        this.repositoryService.setNodeStorageService( storageService );
     }
 
     void createRepository( final Repository repository )

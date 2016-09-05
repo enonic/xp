@@ -24,6 +24,7 @@ public class SystemRepoInitializer
 
     public Node initialize()
     {
+
         final boolean initialized = this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() );
 
         if ( !initialized )

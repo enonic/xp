@@ -68,9 +68,11 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.system.SystemRepoInitializer;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -189,6 +191,7 @@ public class AbstractContentServiceTest
 
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
+        this.repositoryService.setNodeStorageService( storageService );
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
@@ -233,11 +236,23 @@ public class AbstractContentServiceTest
         this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
 
+        initializeRepositories();
+    }
+
+
+    private void initializeRepositories()
+    {
+        ContextBuilder.from( CTX_DEFAULT ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build().
+            runWith( () -> new SystemRepoInitializer( this.nodeService, this.repositoryService ).initialize() );
         waitForClusterHealth();
 
-        final ContentInitializer contentInitializer = new ContentInitializer( this.nodeService, this.repositoryService );
-        contentInitializer.initialize();
+        new ContentInitializer( this.nodeService, this.repositoryService ).initialize();
+        waitForClusterHealth();
     }
+
 
     protected ByteSource loadImage( final String name )
         throws IOException
