@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 
 public class GetMarketApplicationsJson
 {
@@ -20,7 +21,7 @@ public class GetMarketApplicationsJson
     public GetMarketApplicationsJson( @JsonProperty("version") final String version, @JsonProperty("start") final String start,
                                       @JsonProperty("count") final String count, @JsonProperty("ids") final List<String> ids )
     {
-        this.version = version;
+        this.version = !Strings.isNullOrEmpty( version ) ? version : "1.0.0";
         this.start = parseInt( start, 0 );
         this.count = parseInt( count, 10 );
         this.ids = ids;

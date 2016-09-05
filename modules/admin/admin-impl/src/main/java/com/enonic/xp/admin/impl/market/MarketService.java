@@ -6,7 +6,5 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplication
 
 public interface MarketService
 {
-    MarketApplicationsJson get( String version, int start, int count );
-
-    MarketApplicationsJson get( List<String> ids );
+    MarketApplicationsJson get( List<String> ids, String version, int start, int count );
 }

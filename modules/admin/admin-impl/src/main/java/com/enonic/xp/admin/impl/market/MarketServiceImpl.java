@@ -14,15 +14,9 @@ public class MarketServiceImpl
     private MarketDataProvider provider;
 
     @Override
-    public MarketApplicationsJson get( final String version, final int from, final int count )
+    public MarketApplicationsJson get( final List<String> ids, final String version, final int from, final int count )
     {
-        return this.provider.search( version, from, count );
-    }
-
-    @Override
-    public MarketApplicationsJson get( final List<String> ids )
-    {
-        return this.provider.get( ids );
+        return this.provider.search( ids, version, from, count );
     }
 
     @Reference

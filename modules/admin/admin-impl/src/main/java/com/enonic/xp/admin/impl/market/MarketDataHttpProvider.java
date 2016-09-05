@@ -38,16 +38,9 @@ public class MarketDataHttpProvider
         this.marketUrl = config.marketUrl();
     }
 
-    public MarketApplicationsJson search( String version, int start, int count )
+    public MarketApplicationsJson search( List<String> ids, String version, int start, int count )
     {
-        final Request request = MarketRequestFactory.create( marketUrl, version, start, count );
-
-        return doRequest( request );
-    }
-
-    public MarketApplicationsJson get( List<String> ids )
-    {
-        final Request request = MarketRequestFactory.create( marketUrl, ids );
+        final Request request = MarketRequestFactory.create( marketUrl, ids, version, start, count );
 
         return doRequest( request );
     }

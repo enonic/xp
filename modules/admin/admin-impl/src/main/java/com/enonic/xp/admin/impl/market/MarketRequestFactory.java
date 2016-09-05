@@ -10,22 +10,14 @@ import com.squareup.okhttp.Request;
 class MarketRequestFactory
 {
 
-    public static Request create( final String baseUrl, final String version, final int start, final int count )
+    public static Request create( final String baseUrl, final List<String> ids, final String version, final int start, final int count )
     {
         Map<String, Object> params = Maps.newHashMap();
 
+        params.put( "ids", ids );
         params.put( "xpVersion", version );
         params.put( "start", start );
         params.put( "count", count );
-
-        return create( baseUrl, params );
-    }
-
-    public static Request create( final String baseUrl, final List<String> ids )
-    {
-
-        Map<String, Object> params = Maps.newHashMap();
-        params.put( "ids", ids );
 
         return create( baseUrl, params );
     }

@@ -310,12 +310,12 @@ public final class ApplicationResource
     public MarketApplicationsJson getMarketApplications( final GetMarketApplicationsJson params )
         throws Exception
     {
-        final String version = params.getVersion() != null ? params.getVersion() : "1.0.0";
+        final String version = params.getVersion();
         final int start = params.getStart();
         final int count = params.getCount();
         final List<String> ids = params.getIds();
 
-        return ( ids != null && ids.size() > 0 ) ? this.marketService.get( ids ) : this.marketService.get( version, start, count );
+        return this.marketService.get( ids, version, start, count );
     }
 
 
@@ -336,7 +336,7 @@ public final class ApplicationResource
                     containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
                 collect( Collectors.toList() ) );
         }
-        
+
         for ( final Application application : applications )
         {
             final ApplicationKey applicationKey = application.getKey();
