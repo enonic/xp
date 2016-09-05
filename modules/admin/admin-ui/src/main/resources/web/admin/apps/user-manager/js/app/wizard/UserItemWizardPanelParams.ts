@@ -9,6 +9,8 @@ export class UserItemWizardPanelParams<USER_ITEM_TYPE extends api.Equitable> {
 
     persistedPath: string;
 
+    persistedDisplayName: string;
+
     persistedItem: USER_ITEM_TYPE;
 
     setPersistedPath(value: string): UserItemWizardPanelParams<USER_ITEM_TYPE> {
@@ -28,6 +30,11 @@ export class UserItemWizardPanelParams<USER_ITEM_TYPE extends api.Equitable> {
 
     setTabId(value: api.app.bar.AppBarTabId): UserItemWizardPanelParams<USER_ITEM_TYPE> {
         this.tabId = value;
+        return this;
+    }
+
+    setPersistedDisplayName(value: string): UserItemWizardPanelParams<USER_ITEM_TYPE> {
+        this.persistedDisplayName = value;
         return this;
     }
 
