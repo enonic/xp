@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.market;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -8,18 +9,25 @@ import com.squareup.okhttp.Request;
 
 class MarketRequestFactory
 {
-    private final static Map<String, Object> params = Maps.newHashMap();
 
-    public static Request create( final String baseUrl, final String version, final int start, final int count )
+    public static Request create( final String baseUrl, final List<String> ids, final String version, final int start, final int count )
+    {
+        Map<String, Object> params = Maps.newHashMap();
+
+        params.put( "ids", ids );
+        params.put( "xpVersion", version );
+        params.put( "start", start );
+        params.put( "count", count );
+
+        return create( baseUrl, params );
+    }
+
+    private static Request create( final String baseUrl, Map<String, Object> params )
     {
         final Request.Builder request = new Request.Builder();
         request.url( baseUrl );
 
         HttpUrl url = HttpUrl.parse( baseUrl );
-
-        params.put( "xpVersion", version );
-        params.put( "start", start );
-        params.put( "count", count );
 
         url = addParams( url, params );
 
