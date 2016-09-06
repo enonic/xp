@@ -43,19 +43,6 @@ public class RepositoryServiceImpl
 
     private NodeStorageService nodeStorageService;
 
-    private RepositoryId store( final Repository repository )
-    {
-        final Node node = RepositoryNodeTranslator.toNode( repository );
-
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build().
-            callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
-
-        return null;
-    }
-
     @SuppressWarnings("unused")
     @Activate
     public void initialize()
@@ -79,11 +66,24 @@ public class RepositoryServiceImpl
 
         checkClusterHealth();
 
-        //    store( Repository.create().
-        //        id( repositorySettings.getRepositoryId() ).
-        //        build() );
+        store( Repository.create().
+            id( repositorySettings.getRepositoryId() ).
+            build() );
 
         return repositorySettings.getRepositoryId();
+    }
+
+    private RepositoryId store( final Repository repository )
+    {
+        final Node node = RepositoryNodeTranslator.toNode( repository );
+
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build().
+            callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
+
+        return null;
     }
 
     @Override
