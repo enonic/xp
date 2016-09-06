@@ -122,6 +122,7 @@ public class SecurityServiceImplTest
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeStorageService( storageService );
+        this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
@@ -139,8 +140,8 @@ public class SecurityServiceImplTest
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
         securityService.setIndexService( indexService );
-        securityService.setRepositoryService( this.repositoryService );
 
+        this.nodeService.initialize();
         runAsAdmin( () -> securityService.initialize() );
     }
 

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.stream.Collectors;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -64,6 +65,7 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
@@ -82,7 +84,21 @@ public class NodeServiceImpl
 
     private BinaryService binaryService;
 
+    @SuppressWarnings("unused")
+    private RepositoryService repositoryService;
+
     //private BlobStore blobStore;
+
+
+    @SuppressWarnings("unused")
+    @Activate
+    public void initialize()
+    {
+        if ( this.indexServiceInternal.isMaster() )
+        {
+            new SystemNodeInitializer( this ).initialize();
+        }
+    }
 
     @Override
     public Node getById( final NodeId id )
@@ -710,4 +726,9 @@ public class NodeServiceImpl
         this.binaryService = binaryService;
     }
 
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
+    }
 }

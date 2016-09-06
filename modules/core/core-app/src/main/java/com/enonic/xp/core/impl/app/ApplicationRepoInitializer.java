@@ -7,36 +7,28 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.system.SystemRepoInitializer;
 
 class ApplicationRepoInitializer
 {
     private final NodeService nodeService;
 
-    private final RepositoryService repositoryService;
-
     private static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationRepoInitializer.class );
 
-    public ApplicationRepoInitializer( final NodeService nodeService, final RepositoryService repositoryService )
+    public ApplicationRepoInitializer( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        this.repositoryService = repositoryService;
     }
 
     public final void initialize()
     {
         runAsAdmin( () -> {
-
-            new SystemRepoInitializer( this.nodeService, this.repositoryService ).initialize();
-
             if ( isInitialized() )
             {
                 LOG.info( "System-repo [applications] layout already initialized" );

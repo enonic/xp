@@ -56,21 +56,14 @@ public class RepositoryServiceImpl
         return null;
     }
 
+    @SuppressWarnings("unused")
     @Activate
     public void initialize()
     {
-        if ( !this.indexServiceInternal.isMaster() )
+        if ( this.indexServiceInternal.isMaster() )
         {
-            return;
+            new SystemRepoInitializer( this ).initialize();
         }
-
-        if ( !isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
-        {
-
-
-        }
-
-
     }
 
     @Override

@@ -53,7 +53,6 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
@@ -118,8 +117,6 @@ public final class SecurityServiceImpl
 
     private NodeService nodeService;
 
-    private RepositoryService repositoryService;
-
     private IndexService indexService;
 
     private String suPasswordHashing;
@@ -138,7 +135,7 @@ public final class SecurityServiceImpl
 
         if ( indexService.isMaster() )
         {
-            new SecurityInitializer( this, this.nodeService, this.repositoryService ).initialize();
+            new SecurityInitializer( this, this.nodeService ).initialize();
         }
     }
 
@@ -1150,11 +1147,5 @@ public final class SecurityServiceImpl
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
-    }
-
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
     }
 }
