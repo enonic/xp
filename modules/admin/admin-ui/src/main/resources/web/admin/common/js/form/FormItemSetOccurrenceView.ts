@@ -104,6 +104,10 @@ module api.form {
                 this.formItemViews.forEach((formItemView: FormItemView) => {
                     formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
 
+                        if (!this.previousValidationRecording) {
+                            return; // previousValidationRecording is initialized on validate() call which may not be triggered in some cases
+                        }
+
                         var previousValidState = this.previousValidationRecording.isValid();
                         if (event.isValid()) {
                             this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
