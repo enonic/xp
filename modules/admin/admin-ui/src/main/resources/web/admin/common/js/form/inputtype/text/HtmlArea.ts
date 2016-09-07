@@ -185,8 +185,7 @@ module api.form.inputtype.text {
                 removeButtonEL.addEventListener("mouseleave", () => {
                     isMouseOverRemoveOccurenceButton = false;
                 });
-
-                    HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
+                
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
                         if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
@@ -306,6 +305,7 @@ module api.form.inputtype.text {
             var editor = this.getEditor(editorId);
             if (editor) {
                 editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : "");
+                HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
             } else {
                 console.log("Editor with id '" + editorId + "' not found")
             }
