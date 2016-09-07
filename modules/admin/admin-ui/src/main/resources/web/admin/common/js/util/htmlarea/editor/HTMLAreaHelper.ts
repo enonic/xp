@@ -68,6 +68,7 @@ module api.util.htmlarea.editor {
 
             for (let i = 0; i < imgs.length; i++) {
                 this.changeImageParentAlignmentOnImageAlignmentChange(imgs[i]);
+                this.updateImageParentAlignment(imgs[i])
             }
         }
 
@@ -90,8 +91,10 @@ module api.util.htmlarea.editor {
             }
 
             var styleFormat = "float: {0}; margin: {1};" +
-                (HTMLAreaHelper.isImageInOriginalSize(image) ? "" : "width: {2}%;");
-            var styleAttr = "text-align: " + alignment + ";";
+                              (HTMLAreaHelper.isImageInOriginalSize(image) ? "" : "width: {2}%;"),
+                styleAttr = "";
+
+            image.parentElement.className = "";
 
             switch (alignment) {
                 case 'left':
@@ -99,8 +102,12 @@ module api.util.htmlarea.editor {
                     styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
                     break;
                 case 'center':
-                    styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                    styleAttr = api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                    image.parentElement.classList.add(alignment);
                     break;
+            case 'justify':
+                image.parentElement.classList.add(alignment);
+                break;
             }
 
             image.parentElement.setAttribute("style", styleAttr);
