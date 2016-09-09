@@ -137,6 +137,42 @@ public class LiveEditAttributeInjectionTest
         assertEquals( expectedResult, outputHtml );
     }
 
+    @Test
+    public void injectWithSingleComment()
+        throws Exception
+    {
+        final String html = readResource( "part8Source.html" );
+
+        final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
+
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
+
+        final String outputHtml = portalResponse.getBody().toString();
+        final String expectedResult = readResource( "part8Rendered.html" );
+
+        assertEquals( expectedResult, outputHtml );
+    }
+
+    @Test
+    public void injectWithMultipleComments()
+        throws Exception
+    {
+        final String html = readResource( "part9Source.html" );
+
+        final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
+
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
+
+        final String outputHtml = portalResponse.getBody().toString();
+        final String expectedResult = readResource( "part9Rendered.html" );
+
+        assertEquals( expectedResult, outputHtml );
+    }
+
     private String readResource( final String resourceName )
         throws Exception
     {
