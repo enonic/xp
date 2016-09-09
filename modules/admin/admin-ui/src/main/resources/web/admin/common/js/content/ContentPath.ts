@@ -111,11 +111,12 @@ module api.content {
         }
 
         isDescendantOf(path: ContentPath): boolean {
-            return (this.refString.indexOf(path.toString()) === 0) && (this.getLevel() > path.getLevel());
+            return (this.refString.indexOf(path.toString() + ContentPath.ELEMENT_DIVIDER) === 0) && (this.getLevel() > path.getLevel());
         }
 
         isChildOf(path: ContentPath): boolean {
-            return (this.refString.indexOf(path.toString()) === 0) && (this.getLevel() === path.getLevel() + 1);
+            return (this.refString.indexOf(path.toString() + ContentPath.ELEMENT_DIVIDER) === 0) &&
+                   (this.getLevel() === path.getLevel() + 1);
         }
 
         prettifyUnnamedPathElements(): ContentPath {
