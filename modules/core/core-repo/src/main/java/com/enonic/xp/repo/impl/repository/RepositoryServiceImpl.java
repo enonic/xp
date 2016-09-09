@@ -19,7 +19,6 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
@@ -66,24 +65,20 @@ public class RepositoryServiceImpl
 
         checkClusterHealth();
 
-        store( Repository.create().
-            id( repositorySettings.getRepositoryId() ).
-            build() );
+        store( repositorySettings );
 
         return repositorySettings.getRepositoryId();
     }
 
-    private RepositoryId store( final Repository repository )
+    private void store( final RepositorySettings repositorySettings )
     {
-        final Node node = RepositoryNodeTranslator.toNode( repository );
+        final Node node = RepositoryNodeTranslator.toNode( repositorySettings );
 
         ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build().
             callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
-
-        return null;
     }
 
     @Override
