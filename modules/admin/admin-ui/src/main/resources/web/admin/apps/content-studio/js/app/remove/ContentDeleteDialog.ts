@@ -70,16 +70,14 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     }
 
     private manageInstantDeleteStatus(items: ContentSummaryAndCompareStatus[]) {
-        const isVisible = this.isAnyOnline(items);
-        this.instantDeleteCheckbox.setVisible(isVisible);
-        if (isVisible) {
-            const isChecked = this.isEveryPendingDelete(items);
-            this.instantDeleteCheckbox.setChecked(isChecked, true);
-            // Disable to prevent uncheck, when every content is pending delete
-            this.instantDeleteCheckbox.setDisabled(isChecked);
-        } else {
-            this.instantDeleteCheckbox.setChecked(false, true);
-        }
+        const isHidden = this.isEveryOffline(items);
+        const isChecked = isHidden ? false : this.isEveryPendingDelete(items);
+
+        // All Offline - hidden
+        // All Pending Delete - hidden, checked
+        // Any Online - unchecked
+        this.instantDeleteCheckbox.setVisible(!isHidden && !isChecked);
+        this.instantDeleteCheckbox.setChecked(isChecked, true);
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
@@ -176,9 +174,9 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         });
     }
 
-    private isAnyOnline(items: ContentSummaryAndCompareStatus[]): boolean {
-        return items.some((item: ContentSummaryAndCompareStatus) => {
-            return this.isStatusOnline(item.getCompareStatus());
+    private isEveryOffline(items: ContentSummaryAndCompareStatus[]): boolean {
+        return items.every((item: ContentSummaryAndCompareStatus) => {
+            return this.isStatusOffline(item.getCompareStatus());
         });
     }
 
@@ -186,6 +184,10 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         return items.every((item: ContentSummaryAndCompareStatus) => {
             return this.isStatusPendingDelete(item.getCompareStatus());
         });
+    }
+
+    private isStatusOffline(status: CompareStatus): boolean {
+        return status === CompareStatus.NEW;
     }
 
     private isStatusOnline(status: CompareStatus): boolean {
