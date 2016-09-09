@@ -44,6 +44,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     static MAX_FETCH_SIZE: number = 10;
 
+    static SERVER_LOAD_SIZE: number = ContentTreeGrid.MAX_FETCH_SIZE * 5;
+
     private filterQuery: api.content.query.ContentQuery;
 
     constructor() {
@@ -585,11 +587,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             parallelPromises.push(this.xAppendContentNode(relationship, false));
         });
 
-
         return wemQ.allSettled(parallelPromises).then((results) => {
-            var rootList = this.getRoot().getCurrentRoot().treeToList();
+            /*  var rootList = this.getRoot().getCurrentRoot().treeToList();
             this.initData(rootList);
-            this.invalidate();
+             this.invalidate();*/
             return results;
         });
     }
@@ -730,7 +731,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         });
 
         wemQ.all(parallelPromises).spread<void>(() => {
-            this.triggerSelectionChangedListeners();
+            // this.triggerSelectionChangedListeners();
             return wemQ(null);
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
 
