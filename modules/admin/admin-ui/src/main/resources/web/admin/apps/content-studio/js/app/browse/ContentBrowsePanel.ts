@@ -69,6 +69,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.toolbar = new ContentBrowseToolbar(this.browseActions);
 
         this.defaultDockedDetailsPanel = DetailsPanel.create().setUseSplitter(false).build();
+        this.defaultDockedDetailsPanel.addClass("docked-details-panel");
 
         super({
             browseToolbar: this.toolbar,
