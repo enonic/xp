@@ -29,8 +29,11 @@ class MarketRequestFactory
         try
         {
             ObjectNode bodyNode = mapper.createObjectNode();
-            ArrayNode idsNode = bodyNode.putArray( "ids" );
-            ids.forEach( idsNode::add );
+            if ( ids != null && ids.size() > 0 )
+            {
+                ArrayNode idsNode = bodyNode.putArray( "ids" );
+                ids.forEach( idsNode::add );
+            }
             body = mapper.writeValueAsString( bodyNode );
         }
         catch ( JsonProcessingException e )
