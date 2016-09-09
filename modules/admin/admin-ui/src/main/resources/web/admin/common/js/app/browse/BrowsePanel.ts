@@ -70,7 +70,8 @@ module api.app.browse {
                 }
             });
 
-            this.treeGrid.onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
+            let selectionChangedDebouncedHandler = api.util.AppHelper.debounce(
+                (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 let changes = this.browseItemPanel.setItems(browseItems);
                 this.treeGrid.getContextMenu().getActions()
@@ -78,7 +79,9 @@ module api.app.browse {
                     .then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);
-            });
+                }, 500, false);
+
+            this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.checkFilterPanelToBeShownFullScreen(item);
