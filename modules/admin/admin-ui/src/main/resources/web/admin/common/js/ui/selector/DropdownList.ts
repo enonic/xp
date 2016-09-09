@@ -105,10 +105,12 @@ module api.ui.selector {
                 this.emptyDropdown.hide();
                 this.dropdownGrid.show();
                 this.dropdownGrid.adjustGridHeight();
-                if (selectedOptions && selectedOptions.length > 0) {
+                if (selectedOptions) {
                     this.dropdownGrid.markSelections(selectedOptions);
-                    this.dropdownGrid.markReadOnly(selectedOptions);
-                    this.navigateToRowIfNotActive(selectedOptions[0]);
+                    if (selectedOptions.length > 0) {
+                        this.dropdownGrid.markReadOnly(selectedOptions);
+                        this.navigateToRowIfNotActive(selectedOptions[0]);
+                    }
                 }
             } else {
                 this.dropdownGrid.hide();
