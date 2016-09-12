@@ -111,6 +111,7 @@ export class PageComponentsView extends api.dom.DivEl {
         } else if (this.tree) {
 
             this.tree.deselectAll();
+            Highlighter.get().hide();
 
             this.tree.setPageView(pageView).then(() => {
                 this.initMask();
