@@ -3,7 +3,6 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 
@@ -27,25 +26,21 @@ public class GetMarketApplicationsJson
         this.ids = ids;
     }
 
-    @JsonIgnore
     public String getVersion()
     {
         return version;
     }
 
-    @JsonIgnore
     public Integer getStart()
     {
         return start;
     }
 
-    @JsonIgnore
     public Integer getCount()
     {
         return count;
     }
 
-    @JsonIgnore
     public List<String> getIds()
     {
         return ids;
