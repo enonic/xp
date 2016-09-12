@@ -15,7 +15,7 @@ module api.content.page.region {
         }
 
         resolveIconClass(object: LayoutDescriptor): string {
-            return "icon-insert-template icon-large";
+            return api.StyleHelper.getCommonIconCls("layout") + " icon-large";
         }
     }
 }

@@ -17,7 +17,7 @@ module api.liveedit.image {
 
         constructor(imageView: ImageComponentView) {
             super();
-            this.addClassEx("image-placeholder");
+            this.addClassEx("image-placeholder").addClass(api.StyleHelper.getCommonIconCls("image"));
             this.imageComponentView = imageView;
 
             this.initImageCombobox(imageView);
