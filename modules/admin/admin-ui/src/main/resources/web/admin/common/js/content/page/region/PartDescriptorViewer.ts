@@ -15,7 +15,7 @@ module api.content.page.region {
         }
 
         resolveIconClass(object: PartDescriptor): string {
-            return "icon-puzzle icon-large";
+            return api.StyleHelper.getCommonIconCls("part") + " icon-large";
         }
     }
 }

@@ -87,7 +87,8 @@ module api.content.site.inputtype.siteconfigurator {
             var dialogHeader = new ModalDialogHeader("");
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
-                api.app.NamesAndIconViewSize.large)).setMainName(application.getDisplayName()).setSubName(application.getName() + "-" + application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
+                api.app.NamesAndIconViewSize.large)).setMainName(application.getDisplayName()).setSubName(
+                application.getName() + "-" + application.getVersion());
 
             if (application.getIconUrl()) {
                 namesAndIconView.setIconUrl(application.getIconUrl());
