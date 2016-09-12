@@ -575,22 +575,14 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     xAppendContentNodes(relationships: TreeNodeParentOfContent[],
                         update: boolean = true): wemQ.Promise<any> {
-        var nodes = [];
 
         var parallelPromises: wemQ.Promise<any>[] = [];
-
-        this.xUpdateNodesData(relationships.map((el) => {
-            return el.getNode();
-        }));
 
         relationships.forEach((relationship: TreeNodeParentOfContent) => {
             parallelPromises.push(this.xAppendContentNode(relationship, false));
         });
 
         return wemQ.allSettled(parallelPromises).then((results) => {
-            /*  var rootList = this.getRoot().getCurrentRoot().treeToList();
-            this.initData(rootList);
-             this.invalidate();*/
             return results;
         });
     }
@@ -704,68 +696,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 child.clearViewers();
                 this.xUpdatePathsInChildren(child);
             }
-        });
-    }
-
-    /*
-     * Updates all of the remaining parents
-     * Triggers selection changed event to update toolbar
-     */
-    xUpdateNodesData(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): TreeNode<ContentSummaryAndCompareStatus>[] {
-
-        nodes = this.xFilterParentNodes(nodes);
-
-        var parallelPromises: wemQ.Promise<any>[] = [];
-
-        nodes.forEach((node) => {
-            if (!node.hasChildren()) {
-                if (!!node.getData()) {
-                    parallelPromises.push(
-                        new api.content.resource.GetContentByIdRequest(node.getData().getContentSummary().getContentId()).sendAndParse().then(
-                            (content: api.content.Content) => {
-                                node.getData().setContentSummary(content);
-                            })
-                    );
-                }
-            }
-        });
-
-        wemQ.all(parallelPromises).spread<void>(() => {
-            // this.triggerSelectionChangedListeners();
-            return wemQ(null);
-        }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
-
-        return nodes;
-    }
-
-    /*
-     * Filters only the top parent nodes
-     * Parent nodes, that are the children of the other parents will be missed.
-     */
-    private xFilterParentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): TreeNode<ContentSummaryAndCompareStatus>[] {
-
-        return nodes.filter((node, index) => {
-            var result = true;
-
-            var path = node.getData() && node.getData().getContentSummary()
-                ? node.getData().getContentSummary().getPath()
-                : null;
-            if (path) {
-                for (var i = 0; i < nodes.length; i++) {
-                    if (index === i) {
-                        continue;
-                    }
-
-                    var nodePath = nodes[i].getData() && nodes[i].getData().getContentSummary()
-                        ? nodes[i].getData().getContentSummary().getPath()
-                        : null;
-                    if (nodePath && (path.isChildOf(nodePath) || path.toString() === nodePath.toString())) {
-                        return false;
-                    }
-                }
-            }
-
-            return result;
         });
     }
 
