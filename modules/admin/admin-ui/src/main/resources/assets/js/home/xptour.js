@@ -1,7 +1,7 @@
 var tourDialog;
 var tourSteps = [];
 var canInstallDemoApps = false;
-var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.xphoot", "com.enonic.app.googlemaps"];
+var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.xphoot", "com.enonic.app.imagexpert"];
 var marketDemoApps = [];
 var isInstallingNow = false;
 
