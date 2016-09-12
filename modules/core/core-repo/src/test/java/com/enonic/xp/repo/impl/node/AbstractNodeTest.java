@@ -195,7 +195,6 @@ public abstract class AbstractNodeTest
 
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
-        this.repositoryService.setNodeStorageService( storageService );
     }
 
     void createRepository( final Repository repository )

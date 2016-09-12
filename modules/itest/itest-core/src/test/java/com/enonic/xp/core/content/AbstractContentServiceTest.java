@@ -189,8 +189,6 @@ public class AbstractContentServiceTest
 
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
-        this.repositoryService.setNodeStorageService( storageService );
-        this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );

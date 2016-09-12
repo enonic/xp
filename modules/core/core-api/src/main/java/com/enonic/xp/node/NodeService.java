@@ -4,6 +4,9 @@ import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.util.BinaryReference;
 
 @Beta
@@ -80,6 +83,10 @@ public interface NodeService
     Node getRoot();
 
     ImportNodeResult importNode( final ImportNodeParams params );
+
+    void createRepository( final RepositorySettings repositorySettings );
+
+    Repository getRepository( final RepositoryId repositoryId );
 
     NodesHasChildrenResult hasChildren( final Nodes nodes );
 

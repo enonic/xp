@@ -1,28 +1,21 @@
 package com.enonic.xp.repo.impl.repository;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.JsonHelper;
 
 @Component(immediate = true)
@@ -40,18 +33,6 @@ public class RepositoryServiceImpl
     private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
 
-    private NodeStorageService nodeStorageService;
-
-    @SuppressWarnings("unused")
-    @Activate
-    public void initialize()
-    {
-        if ( this.indexServiceInternal.isMaster() )
-        {
-            new SystemRepoInitializer( this ).initialize();
-        }
-    }
-
     @Override
     public RepositoryId create( final RepositorySettings repositorySettings )
     {
@@ -65,20 +46,7 @@ public class RepositoryServiceImpl
 
         checkClusterHealth();
 
-        store( repositorySettings );
-
         return repositorySettings.getRepositoryId();
-    }
-
-    private void store( final RepositorySettings repositorySettings )
-    {
-        final Node node = RepositoryNodeTranslator.toNode( repositorySettings );
-
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build().
-            callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
     }
 
     @Override
@@ -207,11 +175,5 @@ public class RepositoryServiceImpl
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
         this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeStorageService( final NodeStorageService nodeStorageService )
-    {
-        this.nodeStorageService = nodeStorageService;
     }
 }

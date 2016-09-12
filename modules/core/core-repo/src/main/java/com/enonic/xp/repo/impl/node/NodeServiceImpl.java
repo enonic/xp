@@ -10,6 +10,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
@@ -59,13 +60,19 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
+import com.enonic.xp.repo.impl.repository.RepositoryNodeTranslator;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.RepositorySettings;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
@@ -96,7 +103,7 @@ public class NodeServiceImpl
     {
         if ( this.indexServiceInternal.isMaster() )
         {
-            new SystemNodeInitializer( this ).initialize();
+            new SystemRepoInitializer( this, this.repositoryService ).initialize();
         }
     }
 
@@ -658,6 +665,35 @@ public class NodeServiceImpl
         }
 
         return importNodeResult;
+    }
+
+    @Override
+    public void createRepository( final RepositorySettings repositorySettings )
+    {
+        this.repositoryService.create( repositorySettings );
+
+        final Node node = RepositoryNodeTranslator.toNode( repositorySettings );
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build().
+            callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
+
+        //TODO remove
+        final Repository repository = getRepository( repositorySettings.getRepositoryId() );
+    }
+
+
+    @Override
+    public Repository getRepository( final RepositoryId repositoryId )
+    {
+        final NodeId nodeId = NodeId.from( repositoryId.toString() );
+        final Node node = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build().
+            callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
+        return RepositoryNodeTranslator.fromNode( node );
     }
 
     @Override
