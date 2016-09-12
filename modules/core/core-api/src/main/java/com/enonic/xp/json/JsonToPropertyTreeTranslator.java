@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content.mapper;
+package com.enonic.xp.json;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -26,6 +26,11 @@ public final class JsonToPropertyTreeTranslator
     private final InputTypeResolver inputTypeResolver;
 
     private final boolean strictMode;
+
+    public JsonToPropertyTreeTranslator()
+    {
+        this( null, false );
+    }
 
     public JsonToPropertyTreeTranslator( final Form form, final boolean strict )
     {

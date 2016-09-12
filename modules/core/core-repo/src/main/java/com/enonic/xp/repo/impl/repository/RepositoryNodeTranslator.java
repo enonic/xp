@@ -4,6 +4,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repository.IndexConfig;
@@ -25,6 +26,7 @@ public class RepositoryNodeTranslator
         if ( indexConfigs != null )
         {
             final PropertySet indexConfigsPropertySet = repositoryData.addSet( "indexConfigs" );
+            final JsonToPropertyTreeTranslator propertyTreeTranslator = new JsonToPropertyTreeTranslator();
             for ( IndexType indexType : IndexType.values() )
             {
                 final IndexConfig indexConfig = indexConfigs.get( indexType );
@@ -34,16 +36,16 @@ public class RepositoryNodeTranslator
                     final IndexMapping indexMapping = indexConfig.getMapping();
                     if ( indexMapping != null )
                     {
-                        //TODO Translate from JSON to PropertySet
-                        final PropertySet indexMappingPropertySet = new PropertySet();
+                        final PropertySet indexMappingPropertySet = propertyTreeTranslator.translate( indexMapping.getNode() ).
+                            getRoot();
                         indexConfigPropertySet.setSet( "mapping", indexMappingPropertySet );
                     }
 
                     final IndexSettings indexSettings = indexConfig.getSettings();
                     if ( indexSettings != null )
                     {
-                        //TODO Translate from JSON to PropertySet
-                        final PropertySet indexSettingsPropertySet = new PropertySet();
+                        final PropertySet indexSettingsPropertySet = propertyTreeTranslator.translate( indexSettings.getNode() ).
+                            getRoot();
                         indexConfigPropertySet.setSet( "settings", indexSettingsPropertySet );
                     }
                 }
