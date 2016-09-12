@@ -14,7 +14,7 @@ module api.ui.treegrid {
             this.addActions(actions.getAllActions());
 
             this.addGreedySpacer();
-            this.refreshButton = new api.ui.button.Button().addClass('icon-loop2');
+            this.refreshButton = new api.ui.button.Button().addClass(api.StyleHelper.getIconCls("loop"));
             this.refreshButton.onClicked((event: MouseEvent) => treeGrid.reload());
             this.addElement(this.refreshButton);
 
