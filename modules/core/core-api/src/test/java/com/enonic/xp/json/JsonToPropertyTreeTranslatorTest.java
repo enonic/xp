@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content.mapper;
+package com.enonic.xp.json;
 
 import java.net.URL;
 

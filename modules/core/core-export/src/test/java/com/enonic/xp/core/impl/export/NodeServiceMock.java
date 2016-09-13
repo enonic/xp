@@ -62,6 +62,9 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.util.BinaryReference;
 
 class NodeServiceMock
@@ -402,6 +405,18 @@ class NodeServiceMock
 
     @Override
     public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public void createRepository( final RepositorySettings repositorySettings )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public Repository getRepository( final RepositoryId repositoryId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

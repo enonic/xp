@@ -27,6 +27,11 @@ public class RepositorySettings
         return repositoryId;
     }
 
+    public IndexConfigs getIndexConfigs()
+    {
+        return indexConfigs;
+    }
+
     public IndexSettings getIndexSettings( final IndexType indexType )
     {
         if ( this.indexConfigs == null )

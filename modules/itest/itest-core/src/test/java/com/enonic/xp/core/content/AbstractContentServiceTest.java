@@ -189,8 +189,6 @@ public class AbstractContentServiceTest
 
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
-        this.repositoryService.setNodeStorageService( storageService );
-        this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
@@ -198,6 +196,7 @@ public class AbstractContentServiceTest
         this.nodeService.setNodeSearchService( searchService );
         this.nodeService.setEventPublisher( eventPublisher );
         this.nodeService.setBinaryService( this.binaryService );
+        this.nodeService.setRepositoryService( this.repositoryService );
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );

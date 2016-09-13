@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.content.mapper.JsonToPropertyTreeTranslator;
+import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
