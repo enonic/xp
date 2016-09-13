@@ -64,10 +64,8 @@ public class RepositoryNodeTranslator
 
     public static Repository fromNode( final Node node )
     {
-        final PropertyTree data = node.data();
-
         return Repository.create().
-            id( RepositoryId.from( data.getString( "repositoryId" ) ) ).
+            id( RepositoryId.from( node.id().toString() ) ).
             build();
     }
 }

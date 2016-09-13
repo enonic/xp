@@ -196,6 +196,7 @@ public class AbstractContentServiceTest
         this.nodeService.setNodeSearchService( searchService );
         this.nodeService.setEventPublisher( eventPublisher );
         this.nodeService.setBinaryService( this.binaryService );
+        this.nodeService.setRepositoryService( this.repositoryService );
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
