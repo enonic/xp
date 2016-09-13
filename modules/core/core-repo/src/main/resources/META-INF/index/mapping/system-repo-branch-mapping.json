@@ -26,7 +26,8 @@
       },
       "path": {
         "type": "string",
-        "index": "not_analyzed"
+        "index": "analyzed",
+        "index_analyzer": "keywordlowercase"
       },
       "state": {
         "type": "string",
