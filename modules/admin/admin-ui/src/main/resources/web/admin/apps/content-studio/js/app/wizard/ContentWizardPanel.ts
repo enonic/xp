@@ -196,7 +196,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private initListeners() {
-        
+
         let shownAndLoadedHandler = () => {
             if (this.getPersistedItem()) {
                 Router.setHash("edit/" + this.getPersistedItem().getId());
@@ -275,12 +275,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     protected doLoadData(): Q.Promise<api.content.Content> {
         if (ContentWizardPanel.debug) {
-            console.debug("ContentWizardPanel.doLoadData");
+            console.debug("ContentWizardPanel.doLoadData at " + new Date().toISOString());
         }
         return new ContentWizardDataLoader().loadData(this.contentParams)
             .then((loader) => {
                 if (ContentWizardPanel.debug) {
-                    console.debug("ContentWizardPanel.doLoadData: loaded data", loader);
+                    console.debug("ContentWizardPanel.doLoadData: loaded data at " + new Date().toISOString(), loader);
                 }
                 if (loader.content) {
                     // in case of new content will be created in super.loadData()
@@ -382,7 +382,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         return super.doRenderOnDataLoaded(rendered).then((rendered) => {
             if (ContentWizardPanel.debug) {
-                console.debug("ContentWizardPanel.doRenderOnDataLoaded");
+                console.debug("ContentWizardPanel.doRenderOnDataLoaded at " + new Date().toISOString());
             }
 
             this.appendChild(this.getContentWizardToolbarPublishControls().getPublishButtonForMobile());
@@ -675,7 +675,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     let isAlreadyUpdated = content.equals(this.getPersistedItem());
                     let isDisplayNameUpdated = this.isDisplayNameUpdated();
-                    
+
                     this.setPersistedItem(content);
                     this.updateWizard(content, unchangedOnly);
 
@@ -819,7 +819,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return super.doLayout(persistedContent).then(() => {
 
             if (ContentWizardPanel.debug) {
-                console.debug("ContentWizardPanel.doLayout", persistedContent);
+                console.debug("ContentWizardPanel.doLayout at " + new Date().toISOString(), persistedContent);
             }
 
             this.updateThumbnailWithContent(persistedContent);
@@ -923,7 +923,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private initLiveEditor(formContext: ContentFormContext, content: Content): wemQ.Promise<void> {
-
+        if (ContentWizardPanel.debug) {
+            console.debug("ContentWizardPanel.initLiveEditor at " + new Date().toISOString());
+        }
         var deferred = wemQ.defer<void>();
 
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
@@ -962,7 +964,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     // Remember that content has been cloned here and it is not the persistedItem any more
     private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
         if (ContentWizardPanel.debug) {
-            console.debug("ContentWizardPanel.doLayoutPersistedItem");
+            console.debug("ContentWizardPanel.doLayoutPersistedItem at " + new Date().toISOString());
         }
 
         this.toggleClass("rendered", false);
@@ -1028,7 +1030,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private setupWizardLiveEdit() {
 
         let editorEnabled = this.isEditorEnabled();
-        let isEditorOpened = this.shouldEditorOpenByDefault();
+        let shouldOpenEditor = this.shouldOpenEditorByDefault();
 
         this.toggleClass("rendered", editorEnabled);
 
@@ -1038,7 +1040,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.getCycleViewModeButton().setVisible(editorEnabled);
 
-        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && (editorEnabled && isEditorOpened)) {
+        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && (editorEnabled && shouldOpenEditor)) {
             this.wizardActions.getShowSplitEditAction().execute();
         } else if (!!this.getSplitPanel()) {
 
@@ -1526,10 +1528,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private isContentRenderable(): boolean {
-        return this.liveEditModel && this.liveEditModel.isPageRenderable();
+        return !!this.liveEditModel && this.liveEditModel.isPageRenderable();
     }
 
-    private shouldEditorOpenByDefault(): boolean {
+    private shouldOpenEditorByDefault(): boolean {
         let isTemplate = this.contentType.getContentTypeName().isPageTemplate();
         let isSite = this.contentType.getContentTypeName().isSite();
 
@@ -1538,17 +1540,19 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isEditorEnabled(): boolean {
 
-        return ( this.shouldEditorOpenByDefault() || !!this.site) &&
+        return ( this.isContentRenderable() || !!this.site) &&
                (!api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES, this.contentType.getContentTypeName()));
     }
 
     private updateButtonsState() {
-        this.wizardActions.getPreviewAction().setEnabled(this.isContentRenderable());
-        this.getContextWindowToggler().setEnabled(this.isContentRenderable());
-        this.getComponentsViewToggler().setEnabled(this.isContentRenderable());
+        let isRenderable = this.isContentRenderable();
 
-        this.getComponentsViewToggler().setVisible(this.isContentRenderable());
-        this.getContextWindowToggler().setVisible(this.isContentRenderable());
+        this.wizardActions.getPreviewAction().setEnabled(isRenderable);
+        this.getContextWindowToggler().setEnabled(isRenderable);
+        this.getComponentsViewToggler().setEnabled(isRenderable);
+
+        this.getComponentsViewToggler().setVisible(isRenderable);
+        this.getContextWindowToggler().setVisible(isRenderable);
     }
 
 }

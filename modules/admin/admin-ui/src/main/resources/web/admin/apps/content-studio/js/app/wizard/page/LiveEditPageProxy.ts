@@ -49,6 +49,21 @@ import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
 
 export class LiveEditPageProxy {
 
+    private static BLANK_PAGE_TEMPLATE = "<html>" +
+                                         "  <head>" +
+                                         "      <meta charset='utf-8'/>" +
+                                         "      <link id='live-edit-css' rel='stylesheet' href='{0}/admin/live-edit/styles/_all.css'/>" +
+                                         "  </head>" +
+                                         "  <body data-portal-component-type='page'>" +
+                                         "      <script type='text/javascript'>var CONFIG = {baseUri:'{0}'};</script>" +
+                                         "      <script type='text/javascript' src='{0}/admin/common/lib/_all.js'></script>" +
+                                         "      <script type='text/javascript' charset='UTF-8' src='{0}/admin/live-edit/lib/jquery.ui.touch-punch.min.js'></script>" +
+                                         "      <script type='text/javascript' charset='UTF-8' src='{0}/admin/live-edit/lib/jquery.resize.js'></script>" +
+                                         "      <script type='text/javascript' charset='UTF-8' src='{0}/admin/common/js/_all.js'></script>" +
+                                         "      <script type='text/javascript' charset='UTF-8' src='{0}/admin/live-edit/js/_all.js'></script>" +
+                                         "  </body>" +
+                                         "</html>";
+
     private liveEditModel: LiveEditModel;
 
     private liveEditIFrame: api.dom.IFrameEl;
@@ -136,6 +151,9 @@ export class LiveEditPageProxy {
             this.loadMask.hide();
         };
         this.onLiveEditPageViewReady(() => {
+            if (LiveEditPageProxy.debug) {
+                console.debug("LiveEditPageProxy.onLiveEditPageViewReady at " + new Date().toISOString());
+            }
             this.liveEditPageViewReady = true;
             this.hideLoadMaskHandler();
         });
@@ -213,21 +231,50 @@ export class LiveEditPageProxy {
         this.loadMask.remove();
     }
 
+    private getBlankFrameHtml(baseUri: string = CONFIG.baseUri): string {
+        return api.util.StringHelper.format(LiveEditPageProxy.BLANK_PAGE_TEMPLATE, encodeURIComponent(baseUri));
+    }
+
     public load() {
         this.liveEditPageViewReady = false;
-        this.showLoadMaskHandler();
 
-        var contentId = this.liveEditModel.getContent().getContentId().toString();
-        var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
-        if (LiveEditPageProxy.debug) {
-            console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
+        var isSite = this.liveEditModel.getContent().isSite();
+        var isTemplate = this.liveEditModel.getContent().isPageTemplate();
+        var hasController = this.liveEditModel.getPageModel().hasController();
+        var hasApplications = this.liveEditModel.getSiteModel().getApplicationKeys().length > 0;
+
+        if (isSite && (!hasApplications || !hasController) || isTemplate && !hasController) {
+            if (LiveEditPageProxy.debug) {
+                console.debug("LiveEditPageProxy.load: no reason to load page, applying blank template");
+            }
+
+            let setIframeHtml = () => {
+                if (LiveEditPageProxy.debug) {
+                    console.debug("LiveEditPageProxy.load: loading blank page at " + new Date().toISOString());
+                }
+                // can be done after iframe is added to dom only !
+                let contentDoc = this.liveEditIFrame.getHTMLElement()['contentDocument'];
+                contentDoc.open();
+                contentDoc.writeln(this.getBlankFrameHtml());
+                contentDoc.close();
+            };
+
+            this.liveEditIFrame.onAdded(setIframeHtml.bind(this));
+        } else {
+            this.showLoadMaskHandler();
+
+            var contentId = this.liveEditModel.getContent().getContentId().toString();
+            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+            if (LiveEditPageProxy.debug) {
+                console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
+            }
+
+            if (api.BrowserHelper.isIE()) {
+                this.copyObjectsBeforeFrameReloadForIE();
+            }
+
+            this.liveEditIFrame.setSrc(pageUrl);
         }
-
-        if (api.BrowserHelper.isIE()) {
-            this.copyObjectsBeforeFrameReloadForIE();
-        }
-
-        this.liveEditIFrame.setSrc(pageUrl);
     }
 
     public skipNextReloadConfirmation(skip: boolean) {
@@ -236,6 +283,10 @@ export class LiveEditPageProxy {
 
     private handleIFrameLoadedEvent() {
         var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
+
+        if (LiveEditPageProxy.debug) {
+            console.debug("LiveEditPageProxy.handleIframeLoadedEvent at " + new Date().toISOString());
+        }
 
         if (liveEditWindow) {
             if (liveEditWindow.wemjq) {
@@ -256,9 +307,15 @@ export class LiveEditPageProxy {
                     this.resetObjectsAfterFrameReloadForIE();
                     this.disableLinksInLiveEditForIE();
                 }
+                if (LiveEditPageProxy.debug) {
+                    console.debug("LiveEditPageProxy.hanldeIframeLoadedEvent: initialize live edit at " + new Date().toISOString());
+                }
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
             }
             else {
+                if (LiveEditPageProxy.debug) {
+                    console.debug("LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at " + new Date().toISOString());
+                }
                 this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
             }
         }

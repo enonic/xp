@@ -87,6 +87,8 @@ export interface LiveFormPanelConfig {
 
 export class LiveFormPanel extends api.ui.panel.Panel {
 
+    public static debug: boolean = false;
+
     private defaultModels: DefaultModels;
 
     private content: Content;
@@ -351,6 +353,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     loadPage(clearInspection: boolean = true) {
+        if (LiveFormPanel.debug) {
+            console.debug("LiveFormPanel.loadPage at " + new Date().toISOString());
+        }
         if (this.pageSkipReload == false && !this.pageLoading) {
 
             if (clearInspection) {

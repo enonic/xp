@@ -37,6 +37,8 @@ module LiveEdit {
 
         private skipNextReloadConfirmation: boolean = false;
 
+        private static debug: boolean = false;
+
         constructor() {
 
             api.liveedit.SkipLiveEditReloadConfirmationEvent.on((event: api.liveedit.SkipLiveEditReloadConfirmationEvent) => {
@@ -44,17 +46,23 @@ module LiveEdit {
             });
 
             api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditEvent) => {
+                var startTime = Date.now();
+                if (LiveEditPage.debug) {
+                    console.debug("LiveEditPage: starting live edit initialization");
+                }
 
                 var liveEditModel = event.getLiveEditModel();
 
                 var body = api.dom.Body.get().loadExistingChildren();
                 try {
-                    this.pageView = new PageViewBuilder().
-                        setItemViewProducer(new ItemViewIdProducer()).
-                        setLiveEditModel(liveEditModel).
-                        setElement(body).
-                        build();
+                    this.pageView = new PageViewBuilder()
+                        .setItemViewProducer(new ItemViewIdProducer())
+                        .setLiveEditModel(liveEditModel)
+                        .setElement(body).build();
                 } catch (error) {
+                    if (LiveEditPage.debug) {
+                        console.error("LiveEditPage: error initializing live edit in " + (Date.now() - startTime) + "ms");
+                    }
                     if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
                         new api.liveedit.LiveEditPageInitializationErrorEvent('The Live edit page could not be initialized. ' +
                                                                               error.getMessage()).fire();
@@ -71,6 +79,9 @@ module LiveEdit {
 
                 this.registerGlobalListeners();
 
+                if (LiveEditPage.debug) {
+                    console.debug("LiveEditPage: done live edit initializing in " + (Date.now() - startTime) + "ms");
+                }
                 new api.liveedit.LiveEditPageViewReadyEvent(this.pageView).fire();
             });
         }
@@ -123,7 +134,7 @@ module LiveEdit {
             ComponentViewDragStoppedEvent.on(() => {
                 Cursor.get().reset();
 
-                if(this.pageView.isLocked()) {
+                if (this.pageView.isLocked()) {
                     Highlighter.get().hide();
                     Shader.get().shade(this.pageView);
                 }
