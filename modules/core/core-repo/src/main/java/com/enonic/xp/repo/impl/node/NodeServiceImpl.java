@@ -678,9 +678,6 @@ public class NodeServiceImpl
             branch( SystemConstants.BRANCH_SYSTEM ).
             build().
             callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
-
-        //TODO remove
-        final Repository repository = getRepository( repositorySettings.getRepositoryId() );
     }
 
 
