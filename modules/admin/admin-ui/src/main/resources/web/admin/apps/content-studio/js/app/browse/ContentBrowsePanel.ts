@@ -137,6 +137,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
 
             return rendered;
+        }).catch((error) => {
+            console.error("Couldn't render ContentBrowsePanel", error);
+            return true;
         });
     }
 
@@ -175,10 +178,10 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         contentPanelsAndDetailPanel.addClass("split-panel-with-details");
         contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
 
-        this.appendChild(contentPanelsAndDetailPanel);
-
         nonMobileDetailsPanelsManagerBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
         nonMobileDetailsPanelsManagerBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
+
+        this.appendChild(contentPanelsAndDetailPanel);
     }
 
     private initFloatingDetailsPanel(nonMobileDetailsPanelsManagerBuilder: NonMobileDetailsPanelsManagerBuilder) {
