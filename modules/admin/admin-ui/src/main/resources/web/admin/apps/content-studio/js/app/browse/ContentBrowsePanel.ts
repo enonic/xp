@@ -146,8 +146,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
 
-        this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
-            var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems(),
+        this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
+                                               fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+            var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(fullSelection),
                 item: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus> = null;
             if (browseItems.length > 0) {
                 item = browseItems[0];
