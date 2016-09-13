@@ -81,7 +81,7 @@ module api.ui.selector.combobox {
             }
         }
 
-        handleLastRange(handler: () => void) {
+        private handleLastRange(handler: () => void) {
             let grid = this.getComboBox().getComboBoxDropdownGrid().getElement();
 
             grid.onShown(() => {

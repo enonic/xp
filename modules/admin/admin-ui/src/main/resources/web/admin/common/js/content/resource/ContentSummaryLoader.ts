@@ -34,8 +34,16 @@ module api.content.resource {
             this.contentSummaryRequest.setContentPath(path);
         }
 
+        isPartiallyLoaded(): boolean {
+            return this.contentSummaryRequest.isPartiallyLoaded();
+        }
+
         private setSearchQueryExpr(searchString: string = "") {
             this.contentSummaryRequest.setSearchString(searchString);
+        }
+
+        resetParams() {
+            this.contentSummaryRequest.resetParams()
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {

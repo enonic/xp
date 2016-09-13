@@ -16,7 +16,7 @@ module api.util.loader {
         }
 
         resetParams() {
-            // 
+            //
         }
 
         isPartiallyLoaded(): boolean {
@@ -27,9 +27,7 @@ module api.util.loader {
             // already have elements and not more than total
             if (this.isPartiallyLoaded() && this.isLoaded()) {
                 this.isPostLoading = true;
-                this.load(true).then(() => {
-                    this.isPostLoading = false;
-                }).catch(() => {
+                this.load(true).finally(() => {
                     this.isPostLoading = false;
                 });
             }
