@@ -64,7 +64,7 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
             wrapper.getEl().setTitle(value);
         }
 
-        var icon = new api.dom.DivEl("icon-menu3 drag-icon");
+        var icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls("menu") + " drag-icon");
         wrapper.getEl().setInnerHtml(icon.toString(), false);
         return wrapper.toString();
     }
