@@ -15,14 +15,28 @@ var CONFIG = {
             },
             maps: {},
             files: {
-                common: {src: '/common/styles/_module.less', dest: '/common/styles/_all.css'},
-                live: {src: '/live-edit/styles/_module.less', dest: '/live-edit/styles/_all.css'},
-                home: {src: '/common/styles/apps/home/home.less', dest: '/common/styles/_home.css'},
+                common: {
+                    src: '/common/styles/_module.less',
+                    dest: '/common/styles/_all.css',
+                    watch: ['common/icons/icons.less']
+                },
+                live: {
+                    src: '/live-edit/styles/_module.less',
+                    dest: '/live-edit/styles/_all.css'
+                },
+                home: {
+                    src: '/common/styles/apps/home/home.less',
+                    dest: '/common/styles/_home.css'
+                },
                 editor: {
                     src: '/common/styles/api/util/htmlarea/html-editor.module.less',
                     dest: '/common/styles/api/util/htmlarea/html-editor.css'
                 },
-                launcher: {src: '/common/styles/apps/launcher/launcher.less', dest: '/styles/_launcher.css', assets: true}
+                launcher: {
+                    src: '/common/styles/apps/launcher/launcher.less',
+                    dest: '/styles/_launcher.css',
+                    assets: true
+                }
             }
         },
         directives: {
@@ -31,6 +45,7 @@ var CONFIG = {
         },
         clean: {
             pattern: '/**/_all.*',
+            cleanDest: true,
             cleanDot: true
         },
         js: {
