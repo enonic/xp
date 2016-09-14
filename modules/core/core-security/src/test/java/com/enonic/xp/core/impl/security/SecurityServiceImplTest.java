@@ -19,6 +19,7 @@ import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
+import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
@@ -119,18 +120,24 @@ public class SecurityServiceImplTest
         storageService.setIndexServiceInternal( this.indexServiceInternal );
         storageService.setIndexDataService( indexedDataService );
 
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
+        nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
+
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+        this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
+        this.repositoryService.setNodeStorageService( storageService );
+        this.repositoryService.initialize();
 
+        this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setNodeSearchService( searchService );
         this.nodeService.setNodeStorageService( storageService );
         this.nodeService.setBinaryService( binaryService );
         this.nodeService.setRepositoryService( repositoryService );
-
-        this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.nodeService.setEventPublisher( this.eventPublisher );
+        this.nodeService.initialize();
 
         IndexServiceImpl indexService = new IndexServiceImpl();
         indexService.setNodeSearchService( searchService );
@@ -140,7 +147,6 @@ public class SecurityServiceImplTest
         securityService.setNodeService( this.nodeService );
         securityService.setIndexService( indexService );
 
-        this.nodeService.initialize();
         runAsAdmin( () -> securityService.initialize() );
     }
 

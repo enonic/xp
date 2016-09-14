@@ -45,7 +45,7 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public RepositoryId createRepository( final RepositorySettings repositorySettings )
+    public RepositoryId create( final RepositorySettings repositorySettings )
     {
         this.nodeRepositoryService.create( repositorySettings );
 
@@ -60,7 +60,7 @@ public class RepositoryServiceImpl
 
 
     @Override
-    public Repository getRepository( final RepositoryId repositoryId )
+    public Repository get( final RepositoryId repositoryId )
     {
         final NodeId nodeId = NodeId.from( repositoryId.toString() );
         final Node node = ContextBuilder.from( ContextAccessor.current() ).

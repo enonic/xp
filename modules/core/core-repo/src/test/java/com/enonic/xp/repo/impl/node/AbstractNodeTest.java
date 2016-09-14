@@ -42,6 +42,7 @@ import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
@@ -193,8 +194,13 @@ public abstract class AbstractNodeTest
         nodeService.setBinaryService( this.binaryService );
         nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
+        nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
+
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+        this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
+        this.repositoryService.setNodeStorageService( this.storageService );
     }
 
     void createRepository( final Repository repository )

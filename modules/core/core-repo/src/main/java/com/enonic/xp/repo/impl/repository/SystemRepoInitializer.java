@@ -28,7 +28,7 @@ public class SystemRepoInitializer
             final boolean initialized = this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() );
             if ( !initialized )
             {
-                this.repositoryService.createRepository( RepositorySettings.create().
+                this.repositoryService.create( RepositorySettings.create().
                     repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
                     build() );
             }
