@@ -105,7 +105,7 @@ module api.ui.image {
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
 
-            this.image = new ImgEl(null, 'image-bg');
+            this.image = new ImgEl(null, 'image-bg', true);
 
             let resizeListener = (item) => {
                 if (this.isVisible()) {
