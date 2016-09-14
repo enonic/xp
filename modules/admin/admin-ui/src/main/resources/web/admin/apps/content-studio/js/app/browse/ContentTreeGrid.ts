@@ -46,8 +46,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     static MAX_FETCH_SIZE: number = 10;
 
-    static SERVER_LOAD_SIZE: number = ContentTreeGrid.MAX_FETCH_SIZE * 10;
-
     private filterQuery: api.content.query.ContentQuery;
 
     constructor() {
