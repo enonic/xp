@@ -6,9 +6,13 @@ module api.form {
 
         private occurrenceView: FormItemOccurrenceView;
 
-        constructor(occurrence: FormItemOccurrence<FormItemOccurrenceView>, occurrenceView: FormItemOccurrenceView) {
+        private validateOnRender: boolean;
+
+        constructor(occurrence: FormItemOccurrence<FormItemOccurrenceView>, occurrenceView: FormItemOccurrenceView,
+                    validateViewOnRender: boolean = true) {
             this.occurrence = occurrence;
             this.occurrenceView = occurrenceView;
+            this.validateOnRender = validateViewOnRender;
         }
 
         getOccurrence(): FormItemOccurrence<FormItemOccurrenceView> {
@@ -17,6 +21,10 @@ module api.form {
 
         getOccurrenceView(): FormItemOccurrenceView {
             return this.occurrenceView;
+        }
+
+        validateViewOnRender(): boolean {
+            return this.validateOnRender;
         }
     }
 }

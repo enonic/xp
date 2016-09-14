@@ -243,7 +243,7 @@ module api.util.htmlarea.editor {
                         }
                     });
                     editor.on('keydown', (e) => {
-                        if (e.keyCode == 9) { // tab pressed
+                        if (e.keyCode == 9 && !e.altKey && !e.ctrlKey) { // tab pressed
                             editor.execCommand(e.shiftKey ? 'Outdent' : 'Indent');
                             e.preventDefault();
                         }

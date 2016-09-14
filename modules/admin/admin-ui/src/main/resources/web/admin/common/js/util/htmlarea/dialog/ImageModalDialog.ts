@@ -204,7 +204,7 @@ module api.util.htmlarea.dialog {
             imageEl.getEl().setAttribute("alt", imageContent.getDisplayName());
             imageEl.getEl().setAttribute("data-src", imgDataSrcAttr);
 
-            var imageAlignment = isExistingImg ? (this.imageElement.parentElement.style.textAlign ||
+            var imageAlignment = isExistingImg ? (this.imageElement.style.textAlign ||
                                                   this.imageElement.parentElement.style.cssFloat) : "justify";
             imageEl.getHTMLElement().style.textAlign = imageAlignment;
 
@@ -390,7 +390,7 @@ module api.util.htmlarea.dialog {
             var figure = api.dom.ElementHelper.fromName("figure");
             var figCaption = api.dom.ElementHelper.fromName("figcaption");
             figCaption.setText(this.getCaptionFieldValue());
-            figCaption.setAttribute("style", "text-align: center");
+            figCaption.setAttribute("style", "text-align: left");
             this.image.setId("__mcenew");
 
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);

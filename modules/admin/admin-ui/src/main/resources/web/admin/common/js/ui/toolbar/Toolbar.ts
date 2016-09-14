@@ -4,11 +4,11 @@ module api.ui.toolbar {
 
     export class Toolbar extends api.dom.DivEl implements api.ui.ActionContainer {
 
-        private fold: FoldButton;
+        protected fold: FoldButton;
 
         private hasGreedySpacer: boolean;
 
-        private actions: api.ui.Action[] = [];
+        protected actions: api.ui.Action[] = [];
 
         constructor(className?: string) {
             super(!className ? "toolbar" : className + " toolbar");
@@ -70,7 +70,7 @@ module api.ui.toolbar {
             this.hasGreedySpacer = false;
         }
 
-        private foldOrExpand() {
+        protected foldOrExpand() {
             if (!this.isVisible()) {
                 return;
             }

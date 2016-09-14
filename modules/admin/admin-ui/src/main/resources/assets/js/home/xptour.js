@@ -1,7 +1,7 @@
 var tourDialog;
 var tourSteps = [];
 var canInstallDemoApps = false;
-var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.xphoot", "com.enonic.app.googlemaps"];
+var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.xphoot", "com.enonic.app.imagexpert"];
 var marketDemoApps = [];
 var isInstallingNow = false;
 
@@ -10,7 +10,7 @@ exports.init = function () {
     initTourSteps();
     setTourStep(1);
     api.dom.Body.get().appendChild(tourDialog);
-    
+
     return tourDialog;
 };
 
@@ -54,7 +54,7 @@ function initNavigation() {
                 nextStepActionButton.setLabel("Installing...");
                 nextStepActionButton.setEnabled(false);
                 isInstallingNow = true;
-                
+
                 wemQ.all(loadDemoApps()).spread(function () {
                     if (currentStep === tourSteps.length) { //if still on install apps page of xp tour
                         nextStepActionButton.setLabel("Finish");
@@ -97,7 +97,8 @@ function initNavigation() {
 function initTourSteps() {
     tourSteps = [createStep1(), createStep2(), createStep3(), createStep4()];
 
-    fetchDemoAppsFromMarket().then(function () {
+    fetchDemoAppsFromMarket().then(function (apps) {
+        marketDemoApps = apps;
         canInstallDemoApps = marketDemoApps.some(function (marketDemoApp) {
             return marketDemoApp.getStatus() !== api.application.MarketAppStatus.INSTALLED;
         });
@@ -207,24 +208,19 @@ function createStep5() {
 function fetchDemoAppsFromMarket() {
     var appPromises = [];
 
-    appPromises.push(new api.application.ListApplicationsRequest().sendAndParse(), new api.application.ListMarketApplicationsRequest()
-        .setStart(0)
-        .setCount(40)
-        .setVersion(CONFIG.xpVersion)
-        .sendAndParse()
-        .then(function (response) {
-            return response.getApplications().filter(function (marketApp) {
-                return demoAppsNames.some(function (demoAppName) {
-                    if (marketApp.getName() === demoAppName) {
-                        marketDemoApps.push(marketApp);
-                        return true;
-                    }
-                })
-            });
-        }));
+    appPromises.push(
+        new api.application.ListApplicationsRequest().sendAndParse(),
+        new api.application.ListMarketApplicationsRequest()
+            .setStart(0)
+            .setCount(40)
+            .setVersion(CONFIG.xpVersion)
+            .setIds(demoAppsNames)
+            .sendAndParse()
+    );
 
-    return wemQ.all(appPromises).spread(function (installedApplications, marketDemoApps) {
-        marketDemoApps.forEach(function (marketDemoApp) {
+    return wemQ.all(appPromises).spread(function (installedApplications, marketApplications) {
+        var apps = marketApplications.getApplications();
+        apps.forEach(function (marketDemoApp) {
             for (var i = 0; i < installedApplications.length; i++) {
                 if (marketDemoApp.getAppKey().equals(installedApplications[i].getApplicationKey())) {
                     if (api.application.MarketApplicationsFetcher.installedAppCanBeUpdated(marketDemoApp, installedApplications[i])) {
@@ -236,6 +232,7 @@ function fetchDemoAppsFromMarket() {
                 }
             }
         });
+        return apps;
     }).catch(function (err) {
         api.DefaultErrorHandler.handle(err);
     });

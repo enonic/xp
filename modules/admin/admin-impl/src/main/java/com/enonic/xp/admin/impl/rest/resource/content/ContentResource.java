@@ -746,16 +746,15 @@ public final class ContentResource
         }
     }
 
-    @GET
+    @POST
     @Path("resolveByIds")
-    public ContentSummaryListJson getByIds( @QueryParam("ids") final String ids )
+    public ContentSummaryListJson getByIds( final ContentIdsJson params )
     {
-        final ContentIds contentIds = ContentIds.from( ids.split( "," ) );
-        final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
+        final Contents contents = contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) );
 
         if ( contents == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Contents [%s] was not found", ids ) );
+            throw JaxRsExceptions.notFound( String.format( "Contents [%s] was not found", params.getContentIds() ) );
         }
         final ContentListMetaData metaData = ContentListMetaData.create().
             totalHits( contents.getSize() ).

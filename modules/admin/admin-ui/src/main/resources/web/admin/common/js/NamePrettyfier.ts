@@ -136,8 +136,13 @@ module api {
                 result += (replace != null ? replace : character);
             }
 
-            var normalized = (<any>result).normalize('NFD'),
-                nonAsciiCleaned = normalized.replace(this.NOT_ASCII, this.DEFAULT_REPLACE);
+            var normalized = result;
+
+            if ((<any>result).normalize) {
+                normalized = (<any>result).normalize('NFD');
+            }
+
+            var nonAsciiCleaned = normalized.replace(this.NOT_ASCII, this.DEFAULT_REPLACE);
             return nonAsciiCleaned.toLowerCase();
         }
 

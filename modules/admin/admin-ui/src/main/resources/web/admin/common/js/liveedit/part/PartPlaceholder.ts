@@ -21,7 +21,7 @@ module api.liveedit.part {
 
         constructor(partView: PartComponentView) {
             super();
-            this.addClassEx("part-placeholder");
+            this.addClassEx("part-placeholder").addClass(api.StyleHelper.getCommonIconCls("part"));
 
             this.partComponentView = partView;
 

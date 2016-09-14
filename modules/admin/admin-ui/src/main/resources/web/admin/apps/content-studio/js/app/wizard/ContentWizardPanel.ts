@@ -125,8 +125,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isSecurityWizardStepFormAllowed: boolean;
 
-    private publishButtonForMobile: api.ui.dialog.DialogButton;
-
     private inMobileViewMode: boolean;
 
     private skipValidation: boolean;
@@ -327,7 +325,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             unpublishAction: this.wizardActions.getUnpublishAction(),
             showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
             showFormAction: this.wizardActions.getShowFormAction(),
-            showSplitEditAction: this.wizardActions.getShowSplitEditAction()
+            showSplitEditAction: this.wizardActions.getShowSplitEditAction(),
+            publishMobileAction: this.wizardActions.getPublishMobileAction()
         });
     }
 
@@ -386,15 +385,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 console.debug("ContentWizardPanel.doRenderOnDataLoaded");
             }
 
-            new api.content.resource.GetPermittedActionsRequest().
-                addPermissionsToBeChecked(Permission.PUBLISH).
-                addContentIds(this.getPersistedItem().getContentId()).
-                sendAndParse().
-                then((allowedPermissions: Permission[]) => {
-                    if (allowedPermissions.indexOf(Permission.PUBLISH) > -1) {
-                        this.initPublishButtonForMobile();
-                    }
-                });
+            this.appendChild(this.getContentWizardToolbarPublishControls().getPublishButtonForMobile());
 
             if (this.contentType.hasContentDisplayNameScript()) {
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
@@ -412,7 +403,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             this.onShown(() => {
                 this.updateButtonsState();
-            })
+            });
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
                 let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
@@ -843,8 +834,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 publishControls.setCompareStatus(this.contentCompareStatus);
                 publishControls.setLeafContent(!this.getPersistedItem().hasChildren());
-
-                this.managePublishButtonStateForMobile(this.contentCompareStatus);
             });
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
@@ -1509,48 +1498,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         // case when content was moved
         this.getWizardHeader()
             .setPath(content.getPath().getParentPath().isRoot() ? "/" : content.getPath().getParentPath().toString() + "/");
-    }
-
-    private initPublishButtonForMobile() {
-        var action: api.ui.Action = new api.ui.Action("Publish");
-        action.setIconClass("publish-action");
-        action.onExecuted(() => {
-            this.wizardActions.getPublishAction().execute();
-        });
-
-        this.publishButtonForMobile = new DialogButton(action);
-        this.publishButtonForMobile.addClass("mobile-edit-publish-button");
-
-        this.subscribePublishButtonForMobileToPublishEvents();
-
-        this.appendChild(this.publishButtonForMobile);
-    }
-
-    private managePublishButtonStateForMobile(compareStatus: CompareStatus) {
-        var canBeShown = compareStatus !== CompareStatus.EQUAL;
-        this.publishButtonForMobile.toggleClass("visible", canBeShown);
-        this.publishButtonForMobile.setLabel("Publish " + api.content.CompareStatusFormatter.formatStatus(compareStatus) + " item");
-    }
-
-    private subscribePublishButtonForMobileToPublishEvents() {
-
-        var serverPublishOrUnpublishHandler = (contents: ContentSummaryAndCompareStatus[]) => {
-            contents.forEach(content => {
-                if (this.isCurrentContentId(content.getContentId())) {
-                    this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
-                }
-            });
-        };
-
-
-        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
-        serverEvents.onContentPublished(serverPublishOrUnpublishHandler);
-        serverEvents.onContentUnpublished(serverPublishOrUnpublishHandler);
-
-        this.onClosed(() => {
-            serverEvents.unContentPublished(serverPublishOrUnpublishHandler);
-            serverEvents.unContentUnpublished(serverPublishOrUnpublishHandler);
-        });
     }
 
     private openLiveEdit() {

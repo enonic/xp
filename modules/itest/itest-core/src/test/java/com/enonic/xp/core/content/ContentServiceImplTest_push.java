@@ -44,13 +44,12 @@ public class ContentServiceImplTest_push
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
+            name( "myContent" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
-
-        refresh();
 
         final PublishContentResult push = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).

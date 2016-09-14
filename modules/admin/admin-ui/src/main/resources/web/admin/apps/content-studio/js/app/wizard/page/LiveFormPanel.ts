@@ -339,6 +339,11 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 }
             }
         });
+
+        this.pageModel.onReset(() => {
+            this.contextWindow.slideOut();
+            this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
+        });
     }
 
     skipNextReloadConfirmation(skip: boolean) {

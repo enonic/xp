@@ -10,9 +10,6 @@ module api.form.inputtype.text {
     import ContentSummary = api.content.ContentSummary;
     import Element = api.dom.Element;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-    import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
-    import ImageModalDialog = api.util.htmlarea.dialog.ImageModalDialog;
-    import AnchorModalDialog = api.util.htmlarea.dialog.AnchorModalDialog;
     import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
@@ -185,8 +182,7 @@ module api.form.inputtype.text {
                 removeButtonEL.addEventListener("mouseleave", () => {
                     isMouseOverRemoveOccurenceButton = false;
                 });
-
-                    HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
+                
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
                         if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
@@ -306,6 +302,7 @@ module api.form.inputtype.text {
             var editor = this.getEditor(editorId);
             if (editor) {
                 editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : "");
+                HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
             } else {
                 console.log("Editor with id '" + editorId + "' not found")
             }

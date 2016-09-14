@@ -8,13 +8,13 @@ module api.content.resource {
 
         constructor(ids: ContentId[]) {
             super();
-            super.setMethod("GET");
+            super.setMethod("POST");
             this.ids = ids;
         }
 
         getParams(): Object {
             return {
-                ids: this.ids.map(id => id.toString()).join(",")
+                contentIds: this.ids.map(id => id.toString())
             };
         }
 

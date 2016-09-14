@@ -77,9 +77,9 @@ module api.form {
                 });
         }
 
-        private notifyOccurrenceRendered(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
+        private notifyOccurrenceRendered(occurrence: FormItemOccurrence<V>, occurrenceView: V, validate: boolean) {
             this.occurrenceRenderedListeners.forEach((listener: (event: OccurrenceRenderedEvent)=>void)=> {
-                listener.call(this, new OccurrenceRenderedEvent(occurrence, occurrenceView))
+                listener.call(this, new OccurrenceRenderedEvent(occurrence, occurrenceView, validate))
             });
         }
 
@@ -228,7 +228,7 @@ module api.form {
                 this.resetOccurrenceIndexes();
                 this.refreshOccurrenceViews();
                 occurrenceView.giveFocus();
-                this.notifyOccurrenceRendered(occurrence, occurrenceView);
+                this.notifyOccurrenceRendered(occurrence, occurrenceView, validate);
                 return occurrenceView;
             });
         }
