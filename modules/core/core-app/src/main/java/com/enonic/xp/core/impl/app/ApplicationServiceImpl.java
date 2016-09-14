@@ -384,7 +384,7 @@ public final class ApplicationServiceImpl
                     os.write( buffer, 0, bytesRead );
                     totalRead += bytesRead;
 
-                    currentPct = totalRead * 100 / totalLength;
+                    currentPct = ( totalRead / totalLength ) * 100;
 
                     if ( triggerEvent && lastPct != currentPct )
                     {
