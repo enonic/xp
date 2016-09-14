@@ -79,7 +79,7 @@ module api.app.browse {
                     .then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);
-                }, 500, false);
+                }, 200, false);
 
             this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
 
