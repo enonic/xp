@@ -154,7 +154,7 @@ module api.content.event {
             var contentPaths: ContentPath[] = [];
 
             changes.forEach((change: ContentServerChange) => {
-                contentPaths.concat(change.getNewPaths());
+                contentPaths = contentPaths.concat(change.getNewPaths());
             });
 
             return contentPaths;
