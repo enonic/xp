@@ -42,7 +42,6 @@ module api.content.resource {
             this.contentSummaryRequest.setSearchString("");
         }
 
-
         load(): wemQ.Promise<ContentSummary[]> {
 
             this.notifyLoadingData();
@@ -75,7 +74,11 @@ module api.content.resource {
         }
 
         isPartiallyLoaded(): boolean {
-            return false;
+            return this.contentSummaryRequest.isPartiallyLoaded();
+        }
+
+        resetParams() {
+            this.contentSummaryRequest.resetParams()
         }
 
         private filterContent(contents: ContentSummary[], contentTypes: ContentType[]): ContentSummary[] {

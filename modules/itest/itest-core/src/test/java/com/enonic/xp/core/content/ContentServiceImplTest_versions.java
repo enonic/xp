@@ -1,7 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.util.UUID;
-
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
@@ -68,7 +66,7 @@ public class ContentServiceImplTest_versions
     {
         final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
-            displayName( "This is my test content #" + UUID.randomUUID().toString() ).
+            displayName( "This is my test content" ).
             parent( ContentPath.ROOT ).
             name( "myContent" ).
             type( ContentTypeName.folder() ).
@@ -76,8 +74,14 @@ public class ContentServiceImplTest_versions
 
         this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( WS_OTHER ).
+            target( CTX_OTHER.getBranch() ).
             build() );
+
+        final FindContentVersionsResult versionsBeforeUpdate = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        assertEquals( 1, versionsBeforeUpdate.getHits() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).
@@ -87,16 +91,16 @@ public class ContentServiceImplTest_versions
 
         this.contentService.update( updateContentParams );
 
-        final FindContentVersionsResult result2 = this.contentService.getVersions( FindContentVersionsParams.create().
+        final FindContentVersionsResult versionsAfterUpdate = this.contentService.getVersions( FindContentVersionsParams.create().
             contentId( content.getId() ).
             build() );
 
-        assertEquals( 2, result2.getHits() );
+        assertEquals( 2, versionsAfterUpdate.getHits() );
 
         final GetActiveContentVersionsResult activeVersions =
             this.contentService.getActiveVersions( GetActiveContentVersionsParams.create().
                 contentId( content.getId() ).
-                branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
+                branches( Branches.from( CTX_DEFAULT.getBranch(), CTX_OTHER.getBranch() ) ).
                 build() );
 
         final ImmutableSortedSet<ActiveContentVersionEntry> activeContentVersions = activeVersions.getActiveContentVersions();

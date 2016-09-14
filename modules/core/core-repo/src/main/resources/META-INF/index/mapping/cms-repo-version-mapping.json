@@ -27,7 +27,8 @@
       "nodepath": {
         "type": "string",
         "store": "true",
-        "index": "not_analyzed"
+        "index": "analyzed",
+        "analyzer": "keywordlowercase"
       }
     }
   }

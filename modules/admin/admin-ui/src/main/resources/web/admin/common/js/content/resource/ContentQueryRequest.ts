@@ -10,19 +10,32 @@ module api.content.resource {
 
         private expand: api.rest.Expand = api.rest.Expand.SUMMARY;
 
-        constructor(contentQuery?: ContentQuery) {
+        private allLoaded: boolean = false;
+
+        private results: CONTENT[] = [];
+
+        constructor(contentQuery: ContentQuery) {
             super();
             super.setMethod("POST");
             this.contentQuery = contentQuery;
         }
 
-        setContentQuery(contentQuery: ContentQuery) {
-            this.contentQuery = contentQuery;
+        getContentQuery(): ContentQuery {
+            return this.contentQuery;
         }
 
         setExpand(expand: api.rest.Expand): ContentQueryRequest<CONTENT_JSON,CONTENT> {
             this.expand = expand;
             return this;
+        }
+
+        isPartiallyLoaded(): boolean {
+            return this.results.length > 0 && !this.allLoaded;
+        }
+
+        resetParams() {
+            this.allLoaded = false;
+            this.contentQuery.setFrom(this.contentQuery.getFrom() >= 0 ? 0 : -1);
         }
 
         getParams(): Object {
@@ -45,37 +58,37 @@ module api.content.resource {
 
             return this.send().then((response: api.rest.JsonResponse<json.ContentQueryResultJson<CONTENT_JSON>>) => {
 
-                var responseResult: json.ContentQueryResultJson<CONTENT_JSON> = response.getResult();
-
-                var aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations);
-
-                var contentsAsJson: json.ContentIdBaseItemJson[] = responseResult.contents;
-
-                var contentQueryResult: ContentQueryResult<CONTENT, CONTENT_JSON>;
-
-                var metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]);
+                var responseResult: json.ContentQueryResultJson<CONTENT_JSON> = response.getResult(),
+                    aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations),
+                    contentsAsJson: json.ContentIdBaseItemJson[] = responseResult.contents,
+                    metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]),
+                    contents: CONTENT[];
 
                 if (this.expand == api.rest.Expand.NONE) {
-
-                    var contentIdBaseItems: CONTENT[] = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
-                    contentQueryResult =
-                        new ContentQueryResult<CONTENT,CONTENT_JSON>(contentIdBaseItems, aggregations, <CONTENT_JSON[]>contentsAsJson,
-                            metadata);
+                    contents = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
                 }
                 else if (this.expand == api.rest.Expand.SUMMARY) {
-                    var contentSummaries: CONTENT[] = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
-                    contentQueryResult =
-                        new ContentQueryResult<CONTENT,CONTENT_JSON>(contentSummaries, aggregations, <CONTENT_JSON[]>contentsAsJson,
-                            metadata);
+                    contents = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
                 }
                 else {
-                    var contents: CONTENT[] = <any[]>this.fromJsonToContentArray(<json.ContentJson[]>contentsAsJson);
-                    contentQueryResult =
-                        new ContentQueryResult<CONTENT,CONTENT_JSON>(contents, aggregations, <CONTENT_JSON[]>contentsAsJson, metadata);
+                    contents = <any[]>this.fromJsonToContentArray(<json.ContentJson[]>contentsAsJson);
                 }
 
-                return contentQueryResult;
+                this.updateStateAfterLoad(contents, metadata);
+
+                return new ContentQueryResult<CONTENT,CONTENT_JSON>(this.results, aggregations, <CONTENT_JSON[]>contentsAsJson, metadata);
             });
+        }
+
+        private updateStateAfterLoad(contents: CONTENT[], metadata: ContentMetadata) {
+            if (this.contentQuery.getFrom() == 0) {
+                this.results = [];
+            }
+
+            this.results = this.results.concat(contents);
+
+            this.allLoaded = (this.contentQuery.getFrom() + metadata.getHits()) >= metadata.getTotalHits();
+            this.contentQuery.setFrom(this.contentQuery.getFrom() + metadata.getHits());
         }
 
         private getMustBereferencedById(): string {

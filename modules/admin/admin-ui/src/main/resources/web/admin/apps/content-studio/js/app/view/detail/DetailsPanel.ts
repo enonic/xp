@@ -16,6 +16,8 @@ import CompareStatus = api.content.CompareStatus;
 import Widget = api.content.Widget;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
+import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+
 export class DetailsPanel extends api.ui.panel.Panel {
 
     private widgetViews: WidgetView[] = [];
@@ -89,8 +91,14 @@ export class DetailsPanel extends api.ui.panel.Panel {
         this.onSlidedIn(() => !!this.item ? this.updateActiveWidget() : null);
 
         this.onShown(() => {
-            if (!!this.item) {
-                setTimeout(() =>  this.updateActiveWidget(), 50); // small delay so that isVisiblieOrAboutToBeVisible() check detects width change
+            if (this.isDockedPanel() && !!this.item) {
+                setTimeout(() =>  this.updateActiveWidget(), 250); // small delay so that isVisibleOrAboutToBeVisible() check detects width change
+            }
+        });
+
+        ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
+            if (this.isVisibleOrAboutToBeVisible() && !!this.activeWidget && this.activeWidget.getWidgetName() == "Version history") {
+                this.updateActiveWidget();
             }
         });
     }
@@ -238,7 +246,11 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     public isVisibleOrAboutToBeVisible(): boolean {
-        return this.isSlidedIn() || (this.isVisible() && this.getHTMLElement().clientWidth > 0);
+        return this.isSlidedIn() || (this.isDockedPanel() && this.getHTMLElement().clientWidth > 0);
+    }
+
+    private isDockedPanel(): boolean {
+        return this.hasClass("docked-details-panel");
     }
 
     private getWidgetsInterfaceNames(): string[] {
