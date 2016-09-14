@@ -56,10 +56,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private defaultDockedDetailsPanel: DetailsPanel;
 
-    private createdContentQueue: ContentSummaryAndCompareStatus[];
-
-    private contentCreationInProgress: boolean;
-
     constructor() {
 
         this.contentTreeGrid = new ContentTreeGrid();
@@ -74,7 +70,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         this.defaultDockedDetailsPanel = DetailsPanel.create().setUseSplitter(false).build();
 
-        this.createdContentQueue = [];
         super({
             browseToolbar: this.toolbar,
             treeGrid: this.contentTreeGrid,
@@ -362,11 +357,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             console.debug("ContentBrowsePanel: created", data, oldPaths);
         }
 
-        this.createdContentQueue = this.createdContentQueue.concat(data);
-
-        if (!this.contentCreationInProgress) {
-            this.processContentCreated(oldPaths);
-        }
+        this.processContentCreated(data, oldPaths);
     }
 
     private handleContentUpdated(data: ContentSummaryAndCompareStatus[]) {
@@ -442,69 +433,71 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.doHandleContentUpdate(data);
     }
 
-    private processContentCreated(oldPaths?: ContentPath[], results: wemQ.Promise<any>[] = []) {
+    private processContentCreated(data: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) {
 
-        if (this.createdContentQueue.length > 0) {
-            this.contentCreationInProgress = true;
+        var results: wemQ.Promise<any>[] = []
 
-            let data = this.createdContentQueue.splice(0, Math.min(ContentTreeGrid.SERVER_LOAD_SIZE, this.createdContentQueue.length));
+        var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
+        var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true);
 
-            var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
-            var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true);
+        var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
+            nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
 
-            var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
-                nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
+        var parentsOfContents: TreeNodeParentOfContent[] = [];
 
+        for (var i = 0; i < createResult.length; i++) {
+
+            var dataToHandle: ContentSummaryAndCompareStatus[] = [];
 
             data.forEach((el) => {
-                for (var i = 0; i < createResult.length; i++) {
-                    if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
-                        if (oldPaths && oldPaths.length > 0) {
-                            var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(oldPaths);
-                            var premerged = renameResult.map((el) => {
-                                return el.getNodes();
-                            });
-                            // merge array of nodes arrays
-                            nodes = nodes.concat.apply(nodes, premerged);
-                            nodes.forEach((node) => {
-                                if (node.getDataId() === el.getId()) {
-                                    node.setData(el);
-                                    node.clearViewers();
-                                    this.contentTreeGrid.xUpdatePathsInChildren(node);
-                                }
-                            });
-                            results.push(this.contentTreeGrid.xPlaceContentNodes(nodes));
-                        } else {
-                            results.push(this.contentTreeGrid.xAppendContentNodes(
-                                createResult[i].getNodes().map((node) => {
-                                    return new TreeNodeParentOfContent(el, node);
-                                }),
-                                !isFiltered
-                            ).then((results) => {
-                                nodes = nodes.concat(results);
-                            }));
-                        }
-                        break;
+
+                if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
+
+                    if (oldPaths && oldPaths.length > 0) {
+                        var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(oldPaths);
+                        var premerged = renameResult.map((curRenameResult) => {
+                            return curRenameResult.getNodes();
+                        });
+                        // merge array of nodes arrays
+                        nodes = nodes.concat.apply(nodes, premerged);
+
+                        nodes.forEach((node) => {
+                            if (node.getDataId() === el.getId()) {
+                                node.setData(el);
+                                node.clearViewers();
+                                this.contentTreeGrid.xUpdatePathsInChildren(node);
+                            }
+                        });
+                        results.push(this.contentTreeGrid.xPlaceContentNodes(nodes));
+                    } else {
+                        dataToHandle.push(el);
                     }
                 }
             });
 
-            if (this.createdContentQueue.length > 0) {
-                setTimeout(() => this.processContentCreated(oldPaths, results), 500);
-            } else {
-                wemQ.allSettled(results).then(() => {
-
-                    this.contentCreationInProgress = false;
-                    this.contentTreeGrid.initAndRender();
-
-                    this.setRefreshOfFilterRequired();
-                    window.setTimeout(() => {
-                        this.refreshFilter();
-                    }, 1000);
-                });
-            }
-
+            createResult[i].getNodes().map((node) => {
+                parentsOfContents.push(new TreeNodeParentOfContent(dataToHandle, node));
+            });
         }
+
+        if (!!parentsOfContents) {
+            results.push(this.contentTreeGrid.xAppendContentNodes(
+                parentsOfContents,
+                !isFiltered
+            ).then((results) => {
+                nodes = nodes.concat(results);
+            }));
+        }
+
+        wemQ.allSettled(results).then(() => {
+
+            this.contentTreeGrid.initAndRender();
+
+            this.setRefreshOfFilterRequired();
+            window.setTimeout(() => {
+                this.refreshFilter();
+            }, 1000);
+        });
     }
 
     private doHandleContentUpdate(data: ContentSummaryAndCompareStatus[]): TreeNode<ContentSummaryAndCompareStatus>[] {
