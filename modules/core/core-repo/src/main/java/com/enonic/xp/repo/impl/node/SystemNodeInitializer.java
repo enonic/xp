@@ -4,7 +4,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -35,8 +34,6 @@ public class SystemNodeInitializer
                     childOrder( ChildOrder.from( "_name ASC" ) ).
                     permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
                     build() );
-
-                nodeService.push( NodeIds.from( rootNode.id() ), SecurityConstants.BRANCH_SECURITY );
             }
         } );
     }
