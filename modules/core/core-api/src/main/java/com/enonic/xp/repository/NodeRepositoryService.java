@@ -3,11 +3,10 @@ package com.enonic.xp.repository;
 import com.google.common.annotations.Beta;
 
 @Beta
-public interface RepositoryService
+public interface NodeRepositoryService
 {
     RepositoryId create( final RepositorySettings repositorySettings );
 
-    Repository get( final RepositoryId repositoryId );
+    boolean isInitialized( final RepositoryId repositoryId );
 
-    boolean isInitialized( final RepositoryId id );
 }
