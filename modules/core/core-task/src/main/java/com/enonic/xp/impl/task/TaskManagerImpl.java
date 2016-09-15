@@ -19,7 +19,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskManager;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
@@ -28,7 +27,7 @@ import static com.enonic.xp.task.TaskState.FINISHED;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 
-@Component(immediate = true)
+@Component
 public final class TaskManagerImpl
     implements TaskManager
 {

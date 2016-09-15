@@ -6,12 +6,12 @@ import java.util.function.Supplier;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskManager;
+import com.enonic.xp.task.TaskService;
 
 public final class SubmitTaskHandler
     implements ScriptBean
 {
-    private Supplier<TaskManager> taskManager;
+    private Supplier<TaskService> taskServiceSupplier;
 
     private String description;
 
@@ -29,9 +29,9 @@ public final class SubmitTaskHandler
 
     public String submit()
     {
-        final TaskManager taskMan = taskManager.get();
+        final TaskService taskService = taskServiceSupplier.get();
         final TaskWrapper taskWrapper = new TaskWrapper( taskFunction, description );
-        final TaskId taskId = taskMan.submitTask( taskWrapper, description );
+        final TaskId taskId = taskService.submitTask( taskWrapper, description );
 
         return taskId.toString();
     }
@@ -39,6 +39,6 @@ public final class SubmitTaskHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        taskManager = context.getService( TaskManager.class );
+        taskServiceSupplier = context.getService( TaskService.class );
     }
 }

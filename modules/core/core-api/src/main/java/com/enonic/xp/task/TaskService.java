@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.annotations.Beta;
 
 @Beta
-public interface TaskManager
+public interface TaskService
 {
     TaskId submitTask( RunnableTask runnable, String description );
 

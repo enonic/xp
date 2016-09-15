@@ -9,29 +9,29 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskManager;
 import com.enonic.xp.task.TaskProgress;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class GetTasksHandlerTest
     extends ScriptTestSupport
 {
-    private TaskManager taskManager;
+    private TaskService taskService;
 
     @Override
     public void initialize()
         throws Exception
     {
         super.initialize();
-        taskManager = Mockito.mock( TaskManager.class );
-        addService( TaskManager.class, taskManager );
+        taskService = Mockito.mock( TaskService.class );
+        addService( TaskService.class, taskService );
     }
 
     @Test
     public void testExample()
     {
-        Mockito.when( this.taskManager.getAllTasks() ).thenReturn( taskList() );
+        Mockito.when( this.taskService.getAllTasks() ).thenReturn( taskList() );
 
         runScript( "/site/lib/xp/examples/task/getTasks.js" );
     }
@@ -40,7 +40,7 @@ public class GetTasksHandlerTest
     public void testGetTasksExisting()
         throws Exception
     {
-        Mockito.when( this.taskManager.getAllTasks() ).thenReturn( taskList() );
+        Mockito.when( this.taskService.getAllTasks() ).thenReturn( taskList() );
 
         runFunction( "/site/test/getTasks-test.js", "getExistingTasks" );
     }
@@ -49,7 +49,7 @@ public class GetTasksHandlerTest
     public void testGetTasksNone()
         throws Exception
     {
-        Mockito.when( this.taskManager.getAllTasks() ).thenReturn( new ArrayList<>() );
+        Mockito.when( this.taskService.getAllTasks() ).thenReturn( new ArrayList<>() );
 
         runFunction( "/site/test/getTasks-test.js", "getTasksNone" );
     }

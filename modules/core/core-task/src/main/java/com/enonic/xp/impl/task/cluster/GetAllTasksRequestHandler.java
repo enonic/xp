@@ -14,8 +14,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.impl.task.TaskManager;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskManager;
 
 @Component(immediate = true, service = TransportRequestHandler.class)
 public final class GetAllTasksRequestHandler

@@ -8,24 +8,24 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskManager;
 import com.enonic.xp.task.TaskProgress;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 
 public class TaskResourceTest
     extends AdminResourceTestSupport
 {
-    private TaskManager taskManager;
+    private TaskService taskService;
 
     private TaskResource taskResource;
 
     @Override
     protected Object getResourceInstance()
     {
-        this.taskManager = Mockito.mock( TaskManager.class );
+        this.taskService = Mockito.mock( TaskService.class );
 
         this.taskResource = new TaskResource();
-        taskResource.setTaskManager( this.taskManager );
+        taskResource.setTaskService( this.taskService );
 
         return taskResource;
     }
@@ -50,7 +50,7 @@ public class TaskResourceTest
             progress( TaskProgress.create().current( 42 ).total( 42 ).info( "Process completed" ).build() ).
             build();
 
-        Mockito.when( this.taskManager.getAllTasks() ).thenReturn( Arrays.asList( taskInfo1, taskInfo2 ) );
+        Mockito.when( this.taskService.getAllTasks() ).thenReturn( Arrays.asList( taskInfo1, taskInfo2 ) );
 
         String response = request().path( "tasks" ).get().getAsString();
 
@@ -69,7 +69,7 @@ public class TaskResourceTest
             progress( TaskProgress.create().current( 2 ).total( 10 ).info( "Processing items" ).build() ).
             build();
 
-        Mockito.when( this.taskManager.getTaskInfo( taskId ) ).thenReturn( taskInfo );
+        Mockito.when( this.taskService.getTaskInfo( taskId ) ).thenReturn( taskInfo );
 
         String response = request().path( "tasks/" + taskId.toString() ).get().getAsString();
 
