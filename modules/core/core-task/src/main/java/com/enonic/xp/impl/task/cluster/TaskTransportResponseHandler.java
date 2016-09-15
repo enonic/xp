@@ -2,6 +2,7 @@ package com.enonic.xp.impl.task.cluster;
 
 import java.util.List;
 
+import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportResponseHandler;
 
@@ -51,7 +52,7 @@ public class TaskTransportResponseHandler
     @Override
     public String executor()
     {
-        return null;
+        return ThreadPool.Names.MANAGEMENT;
     }
 
     public synchronized List<TaskInfo> getTaskInfos()

@@ -31,13 +31,13 @@ public final class TaskTransportRequestHandler
     @Activate
     public void activate()
     {
-        this.transportService.registerHandler( TaskTransportRequestSender.ACTION, this );
+        this.transportService.registerHandler( TaskTransportRequestSenderImpl.ACTION, this );
     }
 
     @Deactivate
     public void deactivate()
     {
-        this.transportService.removeHandler( TaskTransportRequestSender.ACTION );
+        this.transportService.removeHandler( TaskTransportRequestSenderImpl.ACTION );
     }
 
     @Override
