@@ -142,6 +142,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private static EDITOR_DISABLED_TYPES = [ContentTypeName.FOLDER, ContentTypeName.TEMPLATE_FOLDER, ContentTypeName.SHORTCUT,
         ContentTypeName.UNSTRUCTURED];
 
+    private contentUpdateDisabled: boolean;
+
     /**
      * Whether constructor is being currently executed or not.
      */
@@ -158,6 +160,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.requireValid = false;
         this.skipValidation = false;
         this.contentNamedListeners = [];
+        this.contentUpdateDisabled = false;
 
         this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
 
@@ -606,6 +609,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             liveFormPanel.skipNextReloadConfirmation(true);
         }
         this.setRequireValid(false);
+        this.contentUpdateDisabled = true;
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
@@ -613,6 +617,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
 
             return content;
+        }).finally(() => {
+            this.contentUpdateDisabled = false;
         });
     }
 
@@ -674,22 +680,24 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (this.isCurrentContentId(contentId)) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     let isAlreadyUpdated = content.equals(this.getPersistedItem());
-                    let isDisplayNameUpdated = this.isDisplayNameUpdated();
-                    
-                    this.setPersistedItem(content);
-                    this.updateWizard(content, unchangedOnly);
 
-                    if (versionChanged) {
-                        this.updateLiveForm();
-                        if (!isDisplayNameUpdated) {
-                            this.getWizardHeader().resetBaseValues(content.getDisplayName());
+                    if (!isAlreadyUpdated) {
+                        this.setPersistedItem(content);
+                        this.updateWizard(content, unchangedOnly);
+
+                        if (versionChanged) {
+                            this.updateLiveForm();
+                            if (!this.isDisplayNameUpdated()) {
+                                this.getWizardHeader().resetBaseValues(content.getDisplayName());
+                            }
+                        } else if (this.isEditorEnabled()) {
+                            // also update live form panel for renderable content without asking
+                            this.updateLiveForm();
                         }
-                    } else if (this.isEditorEnabled() && !isAlreadyUpdated) {
-                        // also update live form panel for renderable content without asking
-                        this.updateLiveForm();
+
+                        this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
                     }
 
-                    this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
                 });
             } else if (this.doHtmlAreasContainId(contentId.toString())) {   // Check if there are html areas in form that contain event.getContentId() that was updated
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
@@ -716,7 +724,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         };
 
         var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false, true);
-        var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
+        var contentUpdatedHanlder = (event: ContentUpdatedEvent) => {
+            if (!this.contentUpdateDisabled) {
+                updateHandler(event.getContentId())
+            }
+        };
 
         var movedHandler = (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
             var wasMoved = oldPaths.some((oldPath: ContentPath) => {
