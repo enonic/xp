@@ -1,6 +1,6 @@
 var tourDialog;
 var tourSteps = [];
-var demoAppsLoaded = false;
+var demoAppsInstalled = false;
 var demoAppsLoadMask;
 var canInstallDemoApps = false;
 var isInstallingDemoAppsNow = false;
@@ -88,7 +88,7 @@ function initNavigation() {
 
             if (currentStep === tourSteps.length) {
 
-                if (!demoAppsLoaded) {
+                if (!demoAppsInstalled) {
                     var demoAppsContainer = api.dom.Element.fromHtmlElement(document.querySelector(".demo-apps"));
 
                     if (!demoAppsLoadMask) {
@@ -106,28 +106,29 @@ function initNavigation() {
                     nextStepActionButton.addClass("last-step");
 
                     fetchDemoAppsFromMarket().then(function (apps) {
-                        marketDemoApps = apps;
+
+                        marketDemoApps = apps || [];
                         canInstallDemoApps = marketDemoApps.some(function (marketDemoApp) {
                             return marketDemoApp.getStatus() !== api.application.MarketAppStatus.INSTALLED;
                         });
 
-                        tourSteps[tourSteps.length - 1] = createStep5WithDemoApps();
+                        demoAppsInstalled = !!apps && !canInstallDemoApps;
+
+                        tourSteps[tourSteps.length - 1] = createStep5();
 
                         if (currentStep === tourSteps.length) { //if still on install apps page of xp tour
                             setTourStep(currentStep);
-
+                            demoAppsContainer = api.dom.Element.fromHtmlElement(document.querySelector(".demo-apps"));
                             if (canInstallDemoApps) {
                                 nextStepActionButton.setLabel("Install Apps");
                                 nextStepActionButton.removeClass("last-step");
                             }
                         }
-
-                        demoAppsLoaded = true;
                     }).catch(function (err) {
-                        demoAppsContainer.addClass("failed");
                         api.DefaultErrorHandler.handle(err);
                         //Set text in demo-apps div that failed loading
                     }).finally(function () {
+                        demoAppsContainer.toggleClass("failed", marketDemoApps.length == 0);
                         demoAppsLoadMask.hide();
                     });
                 } else if (isInstallingDemoAppsNow) {
@@ -237,31 +238,18 @@ function createStep5() {
                '        <div class="paragraph1">If you are evaluating or just testing Enonic XP, let’s install some sample applications from Enonic Market - showing you some of Enonic XP’s capabilities.</div>' +
                '    </div>' +
                '    <div class="demo-apps">' +
-               '        <div class="demo-apps-text">Enonic Market is not available at the moment. Please try again later.</div>'
-    '    </div>'
-    '</div>';
+                    getAppsDiv() +
+               '    </div>'
+                '</div>';
 
     var element = api.dom.Element.fromString(html);
     return element;
 }
 
-function createStep5WithDemoApps() {
-    var html = '<div class="xp-tour-step step-5">' +
-               '    <div class="subtitle">' +
-               '        <div class="subtitle-part-1">Custom apps you say? </div>' +
-               '        <div class="subtitle-part-2">Simply choose Install + Upload in the Applications Tool</div>' +
-               '    </div>' +
-               '    <div class="caption">Install Demo Applications</div>' +
-               '    <div class="text">' +
-               '        <div class="paragraph1">If you are evaluating or just testing Enonic XP, let’s install some sample applications from Enonic Market - showing you some of Enonic XP’s capabilities.</div>' +
-               '    </div>' +
-               '    <div class="demo-apps">' +
-               getDemoAppsHtml() +
-               '    </div>'
-    '</div>';
-
-    var element = api.dom.Element.fromString(html);
-    return element;
+function getAppsDiv() {
+    return marketDemoApps.length > 0 ?
+           getDemoAppsHtml() :
+           '        <div class="demo-apps-text">Enonic Market is not available at the moment. Please try again later.</div>';
 }
 
 function fetchDemoAppsFromMarket() {
