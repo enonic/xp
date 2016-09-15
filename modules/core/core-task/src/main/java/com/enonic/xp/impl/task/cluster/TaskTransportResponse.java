@@ -14,17 +14,17 @@ import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
-public final class GetAllTasksResponse
+public final class TaskTransportResponse
     extends TransportResponse
 {
     private List<TaskInfo> taskInfos;
 
-    public GetAllTasksResponse()
+    public TaskTransportResponse()
     {
         this( null );
     }
 
-    public GetAllTasksResponse( final List<TaskInfo> taskInfos )
+    public TaskTransportResponse( final List<TaskInfo> taskInfos )
     {
         this.taskInfos = taskInfos;
     }

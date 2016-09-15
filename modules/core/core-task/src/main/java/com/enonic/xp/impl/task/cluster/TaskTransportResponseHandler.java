@@ -11,8 +11,8 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.util.Exceptions;
 
-public class GetAllTasksResponseHandler
-    implements TransportResponseHandler<GetAllTasksResponse>
+public class TaskTransportResponseHandler
+    implements TransportResponseHandler<TaskTransportResponse>
 {
     private final ImmutableList.Builder<TaskInfo> taskInfos = ImmutableList.builder();
 
@@ -20,7 +20,7 @@ public class GetAllTasksResponseHandler
 
     private TransportException transportException;
 
-    public GetAllTasksResponseHandler( final int responseCount )
+    public TaskTransportResponseHandler( final int responseCount )
     {
         Preconditions.checkArgument( responseCount > 0, "responseCount must be greater than 0" );
         this.awaitingResponseCount = responseCount;
@@ -28,13 +28,13 @@ public class GetAllTasksResponseHandler
 
 
     @Override
-    public GetAllTasksResponse newInstance()
+    public TaskTransportResponse newInstance()
     {
-        return new GetAllTasksResponse();
+        return new TaskTransportResponse();
     }
 
     @Override
-    public synchronized void handleResponse( final GetAllTasksResponse response )
+    public synchronized void handleResponse( final TaskTransportResponse response )
     {
         taskInfos.addAll( response.getTaskInfos() );
         awaitingResponseCount--;

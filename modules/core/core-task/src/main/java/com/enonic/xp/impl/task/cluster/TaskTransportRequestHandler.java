@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.task.cluster;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.elasticsearch.threadpool.ThreadPool;
@@ -18,10 +19,10 @@ import com.enonic.xp.impl.task.TaskManager;
 import com.enonic.xp.task.TaskInfo;
 
 @Component(immediate = true, service = TransportRequestHandler.class)
-public final class GetAllTasksRequestHandler
-    extends BaseTransportRequestHandler<GetAllTasksRequest>
+public final class TaskTransportRequestHandler
+    extends BaseTransportRequestHandler<TaskTransportRequest>
 {
-    private final static Logger LOG = LoggerFactory.getLogger( GetAllTasksRequestHandler.class );
+    private final static Logger LOG = LoggerFactory.getLogger( TaskTransportRequestHandler.class );
 
     private TransportService transportService;
 
@@ -30,28 +31,42 @@ public final class GetAllTasksRequestHandler
     @Activate
     public void activate()
     {
-        this.transportService.registerHandler( GetAllTasksRequestSender.ACTION, this );
+        this.transportService.registerHandler( TaskTransportRequestSender.ACTION, this );
     }
 
     @Deactivate
     public void deactivate()
     {
-        this.transportService.removeHandler( GetAllTasksRequestSender.ACTION );
+        this.transportService.removeHandler( TaskTransportRequestSender.ACTION );
     }
 
     @Override
-    public GetAllTasksRequest newInstance()
+    public TaskTransportRequest newInstance()
     {
-        return new GetAllTasksRequest();
+        return new TaskTransportRequest();
     }
 
     @Override
-    public void messageReceived( final GetAllTasksRequest request, final TransportChannel channel )
+    public void messageReceived( final TaskTransportRequest request, final TransportChannel channel )
     {
         try
         {
-            final List<TaskInfo> allTasks = taskManager.getAllTasks();
-            final GetAllTasksResponse response = new GetAllTasksResponse( allTasks );
+            final List<TaskInfo> taskInfos;
+            if ( TaskTransportRequest.Type.BY_ID == request.getType() )
+            {
+                final TaskInfo taskInfo = taskManager.getTaskInfo( request.getTaskId() );
+                taskInfos = taskInfo == null ? Collections.emptyList() : Collections.singletonList( taskInfo );
+            }
+            else if ( TaskTransportRequest.Type.RUNNING == request.getType() )
+            {
+                taskInfos = taskManager.getRunningTasks();
+            }
+            else
+            {
+                taskInfos = taskManager.getAllTasks();
+            }
+
+            final TaskTransportResponse response = new TaskTransportResponse( taskInfos );
             channel.sendResponse( response );
         }
         catch ( Exception e )
