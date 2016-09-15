@@ -1,0 +1,103 @@
+package com.enonic.xp.impl.task.cluster;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.elasticsearch.common.io.stream.StreamInput;
+import org.elasticsearch.common.io.stream.StreamOutput;
+import org.elasticsearch.transport.TransportResponse;
+
+import com.google.common.collect.ImmutableList;
+
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskInfo;
+import com.enonic.xp.task.TaskProgress;
+import com.enonic.xp.task.TaskState;
+
+public final class GetAllTasksResponse
+    extends TransportResponse
+{
+    private List<TaskInfo> taskInfos;
+
+    public GetAllTasksResponse()
+    {
+        this( null );
+    }
+
+    public GetAllTasksResponse( final List<TaskInfo> taskInfos )
+    {
+        this.taskInfos = taskInfos;
+    }
+
+    public List<TaskInfo> getTaskInfos()
+    {
+        return taskInfos;
+    }
+
+    @Override
+    public void readFrom( final StreamInput streamInput )
+        throws IOException
+    {
+        final ImmutableList.Builder<TaskInfo> taskInfos = ImmutableList.builder();
+        final int taskInfoCount = streamInput.readInt();
+        for ( int i = 0; i < taskInfoCount; i++ )
+        {
+            TaskInfo taskInfo = readTaskInfoFrom( streamInput );
+            taskInfos.add( taskInfo );
+        }
+
+        this.taskInfos = taskInfos.build();
+    }
+
+    private TaskInfo readTaskInfoFrom( final StreamInput streamInput )
+        throws IOException
+    {
+        return TaskInfo.create().
+            id( TaskId.from( streamInput.readString() ) ).
+            description( streamInput.readString() ).
+            state( TaskState.values()[streamInput.readInt()] ).
+            progress( readTaskProgressFrom( streamInput ) ).
+            build();
+    }
+
+    private TaskProgress readTaskProgressFrom( final StreamInput streamInput )
+        throws IOException
+    {
+        return TaskProgress.create().
+            current( streamInput.readInt() ).
+            total( streamInput.readInt() ).
+            info( streamInput.readString() ).
+            build();
+    }
+
+    @Override
+    public void writeTo( final StreamOutput streamOutput )
+        throws IOException
+    {
+        if ( taskInfos != null )
+        {
+            streamOutput.writeInt( taskInfos.size() );
+            for ( TaskInfo taskInfo : taskInfos )
+            {
+                writeTo( streamOutput, taskInfo );
+            }
+        }
+    }
+
+    private void writeTo( final StreamOutput streamOutput, final TaskInfo taskInfo )
+        throws IOException
+    {
+        streamOutput.writeString( taskInfo.getId().toString() );
+        streamOutput.writeString( taskInfo.getDescription() );
+        streamOutput.writeInt( taskInfo.getState().ordinal() );
+        writeTo( streamOutput, taskInfo.getProgress() );
+    }
+
+    private void writeTo( final StreamOutput streamOutput, final TaskProgress taskProgress )
+        throws IOException
+    {
+        streamOutput.writeInt( taskProgress.getCurrent() );
+        streamOutput.writeInt( taskProgress.getTotal() );
+        streamOutput.writeString( taskProgress.getInfo() );
+    }
+}
