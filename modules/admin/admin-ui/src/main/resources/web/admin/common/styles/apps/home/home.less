@@ -7,7 +7,6 @@
 @import "../../variables/mixins";
 @import "../../variables/z-index";
 
-
 @font-face {
   font-family: 'icomoon';
   src: url('../../../../common/icons/fonts/icomoon.eot?d2dpl4');
@@ -171,7 +170,6 @@
     margin-top: 0px !important;
   }
 
-
   .dialog-content {
     overflow: auto;
     max-height: calc(~'100% - 85px');
@@ -252,6 +250,7 @@
         display: flex;
         align-items: center;
         justify-content: space-around;
+        min-height: 103px;
 
         .demo-app {
           display: inline-block;
@@ -293,6 +292,17 @@
             }
           }
         }
+
+        .demo-apps-text {
+          color: @admin-font-gray1;
+        }
+
+        &:not(.failed) {
+          .demo-apps-text {
+            display: none;
+          }
+        }
+
 
       }
 
@@ -360,6 +370,11 @@
   }
 
 }
+
+.load-mask {
+  z-index: 2002;
+}
+
 .xp-tour-dialog + .body-mask,
 .xp-about-dialog + .body-mask {
   background-color: @admin-black;
