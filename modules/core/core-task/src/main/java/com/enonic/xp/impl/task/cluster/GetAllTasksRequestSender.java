@@ -1,13 +1,16 @@
 package com.enonic.xp.impl.task.cluster;
 
+import java.util.List;
+
 import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.threadpool.ThreadPool;
-import org.elasticsearch.transport.EmptyTransportResponseHandler;
+import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.enonic.xp.task.TaskInfo;
 
 @Component(immediate = true)
 public final class GetAllTasksRequestSender
@@ -18,20 +21,16 @@ public final class GetAllTasksRequestSender
 
     private TransportService transportService;
 
-    public void getAllTasks()
+    public List<TaskInfo> getAllTasks()
     {
         final TransportRequest transportRequest = new GetAllTasksRequest();
-        final DiscoveryNode localNode = this.clusterService.localNode();
-        for ( final DiscoveryNode node : this.clusterService.state().nodes() )
+        final DiscoveryNodes discoveryNodes = this.clusterService.state().nodes();
+        final GetAllTasksResponseHandler responseHandler = new GetAllTasksResponseHandler( discoveryNodes.size() );
+        for ( final DiscoveryNode discoveryNode : discoveryNodes )
         {
-            send( transportRequest, node );
+            this.transportService.sendRequest( discoveryNode, ACTION, transportRequest, responseHandler );
         }
-    }
-
-    private void send( final TransportRequest transportRequest, final DiscoveryNode node )
-    {
-        final EmptyTransportResponseHandler responseHandler = new EmptyTransportResponseHandler( ThreadPool.Names.MANAGEMENT );
-        this.transportService.sendRequest( node, ACTION, transportRequest, responseHandler );
+        return responseHandler.getTaskInfos();
     }
 
     @Reference
