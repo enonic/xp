@@ -1,9 +1,11 @@
 var tourDialog;
 var tourSteps = [];
+var demoAppsLoaded = false;
+var demoAppsLoadMask;
 var canInstallDemoApps = false;
+var isInstallingDemoAppsNow = false;
 var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.xphoot", "com.enonic.app.imagexpert"];
 var marketDemoApps = [];
-var isInstallingNow = false;
 
 exports.init = function () {
     initDialog();
@@ -45,6 +47,10 @@ function initNavigation() {
             nextStepActionButton.setLabel("Next");
             nextStepActionButton.removeClass("last-step");
             setTourStep(currentStep);
+
+            if (demoAppsLoadMask) {
+                demoAppsLoadMask.hide();
+            }
         }
     });
 
@@ -53,7 +59,7 @@ function initNavigation() {
             if (canInstallDemoApps) { // if install is hit
                 nextStepActionButton.setLabel("Installing...");
                 nextStepActionButton.setEnabled(false);
-                isInstallingNow = true;
+                isInstallingDemoAppsNow = true;
 
                 wemQ.all(loadDemoApps()).spread(function () {
                     if (currentStep === tourSteps.length) { //if still on install apps page of xp tour
@@ -61,7 +67,7 @@ function initNavigation() {
                         nextStepActionButton.addClass("last-step");
                         nextStepActionButton.setEnabled(true);
                     }
-                    isInstallingNow = false;
+                    isInstallingDemoAppsNow = false;
                     canInstallDemoApps = false;
                 });
             } else { // Finish button was hit
@@ -76,8 +82,55 @@ function initNavigation() {
         }
         else {
             currentStep++;
+
+            previousStepActionButton.setLabel("Previous");
+            setTourStep(currentStep);
+
             if (currentStep === tourSteps.length) {
-                if (isInstallingNow) {
+
+                if (!demoAppsLoaded) {
+                    var demoAppsContainer = api.dom.Element.fromHtmlElement(document.querySelector(".demo-apps"));
+
+                    if (!demoAppsLoadMask) {
+                        demoAppsLoadMask = new api.ui.mask.LoadMask(demoAppsContainer);
+                        tourDialog.onHidden(function () {
+                            demoAppsLoadMask.hide();
+                        });
+                    }
+
+                    demoAppsContainer.removeClass("failed");
+
+                    demoAppsLoadMask.show();
+
+                    nextStepActionButton.setLabel("Finish");
+                    nextStepActionButton.addClass("last-step");
+
+                    fetchDemoAppsFromMarket().then(function (apps) {
+                        marketDemoApps = apps;
+                        canInstallDemoApps = marketDemoApps.some(function (marketDemoApp) {
+                            return marketDemoApp.getStatus() !== api.application.MarketAppStatus.INSTALLED;
+                        });
+
+                        tourSteps[tourSteps.length - 1] = createStep5WithDemoApps();
+
+                        if (currentStep === tourSteps.length) { //if still on install apps page of xp tour
+                            setTourStep(currentStep);
+
+                            if (canInstallDemoApps) {
+                                nextStepActionButton.setLabel("Install Apps");
+                                nextStepActionButton.removeClass("last-step");
+                            }
+                        }
+
+                        demoAppsLoaded = true;
+                    }).catch(function (err) {
+                        demoAppsContainer.addClass("failed");
+                        api.DefaultErrorHandler.handle(err);
+                        //Set text in demo-apps div that failed loading
+                    }).finally(function () {
+                        demoAppsLoadMask.hide();
+                    });
+                } else if (isInstallingDemoAppsNow) {
                     nextStepActionButton.setLabel("Installing...");
                     nextStepActionButton.setEnabled(false);
                 } else if (canInstallDemoApps) {
@@ -88,26 +141,13 @@ function initNavigation() {
                 }
 
             }
-            previousStepActionButton.setLabel("Previous");
-            setTourStep(currentStep);
+
         }
     });
 }
 
 function initTourSteps() {
-    tourSteps = [createStep1(), createStep2(), createStep3(), createStep4()];
-
-    fetchDemoAppsFromMarket().then(function (apps) {
-        marketDemoApps = apps;
-        canInstallDemoApps = marketDemoApps.some(function (marketDemoApp) {
-            return marketDemoApp.getStatus() !== api.application.MarketAppStatus.INSTALLED;
-        });
-
-        tourSteps.push(createStep5());
-    }).catch(function (err) {
-        api.DefaultErrorHandler.handle(err);
-    });
-
+    tourSteps = [createStep1(), createStep2(), createStep3(), createStep4(), createStep5()];
 }
 
 function createStep1() {
@@ -187,6 +227,25 @@ function createStep4() {
 }
 
 function createStep5() {
+    var html = '<div class="xp-tour-step step-5">' +
+               '    <div class="subtitle">' +
+               '        <div class="subtitle-part-1">Custom apps you say? </div>' +
+               '        <div class="subtitle-part-2">Simply choose Install + Upload in the Applications Tool</div>' +
+               '    </div>' +
+               '    <div class="caption">Install Demo Applications</div>' +
+               '    <div class="text">' +
+               '        <div class="paragraph1">If you are evaluating or just testing Enonic XP, let’s install some sample applications from Enonic Market - showing you some of Enonic XP’s capabilities.</div>' +
+               '    </div>' +
+               '    <div class="demo-apps">' +
+               '        <div class="demo-apps-text">Enonic Market is not available at the moment. Please try again later.</div>'
+    '    </div>'
+    '</div>';
+
+    var element = api.dom.Element.fromString(html);
+    return element;
+}
+
+function createStep5WithDemoApps() {
     var html = '<div class="xp-tour-step step-5">' +
                '    <div class="subtitle">' +
                '        <div class="subtitle-part-1">Custom apps you say? </div>' +
