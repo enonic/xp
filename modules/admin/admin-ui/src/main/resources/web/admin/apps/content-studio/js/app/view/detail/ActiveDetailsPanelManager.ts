@@ -14,7 +14,6 @@ export class ActiveDetailsPanelManager {
         300, false);
 
     constructor() {
-
     }
 
     static setActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
@@ -26,22 +25,12 @@ export class ActiveDetailsPanelManager {
     }
 
     private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
-        var activeItem: ContentSummaryAndCompareStatus = null,
-            currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel(),
-            currentlyActiveWidget: WidgetView;
-
+        var currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
         if (currentlyActivePanel == detailsPanelToMakeActive || !detailsPanelToMakeActive) {
             return;
-        } else if (currentlyActivePanel) {
-            activeItem = currentlyActivePanel.getItem();
-            currentlyActiveWidget = currentlyActivePanel.getActiveWidget();
         }
+
         ActiveDetailsPanelManager.activeDetailsPanel = detailsPanelToMakeActive;
-        detailsPanelToMakeActive.getCustomWidgetViewsAndUpdateDropdown().then(() => {
-            detailsPanelToMakeActive.setItem(activeItem);
-            if (currentlyActiveWidget) {
-                detailsPanelToMakeActive.setActiveWidgetWithName(currentlyActiveWidget.getWidgetName());
-            }
-        });
+        ActiveDetailsPanelManager.activeDetailsPanel.setActive();
     }
 }

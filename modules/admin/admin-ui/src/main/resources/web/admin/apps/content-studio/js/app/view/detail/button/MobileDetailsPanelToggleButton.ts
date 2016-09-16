@@ -1,14 +1,14 @@
 import "../../../../api.ts";
 
-import {DetailsPanel} from "../DetailsPanel";
+import {MobileDetailsPanel} from "../MobileDetailsSlidablePanel";
 
 export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
 
-    private detailsPanel: DetailsPanel;
+    private detailsPanel: MobileDetailsPanel;
 
     public static EXPANDED_CLASS: string = "expanded";
 
-    constructor(detailsPanel: DetailsPanel, slideInCallback?: () => void) {
+    constructor(detailsPanel: MobileDetailsPanel, slideInCallback?: () => void) {
         super("mobile-details-panel-toggle-button");
 
         this.detailsPanel = detailsPanel;
