@@ -202,7 +202,8 @@ module api.util.htmlarea.editor {
                 statusbar: true,
                 paste_as_text: true,
                 browser_spellcheck: true,
-                plugins: ['autoresize', 'table', 'fullscreen', 'charmap', 'code', 'paste'],
+                plugins: ['directionality', 'hr', 'preview', 'searchreplace', 'textcolor', 'visualchars', 'visualblocks', 
+                            'autoresize', 'table', 'fullscreen', 'charmap', 'code', 'paste'],
                 external_plugins: {
                     "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
                     "anchor": this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
