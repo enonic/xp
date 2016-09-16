@@ -15,6 +15,8 @@ import com.enonic.xp.util.Exceptions;
 public class TaskTransportResponseHandler
     implements TransportResponseHandler<TaskTransportResponse>
 {
+    private static final long THREAD_TIMEOUT = TaskTransportRequestSenderImpl.TRANSPORT_REQUEST_TIMEOUT + 1_000l;
+
     private final ImmutableList.Builder<TaskInfo> taskInfos = ImmutableList.builder();
 
     private int awaitingResponseCount;
@@ -57,11 +59,19 @@ public class TaskTransportResponseHandler
 
     public synchronized List<TaskInfo> getTaskInfos()
     {
+        final long startTime = System.currentTimeMillis();
         while ( transportException == null && awaitingResponseCount > 0 )
         {
+            long deltaTime = System.currentTimeMillis() - startTime;
+            if ( deltaTime >= THREAD_TIMEOUT )
+            {
+                //Should never happened. An ES timeout exception should have been handled
+                throw new TaskTransportTimeoutException( deltaTime );
+            }
+
             try
             {
-                this.wait();
+                this.wait( THREAD_TIMEOUT );
             }
             catch ( InterruptedException e )
             {

@@ -13,6 +13,7 @@ import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportRequest;
+import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportResponseHandler;
 import org.elasticsearch.transport.TransportService;
@@ -114,13 +115,13 @@ public class TaskServiceImplTest
             doAnswer( invocation -> {
                 sendRequestArguments = invocation.getArguments();
                 transportRequest = (TaskTransportRequest) sendRequestArguments[2];
-                transportResponseHandler = (TaskTransportResponseHandler) sendRequestArguments[3];
+                transportResponseHandler = (TaskTransportResponseHandler) sendRequestArguments[4];
                 LOGGER.info( "Transport service send a " + transportRequest.getType().toString() + " task request" );
                 return null;
             } ).
             when( transportService ).
             sendRequest( Mockito.eq( node2 ), Mockito.eq( TaskTransportRequestSenderImpl.ACTION ), Mockito.any( TransportRequest.class ),
-                         Mockito.any( TransportResponseHandler.class ) );
+                         Mockito.any( TransportRequestOptions.class ), Mockito.any( TransportResponseHandler.class ) );
 
         //Creates Transport Request Sender
         final TaskTransportRequestSenderImpl transportRequestSender = new TaskTransportRequestSenderImpl();

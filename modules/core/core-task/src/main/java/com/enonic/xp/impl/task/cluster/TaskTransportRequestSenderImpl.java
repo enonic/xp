@@ -6,6 +6,7 @@ import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.transport.TransportRequest;
+import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -17,6 +18,8 @@ import com.enonic.xp.task.TaskInfo;
 public final class TaskTransportRequestSenderImpl
     implements TaskTransportRequestSender
 {
+    static final long TRANSPORT_REQUEST_TIMEOUT = 5_000l; //5s 
+
     public static final String ACTION = "xp/task";
 
     private ClusterService clusterService;
@@ -47,7 +50,8 @@ public final class TaskTransportRequestSenderImpl
         final TaskTransportResponseHandler responseHandler = new TaskTransportResponseHandler( discoveryNodes.size() );
         for ( final DiscoveryNode discoveryNode : discoveryNodes )
         {
-            this.transportService.sendRequest( discoveryNode, ACTION, transportRequest, responseHandler );
+            this.transportService.sendRequest( discoveryNode, ACTION, transportRequest,
+                                               TransportRequestOptions.EMPTY.withTimeout( TRANSPORT_REQUEST_TIMEOUT ), responseHandler );
         }
         return responseHandler.getTaskInfos();
     }
