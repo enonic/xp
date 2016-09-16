@@ -65,7 +65,7 @@ public class TaskTransportResponseHandler
             long deltaTime = System.currentTimeMillis() - startTime;
             if ( deltaTime >= THREAD_TIMEOUT )
             {
-                //Should never happened. An ES timeout exception should have been handled
+                //Should never happen. An ES timeout exception should have been handled
                 throw new TaskTransportTimeoutException( deltaTime );
             }
 
