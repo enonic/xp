@@ -62,12 +62,12 @@ function getAboutDialogContent() {
                '    </div>' +
                '    <h1>Enonic XP</h1>' +
                '    <div class="xp-about-dialog-version-block">' +
-               '        <span class="xp-about-dialog-version">' + CONFIG.xpVersion + '</span>&nbsp;' +
+               '        <span class="xp-about-dialog-version">' + CONFIG.xpVersion + '</span>&nbsp;&nbsp;' +
                '        <a href="' + CONFIG.docLinkPrefix + '/appendix/release-notes/" target="_blank">What\'s new</a>' +
                '    </div>' +
                '    <div class="xp-about-dialog-text">' +
-               'The Web Operating System designed by Enonic to simplify all stages of the ' +
-               'digital delivery process and help you focus on solution rather than technology.' +
+               'The Web Operating System - ‌‌Designed to simplify development and delivery of digital experiences and services.<br><br>' +
+               'Built with <span style="color: red;">♥</span> by the Enonic Team.' +
                '    </div>' +
                '    <div class="xp-about-dialog-footer">' +
                '        <a href="https://github.com/enonic/xp/blob/master/LICENSE.txt" target="_blank">Licensing</a>' +
