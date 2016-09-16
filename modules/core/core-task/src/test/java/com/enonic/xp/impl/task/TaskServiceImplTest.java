@@ -3,6 +3,7 @@ package com.enonic.xp.impl.task;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.elasticsearch.Version;
 import org.elasticsearch.cluster.ClusterService;
@@ -10,6 +11,7 @@ import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.transport.TransportChannel;
+import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportResponseHandler;
@@ -39,6 +41,8 @@ public class TaskServiceImplTest
 
     private volatile List<TaskInfo> allTasks;
 
+    private volatile TransportException transportException;
+
     private volatile Object[] sendRequestArguments;
 
     private TaskTransportRequest transportRequest;
@@ -52,6 +56,9 @@ public class TaskServiceImplTest
     @Before
     public void setUp()
     {
+        allTasks = null;
+        transportException = null;
+
         TaskInfo taskInfo1 = TaskInfo.create().
             id( TaskId.from( "task1" ) ).
             description( "Task1 on node1" ).
@@ -73,11 +80,13 @@ public class TaskServiceImplTest
 
         final TaskManager taskManager1 = Mockito.mock( TaskManager.class );
         Mockito.when( taskManager1.getAllTasks() ).thenReturn( Arrays.asList( taskInfo1, taskInfo2 ) );
+        Mockito.when( taskManager1.getTaskInfo( Mockito.any( TaskId.class ) ) ).thenReturn( taskInfo2 );
         taskTransportRequestHandler1 = new TaskTransportRequestHandler();
         taskTransportRequestHandler1.setTaskManager( taskManager1 );
 
         final TaskManager taskManager2 = Mockito.mock( TaskManager.class );
         Mockito.when( taskManager2.getAllTasks() ).thenReturn( Arrays.asList( taskInfo3 ) );
+        Mockito.when( taskManager2.getRunningTasks() ).thenReturn( Arrays.asList( taskInfo3 ) );
         taskTransportRequestHandler2 = new TaskTransportRequestHandler();
         taskTransportRequestHandler2.setTaskManager( taskManager2 );
 
@@ -85,8 +94,6 @@ public class TaskServiceImplTest
         taskService = new TaskServiceImpl();
         taskService.setTaskManager( taskManager1 );
         taskService.setTaskTransportRequestSender( transportRequestSender );
-
-
     }
 
 
@@ -127,17 +134,7 @@ public class TaskServiceImplTest
         throws InterruptedException, IOException
     {
         //Calls TaskService method
-        final Thread senderThread = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                allTasks = taskService.getAllTasks();
-                LOGGER.info( "Task service receives back " + allTasks.size() + " task infos" );
-            }
-        };
-        senderThread.start();
-        Thread.sleep( 1000 );
+        final Thread senderThread = callServiceMethod( () -> taskService.getAllTasks() );
 
         //Checks request sent by TaskService
         Assert.assertEquals( TaskTransportRequest.Type.ALL, transportRequest.getType() );
@@ -147,11 +144,101 @@ public class TaskServiceImplTest
         mockReception( taskTransportRequestHandler1, "node1" );
         mockReception( taskTransportRequestHandler2, "node2" );
 
+        //Checks that the service received back the 3 tasks
         senderThread.join( 2000 );
+        Assert.assertNull( transportException );
         Assert.assertEquals( 3, allTasks.size() );
         Assert.assertEquals( "task1", allTasks.get( 0 ).getId().toString() );
         Assert.assertEquals( "Task1 on node1", allTasks.get( 0 ).getDescription() );
         Assert.assertEquals( TaskState.WAITING, allTasks.get( 0 ).getState() );
+    }
+
+    @Test
+    public void getAllTasks_with_exception()
+        throws InterruptedException, IOException
+    {
+        //Calls TaskService method
+        final Thread senderThread = callServiceMethod( () -> taskService.getAllTasks() );
+
+        //Mocks a transport exception
+        transportResponseHandler.handleException( new TransportException( "ATransportException" ) );
+
+        //Checks that the service received back the 3 tasks
+        senderThread.join( 2000 );
+        Assert.assertNotNull( transportException );
+    }
+
+    @Test
+    public void getRunningTasks()
+        throws InterruptedException, IOException
+    {
+        //Calls TaskService method
+        final Thread senderThread = callServiceMethod( () -> taskService.getRunningTasks() );
+
+        //Checks request sent by TaskService
+        Assert.assertEquals( TaskTransportRequest.Type.RUNNING, transportRequest.getType() );
+        Assert.assertNull( transportRequest.getTaskId() );
+
+        //Mocks the request reception by node1 and node2
+        mockReception( taskTransportRequestHandler1, "node1" );
+        mockReception( taskTransportRequestHandler2, "node2" );
+
+        //Checks that the service received back the 3 tasks
+        senderThread.join( 2000 );
+        Assert.assertNull( transportException );
+        Assert.assertEquals( 1, allTasks.size() );
+        Assert.assertEquals( "task3", allTasks.get( 0 ).getId().toString() );
+        Assert.assertEquals( "Task3 on node2", allTasks.get( 0 ).getDescription() );
+        Assert.assertEquals( TaskState.RUNNING, allTasks.get( 0 ).getState() );
+    }
+
+    @Test
+    public void getTaskInfo()
+        throws InterruptedException, IOException
+    {
+        //Calls TaskService method
+        final Thread senderThread = callServiceMethod( () -> Arrays.asList( taskService.getTaskInfo( TaskId.from( "task2" ) ) ) );
+
+        //Checks request sent by TaskService
+        Assert.assertEquals( TaskTransportRequest.Type.BY_ID, transportRequest.getType() );
+        Assert.assertEquals( "task2", transportRequest.getTaskId().toString() );
+
+        //Mocks the request reception by node1 and node2
+        mockReception( taskTransportRequestHandler1, "node1" );
+        mockReception( taskTransportRequestHandler2, "node2" );
+
+        //Checks that the service received back the 3 tasks
+        senderThread.join( 2000 );
+        Assert.assertNull( transportException );
+        Assert.assertEquals( 1, allTasks.size() );
+        Assert.assertEquals( "task2", allTasks.get( 0 ).getId().toString() );
+        Assert.assertEquals( "Task2 on node1", allTasks.get( 0 ).getDescription() );
+        Assert.assertEquals( TaskState.FINISHED, allTasks.get( 0 ).getState() );
+    }
+
+    private Thread callServiceMethod( Supplier<List<TaskInfo>> serviceMethod )
+        throws InterruptedException
+    {
+        final Thread senderThread = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    allTasks = serviceMethod.get();
+                    LOGGER.info( "Task service receives back " + allTasks.size() + " task infos" );
+                }
+                catch ( TransportException e )
+                {
+                    transportException = e;
+                    LOGGER.info( "Task service throws a transport exception: " + e.toString() );
+                }
+            }
+        };
+        senderThread.start();
+        Thread.sleep( 1000 );
+        return senderThread;
     }
 
     private void mockReception( final TaskTransportRequestHandler transportRequestHandler, final String nodeId )
