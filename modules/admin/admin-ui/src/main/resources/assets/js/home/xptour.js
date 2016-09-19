@@ -4,7 +4,7 @@ var demoAppsInstalled = false;
 var demoAppsLoadMask;
 var canInstallDemoApps = false;
 var isInstallingDemoAppsNow = false;
-var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.xphoot", "com.enonic.app.imagexpert"];
+var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.wireframe", "com.enonic.app.imagexpert"];
 var marketDemoApps = [];
 
 exports.init = function () {
