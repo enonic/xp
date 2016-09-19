@@ -160,7 +160,7 @@ function createStep1() {
                '    <div class="caption">Enonic XP - The Web Operating System</div>' +
                '    <img src="/admin/common/images/app-icon.svg">' +
                '    <div class="text">' +
-               '        <div class="paragraph1">Enonic XP is a powerful platform for building highly scalable, customer tailored applications and sites. It is four systems in one: </div>' +
+               '        <div class="paragraph1">Enonic XP is a powerful platform for building highly scalable, customer tailored applications and sites. It is five systems in one: </div>' +
                '        <ul>' +
                '            <li>Database/Storage</li>' +
                '            <li>Search</li>' +
@@ -201,7 +201,7 @@ function createStep3() {
                '    <div class="caption">Applications and Enonic Market</div>' +
                '    <img src="/admin/common/images/market.svg">' +
                '    <div class="text">' +
-               '        <div class="paragraph1">Enonic XP is all about applications. Using the <a href="/admin/tool/com.enonic.xp.admin.ui/applications" target="_blank">Applications tool</a> you can create your own apps or install ready-2-run applications from Enonic Market.</div>' +
+               '        <div class="paragraph1">Enonic XP is all about applications. You can create your own apps or install ready-2-run applications from Enonic Market using the <a href="/admin/tool/com.enonic.xp.admin.ui/applications" target="_blank">Applications tool</a>.</div>' +
                '        <div class="paragraph2"><a href="https://market.enonic.com/" target="_blank">Enonic Market</a> also features libraries and starters for developers to get going quickly. Applications are primarily built with Javascript - but can also include Java since XP is running on the Java Virtual Machine.</div>' +
                '        <div class="paragraph3">Learn more about building applications from our <a href="http://docs.enonic.com/en/latest/" target="_blank">documentation</a>.</div>' +
                '    </div>' +
@@ -220,7 +220,7 @@ function createStep4() {
                '    <img src="/admin/common/images/studio.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">A valuable part of XP is the <a href="/admin/tool/com.enonic.xp.admin.ui/content-studio" target="_blank">Content Studio tool</a> - its an awesome CMS that can be used to compose websites of any kind - or simply to make your applications more dynamic.</div>' +
-               '        <div class="paragraph2">The interface is praised by users as it and combines simplicity of use with powerful features - and it’s fully responsive too! It can also be extended with 3rd party services like the <a href="https://market.enonic.com/vendors/enonic/com.enonic.app.ga" target="_blank">Google Analytics app</a> for the enjoyment of your site’s editors.</div>' +
+               '        <div class="paragraph2">The interface is praised by users as it combines simplicity of use with powerful features - and it’s fully responsive too! It can also be extended with 3rd party services like the <a href="https://market.enonic.com/vendors/enonic/com.enonic.app.ga" target="_blank">Google Analytics app</a> for the enjoyment of your site’s editors.</div>' +
                '    </div>' +
                '</div>';
     var element = api.dom.Element.fromString(html);
