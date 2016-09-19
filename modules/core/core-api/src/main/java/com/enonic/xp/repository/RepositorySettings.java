@@ -9,11 +9,14 @@ public class RepositorySettings
 {
     private final RepositoryId repositoryId;
 
+    private final ValidationSettings validationSettings;
+
     private final IndexConfigs indexConfigs;
 
     private RepositorySettings( final Builder builder )
     {
         repositoryId = builder.repositoryId;
+        validationSettings = builder.validationSettings == null ? createDefaultValidationSettings() : builder.validationSettings;
         indexConfigs = builder.indexConfigs;
     }
 
@@ -25,6 +28,11 @@ public class RepositorySettings
     public RepositoryId getRepositoryId()
     {
         return repositoryId;
+    }
+
+    public ValidationSettings getValidationSettings()
+    {
+        return validationSettings;
     }
 
     public IndexConfigs getIndexConfigs()
@@ -62,9 +70,16 @@ public class RepositorySettings
         return null;
     }
 
+    private ValidationSettings createDefaultValidationSettings()
+    {
+        return ValidationSettings.create().build();
+    }
+
     public static final class Builder
     {
         private RepositoryId repositoryId;
+
+        private ValidationSettings validationSettings;
 
         private IndexConfigs indexConfigs;
 
@@ -75,6 +90,12 @@ public class RepositorySettings
         public Builder repositoryId( final RepositoryId val )
         {
             repositoryId = val;
+            return this;
+        }
+
+        public Builder validationSettings( final ValidationSettings val )
+        {
+            validationSettings = val;
             return this;
         }
 
