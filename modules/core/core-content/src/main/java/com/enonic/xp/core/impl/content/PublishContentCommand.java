@@ -205,6 +205,8 @@ public class PublishContentCommand
 
         private boolean includeChildren = true;
 
+        private PushContentListener pushContentListener;
+
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
@@ -235,6 +237,12 @@ public class PublishContentCommand
             return this;
         }
 
+        public Builder pushListener( final PushContentListener pushContentListener )
+        {
+            this.pushContentListener = pushContentListener;
+            return this;
+        }
+
         @Override
         void validate()
         {
@@ -249,5 +257,23 @@ public class PublishContentCommand
             return new PublishContentCommand( this );
         }
 
+    }
+
+    private static class NullPushContentListener
+        implements PushContentListener
+    {
+        private NullPushContentListener()
+        {
+        }
+
+        @Override
+        public void contentPushed( final ContentId contentId, final PushResult result )
+        {
+        }
+
+        @Override
+        public void contentResolved( final int count )
+        {
+        }
     }
 }
