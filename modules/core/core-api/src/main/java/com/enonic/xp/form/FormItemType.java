@@ -9,7 +9,8 @@ public enum FormItemType
     INPUT,
     FORM_ITEM_SET,
     LAYOUT,
-    MIXIN_REFERENCE;
+    MIXIN_REFERENCE,
+    FORM_OPTION_SET;
 
     public static FormItemType parse( final String value )
     {
@@ -28,6 +29,10 @@ public enum FormItemType
         else if ( InlineMixin.class.getSimpleName().equals( value ) )
         {
             return MIXIN_REFERENCE;
+        }
+        else if ( FormOptionSet.class.getSimpleName().equals( value ) )
+        {
+            return FORM_OPTION_SET;
         }
         else
         {
