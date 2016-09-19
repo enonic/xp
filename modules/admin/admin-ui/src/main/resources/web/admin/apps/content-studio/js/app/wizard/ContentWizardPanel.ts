@@ -1538,8 +1538,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isEditorEnabled(): boolean {
 
-        return ( this.shouldEditorOpenByDefault() || !!this.site) &&
-               (!api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES, this.contentType.getContentTypeName()));
+        return !!this.site || ( this.shouldEditorOpenByDefault() && !api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES,
+                this.contentType.getContentTypeName()));
     }
 
     private updateButtonsState() {
