@@ -6,17 +6,17 @@ import java.util.function.Supplier;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskManager;
+import com.enonic.xp.task.TaskService;
 
 public final class GetTasksHandler
     implements ScriptBean
 {
-    private Supplier<TaskManager> taskManager;
+    private Supplier<TaskService> taskServiceSupplier;
 
     public TasksMapper getTasks()
     {
-        final TaskManager taskMan = taskManager.get();
-        final List<TaskInfo> tasks = taskMan.getAllTasks();
+        final TaskService taskService = taskServiceSupplier.get();
+        final List<TaskInfo> tasks = taskService.getAllTasks();
 
         return new TasksMapper( tasks );
     }
@@ -24,6 +24,6 @@ public final class GetTasksHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        taskManager = context.getService( TaskManager.class );
+        taskServiceSupplier = context.getService( TaskService.class );
     }
 }

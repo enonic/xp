@@ -7,11 +7,11 @@ import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskManager;
 import com.enonic.xp.task.TaskProgress;
+import com.enonic.xp.task.TaskService;
 
-class MockTaskManager
-    implements TaskManager, ProgressReporter
+class MockTaskService
+    implements TaskService, ProgressReporter
 {
     public TaskId taskId;
 

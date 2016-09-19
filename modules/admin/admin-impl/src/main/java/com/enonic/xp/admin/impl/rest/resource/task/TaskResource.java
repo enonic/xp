@@ -17,7 +17,7 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskManager;
+import com.enonic.xp.task.TaskService;
 
 @Path(ResourceConstants.REST_ROOT + "tasks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,13 +27,13 @@ public final class TaskResource
     implements JaxRsComponent
 {
 
-    private TaskManager taskManager;
+    private TaskService taskService;
 
     @GET
     @Path("/")
     public TaskInfoListJson list()
     {
-        final List<TaskInfo> taskList = taskManager.getAllTasks();
+        final List<TaskInfo> taskList = taskService.getAllTasks();
         return new TaskInfoListJson( taskList );
     }
 
@@ -43,13 +43,13 @@ public final class TaskResource
         throws Exception
     {
         final TaskId taskId = TaskId.from( taskIdStr );
-        final TaskInfo taskInfo = taskManager.getTaskInfo( taskId );
+        final TaskInfo taskInfo = taskService.getTaskInfo( taskId );
         return new TaskInfoJson( taskInfo );
     }
 
     @Reference
-    public void setTaskManager( final TaskManager taskManager )
+    public void setTaskService( final TaskService taskService )
     {
-        this.taskManager = taskManager;
+        this.taskService = taskService;
     }
 }

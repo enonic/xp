@@ -170,7 +170,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskManager;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -218,7 +218,7 @@ public final class ContentResource
 
     private BinaryExtractor extractor;
 
-    private TaskManager taskManager;
+    private TaskService taskService;
 
     @POST
     @Path("create")
@@ -477,7 +477,7 @@ public final class ContentResource
     public TaskResultJson publish( final PublishContentJson params )
     {
         final RunnableTask runnableTask = ( id, progressReporter ) -> publishTask( params, progressReporter );
-        final TaskId taskId = taskManager.submitTask( runnableTask, "Publish content" );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Publish content" );
         return new TaskResultJson( taskId );
     }
 
@@ -614,17 +614,16 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content ->
-                     {
-                         //Creates a ContentPublishItem
-                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                         return ContentPublishItemJson.create().
-                             content( content ).
-                             compareStatus( compareContentResult.getCompareStatus().name() ).
-                             iconUrl( contentIconUrlResolver.resolve( content ) ).
-                             build();
-                     } ).
-                collect( Collectors.toList() );
+                map( content -> {
+                //Creates a ContentPublishItem
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                return ContentPublishItemJson.create().
+                    content( content ).
+                    compareStatus( compareContentResult.getCompareStatus().name() ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).
+                    build();
+            } ).
+            collect( Collectors.toList() );
     }
 
     @POST
@@ -846,13 +845,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }
@@ -1417,8 +1415,8 @@ public final class ContentResource
     }
 
     @Reference
-    public void setTaskManager( final TaskManager taskManager )
+    public void setTaskService( final TaskService taskService )
     {
-        this.taskManager = taskManager;
+        this.taskService = taskService;
     }
 }
