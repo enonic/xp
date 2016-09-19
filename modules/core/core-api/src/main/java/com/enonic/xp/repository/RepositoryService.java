@@ -7,7 +7,7 @@ public interface RepositoryService
 {
     RepositoryId create( final RepositorySettings repositorySettings );
 
-    Repository get( final RepositoryId repositoryId );
+    RepositorySettings get( final RepositoryId repositoryId );
 
     boolean isInitialized( final RepositoryId id );
 }

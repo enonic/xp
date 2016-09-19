@@ -12,7 +12,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.NodeRepositoryService;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
@@ -60,7 +59,7 @@ public class RepositoryServiceImpl
 
 
     @Override
-    public Repository get( final RepositoryId repositoryId )
+    public RepositorySettings get( final RepositoryId repositoryId )
     {
         final NodeId nodeId = NodeId.from( repositoryId.toString() );
         final Node node = ContextBuilder.from( ContextAccessor.current() ).
@@ -68,7 +67,7 @@ public class RepositoryServiceImpl
             branch( SystemConstants.BRANCH_SYSTEM ).
             build().
             callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
-        return RepositoryNodeTranslator.fromNode( node );
+        return RepositoryNodeTranslator.toRepositorySettings( node );
     }
 
     @Reference
