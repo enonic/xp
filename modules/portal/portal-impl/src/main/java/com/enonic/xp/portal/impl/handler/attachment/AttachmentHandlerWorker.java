@@ -16,6 +16,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
+
 final class AttachmentHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {
@@ -48,7 +50,7 @@ final class AttachmentHandlerWorker
 
         if ( this.download )
         {
-            portalResponse.header( "Content-Disposition", "attachment; filename=" + attachment.getName() );
+            portalResponse.header( "Content-Disposition", contentDispositionAttachment( attachment.getName() ) );
         }
         if ( this.name.endsWith( ".svgz" ) )
         {
