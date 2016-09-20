@@ -48,7 +48,7 @@ module api.macro {
     export class MacroSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<MacroDescriptor> {
 
         constructor(option: api.ui.selector.Option<MacroDescriptor>) {
-            super(option);
+            super(new api.ui.selector.combobox.RichSelectedOptionViewBuilder<MacroDescriptor>(option));
         }
 
         resolveIconUrl(macroDescriptor: MacroDescriptor): string {

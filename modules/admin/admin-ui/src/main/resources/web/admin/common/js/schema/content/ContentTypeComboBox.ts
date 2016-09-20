@@ -25,7 +25,7 @@ module api.schema.content {
     export class ContentTypeSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<ContentTypeSummary> {
 
         constructor(option: api.ui.selector.Option<ContentTypeSummary>) {
-            super(option);
+            super(new api.ui.selector.combobox.RichSelectedOptionViewBuilder<ContentTypeSummary>(option));
         }
 
         resolveIconUrl(content: ContentTypeSummary): string {
