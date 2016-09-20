@@ -11,9 +11,9 @@ module api.content.resource {
 
         private contentSummaryRequest: ContentSummaryRequest;
 
-        private filterContentPath: ContentPath;
+        private filterContentPaths: ContentPath[];
 
-        private filterSourceContentType: ContentType;
+        private filterContentTypes: ContentType[];
 
         constructor() {
             this.contentSummaryRequest = new ContentSummaryRequest();
@@ -24,13 +24,14 @@ module api.content.resource {
             this.contentSummaryRequest.setSize(size);
         }
 
-        setFilterContentPath(filterContentPath: ContentPath) {
-            this.filterContentPath = filterContentPath;
-            this.contentSummaryRequest.setContentPath(this.filterContentPath);
+        setFilterContentPaths(contentPaths: ContentPath[]) {
+            this.filterContentPaths = contentPaths;
+            const path = contentPaths.length === 1 ? contentPaths[0] : null;
+            this.contentSummaryRequest.setContentPath(path);
         }
 
-        setFilterSourceContentType(filterSourceContentType: ContentType) {
-            this.filterSourceContentType = filterSourceContentType;
+        setFilterContentTypes(contentTypes: ContentType[]) {
+            this.filterContentTypes = contentTypes;
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
@@ -49,12 +50,12 @@ module api.content.resource {
             return this.sendRequest().then((contents: ContentSummary[]) => {
                 var deferred = wemQ.defer<ContentSummary[]>();
 
-                var allContentTypes = contents.map((content)=> content.getType());
-                var contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
-                var contentTypeRequests = contentTypes.map((contentType)=> new GetContentTypeByNameRequest(contentType).sendAndParse());
+                const allContentTypes = contents.map((content)=> content.getType());
+                const contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
+                const contentTypeRequests = contentTypes.map((contentType)=> new GetContentTypeByNameRequest(contentType).sendAndParse());
 
                 wemQ.all(contentTypeRequests).spread((...contentTypes: ContentType[]) => {
-                    if (this.filterContentPath) {
+                    if (this.filterContentPaths) {
                         contents = this.filterContent(contents, contentTypes);
                     }
                     if (contents && contents.length > 0) {
@@ -87,12 +88,32 @@ module api.content.resource {
 
             var createContentFilter = new api.content.util.CreateContentFilter();
 
-            return contents.filter((content: ContentSummary) => {
-                return !content.getPath().isDescendantOf(this.filterContentPath) && !this.filterContentPath.isChildOf(content.getPath()) &&
-                       !this.filterContentPath.equals(content.getPath()) &&
-                       contentTypeAllowsChild[content.getType().toString()] &&
-                       createContentFilter.isCreateContentAllowed(content, this.filterSourceContentType);
+            var filtered = contents.slice(0);
+
+            if (this.filterContentPaths.length === 1) {
+                const contentPath = this.filterContentPaths[0];
+                return filtered.filter((content: ContentSummary) => {
+                    return !content.getPath().isDescendantOf(contentPath) && !contentPath.isChildOf(content.getPath()) &&
+                           !contentPath.equals(content.getPath()) &&
+                           contentTypeAllowsChild[content.getType().toString()] &&
+                           createContentFilter.isCreateContentAllowed(content, this.filterContentTypes[0]);
+                });
+            }
+            
+            // Optimize filter for multiple paths
+            filtered = filtered.filter((content: ContentSummary) => {
+                return contentTypeAllowsChild[content.getType().toString()] &&
+                       this.filterContentTypes.every(type => createContentFilter.isCreateContentAllowed(content, type));
             });
+
+            this.filterContentPaths.forEach((contentPath) => {
+                filtered = filtered.filter((content: ContentSummary) => {
+                    return !content.getPath().isDescendantOf(contentPath) && !contentPath.isChildOf(content.getPath()) &&
+                           !contentPath.equals(content.getPath());
+                });
+            });
+
+            return filtered;
         }
 
     }
