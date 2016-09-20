@@ -146,6 +146,32 @@
         color: @admin-bg-dark-gray;
       }
     }
+
+    .help-text-button {
+      position: fixed;
+      top: 89px;
+      height: 30px;
+      width: 30px;
+      margin-left: -30px;
+      text-align: center;
+      line-height: 30px;
+      overflow: hidden;
+      z-index: @z-index-mask - 1;
+      cursor: pointer;
+      color: #777777;
+      font-size: 18px;
+
+      &.on {
+        .border-radius(50%);
+        background: @admin-button-blue1;
+        color: white;
+        font-size: 16px;
+      }
+
+      &:hover:not(.on) {
+        color: @admin-bg-dark-gray;
+      }
+    }
   }
 
   &._0-240, &._240-360, &._360-540 {

@@ -41,6 +41,10 @@ module api.form {
 
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
+        private helpTextDiv: api.dom.Element;
+
+        private helpTextToggler: api.dom.DivEl;
+
         public static debug: boolean = false;
 
         constructor(config: InputViewConfig) {
@@ -70,6 +74,16 @@ module api.form {
                 }
             }
 
+            if (this.input.getHelpText()) {
+                this.helpTextToggler = new api.dom.DivEl("help-text-toggler");
+                this.helpTextToggler.setHtml("?");
+                this.helpTextToggler.onClicked(() => {
+                    this.helpTextDiv.toggleClass("visible");
+                    this.helpTextToggler.toggleClass("on");
+                });
+
+                this.appendChild(this.helpTextToggler);
+            }
 
             if (this.input.isMaximizeUIInputWidth()) {
                 this.addClass("label-over-input");
@@ -86,7 +100,7 @@ module api.form {
                 this.appendChild(this.inputTypeView.getElement());
 
                 if (this.input.getHelpText()) {
-                    this.appendHelpText(this.input.getHelpText());
+                    this.helpTextDiv = this.appendHelpText(this.input.getHelpText());
                 }
 
                 if (!this.inputTypeView.isManagingAdd()) {
@@ -126,29 +140,17 @@ module api.form {
                 this.refresh(validate);
             });
         }
-        
-        private appendHelpText(helpText: string) {
-            var helpTextDiv = new api.dom.DivEl("help-text overflow");
+
+        private appendHelpText(helpText: string): api.dom.Element {
+            var helpTextDiv = new api.dom.DivEl("help-text");
             var pEl = new api.dom.PEl();
             pEl.getEl().setText(helpText);
 
-            var spanEl = new api.dom.SpanEl();
-            spanEl.getEl().setText("More");
-
-            spanEl.onClicked(() => {
-                helpTextDiv.removeClass("overflow");
-            });
-
             helpTextDiv.appendChild(pEl);
-            helpTextDiv.appendChild(spanEl);
-
-            helpTextDiv.onRendered(() => {
-                if (pEl.getEl().isOverflown()) {
-                    helpTextDiv.addClass("collapsed");
-                }
-            });
 
             this.appendChild(helpTextDiv);
+
+            return helpTextDiv;
         }
 
         private getPropertyArray(propertySet: PropertySet): PropertyArray {
@@ -338,6 +340,18 @@ module api.form {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.inputTypeView.unBlur(listener);
+        }
+
+        toggleHelpText(show?: boolean) {
+            if (this.helpTextDiv) {
+                this.helpTextDiv.toggleClass("visible", show);
+                this.helpTextToggler.toggleClass("on", show);
+            }
+
+        }
+
+        hasHelpText(): boolean {
+            return !!this.input.getHelpText();
         }
     }
 }
