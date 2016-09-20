@@ -177,10 +177,17 @@ final class ImageHandlerWorker
 
     private Media getImage( final ContentId contentId )
     {
-        final Content content = this.contentService.getById( contentId );
+        final Content content = getContentById( contentId );
         if ( content == null )
         {
-            throw notFound( "Content with id [%s] not found", contentId.toString() );
+            if ( this.contentService.contentExists( contentId ) )
+            {
+                throw forbidden( "You don't have permission to access [%s]", contentId );
+            }
+            else
+            {
+                throw notFound( "Content with id [%s] not found", contentId.toString() );
+            }
         }
 
         if ( !( content instanceof Media ) )
@@ -195,6 +202,18 @@ final class ImageHandlerWorker
         }
 
         return media;
+    }
+
+    private Content getContentById( final ContentId contentId )
+    {
+        try
+        {
+            return this.contentService.getById( contentId );
+        }
+        catch ( final Exception e )
+        {
+            return null;
+        }
     }
 
     private boolean contentNameMatch( final ContentName contentName, final String urlName )
