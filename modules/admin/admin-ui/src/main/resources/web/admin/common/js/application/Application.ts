@@ -1,4 +1,5 @@
 module api.application {
+    import UploadItem = api.ui.uploader.UploadItem;
 
     export class Application extends api.item.BaseItem {
 
@@ -278,6 +279,43 @@ module api.application {
 
         build(): Application {
             return new Application(this);
+        }
+    }
+    
+    export class ApplicationUploadMock {
+
+        private id: string;
+        private name: string;
+        private uploadItem: UploadItem<Application>;
+
+        constructor(uploadItem: UploadItem<Application>) {
+            this.id = uploadItem.getId();
+            this.name = uploadItem.getName();
+            this.uploadItem = uploadItem;
+        }
+
+        getId(): string {
+            return this.id;
+        }
+
+        getDisplayName(): string {
+            return this.name;
+        }
+
+        getName(): string {
+            return this.name;
+        }
+
+        getUploadItem(): UploadItem<Application> {
+            return this.uploadItem;
+        }
+
+        getApplicationKey(): string {
+            return this.name;
+        }
+
+        isLocal(): boolean {
+            return false;
         }
     }
 }
