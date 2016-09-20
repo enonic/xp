@@ -6,19 +6,39 @@ var canInstallDemoApps = false;
 var isInstallingDemoAppsNow = false;
 var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.wireframe", "com.enonic.app.imagexpert"];
 var marketDemoApps = [];
+var isSystemAdmin = false;
 
 exports.init = function () {
     initDialog();
     initTourSteps();
-    setTourStep(1);
-    api.dom.Body.get().appendChild(tourDialog);
 
+    checkAdminRights().then(function () {
+        if (isSystemAdmin) {
+            appendInstalAppStep();
+        }
+        setTourStep(1);
+        api.dom.Body.get().appendChild(tourDialog);
+    });
+    
     return tourDialog;
 };
 
+function appendInstalAppStep() {
+    tourSteps.push(createStep5());
+    tourDialog.setTitle("Welcome Tour - Step 1 of 5");
+}
+
+function checkAdminRights() {
+    return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then(function (loginResult) {
+        isSystemAdmin = loginResult.getPrincipals().some(function (principal) {
+            return principal.equals(api.security.RoleKeys.ADMIN);
+        });
+    });
+}
+
 function initDialog() {
     tourDialog = new api.ui.dialog.ModalDialog({
-        title: new api.ui.dialog.ModalDialogHeader("Welcome Tour - Step 1 of 5"),
+        title: new api.ui.dialog.ModalDialogHeader("Welcome Tour - Step 1 of 4"),
         ignoreClickOutside: true
     });
     tourDialog.addClass("xp-tour-dialog");
@@ -88,7 +108,7 @@ function initNavigation() {
 
             if (currentStep === tourSteps.length) {
 
-                if (!demoAppsInstalled) {
+                if (tourSteps.length == 5 && !demoAppsInstalled) {
                     var demoAppsContainer = api.dom.Element.fromHtmlElement(document.querySelector(".demo-apps"));
 
                     if (!demoAppsLoadMask) {
@@ -148,7 +168,7 @@ function initNavigation() {
 }
 
 function initTourSteps() {
-    tourSteps = [createStep1(), createStep2(), createStep3(), createStep4(), createStep5()];
+    tourSteps = [createStep1(), createStep2(), createStep3(), createStep4()];
 }
 
 function createStep1() {
@@ -362,7 +382,7 @@ function loadApp(marketDemoApp) {
 }
 
 function updateHeaderStep(step) {
-    tourDialog.setTitle("Welcome Tour - Step " + step + " of 5");
+    tourDialog.setTitle("Welcome Tour - Step " + step + " of " + (isSystemAdmin ? "5" : "4"));
 }
 
 function setTourStep(step) {
