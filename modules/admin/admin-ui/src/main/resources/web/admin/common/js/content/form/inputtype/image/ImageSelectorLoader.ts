@@ -1,34 +1,34 @@
-module api.content.form.inputtype.contentselector {
+module api.content.form.inputtype.image {
 
     import ContentSummaryPreLoader = api.content.resource.ContentSummaryPreLoader;
     import ContentSelectorQueryRequest = api.content.resource.ContentSelectorQueryRequest;
 
-    export class ContentSelectorLoader extends api.util.loader.PostLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
+    export class ImageSelectorLoader extends ContentSummaryPreLoader {
 
-        private contentSelectorQueryRequest: ContentSelectorQueryRequest;
+        private imageSelectorQueryRequest: ContentSelectorQueryRequest;
 
         constructor(builder: Builder) {
-            this.contentSelectorQueryRequest = new ContentSelectorQueryRequest();
-            super(this.contentSelectorQueryRequest);
-            this.contentSelectorQueryRequest.setContent(builder.content);
-            this.contentSelectorQueryRequest.setInputName(builder.inputName);
-            this.contentSelectorQueryRequest.setContentTypeNames(builder.contentTypeNames);
-            this.contentSelectorQueryRequest.setAllowedContentPaths(builder.allowedContentPaths);
-            this.contentSelectorQueryRequest.setRelationshipType(builder.relationshipType);
+            this.imageSelectorQueryRequest = new ContentSelectorQueryRequest();
+            super(this.imageSelectorQueryRequest);
+            this.imageSelectorQueryRequest.setContent(builder.content);
+            this.imageSelectorQueryRequest.setInputName(builder.inputName);
+            this.imageSelectorQueryRequest.setContentTypeNames(builder.contentTypeNames);
+            this.imageSelectorQueryRequest.setAllowedContentPaths(builder.allowedContentPaths);
+            this.imageSelectorQueryRequest.setRelationshipType(builder.relationshipType);
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
-            this.contentSelectorQueryRequest.setQueryExpr(searchString);
+            this.imageSelectorQueryRequest.setQueryExpr(searchString);
             return this.load();
         }
 
         isPartiallyLoaded(): boolean {
-            return this.contentSelectorQueryRequest.isPartiallyLoaded();
+            return this.imageSelectorQueryRequest.isPartiallyLoaded();
         }
 
         resetParams() {
-            this.contentSelectorQueryRequest.resetParams();
+            this.imageSelectorQueryRequest.resetParams();
         }
 
         // delegate the postLoad to ComboBox to trigger it before the end of the list
@@ -78,8 +78,8 @@ module api.content.form.inputtype.contentselector {
             return this;
         }
 
-        public build(): ContentSelectorLoader {
-            return new ContentSelectorLoader(this);
+        public build(): ImageSelectorLoader {
+            return new ImageSelectorLoader(this);
         }
     }
 }
