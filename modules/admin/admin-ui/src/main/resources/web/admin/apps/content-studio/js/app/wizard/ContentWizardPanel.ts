@@ -217,11 +217,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
 
         this.dataChangedListener = () => {
-            var publishControls = this.getContentWizardToolbarPublishControls();
-            if (this.isContentFormValid && publishControls.isOnline()) {
-                this.contentCompareStatus = CompareStatus.NEWER;
-                publishControls.setCompareStatus(this.contentCompareStatus);
-            }
+            this.updatePublishStatusOnDataChange()
         };
 
         this.applicationAddedListener = (event: api.content.site.ApplicationAddedEvent) => {
@@ -696,6 +692,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         }
 
                         this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
+                    } else {
+                        this.updatePublishStatusOnDataChange();
                     }
 
                 });
@@ -1561,6 +1559,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.getComponentsViewToggler().setVisible(this.isContentRenderable());
         this.getContextWindowToggler().setVisible(this.isContentRenderable());
+    }
+
+    private updatePublishStatusOnDataChange() {
+        var publishControls = this.getContentWizardToolbarPublishControls();
+        if (this.isContentFormValid && publishControls.isOnline()) {
+            this.contentCompareStatus = CompareStatus.NEWER;
+            publishControls.setCompareStatus(this.contentCompareStatus);
+        }
     }
 
 }
