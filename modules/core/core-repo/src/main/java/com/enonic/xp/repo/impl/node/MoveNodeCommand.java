@@ -24,7 +24,7 @@ import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
 public class MoveNodeCommand
-    extends AbstractNodeCommand
+    extends RepositorySpecificNodeCommand
 {
     private final NodeId nodeId;
 
@@ -45,7 +45,7 @@ public class MoveNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
+    public static Builder create( final RepositorySpecificNodeCommand source )
     {
         return new Builder( source );
     }
@@ -213,6 +213,11 @@ public class MoveNodeCommand
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )
     {
+        if ( skipNodeExistsVerification() )
+        {
+            return;
+        }
+
         final NodePath newNodePath = NodePath.create( newParentPath, newNodeName.toString() ).build();
 
         final boolean exists = CheckNodeExistsCommand.create( this ).
@@ -227,7 +232,7 @@ public class MoveNodeCommand
     }
 
     public static class Builder
-        extends AbstractNodeCommand.Builder<Builder>
+        extends RepositorySpecificNodeCommand.Builder<Builder>
     {
         private NodeId id;
 
@@ -240,7 +245,7 @@ public class MoveNodeCommand
             super();
         }
 
-        private Builder( final AbstractNodeCommand source )
+        private Builder( final RepositorySpecificNodeCommand source )
         {
             super( source );
         }

@@ -48,6 +48,7 @@ public class DuplicateNodeCommandTest
             binaryService( binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -77,6 +78,7 @@ public class DuplicateNodeCommandTest
             binaryService( binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -271,6 +273,7 @@ public class DuplicateNodeCommandTest
             binaryService( binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -320,6 +323,7 @@ public class DuplicateNodeCommandTest
             binaryService( binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -381,6 +385,7 @@ public class DuplicateNodeCommandTest
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
     }

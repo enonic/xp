@@ -34,7 +34,7 @@ import com.enonic.xp.security.acl.Permission;
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermission;
 
 public final class CreateNodeCommand
-    extends AbstractNodeCommand
+    extends RepositorySpecificNodeCommand
 {
     private final CreateNodeParams params;
 
@@ -55,7 +55,7 @@ public final class CreateNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
+    public static Builder create( final RepositorySpecificNodeCommand source )
     {
         return new Builder( source );
     }
@@ -263,6 +263,11 @@ public final class CreateNodeCommand
 
     private void verifyNotExistsAlready()
     {
+        if ( skipNodeExistsVerification() )
+        {
+            return;
+        }
+
         if ( this.params.getNodeId() != null )
         {
             final Node existingNode = doGetById( this.params.getNodeId() );
@@ -287,7 +292,7 @@ public final class CreateNodeCommand
     }
 
     public static class Builder
-        extends AbstractNodeCommand.Builder<Builder>
+        extends RepositorySpecificNodeCommand.Builder<Builder>
     {
         private CreateNodeParams params;
 
@@ -300,7 +305,7 @@ public final class CreateNodeCommand
             super();
         }
 
-        private Builder( final AbstractNodeCommand source )
+        private Builder( final RepositorySpecificNodeCommand source )
         {
             super( source );
         }

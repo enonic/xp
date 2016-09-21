@@ -24,10 +24,17 @@ public class RepositoryNodeTranslator
 
     private static final String SETTINGS_KEY = "settings";
 
+    private static final String VALIDATION_SETTINGS_KEY = "validationSettings";
+
+    private static final String CHECK_EXISTS_KEY = "checkExists";
+
+    private static final String CHECK_PARENT_EXISTS_KEY = "checkParentExists";
+
     public static Node toNode( final RepositorySettings repositorySettings )
     {
         final PropertyTree repositoryData = new PropertyTree();
         toNodeData( repositorySettings.getIndexConfigs(), repositoryData );
+        toNodeData( repositorySettings.getValidationSettings(), repositoryData );
 
         return Node.create().
             id( NodeId.from( repositorySettings.getRepositoryId() ) ).
@@ -71,6 +78,16 @@ public class RepositoryNodeTranslator
         }
     }
 
+    private static void toNodeData( final ValidationSettings validationSettings, final PropertyTree data )
+    {
+        if ( validationSettings != null )
+        {
+            final PropertySet validationSettingsSet = data.addSet( VALIDATION_SETTINGS_KEY );
+            validationSettingsSet.setBoolean( CHECK_EXISTS_KEY, validationSettings.isCheckExists() );
+            validationSettingsSet.setBoolean( CHECK_PARENT_EXISTS_KEY, validationSettings.isCheckParentExists() );
+        }
+    }
+
     public static RepositorySettings toRepositorySettings( final Node node )
     {
         final PropertyTree nodeData = node.data();
@@ -83,6 +100,14 @@ public class RepositoryNodeTranslator
 
     private static ValidationSettings toValidationSettings( final PropertyTree nodeData )
     {
+        final PropertySet validationSettingsSet = nodeData.getSet( VALIDATION_SETTINGS_KEY );
+        if ( validationSettingsSet != null )
+        {
+            return ValidationSettings.create().
+                checkExists( validationSettingsSet.getBoolean( CHECK_EXISTS_KEY ) ).
+                checkParentExists( validationSettingsSet.getBoolean( CHECK_PARENT_EXISTS_KEY ) ).
+                build();
+        }
         return null;
     }
 
