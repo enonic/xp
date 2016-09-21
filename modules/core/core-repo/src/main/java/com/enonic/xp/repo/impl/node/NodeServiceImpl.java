@@ -317,6 +317,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
             ids( ids ).
             target( target ).
             build().

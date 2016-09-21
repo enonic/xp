@@ -23,6 +23,12 @@ abstract class RepositorySpecificNodeCommand
         return !repositoryService.get( repositoryId ).getValidationSettings().isCheckExists();
     }
 
+    protected boolean skipParentNodeExistsVerification()
+    {
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        return !repositoryService.get( repositoryId ).getValidationSettings().isCheckParentExists();
+    }
+
     public static class Builder<B extends Builder>
         extends AbstractNodeCommand.Builder<B>
     {
