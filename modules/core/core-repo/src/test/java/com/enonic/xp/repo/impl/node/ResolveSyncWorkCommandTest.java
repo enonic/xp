@@ -393,6 +393,7 @@ public class ResolveSyncWorkCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             id( moveMe.id() ).
             newNodeName( NodeName.from( moveMe.name() + "_new" ) ).
             newParent( to ).
@@ -1301,6 +1302,7 @@ public class ResolveSyncWorkCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             id( NodeId.from( nodeId ) ).
             newNodeName( NodeName.from( newName ) ).
             newParent( newParent ).
@@ -1317,6 +1319,7 @@ public class ResolveSyncWorkCommandTest
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
     }

@@ -22,7 +22,7 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.util.Reference;
 
 public final class DuplicateNodeCommand
-    extends AbstractNodeCommand
+    extends RepositorySpecificNodeCommand
 {
     private final NodeId nodeId;
 
@@ -224,7 +224,7 @@ public final class DuplicateNodeCommand
     }
 
     public static class Builder
-        extends AbstractNodeCommand.Builder<Builder>
+        extends RepositorySpecificNodeCommand.Builder<Builder>
     {
         private NodeId id;
 

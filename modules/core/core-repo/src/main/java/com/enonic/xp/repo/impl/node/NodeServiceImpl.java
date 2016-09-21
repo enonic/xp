@@ -84,7 +84,6 @@ public class NodeServiceImpl
 
     private BinaryService binaryService;
 
-    @SuppressWarnings("unused")
     private RepositoryService repositoryService;
 
     //private BlobStore blobStore;
@@ -221,6 +220,7 @@ public class NodeServiceImpl
             binaryService( this.binaryService ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -258,6 +258,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -316,6 +317,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
             ids( ids ).
             target( target ).
             build().
@@ -339,6 +341,7 @@ public class NodeServiceImpl
             binaryService( this.binaryService ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -358,6 +361,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -645,6 +649,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 

@@ -114,7 +114,7 @@ public abstract class AbstractNodeTest
 
     protected IndexDataServiceImpl indexedDataService;
 
-    private RepositoryServiceImpl repositoryService;
+    protected RepositoryServiceImpl repositoryService;
 
     private BlobStore blobStore;
 
@@ -253,6 +253,7 @@ public abstract class AbstractNodeTest
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             params( createParamsWithAnalyzer ).
             build().
             execute();
@@ -354,6 +355,7 @@ public abstract class AbstractNodeTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
     }

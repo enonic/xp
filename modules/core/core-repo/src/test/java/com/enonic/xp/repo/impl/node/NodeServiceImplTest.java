@@ -58,6 +58,7 @@ public class NodeServiceImplTest
         this.nodeService.setSnapshotService( this.snapshotService );
         this.nodeService.setNodeStorageService( this.storageService );
         this.nodeService.setNodeSearchService( this.searchService );
+        this.nodeService.setRepositoryService( this.repositoryService );
         this.nodeService.setBinaryService( this.binaryService );
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 

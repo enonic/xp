@@ -12,6 +12,16 @@ public class ValidationSettings
         checkExists = builder.checkExists;
     }
 
+    public boolean isCheckExists()
+    {
+        return checkExists;
+    }
+
+    public boolean isCheckParentExists()
+    {
+        return checkParentExists;
+    }
+
     public static Builder create()
     {
         return new Builder();

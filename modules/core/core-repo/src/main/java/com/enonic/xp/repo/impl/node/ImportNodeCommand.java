@@ -9,7 +9,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 
 public class ImportNodeCommand
-    extends AbstractNodeCommand
+    extends RepositorySpecificNodeCommand
 {
     private final InsertManualStrategy insertManualStrategy;
 
@@ -115,7 +115,7 @@ public class ImportNodeCommand
     }
 
     public static final class Builder
-        extends AbstractNodeCommand.Builder<Builder>
+        extends RepositorySpecificNodeCommand.Builder<Builder>
     {
         private InsertManualStrategy insertManualStrategy;
 
