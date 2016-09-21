@@ -554,14 +554,8 @@ module api.app.wizard {
         }
 
         private toggleHelpTextShown() {
-            if (this.helpTextShown) {
-                this.helpTextToggleButton.removeClass("on");
-                this.helpTextShown = false;
-            }
-            else {
-                this.helpTextToggleButton.addClass("on");
-                this.helpTextShown = true;
-            }
+            this.helpTextShown = !this.helpTextShown;
+            this.helpTextToggleButton.toggleClass("on", this.helpTextShown);
 
             this.steps.forEach((step: WizardStep) => {
                 step.toggleHelpText(this.helpTextShown);
@@ -575,23 +569,13 @@ module api.app.wizard {
         }
 
         private setupHelpTextToggleButton() {
-            var updateHelpTextToggleButtonPosition = () => {
-                this.helpTextToggleButton.getEl().setLeftPx(
-                    this.stepsPanel.getEl().getWidth() - this.minimizeEditButton.getEl().getWidth());
-            };
-
-            this.helpTextToggleButton = new api.dom.DivEl("help-text-button");
-            this.helpTextToggleButton.setHtml("?");
+            this.helpTextToggleButton = this.stepNavigatorAndToolbarContainer.setupHelpTextToggleButton();
 
             this.helpTextToggleButton.onClicked(() => {
                 this.toggleHelpTextShown();
             });
-
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this.formPanel, updateHelpTextToggleButtonPosition);
-
-            this.formPanel.prependChild(this.helpTextToggleButton);
         }
-
+        
         isMinimized(): boolean {
             return this.minimized;
         }
