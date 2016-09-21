@@ -26,3 +26,45 @@ exports.refresh = function (params) {
 
     bean.refresh();
 };
+
+/**
+ * Creates a repository
+ *
+ * @example-ref examples/repo/create.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.id Repository ID.
+ * @param {object} [params.validation] Validation settings.
+ * @param {boolean} [params.validation.checkExists=true] Activate node existence check.
+ * @param {boolean} [params.validation.checkParentExists=true] Activate parent node existence check.
+ * @param {boolean} [params.indexConfigs] TBD.
+ *
+ */
+exports.create = function (params) {
+
+    var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
+    bean.id = required(params, 'id');
+
+    var validation = params.validation || {};
+    bean.checkExists = __.nullOrValue(validation.checkExists);
+    bean.checkParentExists = __.nullOrValue(validation.checkParentExists);
+
+    bean.execute();
+};
+
+/**
+ * Retrieves a repository
+ *
+ * @example-ref examples/repo/get.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.id Repository ID.
+ * @return {object} The repository (as JSON).
+ *
+ */
+exports.get = function (params) {
+
+    var bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
+    bean.id = required(params, 'id');
+    bean.execute();
+};
