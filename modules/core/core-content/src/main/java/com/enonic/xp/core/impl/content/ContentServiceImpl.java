@@ -262,7 +262,6 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentService( this ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).

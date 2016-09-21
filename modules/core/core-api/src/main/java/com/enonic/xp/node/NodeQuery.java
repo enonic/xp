@@ -9,6 +9,8 @@ import com.enonic.xp.security.Principals;
 public class NodeQuery
     extends AbstractQuery
 {
+    public final static int ALL_RESULTS_SIZE_FLAG = -1;
+
     private final NodePath parent;
 
     private final NodePath path;
