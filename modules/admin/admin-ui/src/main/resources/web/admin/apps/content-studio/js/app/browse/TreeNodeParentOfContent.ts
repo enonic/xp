@@ -5,20 +5,24 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 
 export class TreeNodeParentOfContent {
 
-    private data: ContentSummaryAndCompareStatus;
+    private children: ContentSummaryAndCompareStatus[];
 
     private node: TreeNode<ContentSummaryAndCompareStatus>;
 
-    constructor(data: ContentSummaryAndCompareStatus, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        this.data = data;
+    constructor(children: ContentSummaryAndCompareStatus[] = [], node: TreeNode<ContentSummaryAndCompareStatus>) {
+        this.children = children;
         this.node = node;
     }
 
-    getData(): ContentSummaryAndCompareStatus {
-        return this.data;
+    getChildren(): ContentSummaryAndCompareStatus[] {
+        return this.children;
     }
 
     getNode(): TreeNode<ContentSummaryAndCompareStatus> {
         return this.node;
+    }
+
+    addChild(child: ContentSummaryAndCompareStatus) {
+        this.children.push(child);
     }
 }
