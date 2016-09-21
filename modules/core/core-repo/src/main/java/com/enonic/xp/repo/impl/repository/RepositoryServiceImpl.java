@@ -1,8 +1,12 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.concurrent.ConcurrentMap;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -21,6 +25,8 @@ import com.enonic.xp.security.SystemConstants;
 public class RepositoryServiceImpl
     implements RepositoryService
 {
+    private final ConcurrentMap<RepositoryId, RepositorySettings> repositorySettingsMap = Maps.newConcurrentMap();
+
     private IndexServiceInternal indexServiceInternal;
 
     private NodeRepositoryService nodeRepositoryService;
@@ -46,14 +52,20 @@ public class RepositoryServiceImpl
     @Override
     public RepositoryId create( final RepositorySettings repositorySettings )
     {
-        this.nodeRepositoryService.create( repositorySettings );
+        repositorySettingsMap.compute( repositorySettings.getRepositoryId(), ( key, previousValue ) -> {
 
-        final Node node = RepositoryNodeTranslator.toNode( repositorySettings );
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build().
-            callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
+            //TODO Check if repo already exists
+            this.nodeRepositoryService.create( repositorySettings );
+
+            final Node node = RepositoryNodeTranslator.toNode( repositorySettings );
+            ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+                branch( SystemConstants.BRANCH_SYSTEM ).
+                build().
+                callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
+            return repositorySettings;
+        } );
+
         return repositorySettings.getRepositoryId();
     }
 
@@ -61,13 +73,15 @@ public class RepositoryServiceImpl
     @Override
     public RepositorySettings get( final RepositoryId repositoryId )
     {
-        final NodeId nodeId = NodeId.from( repositoryId.toString() );
-        final Node node = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build().
-            callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
-        return RepositoryNodeTranslator.toRepositorySettings( node );
+        return repositorySettingsMap.computeIfAbsent( repositoryId, key -> {
+            final NodeId nodeId = NodeId.from( repositoryId.toString() );
+            final Node node = ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+                branch( SystemConstants.BRANCH_SYSTEM ).
+                build().
+                callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
+            return RepositoryNodeTranslator.toRepositorySettings( node );
+        } );
     }
 
     @Reference
