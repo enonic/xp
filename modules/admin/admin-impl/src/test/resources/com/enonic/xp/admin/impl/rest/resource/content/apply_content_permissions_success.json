@@ -64,6 +64,7 @@
             }
         }
     ],
+    "publishedTime" : null,
     "thumbnail": null,
     "type": "myapplication:content-type"
 }

@@ -33,6 +33,7 @@ public final class ContentMapper
         gen.value( "modifier", value.getModifier() );
         gen.value( "createdTime", value.getCreatedTime() );
         gen.value( "modifiedTime", value.getModifiedTime() );
+        gen.value( "publishedTime", value.getPublishedTime() );
         gen.value( "type", value.getType() );
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "hasChildren", value.hasChildren() );

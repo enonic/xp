@@ -39,6 +39,7 @@
     "page": null,
     "path": "/content-path",
     "permissions": [],
+    "publishedTime" : null,
     "thumbnail": null,
     "type": "myapplication:content-type"
 }
