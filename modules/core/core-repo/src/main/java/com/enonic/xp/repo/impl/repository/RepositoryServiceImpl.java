@@ -54,9 +54,12 @@ public class RepositoryServiceImpl
     {
         repositorySettingsMap.compute( repositorySettings.getRepositoryId(), ( key, previousValue ) -> {
 
-            //TODO Check if repo already exists
-            this.nodeRepositoryService.create( repositorySettings );
+            if ( previousValue != null || getRepositoryNode( key ) != null )
+            {
+                throw new RepositoryAlreadyExistException( key );
+            }
 
+            this.nodeRepositoryService.create( repositorySettings );
             final Node node = RepositoryNodeTranslator.toNode( repositorySettings );
             ContextBuilder.from( ContextAccessor.current() ).
                 repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
@@ -74,14 +77,19 @@ public class RepositoryServiceImpl
     public RepositorySettings get( final RepositoryId repositoryId )
     {
         return repositorySettingsMap.computeIfAbsent( repositoryId, key -> {
-            final NodeId nodeId = NodeId.from( repositoryId.toString() );
-            final Node node = ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-                branch( SystemConstants.BRANCH_SYSTEM ).
-                build().
-                callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
-            return RepositoryNodeTranslator.toRepositorySettings( node );
+            final Node node = getRepositoryNode( repositoryId );
+            return node == null ? null : RepositoryNodeTranslator.toRepositorySettings( node );
         } );
+    }
+
+    private Node getRepositoryNode( final RepositoryId repositoryId )
+    {
+        final NodeId nodeId = NodeId.from( repositoryId.toString() );
+        return ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build().
+            callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
     }
 
     @Reference
