@@ -54,7 +54,7 @@ public class RepositoryServiceImpl
     {
         repositorySettingsMap.compute( repositorySettings.getRepositoryId(), ( key, previousValue ) -> {
 
-            if ( previousValue != null || getRepositoryNode( key ) != null )
+            if ( previousValue != null || repositoryNodeExists( key ) )
             {
                 throw new RepositoryAlreadyExistException( key );
             }
@@ -80,6 +80,18 @@ public class RepositoryServiceImpl
             final Node node = getRepositoryNode( repositoryId );
             return node == null ? null : RepositoryNodeTranslator.toRepositorySettings( node );
         } );
+    }
+
+    private boolean repositoryNodeExists( final RepositoryId repositoryId )
+    {
+        try
+        {
+            return getRepositoryNode( repositoryId ) != null;
+        }
+        catch ( Exception e )
+        {
+            return false;
+        }
     }
 
     private Node getRepositoryNode( final RepositoryId repositoryId )
