@@ -35,8 +35,10 @@ module api.content.form.inputtype.customselector {
     class CustomSelectorSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<CustomSelectorItem> {
 
         constructor(option: Option<CustomSelectorItem>) {
-            super(option);
-            this.setIsDraggable(true);
+            super(
+                new api.ui.selector.combobox.RichSelectedOptionViewBuilder<CustomSelectorItem>(option)
+                .setDraggable(true)
+            );
         }
 
         protected createView(content: CustomSelectorItem): CustomSelectorItemViewer {
