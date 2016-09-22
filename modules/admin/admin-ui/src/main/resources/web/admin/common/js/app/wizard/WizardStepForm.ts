@@ -89,5 +89,13 @@ module api.app.wizard {
             })
         }
 
+        toggleHelpText(show?: boolean) {
+            // TO BE IMPLEMENTED BY INHERITORS
+        }
+
+        hasHelpText(): boolean {
+            return false; // TO BE OVERRIDEN BY INHERITORS
+        }
+
     }
 }
