@@ -1,7 +1,10 @@
 package com.enonic.xp.lib.repo;
 
+import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
@@ -17,14 +20,20 @@ public class CreateRepositoryScriptTest
         super.initialize();
         repositoryService = Mockito.mock( RepositoryService.class );
         Mockito.when( repositoryService.create( Mockito.any() ) ).
-            thenAnswer( invocation -> invocation.getArguments()[0] );
+            thenAnswer( invocation -> {
+                final CreateRepositoryParams params = (CreateRepositoryParams) invocation.getArguments()[0];
+                return Repository.create().
+                    id( params.getRepositoryId() ).
+                    settings( params.getRepositorySettings() ).
+                    build();
+            } );
         addService( RepositoryService.class, repositoryService );
     }
 
-//    @Test
-//    public void testExample()
-//    {
-//        runScript( "/site/lib/xp/examples/repo/create.js" );
-//        verify( this.repositoryService, times( 2 ) ).create( Mockito.any() );
-//    }
+    @Test
+    public void testExample()
+    {
+        runScript( "/site/lib/xp/examples/repo/create.js" );
+        Mockito.verify( this.repositoryService, Mockito.times( 2 ) ).create( Mockito.any() );
+    }
 }

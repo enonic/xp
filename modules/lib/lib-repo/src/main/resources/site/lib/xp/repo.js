@@ -43,22 +43,23 @@ exports.refresh = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
- * @param {object} [params.validation] Validation settings.
- * @param {boolean} [params.validation.checkExists=true] Activate node existence check.
- * @param {boolean} [params.validation.checkParentExists=true] Activate parent node existence check.
- * @param {boolean} [params.indexConfigs] TBD.
+ * @param {object} [params.settings] Repository settings.
+ * @param {object} [params.settings.validationSettings] Validation settings.
+ * @param {boolean} [params.settings.validationSettings.checkExists=true] Activate node existence check.
+ * @param {boolean} [params.settings.validationSettings.checkParentExists=true] Activate parent node existence check.
+ * @param {boolean} [params.settings.indexConfigs] TBD.
  *
  */
 exports.create = function (params) {
-
     var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
     bean.repositoryId = required(params, 'id');
 
-    var validation = params.validation || {};
-    bean.checkExists = __.nullOrValue(validation.checkExists);
-    bean.checkParentExists = __.nullOrValue(validation.checkParentExists);
+    var settings = params.settings || {};
+    var validationSettings = settings.validationSettings || {};
+    bean.checkExists = __.nullOrValue(validationSettings.checkExists);
+    bean.checkParentExists = __.nullOrValue(validationSettings.checkParentExists);
 
-    bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -72,8 +73,8 @@ exports.create = function (params) {
  *
  */
 exports.get = function (params) {
-
     var bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
     bean.repositoryId = required(params, 'id');
-    bean.execute();
+
+    return __.toNativeObject(bean.execute());
 };
