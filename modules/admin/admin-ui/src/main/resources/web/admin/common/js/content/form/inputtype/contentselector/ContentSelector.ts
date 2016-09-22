@@ -11,6 +11,7 @@ module api.content.form.inputtype.contentselector {
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import Deferred = Q.Deferred;
 
     export class ContentSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
 
@@ -29,6 +30,14 @@ module api.content.form.inputtype.contentselector {
         private allowedContentPaths: string[];
 
         private contentDeletedListener: (event: ContentDeletedEvent) => void;
+
+        private static contentIdBatch: ContentId[] = [];
+
+        private static loadSummariesResult: Deferred<ContentSummary[]>;
+
+        private static loadSummaries: () => void = api.util.AppHelper.debounce(
+            ContentSelector.doFetchSummaries,
+            10, false);
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("relationship");
@@ -138,7 +147,17 @@ module api.content.form.inputtype.contentselector {
 
                     this.appendChild(this.contentComboBox);
 
-                    return this.doLoadContent(propertyArray).then((contents: api.content.ContentSummary[]) => {
+                    var contentIds: ContentId[] = [];
+                    propertyArray.forEach((property: Property) => {
+                        if (property.hasNonNullValue()) {
+                            var referenceValue = property.getReference();
+                            if (referenceValue instanceof api.util.Reference) {
+                                contentIds.push(ContentId.fromReference(referenceValue));
+                            }
+                        }
+                    });
+
+                    return this.doLoadContent(contentIds).then((contents: api.content.ContentSummary[]) => {
 
                             //TODO: original value doesn't work because of additional request, so have to select manually
                             contents.forEach((content: api.content.ContentSummary) => {
@@ -203,22 +222,34 @@ module api.content.form.inputtype.contentselector {
             });
         }
 
-        private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<api.content.ContentSummary[]> {
+        private static doFetchSummaries() {
+            new api.content.resource.GetContentSummaryByIds(ContentSelector.contentIdBatch).sendAndParse().then(
+                (result: api.content.ContentSummary[]) => {
 
-            var contentIds: ContentId[] = [];
-            propertyArray.forEach((property: Property) => {
-                if (property.hasNonNullValue()) {
-                    var referenceValue = property.getReference();
-                    if (referenceValue instanceof api.util.Reference) {
-                        contentIds.push(ContentId.fromReference(referenceValue));
-                    }
-                }
+                    ContentSelector.contentIdBatch = []; // empty batch of ids after loading
+
+                    ContentSelector.loadSummariesResult.resolve(result);
+
+                    ContentSelector.loadSummariesResult = null; // empty loading result after resolving
             });
-            return new api.content.resource.GetContentSummaryByIds(contentIds).sendAndParse().
-                then((result: api.content.ContentSummary[]) => {
-                    return result;
-                });
+        }
 
+        private doLoadContent(contentIds: ContentId[]): wemQ.Promise<api.content.ContentSummary[]> {
+
+            ContentSelector.contentIdBatch = ContentSelector.contentIdBatch.concat(contentIds);
+
+            if (!ContentSelector.loadSummariesResult) {
+                ContentSelector.loadSummariesResult = wemQ.defer<ContentSummary[]>();
+            }
+
+            ContentSelector.loadSummaries();
+
+            return ContentSelector.loadSummariesResult.promise.then((result: api.content.ContentSummary[]) => {
+                let contentIdsStr = contentIds.map(id => id.toString());
+                return result.filter(content => contentIdsStr.indexOf(content.getId()) >= 0);
+            });
+
+            return ContentSelector.loadSummariesResult.promise;
         }
 
         private setupSortable() {
