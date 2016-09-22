@@ -1,15 +1,15 @@
 import "../../../../api.ts";
 
-import {DetailsPanel} from "../DetailsPanel";
+import {DetailsView} from "../DetailsView";
 
 export class InfoWidgetToggleButton extends api.dom.DivEl {
 
-    constructor(detailsPanel: DetailsPanel) {
+    constructor(detailsView: DetailsView) {
         super("info-widget-toggle-button");
 
         this.onClicked((event) => {
             this.setActive();
-            detailsPanel.activateDefaultWidget();
+            detailsView.activateDefaultWidget();
         });
     }
 
