@@ -18,16 +18,18 @@
     display: none;
   }
 
-  &.no-selection {
-    .no-selection-message {
-      display: block;
+  .details-panel-view {
+    &.no-selection {
+      .no-selection-message {
+        display: block;
+      }
     }
-  }
 
-  .no-selection-message {
-    display: none;
+    .no-selection-message {
+      display: none;
 
-    .watermark-text();
+      .watermark-text();
+    }
   }
 
   .details-container {

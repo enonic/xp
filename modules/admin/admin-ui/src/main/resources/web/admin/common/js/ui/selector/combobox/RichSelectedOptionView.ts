@@ -10,23 +10,15 @@ module api.ui.selector.combobox {
         private draggable: boolean;
         private removable: boolean;
 
-        constructor(option: api.ui.selector.Option<T>, size: api.app.NamesAndIconViewSize = api.app.NamesAndIconViewSize.small) {
-            this.optionDisplayValue = option.displayValue;
-            this.size = size;
+        constructor(builder: RichSelectedOptionViewBuilder<T>) {
+            this.optionDisplayValue = builder.option.displayValue;
+            this.size = builder.size;
 
-            this.editable = false;
-            this.draggable = false;
-            this.removable = true;
+            this.editable = builder.editable;
+            this.draggable = builder.draggable;
+            this.removable = builder.removable;
 
-            super(option);
-        }
-
-        protected setIsEditable(value: boolean) {
-            this.editable = value;
-        }
-
-        protected setIsDraggable(value: boolean) {
-            this.draggable = value;
+            super(builder.option);
         }
 
         resolveIconUrl(content: T): string {
@@ -106,6 +98,47 @@ module api.ui.selector.combobox {
             this.appendChild(this.createView(this.optionDisplayValue));
 
             return wemQ(true);
+        }
+    }
+
+    export class RichSelectedOptionViewBuilder<T> {
+        option: api.ui.selector.Option<T>;
+        size: api.app.NamesAndIconViewSize = api.app.NamesAndIconViewSize.small;
+
+        editable: boolean = false;
+        draggable: boolean = false;
+        removable: boolean = true;
+
+        constructor(option: api.ui.selector.Option<T>) {
+            this.option = option;
+        }
+        
+        setEditable(value: boolean): RichSelectedOptionViewBuilder<T> {
+            this.editable = value;
+
+            return this;
+        }
+
+        setDraggable(value: boolean): RichSelectedOptionViewBuilder<T> {
+            this.draggable = value;
+
+            return this;
+        }
+
+        setRemovable(value: boolean): RichSelectedOptionViewBuilder<T> {
+            this.removable = value;
+
+            return this;
+        }
+        
+        setSize(size: api.app.NamesAndIconViewSize): RichSelectedOptionViewBuilder<T> {
+            this.size = size;
+
+            return this;
+        }
+        
+        build(): RichSelectedOptionView<T> {
+            return new RichSelectedOptionView(this);
         }
     }
 }

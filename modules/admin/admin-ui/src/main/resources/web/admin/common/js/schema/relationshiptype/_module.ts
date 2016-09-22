@@ -7,3 +7,5 @@
 
 ///<reference path="RelationshipTypeJson.ts" />
 ///<reference path="RelationshipTypeListJson.ts" />
+
+///<reference path="RelationshipTypeCache.ts" />

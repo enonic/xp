@@ -1,10 +1,15 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.concurrent.Callable;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -17,6 +22,8 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
 public final class PortalUrlServiceImpl
@@ -96,7 +103,7 @@ public final class PortalUrlServiceImpl
         builder.setParams( params );
         builder.contentService = this.contentService;
         builder.applicationService = this.applicationService;
-        return builder.build();
+        return runWithAdminRole( () -> builder.build() );
     }
 
     @Reference
@@ -116,5 +123,17 @@ public final class PortalUrlServiceImpl
     public void setMacroService( final MacroService macroService )
     {
         this.macroService = macroService;
+    }
+
+    private <T> T runWithAdminRole( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
+            principals( RoleKeys.ADMIN ).
+            build();
+        return ContextBuilder.from( context ).
+            authInfo( authenticationInfo ).
+            build().
+            callWith( callable );
     }
 }
