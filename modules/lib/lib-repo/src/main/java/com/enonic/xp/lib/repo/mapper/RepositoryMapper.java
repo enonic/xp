@@ -1,22 +1,22 @@
 package com.enonic.xp.lib.repo.mapper;
 
-import com.enonic.xp.repository.RepositorySettings;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 public class RepositoryMapper
     implements MapSerializable
 {
-    private RepositorySettings repositorySettings;
+    private Repository repository;
 
-    public RepositoryMapper( final RepositorySettings repositorySettings )
+    public RepositoryMapper( final Repository repository )
     {
-        this.repositorySettings = repositorySettings;
+        this.repository = repository;
     }
 
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "id", repositorySettings.getRepositoryId() );
+        gen.value( "id", repository.getId() );
     }
 }

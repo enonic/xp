@@ -20,9 +20,9 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -96,11 +96,11 @@ public final class ContentInitializer
 
     private void initializeRepository()
     {
-        final RepositorySettings repoSettings = RepositorySettings.create().
+        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( "cms-repo" ) ).
             build();
 
-        this.repositoryService.create( repoSettings );
+        this.repositoryService.create( createRepositoryParams );
     }
 
     private void doInitContentRootNode( final Node rootNode )

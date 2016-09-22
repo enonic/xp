@@ -10,17 +10,25 @@ public final class Repository
 {
     private final RepositoryId id;
 
+    private final RepositorySettings settings;
+
     private final Branches branches;
 
     private Repository( Builder builder )
     {
         this.branches = builder.branches;
+        this.settings = builder.settings;
         this.id = builder.id;
     }
 
     public RepositoryId getId()
     {
         return id;
+    }
+
+    public RepositorySettings getSettings()
+    {
+        return settings;
     }
 
     public Branches getBranches()
@@ -65,6 +73,8 @@ public final class Repository
     {
         private RepositoryId id;
 
+        private RepositorySettings settings;
+
         private Branches branches;
 
         private Builder()
@@ -80,6 +90,13 @@ public final class Repository
         public Builder branches( final Branch... branches )
         {
             this.branches = Branches.from( branches );
+            return this;
+        }
+
+
+        public Builder settings( final RepositorySettings settings )
+        {
+            this.settings = settings;
             return this;
         }
 

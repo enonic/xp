@@ -2,6 +2,9 @@ package com.enonic.xp.lib.repo;
 
 import java.util.function.Supplier;
 
+import com.enonic.xp.lib.repo.mapper.RepositoryMapper;
+import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
@@ -13,6 +16,10 @@ public class CreateRepositoryHandler
 {
     private RepositoryId repositoryId;
 
+    private boolean checkExists;
+
+    private boolean checkParentExists;
+
     private Supplier<RepositoryService> repositoryServiceSupplier;
 
     public void setRepositoryId( final String repositoryId )
@@ -20,16 +27,33 @@ public class CreateRepositoryHandler
         this.repositoryId = repositoryId == null ? null : RepositoryId.from( repositoryId );
     }
 
-    public void execute()
+    public void setCheckExists( final boolean checkExists )
+    {
+        this.checkExists = checkExists;
+    }
+
+    public void setCheckParentExists( final boolean checkParentExists )
+    {
+        this.checkParentExists = checkParentExists;
+    }
+
+    public RepositoryMapper execute()
     {
         final RepositorySettings repositorySettings = RepositorySettings.create().
-            repositoryId( repositoryId ).
             indexConfigs( null ).
             validationSettings( null ).
             build();
-        repositoryServiceSupplier.
+
+        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+            repositoryId( repositoryId ).
+            repositorySettings( repositorySettings ).
+            build();
+
+        final Repository repository = repositoryServiceSupplier.
             get().
-            create( repositorySettings );
+            create( createRepositoryParams );
+
+        return repository == null ? null : new RepositoryMapper( repository );
     }
 
     @Override

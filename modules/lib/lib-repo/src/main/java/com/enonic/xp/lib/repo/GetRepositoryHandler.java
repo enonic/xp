@@ -3,9 +3,9 @@ package com.enonic.xp.lib.repo;
 import java.util.function.Supplier;
 
 import com.enonic.xp.lib.repo.mapper.RepositoryMapper;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -23,11 +23,11 @@ public class GetRepositoryHandler
 
     public RepositoryMapper execute()
     {
-        final RepositorySettings repositorySettings = repositoryServiceSupplier.
+        final Repository repository = repositoryServiceSupplier.
             get().
             get( repositoryId );
 
-        return repositorySettings == null ? null : new RepositoryMapper( repositorySettings );
+        return repository == null ? null : new RepositoryMapper( repository );
     }
 
     @Override

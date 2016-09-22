@@ -7,6 +7,15 @@
  * @module lib/xp/repo
  */
 
+function required(params, name) {
+    var value = params[name];
+    if (value === undefined) {
+        throw "Parameter '" + name + "' is required";
+    }
+
+    return value;
+}
+
 /**
  * Refresh the data for the given index-type in the current repository.
  *
@@ -43,7 +52,7 @@ exports.refresh = function (params) {
 exports.create = function (params) {
 
     var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
-    bean.id = required(params, 'id');
+    bean.repositoryId = required(params, 'id');
 
     var validation = params.validation || {};
     bean.checkExists = __.nullOrValue(validation.checkExists);
@@ -65,6 +74,6 @@ exports.create = function (params) {
 exports.get = function (params) {
 
     var bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
-    bean.id = required(params, 'id');
+    bean.repositoryId = required(params, 'id');
     bean.execute();
 };
