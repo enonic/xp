@@ -202,6 +202,9 @@ module api.util.htmlarea.editor {
                 statusbar: true,
                 paste_as_text: true,
                 browser_spellcheck: true,
+                verify_html: false,
+                verify_css_classes: false,
+
                 plugins: ['directionality', 'hr', 'preview', 'searchreplace', 'textcolor', 'visualchars', 'visualblocks', 
                             'autoresize', 'table', 'fullscreen', 'charmap', 'code', 'paste'],
                 external_plugins: {
