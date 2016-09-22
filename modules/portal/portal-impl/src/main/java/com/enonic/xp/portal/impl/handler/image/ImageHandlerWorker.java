@@ -89,7 +89,16 @@ final class ImageHandlerWorker
         final PortalResponse.Builder portalResponse = PortalResponse.create().
             contentType( MediaType.parse( mimeType ) );
 
-        if ( !"svg".equals( format ) )
+        if ( "svgz".equals( format ) )
+        {
+            portalResponse.header( "Content-Encoding", "gzip" );
+            portalResponse.body( binary );
+        }
+        else if ( "svg".equals( format ) )
+        {
+            portalResponse.body( binary );
+        }
+        else
         {
             final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                 contentId( this.contentId ).
@@ -105,10 +114,6 @@ final class ImageHandlerWorker
                 build();
 
             portalResponse.body( this.imageService.readImage( readImageParams ) );
-        }
-        else
-        {
-            portalResponse.body( binary );
         }
 
         if ( cacheable )

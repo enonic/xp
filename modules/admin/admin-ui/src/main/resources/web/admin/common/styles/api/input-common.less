@@ -2,9 +2,9 @@
   border: 1px solid @color;
 }
 
-.input-font() {
+.input-font(@size: 15px) {
   font-family: @admin-font-family;
-  font-size: 15px;
+  font-size: @size;
 }
 
 ::-ms-clear {
@@ -130,10 +130,8 @@
   }
 
   .help-text {
-    font-family: 'Shadows Into Light', cursive;
-    font-size: 14px;
+    font-size: 11px;
     padding-top: 2px;
-    letter-spacing: 1px;
 
     p {
       color: @admin-font-gray1;

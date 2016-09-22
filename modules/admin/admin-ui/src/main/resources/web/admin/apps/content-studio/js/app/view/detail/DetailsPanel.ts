@@ -16,6 +16,8 @@ import CompareStatus = api.content.CompareStatus;
 import Widget = api.content.Widget;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
+import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+
 export class DetailsPanel extends api.ui.panel.Panel {
 
     private widgetViews: WidgetView[] = [];
@@ -91,6 +93,12 @@ export class DetailsPanel extends api.ui.panel.Panel {
         this.onShown(() => {
             if (this.isDockedPanel() && !!this.item) {
                 setTimeout(() =>  this.updateActiveWidget(), 250); // small delay so that isVisibleOrAboutToBeVisible() check detects width change
+            }
+        });
+
+        ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
+            if (this.isVisibleOrAboutToBeVisible() && !!this.activeWidget && this.activeWidget.getWidgetName() == "Version history") {
+                this.updateActiveWidget();
             }
         });
     }

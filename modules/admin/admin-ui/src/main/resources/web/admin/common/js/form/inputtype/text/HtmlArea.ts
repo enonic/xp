@@ -199,7 +199,6 @@ module api.form.inputtype.text {
                     editor.focus();
                     return true;
                 } else {
-                    console.log("Element.giveFocus(): Failed to give focus to HtmlArea element: id = " + this.getId());
                     return false;
                 }
             };

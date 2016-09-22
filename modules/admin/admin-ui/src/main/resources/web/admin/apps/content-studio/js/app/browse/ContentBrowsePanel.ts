@@ -138,13 +138,17 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
 
             return rendered;
+        }).catch((error) => {
+            console.error("Couldn't render ContentBrowsePanel", error);
+            return true;
         });
     }
 
     private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
 
-        this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
-            var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems(),
+        this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
+                                               fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+            var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(fullSelection),
                 item: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus> = null;
             if (browseItems.length > 0) {
                 item = browseItems[0];
@@ -176,10 +180,10 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         contentPanelsAndDetailPanel.addClass("split-panel-with-details");
         contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
 
-        this.appendChild(contentPanelsAndDetailPanel);
-
         nonMobileDetailsPanelsManagerBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
         nonMobileDetailsPanelsManagerBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
+
+        this.appendChild(contentPanelsAndDetailPanel);
     }
 
     private initFloatingDetailsPanel(nonMobileDetailsPanelsManagerBuilder: NonMobileDetailsPanelsManagerBuilder) {

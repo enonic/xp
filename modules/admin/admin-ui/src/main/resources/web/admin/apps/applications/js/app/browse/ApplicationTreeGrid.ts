@@ -6,6 +6,7 @@ import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
 import Application = api.application.Application;
 import ApplicationViewer = api.application.ApplicationViewer;
+import ApplicationUploadMock = api.application.ApplicationUploadMock;
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
@@ -159,39 +160,3 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
 
 }
 
-export class ApplicationUploadMock {
-
-    private id: string;
-    private name: string;
-    private uploadItem: UploadItem<Application>;
-
-    constructor(uploadItem: UploadItem<Application>) {
-        this.id = uploadItem.getId();
-        this.name = uploadItem.getName();
-        this.uploadItem = uploadItem;
-    }
-
-    getId(): string {
-        return this.id;
-    }
-
-    getDisplayName(): string {
-        return this.name;
-    }
-
-    getName(): string {
-        return this.name;
-    }
-
-    getUploadItem(): UploadItem<Application> {
-        return this.uploadItem;
-    }
-
-    getApplicationKey(): string {
-        return this.name;
-    }
-
-    isLocal(): boolean {
-        return false;
-    }
-}

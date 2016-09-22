@@ -79,7 +79,7 @@ module api.app.browse {
                     .then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);
-                }, 500, false);
+                }, 200, false);
 
             this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
 
@@ -114,15 +114,36 @@ module api.app.browse {
 
                 if (this.filterPanel) {
                     this.gridAndToolbarPanel = new api.ui.panel.Panel();
-                    this.gridAndToolbarPanel.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
+
+                    this.gridAndToolbarPanel.onAdded(() => {
+                        this.gridAndItemsSplitPanel.setDoOffset(true);
+                    });
 
                     this.filterAndGridSplitPanel = this.setupFilterPanel();
-                    this.appendChild(this.filterAndGridSplitPanel);
                     if (this.filterPanelIsHiddenByDefault) {
                         this.hideFilterPanel();
                     }
+                    this.appendChild(this.filterAndGridSplitPanel);
+
+                    // Hack: Places the append calls farther in the engine call stack.
+                    // Prevent toolbar and gridPanel not being visible when the width/height
+                    // is requested and elements resize/change position/etc.
+                    setTimeout(() => {
+                        this.gridAndToolbarPanel.appendChild(this.browseToolbar);
+                    });
+                    this.browseToolbar.onRendered(() => {
+                        setTimeout(() => {
+                            this.gridAndToolbarPanel.appendChild(this.gridAndItemsSplitPanel);
+                        });
+                    });
                 } else {
-                    this.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
+                    this.appendChild(this.browseToolbar);
+                    // Hack: Same hack.
+                    this.browseToolbar.onRendered(() => {
+                        setTimeout(() => {
+                            this.appendChild(this.gridAndItemsSplitPanel)
+                        });
+                    });
                 }
                 return rendered;
             });
