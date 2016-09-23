@@ -99,9 +99,13 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             this.getGrid().setSelectedRows(this.getGrid().getSelectedRows());
         };
 
+        this.initEventHandlers(updateColumns);
+    }
+
+    private initEventHandlers(updateColumnsHandler: Function) {
         var onBecameActive = (active: boolean) => {
             if (active) {
-                updateColumns(true);
+                updateColumnsHandler(true);
                 this.unActiveChanged(onBecameActive);
             }
         };
@@ -110,14 +114,14 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
             if (this.isInRenderingView()) {
-                updateColumns(item.isRangeSizeChanged());
+                updateColumnsHandler(item.isRangeSizeChanged());
             }
         });
 
         this.getGrid().subscribeOnClick((event, data) => {
             var elem = new ElementHelper(event.target);
             if (elem.hasClass("sort-dialog-trigger")) {
-                this.sortIconClickCallback();
+                new SortContentEvent(this.getSelectedDataList()).fire()
             }
         });
 
@@ -129,7 +133,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                  * nodes will be loaded and displayed. If the any other
                  * node is clicked, edit event will be triggered by default.
                  */
-                if (!!this.getDataId(node.getData())) { // default event
+                if (this.getDataId(node.getData())) { // default event
                     new api.content.event.EditContentEvent([node.getData()]).fire();
                 }
             }
@@ -167,15 +171,20 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
             this.updateContentNode(event.getContentId());
         });
-    }
 
-    private sortIconClickCallback() {
-        new SortContentEvent(this.getSelectedDataList()).fire();
     }
 
     isEmptyNode(node: TreeNode<ContentSummaryAndCompareStatus>): boolean {
         const data = node.getData();
         return !data.getContentSummary() && !data.getUploadItem();
+    }
+
+    hasChildren(data: ContentSummaryAndCompareStatus): boolean {
+        return data.hasChildren();
+    }
+
+    getDataId(data: ContentSummaryAndCompareStatus): string {
+        return data.getId();
     }
 
 
@@ -267,14 +276,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }
     }
 
-    hasChildren(data: ContentSummaryAndCompareStatus): boolean {
-        return data.hasChildren();
-    }
-
-    getDataId(data: ContentSummaryAndCompareStatus): string {
-        return data.getId();
-    }
-
     deleteNodes(dataList: ContentSummaryAndCompareStatus[]): void {
         var root = this.getRoot().getCurrentRoot(),
             node: TreeNode<ContentSummaryAndCompareStatus>;
@@ -298,16 +299,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             var content = treeNode.getData();
             this.updateNode(ContentSummaryAndCompareStatus.fromContentSummary(content.getContentSummary()));
         }
-    }
-
-    appendContentNode(contentId: api.content.ContentId, nextToSelection?: boolean) {
-
-        this.fetchById(contentId)
-            .then((data: ContentSummaryAndCompareStatus) => {
-                this.appendNode(data, nextToSelection);
-            }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        });
     }
 
     appendUploadNode(item: api.ui.uploader.UploadItem<ContentSummary>) {
@@ -380,9 +371,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }, 5);
     }
 
-    /*
-     * New API methods
-     */
     findByPaths(paths: api.content.ContentPath[], useParent: boolean = false): TreeNodesOfContentPath[] {
         var root = this.getRoot().getDefaultRoot().treeToList(false, false),
             filter = this.getRoot().getFilteredRoot().treeToList(false, false),
@@ -612,18 +600,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         });
         this.deselectNodes(deselected);
-    }
-
-    xPopulateWithChildren(source: TreeNode<ContentSummaryAndCompareStatus>, dest: TreeNode<ContentSummaryAndCompareStatus>) {
-        dest.setChildren(source.getChildren());
-        dest.setExpanded(source.isExpanded());
-        if (dest.getData() && dest.getData().getContentSummary()) {
-            dest.getData().setContentSummary(
-                new ContentSummaryBuilder(dest.getData().getContentSummary()).setHasChildren(dest.hasChildren()).build()
-            );
-            this.xUpdatePathsInChildren(dest);
-        }
-        dest.clearViewers();
     }
 
     xUpdatePathsInChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
