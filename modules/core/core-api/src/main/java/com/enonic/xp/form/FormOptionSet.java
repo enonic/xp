@@ -25,6 +25,8 @@ public class FormOptionSet
 
     private final Occurrences occurrences;
 
+    private final Occurrences multiselection;
+
     private FormOptionSet( Builder builder )
     {
         super();
@@ -37,6 +39,7 @@ public class FormOptionSet
         this.label = builder.label;
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
+        this.multiselection = builder.multiselection;
         this.optionSetOptions = builder.setOptionsList.stream().collect( Collectors.toList() );
     }
 
@@ -65,6 +68,11 @@ public class FormOptionSet
     public Occurrences getOccurrences()
     {
         return occurrences;
+    }
+
+    public Occurrences getMultiselection()
+    {
+        return multiselection;
     }
 
     public boolean isExpanded()
@@ -105,7 +113,8 @@ public class FormOptionSet
             Objects.equals( name, that.name ) &&
             Objects.equals( label, that.label ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) &&
-            Objects.equals( occurrences, that.occurrences );
+            Objects.equals( occurrences, that.occurrences ) &&
+            Objects.equals( multiselection, that.multiselection );
     }
 
     @Override
@@ -136,6 +145,8 @@ public class FormOptionSet
 
         private Occurrences occurrences = Occurrences.create( 0, 1 );
 
+        private Occurrences multiselection = Occurrences.create( 0, 1 );
+
         private Builder()
         {
             this.setOptionsList = new ArrayList<>();
@@ -148,6 +159,7 @@ public class FormOptionSet
             this.label = source.label;
             this.expanded = source.expanded;
             this.occurrences = source.occurrences;
+            this.multiselection = source.multiselection;
         }
 
         public Builder name( final String name )
@@ -171,6 +183,12 @@ public class FormOptionSet
         public Builder occurrences( final Occurrences value )
         {
             occurrences = value;
+            return this;
+        }
+
+        public Builder multiselection( final Occurrences value )
+        {
+            multiselection = value;
             return this;
         }
 

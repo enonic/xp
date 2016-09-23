@@ -21,13 +21,14 @@
 ///<reference path='FormItemOccurrences.ts' />
 ///<reference path='FormItemOccurrence.ts' />
 ///<reference path='FormItemView.ts' />
+///<reference path='optionset/_module.ts' />
 ///<reference path='FormItemLayer.ts' />
 
 ///<reference path='InputLabel.ts' />
 ///<reference path='InputView.ts' />
 ///<reference path='FormView.ts' />
 
-///<reference path='FormItemSetLabel.ts' />
+///<reference path='FormOccurrenceDraggableLabel.ts' />
 ///<reference path='FormItemSetOccurrence.ts' />
 ///<reference path='FormItemSetOccurrences.ts' />
 ///<reference path='FormItemSetOccurrenceView.ts' />

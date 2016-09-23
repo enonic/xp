@@ -1,29 +1,29 @@
-module api.form {
+module api.form.optionset {
 
     import PropertySet = api.data.PropertySet;
     import PropertyArray = api.data.PropertyArray;
     import PropertyPath = api.data.PropertyPath;
+    import ValueTypes = api.data.ValueTypes;
 
-    export interface FormItemSetOccurrenceViewConfig {
-
+    export interface FormOptionSetOccurrenceViewConfig {
         context: FormContext;
 
-        formItemSetOccurrence: FormItemSetOccurrence;
+        formOptionSetOccurrence: FormOptionSetOccurrence;
 
-        formItemSet: FormItemSet;
+        formOptionSet: FormOptionSet;
 
-        parent: FormItemSetOccurrenceView;
+        parent: FormItemOccurrenceView;
 
         dataSet: PropertySet
     }
 
-    export class FormItemSetOccurrenceView extends FormItemOccurrenceView {
+    export class FormOptionSetOccurrenceView extends FormItemOccurrenceView {
 
         private context: FormContext;
 
-        private formItemSetOccurrence: FormItemSetOccurrence;
+        private formOptionSetOccurrence: FormOptionSetOccurrence;
 
-        private formItemSet: FormItemSet;
+        private formOptionSet: FormOptionSet;
 
         private removeButton: api.dom.AEl;
 
@@ -31,7 +31,7 @@ module api.form {
 
         private constructedWithData: boolean;
 
-        private parent: FormItemSetOccurrenceView;
+        private parent: FormItemOccurrenceView;
 
         private propertySet: PropertySet;
 
@@ -39,17 +39,17 @@ module api.form {
 
         private formItemViews: FormItemView[] = [];
 
-        private formItemSetOccurrencesContainer: api.dom.DivEl;
+        private formOptionSetOccurrencesContainer: api.dom.DivEl;
 
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
 
-        constructor(config: FormItemSetOccurrenceViewConfig) {
-            super("form-item-set-occurrence-view", config.formItemSetOccurrence);
+        constructor(config: FormOptionSetOccurrenceViewConfig) {
+            super("form-option-set-occurrence-view", config.formOptionSetOccurrence);
             this.context = config.context;
-            this.formItemSetOccurrence = config.formItemSetOccurrence;
-            this.formItemSet = config.formItemSet;
+            this.formOptionSetOccurrence = config.formOptionSetOccurrence;
+            this.formOptionSet = config.formOptionSet;
             this.parent = config.parent;
             this.constructedWithData = config.dataSet != null;
             this.propertySet = config.dataSet;
@@ -75,16 +75,17 @@ module api.form {
                 return false;
             });
 
-            this.label = new FormOccurrenceDraggableLabel(this.formItemSet.getLabel(), this.formItemSet.getOccurrences());
+            this.label = new FormOccurrenceDraggableLabel(this.formOptionSet.getLabel(), this.formOptionSet.getOccurrences());
             this.appendChild(this.label);
 
-            this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-item-set-occurrences-container");
-            this.appendChild(this.formItemSetOccurrencesContainer);
+            this.formOptionSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
+            this.appendChild(this.formOptionSetOccurrencesContainer);
 
+            this.ensureSelectionArrayExists(this.propertySet);
 
             var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
-                setFormItems(this.formItemSet.getFormItems()).
-                setParentElement(this.formItemSetOccurrencesContainer).
+                setFormItems(this.formOptionSet.getFormItems()).
+                setParentElement(this.formOptionSetOccurrencesContainer).
                 setParent(this).
                 layout(this.propertySet, validate);
 
@@ -126,12 +127,24 @@ module api.form {
         }
 
         public update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            var set = propertyArray.getSet(this.formItemSetOccurrence.getIndex());
+            var set = propertyArray.getSet(this.formOptionSetOccurrence.getIndex());
             if (!set) {
                 set = propertyArray.addSet();
             }
             this.propertySet = set;
             return this.formItemLayer.update(this.propertySet, unchangedOnly);
+        }
+
+        private ensureSelectionArrayExists(propertyArraySet: PropertySet) {
+            var selectionPropertyArray = propertyArraySet.getPropertyArray(this.formOptionSet.getName() + "_selection");
+            if (!selectionPropertyArray) {
+                selectionPropertyArray = PropertyArray.create().
+                    setType(ValueTypes.STRING).
+                    setName(this.formOptionSet.getName() + "_selection").
+                    setParent(propertyArraySet).
+                    build();
+                propertyArraySet.addPropertyArray(selectionPropertyArray);
+            }
         }
 
         getFormItemViews(): FormItemView[] {
@@ -150,13 +163,13 @@ module api.form {
 
         refresh() {
 
-            if (!this.formItemSetOccurrence.oneAndOnly()) {
+            if (!this.formOptionSetOccurrence.oneAndOnly()) {
                 this.label.addClass("drag-control");
             } else {
                 this.label.removeClass("drag-control");
             }
 
-            this.removeButton.setVisible(this.formItemSetOccurrence.isRemoveButtonRequired());
+            this.removeButton.setVisible(this.formOptionSetOccurrence.isRemoveButtonRequired());
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
@@ -173,9 +186,9 @@ module api.form {
 
         showContainer(show: boolean) {
             if (show) {
-                this.formItemSetOccurrencesContainer.show();
+                this.formOptionSetOccurrencesContainer.show();
             } else {
-                this.formItemSetOccurrencesContainer.hide();
+                this.formOptionSetOccurrencesContainer.hide();
             }
         }
 
@@ -269,5 +282,4 @@ module api.form {
             });
         }
     }
-
 }

@@ -1,0 +1,70 @@
+.form-option-set-occurrence-view {
+
+  .form-option-set-option-view {
+    .option-items-container {
+      display: none;
+    }
+
+    .form-input {
+      input[type="radio"], label {
+        vertical-align: middle;
+      }
+
+      input[type="radio"] + label {
+        padding: 0px 5px 0px 11px;
+      }
+
+      input[type="checkbox"] + label {
+        padding: 0px 5px 0px 30px;
+        &:before {
+          margin-top: 3px;
+        }
+      }
+
+      label {
+        font-size: 14px;
+        color: @admin-font-gray2;
+      }
+
+      &.checkbox {
+        display: inline-block;
+      }
+    }
+
+    .form-occurrence-draggable-label {
+      font-size: 12px;
+    }
+
+    .collapse-button {
+      float: right;
+      vertical-align: middle;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &:after {
+        content: "Expand";
+      }
+    }
+
+    &.expanded {
+      .collapse-button:after {
+        content: "Collapse";
+      }
+      .option-items-container {
+        display: block;
+      }
+    }
+  }
+
+  .form-option-set-occurrences-container > *:not(:last-child) {
+    padding-bottom: 7.5px;
+    border-bottom: 1px solid @admin-font-gray1;
+  }
+
+  .form-option-set-occurrences-container > *:not(:first-child) {
+    margin-top: 7.5px;
+  }
+
+}

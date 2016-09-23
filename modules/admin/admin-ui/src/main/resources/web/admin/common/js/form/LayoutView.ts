@@ -6,7 +6,7 @@ module api.form {
 
         layout:Layout;
 
-        parent: FormItemSetOccurrenceView;
+        parent: FormItemOccurrenceView;
 
         className:string
     }

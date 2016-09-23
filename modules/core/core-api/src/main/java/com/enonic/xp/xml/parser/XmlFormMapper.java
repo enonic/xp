@@ -157,6 +157,7 @@ public final class XmlFormMapper
         builder.label( root.getChildValue( "label" ) );
         builder.expanded( root.getChildValueAs( "expanded", Boolean.class, false ) );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
+        builder.multiselection( buildOccurrence( root.getChild( "multiselection" ) ) );
         builder.addOptionSetOptions( buildOptionSetOptions( root.getChild( "options" ) ) );
         return builder.build();
     }

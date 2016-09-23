@@ -2,6 +2,10 @@
   "FormOptionSet": {
     "expanded": false,
     "label": "My option set",
+    "multiselection": {
+      "maximum": 3,
+      "minimum": 1
+    },
     "name": "myOptionSet",
     "occurrences": {
       "maximum": 1,
