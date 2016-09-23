@@ -42,10 +42,13 @@ public final class ResponseMapper
     {
         gen.value( "status", this.response.code() );
         gen.value( "message", this.response.message() );
-        final String bodyString = getResponseBodyString();
         final String contentType = this.response.header( "content-type" );
+
+        final boolean isHeadMethod = "HEAD".equalsIgnoreCase( this.response.request().method() );
+        final String bodyString = isHeadMethod ? "" : getResponseBodyString();
+        final ByteSource bodySource = isHeadMethod ? ByteSource.empty() : getResponseBodyStream( bodyString, getCharset( contentType ) );
         gen.value( "body", bodyString );
-        gen.value( "bodyStream", getResponseBodyStream( bodyString, getCharset( contentType ) ) );
+        gen.value( "bodyStream", bodySource );
         gen.value( "contentType", contentType );
         serializeHeaders( "headers", gen, this.response.headers() );
     }
