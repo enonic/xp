@@ -50,21 +50,13 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     private filterQuery: api.content.query.ContentQuery;
 
     constructor() {
-        const buildColumn = (name: string, id: string, field: string, formatter: Slick.Formatter<any>,
-            {cssClass = undefined, minWidth = undefined, maxWidth = undefined}) => {
-
-            return new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>()
-                .setName(name).setId(id).setField(field).setFormatter(formatter)
-                .setCssClass(cssClass).setMinWidth(minWidth).setMaxWidth(maxWidth).build();
-        };
-
-        const nameColumn = buildColumn("Name", "displayName", "contentSummary.displayName", ContentRowFormatter.nameFormatter,
+        const nameColumn = this.buildColumn("Name", "displayName", "contentSummary.displayName", ContentRowFormatter.nameFormatter,
             {minWidth: 130});
-        const compareStatusColumn = buildColumn("CompareStatus", "compareStatus", "compareStatus", ContentRowFormatter.statusFormatter,
+        const compareStatusColumn = this.buildColumn("CompareStatus", "compareStatus", "compareStatus", ContentRowFormatter.statusFormatter,
             {cssClass: "status", minWidth: 75, maxWidth: 75});
-        const orderColumn = buildColumn("Order", "order", "contentSummary.order", ContentRowFormatter.orderFormatter,
+        const orderColumn = this.buildColumn("Order", "order", "contentSummary.order", ContentRowFormatter.orderFormatter,
             {cssClass: "order", minWidth: 25, maxWidth: 40});
-        const modifiedTimeColumn = buildColumn("ModifiedTime", "modifiedTime", "contentSummary.modifiedTime", DateTimeFormatter.format,
+        const modifiedTimeColumn = this.buildColumn("ModifiedTime", "modifiedTime", "contentSummary.modifiedTime", DateTimeFormatter.format,
             {cssClass: "modified", minWidth: 135, maxWidth: 135});
         const columns = [nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn];
 

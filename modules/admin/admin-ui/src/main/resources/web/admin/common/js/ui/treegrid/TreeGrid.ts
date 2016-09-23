@@ -16,6 +16,7 @@ module api.ui.treegrid {
 
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
+    import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
     /*
      * There are several methods that should be overridden:
@@ -306,6 +307,14 @@ module api.ui.treegrid {
         public isInRenderingView(): boolean {
             // TreeGrid in visible tab or TreeGrid is active
             return this.isVisible() && this.isActive();
+        }
+
+        buildColumn(name: string, id: string, field: string, formatter: Slick.Formatter<any>,
+            {cssClass = undefined, minWidth = undefined, maxWidth = undefined}) {
+
+            return new GridColumnBuilder<TreeNode<DATA>>()
+                .setName(name).setId(id).setField(field).setFormatter(formatter)
+                .setCssClass(cssClass).setMinWidth(minWidth).setMaxWidth(maxWidth).build();
         }
 
         private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {

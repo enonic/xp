@@ -1,5 +1,6 @@
 import "../../api.ts";
 import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
+import {ApplicationRowFormatter} from "./ApplicationRowFormatter";
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -19,46 +20,20 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
 
     constructor() {
         super(new TreeGridBuilder<Application>().setColumns([
-                new GridColumnBuilder<TreeNode<Application>>().setName("Name").setId("displayName").setField("displayName").setFormatter(
-                    this.nameFormatter).setMinWidth(250).build(),
-
-                new GridColumnBuilder<TreeNode<Application>>().setName("Version").setId("version").setField("version").setCssClass(
-                    "version").setMinWidth(50).setMaxWidth(130).build(),
-
-                new GridColumnBuilder<TreeNode<Application>>().setName("State").setId("state").setField("state").setCssClass(
-                    "state").setMinWidth(80).setMaxWidth(100).setFormatter(this.stateFormatter).build()
-
+            this.buildColumn("Name", "displayName", "displayName", ApplicationRowFormatter.nameFormatter, {minWidth: 250}),
+            this.buildColumn("Version", "version", "version", undefined, {cssClass: "version", minWidth: 50, maxWidth: 130}),
+            this.buildColumn("State", "state", "state", ApplicationRowFormatter.stateFormatter,
+                {cssClass: "state", minWidth: 80, maxWidth: 100})
             ]).prependClasses("application-grid").setShowContextMenu(new TreeGridContextMenu(new ApplicationBrowseActions(this)))
         );
 
+        this.initEventHandlers();
+    }
+
+    private initEventHandlers() {
         api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
             this.getGrid().resizeCanvas();
         });
-    }
-
-    private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Application>) {
-        var viewer = <ApplicationViewer>node.getViewer("name");
-        if (!viewer) {
-            var viewer = new ApplicationViewer();
-            viewer.setObject(node.getData());
-            node.setViewer("name", viewer);
-        }
-        return viewer.toString();
-    }
-
-    private stateFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Application>) {
-        var data = node.getData(),
-            status,
-            statusEl = new api.dom.DivEl();
-
-        if (data instanceof Application) {   // default node
-            statusEl.getEl().setText(value);
-        } else if (data instanceof ApplicationUploadMock) {   // uploading node
-            status = new api.ui.ProgressBar((<any>data).getUploadItem().getProgress())
-            statusEl.appendChild(status);
-        }
-
-        return statusEl.toString();
     }
 
     getDataId(data: Application): string {
