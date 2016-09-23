@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.repository;
 
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
@@ -28,9 +28,11 @@ public class SystemRepoInitializer
             final boolean initialized = this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() );
             if ( !initialized )
             {
-                this.repositoryService.create( RepositorySettings.create().
+                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
                     repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-                    build() );
+                    build();
+
+                this.repositoryService.create( createRepositoryParams );
             }
         } );
     }

@@ -5,7 +5,7 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface NodeRepositoryService
 {
-    RepositoryId create( final RepositorySettings repositorySettings );
+    Repository create( final CreateRepositoryParams params );
 
     boolean isInitialized( final RepositoryId repositoryId );
 

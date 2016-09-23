@@ -11,6 +11,7 @@ import com.enonic.xp.repository.IndexConfig;
 import com.enonic.xp.repository.IndexConfigs;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.repository.ValidationSettings;
@@ -30,17 +31,18 @@ public class RepositoryNodeTranslator
 
     private static final String CHECK_PARENT_EXISTS_KEY = "checkParentExists";
 
-    public static Node toNode( final RepositorySettings repositorySettings )
+    public static Node toNode( final Repository repository )
     {
         final PropertyTree repositoryData = new PropertyTree();
+        final RepositorySettings repositorySettings = repository.getSettings();
         toNodeData( repositorySettings.getIndexConfigs(), repositoryData );
         toNodeData( repositorySettings.getValidationSettings(), repositoryData );
 
         return Node.create().
-            id( NodeId.from( repositorySettings.getRepositoryId() ) ).
+            id( NodeId.from( repository.getId() ) ).
             childOrder( ChildOrder.defaultOrder() ).
             data( repositoryData ).
-            name( repositorySettings.getRepositoryId().toString() ).
+            name( repository.getId().toString() ).
             parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
             permissions( AccessControlList.empty() ).
             build();
@@ -88,13 +90,18 @@ public class RepositoryNodeTranslator
         }
     }
 
-    public static RepositorySettings toRepositorySettings( final Node node )
+    public static Repository toRepository( final Node node )
     {
         final PropertyTree nodeData = node.data();
-        return RepositorySettings.create().
-            repositoryId( RepositoryId.from( node.id().toString() ) ).
+
+        final RepositorySettings repositorySettings = RepositorySettings.create().
             validationSettings( toValidationSettings( nodeData ) ).
             indexConfigs( toIndexConfigs( nodeData ) ).
+            build();
+
+        return Repository.create().
+            id( RepositoryId.from( node.id().toString() ) ).
+            settings( repositorySettings ).
             build();
     }
 

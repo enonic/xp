@@ -7,6 +7,15 @@
  * @module lib/xp/repo
  */
 
+function required(params, name) {
+    var value = params[name];
+    if (value === undefined) {
+        throw "Parameter '" + name + "' is required";
+    }
+
+    return value;
+}
+
 /**
  * Refresh the data for the given index-type in the current repository.
  *
@@ -25,4 +34,47 @@ exports.refresh = function (params) {
     bean.repoId = __.nullOrValue(params.repo);
 
     bean.refresh();
+};
+
+/**
+ * Creates a repository
+ *
+ * @example-ref examples/repo/create.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.id Repository ID.
+ * @param {object} [params.settings] Repository settings.
+ * @param {object} [params.settings.validationSettings] Validation settings.
+ * @param {boolean} [params.settings.validationSettings.checkExists=true] Activate node existence check.
+ * @param {boolean} [params.settings.validationSettings.checkParentExists=true] Activate parent node existence check.
+ * @param {boolean} [params.settings.indexConfigs] TBD.
+ *
+ */
+exports.create = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
+    bean.repositoryId = required(params, 'id');
+
+    var settings = params.settings || {};
+    var validationSettings = settings.validationSettings || {};
+    bean.checkExists = __.nullOrValue(validationSettings.checkExists);
+    bean.checkParentExists = __.nullOrValue(validationSettings.checkParentExists);
+
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Retrieves a repository
+ *
+ * @example-ref examples/repo/get.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.id Repository ID.
+ * @return {object} The repository (as JSON).
+ *
+ */
+exports.get = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
+    bean.repositoryId = required(params, 'id');
+
+    return __.toNativeObject(bean.execute());
 };

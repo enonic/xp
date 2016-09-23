@@ -15,17 +15,18 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
     implements RepositoryService
 {
-    private final ConcurrentMap<RepositoryId, RepositorySettings> repositorySettingsMap = Maps.newConcurrentMap();
+    private final ConcurrentMap<RepositoryId, Repository> repositorySettingsMap = Maps.newConcurrentMap();
 
     private IndexServiceInternal indexServiceInternal;
 
@@ -50,35 +51,34 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public RepositoryId create( final RepositorySettings repositorySettings )
+    public Repository create( final CreateRepositoryParams params )
     {
-        repositorySettingsMap.compute( repositorySettings.getRepositoryId(), ( key, previousValue ) -> {
+        return repositorySettingsMap.compute( params.getRepositoryId(), ( key, previousValue ) -> {
 
             if ( previousValue != null || repositoryNodeExists( key ) )
             {
                 throw new RepositoryAlreadyExistException( key );
             }
 
-            this.nodeRepositoryService.create( repositorySettings );
-            final Node node = RepositoryNodeTranslator.toNode( repositorySettings );
+            final Repository repository = this.nodeRepositoryService.create( params );
+
+            final Node node = RepositoryNodeTranslator.toNode( repository );
             ContextBuilder.from( ContextAccessor.current() ).
                 repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
                 branch( SystemConstants.BRANCH_SYSTEM ).
                 build().
                 callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
-            return repositorySettings;
+            return repository;
         } );
-
-        return repositorySettings.getRepositoryId();
     }
 
 
     @Override
-    public RepositorySettings get( final RepositoryId repositoryId )
+    public Repository get( final RepositoryId repositoryId )
     {
         return repositorySettingsMap.computeIfAbsent( repositoryId, key -> {
             final Node node = getRepositoryNode( repositoryId );
-            return node == null ? null : RepositoryNodeTranslator.toRepositorySettings( node );
+            return node == null ? null : RepositoryNodeTranslator.toRepository( node );
         } );
     }
 

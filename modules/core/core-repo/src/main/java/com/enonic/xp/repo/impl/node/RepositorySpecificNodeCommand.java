@@ -20,13 +20,19 @@ abstract class RepositorySpecificNodeCommand
     protected boolean skipNodeExistsVerification()
     {
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
-        return !repositoryService.get( repositoryId ).getValidationSettings().isCheckExists();
+        return !repositoryService.get( repositoryId ).
+            getSettings().
+            getValidationSettings().
+            isCheckExists();
     }
 
     protected boolean skipParentNodeExistsVerification()
     {
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
-        return !repositoryService.get( repositoryId ).getValidationSettings().isCheckParentExists();
+        return !repositoryService.get( repositoryId ).
+            getSettings().
+            getValidationSettings().
+            isCheckParentExists();
     }
 
     public static class Builder<B extends Builder>

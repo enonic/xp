@@ -48,9 +48,9 @@ import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
@@ -205,7 +205,7 @@ public abstract class AbstractNodeTest
 
     void createRepository( final Repository repository )
     {
-        this.repositoryService.create( RepositorySettings.create().
+        this.repositoryService.create( CreateRepositoryParams.create().
             repositoryId( repository.getId() ).
             build() );
 

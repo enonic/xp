@@ -5,9 +5,9 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface RepositoryService
 {
-    RepositoryId create( final RepositorySettings repositorySettings );
+    Repository create( final CreateRepositoryParams params );
 
-    RepositorySettings get( final RepositoryId repositoryId );
+    Repository get( final RepositoryId repositoryId );
 
     boolean isInitialized( final RepositoryId id );
 }
