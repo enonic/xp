@@ -6,6 +6,7 @@ import {ContentBrowseResetEvent} from "./filter/ContentBrowseResetEvent";
 import {ContentBrowseRefreshEvent} from "./filter/ContentBrowseRefreshEvent";
 import {TreeNodesOfContentPath} from "./TreeNodesOfContentPath";
 import {TreeNodeParentOfContent} from "./TreeNodeParentOfContent";
+import {ContentRowFormatter} from "./ContentRowFormatter";
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -49,24 +50,27 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     private filterQuery: api.content.query.ContentQuery;
 
     constructor() {
-        var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName("Name").setId("displayName").setField(
-            "contentSummary.displayName").setMinWidth(130).setFormatter(this.nameFormatter).build();
-        var compareStatusColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName("CompareStatus").setId(
-            "compareStatus").setField("compareStatus").setFormatter(this.statusFormatter).setCssClass("status").setMinWidth(75).setMaxWidth(
-            75).build();
-        var orderColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName("Order").setId("order").setField(
-            "contentSummary.order").setCssClass("order").setMinWidth(25).setMaxWidth(40).setFormatter(this.orderFormatter).build();
-        var modifiedTimeColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName("ModifiedTime").setId(
-            "modifiedTime").setField("contentSummary.modifiedTime").setCssClass("modified").setMinWidth(135).setMaxWidth(135).setFormatter(
-            DateTimeFormatter.format).build();
+        const buildColumn = (name: string, id: string, field: string, formatter: Slick.Formatter<any>,
+            {cssClass = undefined, minWidth = undefined, maxWidth = undefined}) => {
 
-        super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumns([
-                nameColumn,
-                orderColumn,
-                compareStatusColumn,
-                modifiedTimeColumn
-            ]).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this))).setPartialLoadEnabled(true).setLoadBufferSize(
-            20).// rows count
+            return new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>()
+                .setName(name).setId(id).setField(field).setFormatter(formatter)
+                .setCssClass(cssClass).setMinWidth(minWidth).setMaxWidth(maxWidth).build();
+        };
+
+        const nameColumn = buildColumn("Name", "displayName", "contentSummary.displayName", ContentRowFormatter.nameFormatter,
+            {minWidth: 130});
+        const compareStatusColumn = buildColumn("CompareStatus", "compareStatus", "compareStatus", ContentRowFormatter.statusFormatter,
+            {cssClass: "status", minWidth: 75, maxWidth: 75});
+        const orderColumn = buildColumn("Order", "order", "contentSummary.order", ContentRowFormatter.orderFormatter,
+            {cssClass: "order", minWidth: 25, maxWidth: 40});
+        const modifiedTimeColumn = buildColumn("ModifiedTime", "modifiedTime", "contentSummary.modifiedTime", DateTimeFormatter.format,
+            {cssClass: "modified", minWidth: 135, maxWidth: 135});
+        const columns = [nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn];
+
+        super(new TreeGridBuilder<ContentSummaryAndCompareStatus>()
+            .setColumns(columns).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this)))
+            .setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
             prependClasses("content-tree-grid")
         );
 
@@ -165,73 +169,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         });
     }
 
-    private orderFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        var wrapper = new api.dom.SpanEl();
-
-        if (!api.util.StringHelper.isBlank(value)) {
-            wrapper.getEl().setTitle(value);
-        }
-
-        if (node.getData().getContentSummary()) {
-            var childOrder = node.getData().getContentSummary().getChildOrder();
-            var icon;
-            if (!childOrder.isDefault()) {
-                if (!childOrder.isManual()) {
-                    if (childOrder.isDesc()) {
-                        icon = new api.dom.DivEl("icon-arrow-up2 sort-dialog-trigger");
-                    } else {
-                        icon = new api.dom.DivEl("icon-arrow-down4 sort-dialog-trigger");
-                    }
-                } else {
-                    icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls("menu") + " sort-dialog-trigger");
-                }
-                wrapper.getEl().setInnerHtml(icon.toString(), false);
-            }
-        }
-        return wrapper.toString();
-    }
-
     private sortIconClickCallback() {
         new SortContentEvent(this.getSelectedDataList()).fire();
-    }
-
-    private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-
-        var data = node.getData(),
-            status,
-            statusEl = new api.dom.SpanEl();
-
-        if (!!data.getContentSummary()) {   // default node
-            var compareStatus: CompareStatus = CompareStatus[CompareStatus[value]];
-
-            status = api.content.CompareStatusFormatter.formatStatus(compareStatus);
-
-            if (!!CompareStatus[value]) {
-                statusEl.addClass(CompareStatus[value].toLowerCase().replace("_", "-") || "unknown");
-            }
-
-            statusEl.getEl().setText(status);
-        } else if (!!data.getUploadItem()) {   // uploading node
-            status = new api.ui.ProgressBar(data.getUploadItem().getProgress());
-            statusEl.appendChild(status);
-        }
-
-        return statusEl.toString();
-    }
-
-    private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        const data = node.getData();
-        if (data.getContentSummary() || data.getUploadItem()) {
-            let viewer = <ContentSummaryAndCompareStatusViewer> node.getViewer("name");
-            if (!viewer) {
-                viewer = new ContentSummaryAndCompareStatusViewer();
-                node.setViewer("name", viewer);
-            }
-            viewer.setObject(node.getData(), node.calcLevel() > 1);
-            return viewer ? viewer.toString() : "";
-        }
-
-        return "";
     }
 
     isEmptyNode(node: TreeNode<ContentSummaryAndCompareStatus>): boolean {
