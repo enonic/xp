@@ -276,6 +276,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }
     }
 
+    private fetchChildrenData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+        return this.fetchChildren(parentNode);
+    }
+
     deleteNodes(dataList: ContentSummaryAndCompareStatus[]): void {
         var root = this.getRoot().getCurrentRoot(),
             node: TreeNode<ContentSummaryAndCompareStatus>;
@@ -290,15 +294,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             return true;
         });
         super.deleteNodes(dataList);
-    }
-
-    updateContentNode(contentId: api.content.ContentId) {
-        var root = this.getRoot().getCurrentRoot();
-        var treeNode = root.findNode(contentId.toString());
-        if (treeNode) {
-            var content = treeNode.getData();
-            this.updateNode(ContentSummaryAndCompareStatus.fromContentSummary(content.getContentSummary()));
-        }
     }
 
     appendUploadNode(item: api.ui.uploader.UploadItem<ContentSummary>) {
@@ -423,7 +418,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     private expandNodeAndCheckTargetReached(nodeToExpand: TreeNode<ContentSummaryAndCompareStatus>, targetPathToExpand: ContentPath) {
 
-        if (!!nodeToExpand.getData() && targetPathToExpand.equals(nodeToExpand.getData().getPath())) {
+        if (nodeToExpand.getData() && targetPathToExpand.equals(nodeToExpand.getData().getPath())) {
             return;
         }
 
@@ -469,12 +464,17 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }
     }
 
-    private fetchChildrenData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        return this.fetchChildren(parentNode);
+    updateContentNode(contentId: api.content.ContentId) {
+        var root = this.getRoot().getCurrentRoot();
+        var treeNode = root.findNode(contentId.toString());
+        if (treeNode) {
+            var content = treeNode.getData();
+            this.updateNode(ContentSummaryAndCompareStatus.fromContentSummary(content.getContentSummary()));
+        }
     }
 
-    xAppendContentNode(parentNode: TreeNode<ContentSummaryAndCompareStatus>, childData: ContentSummaryAndCompareStatus, index: number,
-                       update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
+    appendContentNode(parentNode: TreeNode<ContentSummaryAndCompareStatus>, childData: ContentSummaryAndCompareStatus, index: number,
+                      update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
 
         var appendedNode = this.dataToTreeNode(childData, parentNode),
             data = parentNode.getData();
@@ -499,15 +499,15 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     }
 
-    xAppendContentNodes(relationships: TreeNodeParentOfContent[],
-                        update: boolean = true): wemQ.Promise<any> {
+    appendContentNodes(relationships: TreeNodeParentOfContent[],
+                       update: boolean = true): wemQ.Promise<any> {
 
         var parallelPromises: wemQ.Promise<any>[] = [];
 
         relationships.forEach((relationship) => {
             parallelPromises.push(this.fetchChildrenIds(relationship.getNode()).then((contentIds: ContentId[]) => {
                 relationship.getChildren().forEach((content: ContentSummaryAndCompareStatus) => {
-                    this.xAppendContentNode(relationship.getNode(), content, contentIds.indexOf(content.getContentId()), false);
+                    this.appendContentNode(relationship.getNode(), content, contentIds.indexOf(content.getContentId()), false);
                 })
             }));
         });
@@ -515,8 +515,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         return wemQ.allSettled(parallelPromises);
     }
 
-    xPlaceContentNode(parent: TreeNode<ContentSummaryAndCompareStatus>,
-                      child: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
+    placeContentNode(parent: TreeNode<ContentSummaryAndCompareStatus>,
+                     child: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
         return this.fetchChildrenIds(parent).then((result: ContentId[]) => {
             var map = result.map((el) => {
                 return el.toString();
@@ -538,11 +538,11 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         });
     }
 
-    xPlaceContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): wemQ.Promise<any> {
+    placeContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): wemQ.Promise<any> {
         var parallelPromises: wemQ.Promise<any>[] = [];
 
         nodes.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
-            parallelPromises.push(this.xPlaceContentNode(node.getParent(), node));
+            parallelPromises.push(this.placeContentNode(node.getParent(), node));
         });
 
         return wemQ.allSettled(parallelPromises).then((results) => {
@@ -553,13 +553,13 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         });
     }
 
-    xDeleteContentNode(node: TreeNode<ContentSummaryAndCompareStatus>,
-                       update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
+    deleteContentNode(node: TreeNode<ContentSummaryAndCompareStatus>,
+                      update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
         var parentNode = node.getParent();
 
         node.remove();
 
-        var data = !!parentNode ? parentNode.getData() : null;
+        var data = parentNode ? parentNode.getData() : null;
         if (data && !parentNode.hasChildren() && data.getContentSummary().hasChildren()) {
             data.setContentSummary(new ContentSummaryBuilder(data.getContentSummary()).setHasChildren(false).build());
         }
@@ -571,13 +571,13 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         return parentNode;
     }
 
-    xDeleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[],
-                        update: boolean = true) {
+    deleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[],
+                       update: boolean = true) {
 
         this.deselectDeletedNodes(nodes);
 
         nodes.forEach((node) => {
-            this.xDeleteContentNode(node, false);
+            this.deleteContentNode(node, false);
         });
 
         if (update) {
@@ -602,7 +602,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         this.deselectNodes(deselected);
     }
 
-    xUpdatePathsInChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
+    updatePathsInChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
         node.getChildren().forEach((child) => {
             var nodeSummary = node.getData() ? node.getData().getContentSummary() : null,
                 childSummary = child.getData() ? child.getData().getContentSummary() : null;
@@ -610,12 +610,12 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 var path = ContentPath.fromParent(nodeSummary.getPath(), childSummary.getPath().getName());
                 child.getData().setContentSummary(new ContentSummaryBuilder(childSummary).setPath(path).build());
                 child.clearViewers();
-                this.xUpdatePathsInChildren(child);
+                this.updatePathsInChildren(child);
             }
         });
     }
 
-    xSortNodesChildren(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): wemQ.Promise<void> {
+    sortNodesChildren(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): wemQ.Promise<void> {
 
         var parallelPromises: wemQ.Promise<any>[] = [];
 
