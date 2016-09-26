@@ -1,9 +1,8 @@
 import "../../../api.ts";
+import {DetailsPanel} from "./DetailsPanel";
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {DetailsPanel} from "./DetailsPanel";
-import {WidgetView} from "./WidgetView";
 
 export class ActiveDetailsPanelManager {
 

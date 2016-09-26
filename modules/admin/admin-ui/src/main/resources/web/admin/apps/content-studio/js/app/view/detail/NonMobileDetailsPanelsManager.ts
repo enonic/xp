@@ -1,11 +1,11 @@
 import "../../../api.ts";
-
-import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import {DetailsPanel} from "./DetailsPanel";
 import {FloatingDetailsPanel} from "./FloatingDetailsPanel";
 import {DockedDetailsPanel} from "./DockedDetailsPanel";
 import {NonMobileDetailsPanelToggleButton} from "./button/NonMobileDetailsPanelToggleButton";
 import {ActiveDetailsPanelManager} from "./ActiveDetailsPanelManager";
+
+import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 export class NonMobileDetailsPanelsManager {
 

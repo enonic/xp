@@ -5,7 +5,6 @@ import {ContentTreeGrid} from "./ContentTreeGrid";
 import {ContentBrowseFilterPanel} from "./filter/ContentBrowseFilterPanel";
 import {ContentBrowseItemPanel} from "./ContentBrowseItemPanel";
 import {MobileContentItemStatisticsPanel} from "../view/MobileContentItemStatisticsPanel";
-import {MobileDetailsPanel} from "../view/detail/MobileDetailsSlidablePanel";
 import {FloatingDetailsPanel} from "../view/detail/FloatingDetailsPanel";
 import {DockedDetailsPanel} from "../view/detail/DockedDetailsPanel";
 import {DetailsView} from "../view/detail/DetailsView";
