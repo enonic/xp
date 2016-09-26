@@ -60,7 +60,6 @@ public class RepositoryServiceImpl
                 throw new RepositoryAlreadyExistException( key );
             }
 
-            //TODO If/else needed for backward compatibility. Remove after 6.8.0
             final Repository repository;
             if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
             {
@@ -109,12 +108,16 @@ public class RepositoryServiceImpl
 
     private Node getRepositoryNode( final RepositoryId repositoryId )
     {
-        final NodeId nodeId = NodeId.from( repositoryId.toString() );
-        return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build().
-            callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
+        if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
+        {
+            final NodeId nodeId = NodeId.from( repositoryId.toString() );
+            return ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+                branch( SystemConstants.BRANCH_SYSTEM ).
+                build().
+                callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
+        }
+        return null;
     }
 
     @Reference
