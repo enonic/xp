@@ -14,12 +14,15 @@ public class FormOptionSetJson
 
     private final OccurrencesJson occurrences;
 
+    private final OccurrencesJson multiselection;
+
     private final List<FormOptionSetOptionJson> options;
 
     public FormOptionSetJson( final FormOptionSet formOptionSet )
     {
         this.formOptionSet = formOptionSet;
         this.occurrences = new OccurrencesJson( formOptionSet.getOccurrences() );
+        this.multiselection = new OccurrencesJson( formOptionSet.getMultiselection() );
         this.options = formOptionSet.getOptions().stream().map( FormOptionSetOptionJson::new ).collect( Collectors.toList() );
     }
 
@@ -41,6 +44,11 @@ public class FormOptionSetJson
     public OccurrencesJson getOccurrences()
     {
         return occurrences;
+    }
+
+    public OccurrencesJson getMultiselection()
+    {
+        return multiselection;
     }
 
     public List<FormOptionSetOptionJson> getOptions()

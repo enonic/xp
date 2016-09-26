@@ -799,10 +799,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var result: string[] = [];
 
         formItemContainer.getFormItems().forEach((item) => {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet)) {
-                result = result.concat(this.getHtmlAreasInForm(<api.form.FieldSet> item));
-            } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)) {
-                result = result.concat(this.getHtmlAreasInForm(<api.form.FormItemSet> item));
+            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)||
+                api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.optionset.FormOptionSet)) {
+                result = result.concat(this.getHtmlAreasInForm(<any>item));
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.Input)) {
                 var input = <api.form.Input> item;
                 if (input.getInputType().getName() === "HtmlArea") {

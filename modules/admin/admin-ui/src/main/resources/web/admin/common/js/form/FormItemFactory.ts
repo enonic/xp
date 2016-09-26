@@ -17,6 +17,9 @@ module api.form {
             else if (formItemTypeWrapperJson.FieldSet) {
                 return FormItemFactory.createFieldSetLayout(<api.form.json.FieldSetJson>formItemTypeWrapperJson.FieldSet);
             }
+            else if (formItemTypeWrapperJson.FormOptionSet) {
+                return FormItemFactory.createFormOptionSet(<api.form.json.FormOptionSetJson>formItemTypeWrapperJson.FormOptionSet);
+            }
 
             console.error("Unknown FormItem type: ", formItemTypeWrapperJson);
             return null;
@@ -32,6 +35,10 @@ module api.form {
 
         static createFieldSetLayout(fieldSetJson: api.form.json.FieldSetJson): FieldSet {
             return new FieldSet(fieldSetJson);
+        }
+
+        static createFormOptionSet(optionSetJson: api.form.json.FormOptionSetJson): api.form.optionset.FormOptionSet {
+            return new api.form.optionset.FormOptionSet(optionSetJson);
         }
     }
 }

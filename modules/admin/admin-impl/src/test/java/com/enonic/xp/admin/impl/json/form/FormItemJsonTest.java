@@ -12,6 +12,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.support.JsonTestHelper;
@@ -112,6 +113,7 @@ public class FormItemJsonTest
         final FormOptionSetJson formOptionSetJson = new FormOptionSetJson( FormOptionSet.create().
             name( "myOptionSet" ).
             label( "My option set" ).
+            multiselection( Occurrences.create( 1, 3 ) ).
             addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).
                 addFormItem(
                     Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).

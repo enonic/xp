@@ -8,7 +8,7 @@ module api.form {
 
         fieldSet: FieldSet;
 
-        parent: FormItemSetOccurrenceView;
+        parent: FormItemOccurrenceView;
 
         dataSet?: PropertySet;
     }
