@@ -111,9 +111,9 @@ public final class CreateNodeCommand
     {
         final PropertyTree data = params.getData();
 
-        final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
-
         final AttachedBinaries.Builder builder = AttachedBinaries.create();
+
+        final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
 
         for ( final Property binaryRef : binaryReferences )
         {
