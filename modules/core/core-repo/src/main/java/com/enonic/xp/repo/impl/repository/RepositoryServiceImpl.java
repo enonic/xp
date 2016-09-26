@@ -47,7 +47,7 @@ public class RepositoryServiceImpl
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
-        return this.nodeRepositoryService.isInitialized( repositoryId );
+        return this.get( repositoryId ) != null;
     }
 
     @Override
@@ -60,7 +60,18 @@ public class RepositoryServiceImpl
                 throw new RepositoryAlreadyExistException( key );
             }
 
-            final Repository repository = this.nodeRepositoryService.create( params );
+            final Repository repository;
+            if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
+            {
+                repository = this.nodeRepositoryService.create( params );
+            }
+            else
+            {
+                repository = Repository.create().
+                    id( params.getRepositoryId() ).
+                    settings( params.getRepositorySettings() ).
+                    build();
+            }
 
             final Node node = RepositoryNodeTranslator.toNode( repository );
             ContextBuilder.from( ContextAccessor.current() ).
@@ -68,6 +79,7 @@ public class RepositoryServiceImpl
                 branch( SystemConstants.BRANCH_SYSTEM ).
                 build().
                 callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
+
             return repository;
         } );
     }
@@ -96,12 +108,16 @@ public class RepositoryServiceImpl
 
     private Node getRepositoryNode( final RepositoryId repositoryId )
     {
-        final NodeId nodeId = NodeId.from( repositoryId.toString() );
-        return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build().
-            callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
+        if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
+        {
+            final NodeId nodeId = NodeId.from( repositoryId.toString() );
+            return ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+                branch( SystemConstants.BRANCH_SYSTEM ).
+                build().
+                callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
+        }
+        return null;
     }
 
     @Reference
