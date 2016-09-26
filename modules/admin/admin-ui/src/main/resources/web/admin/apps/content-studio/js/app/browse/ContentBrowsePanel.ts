@@ -5,7 +5,6 @@ import {ContentTreeGrid} from "./ContentTreeGrid";
 import {ContentBrowseFilterPanel} from "./filter/ContentBrowseFilterPanel";
 import {ContentBrowseItemPanel} from "./ContentBrowseItemPanel";
 import {MobileContentItemStatisticsPanel} from "../view/MobileContentItemStatisticsPanel";
-import {MobileDetailsPanel} from "../view/detail/MobileDetailsSlidablePanel";
 import {FloatingDetailsPanel} from "../view/detail/FloatingDetailsPanel";
 import {DockedDetailsPanel} from "../view/detail/DockedDetailsPanel";
 import {DetailsView} from "../view/detail/DetailsView";
@@ -384,7 +383,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         this.updateStatisticsPanel(data);
 
-        return this.contentTreeGrid.xPlaceContentNodes(changed);
+        return this.contentTreeGrid.placeContentNodes(changed);
     }
 
     private handleContentDeleted(paths: ContentPath[]) {
@@ -404,7 +403,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             }
         });
 
-        this.contentTreeGrid.xDeleteContentNodes(merged);
+        this.contentTreeGrid.deleteContentNodes(merged);
 
         // now get unique parents and update their hasChildren
         var uniqueParents = paths.map(path => path.getParentPath()).filter((parent, index, self) => {
@@ -480,10 +479,10 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                             if (node.getDataId() === el.getId()) {
                                 node.setData(el);
                                 node.clearViewers();
-                                this.contentTreeGrid.xUpdatePathsInChildren(node);
+                                this.contentTreeGrid.updatePathsInChildren(node);
                             }
                         });
-                        results.push(this.contentTreeGrid.xPlaceContentNodes(nodes));
+                        results.push(this.contentTreeGrid.placeContentNodes(nodes));
                     } else {
                         dataToHandle.push(el);
                     }
@@ -496,7 +495,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         }
 
         if (!!parentsOfContents) {
-            results.push(this.contentTreeGrid.xAppendContentNodes(
+            results.push(this.contentTreeGrid.appendContentNodes(
                 parentsOfContents,
                 !isFiltered
             ).then((results) => {
@@ -561,7 +560,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         // merge array of nodes arrays
         merged = merged.concat.apply(merged, nodes);
 
-        this.contentTreeGrid.xSortNodesChildren(merged).then(() => this.contentTreeGrid.invalidate());
+        this.contentTreeGrid.sortNodesChildren(merged).then(() => this.contentTreeGrid.invalidate());
     }
 
     private handleNewMediaUpload(event: NewMediaUploadEvent) {
