@@ -1,17 +1,16 @@
 import "../../api.ts";
 
-import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 import ViewItem = api.app.view.ViewItem;
-import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import StringHelper = api.util.StringHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import {DetailsPanel, SLIDE_FROM} from "./detail/DetailsPanel";
+import {MobileDetailsPanel} from "./detail/MobileDetailsSlidablePanel";
 import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
 import {MobileDetailsPanelToggleButton} from "./detail/button/MobileDetailsPanelToggleButton";
 import {MobileContentBrowseToolbar} from "../browse/MobileContentBrowseToolbar";
 import {ContentTreeGridActions} from "../browse/action/ContentTreeGridActions";
+import {DetailsView} from "./detail/DetailsView";
 
 export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
@@ -19,12 +18,12 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private headerLabel: api.dom.SpanEl = new api.dom.SpanEl();
 
     private previewPanel: ContentItemPreviewPanel;
-    private detailsPanel: DetailsPanel;
+    private detailsPanel: MobileDetailsPanel;
     private detailsToggleButton: MobileDetailsPanelToggleButton;
 
     private toolbar: MobileContentBrowseToolbar;
 
-    constructor(browseActions: ContentTreeGridActions) {
+    constructor(browseActions: ContentTreeGridActions, detailsView: DetailsView) {
         super("mobile-content-item-statistics-panel");
 
         this.setDoOffset(false);
@@ -33,7 +32,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
         this.initPreviewPanel();
 
-        this.initDetailsPanel();
+        this.initDetailsPanel(detailsView);
 
         this.initDetailsPanelToggleButton();
 
@@ -74,14 +73,8 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
     }
 
-    private initDetailsPanel() {
-        this.detailsPanel = DetailsPanel.create().
-            setUseSplitter(false).
-            setUseViewer(false).
-            setSlideFrom(SLIDE_FROM.BOTTOM).
-            setIsMobile(true).
-            build();
-        this.detailsPanel.addClass("mobile");
+    private initDetailsPanel(detailsView: DetailsView) {
+        this.detailsPanel = new MobileDetailsPanel(detailsView);
         this.appendChild(this.detailsPanel);
     }
 
@@ -101,6 +94,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
         if (!this.getItem() || !this.getItem().equals(item)) {
             super.setItem(item);
+            this.detailsPanel.setItem(!!item ? item.getModel() : null);
             if (item) {
                 this.setName(this.makeDisplayName(item));
             }
@@ -115,7 +109,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
             : item.getDisplayName();
     }
 
-    getDetailsPanel(): DetailsPanel {
+    getDetailsPanel(): MobileDetailsPanel {
         return this.detailsPanel;
     }
 
