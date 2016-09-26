@@ -696,7 +696,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                             this.updateLiveForm();
                         }
 
-                    this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
+                        this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
+                    }
                 });
             } else if (this.doHtmlAreasContainId(contentId.toString())) {   // Check if there are html areas in form that contain event.getContentId() that was updated
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
