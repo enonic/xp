@@ -229,14 +229,16 @@ module api.form.optionset {
                 }
             });
 
-            if (numberOfValids < this.formOptionSet.getOccurrences().getMinimum()) {
+            if (numberOfValids < this.formOptionSet.getOccurrences().getMinimum() ||
+                numberOfValids < this.formOptionSet.getMultiselection().getMinimum()) {
                 this.previousValidationRecording.breaksMinimumOccurrences(validationRecordingPath);
                 occurrenceRecording.breaksMinimumOccurrences(validationRecordingPath);
             } else {
                 this.previousValidationRecording.removeUnreachedMinimumOccurrencesByPath(validationRecordingPath, true);
             }
 
-            if (this.formOptionSet.getOccurrences().maximumBreached(numberOfValids)) {
+            if (this.formOptionSet.getOccurrences().maximumBreached(numberOfValids) ||
+                this.formOptionSet.getMultiselection().maximumBreached(numberOfValids)) {
                 this.previousValidationRecording.breaksMaximumOccurrences(validationRecordingPath);
                 occurrenceRecording.breaksMaximumOccurrences(validationRecordingPath);
             } else {
@@ -297,14 +299,12 @@ module api.form.optionset {
 
         validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {
 
-            var validationRecordingPath = this.resolveValidationRecordingPath();
+            var validationRecordingPath = this.resolveValidationRecordingPath(),
+                wholeRecording = new ValidationRecording(),
+                occurrenceViews = this.formOptionSetOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation),
+                occurrenceRecording = new ValidationRecording(),
+                numberOfValids = 0;
 
-            var wholeRecording = new ValidationRecording();
-
-            var occurrenceViews = this.formOptionSetOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation);
-            var occurrenceRecording = new ValidationRecording();
-
-            var numberOfValids = 0;
             occurrenceViews.forEach((occurrenceView: FormOptionSetOccurrenceView) => {
                 var recordingForOccurrence = occurrenceView.validate(silent);
                 if (recordingForOccurrence.isValid()) {
