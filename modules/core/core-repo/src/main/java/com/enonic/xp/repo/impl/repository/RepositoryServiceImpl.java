@@ -47,7 +47,7 @@ public class RepositoryServiceImpl
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
-        return this.nodeRepositoryService.isInitialized( repositoryId );
+        return this.get( repositoryId ) != null;
     }
 
     @Override
@@ -60,7 +60,19 @@ public class RepositoryServiceImpl
                 throw new RepositoryAlreadyExistException( key );
             }
 
-            final Repository repository = this.nodeRepositoryService.create( params );
+            //TODO If/else needed for backward compatibility. Remove after 6.8.0
+            final Repository repository;
+            if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
+            {
+                repository = this.nodeRepositoryService.create( params );
+            }
+            else
+            {
+                repository = Repository.create().
+                    id( params.getRepositoryId() ).
+                    settings( params.getRepositorySettings() ).
+                    build();
+            }
 
             final Node node = RepositoryNodeTranslator.toNode( repository );
             ContextBuilder.from( ContextAccessor.current() ).
@@ -68,6 +80,7 @@ public class RepositoryServiceImpl
                 branch( SystemConstants.BRANCH_SYSTEM ).
                 build().
                 callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
+
             return repository;
         } );
     }
