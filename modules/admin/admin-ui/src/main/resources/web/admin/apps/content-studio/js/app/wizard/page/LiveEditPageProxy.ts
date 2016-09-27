@@ -241,9 +241,10 @@ export class LiveEditPageProxy {
         var isSite = this.liveEditModel.getContent().isSite();
         var isTemplate = this.liveEditModel.getContent().isPageTemplate();
         var hasController = this.liveEditModel.getPageModel().hasController();
+        var hasDefaultPageTemplate = this.liveEditModel.getPageModel().hasDefaultPageTemplate();
         var hasApplications = this.liveEditModel.getSiteModel().getApplicationKeys().length > 0;
 
-        if (isSite && (!hasApplications || !hasController) || isTemplate && !hasController) {
+        if (isSite && (!hasApplications || (!hasController && !hasDefaultPageTemplate )) || isTemplate && !hasController) {
             if (LiveEditPageProxy.debug) {
                 console.debug("LiveEditPageProxy.load: no reason to load page, applying blank template");
             }
