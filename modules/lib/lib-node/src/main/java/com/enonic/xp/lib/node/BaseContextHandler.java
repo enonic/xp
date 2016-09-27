@@ -9,7 +9,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -17,8 +16,6 @@ public abstract class BaseContextHandler
     implements ScriptBean
 {
     protected NodeService nodeService;
-
-    protected RepositoryService repositoryService;
 
     private String branch;
 
@@ -58,6 +55,5 @@ public abstract class BaseContextHandler
     public void initialize( final BeanContext context )
     {
         this.nodeService = context.getService( NodeService.class ).get();
-        this.repositoryService = context.getService( RepositoryService.class ).get();
     }
 }

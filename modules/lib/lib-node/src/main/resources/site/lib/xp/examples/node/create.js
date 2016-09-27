@@ -4,8 +4,7 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Creates a content.
 var result1 = nodeLib.create({
-    name: 'myNode',
-    parentPath: '/',
+    _modified : '2015-10-02T10:00:00Z',
     data: {
         a: 1,
         b: 2,
@@ -16,9 +15,7 @@ var result1 = nodeLib.create({
                 g: true
             }
         }
-    },
-    manualOrderValue: 0,
-    childOrder: "name _asc"
+    }
 });
 
 log.info('Node created with id ' + result1._id);
