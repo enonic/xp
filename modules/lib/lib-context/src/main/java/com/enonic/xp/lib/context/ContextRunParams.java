@@ -6,6 +6,8 @@ import com.enonic.xp.security.PrincipalKey;
 
 public final class ContextRunParams
 {
+    protected String repository;
+
     protected String branch;
 
     protected String username;
@@ -15,6 +17,11 @@ public final class ContextRunParams
     protected PrincipalKey[] principals;
 
     protected Callable<Object> callback;
+
+    public void setRepository( final String repository )
+    {
+        this.repository = repository;
+    }
 
     public void setBranch( final String branch )
     {

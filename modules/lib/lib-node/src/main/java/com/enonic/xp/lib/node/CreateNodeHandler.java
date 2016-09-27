@@ -16,7 +16,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -46,7 +45,6 @@ public class CreateNodeHandler
     protected Object doExecute()
     {
         final Context context = ContextAccessor.current();
-        final Repository repository = repositoryService.get( context.getRepositoryId() );
 
         final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.create();
 

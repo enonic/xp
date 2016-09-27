@@ -20,6 +20,7 @@ exports.testNoChange = function () {
 
 exports.testChange = function () {
     var result = context.run({
+        repository: "myrepository",
         branch: 'mybranch',
         user: {
             login: 'su',
@@ -32,7 +33,7 @@ exports.testChange = function () {
 
     assert.assertJsonEquals({
         "branch": "mybranch",
-        "repository": "cms-repo",
+        "repository": "myrepository",
         "authInfo": {
             "user": {
                 "type": "user",
