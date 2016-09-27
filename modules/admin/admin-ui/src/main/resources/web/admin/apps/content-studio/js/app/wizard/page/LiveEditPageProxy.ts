@@ -238,13 +238,32 @@ export class LiveEditPageProxy {
     public load() {
         this.liveEditPageViewReady = false;
 
-        var isSite = this.liveEditModel.getContent().isSite();
-        var isTemplate = this.liveEditModel.getContent().isPageTemplate();
-        var hasController = this.liveEditModel.getPageModel().hasController();
-        var hasDefaultPageTemplate = this.liveEditModel.getPageModel().hasDefaultPageTemplate();
-        var hasApplications = this.liveEditModel.getSiteModel().getApplicationKeys().length > 0;
+        var isSite = this.liveEditModel.getContent().isSite(),
+            isTemplate = this.liveEditModel.getContent().isPageTemplate(),
+            hasController = this.liveEditModel.getPageModel().hasController(),
+            hasDefaultPageTemplate = this.liveEditModel.getPageModel().hasDefaultPageTemplate(),
+            hasApplications = this.liveEditModel.getSiteModel().getApplicationKeys().length > 0;
 
-        if (isSite && (!hasApplications || (!hasController && !hasDefaultPageTemplate )) || isTemplate && !hasController) {
+        var isRenderable = hasApplications || hasController || hasDefaultPageTemplate,
+            isRenderableSite = isSite && isRenderable,
+            isRenderableTemplate = isTemplate && hasController;
+
+        if (isRenderableSite || isRenderableTemplate) {
+            this.showLoadMaskHandler();
+
+            var contentId = this.liveEditModel.getContent().getContentId().toString();
+            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+            if (LiveEditPageProxy.debug) {
+                console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
+            }
+
+            if (api.BrowserHelper.isIE()) {
+                this.copyObjectsBeforeFrameReloadForIE();
+            }
+
+            this.liveEditIFrame.setSrc(pageUrl);
+        } else {
+
             if (LiveEditPageProxy.debug) {
                 console.debug("LiveEditPageProxy.load: no reason to load page, applying blank template");
             }
@@ -261,20 +280,6 @@ export class LiveEditPageProxy {
             };
 
             this.liveEditIFrame.onAdded(setIframeHtml.bind(this));
-        } else {
-            this.showLoadMaskHandler();
-
-            var contentId = this.liveEditModel.getContent().getContentId().toString();
-            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
-            if (LiveEditPageProxy.debug) {
-                console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
-            }
-
-            if (api.BrowserHelper.isIE()) {
-                this.copyObjectsBeforeFrameReloadForIE();
-            }
-
-            this.liveEditIFrame.setSrc(pageUrl);
         }
     }
 
