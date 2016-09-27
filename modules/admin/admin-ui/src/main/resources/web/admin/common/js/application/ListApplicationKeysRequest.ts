@@ -1,7 +1,6 @@
 module api.application {
-
-    import ApplicationKeyBaseItemJson = api.application.json.ApplicationKeyBaseItemJson;
-    export class ListApplicationKeysRequest extends ApplicationResourceRequest<ApplicationKeyBaseItemJson[], ApplicationKey[]> {
+    
+    export class ListApplicationKeysRequest extends ApplicationResourceRequest<String[], ApplicationKey[]> {
 
         private searchQuery: string;
         private apiName: string;
@@ -30,8 +29,8 @@ module api.application {
 
         sendAndParse(): wemQ.Promise<ApplicationKey[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<ApplicationKeyBaseItemJson[]>) => {
-                return response.getResult().map(application => ApplicationKey.fromString(application.key));
+            return this.send().then((response: api.rest.JsonResponse<String[]>) => {
+                return response.getResult().map(application => ApplicationKey.fromString(application));
             });
         }
     }

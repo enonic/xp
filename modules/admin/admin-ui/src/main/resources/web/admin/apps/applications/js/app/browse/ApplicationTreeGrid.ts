@@ -68,7 +68,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     placeNode(data: Application, stashedParentNode?: TreeNode<Application>): wemQ.Promise<void> {
-        const parentNode = this.getParentNode(false, stashedParentNode);
+        const parentNode = this.getParentNode(true, stashedParentNode);
         let index = parentNode.getChildren().length;
         for (let i = 0; i < index; i++) {
             if (parentNode.getChildren()[i].getData().getDisplayName().localeCompare(data.getDisplayName()) >= 0) {
@@ -76,7 +76,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
                 break;
             }
         }
-        return this.insertNode(data, false, index, stashedParentNode);
+        return this.insertNode(data, true, index, stashedParentNode);
     }
 
     updateApplicationNode(applicationKey: api.application.ApplicationKey) {
