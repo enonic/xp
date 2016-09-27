@@ -4,6 +4,7 @@ module api.form.optionset {
     import PropertyArray = api.data.PropertyArray;
     import PropertyPath = api.data.PropertyPath;
     import ValueTypes = api.data.ValueTypes;
+    import Value = api.data.Value;
 
     export interface FormOptionSetOccurrenceViewConfig {
         context: FormContext;
@@ -75,7 +76,8 @@ module api.form.optionset {
                 return false;
             });
 
-            this.label = new FormOccurrenceDraggableLabel(this.formOptionSet.getLabel(), this.formOptionSet.getOccurrences());
+            this.label = new FormOccurrenceDraggableLabel(this.formOptionSet.getLabel(), this.formOptionSet.getOccurrences(),
+                this.makeMultiselectionNote());
             this.appendChild(this.label);
 
             this.formOptionSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
@@ -115,6 +117,25 @@ module api.form.optionset {
                                 this.resolveValidationRecordingPath()).setIncludeChildren(true));
                         }
                     });
+
+                    (<FormOptionSetOptionView> formItemView).onSelectionChanged(() => {
+                        if (!this.previousValidationRecording) {
+                            return; // previousValidationRecording is initialized on validate() call which may not be triggered in some cases
+                        }
+
+                        var previousValidState = this.previousValidationRecording.isValid(),
+                            multiselectionValidationRecording = this.validateMultiselection();
+                        if (multiselectionValidationRecording.isValid()) {
+                            this.previousValidationRecording.removeByPath(this.resolveValidationRecordingPath(), false);
+                        } else {
+                            this.previousValidationRecording.flatten(multiselectionValidationRecording);
+                        }
+
+                        if (previousValidState != this.previousValidationRecording.isValid()) {
+                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
+                                this.resolveValidationRecordingPath()).setIncludeChildren(true));
+                        }
+                    })
                 });
 
                 this.refresh();
@@ -124,6 +145,33 @@ module api.form.optionset {
             }).done();
 
             return deferred.promise;
+        }
+
+        private makeMultiselectionNote(): string {
+            var multiselection = this.formOptionSet.getMultiselection();
+            if (multiselection.getMinimum() == 1 && multiselection.getMaximum() == 1) {
+                return null;
+            }
+
+            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 0) {
+                return "(any)"
+            }
+            if (multiselection.getMinimum() > 0 && multiselection.getMaximum() == 0) {
+                return "(at least " + multiselection.getMinimum() + ")";
+            }
+            if (multiselection.getMinimum() > 1 && multiselection.getMinimum() == multiselection.getMaximum()) {
+                return "(pick " + multiselection.getMinimum() + ")";
+            }
+            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() > 1) {
+                return "(up to " + multiselection.getMaximum() + ")";
+            }
+            if (multiselection.getMinimum() > 0 && multiselection.getMaximum() > multiselection.getMinimum()) {
+                return "(" + multiselection.getMinimum() + " to " + multiselection.getMaximum() + ")";
+            }
+            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 1) {
+                return "(0 or 1)";
+            }
+            return null;
         }
 
         public update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
@@ -144,7 +192,16 @@ module api.form.optionset {
                     setParent(propertyArraySet).
                     build();
                 propertyArraySet.addPropertyArray(selectionPropertyArray);
+                this.addDefaultSelectionToSelectionArray(selectionPropertyArray);
             }
+        }
+
+        private addDefaultSelectionToSelectionArray(selectionPropertyArray: PropertyArray) {
+            this.formOptionSet.getOptions().forEach((option: FormOptionSetOption) => {
+                if (option.isDefaultOption() && selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMaximum()) {
+                    selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()))
+                }
+            });
         }
 
         getFormItemViews(): FormItemView[] {
@@ -223,15 +280,16 @@ module api.form.optionset {
             return result;
         }
 
-
         validate(silent: boolean = true): ValidationRecording {
 
             var allRecordings = new ValidationRecording();
+
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 var currRecording = formItemView.validate(silent);
                 allRecordings.flatten(currRecording);
-
             });
+
+            allRecordings.flatten(this.validateMultiselection());
 
             if (!silent) {
                 if (allRecordings.validityChanged(this.previousValidationRecording)) {
@@ -240,6 +298,36 @@ module api.form.optionset {
             }
             this.previousValidationRecording = allRecordings;
             return allRecordings;
+        }
+
+        private validateMultiselection(): ValidationRecording {
+            var multiselectionRecording = new ValidationRecording(),
+                validationRecordingPath = this.resolveValidationRecordingPath(),
+                selectionPropertyArray = this.propertySet.getPropertyArray(this.formOptionSet.getName() + "_selection");
+
+            if (selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMinimum()) {
+                multiselectionRecording.breaksMinimumOccurrences(validationRecordingPath);
+            }
+
+            if (this.formOptionSet.getMultiselection().maximumBreached(selectionPropertyArray.getSize())) {
+                multiselectionRecording.breaksMaximumOccurrences(validationRecordingPath);
+            }
+
+            if (this.previousValidationRecording) {
+                if (selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMinimum()) {
+                    this.previousValidationRecording.breaksMinimumOccurrences(validationRecordingPath);
+                } else {
+                    this.previousValidationRecording.removeUnreachedMinimumOccurrencesByPath(validationRecordingPath, true);
+                }
+
+                if (this.formOptionSet.getMultiselection().maximumBreached(selectionPropertyArray.getSize())) {
+                    this.previousValidationRecording.breaksMaximumOccurrences(validationRecordingPath);
+                } else {
+                    this.previousValidationRecording.removeBreachedMaximumOccurrencesByPath(validationRecordingPath, true);
+                }
+            }
+
+            return multiselectionRecording;
         }
 
         onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {

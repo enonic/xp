@@ -6,6 +6,7 @@ module api.form.optionset {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import Occurrences = api.form.Occurrences;
 
     export interface FormOptionSetOptionViewConfig {
 
@@ -31,6 +32,10 @@ module api.form.optionset {
         private formItemViews: FormItemView[] = [];
 
         private formItemLayer: FormItemLayer;
+
+        private selectedOptionsPropertyArray: PropertyArray;
+
+        private selectionChangedListeners: {() : void}[] = [];
 
         constructor(config: FormOptionSetOptionViewConfig) {
             super(<FormItemViewConfig> {
@@ -63,12 +68,14 @@ module api.form.optionset {
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
+                this.selectedOptionsPropertyArray = this.getSelectedOptionsArray();
+
                 if ((<FormOptionSet>this.formOptionSetOption.getParent()).isExpanded() ||
                     this.getThisPropertyFromSelectedOptionsArray() != null) {
                     this.addClass("expanded");
                 }
 
-                if (optionItemsPropertySet.getSize() > 0) {
+                if (this.formOptionSetOption.getFormItems().length > 0) {
                     this.collapseButton = this.makeCollapseButton();
                     this.prependChild(this.collapseButton);
                 }
@@ -116,7 +123,7 @@ module api.form.optionset {
 
         private getThisPropertyFromSelectedOptionsArray(): Property {
             var result: Property = null;
-            this.getSelectedOptionsArray().forEach((property: api.data.Property, i: number) => {
+            this.selectedOptionsPropertyArray.forEach((property: api.data.Property, i: number) => {
                 if (property.getString() == this.getName()) {
                     result = property;
                 }
@@ -129,44 +136,64 @@ module api.form.optionset {
         }
 
         private makeSelectionButton(): api.dom.FormInputEl {
-            if (this.parentOptionSetAllowsMultiSelection()) {
-                return this.makeSelectionCheckbox();
-            } else {
+            if (this.isRadioSelection()) {
                 return this.makeSelectionRadioButton();
+            } else {
+                return this.makeSelectionCheckbox();
             }
         }
 
         private makeSelectionRadioButton(): api.ui.RadioButton {
-            var selectedProperty = this.getSelectedOptionsArray().get(0);
-            var checked = !!selectedProperty && selectedProperty.getString() == this.getName(); // this.formOptionSetOption.isDefaultOption()
+            var selectedProperty = this.selectedOptionsPropertyArray.get(0);
+            var checked = !!selectedProperty && selectedProperty.getString() == this.getName();
             var button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked);
             button.onChange(() => {
-                this.getSelectedOptionsArray().set(0, new Value(this.getName(), new api.data.ValueTypeString()));
+                this.selectedOptionsPropertyArray.set(0, new Value(this.getName(), new api.data.ValueTypeString()));
+                this.notifySelectionChanged();
             });
             return button;
         }
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
-            var checked = this.getThisPropertyFromSelectedOptionsArray() != null; // this.formOptionSetOption.isDefaultOption()
+            var checked = this.getThisPropertyFromSelectedOptionsArray() != null;
             var button = api.ui.Checkbox.create().setLabelPosition(api.ui.LabelPosition.RIGHT).
                 setLabelText(this.formOptionSetOption.getLabel()).
                 setChecked(checked).
                 build();
+
             button.onChange(() => {
                 if (button.isChecked()) {
-                    this.getSelectedOptionsArray().add(new Value(this.getName(), new api.data.ValueTypeString()));
+                    this.selectedOptionsPropertyArray.add(new Value(this.getName(), new api.data.ValueTypeString()));
                 } else {
                     var property = this.getThisPropertyFromSelectedOptionsArray();
                     if (!!property) {
-                        this.getSelectedOptionsArray().remove(property.getIndex());
+                        this.selectedOptionsPropertyArray.remove(property.getIndex());
                     }
                 }
+                this.notifySelectionChanged();
             });
+
+            var checkboxEnabledStatusHandler: () => void = () => {
+                var canCheckMoreOptions = !button.isChecked() && this.cantSelectMoreOptions();
+                button.setDisabled(canCheckMoreOptions);
+                button.toggleClass("disabled", canCheckMoreOptions);
+            }
+
+            this.selectedOptionsPropertyArray.onPropertyAdded(checkboxEnabledStatusHandler);
+            this.selectedOptionsPropertyArray.onPropertyRemoved(checkboxEnabledStatusHandler);
             return button;
         }
 
-        private parentOptionSetAllowsMultiSelection(): boolean {
-            return (<FormOptionSet>this.formOptionSetOption.getParent()).getMultiselection().getMaximum() > 1;
+        private cantSelectMoreOptions(): boolean {
+            return this.selectedOptionsPropertyArray.getSize() >= this.getMultiselection().getMaximum();
+        }
+
+        private isRadioSelection(): boolean {
+            return this.getMultiselection().getMinimum() == 1 && this.getMultiselection().getMaximum() == 1;
+        }
+
+        private getMultiselection(): Occurrences {
+            return (<FormOptionSet>this.formOptionSetOption.getParent()).getMultiselection();
         }
 
         private makeCollapseButton(): api.dom.AEl {
@@ -195,7 +222,6 @@ module api.form.optionset {
         }
 
         refresh() {
-            //this.collapseButton.setVisible(this.formOptionSetOccurrences.getOccurrences().length > 0);
         }
 
         public displayValidationErrors(value: boolean) {
@@ -246,15 +272,20 @@ module api.form.optionset {
             });
         }
 
-        private renderValidationErrors(recording: ValidationRecording) {
-            if (recording.isValid()) {
-                this.removeClass("invalid");
-                this.addClass("valid");
-            }
-            else {
-                this.removeClass("valid");
-                this.addClass("invalid");
-            }
+        onSelectionChanged(listener: ()=> void) {
+            this.selectionChangedListeners.push(listener);
+        }
+
+        unSelectionChanged(listener: ()=> void) {
+            this.selectionChangedListeners.filter((currentListener: () => void) => {
+                return listener == currentListener;
+            });
+        }
+
+        private notifySelectionChanged() {
+            this.selectionChangedListeners.forEach((listener: () => void) => {
+                listener();
+            });
         }
 
         giveFocus(): boolean {
