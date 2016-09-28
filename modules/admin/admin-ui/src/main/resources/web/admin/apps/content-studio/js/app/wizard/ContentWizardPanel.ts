@@ -1491,8 +1491,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var contentCopy = content.clone();
         contentCopy.getContentData().onChanged(this.dataChangedListener);
 
-        this.contentWizardStepForm.update(contentCopy.getContentData(), unchangedOnly);
-        this.contentWizardStepForm.validate();
+        this.contentWizardStepForm.update(contentCopy.getContentData(), unchangedOnly).then(() => {
+            setTimeout(this.contentWizardStepForm.validate.bind(this.contentWizardStepForm), 100);
+        });
+
 
         if (contentCopy.isSite()) {
             this.siteModel.update(<Site>contentCopy);
