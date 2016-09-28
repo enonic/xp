@@ -5,17 +5,19 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.util.CharacterChecker;
-
 @Beta
 public final class RepositoryId
 {
+    private static final String VALID_REPOSITORY_ID_REGEX = "([a-z0-9\\-:])([a-z0-9_\\-\\.:])*";
+
     private final String value;
 
     private RepositoryId( final String value )
     {
-        Preconditions.checkNotNull( value );
-        this.value = CharacterChecker.check( value, "Not a valid value for RepositoryId [" + value + "]" );
+        Preconditions.checkNotNull( value, "RepositoryId cannot be null" );
+        Preconditions.checkArgument( !value.trim().isEmpty(), "RepositoryId cannot be blank" );
+        Preconditions.checkArgument( value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ), "RepositoryId format incorrect: " + value );
+        this.value = value;
     }
 
     @Override
