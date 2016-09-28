@@ -4,8 +4,6 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Creates a content.
 var result1 = nodeLib.create({
-    _name: "myNode",
-    _parentPath: "/",
     a: 1,
     b: 2,
     c: ['1', '2'],
@@ -26,16 +24,6 @@ var expected = {
         "_id": "123456",
         "_name": "myNode",
         "_path": "/myNode",
-        "_attachedBinaries": [
-            {
-                "binaryReference": "myRef",
-                "blobKey": "abc"
-            },
-            {
-                "binaryReference": "myRef2",
-                "blobKey": "def"
-            }
-        ],
         "_childOrder": "_timestamp DESC",
         "_indexConfig": {
             "analyzer": "myAnalyzer",
@@ -76,8 +64,7 @@ var expected = {
                     }
                 }
             ]
-        }
-        ,
+        },
         "_inheritsPermissions": false,
         "_permissions": [
             {

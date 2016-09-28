@@ -19,7 +19,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-class CreateNodeHandler
+public class CreateNodeHandler
     extends BaseContextHandler
 {
     private String name;
