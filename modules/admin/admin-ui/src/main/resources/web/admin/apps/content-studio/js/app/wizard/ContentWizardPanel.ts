@@ -676,7 +676,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
         };
 
-        var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true, versionChanged: boolean = false) => {
+        var updateHandler = (contentId: ContentId, compareStatus?: CompareStatus) => {
 
             if (this.isCurrentContentId(contentId)) {
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
@@ -684,28 +684,26 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                     if (!isAlreadyUpdated) {
                         this.setPersistedItem(content);
-                        this.updateWizard(content, unchangedOnly);
+                        this.updateWizard(content, true);
 
-                        if (versionChanged) {
-                            this.updateLiveForm();
-                            if (!this.isDisplayNameUpdated()) {
-                                this.getWizardHeader().resetBaseValues(content.getDisplayName());
-                            }
-                        } else if (this.isEditorEnabled()) {
+                        if (compareStatus != undefined) {
+                            this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
+                            this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
+
+                        }
+                        if (this.isEditorEnabled()) {
                             // also update live form panel for renderable content without asking
                             this.updateLiveForm();
                         }
-
+                        if (!this.isDisplayNameUpdated()) {
+                            this.getWizardHeader().resetBaseValues(content.getDisplayName());
+                        }
                         this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
                     }
-                    /*else {
-                     this.updatePublishStatusOnDataChange();
-                     }*/
-
                 });
             } else if (this.doHtmlAreasContainId(contentId.toString())) {   // Check if there are html areas in form that contain event.getContentId() that was updated
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
-                    this.updateWizard(content, unchangedOnly);
+                    this.updateWizard(content, true);
                     if (this.isEditorEnabled()) {
                         let liveFormPanel = this.getLivePanel();
                         liveFormPanel.skipNextReloadConfirmation(true);
@@ -727,38 +725,37 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         };
 
-        var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false, true);
-        var contentUpdatedHanlder = (event: ContentUpdatedEvent) => {
-            if (!this.contentUpdateDisabled) {
-                updateHandler(event.getContentId())
-            }
-        };
-
         var movedHandler = (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
             var wasMoved = oldPaths.some((oldPath: ContentPath) => {
                 return this.persistedItemPathIsDescendantOrEqual(oldPath);
             });
 
             if (wasMoved) {
-                updateHandler(this.getPersistedItem().getContentId());
+                updateHandler(this.getPersistedItem().getContentId(), data[0].getCompareStatus());
             }
         };
 
-        ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
-        ContentUpdatedEvent.on(contentUpdatedHanlder);
+        var contentUpdatedHandler = (data: ContentSummaryAndCompareStatus[]) => {
+            if (!this.contentUpdateDisabled) {
+                data.forEach((updated: ContentSummaryAndCompareStatus) => {
+                    updateHandler(updated.getContentId(), updated.getCompareStatus());
+                });
+            }
+        };
+
         ContentDeletedEvent.on(deleteHandler);
         ContentServerEventsHandler.getInstance().onContentMoved(movedHandler);
         ContentServerEventsHandler.getInstance().onContentSorted(sortedHandler);
+        ContentServerEventsHandler.getInstance().onContentUpdated(contentUpdatedHandler);
 
         serverEvents.onContentPublished(publishOrUnpublishHandler);
         serverEvents.onContentUnpublished(publishOrUnpublishHandler);
 
         this.onClosed(() => {
-            ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
-            ContentUpdatedEvent.un(contentUpdatedHanlder);
             ContentDeletedEvent.un(deleteHandler);
             ContentServerEventsHandler.getInstance().unContentMoved(movedHandler);
             ContentServerEventsHandler.getInstance().unContentSorted(sortedHandler);
+            ContentServerEventsHandler.getInstance().unContentUpdated(contentUpdatedHandler);
 
             serverEvents.unContentPublished(publishOrUnpublishHandler);
             serverEvents.unContentUnpublished(publishOrUnpublishHandler);
