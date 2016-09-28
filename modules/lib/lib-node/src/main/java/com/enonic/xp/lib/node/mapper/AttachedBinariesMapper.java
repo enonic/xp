@@ -4,7 +4,7 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public class AttachedBinariesMapper
+class AttachedBinariesMapper
     implements MapSerializable
 {
     private final AttachedBinaries value;
@@ -22,8 +22,6 @@ public class AttachedBinariesMapper
 
     private void serialize( final MapGenerator gen, final AttachedBinaries binaries )
     {
-        gen.array( "attachedBinaries" );
-
         binaries.forEach( ( binary ) -> {
             gen.map();
             gen.value( "binaryReference", binary.getBinaryReference().toString() );
@@ -31,6 +29,5 @@ public class AttachedBinariesMapper
             gen.end();
         } );
 
-        gen.end();
     }
 }

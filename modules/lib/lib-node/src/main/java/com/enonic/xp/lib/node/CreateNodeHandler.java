@@ -5,8 +5,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -21,7 +19,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-public class CreateNodeHandler
+class CreateNodeHandler
     extends BaseContextHandler
 {
     private String name;
@@ -40,12 +38,9 @@ public class CreateNodeHandler
 
     private AccessControlList accessControlList;
 
-
     @Override
     protected Object doExecute()
     {
-        final Context context = ContextAccessor.current();
-
         final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.create();
 
         if ( isBlank( this.name ) )

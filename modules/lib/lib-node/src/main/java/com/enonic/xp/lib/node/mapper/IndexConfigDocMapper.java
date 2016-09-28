@@ -11,7 +11,7 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public class IndexConfigDocMapper
+class IndexConfigDocMapper
     implements MapSerializable
 {
     private final IndexConfigDocument value;
@@ -29,20 +29,17 @@ public class IndexConfigDocMapper
 
     private void serialize( final MapGenerator gen, final IndexConfigDocument document )
     {
-        gen.map( "indexConfig" );
         gen.value( "analyzer", value.getAnalyzer() );
 
         if ( document instanceof PatternIndexConfigDocument )
         {
             serialize( gen, (PatternIndexConfigDocument) document );
         }
-
-        gen.end();
     }
 
     private void serialize( final MapGenerator gen, final PatternIndexConfigDocument document )
     {
-        gen.array( "patternIndexConfigs" );
+        gen.array( "configs" );
 
         final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs = document.getPathIndexConfigs();
 
@@ -59,7 +56,7 @@ public class IndexConfigDocMapper
 
     private void serialize( final MapGenerator gen, final IndexConfig indexConfig )
     {
-        gen.map( "indexConfig" );
+        gen.map( "config" );
 
         gen.value( "decideByType", indexConfig.isDecideByType() );
         gen.value( "enabled", indexConfig.isEnabled() );
@@ -81,5 +78,4 @@ public class IndexConfigDocMapper
         }
         gen.end();
     }
-
 }

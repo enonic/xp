@@ -19,8 +19,8 @@ exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.node.CreateNodeHandler');
 
     params = params || {};
-    bean.name = nullOrValue(params.name);
-    bean.parentPath = nullOrValue(params.parentPath);
+    bean.name = nullOrValue(params._name);
+    bean.parentPath = nullOrValue(params._parentPath);
     bean.data = __.toScriptValue(params.data);
 
     return __.toNativeObject(bean.execute());

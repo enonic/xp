@@ -4,16 +4,15 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Creates a content.
 var result1 = nodeLib.create({
-    _modified : '2015-10-02T10:00:00Z',
-    data: {
-        a: 1,
-        b: 2,
-        c: ['1', '2'],
-        d: {
-            e: {
-                f: 3.6,
-                g: true
-            }
+    _name: "myNode",
+    _parentPath: "/",
+    a: 1,
+    b: 2,
+    c: ['1', '2'],
+    d: {
+        e: {
+            f: 3.6,
+            g: true
         }
     }
 });
@@ -24,10 +23,10 @@ log.info('Node created with id ' + result1._id);
 // BEGIN
 // Node created.
 var expected = {
-        "id": "123456",
-        "name": "myNode",
-        "path": "/myNode",
-        "attachedBinaries": [
+        "_id": "123456",
+        "_name": "myNode",
+        "_path": "/myNode",
+        "_attachedBinaries": [
             {
                 "binaryReference": "myRef",
                 "blobKey": "abc"
@@ -37,21 +36,13 @@ var expected = {
                 "blobKey": "def"
             }
         ],
-        "childOrder": "_timestamp DESC",
-        "data": {
-            "myHtmlField": "<h1>Html here</h1>",
-            "displayName": "House1",
-            "type": "com.enonic.app.features:house",
-            "owner": "user:system:su",
-            "modifiedTime": "2015-10-05T12:11:01.272Z"
-        }
-        ,
-        "indexConfig": {
+        "_childOrder": "_timestamp DESC",
+        "_indexConfig": {
             "analyzer": "myAnalyzer",
-            "patternIndexConfigs": [
+            "configs": [
                 {
                     "path": "displayName",
-                    "indexConfig": {
+                    "config": {
                         "decideByType": false,
                         "enabled": true,
                         "nGram": true,
@@ -62,7 +53,7 @@ var expected = {
                 },
                 {
                     "path": "myHtmlField",
-                    "indexConfig": {
+                    "config": {
                         "decideByType": false,
                         "enabled": true,
                         "nGram": false,
@@ -75,7 +66,7 @@ var expected = {
                 },
                 {
                     "path": "type",
-                    "indexConfig": {
+                    "config": {
                         "decideByType": false,
                         "enabled": false,
                         "nGram": false,
@@ -87,8 +78,8 @@ var expected = {
             ]
         }
         ,
-        "inheritsPermissions": false,
-        "permissions": [
+        "_inheritsPermissions": false,
+        "_permissions": [
             {
                 "principal": "user:system:anonymous",
                 "allow": [
@@ -130,11 +121,16 @@ var expected = {
                 "deny": []
             }
         ],
-        "nodeState": "DEFAULT",
-        "nodeType": "myNodeType",
-        "nodeVersionId": "versionId",
-        "manualOrderValue": 0,
-        "timestamp": "2010-10-10T10:10:10.100Z"
+        "_state": "DEFAULT",
+        "_nodeType": "myNodeType",
+        "_versionKey": "versionId",
+        "_manualOrderValue": 0,
+        "_timestamp": "2010-10-10T10:10:10.100Z",
+        "myHtmlField": "<h1>Html here</h1>",
+        "displayName": "House1",
+        "type": "com.enonic.app.features:house",
+        "owner": "user:system:su",
+        "modifiedTime": "2015-10-05T12:11:01.272Z"
     }
     ;
 // END

@@ -2,6 +2,7 @@ package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.lib.node.NodePropertyConstants;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -20,40 +21,43 @@ public class NodeMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "id", node.id() );
-        gen.value( "name", node.name() );
-        gen.value( "path", node.path() );
+        gen.value( NodePropertyConstants.NODE_ID, node.id() );
+        gen.value( NodePropertyConstants.NODE_NAME, node.name() );
+        gen.value( NodePropertyConstants.PATH, node.path() );
         serializeAttachedBinaries( gen, node.getAttachedBinaries() );
-        gen.value( "childOrder", node.getChildOrder().toString() );
-        serializeData( gen, node.data() );
+        gen.value( NodePropertyConstants.CHILD_ORDER, node.getChildOrder().toString() );
         serializeIndexConfigDocument( gen, node.getIndexConfigDocument() );
         serializePermissions( gen, node );
-        gen.value( "nodeState", node.getNodeState() );
-        gen.value( "nodeType", node.getNodeType() );
-        gen.value( "nodeVersionId", node.getNodeVersionId() );
-        gen.value( "manualOrderValue", node.getManualOrderValue() );
-        gen.value( "timestamp", node.getTimestamp() );
+        gen.value( NodePropertyConstants.NODE_STATE, node.getNodeState() );
+        gen.value( NodePropertyConstants.NODE_TYPE, node.getNodeType() );
+        gen.value( NodePropertyConstants.NODE_VERSION_ID, node.getNodeVersionId() );
+        gen.value( NodePropertyConstants.MANUAL_ORDER_VALUE, node.getManualOrderValue() );
+        gen.value( NodePropertyConstants.TIMESTAMP, node.getTimestamp() );
+        serializeData( gen, node.data() );
     }
 
     private static void serializeData( final MapGenerator gen, final PropertyTree value )
     {
-        gen.map( "data" );
         new PropertyTreeMapper( value ).serialize( gen );
-        gen.end();
     }
 
     private static void serializeAttachedBinaries( final MapGenerator gen, final AttachedBinaries attachedBinaries )
     {
+        gen.array( NodePropertyConstants.ATTACHED_BINARIES );
         new AttachedBinariesMapper( attachedBinaries ).serialize( gen );
+        gen.end();
     }
 
     private static void serializeIndexConfigDocument( final MapGenerator gen, final IndexConfigDocument value )
     {
+        gen.map( NodePropertyConstants.INDEX_CONFIG );
         new IndexConfigDocMapper( value ).serialize( gen );
+        gen.end();
     }
 
     private static void serializePermissions( final MapGenerator gen, final Node node )
     {
+
         new PermissionsMapper( node ).serialize( gen );
     }
 }
