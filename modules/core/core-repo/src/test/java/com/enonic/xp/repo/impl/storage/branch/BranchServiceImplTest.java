@@ -53,7 +53,7 @@ public class BranchServiceImplTest
         context = InternalContext.create().
             branch( Branch.from( "myBranch" ) ).
             authInfo( AuthenticationInfo.unAuthenticated() ).
-            repositoryId( RepositoryId.from( "myRepo" ) ).
+            repositoryId( RepositoryId.from( "my-repo" ) ).
             build();
     }
 
@@ -64,7 +64,7 @@ public class BranchServiceImplTest
     {
         final InternalContext context = InternalContext.create().
             branch( Branch.from( "myBranch" ) ).
-            repositoryId( RepositoryId.from( "myRepo" ) ).
+            repositoryId( RepositoryId.from( "my-repo" ) ).
             build();
 
         final NodePath path = NodePath.create( NodePath.ROOT, "fisk" ).build();

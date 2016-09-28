@@ -29,7 +29,7 @@ public class JsonIndexResourceTest
         throws Exception
     {
         final ReindexResult reindexResult = ReindexResult.create().
-            repositoryId( RepositoryId.from( "repoId" ) ).
+            repositoryId( RepositoryId.from( "repo-id" ) ).
             branches( Branches.from( Branch.from( "branch1" ) ) ).
             duration( Duration.ofMillis( 41416 ) ).
             startTime( Instant.ofEpochMilli( 1438866915875L ) ).
