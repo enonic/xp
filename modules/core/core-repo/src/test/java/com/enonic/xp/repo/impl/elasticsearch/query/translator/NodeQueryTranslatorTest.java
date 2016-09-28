@@ -27,12 +27,12 @@ public class NodeQueryTranslatorTest
                 build() ).
             acl( PrincipalKeys.empty() ).
             settings( StorageSettings.create().
-                storageName( SearchStorageName.from( RepositoryId.from( "myRepo" ) ) ).
+                storageName( SearchStorageName.from( RepositoryId.from( "my-repo" ) ) ).
                 storageType( SearchStorageType.from( Branch.from( "myBranch" ) ) ).
                 build() ).
             build() );
 
-        assertEquals( "search-myRepo", esQuery.getIndexName() );
+        assertEquals( "search-my-repo", esQuery.getIndexName() );
         assertEquals( "myBranch", esQuery.getIndexType() );
         assertNotNull( esQuery.getQuery() );
         assertNull( esQuery.getFilter() );
