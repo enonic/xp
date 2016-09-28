@@ -886,7 +886,7 @@ module api.ui.treegrid {
             return this.insertNode(data, nextToSelection, index, stashedParentNode);
         }
 
-        private getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<DATA>) {
+        getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<DATA>) {
             var root = stashedParentNode || this.root.getCurrentRoot();
             var parentNode: TreeNode<DATA>;
             if (this.getSelectedNodes() && this.getSelectedNodes().length == 1) {

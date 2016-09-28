@@ -15,6 +15,7 @@ import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
 import UploadItem = api.ui.uploader.UploadItem;
+import ApplicationKey = api.application.ApplicationKey;
 
 export class ApplicationTreeGrid extends TreeGrid<Application> {
 
@@ -41,7 +42,9 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     fetchRoot(): wemQ.Promise<Application[]> {
-        return new api.application.ListApplicationsRequest().sendAndParse();
+        return new api.application.ListApplicationsRequest().sendAndParse()
+        // Sort by displayName
+            .then((applications: Application[]) => applications.sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())));
     }
 
     fetch(node: TreeNode<Application>, dataId?: string): wemQ.Promise<api.application.Application> {
@@ -58,6 +61,22 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         });
 
         return deferred.promise;
+    }
+
+    fetchRootKeys(): wemQ.Promise<ApplicationKey[]> {
+        return new api.application.ListApplicationKeysRequest().sendAndParse();
+    }
+
+    placeNode(data: Application, stashedParentNode?: TreeNode<Application>): wemQ.Promise<void> {
+        const parentNode = this.getParentNode(true, stashedParentNode);
+        let index = parentNode.getChildren().length;
+        for (let i = 0; i < index; i++) {
+            if (parentNode.getChildren()[i].getData().getDisplayName().localeCompare(data.getDisplayName()) >= 0) {
+                index = i;
+                break;
+            }
+        }
+        return this.insertNode(data, true, index, stashedParentNode);
     }
 
     updateApplicationNode(applicationKey: api.application.ApplicationKey) {
@@ -93,10 +112,16 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     appendApplicationNode(applicationKey: api.application.ApplicationKey): wemQ.Promise<void> {
-
         return this.fetchByKey(applicationKey)
             .then((data: api.application.Application) => {
                 return this.appendNode(data, true);
+            });
+    }
+
+    placeApplicationNode(applicationKey: api.application.ApplicationKey): wemQ.Promise<void> {
+        return this.fetchByKey(applicationKey)
+            .then((data: api.application.Application) => {
+                return this.placeNode(data);
             });
     }
 
@@ -130,7 +155,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         item.onFailed(() => {
             this.deleteNode(<any>appMock);
             this.triggerSelectionChangedListeners();
-        })
+        });
     }
 
 }
