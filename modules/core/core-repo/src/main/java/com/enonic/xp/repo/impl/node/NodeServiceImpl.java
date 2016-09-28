@@ -53,6 +53,7 @@ import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
+import com.enonic.xp.node.SetActiveVersionResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -428,7 +429,7 @@ public class NodeServiceImpl
     @Override
     public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
-        return SetActiveVersionCommand.create().
+        final SetActiveVersionResult result = SetActiveVersionCommand.create().
             nodeVersionId( nodeVersionId ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -436,6 +437,10 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        this.eventPublisher.publish( NodeEvents.updated( result.getNode() ) );
+
+        return result.getNodeVersionId();
     }
 
     @Override
