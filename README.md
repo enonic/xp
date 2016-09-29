@@ -7,7 +7,7 @@ please read our docs here: http://xp.readthedocs.org.
 
 Before trying to build the project, you need to verify that the following software are installed:
 
-* Java 8 (update 40 or above) for building and running.
+* Java 8 (update 92 or above) for building and running.
 * Gradle 2.x build system.
 
 Build all code and run all tests including integration tests:
