@@ -11,6 +11,12 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
+import static com.enonic.xp.lib.node.NodePropertyConstants.ANALYZER;
+import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_ARRAY;
+import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_PATH;
+import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_SETTINGS;
+import static com.enonic.xp.lib.node.NodePropertyConstants.DEFAULT_CONFIG;
+
 class IndexConfigDocMapper
     implements MapSerializable
 {
@@ -29,7 +35,7 @@ class IndexConfigDocMapper
 
     private void serialize( final MapGenerator gen, final IndexConfigDocument document )
     {
-        gen.value( "analyzer", value.getAnalyzer() );
+        gen.value( ANALYZER, value.getAnalyzer() );
 
         if ( document instanceof PatternIndexConfigDocument )
         {
@@ -39,15 +45,21 @@ class IndexConfigDocMapper
 
     private void serialize( final MapGenerator gen, final PatternIndexConfigDocument document )
     {
-        gen.array( "configs" );
+        gen.map( DEFAULT_CONFIG );
+        serialize( gen, document.getDefaultConfig() );
+        gen.end();
+
+        gen.array( CONFIG_ARRAY );
 
         final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs = document.getPathIndexConfigs();
 
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
             gen.map();
-            gen.value( "path", pathIndexConfig.getPath().toString() );
+            gen.value( CONFIG_PATH, pathIndexConfig.getPath().toString() );
+            gen.map( CONFIG_SETTINGS );
             serialize( gen, pathIndexConfig.getIndexConfig() );
+            gen.end();
             gen.end();
         }
 
@@ -56,8 +68,6 @@ class IndexConfigDocMapper
 
     private void serialize( final MapGenerator gen, final IndexConfig indexConfig )
     {
-        gen.map( "config" );
-
         gen.value( "decideByType", indexConfig.isDecideByType() );
         gen.value( "enabled", indexConfig.isEnabled() );
         gen.value( "nGram", indexConfig.isnGram() );
@@ -65,8 +75,6 @@ class IndexConfigDocMapper
         gen.value( "includeInAllText", indexConfig.isIncludeInAllText() );
         final ImmutableList<IndexValueProcessor> indexValueProcessors = indexConfig.getIndexValueProcessors();
         serialize( gen, indexValueProcessors );
-
-        gen.end();
     }
 
     private void serialize( final MapGenerator gen, final ImmutableList<IndexValueProcessor> indexValueProcessors )

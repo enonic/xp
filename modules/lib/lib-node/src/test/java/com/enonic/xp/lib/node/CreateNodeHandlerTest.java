@@ -39,6 +39,7 @@ public class CreateNodeHandlerTest
 
         final PatternIndexConfigDocument indexConfig = PatternIndexConfigDocument.create().
             analyzer( "myAnalyzer" ).
+            defaultConfig( IndexConfig.BY_TYPE ).
             add( "myHtmlField", IndexConfig.create().
                 includeInAllText( true ).
                 addIndexValueProcessor( createIndexValueProcessor() ).

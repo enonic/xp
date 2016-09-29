@@ -22,6 +22,7 @@ exports.create = function (params) {
     bean.name = nullOrValue(params._name);
     bean.parentPath = nullOrValue(params._parentPath);
     bean.data = __.toScriptValue(params.data);
+    bean.params = __.toScriptValue(params);
 
     return __.toNativeObject(bean.execute());
 };

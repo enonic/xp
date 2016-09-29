@@ -4,6 +4,7 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Creates a content.
 var result1 = nodeLib.create({
+    _name: "myNode",
     a: 1,
     b: 2,
     c: ['1', '2'],
@@ -12,6 +13,9 @@ var result1 = nodeLib.create({
             f: 3.6,
             g: true
         }
+    },
+    _indexConfig: {
+        default: "minimal"
     }
 });
 
@@ -27,6 +31,14 @@ var expected = {
         "_childOrder": "_timestamp DESC",
         "_indexConfig": {
             "analyzer": "myAnalyzer",
+            "default": {
+                "decideByType": true,
+                "enabled": true,
+                "nGram": false,
+                "fulltext": false,
+                "includeInAllText": false,
+                "indexValueProcessors": []
+            },
             "configs": [
                 {
                     "path": "displayName",

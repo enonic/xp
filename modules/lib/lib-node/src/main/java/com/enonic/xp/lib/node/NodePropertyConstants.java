@@ -29,4 +29,16 @@ public class NodePropertyConstants
     public final static String INDEX_CONFIG = "_indexConfig";
 
     public static final String INHERITS_PERMISSIONS = "_inheritsPermissions";
+
+    public static final String ANALYZER = "analyzer";
+
+    public static final String DEFAULT_CONFIG = "default";
+
+    public static final String CONFIG_ARRAY = "configs";
+
+    public static final String CONFIG_SETTINGS = "config";
+
+    public static final String CONFIG_PATH = "path";
+
+
 }

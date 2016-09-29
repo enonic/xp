@@ -11,13 +11,9 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.lib.node.mapper.NodeMapper;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.acl.AccessControlList;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class CreateNodeHandler
     extends BaseContextHandler
@@ -34,6 +30,8 @@ public class CreateNodeHandler
 
     private Map<String, Object> data;
 
+    private ScriptValue params;
+
     private IndexConfigDocument indexConfigDocument;
 
     private AccessControlList accessControlList;
@@ -41,44 +39,9 @@ public class CreateNodeHandler
     @Override
     protected Object doExecute()
     {
-        final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.create();
+        final CreateNodeParams createNodeParams = new CreateNodeParamsFactory().create( params );
 
-        if ( isBlank( this.name ) )
-        {
-            final NodeId nodeId = new NodeId();
-            paramsBuilder.
-                setNodeId( nodeId ).
-                name( nodeId.toString() );
-        }
-        else
-        {
-            paramsBuilder.name( this.name );
-        }
-
-        if ( isBlank( this.parentPath ) )
-        {
-            paramsBuilder.parent( NodePath.ROOT );
-        }
-        else
-        {
-            paramsBuilder.parent( NodePath.create( parentPath ).build() );
-        }
-
-        paramsBuilder.data( this.data != null ? createPropertyTree( this.data ) : new PropertyTree() );
-
-        if ( this.childOrder != null )
-        {
-            paramsBuilder.childOrder( this.childOrder );
-        }
-
-        if ( this.manualOrderValue != null )
-        {
-            paramsBuilder.manualOrderValue( this.manualOrderValue );
-        }
-
-        final Node node;
-
-        node = this.nodeService.create( paramsBuilder.build() );
+        final Node node = this.nodeService.create( createNodeParams );
         return new NodeMapper( node );
     }
 
@@ -126,5 +89,10 @@ public class CreateNodeHandler
     public void setChildOrder( final String childOrder )
     {
         this.childOrder = ChildOrder.from( childOrder );
+    }
+
+    public void setParams( final ScriptValue params )
+    {
+        this.params = params;
     }
 }
