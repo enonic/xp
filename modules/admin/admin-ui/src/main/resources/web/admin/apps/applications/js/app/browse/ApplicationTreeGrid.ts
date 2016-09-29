@@ -32,7 +32,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     private initEventHandlers() {
-        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
             this.getGrid().resizeCanvas();
         });
     }
@@ -42,9 +42,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     fetchRoot(): wemQ.Promise<Application[]> {
-        return new api.application.ListApplicationsRequest().sendAndParse()
-        // Sort by displayName
-            .then((applications: Application[]) => applications.sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())));
+        return new api.application.ListApplicationsRequest().sendAndParse();
     }
 
     fetch(node: TreeNode<Application>, dataId?: string): wemQ.Promise<api.application.Application> {

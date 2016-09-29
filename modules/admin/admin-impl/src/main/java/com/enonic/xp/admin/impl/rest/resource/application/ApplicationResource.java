@@ -97,7 +97,8 @@ public final class ApplicationResource
     {
         Applications applications = this.applicationService.getInstalledApplications();
 
-        applications = this.filterApplication( applications, query );
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
 
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
@@ -125,7 +126,8 @@ public final class ApplicationResource
     {
         Applications applications = this.applicationService.getInstalledApplications();
 
-        applications = this.filterApplication( applications, query );
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
 
         return applications.getApplicationKeys().stream().filter(
             applicationKey -> !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
@@ -334,7 +336,8 @@ public final class ApplicationResource
 
         Applications applications = this.applicationService.getInstalledApplications();
 
-        applications = this.filterApplication( applications, query );
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
 
         for ( final Application application : applications )
         {
@@ -414,7 +417,14 @@ public final class ApplicationResource
         }
     }
 
-    private Applications filterApplication( final Applications applications, final String query )
+    private Applications sortApplications( final Applications applications )
+    {
+        return Applications.from( applications.stream().
+            sorted( ( app1, app2 ) -> app1.getDisplayName().compareTo( app2.getDisplayName() ) ).
+            collect( Collectors.toList() ) );
+    }
+
+    private Applications filterApplications( final Applications applications, final String query )
     {
         if ( StringUtils.isNotBlank( query ) )
         {
