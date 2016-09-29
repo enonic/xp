@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 import static org.junit.Assert.*;
 
@@ -36,6 +37,17 @@ public class CustomSelectorTypeTest
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
+    }
+
+    @Test
+    public void testCreateDefaultValue()
+    {
+        final Input input = getDefaultInputBuilder( InputTypeName.CUSTOM_SELECTOR, "testValue" ).build();
+        final Value value = this.type.createDefaultValue( input );
+
+        assertNotNull( value );
+        assertEquals( "testValue", value.toString() );
+
     }
 
     @Test
