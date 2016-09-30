@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueTypes;
@@ -26,9 +28,25 @@ public class IndexConfigFactory
     public IndexConfigDocument create()
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
-        builder.analyzer( this.propertySet.getString( ANALYZER ) );
+
+        if ( this.propertySet == null )
+        {
+            return PatternIndexConfigDocument.create().
+                defaultConfig( DEFAULT_CONFIG ).
+                build();
+        }
+
+        final String analyzer = this.propertySet.getString( ANALYZER );
+
+        if ( !Strings.isNullOrEmpty( analyzer ) )
+        {
+            builder.analyzer( analyzer );
+        }
+
         createDefaultSettings( builder );
+
         createPathConfigs( builder );
+
         return builder.build();
     }
 
