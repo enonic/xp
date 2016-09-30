@@ -1,9 +1,13 @@
+<img align="right" src="https://raw.githubusercontent.com/enonic/xp/master/misc/logo.png">
+
 # Enonic XP
+
+[![Build Status](https://travis-ci.org/enonic/xp.svg?branch=master)](https://travis-ci.org/enonic/xp)
 
 Welcome to the home of Enonic XP. Here you will find all source code for the product. To get started,
 please read our docs here: http://xp.readthedocs.org.
 
-## Building 
+## Building
 
 Before trying to build the project, you need to verify that the following software are installed:
 
@@ -27,7 +31,7 @@ After building the project, you can start it locally by running the server scrip
 ## License
 
 This software is licensed under AGPL 3.0 license. See full license terms [here](http://www.enonic.com/license). Also the distribution includes
-3rd party software components. The vast majority of these libraries are licensed under Apache 2.0. For a complete list please 
+3rd party software components. The vast majority of these libraries are licensed under Apache 2.0. For a complete list please
 read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
 
 	Enonic XP
@@ -45,4 +49,3 @@ read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
 
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
