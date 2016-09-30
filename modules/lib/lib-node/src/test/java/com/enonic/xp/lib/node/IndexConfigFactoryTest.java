@@ -3,7 +3,6 @@ package com.enonic.xp.lib.node;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSortedSet;
 
 import com.enonic.xp.data.PropertyPath;
@@ -86,7 +85,7 @@ public class IndexConfigFactoryTest
     public void unknown_alias()
         throws Exception
     {
-        IndexConfigDocument config = create( "{ \"default\" : \"fisk\" }" );
+        create( "{ \"default\" : \"fisk\" }" );
     }
 
     private IndexConfigDocument create( final String json )
@@ -96,12 +95,6 @@ public class IndexConfigFactoryTest
         final PropertyTree properties = new JsonToPropertyTreeTranslator().translate( node );
 
         return new IndexConfigFactory( properties.getRoot() ).create();
-    }
-
-    private JsonNode createJson( final String json )
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( json );
     }
 
     private PatternIndexConfigDocument createFullConfig()

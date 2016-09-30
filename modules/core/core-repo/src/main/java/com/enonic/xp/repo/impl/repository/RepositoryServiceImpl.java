@@ -80,17 +80,23 @@ public class RepositoryServiceImpl
                 build().
                 callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
 
-            final Node rootNode = Node.createRoot().
-                build();
-
-            ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( params.getRepositoryId() ).
-                branch( SystemConstants.BRANCH_SYSTEM ).
-                build().
-                callWith( () -> nodeStorageService.store( rootNode, InternalContext.from( ContextAccessor.current() ) ) );
+            //createRootNodeTemp( repository.getId() );
 
             return repository;
         } );
+    }
+
+    private void createRootNodeTemp( final RepositoryId repositoryId )
+    {
+        final Node rootNode = Node.createRoot().
+            build();
+
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( repositoryId ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build().
+            callWith( () -> nodeStorageService.store( rootNode, InternalContext.from( ContextAccessor.current() ) ) );
+
     }
 
 

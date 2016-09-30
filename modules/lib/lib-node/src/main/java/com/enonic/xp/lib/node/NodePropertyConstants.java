@@ -8,6 +8,8 @@ public class NodePropertyConstants
 
     public final static String PATH = "_path";
 
+    public final static String PARENT_PATH = "_parentPath";
+
     public final static String CHILD_ORDER = "_childOrder";
 
     public final static String NODE_STATE = "_state";

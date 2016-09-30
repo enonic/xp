@@ -6,17 +6,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.script.ScriptValue;
+
+import static com.enonic.xp.lib.node.NodePropertyConstants.CHILD_ORDER;
+import static com.enonic.xp.lib.node.NodePropertyConstants.INDEX_CONFIG;
+import static com.enonic.xp.lib.node.NodePropertyConstants.MANUAL_ORDER_VALUE;
+import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_NAME;
+import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
+import static com.enonic.xp.lib.node.NodePropertyConstants.PARENT_PATH;
+import static com.enonic.xp.lib.node.NodePropertyConstants.PERMISSIONS;
 
 public class CreateNodeParamsFactory
 {
@@ -28,14 +34,13 @@ public class CreateNodeParamsFactory
     {
         final PropertyTree properties = new JsonToPropertyTreeTranslator().translate( createJson( value.getMap() ) );
 
-        final String name = properties.getString( NodePropertyConstants.NODE_NAME );
-        final String parentPath = properties.getString( "_parentPath" );
-        final Long manualOrderValue = properties.getLong( NodePropertyConstants.MANUAL_ORDER_VALUE );
-        final String childOrder = properties.getString( NodePropertyConstants.CHILD_ORDER );
-        final String nodeState = properties.getString( NodePropertyConstants.NODE_STATE );
-        final String nodeType = properties.getString( NodePropertyConstants.NODE_TYPE );
-        final PropertySet permissions = properties.getSet( NodePropertyConstants.PERMISSIONS );
-        final PropertySet indexConfig = properties.getSet( NodePropertyConstants.INDEX_CONFIG );
+        final String name = properties.getString( NODE_NAME );
+        final String parentPath = properties.getString( PARENT_PATH );
+        final Long manualOrderValue = properties.getLong( MANUAL_ORDER_VALUE );
+        final String childOrder = properties.getString( CHILD_ORDER );
+        final String nodeType = properties.getString( NODE_TYPE );
+        final Iterable<PropertySet> permissions = properties.getSets( PERMISSIONS );
+        final PropertySet indexConfig = properties.getSet( INDEX_CONFIG );
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create();
         setName( name, builder );
@@ -47,6 +52,7 @@ public class CreateNodeParamsFactory
             childOrder( ChildOrder.from( childOrder ) ).
             nodeType( NodeType.from( nodeType ) ).
             indexConfigDocument( new IndexConfigFactory( indexConfig ).create() ).
+            permissions( new PermissionsFactory( permissions ).create() ).
             build();
     }
 
@@ -57,7 +63,7 @@ public class CreateNodeParamsFactory
         properties.getProperties().forEach( ( property ) -> {
             if ( !property.getName().startsWith( "_" ) )
             {
-                handleUserProperty( property, data );
+                property.copyTo( data.getRoot() );
             }
         } );
 
@@ -76,18 +82,6 @@ public class CreateNodeParamsFactory
         {
             builder.name( name );
         }
-    }
-
-    private IndexConfigDocument createIndexConfig( final PropertySet propertySet )
-    {
-        final String analyzer = propertySet.getString( "analyzer" );
-
-        return null;
-    }
-
-    private void handleUserProperty( final Property property, final PropertyTree data )
-    {
-        property.copyTo( data.getRoot() );
     }
 
     private JsonNode createJson( final Map<?, ?> value )

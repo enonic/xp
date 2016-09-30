@@ -4,19 +4,43 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Creates a content.
 var result1 = nodeLib.create({
-    _name: "myNode",
-    a: 1,
-    b: 2,
-    c: ['1', '2'],
-    d: {
-        e: {
-            f: 3.6,
-            g: true
-        }
+    displayName: "This is my node",
+    someData: {
+        cars: [
+            "skoda", "tesla model X"
+        ],
+        likes: "plywood",
+        numberOfUselessGadgets: 123
     },
     _indexConfig: {
-        default: "minimal"
-    }
+        default: "minimal",
+        configs: {
+            path: "displayName",
+            config: "fulltext"
+        }
+    },
+    _permissions: [
+        {
+            "principal": "user:system:anonymous",
+            "allow": [
+                "READ"
+            ],
+            "deny": []
+        },
+        {
+            "principal": "role:admin",
+            "allow": [
+                "READ",
+                "CREATE",
+                "MODIFY",
+                "DELETE",
+                "PUBLISH",
+                "READ_PERMISSIONS",
+                "WRITE_PERMISSIONS"
+            ],
+            "deny": []
+        }
+    ]
 });
 
 log.info('Node created with id ' + result1._id);
