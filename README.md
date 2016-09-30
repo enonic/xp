@@ -3,7 +3,6 @@
 # Enonic XP
 
 [![Build Status](https://travis-ci.org/enonic/xp.svg?branch=master)](https://travis-ci.org/enonic/xp)
-[![Build status](https://badge.buildkite.com/afa6b2bb1577c0666378ca76491d405bf60c7338e201eaf3f5.svg)](https://buildkite.com/enonic/enonic-xp)
 
 Welcome to the home of Enonic XP. Here you will find all source code for the product. To get started,
 please read our docs here: http://xp.readthedocs.org.
