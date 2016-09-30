@@ -3,6 +3,7 @@
 # Enonic XP
 
 [![Build Status](https://travis-ci.org/enonic/xp.svg?branch=master)](https://travis-ci.org/enonic/xp)
+[![Build status](https://ci.appveyor.com/api/projects/status/x2yf722t79ierhbv/branch/master?svg=true)](https://ci.appveyor.com/project/srs/xp/branch/master)
 
 Welcome to the home of Enonic XP. Here you will find all source code for the product. To get started,
 please read our docs here: http://xp.readthedocs.org.
@@ -13,6 +14,7 @@ Before trying to build the project, you need to verify that the following softwa
 
 * Java 8 (update 92 or above) for building and running.
 * Gradle 2.x build system.
+* Git installed on system.
 
 Build all code and run all tests including integration tests:
 
