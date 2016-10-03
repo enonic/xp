@@ -1478,11 +1478,13 @@ module api.ui.image {
                 } else if (dragMouseDown) {
 
                     var deltaY = this.getOffsetY(event) - lastPos.y,
+                        toolbarEl = this.stickyToolbar.getEl(),
+                        topBoundary = toolbarEl.getHeight() + toolbarEl.getOffsetTop() - this.frame.getEl().getOffsetTop(),
                         distBetweenCropAndZoomBottoms = this.zoomData.h - this.cropData.h - this.cropData.y,
                         newH = this.cropData.h +
                                (deltaY > distBetweenCropAndZoomBottoms ? distBetweenCropAndZoomBottoms : deltaY);
 
-                    if (newH > 0 && newH != this.cropData.h) {
+                    if (newH > topBoundary && newH != this.cropData.h) {
 
                         this.setCropPositionPx({
                             x: this.cropData.x,
