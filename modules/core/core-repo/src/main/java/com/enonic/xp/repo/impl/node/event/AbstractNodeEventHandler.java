@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -15,6 +16,8 @@ abstract class AbstractNodeEventHandler
     private final static String ID = "id";
 
     private final static String PATH = "path";
+
+    private final static String BRANCH = "branch";
 
     final static String NEW_PATH = "newPath";
 
@@ -48,6 +51,11 @@ abstract class AbstractNodeEventHandler
         }
 
         return mapList;
+    }
+
+    Branch getBranch( final Map<Object, Object> map )
+    {
+        return Branch.from( map.get( BRANCH ).toString() );
     }
 
     NodePath getPath( final Map<Object, Object> map )

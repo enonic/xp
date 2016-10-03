@@ -19,7 +19,10 @@ public class NodeCreatedHandler
         for ( final Map<Object, Object> map : valueMapList )
 
         {
-            storageService.handleNodeCreated( getId( map ), getPath( map ), context );
+            final InternalContext nodeContext = InternalContext.create( context ).
+                branch( getBranch( map ) ).
+                build();
+            storageService.handleNodeCreated( getId( map ), getPath( map ), nodeContext );
         }
     }
 
