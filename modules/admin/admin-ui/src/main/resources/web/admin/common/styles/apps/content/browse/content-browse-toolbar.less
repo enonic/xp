@@ -1,5 +1,5 @@
 .content-browse-toolbar {
-  overflow: visible; // To hide the Publish button jumping under the toolbar when reducing toolbar width
+  overflow: visible;
   .fold-button .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}:hover {
     background-color: @admin-bg-light-gray;
   }
@@ -14,7 +14,7 @@
 .split-panel {
   &.sliding {
     .content-browse-toolbar {
-      overflow: hidden;
+      overflow: hidden;  // To hide the Publish button jumping under the toolbar when reducing toolbar width
     }
   }
 }
