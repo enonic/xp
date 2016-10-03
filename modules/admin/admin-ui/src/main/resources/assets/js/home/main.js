@@ -14,7 +14,7 @@ $(function () {
 
     var enonicXPTourCookie = api.util.CookieHelper.getCookie("enonic_xp_tour");
     if (!enonicXPTourCookie) {
-        api.util.CookieHelper.setCookie("enonic_xp_tour", "tour", 365)
+        api.util.CookieHelper.setCookie("enonic_xp_tour", "tour", 365);
         setTimeout(function () {
             tourDialog.open();
         }, 100);
@@ -24,6 +24,10 @@ $(function () {
         tourDialog.open();
         setupBodyClickListeners(tourDialog);
     });
+
+    setTimeout(function () {
+        api.ui.responsive.ResponsiveManager.fireResizeEvent()
+    }, 15);
 
 });
 
