@@ -1,11 +1,11 @@
 import "../../../api.ts";
-
-import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import {DetailsPanel} from "./DetailsPanel";
 import {FloatingDetailsPanel} from "./FloatingDetailsPanel";
 import {DockedDetailsPanel} from "./DockedDetailsPanel";
 import {NonMobileDetailsPanelToggleButton} from "./button/NonMobileDetailsPanelToggleButton";
 import {ActiveDetailsPanelManager} from "./ActiveDetailsPanelManager";
+
+import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 export class NonMobileDetailsPanelsManager {
 
@@ -70,6 +70,9 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private doPanelAnimation(canSetActivePanel: boolean = true) {
+
+        this.splitPanelWithGridAndDetails.addClass("sliding");
+
         if (this.requiresFloatingPanelDueToShortWidth()) {
             this.toggleButton.addClass("floating-mode");
             if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
@@ -88,6 +91,7 @@ export class NonMobileDetailsPanelsManager {
                 this.floatingDetailsPanel.slideOut();
             }
             this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
+            this.splitPanelWithGridAndDetails.removeClass("sliding");
 
         } else {
             this.toggleButton.removeClass("floating-mode");
@@ -113,7 +117,8 @@ export class NonMobileDetailsPanelsManager {
                     this.splitPanelWithGridAndDetails.showSplitter();
                     this.dockedDetailsPanel.notifyPanelSizeChanged();
                 }
-            }, 500);
+                this.splitPanelWithGridAndDetails.removeClass("sliding");
+            }, 600);
         }
 
         this.ensureButtonHasCorrectState();
