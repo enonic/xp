@@ -112,6 +112,13 @@ module api.dom {
         onUnload(listener: (event) => void) {
             this.onUnloadListeners.push(listener);
         }
+
+        unUnload(listener: (event) => void) {
+            this.onUnloadListeners = this.onUnloadListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
+        }
     }
 
 }
