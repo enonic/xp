@@ -84,7 +84,7 @@ module api.liveedit {
                 isRenderableSite = isSite && isRenderable,
                 isRenderableTemplate = isTemplate && hasController;
             
-            return isRenderableSite || isRenderableTemplate;
+            return isRenderableSite || isRenderableTemplate || hasDefaultPageTemplate;
         }
         
         static create(): LiveEditModelBuilder {
