@@ -23,6 +23,9 @@ $(function () {
     document.querySelector(".xp-tour").addEventListener("click", function () {
         tourDialog.open();
         setupBodyClickListeners(tourDialog);
+        setTimeout(function () {
+            api.ui.responsive.ResponsiveManager.fireResizeEvent()
+        }, 15);
     });
 
     setTimeout(function () {

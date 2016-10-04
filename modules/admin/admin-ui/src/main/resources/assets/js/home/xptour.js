@@ -18,6 +18,9 @@ exports.init = function () {
         }
         setTourStep(1);
         api.dom.Body.get().appendChild(tourDialog);
+        setTimeout(function () {
+            api.ui.responsive.ResponsiveManager.fireResizeEvent()
+        }, 15);
     });
     
     return tourDialog;
