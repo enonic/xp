@@ -1520,10 +1520,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.getSplitPanel().showSecondPanel();
         livePanel.clearPageViewSelectionAndOpenInspectPage();
         this.showMinimizeEditButton();
-
-        if (!this.livePanel.isRendered()) {
-            this.liveMask.show();
-        }
     }
 
     private closeLiveEdit() {
@@ -1579,6 +1575,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
             publishControls.setCompareStatus(this.currentContentCompareStatus);
         }
+    }
+    
+    getLiveMask(): api.ui.mask.LoadMask {
+        return this.liveMask;
     }
 
 }

@@ -50,26 +50,13 @@ import PageView = api.liveedit.PageView;
 
 export class LiveEditPageProxy {
 
-    private static BLANK_PAGE_TEMPLATE = "<html>" +
-                                         "  <head>" +
-                                         "      <meta charset='utf-8'/>" +
-                                         "      <link id='live-edit-css' rel='stylesheet' href='{0}/admin/live-edit/styles/_all.css'/>" +
-                                         "  </head>" +
-                                         "  <body data-portal-component-type='page'>" +
-                                         "      <script type='text/javascript'>var CONFIG = {baseUri:'{0}'};</script>" +
-                                         "      <script type='text/javascript' src='{0}/admin/common/lib/_all.js'></script>" +
-                                         "      <script type='text/javascript' charset='UTF-8' src='{0}/admin/live-edit/lib/jquery.ui.touch-punch.min.js'></script>" +
-                                         "      <script type='text/javascript' charset='UTF-8' src='{0}/admin/live-edit/lib/jquery.resize.js'></script>" +
-                                         "      <script type='text/javascript' charset='UTF-8' src='{0}/admin/common/js/_all.js'></script>" +
-                                         "      <script type='text/javascript' charset='UTF-8' src='{0}/admin/live-edit/js/_all.js'></script>" +
-                                         "  </body>" +
-                                         "</html>";
-
     private liveEditModel: LiveEditModel;
 
     private pageView: PageView;
 
     private liveEditIFrame: api.dom.IFrameEl;
+
+    private placeholderIFrame: api.dom.IFrameEl;
 
     private loadMask: api.ui.mask.LoadMask;
 
@@ -143,21 +130,23 @@ export class LiveEditPageProxy {
 
     constructor() {
 
-        this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
-        this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
+        this.liveEditIFrame = this.createLiveEditIFrame();
+        this.placeholderIFrame = this.createPlaceholderIFrame();
+
         this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
         this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
         this.hideLoadMaskHandler = () => {
-            this.loadMask.hide();
+            if (!this.pageView && this.liveEditIFrame.isVisible()) {
+                this.loadMask.hide();
+            }
         };
         this.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
             if (LiveEditPageProxy.debug) {
                 console.debug("LiveEditPageProxy.onLiveEditPageViewReady at " + new Date().toISOString());
             }
-
-            this.pageView = event.getPageView();
             this.hideLoadMaskHandler();
+            this.pageView = event.getPageView();
         });
         ShowContentFormEvent.on(this.hideLoadMaskHandler);
 
@@ -170,6 +159,22 @@ export class LiveEditPageProxy {
 
         ShowLiveEditEvent.on(this.showLoadMaskHandler);
         ShowSplitEditEvent.on(this.showLoadMaskHandler);
+    }
+
+    private createLiveEditIFrame(): api.dom.IFrameEl {
+        var liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
+        liveEditIFrame.hide();
+        liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
+
+        return liveEditIFrame;
+    }
+
+    private createPlaceholderIFrame(): api.dom.IFrameEl {
+        var placeholderIFrame = new api.dom.IFrameEl("live-edit-frame-blank");
+        placeholderIFrame.setSrc(CONFIG.assetsUri + "/live-edit/js/_blank.html");
+        placeholderIFrame.hide();
+
+        return placeholderIFrame;
     }
 
     public setModel(liveEditModel: LiveEditModel) {
@@ -204,6 +209,10 @@ export class LiveEditPageProxy {
         return this.liveEditIFrame;
     }
 
+    public getPlaceholderIFrame(): api.dom.IFrameEl {
+        return this.placeholderIFrame;
+    }
+    
     public getLoadMask(): api.ui.mask.LoadMask {
         return this.loadMask;
     }
@@ -233,66 +242,59 @@ export class LiveEditPageProxy {
         this.loadMask.remove();
     }
 
-    private getBlankFrameHtml(baseUri: string = CONFIG.baseUri): string {
-        return api.util.StringHelper.format(LiveEditPageProxy.BLANK_PAGE_TEMPLATE, encodeURIComponent(baseUri));
-    }
-
     public load() {
         if (this.pageView) {
             // do this to unregister all dependencies of current page view
             this.pageView.remove();
             this.pageView = null;
         }
-
-        this.showLoadMaskHandler();
-
-        var isSite = this.liveEditModel.getContent().isSite(),
-            isTemplate = this.liveEditModel.getContent().isPageTemplate(),
-            hasController = this.liveEditModel.getPageModel().hasController(),
-            hasDefaultPageTemplate = this.liveEditModel.getPageModel().hasDefaultPageTemplate(),
-            hasApplications = this.liveEditModel.getSiteModel().getApplicationKeys().length > 0;
-
-        var isRenderable = hasApplications || hasController || hasDefaultPageTemplate,
-            isRenderableSite = isSite && isRenderable,
-            isRenderableTemplate = isTemplate && hasController;
-
-        if (isRenderableSite || isRenderableTemplate) {
+        if (this.liveEditModel.isRenderableSiteOrTemplate()) {
             this.showLoadMaskHandler();
+        }
 
-            var contentId = this.liveEditModel.getContent().getContentId().toString();
-            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+        var contentId = this.liveEditModel.getContent().getContentId().toString();
+        var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+
+        if (api.BrowserHelper.isIE()) {
+            this.copyObjectsBeforeFrameReloadForIE();
+        }
+
+        this.liveEditIFrame.setSrc(pageUrl);
+
+        if (this.liveEditModel.isRenderableSiteOrTemplate()) {
             if (LiveEditPageProxy.debug) {
                 console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
             }
-
-            if (api.BrowserHelper.isIE()) {
-                this.copyObjectsBeforeFrameReloadForIE();
-            }
-
-            this.liveEditIFrame.setSrc(pageUrl);
+            this.hidePlaceholderAndShowEditor();
+            this.hideLoadMaskHandler();
         } else {
 
             if (LiveEditPageProxy.debug) {
-                console.debug("LiveEditPageProxy.load: no reason to load page, applying blank template");
+                console.debug("LiveEditPageProxy.load: no reason to load page, showing blank placeholder");
             }
 
-            let setIframeHtml = () => {
-                if (LiveEditPageProxy.debug) {
-                    console.debug("LiveEditPageProxy.load: loading blank page at " + new Date().toISOString());
-                }
-                // can be done after iframe is added to dom only !
-                let contentDoc = this.liveEditIFrame.getHTMLElement()['contentDocument'];
-                contentDoc.open();
-                contentDoc.writeln(this.getBlankFrameHtml());
-                contentDoc.close();
-            };
-
-            if (this.liveEditIFrame.isAdded()) {
-                setIframeHtml();
+            if (this.placeholderIFrame.isAdded()) {
+                this.hideEditorAndShowPlaceholder();
             } else {
-                this.liveEditIFrame.onAdded(setIframeHtml.bind(this));
+                this.placeholderIFrame.onAdded(() => {
+                    this.liveEditModel.getSiteModel().onApplicationAdded(() => {
+                        this.hidePlaceholderAndShowEditor();
+                    });
+
+                    this.hideEditorAndShowPlaceholder();
+                });
             }
         }
+    }
+
+    private hideEditorAndShowPlaceholder() {
+        this.liveEditIFrame.hide();
+        this.placeholderIFrame.show();
+    }
+
+    private hidePlaceholderAndShowEditor() {
+        this.placeholderIFrame.hide();
+        this.liveEditIFrame.show();
     }
 
     public skipNextReloadConfirmation(skip: boolean) {

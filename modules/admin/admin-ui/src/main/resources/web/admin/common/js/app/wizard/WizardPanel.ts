@@ -416,7 +416,6 @@ module api.app.wizard {
                         console.debug("WizardPanel: livePanel.onAdded");
                     }
                     this.liveMask = new api.ui.mask.LoadMask(this.livePanel);
-                    this.liveMask.show();
                 });
 
                 this.livePanel.onRendered((event) => {
