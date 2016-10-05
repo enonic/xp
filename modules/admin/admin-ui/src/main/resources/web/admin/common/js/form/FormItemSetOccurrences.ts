@@ -115,6 +115,10 @@ module api.form {
             return occurrenceView.update(propertyArray);
         }
 
+        resetOccurrenceView(occurrenceView: FormItemSetOccurrenceView) {
+            occurrenceView.reset();
+        }
+
         private getSetFromArray(occurrence): PropertySet {
             var dataSet = this.propertyArray.getSet(occurrence.getIndex());
             if (!dataSet) {

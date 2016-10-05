@@ -222,6 +222,10 @@ module api.content.form.inputtype.contentselector {
             });
         }
 
+        reset() {
+            this.contentComboBox.resetBaseValues();
+        }
+
         private static doFetchSummaries() {
             new api.content.resource.GetContentSummaryByIds(ContentSelector.contentIdBatch).sendAndParse().then(
                 (result: api.content.ContentSummary[]) => {

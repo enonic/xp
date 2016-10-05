@@ -75,6 +75,10 @@ module api.content.site.inputtype.siteconfigurator {
             });
         }
 
+        reset() {
+            this.comboBox.resetBaseValues();
+        }
+
 
         private saveToSet(siteConfig: SiteConfig, index) {
 

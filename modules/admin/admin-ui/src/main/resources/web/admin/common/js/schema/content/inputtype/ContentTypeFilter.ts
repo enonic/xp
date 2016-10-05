@@ -125,6 +125,10 @@ module api.schema.content.inputtype {
             }
         }
 
+        reset() {
+            this.combobox.resetBaseValues();
+        }
+
         private getValues(): Value[] {
             return this.combobox.getSelectedDisplayValues().map((contentType: ContentTypeSummary) => {
                 return new Value(contentType.getContentTypeName().toString(), ValueTypes.STRING);

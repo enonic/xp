@@ -639,6 +639,22 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.resetLastFocusedElement();
     }
 
+    private resetWizard() {
+
+        this.getWizardHeader().resetBaseValues();
+
+        this.contentWizardStepForm.reset();
+        this.settingsWizardStepForm.reset();
+
+        for (var key in this.metadataStepFormByName) {
+            if (this.metadataStepFormByName.hasOwnProperty(key)) {
+                let form = this.metadataStepFormByName[key];
+                form.reset();
+            }
+        }
+
+    }
+
     private listenToContentEvents() {
 
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
@@ -696,9 +712,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                             this.updateLiveForm();
                         }
                         if (!this.isDisplayNameUpdated()) {
-                            this.getWizardHeader().resetBaseValues(content.getDisplayName());
+                            this.getWizardHeader().resetBaseValues();
                         }
                         this.wizardActions.setDeleteOnlyMode(this.getPersistedItem(), false);
+                    } else {
+                        this.resetWizard();
                     }
                 });
             } else if (this.doHtmlAreasContainId(contentId.toString())) {   // Check if there are html areas in form that contain event.getContentId() that was updated
@@ -895,7 +913,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     console.warn(" persistedContent: ", persistedContent);
 
                     if (persistedContent.getType().isDescendantOfMedia()) {
-                        this.updateMetadataAndMetadataStepForms(persistedContent.clone());
+                        this.updateMetadataAndMetadataStepForms(persistedContent);
                     } else {
                         ConfirmationDialog.get().setQuestion(
                             "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
@@ -1211,7 +1229,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             api.notify.showFeedback(contentToDisplay + ' saved');
             //new api.content.ContentUpdatedEvent(content.getContentId()).fire();
             // Since event doesn't fire, update origin value for the display name
-            this.getWizardHeader().resetBaseValues(content.getDisplayName());
+            this.getWizardHeader().resetBaseValues();
 
             return content;
         });

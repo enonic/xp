@@ -1,4 +1,5 @@
 import "../../api.ts";
+import {ContentSettingsModel} from "./ContentSettingsModel";
 
 import Content = api.content.Content;
 import PrincipalType = api.security.PrincipalType;
@@ -8,7 +9,6 @@ import FormItem = api.ui.form.FormItem;
 import Validators = api.ui.form.Validators;
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import LocaleComboBox = api.ui.locale.LocaleComboBox;
-import {ContentSettingsModel} from "./ContentSettingsModel";
 
 export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -82,6 +82,11 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         this.updateUnchangedOnly = unchangedOnly;
 
         this.model.setOwner(content.getOwner()).setLanguage(content.getLanguage());
+    }
+
+    reset() {
+        return this.localeCombo.resetBaseValues();
+        return this.ownerCombo.resetBaseValues();
     }
 
     private setModel(model: ContentSettingsModel) {

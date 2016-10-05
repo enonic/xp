@@ -140,6 +140,10 @@ module api.form {
             return this.formItemLayer.update(this.propertySet, unchangedOnly);
         }
 
+        public reset() {
+            return this.formItemLayer.reset();
+        }
+
         getFormItemViews(): FormItemView[] {
             return this.formItemViews;
         }
