@@ -45,16 +45,18 @@ public final class ResponseMapper
         final String contentType = this.response.header( "content-type" );
 
         final boolean isHeadMethod = "HEAD".equalsIgnoreCase( this.response.request().method() );
-        final String bodyString = isHeadMethod ? "" : getResponseBodyString();
-        final ByteSource bodySource = isHeadMethod ? ByteSource.empty() : getResponseBodyStream( bodyString, getCharset( contentType ) );
+        final ByteSource bodySource = isHeadMethod ? ByteSource.empty() : getResponseBodyStream();
+        final String bodyString = isHeadMethod ? "" : getResponseBodyString( bodySource );
+
         gen.value( "body", bodyString );
         gen.value( "bodyStream", bodySource );
         gen.value( "contentType", contentType );
         serializeHeaders( "headers", gen, this.response.headers() );
     }
 
-    private Charset getCharset( final String contentType )
+    private Charset getCharset()
     {
+        final String contentType = response.header( "content-type" );
         if ( contentType == null )
         {
             return StandardCharsets.UTF_8;
@@ -70,18 +72,11 @@ public final class ResponseMapper
         }
     }
 
-    private String getResponseBodyString()
+    private String getResponseBodyString( final ByteSource source )
     {
         try
         {
-            if ( isTextContent() )
-            {
-                return this.response.body().string();
-            }
-            else
-            {
-                return null;
-            }
+            return isTextContent() ? source.asCharSource( getCharset() ).read() : null;
         }
         catch ( IOException e )
         {
@@ -89,13 +84,8 @@ public final class ResponseMapper
         }
     }
 
-    public ByteSource getResponseBodyStream( final String bodyString, final Charset charset )
+    public ByteSource getResponseBodyStream()
     {
-        if ( isTextContent() )
-        {
-            return new StringByteSource( bodyString, charset );
-        }
-
         try
         {
             final long bodyLength = response.body().contentLength();
