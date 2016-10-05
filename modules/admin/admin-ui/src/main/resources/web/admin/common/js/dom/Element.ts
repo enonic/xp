@@ -835,14 +835,17 @@ module api.dom {
         }
 
         private notifyAdded() {
-            var addedEvent = new ElementAddedEvent(this);
-            this.addedListeners.forEach((listener) => {
-                listener(addedEvent);
-            });
+            // wait 1ms to ensure browser calculated element dimensions and styles
+            setTimeout(() => {
+                var addedEvent = new ElementAddedEvent(this);
+                this.addedListeners.forEach((listener) => {
+                    listener(addedEvent);
+                });
 
-            this.children.forEach((child: Element) => {
-                child.notifyAdded();
-            })
+                this.children.forEach((child: Element) => {
+                    child.notifyAdded();
+                })
+            }, 1);
         }
 
         onRemoved(listener: (event: ElementRemovedEvent) => void) {
