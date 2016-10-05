@@ -31,6 +31,13 @@ module api.task {
             return this.progress;
         }
 
+        getProgressPercentage(): number {
+            let current = Math.min(this.progress.getCurrent(), this.progress.getTotal());
+            let total = Math.max(0, this.progress.getTotal());
+
+            return (total == 0) ? 0 : Math.round((current / total) * 100);
+        }
+
         static fromJson(json: api.task.TaskInfoJson) {
             if (!json.id) {
                 return null;

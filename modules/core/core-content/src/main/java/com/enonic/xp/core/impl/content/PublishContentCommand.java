@@ -170,6 +170,14 @@ public class PublishContentCommand
 
         for ( ContentId contentId : contentIdsToDelete )
         {
+            try
+            {
+                Thread.sleep( 100 );
+            }
+            catch ( InterruptedException e )
+            {
+                e.printStackTrace();
+            }
             pushContentListener.contentPushed( contentId, PushContentListener.PushResult.DELETED );
         }
     }
@@ -185,6 +193,14 @@ public class PublishContentCommand
     @Override
     public void nodePushed( final NodeId nodeId, final PushResult result )
     {
+        try
+        {
+            Thread.sleep( 100 );
+        }
+        catch ( InterruptedException e )
+        {
+            e.printStackTrace();
+        }
         final ContentId contentId = ContentId.from( nodeId.toString() );
         final PushContentListener.PushResult pushResult =
             result == PushResult.FAILED ? PushContentListener.PushResult.FAILED : PushContentListener.PushResult.PUSHED;

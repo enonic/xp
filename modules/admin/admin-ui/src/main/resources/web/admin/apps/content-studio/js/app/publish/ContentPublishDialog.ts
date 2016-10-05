@@ -32,14 +32,14 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private progressBar: api.ui.ProgressBar;
 
+    private static minItemCountForProgressBar: number = 100;   // Progress bar will not be shown if number of published items is less than this number
+    private static pollInterval: number = 500;  // Interval of task polling when publishing content (in ms)
+
     constructor() {
         super("Publishing Wizard", "Resolving items...", "Other items that will be published");
 
         this.setAutoUpdateTitle(false);
         this.getEl().addClass("publish-dialog");
-
-        this.progressBar = new api.ui.ProgressBar(0);
-        this.getButtonRow().insertChild(this.progressBar, 0);
 
         var publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this));
@@ -56,6 +56,13 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 this.reloadPublishDependencies().done();
             }
         });
+    }
+
+    protected createProgressBar() {
+        let progressBar = new api.ui.ProgressBar(0);
+        this.appendChildToContentPanel(progressBar);
+
+        return progressBar;
     }
 
     protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -251,18 +258,34 @@ export class ContentPublishDialog extends DependantItemsDialog {
         return false;
     }
 
+    private hideItemsAndDependants() {
+        this.getItemList().setVisible(false);
+        this.getDependantsContainer().setVisible(false);
+    }
+
     private doPublish() {
 
         this.showLoadingSpinner();
         this.actionButton.setEnabled(false);
 
+        this.setSubTitle("Your changes are being published...")
+
         var selectedIds = this.getContentToPublishIds();
 
-        new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked())
-            .setIds(selectedIds).setExcludedIds(this.excludedIds).sendAndParse().then(
-            (taskId: api.task.TaskId) => {
-                //this.close();
-                this.pollPublishTask(taskId);
+        new PublishContentRequest()
+            .setIncludeChildren(this.childrenCheckbox.isChecked())
+            .setIds(selectedIds)
+            .setExcludedIds(this.excludedIds)
+            .sendAndParse()
+            .then((taskId: api.task.TaskId) => {
+                if (this.isProgressBarNeeded()) {
+                    this.hideItemsAndDependants();
+                    this.progressBar = this.createProgressBar();
+                    this.pollPublishTask(taskId);
+                }
+                else {
+                    this.close();
+                }
 
             }).catch((reason) => {
                 this.close();
@@ -270,11 +293,15 @@ export class ContentPublishDialog extends DependantItemsDialog {
                     api.notify.showError(reason.message);
                 }
             }).finally(() => {
-            this.hideLoadingSpinner();
-            this.actionButton.setEnabled(true);
-        });
+                this.hideLoadingSpinner();
+                this.actionButton.setEnabled(true);
+            });
     }
 
+    private isProgressBarNeeded() {
+        return this.countTotal() >= ContentPublishDialog.minItemCountForProgressBar;
+    }
+    
     private pollPublishTask(taskId: api.task.TaskId, time: number = 500) {
         setTimeout(() => {
 
@@ -287,37 +314,32 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 let progress = task.getProgress();
 
                 if (state == api.task.TaskState.FINISHED) {
-                    this.setProgressValue(progress.getCurrent(), progress.getTotal());
-                    api.notify.showSuccess(progress.getInfo());
-                    // this.close();
-
-                } else if (state == api.task.TaskState.FAILED) {
-                    api.notify.showWarning('Publishing failed');
+                    this.setProgressValue(100);
+                    this.progressBar.hide();
                     this.close();
 
+                    api.notify.showSuccess(progress.getInfo());
+                } else if (state == api.task.TaskState.FAILED) {
+                    this.progressBar.hide();
+                    this.close();
+
+                    api.notify.showError('Publishing failed: ' + progress.getInfo());
                 } else {
-                    this.setProgressValue(progress.getCurrent(), progress.getTotal());
-                    this.pollPublishTask(taskId, 500);
+                    this.setProgressValue(task.getProgressPercentage());
+                    this.pollPublishTask(taskId, ContentPublishDialog.pollInterval);
                 }
 
             }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
+                this.progressBar.hide();
                 this.close();
+
+                api.DefaultErrorHandler.handle(reason);
             }).done();
 
         }, time);
     }
 
-    private setProgressValue(current: number, total: number) {
-        if (total <= 0) {
-            this.progressBar.setValue(0);
-            return;
-        }
-        if (current > total) {
-            this.progressBar.setValue(100);
-            return;
-        }
-        let value = Math.round((current / total) * 100);
+    private setProgressValue(value: number) {
         this.progressBar.setValue(value);
     }
 

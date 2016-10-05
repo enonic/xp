@@ -132,6 +132,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
+        this.itemList.setVisible(true);
         this.appendChildToContentPanel(this.loadMask);
         this.loadMask.show();
     }
@@ -142,6 +143,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.clearItems(true);
         this.dependantList.clearItems(true);
         this.dependantsContainer.setVisible(false);
+    }
+
+    getDependantsContainer(): api.dom.DivEl {
+        return this.dependantsContainer;
     }
 
     setAutoUpdateTitle(value: boolean) {
