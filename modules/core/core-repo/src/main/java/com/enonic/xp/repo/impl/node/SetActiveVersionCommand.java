@@ -5,7 +5,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.SetActiveVersionResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.Permission;
 
@@ -30,7 +29,7 @@ public class SetActiveVersionCommand
         return new Builder();
     }
 
-    public SetActiveVersionResult execute()
+    public NodeVersionId execute()
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
@@ -51,10 +50,7 @@ public class SetActiveVersionCommand
 
         this.storageService.updateVersion( node, nodeVersionId, context );
 
-        return SetActiveVersionResult.create().
-            node( node ).
-            versionId( nodeVersionId ).
-            build();
+        return nodeVersionId;
     }
 
     public static final class Builder
