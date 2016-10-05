@@ -16,6 +16,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.function.ApplicationInfo;
 import com.enonic.xp.script.impl.function.ScriptFunctions;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.ErrorHelper;
@@ -93,6 +94,7 @@ final class ScriptExecutorImpl
 
         final Bindings global = new SimpleBindings();
         global.putAll( this.scriptSettings.getGlobalVariables() );
+        global.put( "app", new ApplicationInfo( this.application ) );
         this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
 
         final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
@@ -142,7 +144,7 @@ final class ScriptExecutorImpl
         try
         {
             final ScriptFunctions functions = new ScriptFunctions( script, this );
-            return func.call( null, functions.getApp(), functions.getLog(), functions.getRequire(), functions.getResolve(), functions );
+            return func.call( null, functions.getLog(), functions.getRequire(), functions.getResolve(), functions );
         }
         catch ( final Exception e )
         {
