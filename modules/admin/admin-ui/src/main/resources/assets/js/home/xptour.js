@@ -18,6 +18,8 @@ exports.init = function () {
         }
         setTourStep(1);
         api.dom.Body.get().appendChild(tourDialog);
+        // Hack: Make sure the correct size is set on first-time run.
+        api.ui.responsive.ResponsiveManager.fireResizeEvent();
     });
     
     return tourDialog;
