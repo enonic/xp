@@ -1,16 +1,16 @@
 import "../../api.ts";
-
-import ViewItem = api.app.view.ViewItem;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import StringHelper = api.util.StringHelper;
-import ResponsiveManager = api.ui.responsive.ResponsiveManager;
-import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import {MobileDetailsPanel} from "./detail/MobileDetailsSlidablePanel";
 import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
 import {MobileDetailsPanelToggleButton} from "./detail/button/MobileDetailsPanelToggleButton";
 import {MobileContentBrowseToolbar} from "../browse/MobileContentBrowseToolbar";
 import {ContentTreeGridActions} from "../browse/action/ContentTreeGridActions";
 import {DetailsView} from "./detail/DetailsView";
+
+import ViewItem = api.app.view.ViewItem;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import StringHelper = api.util.StringHelper;
+import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
 export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 

@@ -201,7 +201,7 @@ public class ResolveSyncWorkCommand
 
         for ( final NodePath parent : parentPaths )
         {
-            final NodeId parentId = this.storageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
+            final NodeId parentId = this.nodeStorageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
 
             if ( parentId == null )
             {

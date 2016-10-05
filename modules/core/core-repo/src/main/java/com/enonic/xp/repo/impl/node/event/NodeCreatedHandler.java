@@ -20,7 +20,7 @@ public class NodeCreatedHandler
 
         {
             final InternalContext nodeContext = createNodeContext( map, context );
-            storageService.handleNodeCreated( getId( map ), getPath( map ), nodeContext );
+            nodeStorageService.handleNodeCreated( getId( map ), getPath( map ), nodeContext );
         }
     }
 

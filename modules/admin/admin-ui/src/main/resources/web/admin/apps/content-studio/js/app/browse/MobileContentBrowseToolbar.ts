@@ -1,7 +1,6 @@
 import "../../api.ts";
 
 import FoldButton = api.ui.toolbar.FoldButton;
-import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
 import ActionButton = api.ui.button.ActionButton;
 
 export interface MobileContentBrowseToolbarActions {

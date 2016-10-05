@@ -25,7 +25,7 @@ public class NodeMovedHandler
             final NodeMovedParams nodeMovedParams =
                 new NodeMovedParams( getPath( map ), NodePath.create( map.get( NEW_PATH ).toString() ).build(), getId( map ) );
 
-            storageService.handleNodeMoved( nodeMovedParams, nodeContext );
+            nodeStorageService.handleNodeMoved( nodeMovedParams, nodeContext );
         }
     }
 }
