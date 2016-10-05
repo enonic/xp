@@ -25,6 +25,15 @@ module api.ui.security.acl {
                 setOptionDisplayValueViewer(new AccessControlEntryViewer()).
                 setDelayedInputValueChangedHandling(500);
             super(builder);
+
+            this.onLoaded((comboboxItems: AccessControlEntry[]) => {
+
+                var displayedItems = this.aceSelectedOptionsView.getSelectedOptions().map((item: SelectedOption<AccessControlEntry>) => {
+                    return item.getOption().displayValue;
+                });
+
+                this.setAllowedPermissionsToComboboxItems(comboboxItems, displayedItems);
+            })
         }
 
         setEditable(editable: boolean) {
@@ -39,6 +48,17 @@ module api.ui.security.acl {
 
         unItemValueChanged(listener: (item: AccessControlEntry) => void) {
             this.aceSelectedOptionsView.unItemValueChanged(listener);
+        }
+
+        private setAllowedPermissionsToComboboxItems(comboboxItems: AccessControlEntry[], displayedItems: AccessControlEntry[]) {
+            displayedItems.forEach((displayedItem: AccessControlEntry) => {
+                for(let i=0; i < comboboxItems.length; i++) {
+                    if(displayedItem.getPrincipal().equals(comboboxItems[i].getPrincipal())) {
+                        comboboxItems[i].setAllowedPermissions(displayedItem.getAllowedPermissions());
+                        break;
+                    }
+                }
+            })
         }
     }
 
