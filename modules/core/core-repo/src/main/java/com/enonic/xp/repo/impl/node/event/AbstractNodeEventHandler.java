@@ -9,6 +9,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.InternalContext;
 
 abstract class AbstractNodeEventHandler
     implements NodeEventHandler
@@ -53,9 +54,21 @@ abstract class AbstractNodeEventHandler
         return mapList;
     }
 
+    InternalContext createNodeContext( final Map<Object, Object> map, final InternalContext context )
+    {
+        final Branch branch = getBranch( map );
+        if ( branch != null && !branch.equals( context.getBranch() ) )
+        {
+            return InternalContext.create( context ).
+                branch( branch ).
+                build();
+        }
+        return context;
+    }
+
     Branch getBranch( final Map<Object, Object> map )
     {
-        return Branch.from( map.get( BRANCH ).toString() );
+        return map.get( BRANCH ) == null ? null : Branch.from( map.get( BRANCH ).toString() );
     }
 
     NodePath getPath( final Map<Object, Object> map )

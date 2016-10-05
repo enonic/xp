@@ -18,9 +18,7 @@ public class NodeDeletedHandler
 
         for ( final Map<Object, Object> map : valueMapList )
         {
-            final InternalContext nodeContext = InternalContext.create( context ).
-                branch( getBranch( map ) ).
-                build();
+            final InternalContext nodeContext = createNodeContext( map, context );
             storageService.handleNodeDeleted( getId( map ), getPath( map ), nodeContext );
         }
     }
