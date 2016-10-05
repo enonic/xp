@@ -38,15 +38,45 @@
           cursor: default;
         }
       }
-
-
-
     }
-
-
 
     @media screen and (max-height: 360px) {
       bottom: 25px;
+    }
+  }
+
+  .progress-bar {
+    display: none;
+  }
+
+  &.is-publishing {
+    .item-list, .include-child-check, .dialog-buttons button.publish-action {
+      display: none;
+    }
+    .dependants {
+      display: none !important;
+    }
+    .progress-bar {
+      display: block;
+      margin-bottom: 20px;
+      height: 25px;
+    }
+    .button-container {
+      float: none;
+      text-align: center;
+
+      .cancel-button-bottom {
+        span {
+          display: none;
+        }
+        &:after {
+          content: 'OK';
+          color: @admin-white;
+          width: 100px;
+          line-height: 24px;
+          font-size: 16px;
+        }
+      }
     }
   }
 

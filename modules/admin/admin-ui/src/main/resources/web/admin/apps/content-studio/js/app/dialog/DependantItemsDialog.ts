@@ -129,12 +129,13 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.ignoreItemsChanged = value;
     }
 
-    show() {
+    show(hideLoadMask: boolean = false) {
         api.dom.Body.get().appendChild(this);
         super.show();
-        this.itemList.setVisible(true);
-        this.appendChildToContentPanel(this.loadMask);
-        this.loadMask.show();
+        if (!hideLoadMask) {
+            this.appendChildToContentPanel(this.loadMask);
+            this.loadMask.show();
+        }
     }
 
     close() {
@@ -143,10 +144,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.clearItems(true);
         this.dependantList.clearItems(true);
         this.dependantsContainer.setVisible(false);
-    }
-
-    getDependantsContainer(): api.dom.DivEl {
-        return this.dependantsContainer;
     }
 
     setAutoUpdateTitle(value: boolean) {
@@ -173,7 +170,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     }
 
     protected updateButtonCount(actionString: string, count: number) {
-        this.actionButton.setLabel(count > 1 ? actionString + "(" + count + ")" : actionString);
+        this.actionButton.setLabel(count > 1 ? actionString + " (" + count + ")" : actionString);
     }
 
     protected loadDescendantIds(filterStatuses?: CompareStatus[]) {
