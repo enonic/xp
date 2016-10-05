@@ -19,5 +19,12 @@ module api.app.wizard {
             return this.stepForm;
         }
 
+        toggleHelpText(show?: boolean) {
+            this.stepForm.toggleHelpText(show);
+        }
+
+        hasHelpText(): boolean {
+            return this.stepForm.hasHelpText();
+        }
     }
 }

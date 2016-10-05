@@ -588,7 +588,7 @@ public class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult results = resolveSyncWorkResult( getNodeByPath( NodePath.ROOT ).id(), true );
 
-        assertEquals( 9, results.getSize() );
+        assertEquals( 10, results.getSize() );
 
         /*
         final String rootNodeId = RootNode.UUID.toString();
@@ -639,6 +639,7 @@ public class ResolveSyncWorkCommandTest
         - A1 (E)
  	    - A2 (E)
  	        - A2_1 - Ref:B2_1 (M)
+ 	          - A2_1_1
     - S2 (E)
         - B1 (E)
         - B2 (E)
@@ -674,6 +675,7 @@ public class ResolveSyncWorkCommandTest
             - A1 (E)
             - A2 (E)
                 - A2_1 - Ref:B2_1 (M)
+                  - A2_1_1
         - S2 (Moved)
             - B1 (M)
             - B2 (M)
@@ -727,6 +729,7 @@ public class ResolveSyncWorkCommandTest
          - A1 (New)
          - A2 (New)
              - A2_1 - Ref:B2_1 (New)
+               - A2_1_1
      - S2 (New)
          - B1 (New)
          - B2 (New)
@@ -764,6 +767,7 @@ public class ResolveSyncWorkCommandTest
          - A1 (New)
          - A2 (New)
              - A2_1 - Ref:B2_1 (New)
+               - A2_1_1
      - S2 (New)
          - B1 (New)
          - B2 (New)
@@ -786,7 +790,7 @@ public class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
-        assertEquals( 7, result.getSize() );
+        assertEquals( 8, result.getSize() );
     }
 
     /*
@@ -794,6 +798,7 @@ public class ResolveSyncWorkCommandTest
          - A1 (New)
          - A2 (New)
              - A2_1 - Ref:B2_1 (New)
+               - A2_1_1
         - S2 (New)
          - B1 (New)
          - B2 (New)
@@ -808,7 +813,7 @@ public class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
-        assertEquals( 7, result.getSize() );
+        assertEquals( 8, result.getSize() );
     }
 
     /*
@@ -816,6 +821,7 @@ public class ResolveSyncWorkCommandTest
              - A1 (New)
              - A2 (New)
                  - A2_1 - Ref:B2_1 (New)
+                   - A2_1_1
             - S2 (New)
              - B1 (New)
              - B2 (New)
@@ -838,6 +844,7 @@ public class ResolveSyncWorkCommandTest
           - A1 (New)
           - A2 (New)
               - A2_1 - Ref:B2_1 (New)
+                - A2_1_1
          - S2 (New)
           - B1 (New)
           - B2 (New)
@@ -852,7 +859,7 @@ public class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "a2" ), true );
 
-        assertEquals( 6, result.getSize() );
+        assertEquals( 7, result.getSize() );
     }
 
     /*
@@ -860,6 +867,7 @@ public class ResolveSyncWorkCommandTest
        - A1 (New)
        - A2 (New)
            - A2_1 - Ref:B2_1 (New)
+             - A2_1_1
       - S2 (New)
        - B1 (New)
        - B2 (New)
@@ -874,7 +882,34 @@ public class ResolveSyncWorkCommandTest
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "a2_1" ).
+            child( "a2_1_1" ).
             parent( "a2", "s1" ).
+            referred( "b2_1" ).
+            parent( "b2", "s2" ) );
+    }
+
+
+    /*
+    - S1 (New)
+     - A1 (New)
+     - A2 (New)
+         - A2_1 - Ref:B2_1 (New)
+           - A2_1_1
+    - S2 (New)
+     - B1 (New)
+     - B2 (New)
+         - B2_1 (New)
+    */
+    @Test
+    public void make_missing_parents_references_parents_nodes_included()
+    {
+        createS1S2Tree();
+
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "a2_1_1" ), true );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1_1" ).
+            parent( "a2_1", "a2", "s1" ).
             referred( "b2_1" ).
             parent( "b2", "s2" ) );
     }
@@ -884,6 +919,7 @@ public class ResolveSyncWorkCommandTest
            - A1 (New)
            - A2 (New)
               - A2_1 - Ref:B2_1 (New)
+                - A2_1_1
          - S2 (New)
            - B1 (New)
            - B2 (New)
@@ -901,15 +937,15 @@ public class ResolveSyncWorkCommandTest
 
         final Node s1d = duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
 
-        final Node a1d = getNodeByPath( NodePath.create( "/s1-copy/a1" ).build() );
-        final Node a2d = getNodeByPath( NodePath.create( "/s1-copy/a2" ).build() );
-        final Node a2_1d = getNodeByPath( NodePath.create( "/s1-copy/a2/a2_1" ).build() );
+        getNodeByPath( NodePath.create( "/s1-copy/a1" ).build() );
+        getNodeByPath( NodePath.create( "/s1-copy/a2" ).build() );
+        getNodeByPath( NodePath.create( "/s1-copy/a2/a2_1" ).build() );
 
         refresh();
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( s1d.id(), true );
 
-        assertEquals( 7, result.getSize() );
+        assertEquals( 8, result.getSize() );
 
     }
 
@@ -995,7 +1031,7 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
 
         ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
-        assertEquals( 7, result.getSize() );
+        assertEquals( 8, result.getSize() );
 
         pushAllNodesInS1S2Tree();
         markAsDelete( NodeId.from( "s1" ) );
@@ -1007,12 +1043,12 @@ public class ResolveSyncWorkCommandTest
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
-            child( "a1", "a2", "a2_1" ) );
+            child( "a1", "a2", "a2_1", "a2_1_1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
-            child( "a1", "a2", "a2_1" ).
+            child( "a1", "a2", "a2_1", "a2_1_1" ).
             referred( "b2_1" ) );
     }
 
@@ -1028,7 +1064,7 @@ public class ResolveSyncWorkCommandTest
             implicit( "s1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), true );
-        assertEquals( 7, result.getSize() );
+        assertEquals( 8, result.getSize() );
 
     }
 
@@ -1055,9 +1091,9 @@ public class ResolveSyncWorkCommandTest
         ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), true );
 
         assertNodes( result, ExpectedNodes.create().
-            child( NodeId.from( "a1" ), NodeId.from( "a2" ), NodeId.from( "a2_1" ) ).
-            referred( NodeId.from( "b2_1" ) ).
-            parent( NodeId.from( "b2" ), NodeId.from( "s2" ), NodeId.from( "s1" ) ) );
+            child( "a1", "a2", "a2_1", "a2_1_1" ).
+            referred( "b2_1" ).
+            parent( "b2", "s2", "s1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), false );
 
@@ -1071,7 +1107,7 @@ public class ResolveSyncWorkCommandTest
         refresh();
 
         ResolveSyncWorkResult result =
-            resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1", "a1", "a2", "a2_1", "b2_1", "b2", "s2" ), true );
+            resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1", "a1", "a2", "a2_1", "a2_1_1", "b2_1", "b2", "s2" ), true );
         assertEquals( 0, result.getNodeComparisons().getSize() );
     }
 
@@ -1081,7 +1117,7 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
         refresh();
 
-        final NodeIds children = NodeIds.from( "a1", "a2", "a2_1", "b2_1", "b2", "s2" );
+        final NodeIds children = NodeIds.from( "a1", "a2", "a2_1", "a2_1_1", "b2_1", "b2", "s2" );
 
         ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), children, false );
         assertNodes( result, ExpectedNodes.create().
@@ -1113,7 +1149,7 @@ public class ResolveSyncWorkCommandTest
         createS1S2Tree();
         refresh();
 
-        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2_1" ), true );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2_1_1", "a2_1" ), true );
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
@@ -1130,7 +1166,7 @@ public class ResolveSyncWorkCommandTest
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
-            child( "a1", "a2", "a2_1" ) );
+            child( "a1", "a2", "a2_1", "a2_1_1" ) );
     }
 
     /*
@@ -1157,7 +1193,7 @@ public class ResolveSyncWorkCommandTest
 
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
-            child( "a1", "a2", "a2_1" ).
+            child( "a1", "a2", "a2_1", "a2_1_1" ).
             referred( "b2_1" ).
             parent( "b2", "s2" ) );
     }
@@ -1229,11 +1265,17 @@ public class ResolveSyncWorkCommandTest
             name( "a2" ).
             build() );
 
-        createNode( CreateNodeParams.create().
+        final Node a2_1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "a2_1" ) ).
             parent( a2.path() ).
             data( createDataWithReferences( Reference.from( "b2_1" ) ) ).
             name( "a2_1" ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "a2_1_1" ) ).
+            parent( a2_1.path() ).
+            name( "a2_1_1" ).
             build() );
 
         final Node s2 = createNode( CreateNodeParams.create().

@@ -1,6 +1,6 @@
 import "../../../api.ts";
 import {WidgetView} from "./WidgetView";
-import {DetailsPanel} from "./DetailsPanel";
+import {DetailsView} from "./DetailsView";
 import {InfoWidgetToggleButton} from "./button/InfoWidgetToggleButton";
 
 import Dropdown = api.ui.selector.dropdown.Dropdown;
@@ -10,19 +10,19 @@ import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
 export class WidgetsSelectionRow extends api.dom.DivEl {
 
-    private detailsPanel: DetailsPanel;
+    private detailsView: DetailsView;
 
     private widgetSelectorDropdown: WidgetSelectorDropdown;
     private infoWidgetToggleButton: InfoWidgetToggleButton;
 
-    constructor(detailsPanel: DetailsPanel) {
+    constructor(detailsView: DetailsView) {
         super("widgets-selection-row");
 
-        this.detailsPanel = detailsPanel;
+        this.detailsView = detailsView;
 
-        this.infoWidgetToggleButton = new InfoWidgetToggleButton(detailsPanel);
+        this.infoWidgetToggleButton = new InfoWidgetToggleButton(detailsView);
 
-        this.widgetSelectorDropdown = new WidgetSelectorDropdown(detailsPanel);
+        this.widgetSelectorDropdown = new WidgetSelectorDropdown(detailsView);
         this.widgetSelectorDropdown.addClass("widget-selector");
 
         this.widgetSelectorDropdown.onOptionSelected((event: OptionSelectedEvent<WidgetViewOption>) => {
@@ -41,7 +41,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
     }
 
     updateState(widgetView: WidgetView) {
-        if (this.detailsPanel.isDefaultWidget(widgetView)) {
+        if (this.detailsView.isDefaultWidget(widgetView)) {
             this.infoWidgetToggleButton.setActive();
             this.widgetSelectorDropdown.removeClass("non-default-selected");
         } else {
@@ -87,19 +87,18 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
 
 export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
 
-    constructor(detailsPanel: DetailsPanel) {
+    constructor(detailsView: DetailsView) {
         super("widgetSelector", {
             disableFilter: true,
             skipExpandOnClick: true,
-            inputPlaceholderText: "",
-            disableFilter: true
+            inputPlaceholderText: ""
         });
 
         this.onClicked((event) => {
             if (this.isDefaultOptionDisplayValueViewer(event.target)) {
                 if (this.getSelectedOption()) {
                     var widgetView = this.getSelectedOption().displayValue.getWidgetView();
-                    if (widgetView != detailsPanel.getActiveWidget()) {
+                    if (widgetView != detailsView.getActiveWidget()) {
                         widgetView.setActive();
                     }
                     this.hideDropdown();

@@ -47,13 +47,10 @@ final class ErrorHandlerScriptImpl
         }
         else
         {
-            PortalResponseSerializer responseSerializer = new PortalResponseSerializer( result ).
-                postProcess( false ).applyFilters( false );
-            if ( result.getMember( "redirect" ) == null )
-            {
-                responseSerializer.status( portalError.getStatus() );
-            }
-            return responseSerializer.serialize();
+            return new PortalResponseSerializer( result, portalError.getStatus() ).
+                postProcess( false ).
+                applyFilters( false ).
+                serialize();
         }
     }
 

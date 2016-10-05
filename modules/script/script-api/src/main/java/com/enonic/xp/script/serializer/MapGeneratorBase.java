@@ -141,7 +141,7 @@ public abstract class MapGeneratorBase
 
         if ( value instanceof Number )
         {
-            return value;
+            return convertNumber( (Number) value );
         }
 
         if ( value instanceof Boolean )
@@ -154,6 +154,24 @@ public abstract class MapGeneratorBase
             return value;
         }
 
+        if ( value instanceof Exception )
+        {
+            return value;
+        }
+
         return value.toString();
+    }
+
+    private Object convertNumber( final Number value )
+    {
+        if ( value instanceof Long )
+        {
+            Long l = (Long) value;
+            if ( l >= Integer.MIN_VALUE && l <= Integer.MAX_VALUE )
+            {
+                return l.intValue();
+            }
+        }
+        return value;
     }
 }

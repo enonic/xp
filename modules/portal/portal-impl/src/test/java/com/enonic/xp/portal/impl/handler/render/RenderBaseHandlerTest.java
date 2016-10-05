@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.handler.render;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -54,6 +56,8 @@ public abstract class RenderBaseHandlerTest
 
     protected PostProcessor postProcessor;
 
+    private HttpServletRequest rawRequest;
+
     protected void setup()
         throws Exception
     {
@@ -69,6 +73,10 @@ public abstract class RenderBaseHandlerTest
 
         this.renderer = Mockito.mock( Renderer.class );
         Mockito.when( this.rendererFactory.getRenderer( Mockito.any() ) ).thenReturn( this.renderer );
+
+        this.rawRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( Boolean.TRUE );
+        this.request.setRawRequest( this.rawRequest );
     }
 
     protected final void setupContentAndSite()

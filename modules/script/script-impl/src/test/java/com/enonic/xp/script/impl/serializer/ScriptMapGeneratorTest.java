@@ -16,9 +16,12 @@ public class ScriptMapGeneratorTest
     @Test
     public void testObject()
     {
-        final Object obj = (MapSerializable) gen -> {
+        final Object obj = (MapSerializable) gen ->
+        {
             gen.value( "a", 1 );
-            gen.value( "b", 2 );
+            gen.value( "b", "2" );
+            gen.value( "c", 3L );
+            gen.value( "d", 4.0f );
         };
 
         final ScriptExports exports = runTestScript( "serializer/serializer-test.js" );
@@ -28,7 +31,8 @@ public class ScriptMapGeneratorTest
     @Test
     public void testArray()
     {
-        final Object obj = (MapSerializable) gen -> {
+        final Object obj = (MapSerializable) gen ->
+        {
             gen.value( "a", 1 );
             gen.value( "b", 2 );
         };

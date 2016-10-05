@@ -55,6 +55,7 @@ module api.app.browse.filter {
             hitsCounterAndClearButtonWrapper.appendChildren(this.clearFilter, this.hitsCounterEl);
 
             this.aggregationContainer = new api.aggregation.AggregationContainer();
+            this.aggregationContainer.hide();
             this.appendChild(this.aggregationContainer);
 
             if (groupViews != null) {
@@ -82,7 +83,15 @@ module api.app.browse.filter {
                 api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding("/", (e: ExtendedKeyboardEvent) => {
                     setTimeout(this.giveFocusToSearch.bind(this), 100);
                 }).setGlobal(true));
-            })
+            });
+
+            this.onHidden(() => {
+                this.aggregationContainer.hide();
+            });
+
+            this.onShown(() => {
+                setTimeout(this.aggregationContainer.show.bind(this.aggregationContainer), 100);
+            });
         }
 
         protected appendExtraSection() {

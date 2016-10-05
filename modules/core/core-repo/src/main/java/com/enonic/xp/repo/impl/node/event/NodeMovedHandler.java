@@ -21,10 +21,11 @@ public class NodeMovedHandler
         for ( final Map<Object, Object> map : valueMapList )
 
         {
+            final InternalContext nodeContext = createNodeContext( map, context );
             final NodeMovedParams nodeMovedParams =
                 new NodeMovedParams( getPath( map ), NodePath.create( map.get( NEW_PATH ).toString() ).build(), getId( map ) );
 
-            nodeStorageService.handleNodeMoved( nodeMovedParams, context );
+            storageService.handleNodeMoved( nodeMovedParams, nodeContext );
         }
     }
 }

@@ -16,6 +16,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.function.ApplicationInfo;
 import com.enonic.xp.script.impl.function.ScriptFunctions;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.ErrorHelper;
@@ -29,6 +30,10 @@ import com.enonic.xp.server.RunMode;
 final class ScriptExecutorImpl
     implements ScriptExecutor
 {
+    private final static String PRE_SCRIPT = "(function(log, require, resolve, __, exports, module) { ";
+
+    private final static String POST_SCRIPT = "\n});";
+
     private ScriptEngine engine;
 
     private ScriptSettings scriptSettings;
@@ -93,6 +98,7 @@ final class ScriptExecutorImpl
 
         final Bindings global = new SimpleBindings();
         global.putAll( this.scriptSettings.getGlobalVariables() );
+        global.put( "app", new ApplicationInfo( this.application ) );
         this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
 
         final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
@@ -120,7 +126,7 @@ final class ScriptExecutorImpl
         final SimpleBindings bindings = new SimpleBindings();
         bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
 
-        final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( bindings, resource );
+        final ScriptObjectMirror func = doExecute( bindings, resource );
         final Object result = executeRequire( key, func );
 
         this.exportsCache.put( resource, result );
@@ -141,8 +147,15 @@ final class ScriptExecutorImpl
     {
         try
         {
+            final ScriptObjectMirror exports = this.javascriptHelper.newJsObject();
+
+            final ScriptObjectMirror module = this.javascriptHelper.newJsObject();
+            module.put( "id", script.toString() );
+            module.put( "exports", exports );
+
             final ScriptFunctions functions = new ScriptFunctions( script, this );
-            return func.call( null, functions.getApp(), functions.getLog(), functions.getRequire(), functions.getResolve(), functions );
+            func.call( exports, functions.getLog(), functions.getRequire(), functions.getResolve(), functions, exports, module );
+            return module.get( "exports" );
         }
         catch ( final Exception e )
         {
@@ -156,12 +169,13 @@ final class ScriptExecutorImpl
         return this.scriptValueFactory.newValue( value );
     }
 
-    private Object doExecute( final Bindings bindings, final Resource script )
+    private ScriptObjectMirror doExecute( final Bindings bindings, final Resource script )
     {
         try
         {
-            final String source = InitScriptReader.getScript( script.readString() );
-            return this.engine.eval( source, bindings );
+            final String text = script.readString();
+            final String source = PRE_SCRIPT + text + POST_SCRIPT;
+            return (ScriptObjectMirror) this.engine.eval( source, bindings );
         }
         catch ( final Exception e )
         {

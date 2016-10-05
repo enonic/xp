@@ -124,7 +124,7 @@ public class DiffQueryFactory
 
     private QueryBuilder hasPath( final NodePath nodePath, final boolean recursive )
     {
-        final String queryPath = nodePath.toString();
+        final String queryPath = nodePath.toString().toLowerCase();
 
         final BoolQueryBuilder pathQuery = new BoolQueryBuilder().
             should( new TermQueryBuilder( BranchIndexPath.PATH.getPath(), queryPath ) );

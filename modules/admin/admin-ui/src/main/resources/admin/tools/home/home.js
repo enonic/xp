@@ -36,7 +36,7 @@ function handleGet(req) {
         marketIconUrl: marketIconUrl,
         baseUri: '',
         portalAssetsUrl: portal.assetUrl({path: ""}),
-        xpVersion: app.version.replace('.SNAPSHOT', ''),
+        xpVersion: app.version,
         docLinkPrefix: docLinkPrefix
     };
     return {

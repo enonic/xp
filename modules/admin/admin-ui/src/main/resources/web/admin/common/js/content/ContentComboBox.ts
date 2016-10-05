@@ -5,6 +5,7 @@ module api.content {
     import RichComboBox = api.ui.selector.combobox.RichComboBox;
     import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
     import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
+    import RichSelectedOptionViewBuilder = api.ui.selector.combobox.RichSelectedOptionViewBuilder;
 
     export class ContentComboBox extends RichComboBox<ContentSummary> {
 
@@ -100,9 +101,11 @@ module api.content {
     export class ContentSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<ContentSummary> {
 
         constructor(option: api.ui.selector.Option<ContentSummary>) {
-            super(option);
-            this.setIsEditable(true);
-            this.setIsDraggable(true);
+            super(
+                new api.ui.selector.combobox.RichSelectedOptionViewBuilder<ContentSummary>(option)
+                    .setEditable(true)
+                    .setDraggable(true)
+            );
         }
 
         resolveIconUrl(content: ContentSummary): string {

@@ -45,7 +45,6 @@ module api.app.wizard {
 
         protected liveMask: api.ui.mask.LoadMask;
 
-        // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
 
         private dataLoaded: boolean = false;
@@ -76,7 +75,13 @@ module api.app.wizard {
 
         private toggleMinimizeListener: (event: api.ui.ActivatedEvent) => void;
 
+        private helpTextToggleButton: api.dom.DivEl;
+
+        private helpTextShown: boolean = false;
+
         private scrollPosition: number = 0;
+
+        private wizardHeaderCreatedListeners: any[] = [];
 
         public static debug: boolean = false;
 
@@ -196,7 +201,13 @@ module api.app.wizard {
                         this.doRenderOnDataLoaded(rendered).then((rendered) => {
 
                             this.doLayout(this.getPersistedItem())
-                                .then(() => deferred.resolve(rendered))
+                                .then(() => {
+                                    deferred.resolve(rendered);
+
+                                    if (this.hasHelpText()) {
+                                        this.setupHelpTextToggleButton();
+                                    }
+                                })
                                 .catch(reason => {
                                     deferred.reject(reason);
                                     api.DefaultErrorHandler.handle(reason);
@@ -353,6 +364,7 @@ module api.app.wizard {
             this.wizardHeader = this.createWizardHeader();
             if (this.wizardHeader) {
                 headerAndNavigatorContainer.appendChild(this.wizardHeader);
+                this.notifyWizardHeaderCreated();
                 this.validityManager.setHeader(this.wizardHeader);
             }
 
@@ -524,6 +536,8 @@ module api.app.wizard {
                 this.splitPanel.hideSplitter();
                 this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
 
+                this.helpTextToggleButton.hide();
+
                 this.stepNavigator.onNavigationItemActivated(this.toggleMinimizeListener);
             } else {
                 this.splitPanel.loadPanelSizesAndDistribute();
@@ -533,10 +547,35 @@ module api.app.wizard {
                 this.stepsPanel.setListenToScroll(true);
                 this.stepNavigator.setScrollEnabled(true);
 
+                this.helpTextToggleButton.show();
+
                 this.stepNavigator.selectNavigationItem(navigationIndex, false, true);
             }
         }
 
+        private toggleHelpTextShown() {
+            this.helpTextShown = !this.helpTextShown;
+            this.helpTextToggleButton.toggleClass("on", this.helpTextShown);
+
+            this.steps.forEach((step: WizardStep) => {
+                step.toggleHelpText(this.helpTextShown);
+            });
+        }
+
+        hasHelpText(): boolean {
+            return this.steps.some((step: WizardStep) => {
+                return step.hasHelpText();
+            });
+        }
+
+        private setupHelpTextToggleButton() {
+            this.helpTextToggleButton = this.stepNavigatorAndToolbarContainer.setupHelpTextToggleButton();
+
+            this.helpTextToggleButton.onClicked(() => {
+                this.toggleHelpTextShown();
+            });
+        }
+        
         isMinimized(): boolean {
             return this.minimized;
         }
@@ -759,6 +798,20 @@ module api.app.wizard {
 
         notifyValidityChanged(valid: boolean) {
             this.validityManager.notifyValidityChanged(valid);
+        }
+
+        onWizardHeaderCreated(listener: () => void) {
+            this.validityManager.onValidityChanged(listener);
+        }
+
+        unWizardHeaderCreated(listener: () => void) {
+            this.validityManager.unValidityChanged(listener);
+        }
+
+        notifyWizardHeaderCreated() {
+            this.wizardHeaderCreatedListeners.forEach((listener: () => void) => {
+                listener.call(this);
+            });
         }
 
         isValid() {

@@ -118,6 +118,7 @@ import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
@@ -561,15 +562,16 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content -> {
-                //Creates a ContentPublishItem
-                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                return ContentPublishItemJson.create().
-                    content( content ).
-                    compareStatus( compareContentResult.getCompareStatus().name() ).
-                    iconUrl( contentIconUrlResolver.resolve( content ) ).
-                    build();
-            } ).
+                map( content ->
+                     {
+                         //Creates a ContentPublishItem
+                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                         return ContentPublishItemJson.create().
+                             content( content ).
+                             compareStatus( compareContentResult.getCompareStatus().name() ).
+                             iconUrl( contentIconUrlResolver.resolve( content ) ).
+                             build();
+                     } ).
                 collect( Collectors.toList() );
     }
 
@@ -692,16 +694,15 @@ public final class ContentResource
         }
     }
 
-    @GET
+    @POST
     @Path("resolveByIds")
-    public ContentSummaryListJson getByIds( @QueryParam("ids") final String ids )
+    public ContentSummaryListJson getByIds( final ContentIdsJson params )
     {
-        final ContentIds contentIds = ContentIds.from( ids.split( "," ) );
-        final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
+        final Contents contents = contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) );
 
         if ( contents == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Contents [%s] was not found", ids ) );
+            throw JaxRsExceptions.notFound( String.format( "Contents [%s] was not found", params.getContentIds() ) );
         }
         final ContentListMetaData metaData = ContentListMetaData.create().
             totalHits( contents.getSize() ).
@@ -793,12 +794,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission -> {
-            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-            {
-                result.add( permission.name() );
-            }
-        } );
+        permissions.forEach( permission ->
+                             {
+                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+                                 {
+                                     result.add( permission.name() );
+                                 }
+                             } );
 
         return result;
     }
@@ -1212,6 +1214,22 @@ public final class ContentResource
         }
         return permissionsJson;
     }
+
+    @GET
+    @Path("listIds")
+    public List<ContentIdJson> listChildrenIds( @QueryParam("parentId") final String parentId,
+                                                @QueryParam("childOrder") @DefaultValue("") final String childOrder )
+    {
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            parentId( StringUtils.isNotEmpty( parentId ) ? ContentId.from( parentId ) : null ).
+            childOrder( StringUtils.isNotEmpty( childOrder ) ? ChildOrder.from( childOrder ) : null ).
+            build();
+
+        final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
+        return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
+    }
+
 
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
     {

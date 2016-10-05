@@ -64,7 +64,7 @@ module api.content.page.region {
         doRender(): wemQ.Promise<boolean> {
             
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            namesAndIconView.setIconClass("icon-puzzle icon-medium")
+            namesAndIconView.setIconClass(api.StyleHelper.getCommonIconCls("part") + " icon-medium")
                 .setMainName(this.descriptor.getDisplayName())
                 .setSubName(this.descriptor.getKey().toString());
 

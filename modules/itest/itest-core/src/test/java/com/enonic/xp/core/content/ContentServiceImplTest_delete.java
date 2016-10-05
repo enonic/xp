@@ -39,6 +39,7 @@ public class ContentServiceImplTest_delete
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
+            name( "myContent" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build();
@@ -126,6 +127,7 @@ public class ContentServiceImplTest_delete
         final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
+            name( "myContent" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build() );
@@ -279,12 +281,9 @@ public class ContentServiceImplTest_delete
             contentPath( parent.getPath() ).
             build();
 
-
-        assertTrue( deletedContents.getDeletedContents().contains( unpublishedChildContent.getId() ));
+        assertTrue( deletedContents.getDeletedContents().contains( unpublishedChildContent.getId() ) );
         assertTrue( deletedContents.getPendingContents().contains( parent.getId() ) );
         assertTrue( deletedContents.getPendingContents().contains( child.getId() ) );
-
-
 
         //Checks that the content and published child are marked for deletion and that the unpublished child is deleted
         final ContentIds contentIds = ContentIds.from( parent.getId(), child.getId(), unpublishedChildContent.getId() );

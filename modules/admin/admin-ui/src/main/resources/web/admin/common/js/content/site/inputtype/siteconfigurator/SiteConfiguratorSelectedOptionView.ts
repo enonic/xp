@@ -44,7 +44,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
-                this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
+                this.application.getName() + "-" + this.application.getVersion());
             
             if (this.application.getIconUrl()) {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());

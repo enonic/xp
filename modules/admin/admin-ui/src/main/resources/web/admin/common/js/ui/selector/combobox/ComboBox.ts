@@ -38,6 +38,8 @@ module api.ui.selector.combobox {
         displayMissingSelectedOptions?: boolean
 
         removeMissingSelectedOptions?: boolean
+
+        skipAutoDropShowOnValueChange?: boolean
     }
 
     export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -84,6 +86,8 @@ module api.ui.selector.combobox {
 
         private removeMissingSelectedOptions: boolean = false;
 
+        private skipAutoDropShowOnValueChange: boolean = false;
+
         public static debug: boolean = false;
 
         /**
@@ -119,6 +123,10 @@ module api.ui.selector.combobox {
 
             if (config.removeMissingSelectedOptions) {
                 this.removeMissingSelectedOptions = config.removeMissingSelectedOptions;
+            }
+
+            if (config.skipAutoDropShowOnValueChange) {
+                this.skipAutoDropShowOnValueChange = config.skipAutoDropShowOnValueChange;
             }
 
             this.noOptionsText = config.noOptionsText;
@@ -665,7 +673,9 @@ module api.ui.selector.combobox {
                     this.preservedInputValueChangedEvent.getNewValue());
 
                 this.comboBoxDropdown.resetActiveSelection();
-                this.showDropdown();
+                if (!this.skipAutoDropShowOnValueChange) {
+                    this.showDropdown();
+                }
 
                 this.input.setReadOnly(false);
             }

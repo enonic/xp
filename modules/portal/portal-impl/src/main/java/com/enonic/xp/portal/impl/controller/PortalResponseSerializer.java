@@ -37,7 +37,7 @@ public final class PortalResponseSerializer
     public PortalResponseSerializer( final ScriptValue value, final HttpStatus defaultStatus )
     {
         this.value = value;
-        this.defaultStatus = defaultStatus;
+        this.defaultStatus = defaultStatus == null ? HttpStatus.OK : defaultStatus;
     }
 
     public PortalResponseSerializer postProcess( final boolean value )
@@ -110,7 +110,7 @@ public final class PortalResponseSerializer
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? HttpStatus.from( status ) : HttpStatus.OK );
+        builder.status( status != null ? HttpStatus.from( status ) : defaultStatus );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )

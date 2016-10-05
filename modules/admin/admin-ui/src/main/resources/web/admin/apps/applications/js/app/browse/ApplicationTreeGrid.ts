@@ -1,11 +1,13 @@
 import "../../api.ts";
 import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
+import {ApplicationRowFormatter} from "./ApplicationRowFormatter";
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
 import Application = api.application.Application;
 import ApplicationViewer = api.application.ApplicationViewer;
+import ApplicationUploadMock = api.application.ApplicationUploadMock;
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
@@ -13,51 +15,26 @@ import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
 import UploadItem = api.ui.uploader.UploadItem;
+import ApplicationKey = api.application.ApplicationKey;
 
 export class ApplicationTreeGrid extends TreeGrid<Application> {
 
     constructor() {
         super(new TreeGridBuilder<Application>().setColumns([
-                new GridColumnBuilder<TreeNode<Application>>().setName("Name").setId("displayName").setField("displayName").setFormatter(
-                    this.nameFormatter).setMinWidth(250).build(),
-
-                new GridColumnBuilder<TreeNode<Application>>().setName("Version").setId("version").setField("version").setCssClass(
-                    "version").setMinWidth(50).setMaxWidth(130).build(),
-
-                new GridColumnBuilder<TreeNode<Application>>().setName("State").setId("state").setField("state").setCssClass(
-                    "state").setMinWidth(80).setMaxWidth(100).setFormatter(this.stateFormatter).build()
-
+            this.buildColumn("Name", "displayName", "displayName", ApplicationRowFormatter.nameFormatter, {minWidth: 250}),
+            this.buildColumn("Version", "version", "version", undefined, {cssClass: "version", minWidth: 50, maxWidth: 130}),
+            this.buildColumn("State", "state", "state", ApplicationRowFormatter.stateFormatter,
+                {cssClass: "state", minWidth: 80, maxWidth: 100})
             ]).prependClasses("application-grid").setShowContextMenu(new TreeGridContextMenu(new ApplicationBrowseActions(this)))
         );
 
-        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+        this.initEventHandlers();
+    }
+
+    private initEventHandlers() {
+        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
             this.getGrid().resizeCanvas();
         });
-    }
-
-    private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Application>) {
-        var viewer = <ApplicationViewer>node.getViewer("name");
-        if (!viewer) {
-            var viewer = new ApplicationViewer();
-            viewer.setObject(node.getData());
-            node.setViewer("name", viewer);
-        }
-        return viewer.toString();
-    }
-
-    private stateFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Application>) {
-        var data = node.getData(),
-            status,
-            statusEl = new api.dom.DivEl();
-
-        if (data instanceof Application) {   // default node
-            statusEl.getEl().setText(value);
-        } else if (data instanceof ApplicationUploadMock) {   // uploading node
-            status = new api.ui.ProgressBar((<any>data).getUploadItem().getProgress())
-            statusEl.appendChild(status);
-        }
-
-        return statusEl.toString();
     }
 
     getDataId(data: Application): string {
@@ -82,6 +59,22 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         });
 
         return deferred.promise;
+    }
+
+    fetchRootKeys(): wemQ.Promise<ApplicationKey[]> {
+        return new api.application.ListApplicationKeysRequest().sendAndParse();
+    }
+
+    placeNode(data: Application, stashedParentNode?: TreeNode<Application>): wemQ.Promise<void> {
+        const parentNode = this.getParentNode(true, stashedParentNode);
+        let index = parentNode.getChildren().length;
+        for (let i = 0; i < index; i++) {
+            if (parentNode.getChildren()[i].getData().getDisplayName().localeCompare(data.getDisplayName()) >= 0) {
+                index = i;
+                break;
+            }
+        }
+        return this.insertNode(data, true, index, stashedParentNode);
     }
 
     updateApplicationNode(applicationKey: api.application.ApplicationKey) {
@@ -117,10 +110,16 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     appendApplicationNode(applicationKey: api.application.ApplicationKey): wemQ.Promise<void> {
-
         return this.fetchByKey(applicationKey)
             .then((data: api.application.Application) => {
                 return this.appendNode(data, true);
+            });
+    }
+
+    placeApplicationNode(applicationKey: api.application.ApplicationKey): wemQ.Promise<void> {
+        return this.fetchByKey(applicationKey)
+            .then((data: api.application.Application) => {
+                return this.placeNode(data);
             });
     }
 
@@ -154,44 +153,8 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         item.onFailed(() => {
             this.deleteNode(<any>appMock);
             this.triggerSelectionChangedListeners();
-        })
+        });
     }
 
 }
 
-export class ApplicationUploadMock {
-
-    private id: string;
-    private name: string;
-    private uploadItem: UploadItem<Application>;
-
-    constructor(uploadItem: UploadItem<Application>) {
-        this.id = uploadItem.getId();
-        this.name = uploadItem.getName();
-        this.uploadItem = uploadItem;
-    }
-
-    getId(): string {
-        return this.id;
-    }
-
-    getDisplayName(): string {
-        return this.name;
-    }
-
-    getName(): string {
-        return this.name;
-    }
-
-    getUploadItem(): UploadItem<Application> {
-        return this.uploadItem;
-    }
-
-    getApplicationKey(): string {
-        return this.name;
-    }
-
-    isLocal(): boolean {
-        return false;
-    }
-}

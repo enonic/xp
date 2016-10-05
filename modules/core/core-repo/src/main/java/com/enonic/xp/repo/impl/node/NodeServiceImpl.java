@@ -436,7 +436,7 @@ public class NodeServiceImpl
     @Override
     public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
-        return SetActiveVersionCommand.create().
+        final NodeVersionId result = SetActiveVersionCommand.create().
             nodeVersionId( nodeVersionId ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -444,6 +444,15 @@ public class NodeServiceImpl
             searchService( this.nodeSearchService ).
             build().
             execute();
+
+        final Node node = this.getById( nodeId );
+
+        if ( node != null )
+        {
+            this.eventPublisher.publish( NodeEvents.updated( node ) );
+        }
+
+        return result;
     }
 
     @Override

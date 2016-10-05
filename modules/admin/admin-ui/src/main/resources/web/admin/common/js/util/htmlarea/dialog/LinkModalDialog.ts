@@ -204,7 +204,7 @@ module api.util.htmlarea.dialog {
             dockedPanel.addItem(LinkModalDialog.tabNames.url, true, this.createUrlPanel(), this.isUrl());
             dockedPanel.addItem(LinkModalDialog.tabNames.download, true, this.createDownloadPanel(), this.isDownloadLink());
             dockedPanel.addItem(LinkModalDialog.tabNames.email, true, this.createEmailPanel(), this.isEmail());
-            if (this.anchorList.length) {
+            if (this.anchorList.length > 0) {
                 dockedPanel.addItem(LinkModalDialog.tabNames.anchor, true, this.createAnchorPanel(), this.isAnchor());
             }
 
@@ -264,7 +264,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createAnchorDropdown(): FormItem {
-            var dropDown = new Dropdown<string>(name, <DropdownConfig<string>>{});
+            var dropDown = new Dropdown<string>("anchor", <DropdownConfig<string>>{});
 
             this.anchorList.forEach((anchor: string) => {
                 dropDown.addOption(<Option<string>>{value: "#" + anchor, displayValue: anchor});

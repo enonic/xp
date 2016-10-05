@@ -18,7 +18,8 @@ public class NodeDeletedHandler
 
         for ( final Map<Object, Object> map : valueMapList )
         {
-            nodeStorageService.handleNodeDeleted( getId( map ), getPath( map ), context );
+            final InternalContext nodeContext = createNodeContext( map, context );
+            storageService.handleNodeDeleted( getId( map ), getPath( map ), nodeContext );
         }
     }
 }

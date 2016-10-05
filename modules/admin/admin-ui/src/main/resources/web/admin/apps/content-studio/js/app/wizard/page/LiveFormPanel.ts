@@ -205,7 +205,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     doRender(): Q.Promise<boolean> {
-        return super.doRender().then((rendered) => {
+        return super.doRender().then((rendered: boolean) => {
 
             api.dom.WindowDOM.get().onBeforeUnload((event) => {
                 console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
@@ -231,7 +231,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.liveEditListen();
 
             // delay rendered event until live edit page is fully loaded
-            var liveEditDeferred = wemQ.defer();
+            var liveEditDeferred = wemQ.defer<boolean>();
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
                 liveEditDeferred.resolve(rendered);
@@ -338,6 +338,11 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                     }
                 }
             }
+        });
+
+        this.pageModel.onReset(() => {
+            this.contextWindow.slideOut();
+            this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
         });
     }
 

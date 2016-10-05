@@ -5,12 +5,12 @@ module api.util.htmlarea.dialog {
 
     export class AnchorModalDialog extends ModalDialog {
 
-        constructor(editor:HtmlAreaEditor) {
+        constructor(editor: HtmlAreaEditor) {
 
             super(editor, new api.ui.dialog.ModalDialogHeader("Insert Anchor"));
         }
 
-        protected getMainFormItems():FormItem[] {
+        protected getMainFormItems(): FormItem[] {
             var nameField = this.createFormItem("name", "Name", Validators.required);
 
             this.setFirstFocusField(nameField.getInput());
@@ -34,22 +34,22 @@ module api.util.htmlarea.dialog {
             super.initializeActions();
         }
 
-        private createAnchorEl():api.dom.AEl {
+        private createAnchorEl(): string {
             var anchorEl = new api.dom.AEl();
 
             anchorEl.setId(this.getName());
             anchorEl.getEl().removeAttribute('href');
 
-            return anchorEl;
+            return "<p>&nbsp;" + anchorEl.toString() + "</p>";
         }
 
-        private getName():string {
+        private getName(): string {
             return (<api.ui.text.TextInput>this.getFieldById("name")).getValue();
         }
 
-        private insertAnchor():void {
+        private insertAnchor(): void {
             var anchorEl = this.createAnchorEl();
-            this.getEditor().insertContent(anchorEl.toString());
+            this.getEditor().insertContent(anchorEl);
         }
     }
 }

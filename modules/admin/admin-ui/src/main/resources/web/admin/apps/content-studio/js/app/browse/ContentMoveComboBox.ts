@@ -20,17 +20,18 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
             .setLoader(this.contentLoader)
             .setSelectedOptionsView(new ContentSelectedOptionsView())
             .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
-            .setDelayedInputValueChangedHandling(500);
+            .setDelayedInputValueChangedHandling(500)
+            .setSkipAutoDropShowOnValueChange(true);
 
         super(richComboBoxBuilder);
     }
 
-    setFilterContentPath(contentPath: ContentPath) {
-        this.contentLoader.setFilterContentPath(contentPath);
+    setFilterContentPaths(contentPaths: ContentPath[]) {
+        this.contentLoader.setFilterContentPaths(contentPaths);
     }
 
-    setFilterSourceContentType(contentType: api.schema.content.ContentType) {
-        this.contentLoader.setFilterSourceContentType(contentType);
+    setFilterContentTypes(contentTypes: api.schema.content.ContentType[]) {
+        this.contentLoader.setFilterContentTypes(contentTypes);
     }
 
     clearCombobox() {

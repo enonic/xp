@@ -41,7 +41,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
     addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<Content>) {
         super.addWizardPanel(tabMenuItem, wizardPanel);
 
-        wizardPanel.onRendered((event) => {
+        wizardPanel.onWizardHeaderCreated(() => {
             // header will be ready after rendering is complete
             wizardPanel.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() === "displayName") {

@@ -28,12 +28,12 @@ module api.dom {
             // Descendant class might override my methods
             // therefore set value on added to make sure it's ready
             this.onAdded((event) => {
-                if (!api.util.StringHelper.isBlank(originalValue)) {
+                if (!api.util.StringHelper.isBlank(this.originalValue)) {
                     if (FormInputEl.debug) {
-                        console.debug(this.toString() + '.onAdded: setting original value = "' + originalValue + '"');
+                        console.debug(this.toString() + '.onAdded: setting original value = "' + this.originalValue + '"');
                     }
                     // use this prototype's setValue because descendants might override setValue method (i.e. CheckBox, RadioGroup)
-                    FormInputEl.prototype.setValue.call(this, originalValue, true);
+                    FormInputEl.prototype.setValue.call(this, this.originalValue, true);
                 }
             });
 
@@ -122,7 +122,7 @@ module api.dom {
         }
 
         isDirty(): boolean {
-            return this.originalValue != this.doGetValue();
+            return !api.ObjectHelper.stringEquals(this.originalValue, this.doGetValue());
         }
 
         toString(): string {

@@ -62,6 +62,21 @@ public class CreateNodeCommandTest
             build() );
     }
 
+    @Test(expected = NodeAlreadyExistAtPathException.class)
+    public void case_insensitive_path()
+        throws Exception
+    {
+        createNode( CreateNodeParams.create().
+            name( "MyNode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            build() );
+    }
+
     @Test
     public void timestamp_set()
         throws Exception
@@ -266,7 +281,7 @@ public class CreateNodeCommandTest
 
         CTX_OTHER.callWith( this::createDefaultRootNode );
 
-        final Node otherNode = CTX_OTHER.callWith( () -> createNode( CreateNodeParams.create().
+        CTX_OTHER.callWith( () -> createNode( CreateNodeParams.create().
             name( "myNode" ).
             parent( NodePath.ROOT ).
             build() ) );

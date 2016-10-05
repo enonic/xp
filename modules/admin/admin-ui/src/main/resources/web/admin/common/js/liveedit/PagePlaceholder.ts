@@ -26,6 +26,7 @@ module api.liveedit {
         private createControllerDropdown(pageView: PageView, infoBlock: PagePlaceholderInfoBlock): PageDescriptorDropdown {
             var controllerDropdown = new PageDescriptorDropdown(pageView.getLiveEditModel());
             controllerDropdown.addClassEx("page-descriptor-dropdown");
+            controllerDropdown.hide();
             controllerDropdown.load();
 
             this.addControllerDropdownEvents(controllerDropdown, pageView, infoBlock)

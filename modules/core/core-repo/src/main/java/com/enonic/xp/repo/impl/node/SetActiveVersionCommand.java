@@ -11,17 +11,22 @@ import com.enonic.xp.security.acl.Permission;
 public class SetActiveVersionCommand
     extends AbstractNodeCommand
 {
+    private final static Permission REQUIRED_PERMISSION = Permission.MODIFY;
+
     private final NodeId nodeId;
 
     private final NodeVersionId nodeVersionId;
-
-    private final static Permission REQUIRED_PERMISSION = Permission.MODIFY;
 
     private SetActiveVersionCommand( final Builder builder )
     {
         super( builder );
         nodeId = builder.nodeId;
         nodeVersionId = builder.nodeVersionId;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public NodeVersionId execute()
@@ -47,12 +52,6 @@ public class SetActiveVersionCommand
 
         return nodeVersionId;
     }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
 
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>

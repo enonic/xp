@@ -49,25 +49,21 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
             this.movedContentSummaries = event.getContentSummaries();
             this.destinationSearchInput.clearCombobox();
 
-            if (event.getContentSummaries().length == 1) {
-                var contentToMove = event.getContentSummaries()[0];
+            const contents = event.getContentSummaries();
 
-                new GetContentTypeByNameRequest(contentToMove.getType()).sendAndParse().then((contentType: ContentType) => {
+            const allContentTypes = contents.map((content)=> content.getType());
+            const contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
+            const contentTypeRequests = contentTypes.map((contentType)=> new GetContentTypeByNameRequest(contentType).sendAndParse());
 
-                    this.destinationSearchInput.setFilterContentPath(contentToMove.getPath());
-                    this.destinationSearchInput.setFilterSourceContentType(contentType);
-                    this.contentPathSubHeader.setHtml(contentToMove.getPath().toString());
-
-                    this.open();
-                }).catch((reason)=> {
-                    api.notify.showError(reason.getMessage());
-                }).done();
-            } else {
-                this.destinationSearchInput.setFilterContentPath(null);
-                this.contentPathSubHeader.setHtml("");
+            const deferred = wemQ.defer<ContentType[]>();
+            wemQ.all(contentTypeRequests).spread((...filterContentTypes: ContentType[]) => {
+                const filterContentPaths = contents.map((content)=> content.getPath());
+                this.destinationSearchInput.setFilterContentPaths(filterContentPaths);
+                this.destinationSearchInput.setFilterContentTypes(filterContentTypes);
+                this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : "");
                 this.open();
-            }
-
+                deferred.resolve(filterContentTypes);
+            }).catch((reason: any) => deferred.reject(reason)).done();
         });
     }
 

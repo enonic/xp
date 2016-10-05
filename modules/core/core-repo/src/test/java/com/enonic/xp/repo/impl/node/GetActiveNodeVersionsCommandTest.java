@@ -66,6 +66,8 @@ public class GetActiveNodeVersionsCommandTest
             build().
             execute();
 
+        assertEquals( 2, result2.getNodeVersions().size() );
+
         draft = result2.getNodeVersions().get( WS_DEFAULT );
         master = result2.getNodeVersions().get( WS_OTHER );
 

@@ -87,6 +87,7 @@ public class NodeEvents
         final ImmutableMap<Object, Object> node = ImmutableMap.builder().
             put( "id", sourceNode.id().toString() ).
             put( "path", sourceNode.path().toString() ).
+            put( "branch", ContextAccessor.current().getBranch().getName() ).
             put( "newPath", targetNode.path().toString() ).
             build();
 
@@ -101,6 +102,7 @@ public class NodeEvents
         final ImmutableMap<Object, Object> node = ImmutableMap.builder().
             put( "id", sourceNode.id().toString() ).
             put( "path", sourceNode.path().toString() ).
+            put( "branch", ContextAccessor.current().getBranch().getName() ).
             put( "newPath", targetNode.path().toString() ).
             build();
 

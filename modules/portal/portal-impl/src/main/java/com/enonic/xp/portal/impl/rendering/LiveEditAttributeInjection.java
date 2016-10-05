@@ -20,7 +20,8 @@ final class LiveEditAttributeInjection
         final String responseHtml = (String) bodyObj;
         int p = 0;
         p = skipXmlDeclaration( responseHtml, p );
-        p = skipDocTypeOrComment( responseHtml, p );
+        p = skipDocType( responseHtml, p );
+        p = skipComments( responseHtml, p );
 
         char ch = ' ';
         while ( p < responseHtml.length() )
@@ -80,7 +81,29 @@ final class LiveEditAttributeInjection
         return endOfXmlDeclaration == -1 ? initialPosition : endOfXmlDeclaration + 1;
     }
 
-    private int skipDocTypeOrComment( final String responseHtml, final int initialPosition )
+    private int skipDocType( final String responseHtml, final int initialPosition )
+    {
+        int p = initialPosition;
+        char ch = ' ';
+        while ( p < responseHtml.length() )
+        {
+            ch = responseHtml.charAt( p );
+            p++;
+            if ( ch == '<' || !Character.isWhitespace( ch ) )
+            {
+                break;
+            }
+        }
+        if ( ch != '<' || p < responseHtml.length() - 7 && !"!DOCTYPE".equals( responseHtml.substring( p, p + 8 ) ) )
+        {
+            return initialPosition;
+        }
+
+        final int endOfXmlDeclaration = responseHtml.indexOf( '>', p + 1 );
+        return endOfXmlDeclaration == -1 ? initialPosition : endOfXmlDeclaration + 1;
+    }
+
+    private int skipComment( final String responseHtml, final int initialPosition )
     {
         int p = initialPosition;
         char ch = ' ';
@@ -98,8 +121,23 @@ final class LiveEditAttributeInjection
             return initialPosition;
         }
 
-        final int endOfXmlDeclaration = responseHtml.indexOf( '>', p + 1 );
-        return endOfXmlDeclaration == -1 ? initialPosition : endOfXmlDeclaration + 1;
+        final int endOfXmlComment = responseHtml.indexOf( "-->", p + 1 );
+        return endOfXmlComment == -1 ? initialPosition : endOfXmlComment + 3;
+    }
+
+    private int skipComments( final String responseHtml, final int initialPosition )
+    {
+        int p;
+        int newP = initialPosition;
+
+        do
+        {
+            p = newP;
+            newP = skipComment( responseHtml, p );
+        }
+        while ( p != newP );
+
+        return newP;
     }
 
 }

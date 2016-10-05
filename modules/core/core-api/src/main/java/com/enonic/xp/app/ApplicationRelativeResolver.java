@@ -1,8 +1,5 @@
 package com.enonic.xp.app;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 
@@ -22,26 +19,23 @@ public final class ApplicationRelativeResolver
 
     public String toServiceUrl( final String name )
     {
-        if ( name.contains( "/" ) )
+        if ( name.contains( ":" ) )
         {
-            return name;
+            if ( name.startsWith( "http" ) )
+            {
+                // points to external location
+                return name;
+            }
+            else
+            {
+                // points to other app
+                return name.replace( ":", "/" );
+            }
         }
 
         if ( this.current == null )
         {
             throw new IllegalArgumentException( "Unable to resolve application for Service [" + name + "]" );
-        }
-
-        if ( name.startsWith( "http" ) )
-        {
-            try
-            {
-                URL url = new URL( name );
-                return url.toString();
-            }
-            catch ( MalformedURLException e )
-            {
-            }
         }
 
         return Joiner.on( "/" ).join( current.toString(), name );
