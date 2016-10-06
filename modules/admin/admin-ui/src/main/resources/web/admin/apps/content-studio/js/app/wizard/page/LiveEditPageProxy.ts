@@ -46,12 +46,17 @@ import RegionView = api.liveedit.RegionView;
 import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEvent;
 import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
+import PageView = api.liveedit.PageView;
 
 export class LiveEditPageProxy {
 
     private liveEditModel: LiveEditModel;
 
+    private pageView: PageView;
+
     private liveEditIFrame: api.dom.IFrameEl;
+
+    private placeholderIFrame: api.dom.IFrameEl;
 
     private loadMask: api.ui.mask.LoadMask;
 
@@ -117,8 +122,6 @@ export class LiveEditPageProxy {
 
     private hideLoadMaskHandler: () => void;
 
-    private liveEditPageViewReady: boolean;
-
     private static debug: boolean = false;
 
     private regionsCopyForIE;
@@ -127,29 +130,51 @@ export class LiveEditPageProxy {
 
     constructor() {
 
-        this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
-        this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
+        this.liveEditIFrame = this.createLiveEditIFrame();
+        this.placeholderIFrame = this.createPlaceholderIFrame();
+
         this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
         this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
         this.hideLoadMaskHandler = () => {
-            this.loadMask.hide();
+            if (!this.pageView && this.liveEditIFrame.isVisible()) {
+                this.loadMask.hide();
+            }
         };
-        this.onLiveEditPageViewReady(() => {
-            this.liveEditPageViewReady = true;
+        this.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
+            if (LiveEditPageProxy.debug) {
+                console.debug("LiveEditPageProxy.onLiveEditPageViewReady at " + new Date().toISOString());
+            }
             this.hideLoadMaskHandler();
+            this.pageView = event.getPageView();
         });
         ShowContentFormEvent.on(this.hideLoadMaskHandler);
 
         this.showLoadMaskHandler = () => {
             // in case someone tries to open live edit while it's still not loaded
-            if (!this.liveEditPageViewReady && this.liveEditIFrame.isVisible()) {
+            if (!this.pageView && this.liveEditIFrame.isVisible()) {
                 this.loadMask.show();
             }
         };
 
         ShowLiveEditEvent.on(this.showLoadMaskHandler);
         ShowSplitEditEvent.on(this.showLoadMaskHandler);
+    }
+
+    private createLiveEditIFrame(): api.dom.IFrameEl {
+        var liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
+        liveEditIFrame.hide();
+        liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
+
+        return liveEditIFrame;
+    }
+
+    private createPlaceholderIFrame(): api.dom.IFrameEl {
+        var placeholderIFrame = new api.dom.IFrameEl("live-edit-frame-blank");
+        placeholderIFrame.setSrc(CONFIG.assetsUri + "/live-edit/js/_blank.html");
+        placeholderIFrame.hide();
+
+        return placeholderIFrame;
     }
 
     public setModel(liveEditModel: LiveEditModel) {
@@ -184,6 +209,10 @@ export class LiveEditPageProxy {
         return this.liveEditIFrame;
     }
 
+    public getPlaceholderIFrame(): api.dom.IFrameEl {
+        return this.placeholderIFrame;
+    }
+    
     public getLoadMask(): api.ui.mask.LoadMask {
         return this.loadMask;
     }
@@ -214,20 +243,58 @@ export class LiveEditPageProxy {
     }
 
     public load() {
-        this.liveEditPageViewReady = false;
-        this.showLoadMaskHandler();
+        if (this.pageView) {
+            // do this to unregister all dependencies of current page view
+            this.pageView.remove();
+            this.pageView = null;
+        }
+        if (this.liveEditModel.isRenderableSiteOrTemplate()) {
+            this.showLoadMaskHandler();
+        }
 
         var contentId = this.liveEditModel.getContent().getContentId().toString();
         var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
-        if (LiveEditPageProxy.debug) {
-            console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
-        }
 
         if (api.BrowserHelper.isIE()) {
             this.copyObjectsBeforeFrameReloadForIE();
         }
 
         this.liveEditIFrame.setSrc(pageUrl);
+
+        if (this.liveEditModel.isRenderableSiteOrTemplate()) {
+            if (LiveEditPageProxy.debug) {
+                console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
+            }
+            this.hidePlaceholderAndShowEditor();
+            this.hideLoadMaskHandler();
+        } else {
+
+            if (LiveEditPageProxy.debug) {
+                console.debug("LiveEditPageProxy.load: no reason to load page, showing blank placeholder");
+            }
+
+            if (this.placeholderIFrame.isAdded()) {
+                this.hideEditorAndShowPlaceholder();
+            } else {
+                this.placeholderIFrame.onAdded(() => {
+                    this.liveEditModel.getSiteModel().onApplicationAdded(() => {
+                        this.hidePlaceholderAndShowEditor();
+                    });
+
+                    this.hideEditorAndShowPlaceholder();
+                });
+            }
+        }
+    }
+
+    private hideEditorAndShowPlaceholder() {
+        this.liveEditIFrame.hide();
+        this.placeholderIFrame.show();
+    }
+
+    private hidePlaceholderAndShowEditor() {
+        this.placeholderIFrame.hide();
+        this.liveEditIFrame.show();
     }
 
     public skipNextReloadConfirmation(skip: boolean) {
@@ -237,10 +304,17 @@ export class LiveEditPageProxy {
     private handleIFrameLoadedEvent() {
         var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
 
+        if (LiveEditPageProxy.debug) {
+            console.debug("LiveEditPageProxy.handleIframeLoadedEvent at " + new Date().toISOString());
+        }
+
         if (liveEditWindow) {
             if (liveEditWindow.wemjq) {
-                // Give loaded page same CONFIG.baseUri as in admin
-                liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri, assetsUri: CONFIG.assetsUri};
+                if (LiveEditPageProxy.debug) {
+                    console.debug("LiveEditPageProxy.setting config for", liveEditWindow.document, CONFIG);
+                }
+                // Give loaded page same CONFIG as in admin
+                liveEditWindow.CONFIG = JSON.parse(JSON.stringify(CONFIG));
 
                 this.livejq = <JQueryStatic>liveEditWindow.wemjq;
 
@@ -256,9 +330,15 @@ export class LiveEditPageProxy {
                     this.resetObjectsAfterFrameReloadForIE();
                     this.disableLinksInLiveEditForIE();
                 }
+                if (LiveEditPageProxy.debug) {
+                    console.debug("LiveEditPageProxy.hanldeIframeLoadedEvent: initialize live edit at " + new Date().toISOString());
+                }
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
             }
             else {
+                if (LiveEditPageProxy.debug) {
+                    console.debug("LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at " + new Date().toISOString());
+                }
                 this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
             }
         }
