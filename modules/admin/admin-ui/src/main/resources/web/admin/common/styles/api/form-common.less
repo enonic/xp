@@ -96,6 +96,44 @@
   .checkbox label {
     height: auto;
   }
+
+  .help-text-toggler {
+    float: right;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    width: 17px;
+    text-align: center;
+    font-size: 14px;
+    color: @admin-font-gray2;
+    margin-right: 11px;
+
+    &:hover:not(.on) {
+      color: @admin-font-gray3;
+    }
+
+    &.on {
+      .border-radius(50%);
+      background: @admin-button-blue1;
+      color: white;
+      font-size: 12px;
+    }
+  }
+
+  .help-text {
+    font-size: 11px;
+    padding-top: 2px;
+
+    &:not(.visible) {
+      visibility: hidden;
+    }
+
+    p {
+      color: @admin-font-gray1;
+      font-style: italic;
+      text-align: justify;
+    }
+  }
 }
 
 .context-window, ._0-240, ._240-360, ._360-540, ._540-720 {
