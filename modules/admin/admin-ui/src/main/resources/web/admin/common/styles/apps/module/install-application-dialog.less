@@ -98,6 +98,9 @@
     .tab-bar-item {
       display: inline-table;
       width: 25%;
+      &:hover {
+        text-decoration: underline;
+      }
     }
 
     .market-app-panel {
@@ -128,6 +131,9 @@
                 a {
                   cursor: pointer !important;
                   text-decoration: none;
+                  &:hover {
+                    text-decoration: underline;
+                  }
                 }
               }
             }
@@ -158,9 +164,15 @@
             padding: 0px 15px;
           }
           .install {
+            &:hover {
+              text-decoration: underline;
+            }
             color: @admin-green;
           }
           .update {
+            &:hover {
+              text-decoration: underline;
+            }
             color: @input-dark-red;
           }
           .installed {
@@ -169,8 +181,57 @@
             color: #777777;
           }
         }
+
+        &.empty {
+          &:after {
+            content: 'No applications found';
+            display: block;
+            color: @admin-font-gray2;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+          }
+        }
+
+        .clear-button {
+          .icon-close2();
+          position: absolute;
+          top: 84px;
+          font-size: 16px;
+          line-height: 20px;
+          border-radius: 20px;
+          border: none;
+          right: 32px;
+          padding: 0px 4px;
+          background-color: white;
+          cursor: pointer;
+          &:hover {
+            background-color: @admin-font-gray;
+          }
+          @media screen and (max-width: 540px) {
+            right: 16px;
+          }
+        }
       }
 
+    }
+  }
+
+  .market-apps-filter-input {
+    position: absolute;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    top: 79px;
+    right: 30px;
+    padding: 4px 27px 4px 10px;
+    line-height: 20px;
+    .input-glow();
+    color: @admin-font-gray2;
+
+    @media screen and (max-width: 540px) {
+      padding: 4px 5px 4px 5px;
+      max-width: 100px;
+      right: 14px;
     }
   }
 }

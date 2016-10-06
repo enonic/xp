@@ -42,23 +42,47 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     private installApplications: Application[];
 
+    private marketAppsFilterInput: MarketAppsFilterInputEl;
+
     constructor() {
 
-        var nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>().setName("Name").setId("displayName").setField(
-            "displayName").setCssClass("app-name-and-icon").setMinWidth(170).setFormatter(this.nameFormatter).build();
-        var versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>().setName("Version").setId("version").setField(
-            "latestVersion").setCssClass("version").setMinWidth(40).build();
-        var appStatusColumns = new GridColumnBuilder<TreeNode<MarketApplication>>().setName("AppStatus").setId("appStatus").setField(
-            "status").setCssClass("status").setMinWidth(50).setFormatter(this.appStatusFormatter).setCssClass("app-status").build();
+        var nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>().
+            setName("Name").
+            setId("displayName").
+            setField("displayName").
+            setCssClass("app-name-and-icon").
+            setMinWidth(170).
+            setFormatter(this.nameFormatter).
+            build();
+        var versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>().
+            setName("Version").
+            setId("version").
+            setField("latestVersion").
+            setCssClass("version").
+            setMinWidth(40).
+            build();
+        var appStatusColumns = new GridColumnBuilder<TreeNode<MarketApplication>>().
+            setName("AppStatus").
+            setId("appStatus").
+            setField("status").
+            setCssClass("status").
+            setMinWidth(50).
+            setFormatter(this.appStatusFormatter).
+            setCssClass("app-status").
+            build();
 
-        super(new TreeGridBuilder<MarketApplication>().setColumns([
-                nameColumn,
-                versionColumn,
-                appStatusColumns
-            ]).setPartialLoadEnabled(true).setLoadBufferSize(2).setCheckableRows(false).setShowToolbar(false).setRowHeight(
-            70).disableMultipleSelection(true).prependClasses("market-app-tree-grid").setSelectedCellCssClass(
-            "selected-sort-row").setQuietErrorHandling(
-            true).setAutoLoad(false)
+        super(new TreeGridBuilder<MarketApplication>().
+                setColumns([nameColumn, versionColumn, appStatusColumns]).
+                setPartialLoadEnabled(true).
+                setLoadBufferSize(2).
+                setCheckableRows(false).
+                setShowToolbar(false).
+                setRowHeight(70).
+                disableMultipleSelection(true).
+                prependClasses("market-app-tree-grid").
+                setSelectedCellCssClass("selected-sort-row").
+                setQuietErrorHandling(true).
+                setAutoLoad(false)
         );
 
         this.installApplications = [];
@@ -66,6 +90,30 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         this.subscribeAndManageInstallClick();
         this.subscribeOnUninstallEvent();
         this.subscribeOnInstallEvent();
+        this.initAppsFilter();
+    }
+
+    private initAppsFilter() {
+        if (!this.marketAppsFilterInput) {
+            this.marketAppsFilterInput = new MarketAppsFilterInputEl();
+
+            var changeHandler = api.util.AppHelper.debounce((event) => {
+                this.refresh();
+            }, 400, false);
+            this.marketAppsFilterInput.getEl().addEventListener("input", changeHandler);
+            this.appendChild(this.marketAppsFilterInput);
+            this.appendChild(this.createClearFilterButton());
+        }
+    }
+
+    public createClearFilterButton(): api.dom.ButtonEl {
+        var clearButton = new api.dom.ButtonEl();
+        clearButton.addClass("clear-button");
+        clearButton.onClicked(() => {
+            this.marketAppsFilterInput.reset();
+            this.refresh();
+        });
+        return clearButton;
     }
 
     private subscribeOnUninstallEvent() { // set status of market app to NOT_INSTALLED if it was uninstalled
@@ -87,16 +135,16 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 if (!!nodeToUpdate) {
                     new api.application.GetApplicationRequest(event.getApplicationKey(),
                         true).sendAndParse().then((application: api.application.Application)=> {
-                        if (!!application) {
-                            var marketApplication: MarketApplication = <MarketApplication>nodeToUpdate.getData();
-                            if (MarketApplicationsFetcher.installedAppCanBeUpdated(marketApplication, application)) {
-                                marketApplication.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
-                            } else {
-                                marketApplication.setStatus(MarketAppStatus.INSTALLED);
+                            if (!!application) {
+                                var marketApplication: MarketApplication = <MarketApplication>nodeToUpdate.getData();
+                                if (MarketApplicationsFetcher.installedAppCanBeUpdated(marketApplication, application)) {
+                                    marketApplication.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
+                                } else {
+                                    marketApplication.setStatus(MarketAppStatus.INSTALLED);
+                                }
+                                this.refresh();
                             }
-                            this.refresh();
-                        }
-                    });
+                        });
                 }
             }
         });
@@ -127,25 +175,25 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
                 new api.application.InstallUrlApplicationRequest(url)
                     .sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
-                    api.application.ApplicationEvent.un(progressHandler);
-                    if (!result.getFailure()) {
+                        api.application.ApplicationEvent.un(progressHandler);
+                        if (!result.getFailure()) {
 
-                        elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + " " +
-                                         MarketAppStatusFormatter.statusUpdateCssClass);
-                        elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
+                            elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + " " +
+                                             MarketAppStatusFormatter.statusUpdateCssClass);
+                            elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
 
-                        elem.setHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
-                        app.setStatus(MarketAppStatus.INSTALLED);
-                    } else {
+                            elem.setHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
+                            app.setStatus(MarketAppStatus.INSTALLED);
+                        } else {
+                            elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
+                        }
+
+                    }).catch((reason: any) => {
+                        api.application.ApplicationEvent.un(progressHandler);
                         elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
-                    }
 
-                }).catch((reason: any) => {
-                    api.application.ApplicationEvent.un(progressHandler);
-                    elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
-
-                    api.DefaultErrorHandler.handle(reason);
-                });
+                        api.DefaultErrorHandler.handle(reason);
+                    });
             }
         });
     }
@@ -214,13 +262,37 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                     let emptyApplication = new MarketApplicationBuilder().setLatestVersion("").build();
                     applications.push(emptyApplication);
                 }
+
                 return applications;
             }).catch((reason: any) => {
-            var status500Message = "Woops... The server seems to be experiencing problems. Please try again later.";
-            var defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
-            this.handleError(reason, reason.getStatusCode() === 500 ? status500Message : defaultErrorMessage);
-            return [];
-        });
+                var status500Message = "Woops... The server seems to be experiencing problems. Please try again later.";
+                var defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
+                this.handleError(reason, reason.getStatusCode() === 500 ? status500Message : defaultErrorMessage);
+                return [];
+            });
+    }
+
+    initData(nodes: TreeNode<MarketApplication>[]) {
+        var items = nodes;
+        if (this.marketAppsFilterInput && !api.util.StringHelper.isEmpty(this.marketAppsFilterInput.getValue())) {
+            items = nodes.filter((node: TreeNode<MarketApplication>) => {
+                return this.nodePassesFilterCondition(node);
+            });
+        }
+        super.initData(items);
+        this.getGrid().getCanvasNode().style.height = (70 * items.length + "px");
+        this.getGrid().resizeCanvas();
+        this.toggleClass("empty", items.length == 0);
+    }
+
+    private nodePassesFilterCondition(node: TreeNode<MarketApplication>): boolean {
+        var app: MarketApplication = node.getData();
+        return app.isEmpty() ? true : this.appHasFilterEntry(app); // true for empty app because empty app is empty node that triggers loading
+    }
+
+    private appHasFilterEntry(app: MarketApplication): boolean {
+        return this.marketAppsFilterInput.hasMatchInEntry(app.getDisplayName()) ||
+               this.marketAppsFilterInput.hasMatchInEntry(app.getDescription());
     }
 
     private getVersion(): string {
@@ -238,5 +310,35 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     getDataId(data: MarketApplication): string {
         return data.getAppKey() ? data.getAppKey().toString() : "";
+    }
+
+    public resetAppFilter() {
+        this.marketAppsFilterInput.reset();
+    }
+}
+
+export class MarketAppsFilterInputEl extends api.dom.Element {
+
+    constructor() {
+        super(new api.dom.NewElementBuilder().
+            setTagName("input").
+            setClassName("market-apps-filter-input"));
+
+        this.getEl().setAttribute("placeholder", "Filter apps...");
+        this.getEl().setAttribute("type", "text");
+        this.getEl().addEventListener("click", (event) => event.stopPropagation());
+        this.getEl().setAttribute("tabindex", "-1");
+    }
+
+    public hasMatchInEntry(entry: string): boolean {
+        return entry.toLowerCase().indexOf(this.getValue().toLowerCase()) > -1
+    }
+
+    public reset() {
+        this.getEl().setValue("");
+    }
+
+    public getValue(): string {
+        return this.getEl().getValue();
     }
 }

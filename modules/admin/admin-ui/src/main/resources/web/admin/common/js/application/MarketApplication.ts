@@ -37,6 +37,10 @@ module api.application {
             return array;
         }
 
+        public isEmpty(): boolean {
+            return !this.displayName && !this.url;
+        }
+
         public getDisplayName(): string {
             return this.displayName;
         }
