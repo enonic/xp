@@ -617,6 +617,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 liveFormPanel.loadPage(false);
             }
 
+            if (content.getType().isImage()) {
+                this.updateWizard(content);
+            }
+
             return content;
         }).finally(() => {
             this.contentUpdateDisabled = false;
