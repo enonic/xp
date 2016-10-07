@@ -151,18 +151,28 @@ module api.form.optionset {
             var checked = !!selectedProperty && selectedProperty.getString() == this.getName();
             var button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked);
             button.onChange(() => {
-                this.selectedOptionsPropertyArray.set(0, new Value(this.getName(), new api.data.ValueTypeString()));
+                var thereWasNoOptionSelected: boolean = this.selectedOptionsPropertyArray.get(0) == null,
+                    property = this.selectedOptionsPropertyArray.set(0, new Value(this.getName(), new api.data.ValueTypeString()));
                 this.notifySelectionChanged();
                 this.expand();
                 this.enableFormItems();
+                if (thereWasNoOptionSelected) {
+                    this.handleRadioDeselect(property);
+                }
             });
-            selectedProperty.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+            if (!!selectedProperty) {
+                this.handleRadioDeselect(selectedProperty);
+            }
+            return button;
+        }
+
+        private handleRadioDeselect(property: Property) {
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
                 if (event.getPreviousValue().getString() == this.getName()) {
                     this.expand(this.isOptionSetExpanded());
                     this.disableAndResetAllFormItems();
                 }
             });
-            return button;
         }
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
