@@ -139,17 +139,23 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
 
         }).done();
 
-        item.onProgress((progress: number) => {
-            this.invalidate();
-        });
-        item.onUploaded((model: Application) => {
+        var deleteUploadedNodeHandler = () => {
             var nodeToRemove = this.getRoot().getCurrentRoot().findNode(item.getId());
             if (nodeToRemove) {
                 this.deleteNode(nodeToRemove.getData());
                 this.invalidate();
                 this.triggerSelectionChangedListeners();
             }
+        };
+
+        item.onProgress((progress: number) => {
+            this.invalidate();
         });
+
+        item.onUploaded(deleteUploadedNodeHandler);
+
+        item.onUploadStopped(deleteUploadedNodeHandler);
+        
         item.onFailed(() => {
             this.deleteNode(<any>appMock);
             this.triggerSelectionChangedListeners();
