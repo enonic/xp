@@ -314,8 +314,11 @@ module api.app.wizard {
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel: formPanel.onAdded");
                 }
-                this.formMask = new api.ui.mask.LoadMask(this.formPanel);
-                this.formMask.show();
+                setTimeout(() => {
+                    // Must be delayed due to delay in SplitPanel.onAdded, to prevent spinner jumping
+                    this.formMask = new api.ui.mask.LoadMask(this.formPanel);
+                    this.formMask.show();
+                }, 1);
             });
 
             var firstShow;
