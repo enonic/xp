@@ -137,7 +137,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     hide() {
         this.marketAppPanel.getMarketAppsTreeGrid().unLoaded(this.onMarketLoaded);
         super.hide();
-        this.uploadAppPanel.getApplicationInput().stop();
         this.addClass("hidden");
         this.removeClass("animated");
     }
