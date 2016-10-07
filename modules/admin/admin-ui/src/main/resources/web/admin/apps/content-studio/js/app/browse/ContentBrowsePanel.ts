@@ -195,39 +195,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.browseActions, detailsView);
 
-        // let updatePreviewItem = () => {
-        //     if (this.isNonZeroSelectionInMobileMode()) {
-        //         var browseItem = this.getFirstSelectedBrowseItem();
-        //         new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
-        //             (renderable: boolean) => {
-        //                 var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItem.toViewItem();
-        //                 item.setRenderable(renderable);
-        //                 this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
-        //             });
-        //     }
-        // };
-        //
-        // this.contentTreeGrid.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
-        //                                          fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-        //     if (this.isNonZeroSelectionInMobileMode()) {
-        //         this.updateMobilePanel(fullSelection);
-        //     }
-        // });
-        //
-        // api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
-        //     if (this.isNonZeroSelectionInMobileMode()) {
-        //         if (event.isRepeatedSelection()) {
-        //             this.updateMobilePanel();
-        //         } else {
-        //             updatePreviewItem();
-        //         }
-        //     }
-        // });
-
-        const showMobilePanel = () => {
-            this.mobileContentItemStatisticsPanel.slideIn();
-        };
-
         const updateMobilePanel = () => {
             const defer = wemQ.defer();
 
@@ -252,34 +219,32 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             return defer.promise;
         };
 
+        const showMobilePanel = () => this.mobileContentItemStatisticsPanel.slideIn();
+
         const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
 
-        // selection changed
         this.contentTreeGrid.onSelectionChanged(() => {
             const isNewlySelected = this.contentTreeGrid.isNewlySelected();
             const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
 
-            if (isNonZeroSelectionInMobileMode) {
-                // update
+            const needUpdate = isNonZeroSelectionInMobileMode && isNewlySelected;
 
-                if (isNewlySelected) {
-                    // show
-                    updateAndShowMobilePanel();
-                }
+            if (needUpdate) {
+                updateAndShowMobilePanel();
             }
         });
 
-        // Handle click for selection [many] -> [single],
-        // [single] is a subset of [many]
+        // Handles specific case, not handled by function above
+        // Handles click for selection [many] -> [single],
+        // where: [single] is a subset of [many]
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
             const isNewlySelected = this.contentTreeGrid.isNewlySelected();
             const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
 
-            if (isNonZeroSelectionInMobileMode) {
-                if (!isNewlySelected) {
-                    // show
-                    updateAndShowMobilePanel();
-                }
+            const needUpdate = isNonZeroSelectionInMobileMode && !isNewlySelected;
+
+            if (needUpdate) {
+                updateAndShowMobilePanel();
             }
         });
 
