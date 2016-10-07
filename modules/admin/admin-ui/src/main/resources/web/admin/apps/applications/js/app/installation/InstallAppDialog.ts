@@ -113,7 +113,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         });
 
         let uploadCompletedHandler = (event: FileUploadCompleteEvent<Application>) => {
-            if (event.getUploadItems()) {
+            if (event.getUploadItems() && !this.hasClass("hidden")) {
                 this.close();
             }
         };
@@ -131,6 +131,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         this.marketAppPanel.getMarketAppsTreeGrid().onLoaded(this.onMarketLoaded);
         this.resetFileInputWithUploader();
         super.show();
+        this.removeClass("hidden");
         this.marketAppPanel.loadGrid();
     }
 
