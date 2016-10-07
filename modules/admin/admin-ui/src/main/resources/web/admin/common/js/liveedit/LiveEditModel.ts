@@ -82,7 +82,7 @@ module api.liveedit {
 
             var isRenderable = hasApplications || hasController || hasDefaultPageTemplate;
 
-            return isRenderable && (isTemplate || isSite);
+            return (isRenderable && (isTemplate || isSite)) || hasDefaultPageTemplate;
         }
 
         static create(): LiveEditModelBuilder {
