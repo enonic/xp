@@ -1,5 +1,6 @@
 import "../../api.ts";
 import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
+import {ContentPublishMenuManager} from "../browse/ContentPublishMenuManager";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareContentResults = api.content.resource.result.CompareContentResults;
@@ -32,8 +33,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private progressBar: api.ui.ProgressBar;
 
-    private static minItemCountForProgressBar: number = 100;   // Progress bar will not be shown if number of published items is less than this number
-    private static pollInterval: number = 500;  // Interval of task polling when publishing content (in ms)
+    private static progressBarDelay: number = 2000; // If the content is still being published after this time, show the progress bar (in ms)
+    private static pollInterval: number = 500;  // Interval of task polling when publishing the content (in ms)
     private static isPublishingClass: string = "is-publishing";
 
     constructor() {
@@ -59,7 +60,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         });
     }
 
-    protected createProgressBar() {
+    private createProgressBar() {
         if (this.progressBar) {
             this.progressBar.setValue(0);
             return this.progressBar;
@@ -108,20 +109,19 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
 
     show() {
-        super.show(this.isPublishing());
+        super.show(this.isPublishing() );
     }
     
     close() {
-        if (!!this.progressBar && this.progressBar.isComplete()) {
-            this.removeClass(ContentPublishDialog.isPublishingClass);
+        if (this.isPublishing() && (!this.progressBar || this.progressBar.isComplete())) {
+            this.disableProgressBar();
         }
+
         super.close();
         this.childrenCheckbox.setChecked(false);
+        this.hideLoadingSpinner();
     }
 
-    private isPublishing() {
-        return this.hasClass(ContentPublishDialog.isPublishingClass);
-    }
 
     private getStashedItems(): ContentSummaryAndCompareStatus[] {
         return this.stash[String(this.childrenCheckbox.isChecked())];
@@ -157,7 +157,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
-        if (this.isPublishing()) {
+        if (this.isPublishing() ) {
             return wemQ<void>(null);
         }
         this.actionButton.setEnabled(false);
@@ -207,7 +207,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
-        if (this.isPublishing()) {
+        if (this.isPublishing() ) {
             return;
         }
         var itemsToRemove = this.getDependantList().getItems().filter(
@@ -223,7 +223,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
-        if (this.isPublishing()) {
+        if (this.isPublishing() ) {
             return;
         }
         super.setDependantItems(items);
@@ -239,7 +239,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     setContentToPublish(contents: ContentSummaryAndCompareStatus[]) {
-        if (this.isPublishing()) {
+        if (this.isPublishing() ) {
             return this;
         }
         this.setIgnoreItemsChanged(true);
@@ -291,7 +291,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
     private doPublish() {
 
         this.showLoadingSpinner();
-        this.actionButton.setEnabled(false);
 
         this.setSubTitle(this.countTotal() + " items are being published...")
 
@@ -303,32 +302,37 @@ export class ContentPublishDialog extends DependantItemsDialog {
             .setExcludedIds(this.excludedIds)
             .sendAndParse()
             .then((taskId: api.task.TaskId) => {
-                if (this.isProgressBarNeeded()) {
-                    this.addClass(ContentPublishDialog.isPublishingClass);
-                    this.progressBar = this.createProgressBar();
-                    this.pollPublishTask(taskId);
-                }
-                else {
-                    this.close();
-                }
-
+                this.pollPublishTask(taskId);
             }).catch((reason) => {
+                this.hideLoadingSpinner();
                 this.close();
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);
                 }
-            }).finally(() => {
-                this.hideLoadingSpinner();
-                this.actionButton.setEnabled(true);
             });
     }
 
-    private isProgressBarNeeded() {
-        return this.countTotal() >= ContentPublishDialog.minItemCountForProgressBar;
+    private enableProgressBar() {
+        api.dom.Body.get().addClass(ContentPublishDialog.isPublishingClass);
+        this.addClass(ContentPublishDialog.isPublishingClass);
+        this.hideLoadingSpinner();
+        this.progressBar = this.createProgressBar();
+    }
+
+    private disableProgressBar() {
+        this.removeClass(ContentPublishDialog.isPublishingClass);
+        api.dom.Body.get().removeClass(ContentPublishDialog.isPublishingClass);
+    }
+
+    private isPublishing() {
+        return this.hasClass(ContentPublishDialog.isPublishingClass);
     }
     
-    private pollPublishTask(taskId: api.task.TaskId, time: number = 500) {
+    private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ContentPublishDialog.pollInterval) {
         setTimeout(() => {
+            if (!this.isPublishing() && elapsed >= ContentPublishDialog.progressBarDelay) {
+                this.enableProgressBar();
+            }
 
             new api.task.GetTaskInfoRequest(taskId).sendAndParse().then((task: api.task.TaskInfo) => {
                 let state = task.getState();
@@ -344,25 +348,32 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
                     api.notify.showSuccess(progress.getInfo());
                 } else if (state == api.task.TaskState.FAILED) {
+                    this.disableProgressBar();
                     this.close();
 
                     api.notify.showError('Publishing failed: ' + progress.getInfo());
                 } else {
                     this.setProgressValue(task.getProgressPercentage());
-                    this.pollPublishTask(taskId, ContentPublishDialog.pollInterval);
+                    this.pollPublishTask(taskId, elapsed + interval, interval);
                 }
 
             }).catch((reason: any) => {
+                this.disableProgressBar();
                 this.close();
 
                 api.DefaultErrorHandler.handle(reason);
             }).done();
 
-        }, time);
+        }, interval);
     }
 
     private setProgressValue(value: number) {
-        this.progressBar.setValue(value);
+        if (this.isPublishing()) {
+            this.progressBar.setValue(value);
+            if (!api.dom.Body.get().isShowingModalDialog()) {
+                ContentPublishMenuManager.getProgressBar().setValue(value);
+            }
+        }
     }
 
     protected countTotal(): number {

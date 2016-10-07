@@ -135,7 +135,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
 
             let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
-            this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
+            this.toolbar.appendChild(ContentPublishMenuManager.getPublishMenuButton());
 
             return rendered;
         }).catch((error) => {

@@ -246,11 +246,13 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     }
 
     protected showLoadingSpinner() {
+        this.actionButton.setEnabled(false);
         this.actionButton.addClass("spinner");
     }
 
     protected hideLoadingSpinner() {
         this.actionButton.removeClass("spinner");
+        this.actionButton.setEnabled(true);
     }
 
 }
