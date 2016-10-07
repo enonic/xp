@@ -196,7 +196,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.browseActions, detailsView);
 
         let updatePreviewItem = () => {
-            if (this.isSingleItemSelectedInMobileMode()) {
+            if (this.isNonZeroSelectionInMobileMode()) {
                 var browseItem = this.getFirstSelectedBrowseItem();
                 new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
                     (renderable: boolean) => {
@@ -209,13 +209,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         this.contentTreeGrid.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
                                                  fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-            if (this.isSingleItemSelectedInMobileMode()) {
+            if (this.isNonZeroSelectionInMobileMode()) {
                 this.updateMobilePanel(fullSelection);
             }
         });
 
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
-            if (this.isSingleItemSelectedInMobileMode()) {
+            if (this.isNonZeroSelectionInMobileMode()) {
                 if (event.isRepeatedSelection()) {
                     this.updateMobilePanel();
                 } else {
@@ -242,7 +242,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return item;
     }
 
-    private isSingleItemSelectedInMobileMode(): boolean {
+    private isNonZeroSelectionInMobileMode(): boolean {
         if (ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
             return this.getFirstSelectedBrowseItem() != null;
         }
