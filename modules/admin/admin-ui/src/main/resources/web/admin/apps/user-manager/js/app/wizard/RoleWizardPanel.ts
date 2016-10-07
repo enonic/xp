@@ -61,19 +61,7 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
         return new CreateRoleRequest().setKey(key).setDisplayName(name).setMembers(members).setDescription(description);
     }
 
-    updatePersistedItem(): wemQ.Promise<Principal> {
-        return this.produceUpdateRoleRequest(this.assembleViewedItem()).sendAndParse().then((principal: Principal) => {
-            if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
-                this.notifyPrincipalNamed(principal);
-            }
-            api.notify.showFeedback('Role was updated!');
-            new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
-
-            return principal;
-        });
-    }
-
-    produceUpdateRoleRequest(viewedPrincipal: Principal): UpdateRoleRequest {
+    produceUpdateRequest(viewedPrincipal:Principal):UpdateRoleRequest {
         var role = viewedPrincipal.asRole(),
             key = role.getKey(),
             displayName = role.getDisplayName(),

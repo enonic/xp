@@ -10,6 +10,8 @@ import PartDescriptor = api.content.page.region.PartDescriptor;
 import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
 import ItemDataGroup = api.app.view.ItemDataGroup;
 import ApplicationKey = api.application.ApplicationKey;
+import Application = api.application.Application;
+import MacroDescriptor = api.macro.MacroDescriptor;
 
 export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
@@ -72,9 +74,10 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         var descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
         var schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
         var macroResponse = this.initMacros(currentApplication.getApplicationKey());
+        var providerResponse = this.initProviders(currentApplication.getApplicationKey());
 
 
-        wemQ.all([descriptorResponse, schemaResponse, macroResponse]).spread((descriptorsGroup, schemasGroup, macrosGroup) => {
+        wemQ.all([descriptorResponse, schemaResponse, macroResponse, providerResponse]).spread((descriptorsGroup, schemasGroup, macrosGroup, providersGroup) => {
             if (!infoGroup.isEmpty()) {
                 this.applicationDataContainer.appendChild(infoGroup);
             }
@@ -89,14 +92,18 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             if (macrosGroup && !macrosGroup.isEmpty()) {
                 this.applicationDataContainer.appendChild(macrosGroup);
             }
+
+            if (providersGroup && !providersGroup.isEmpty()) {
+                this.applicationDataContainer.appendChild(providersGroup);
+            }
         })
 
     }
 
-    private initMacros(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+    private initMacros(applicationKey: ApplicationKey): wemQ.Promise<any> {
         var macroPromises = [new api.macro.resource.GetMacrosRequest([applicationKey]).sendAndParse()]
 
-        return wemQ.all(macroPromises).spread((macros: api.macro.MacroDescriptor[])=> {
+        return wemQ.all(macroPromises).spread((macros: MacroDescriptor[])=> {
 
             var macrosGroup = new ItemDataGroup("Macros", "macros");
 
@@ -106,13 +113,13 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             }).map((macro: MacroDescriptor) => {
                 return macro.getDisplayName();
             });
-            macrosGroup.addDataArray("Macros", macroNames);
+            macrosGroup.addDataArray("Name", macroNames);
 
             return macrosGroup;
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
     }
 
-    private initDescriptors(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+    private initDescriptors(applicationKey: ApplicationKey): wemQ.Promise<any> {
 
         var descriptorPromises = [
             new api.content.page.GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
@@ -141,15 +148,15 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
     }
 
-    private initSchemas(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+    private initSchemas(applicationKey: ApplicationKey): wemQ.Promise<any> {
 
         var schemaPromises = [
             new api.schema.content.GetContentTypesByApplicationRequest(applicationKey).sendAndParse(),
             new api.schema.mixin.GetMixinsByApplicationRequest(applicationKey).sendAndParse(),
             new api.schema.relationshiptype.GetRelationshipTypesByApplicationRequest(applicationKey).sendAndParse()
-        ]
+        ];
 
-        return wemQ.all(schemaPromises).spread(
+        return wemQ.all(schemaPromises).spread<any>(
             (contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
                 var schemasGroup = new ItemDataGroup("Schemas", "schemas");
 
@@ -169,6 +176,23 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
                 return schemasGroup;
 
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason))
+    }
+
+    private initProviders(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
+        var providersPromises = [new api.application.AuthApplicationRequest(applicationKey).sendAndParse()];
+
+        return wemQ.all(providersPromises).spread<ItemDataGroup>(
+            (application: Application) => {
+                if(application) {
+                    var providersGroup = new ItemDataGroup("ID Providers", "providers");
+
+                    providersGroup.addDataList("Key", application.getApplicationKey().toString());
+                    providersGroup.addDataList("Name", application.getDisplayName());
+
+                    return providersGroup;
+                }
+                return null;
+            });
     }
 
     private sortAlphabeticallyAsc(a: string, b: string): number {

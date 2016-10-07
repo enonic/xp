@@ -1,11 +1,12 @@
 import "../../../api.ts";
+import {DetailsView} from "./DetailsView";
+import {WidgetItemView} from "./WidgetItemView";
+import {ActiveDetailsPanelManager} from "../../view/detail/ActiveDetailsPanelManager";
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import RenderingMode = api.rendering.RenderingMode;
 import Widget = api.content.Widget;
-import {DetailsPanel} from "./DetailsPanel";
-import {WidgetItemView} from "./WidgetItemView";
 
 export class WidgetView extends api.dom.DivEl {
 
@@ -13,7 +14,7 @@ export class WidgetView extends api.dom.DivEl {
 
     private widgetItemViews: WidgetItemView[];
 
-    private detailsPanel: DetailsPanel;
+    private detailsView: DetailsView;
 
     private widget: Widget;
 
@@ -21,34 +22,63 @@ export class WidgetView extends api.dom.DivEl {
 
     private url: string = "";
 
-    private contentId: string = "";
+    private content: ContentSummaryAndCompareStatus;
+
+    private activationListeners: {() : void}[] = [];
 
     public static debug = false;
 
     constructor(builder: WidgetViewBuilder) {
         super("widget-view " + (builder.widget ? "external-widget" : "internal-widget"));
 
-        this.detailsPanel = builder.detailsPanel;
+        this.detailsView = builder.detailsView;
         this.widgetName = builder.name;
         this.widgetItemViews = builder.widgetItemViews;
         this.widget = builder.widget;
         if (!this.widgetItemViews.length) {
-            this.createWidgetItemView();
+            this.createDefaultWidgetItemView();
         }
 
         this.layout();
-        if (this.isUrlBased()) {
-            this.detailsPanel.onPanelSizeChanged(() => {
-                var containerWidth = this.detailsPanel.getEl().getWidth();
-                if (this.detailsPanel.getItem() && containerWidth !== this.containerWidth) {
-                    this.setContent(this.detailsPanel.getItem(), true);
-                }
-            })
-        }
+
+        this.applyConfig();
+
+        this.onActivated(() => {
+            this.updateWidgetItemViews();
+        });
     }
 
     resetContainerWidth() {
         this.containerWidth = 0;
+    }
+
+    private applyConfig() {
+        if (this.isUrlBased()) {
+            var config = this.widget.getConfig();
+            if (!!config && config.hasOwnProperty("render-on-resize") && config["render-on-resize"] == "true") {
+                this.handleRerenderOnResize();
+            }
+        }
+    }
+
+    private handleRerenderOnResize() {
+        var updateWidgetItemViewsHandler = () => {
+            var containerWidth = this.detailsView.getEl().getWidth();
+            if (this.detailsView.getItem() && containerWidth !== this.containerWidth) {
+                this.updateWidgetItemViews(true);
+            }
+        }
+        this.detailsView.onPanelSizeChanged(() => {
+            if (this.isActive()) {
+                updateWidgetItemViewsHandler();
+            } else {
+                var onActivatedHandler = () => {
+                    updateWidgetItemViewsHandler();
+                    this.unActivated(onActivatedHandler);
+                }
+                this.onActivated(onActivatedHandler);
+            }
+        });
     }
 
     private getWidgetUrl() {
@@ -56,44 +86,55 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private getFullUrl(url: string) {
-        return url + "/" + this.detailsPanel.getEl().getWidth();
+        return url + "/" + this.detailsView.getEl().getWidth();
     }
 
-    private isDetailsPanelVisible(): boolean {
-        return this.detailsPanel.getHTMLElement().clientWidth > 0;
-    }
-
-    private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus,
-                                        force: boolean = false): wemQ.Promise<any> {
-        if (!this.isUrlBased() || !this.isDetailsPanelVisible()) {
-            return wemQ.resolve(null);
-        }
-        this.url = this.getWidgetUrl();
-        this.contentId = content.getId();
-        return widgetItemView.setUrl(this.getFullUrl(this.url), this.contentId, force);
-    }
-
-    public setContent(content: ContentSummaryAndCompareStatus, force: boolean = false): wemQ.Promise<any> {
+    private updateCustomWidgetItemViews(force: boolean = false): wemQ.Promise<any>[] {
         var promises = [];
+
+        this.url = this.getWidgetUrl();
         this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
-            if (this.isUrlBased() && (force || this.contentId !== content.getId() || this.url !== this.getWidgetUrl())) {
-                promises.push(this.setContentForWidgetItemView(widgetItemView, content, force));
-            }
+            promises.push(widgetItemView.setUrl(this.getFullUrl(this.url), this.content.getContentId().toString(), force));
         });
-        this.containerWidth = this.detailsPanel.getEl().getWidth();
-        return wemQ.all(promises);
+
+        return promises;
     }
 
-    private createWidgetItemView() {
-        var widgetItemView = new WidgetItemView();
-        if (this.detailsPanel.getItem()) {
-            this.setContentForWidgetItemView(widgetItemView, this.detailsPanel.getItem());
+    public updateWidgetItemViews(force: boolean = false): wemQ.Promise<any> {
+        var content = this.detailsView.getItem(),
+            promises = [];
+
+        if (this.widgetShouldBeUpdated(force)) {
+            this.detailsView.showLoadMask();
+            this.content = content;
+
+            if (this.isUrlBased()) {
+                promises = promises.concat(this.updateCustomWidgetItemViews(force));
+            } else {
+                this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
+                    promises.push(widgetItemView.setContentAndUpdateView(content));
+                });
+            }
         }
 
-        this.widgetItemViews.push(widgetItemView);
+        this.containerWidth = this.detailsView.getEl().getWidth();
+        return wemQ.all(promises).finally(() => this.detailsView.hideLoadMask());
     }
 
-    public layout(): wemQ.Promise<any> {
+    private widgetShouldBeUpdated(force: boolean = false): boolean {
+        var content = this.detailsView.getItem();
+        return content && ActiveDetailsPanelManager.getActiveDetailsPanel().isVisibleOrAboutToBeVisible() &&
+               (force || !api.ObjectHelper.equals(this.content, content) || (this.isUrlBased() && this.url !== this.getWidgetUrl()));
+    }
+
+    private createDefaultWidgetItemView() {
+        this.widgetItemViews.push(new WidgetItemView());
+        if (this.detailsView.getItem()) {
+            this.updateWidgetItemViews();
+        }
+    }
+
+    private layout(): wemQ.Promise<any> {
 
         this.slideOut();
 
@@ -105,24 +146,6 @@ export class WidgetView extends api.dom.DivEl {
         });
 
         return wemQ.all(layoutTasks);
-    }
-
-    private calcHeight(): number {
-        var originalHeight = this.getEl().getHeight();
-        if (originalHeight == 0) {
-            // prevent jitter if widget is collapsed
-            this.setVisible(false);
-        }
-        this.getEl().setHeight("auto");
-        var height = this.getEl().getHeight();
-        this.getEl().setHeightPx(originalHeight);
-        if (originalHeight == 0) {
-            this.setVisible(true);
-        }
-        if (WidgetView.debug) {
-            console.debug('WidgetView.calcHeight: ', height, 'originalHeight: ', originalHeight);
-        }
-        return height;
     }
 
     getWidgetName(): string {
@@ -154,7 +177,8 @@ export class WidgetView extends api.dom.DivEl {
         if (this.isActive()) {
             return;
         }
-        this.detailsPanel.setActiveWidget(this);
+        this.detailsView.setActiveWidget(this);
+        this.notifyActivated();
         this.slideIn();
     }
 
@@ -162,12 +186,12 @@ export class WidgetView extends api.dom.DivEl {
         if (WidgetView.debug) {
             console.debug('WidgetView.setInactive: ', this.getWidgetName());
         }
-        this.detailsPanel.resetActiveWidget();
+        this.detailsView.resetActiveWidget();
         this.slideOut();
     }
 
     private isActive() {
-        return this.detailsPanel.getActiveWidget() == this;
+        return this.detailsView.getActiveWidget() == this;
     }
 
     private hasDynamicHeight(): boolean {
@@ -186,12 +210,22 @@ export class WidgetView extends api.dom.DivEl {
         }, 200);
     }
 
-    public isUrlBased(): boolean {
+    private isUrlBased(): boolean {
         return !!this.widget && !!this.widget.getUrl();
     }
 
-    public getDetailsPanel(): DetailsPanel {
-        return this.detailsPanel;
+    notifyActivated() {
+        this.activationListeners.forEach((listener: ()=> void) => listener());
+    }
+
+    onActivated(listener: () => void) {
+        this.activationListeners.push(listener);
+    }
+
+    unActivated(listener: ()=>void) {
+        this.activationListeners = this.activationListeners.filter((currentListener: ()=>void) => {
+            return currentListener != listener;
+        });
     }
 
     public static create(): WidgetViewBuilder {
@@ -203,7 +237,7 @@ export class WidgetViewBuilder {
 
     name: string;
 
-    detailsPanel: DetailsPanel;
+    detailsView: DetailsView;
 
     widgetItemViews: WidgetItemView[] = [];
 
@@ -214,8 +248,8 @@ export class WidgetViewBuilder {
         return this;
     }
 
-    public setDetailsPanel(detailsPanel: DetailsPanel): WidgetViewBuilder {
-        this.detailsPanel = detailsPanel;
+    public setDetailsView(detailsView: DetailsView): WidgetViewBuilder {
+        this.detailsView = detailsView;
         return this;
     }
 

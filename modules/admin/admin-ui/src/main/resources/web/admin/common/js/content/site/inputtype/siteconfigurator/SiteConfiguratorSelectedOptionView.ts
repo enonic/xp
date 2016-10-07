@@ -44,7 +44,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
-                this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
+                this.application.getName() + "-" + this.application.getVersion());
             
             if (this.application.getIconUrl()) {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());
@@ -69,7 +69,7 @@ module api.content.site.inputtype.siteconfigurator {
                 header.appendChild(this.createEditButton());
             }
 
-            var removeButton = new api.dom.AEl("remove-button icon-close");
+            var removeButton = new api.dom.AEl("remove");
             removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
                 event.stopPropagation();
@@ -86,7 +86,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private createEditButton(): api.dom.AEl {
-            var editButton = new api.dom.AEl('edit-button');
+            var editButton = new api.dom.AEl('edit');
 
             editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked(event);
@@ -125,8 +125,7 @@ module api.content.site.inputtype.siteconfigurator {
                     }
                 };
 
-                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application.getDisplayName(),
-                    this.application.getName() + "-" + this.application.getVersion(),
+                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
                     this.formView,
                     okCallback,
                     cancelCallback);

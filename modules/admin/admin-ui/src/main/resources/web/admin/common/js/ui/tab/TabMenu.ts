@@ -221,7 +221,7 @@ module api.ui.tab {
             } else if (tab.getIndex() < this.selectedTab) {
                 // if removed tab was before selected tab than decrement selected index
                 this.selectedTab--;
-            } else if (tab.getIndex() > this.getSize() - 1) {
+            } else if (tab.getIndex() > this.getSize() - 1 && this.selectedTab != 0) {
                 // if selected index is more than tabs amount set last index as selected
                 this.selectedTab = this.getSize() - 1;
             }
@@ -261,6 +261,18 @@ module api.ui.tab {
             this.selectedTab = -1;
             this.tabs = [];
         }
+
+        resetItemsVisibility() {
+            let items = this.getNavigationItems();
+            if (!!items) {
+                items.forEach(item => {
+                    if (!item.isVisibleInMenu()) {
+                        item.setVisibleInMenu(true);
+                    }
+                });
+            }
+        }
+
 
         updateActiveTab(tabIndex: number) {
             this.tabs.forEach((tab: TabMenuItem, index: number) => {

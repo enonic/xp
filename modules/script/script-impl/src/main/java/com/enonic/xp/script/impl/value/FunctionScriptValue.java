@@ -33,7 +33,7 @@ final class FunctionScriptValue
 
         try
         {
-            final Object result = this.value.call( null, convertedArgs );
+            final Object result = this.value.call( this.value, convertedArgs );
             return this.factory.newValue( result );
         }
         catch ( final Exception e )

@@ -38,6 +38,18 @@
   }
 }
 
+body.modal-dialog {
+  .launcher-panel, .launcher-button {
+    z-index: @z-index-mask - 1;
+  }
+}
+
+body.mobile-statistics-panel {
+  .launcher-panel, .launcher-button {
+    z-index: auto;
+  }
+}
+
 .launcher-panel {
   position: fixed;
   top: 0;
@@ -86,7 +98,7 @@
       color: @admin-white;
     }
   }
- 
+   
   &.keyboard-navigation {
     .launcher-app-container .app-row.selected {
       .app-row-selected;
@@ -127,16 +139,18 @@
     color: @admin-white;
     font-size: 25px;
     display: table;
-    overflow: hidden;
     table-layout: fixed;
 
     .container-title {
-      .ellipsis();
       .container-title-mixin(32px, 0);
+      overflow-y: visible;
+      overflow-x: hidden;
+      white-space: pre;
+      text-overflow: ellipsis;
+      top: 8px;
       position: relative;
       display: table-cell;
       vertical-align: bottom;
-      line-height: 25px;
       &::first-letter {
         text-transform: uppercase;
       }
@@ -224,14 +238,13 @@
 
     .user-info {
       vertical-align: middle;
-      padding: 10px 15px 0 0;
-      width: 100%;
+      padding: 11px 15px 0 0;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
 
       > * {
-        vertical-align: middle
+        vertical-align: middle;
       }
     }
     .user-logout {
@@ -248,9 +261,15 @@
       width: 24px;
       height: 24px; // For IE
       margin-right: 10px;
+      float: left;
     }
-    span {
+    p {
       vertical-align: middle;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 160px;
+      line-height: 22px;
     }
   }
 }
@@ -360,3 +379,4 @@
     }
   }
 }
+

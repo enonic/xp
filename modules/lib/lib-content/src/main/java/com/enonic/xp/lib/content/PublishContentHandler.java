@@ -10,8 +10,8 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -81,7 +81,7 @@ public final class PublishContentHandler
         {
             builder.includeDependencies( includeDependencies );
         }
-        final PushContentsResult result = this.contentService.push( builder.build() );
+        final PublishContentResult result = this.contentService.publish( builder.build() );
         return result != null ? new PushContentResultMapper( result, contentNotFound ) : null;
     }
 

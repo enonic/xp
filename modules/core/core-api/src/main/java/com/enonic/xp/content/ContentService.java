@@ -32,7 +32,10 @@ public interface ContentService
 
     DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
+    @Deprecated
     PushContentsResult push( PushContentParams params );
+
+    PublishContentResult publish( PushContentParams params );
 
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
@@ -59,6 +62,8 @@ public interface ContentService
     Contents getByPaths( ContentPaths paths );
 
     FindContentByParentResult findByParent( FindContentByParentParams params );
+
+    FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params );
 
     @Deprecated
     FindContentByQueryResult find( FindContentByQueryParams params );

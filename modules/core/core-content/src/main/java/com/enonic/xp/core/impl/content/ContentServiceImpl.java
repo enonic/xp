@@ -44,6 +44,7 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
@@ -52,6 +53,7 @@ import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.RenameContentParams;
@@ -228,6 +230,8 @@ public class ContentServiceImpl
                 requireValid( true ).
                 contentData( new PropertyTree() ).
                 build() );
+
+            return this.getById( content.getId() );
         }
 
         return content;
@@ -311,11 +315,28 @@ public class ContentServiceImpl
             execute();
     }
 
-
     @Override
     public PushContentsResult push( final PushContentParams params )
     {
         return PushContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentIds( params.getContentIds() ).
+            excludedContentIds( params.getExcludedContentIds() ).
+            target( params.getTarget() ).
+            includeChildren( params.isIncludeChildren() ).
+            includeDependencies( params.isIncludeDependencies() ).
+            build().
+            execute();
+    }
+
+
+    @Override
+    public PublishContentResult publish( final PushContentParams params )
+    {
+        return PublishContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -423,6 +444,18 @@ public class ContentServiceImpl
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
         return FindContentByParentCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    @Override
+    public FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params )
+    {
+        return FindContentIdsByParentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).

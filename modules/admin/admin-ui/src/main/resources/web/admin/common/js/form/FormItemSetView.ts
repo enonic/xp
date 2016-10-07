@@ -102,71 +102,13 @@ module api.form {
 
             this.formItemSetOccurrences.layout(validate).then(() => {
 
-                this.formItemSetOccurrences.onOccurrenceRendered(() => {
-                    this.validate(false);
-                });
+                this.subscribeFormItemSetOccurrencesOnEvents();
 
-                this.formItemSetOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
-                    this.refresh();
-                    wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
-
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormItemSetOccurrenceView)) {
-                        var addedFormItemSetOccurrenceView = <FormItemSetOccurrenceView>event.getOccurrenceView();
-                        addedFormItemSetOccurrenceView.onValidityChanged((event: RecordingValidityChangedEvent) => {
-                            this.handleFormItemSetOccurrenceViewValidityChanged(event);
-                        });
-                    }
-                });
-                this.formItemSetOccurrences.onOccurrenceRemoved((event: OccurrenceRemovedEvent) => {
-
-                    this.refresh();
-
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormItemSetOccurrenceView)) {
-                        // force validate, since FormItemSet might have become invalid
-                        this.validate(false);
-                    }
-                });
-
-                this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView)=> {
-                    formItemSetOccurrenceView.onValidityChanged((event: RecordingValidityChangedEvent) => {
-                        this.handleFormItemSetOccurrenceViewValidityChanged(event);
-                    });
-                    formItemSetOccurrenceView.onEditContentRequest((summary: api.content.ContentSummary) => {
-                        this.notifyEditContentRequested(summary);
-                    })
-                });
                 this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
                 this.appendChild(this.bottomButtonRow);
 
-                this.addButton = new api.ui.button.Button("Add " + this.formItemSet.getLabel());
-                this.addButton.addClass("small");
-                this.addButton.onClicked((event: MouseEvent) => {
-                    this.formItemSetOccurrences.createAndAddOccurrence(this.formItemSetOccurrences.countOccurrences(),
-                        false).then((occurenceView: FormItemOccurrenceView) => {
-                            console.log("view added");
-                        });
-                    if (this.formItemSetOccurrences.isCollapsed()) {
-                        this.collapseButton.getHTMLElement().click();
-                    }
-
-                });
-                this.collapseButton = new api.dom.AEl("collapse-button");
-                this.collapseButton.setHtml("Collapse");
-                this.collapseButton.onClicked((event: MouseEvent) => {
-                    if (this.formItemSetOccurrences.isCollapsed()) {
-                        this.collapseButton.setHtml("Collapse");
-                        this.formItemSetOccurrences.showOccurrences(true);
-                    } else {
-                        this.collapseButton.setHtml("Expand");
-                        this.formItemSetOccurrences.showOccurrences(false);
-                    }
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return false;
-                });
-
-                this.bottomButtonRow.appendChild(this.addButton);
-                this.bottomButtonRow.appendChild(this.collapseButton);
+                this.bottomButtonRow.appendChild(this.addButton = this.makeAddButton());
+                this.bottomButtonRow.appendChild(this.collapseButton = this.makeCollapseButton());
 
                 this.refresh();
 
@@ -180,6 +122,75 @@ module api.form {
             return deferred.promise;
         }
 
+        private subscribeFormItemSetOccurrencesOnEvents() {
+
+            this.formItemSetOccurrences.onOccurrenceRendered((event: OccurrenceRenderedEvent) => {
+                this.validate(false, event.validateViewOnRender() ? null : event.getOccurrenceView());
+            });
+
+            this.formItemSetOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
+                this.refresh();
+                wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
+
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormItemSetOccurrenceView)) {
+                    var addedFormItemSetOccurrenceView = <FormItemSetOccurrenceView>event.getOccurrenceView();
+                    addedFormItemSetOccurrenceView.onValidityChanged((event: RecordingValidityChangedEvent) => {
+                        this.handleFormItemSetOccurrenceViewValidityChanged(event);
+                    });
+                }
+            });
+            this.formItemSetOccurrences.onOccurrenceRemoved((event: OccurrenceRemovedEvent) => {
+
+                this.refresh();
+
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormItemSetOccurrenceView)) {
+                    // force validate, since FormItemSet might have become invalid
+                    this.validate(false);
+                }
+            });
+
+            this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView)=> {
+                formItemSetOccurrenceView.onValidityChanged((event: RecordingValidityChangedEvent) => {
+                    this.handleFormItemSetOccurrenceViewValidityChanged(event);
+                });
+                formItemSetOccurrenceView.onEditContentRequest((summary: api.content.ContentSummary) => {
+                    this.notifyEditContentRequested(summary);
+                })
+            });
+        }
+
+        private makeAddButton(): api.ui.button.Button {
+            var addButton = new api.ui.button.Button("Add " + this.formItemSet.getLabel());
+            addButton.addClass("small");
+            addButton.onClicked((event: MouseEvent) => {
+                this.formItemSetOccurrences.createAndAddOccurrence(this.formItemSetOccurrences.countOccurrences(), false);
+                if (this.formItemSetOccurrences.isCollapsed()) {
+                    this.collapseButton.getHTMLElement().click();
+                }
+
+            });
+
+            return addButton;
+        }
+
+        private makeCollapseButton(): api.dom.AEl {
+            var collapseButton = new api.dom.AEl("collapse-button");
+            collapseButton.setHtml("Collapse");
+            collapseButton.onClicked((event: MouseEvent) => {
+                if (this.formItemSetOccurrences.isCollapsed()) {
+                    collapseButton.setHtml("Collapse");
+                    this.formItemSetOccurrences.showOccurrences(true);
+                } else {
+                    collapseButton.setHtml("Expand");
+                    this.formItemSetOccurrences.showOccurrences(false);
+                }
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
+
+            return collapseButton;
+        }
 
         update(propertySet: api.data.PropertySet, unchangedOnly?: boolean): Q.Promise<void> {
             this.parentDataSet = propertySet;
@@ -283,13 +294,13 @@ module api.form {
         }
 
 
-        validate(silent: boolean = true): ValidationRecording {
+        validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {
 
             var validationRecordingPath = this.resolveValidationRecordingPath();
 
             var wholeRecording = new ValidationRecording();
 
-            var occurrenceViews = this.formItemSetOccurrences.getOccurrenceViews();
+            var occurrenceViews = this.formItemSetOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation);
             var occurrenceRecording = new ValidationRecording();
 
             var numberOfValids = 0;

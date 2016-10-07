@@ -1,4 +1,5 @@
 .content-browse-toolbar {
+  overflow: visible;
   .fold-button .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}:hover {
     background-color: @admin-bg-light-gray;
   }
@@ -6,6 +7,14 @@
   &._0-240, &._240-360, &._360-540 {
     .content-publish-menu {
       display: none !important;
+    }
+  }
+}
+
+.split-panel {
+  &.sliding {
+    .content-browse-toolbar {
+      overflow: hidden;  // To hide the Publish button jumping under the toolbar when reducing toolbar width
     }
   }
 }
@@ -28,16 +37,15 @@ button.icon-toolbar-settings {
 }
 
 .browse-toolbar {
-  .details-panel-toggle-button, .non-mobile-details-panel-toggle-button {
-    // toggle button for medium screen sizes
+  .non-mobile-details-panel-toggle-button {
     z-index: 2;
     float: right;
-    line-height: 24px;
+    line-height: 22px;
 
-    overflow: hidden;
     display: block;
     background-color: transparent;
-    border: 1px transparent;
+    border-bottom: 1px transparent;
+    position: relative;
 
     @media screen and (max-width: 540px) {
       display: none !important;
@@ -55,47 +63,92 @@ button.icon-toolbar-settings {
     &:before {
       font-size: 16px;
     }
-    &.expanded {
-      top: 2px;
-      right: 0px;
-      &:before {
-        font-size: 21px;
-      }
-    }
 
     .icon-list();
 
-    &.expanded {
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
 
-      @keyframes slide {
+    &:not(.floating-mode) {
+      animation-name: d-slide;
+      @keyframes d-slide {
         0% {
-          z-index: 2;
           width: 0px;
+          padding-right: 0px;
+          padding-left: 0px;
         }
         50% {
-          z-index: 2;
+          width: 0px;
         }
         100% {
-          z-index: 3;
           width: auto;
         }
       }
+    }
 
-      animation-name: slide;
-      animation-duration: 0.5s;
-      animation-timing-function: linear;
-      animation-delay: 0s;
+    &:not(.expanded) {
+      padding: 9px 12px 7px 12px;
+    }
+
+    &.expanded {
+
+      .icon-close2();
+      &:before {
+        font-size: 21px;
+      }
 
       z-index: 3;
-      padding-top: 13px;
-      .icon-close2();
+      padding: 10px;
+      padding-left: 9px;
+      height: 40px;
 
-      &.non-mobile-details-panel-toggle-button {
-        padding-top: 7px;
+      &.floating-mode {
+        animation-name: f-slide;
+        @keyframes f-slide {
+          0% {
+            opacity: 0;
+            z-index: 2;
+          }
+          50% {
+            opacity: 0;
+            z-index: 2;
+          }
+          100% {
+            z-index: 3;
+            opacity: 100;
+          }
+        }
+      }
+
+      &:not(.floating-mode) {
+        animation-name: slide;
+        @keyframes slide {
+          0% {
+            opacity: 0;
+            z-index: 2;
+            width: auto;
+            position: relative;
+            border: 0px;
+          }
+          50% {
+            opacity: 0;
+            z-index: 2;
+            width: 0px;
+            position: relative;
+            border: 0px;
+          }
+          100% {
+            z-index: 3;
+            opacity: 100;
+            width: auto;
+            position: fixed;
+            border: 0px;
+          }
+        }
         position: fixed;
-        top: 50px;
-        padding-right: 5px;
-        height: 40px;
+        right: 0px;
+        top: 44px;
       }
     }
 

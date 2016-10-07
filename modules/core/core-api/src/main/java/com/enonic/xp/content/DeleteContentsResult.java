@@ -12,16 +12,10 @@ public class DeleteContentsResult
 
     private final ContentIds pendingContents;
 
-    private final String contentName;
-
-    private final String contentType;
-
     private DeleteContentsResult( Builder builder )
     {
         this.pendingContents = ContentIds.from( builder.pendingContents );
         this.deletedContents = ContentIds.from( builder.deletedContents );
-        this.contentName = builder.contentName;
-        this.contentType = builder.contentType;
     }
 
     public static Builder create()
@@ -39,25 +33,11 @@ public class DeleteContentsResult
         return deletedContents;
     }
 
-    public String getContentName()
-    {
-        return contentName;
-    }
-
-    public String getContentType()
-    {
-        return contentType;
-    }
-
     public static final class Builder
     {
         private List<ContentId> pendingContents = Lists.newArrayList();
 
         private List<ContentId> deletedContents = Lists.newArrayList();
-
-        private String contentName;
-
-        private String contentType;
 
         private Builder()
         {
@@ -84,19 +64,6 @@ public class DeleteContentsResult
         public Builder addDeleted( final ContentIds deletedContents )
         {
             this.deletedContents.addAll( deletedContents.getSet() );
-            return this;
-        }
-
-
-        public Builder setContentName( final String contentName )
-        {
-            this.contentName = contentName;
-            return this;
-        }
-
-        public Builder setContentType( final String contentType )
-        {
-            this.contentType = contentType;
             return this;
         }
 

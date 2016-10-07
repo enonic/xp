@@ -373,7 +373,7 @@ public final class ApplicationServiceImpl
             {
                 int totalLength = connection.getContentLength();
                 int bytesRead;
-                int totalRead = 0;
+                float totalRead = 0;
                 int lastPct = 0;
                 int currentPct;
                 byte[] buffer = new byte[8192];
@@ -384,7 +384,7 @@ public final class ApplicationServiceImpl
                     os.write( buffer, 0, bytesRead );
                     totalRead += bytesRead;
 
-                    currentPct = totalRead * 100 / totalLength;
+                    currentPct = (int) ( ( totalRead / totalLength ) * 100 );
 
                     if ( triggerEvent && lastPct != currentPct )
                     {

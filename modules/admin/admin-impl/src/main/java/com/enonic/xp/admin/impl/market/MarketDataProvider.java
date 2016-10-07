@@ -7,7 +7,6 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplication
 public interface MarketDataProvider
 {
 
-    MarketApplicationsJson search( String version, int start, int count );
+    MarketApplicationsJson search( List<String> ids, String version, int start, int count );
 
-    MarketApplicationsJson get( List<String> ids );
 }

@@ -1,4 +1,5 @@
 import "../../api.ts";
+import {UserTreeGridItem, UserTreeGridItemType} from "../browse/UserTreeGridItem";
 
 import ViewItem = api.app.view.ViewItem;
 import ItemStatisticsPanel = api.app.view.ItemStatisticsPanel;
@@ -9,7 +10,6 @@ import PrincipalType = api.security.PrincipalType;
 import GetPrincipalByKeyRequest = api.security.GetPrincipalByKeyRequest;
 
 import PrincipalViewer = api.ui.security.PrincipalViewer;
-import {UserTreeGridItem, UserTreeGridItemType} from "../browse/UserTreeGridItem";
 
 export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridItem> {
 
@@ -87,18 +87,18 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 }).map((el) => {
                     var viewer = new PrincipalViewer();
                     viewer.setObject(el);
-                    return viewer.getHtml();
+                    return viewer;
                 });
-                rolesAndGroupsGroup.addDataArray("Roles", roles);
+                rolesAndGroupsGroup.addDataElements("Roles", roles);
 
                 var groups = principal.asUser().getMemberships().filter((el) => {
                     return el.isGroup()
                 }).map((el) => {
                     var viewer = new PrincipalViewer();
                     viewer.setObject(el);
-                    return viewer.getHtml();
+                    return viewer;
                 });
-                rolesAndGroupsGroup.addDataArray("Groups", groups);
+                rolesAndGroupsGroup.addDataElements("Groups", groups);
 
                 this.userDataContainer.removeChildren();
                 this.userDataContainer.appendChild(userGroup);
@@ -135,10 +135,10 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
                     membersGroup = new ItemDataGroup("Members", "members");
 
-                    membersGroup.addDataArray("Members", results.map((el) => {
+                    membersGroup.addDataElements("Members", results.map((el) => {
                         var viewer = new PrincipalViewer();
                         viewer.setObject(el);
-                        return viewer.getHtml();
+                        return viewer;
                     }));
 
                     this.userDataContainer.removeChildren();

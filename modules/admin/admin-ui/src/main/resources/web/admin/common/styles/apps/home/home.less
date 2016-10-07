@@ -7,7 +7,6 @@
 @import "../../variables/mixins";
 @import "../../variables/z-index";
 
-
 @font-face {
   font-family: 'icomoon';
   src: url('../../../../common/icons/fonts/icomoon.eot?d2dpl4');
@@ -21,14 +20,6 @@
   .home-main-container-mixin();
 
   background-color: @admin-dark-gray;
-
-  .shader {
-    width: 100%;
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.4);
-    top: 0;
-    bottom: 0;
-  }
 
   .home-main-dashboard {
     position: absolute;
@@ -64,7 +55,25 @@
 }
 
 .xp-about-dialog {
-  max-width: 440px;
+  max-width: 496px;
+  padding-left: 3em;
+  padding-right: 3em;
+  background-color: rgba(0, 0, 0, 0.8);
+
+  .modal-dialog-content-wrapper {
+    margin-bottom: -4em;
+  }
+
+  .cancel-button-top, .cancel-button-top:hover {
+    background-color: rgba(0, 0, 0, 0);
+    &:before {
+      color: #bfbfbf;
+    }
+  }
+
+  .xp-about-dialog-content {
+    color: #bfbfbf;
+  }
 
   .dialog-header {
     margin-bottom: 0px;
@@ -72,24 +81,24 @@
 
   .xp-about-dialog-app-icon {
     float: left;
-    margin-right: 25px;
+    margin: 0 18px 50px -15px;
 
     img {
-      height: 175px;
+      height: 135px;
+      margin: 12px 10px 10px 10px;
     }
   }
 
-  a {
-    color: blue;
-  }
-
   h1 {
-    margin: 10px 0 5px 0;
+    margin: 0 0 12px 0;
   }
 
   .xp-about-dialog-version-block {
     font-size: 14px;
     margin-bottom: 15px;
+    a {
+      color: #70879e;
+    }
 
     .xp-about-dialog-version {
       font-weight: bold;
@@ -98,6 +107,7 @@
 
   .xp-about-dialog-text {
     font-size: 13px;
+    font-weight: 700;
     text-align: justify;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -115,6 +125,28 @@
 
   .modal-dialog-footer {
     display: none;
+  }
+
+  .xp-about-dialog-footer {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+
+    a {
+      flex: 33%;
+      margin-top: 10px;
+      text-align: center;
+      color: @admin-white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
   }
 
 }
@@ -143,7 +175,6 @@
     max-height: none;
     margin-top: 0px !important;
   }
-
 
   .dialog-content {
     overflow: auto;
@@ -193,6 +224,9 @@
       img {
         margin-right: 10px;
       }
+      ul {
+        margin-top: 10px;
+      }
     }
 
     .step-2 {
@@ -221,10 +255,11 @@
 
     .step-5 {
       .demo-apps {
-        margin: 10px 0px 10px 0px;
+        margin: 10px 0px 49px 0px;
         display: flex;
         align-items: center;
         justify-content: space-around;
+        min-height: 103px;
 
         .demo-app {
           display: inline-block;
@@ -253,15 +288,30 @@
           .demo-app-status {
             position: absolute;
             width: 100%;
-            bottom: -23px;
+            bottom: -28px;
             font-size: 16px;
             color: @admin-green;
+
+            &.install, &.update {
+              display: none;
+            }
 
             &.failure {
               color: @input-red-text;
             }
           }
         }
+
+        .demo-apps-text {
+          color: @admin-font-gray1;
+        }
+
+        &:not(.failed) {
+          .demo-apps-text {
+            display: none;
+          }
+        }
+
 
       }
 
@@ -328,6 +378,15 @@
     }
   }
 
+}
+
+.load-mask {
+  z-index: 2002;
+}
+
+.xp-tour-dialog + .body-mask,
+.xp-about-dialog + .body-mask {
+  background-color: @admin-black;
 }
 
 .notification-container {

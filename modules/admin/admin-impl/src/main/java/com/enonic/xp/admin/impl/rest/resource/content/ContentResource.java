@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -117,6 +118,7 @@ import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
@@ -125,8 +127,8 @@ import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
@@ -152,7 +154,6 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -183,6 +184,8 @@ public final class ContentResource
 {
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
+    public static final int GET_ALL_SIZE_FLAG = -1;
+
     private static final String DEFAULT_FROM_PARAM = "0";
 
     private static final String DEFAULT_SIZE_PARAM = "500";
@@ -196,8 +199,6 @@ public final class ContentResource
     private static final int MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS = 10;
 
     private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
-
-    public static final int GET_ALL_SIZE_FLAG = -1;
 
     private ContentService contentService;
 
@@ -427,13 +428,6 @@ public final class ContentResource
                 jsonResult.addPending( result.getPendingContents().getSize() );
                 jsonResult.addSuccess( result.getDeletedContents().getSize() );
 
-                jsonResult.setContentName( result.getContentName() );
-
-                if ( StringUtils.isNotEmpty( result.getContentType() ) )
-                {
-                    jsonResult.setContentType( ContentTypeName.from( result.getContentType() ).getLocalName() );
-                }
-
             }
             catch ( final Exception e )
             {
@@ -479,7 +473,7 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
 
-        final PushContentsResult result = contentService.push( PushContentParams.create().
+        final PublishContentResult result = contentService.publish( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             excludedContentIds( excludeContentIds ).
@@ -568,15 +562,16 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content -> {
-                //Creates a ContentPublishItem
-                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                return ContentPublishItemJson.create().
-                    content( content ).
-                    compareStatus( compareContentResult.getCompareStatus().name() ).
-                    iconUrl( contentIconUrlResolver.resolve( content ) ).
-                    build();
-            } ).
+                map( content ->
+                     {
+                         //Creates a ContentPublishItem
+                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                         return ContentPublishItemJson.create().
+                             content( content ).
+                             compareStatus( compareContentResult.getCompareStatus().name() ).
+                             iconUrl( contentIconUrlResolver.resolve( content ) ).
+                             build();
+                     } ).
                 collect( Collectors.toList() );
     }
 
@@ -699,16 +694,15 @@ public final class ContentResource
         }
     }
 
-    @GET
+    @POST
     @Path("resolveByIds")
-    public ContentSummaryListJson getByIds( @QueryParam("ids") final String ids )
+    public ContentSummaryListJson getByIds( final ContentIdsJson params )
     {
-        final ContentIds contentIds = ContentIds.from( ids.split( "," ) );
-        final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
+        final Contents contents = contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) );
 
         if ( contents == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Contents [%s] was not found", ids ) );
+            throw JaxRsExceptions.notFound( String.format( "Contents [%s] was not found", params.getContentIds() ) );
         }
         final ContentListMetaData metaData = ContentListMetaData.create().
             totalHits( contents.getSize() ).
@@ -795,17 +789,18 @@ public final class ContentResource
         final List<AccessControlList> contentsPermissions =
             params.getContentIds().getSize() > 0
                 ? contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) ).
-                stream().map( content -> content.getPermissions() ).collect( Collectors.toList() )
-                : Arrays.asList( contentService.getRootPermissions() );
+                stream().map( Content::getPermissions ).collect( Collectors.toList() )
+                : Collections.singletonList( contentService.getRootPermissions() );
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission -> {
-            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-            {
-                result.add( permission.name() );
-            }
-        } );
+        permissions.forEach( permission ->
+                             {
+                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+                                 {
+                                     result.add( permission.name() );
+                                 }
+                             } );
 
         return result;
     }
@@ -962,7 +957,7 @@ public final class ContentResource
         }
         else
         {
-            return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
+            return result.getContentIds().stream().map( ContentIdJson::new ).collect( Collectors.toList() );
         }
     }
 
@@ -1219,6 +1214,22 @@ public final class ContentResource
         }
         return permissionsJson;
     }
+
+    @GET
+    @Path("listIds")
+    public List<ContentIdJson> listChildrenIds( @QueryParam("parentId") final String parentId,
+                                                @QueryParam("childOrder") @DefaultValue("") final String childOrder )
+    {
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            parentId( StringUtils.isNotEmpty( parentId ) ? ContentId.from( parentId ) : null ).
+            childOrder( StringUtils.isNotEmpty( childOrder ) ? ChildOrder.from( childOrder ) : null ).
+            build();
+
+        final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
+        return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
+    }
+
 
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
     {

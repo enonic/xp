@@ -169,7 +169,7 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
     }
 
     private getPrettyNameForWizardPanel(wizard: api.app.wizard.WizardPanel<api.Equitable>): string {
-        return api.content.ContentUnnamed.prettifyUnnamed((<UserItemWizardPanel>wizard).getUserItemType());
+        return api.content.ContentUnnamed.prettifyUnnamed((<UserItemWizardPanel<api.Equitable>>wizard).getUserItemType());
     }
 
     private handleWizardUpdated(wizard: UserItemWizardPanel<api.Equitable>, tabMenuItem: AppBarTabMenuItem) {
@@ -179,11 +179,9 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
             this.getAppBarTabMenu().removeNavigationItem(tabMenuItem);
             this.removePanelByIndex(tabMenuItem.getIndex());
         }
-        tabMenuItem = new AppBarTabMenuItemBuilder().
-            setTabId(wizard.getTabId()).
-            setEditing(true).
-            setCloseAction(wizard.getCloseAction()).
-            build();
+        tabMenuItem =
+            new AppBarTabMenuItemBuilder().setTabId(wizard.getTabId()).setEditing(true).setCloseAction(wizard.getCloseAction()).setLabel(
+                wizard.getPersistedDisplayName()).build();
         this.addWizardPanel(tabMenuItem, wizard);
 
         // TODO: what is this view that we try to remove?
@@ -353,7 +351,8 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
 
         var wizardParams = new UserStoreWizardPanelParams()
             .setUserStoreKey(userStore.getKey())    // use key to load persisted item
-            .setTabId(tabId);
+            .setTabId(tabId)
+            .setPersistedDisplayName(userStore.getDisplayName());
 
         var wizard = new UserStoreWizardPanel(wizardParams);
 
@@ -386,7 +385,8 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
             .setPrincipalKey(principal.getKey())    // user principal key to load persisted item
             .setPersistedType(principal.getType())
             .setPersistedPath(principal.getKey().toPath(true))
-            .setTabId(tabId);
+            .setTabId(tabId)
+            .setPersistedDisplayName(principal.getDisplayName());
 
         var wizard = this.resolvePrincipalWizardPanel(wizardParams);
 
@@ -416,7 +416,7 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
         var wizard = e.getWizard(),
             tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
         // update tab id so that new wizard for the same content type can be created
-        var newTabId = api.app.bar.AppBarTabId.forEdit(e.getPrincipal().getKey().getId());
+        var newTabId = api.app.bar.AppBarTabId.forEdit(e.getPrincipal().getKey().toString());
         tabMenuItem.setTabId(newTabId);
         wizard.setTabId(newTabId);
 
@@ -437,9 +437,9 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
     private getTabIdForUserItem(userItem: UserTreeGridItem): AppBarTabId {
         var appBarTabId: AppBarTabId;
         if (UserTreeGridItemType.PRINCIPAL == userItem.getType()) {
-            appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().getId());
+            appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().toString());
         } else if (UserTreeGridItemType.USER_STORE == userItem.getType()) {
-            appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().getId());
+            appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().toString());
         }
         return appBarTabId;
     }

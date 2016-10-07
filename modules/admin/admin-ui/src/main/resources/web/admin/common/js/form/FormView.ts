@@ -294,5 +294,13 @@ module api.form {
                 listener();
             })
         }
+
+        toggleHelpText(show?: boolean) {
+            this.formItemLayer.toggleHelpText(show);
+        }
+
+        hasHelpText(): boolean {
+            return this.formItemLayer.hasHelpText();
+        }
     }
 }

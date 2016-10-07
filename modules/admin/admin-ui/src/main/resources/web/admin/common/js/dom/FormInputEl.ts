@@ -2,9 +2,9 @@ module api.dom {
 
     export class FormInputEl extends FormItemEl {
 
-        private dirtyChangedListeners: {(dirty: boolean):void}[] = [];
+        private dirtyChangedListeners: {(dirty: boolean): void}[] = [];
 
-        private valueChangedListeners: {(event: api.ValueChangedEvent):void}[] = [];
+        private valueChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
 
         private originalValue: string;
 
@@ -18,6 +18,8 @@ module api.dom {
             super(tagName, className, prefix);
             this.addClass('form-input');
 
+            this.originalValue = originalValue;
+
             if (FormInputEl.debug) {
                 console.groupCollapsed(this.toString() + ".constructor: setting originalValue = " +
                                        this.originalValue + ", oldValue = " + this.oldValue);
@@ -26,12 +28,12 @@ module api.dom {
             // Descendant class might override my methods
             // therefore set value on added to make sure it's ready
             this.onAdded((event) => {
-                if (!api.util.StringHelper.isBlank(originalValue)) {
+                if (!api.util.StringHelper.isBlank(this.originalValue)) {
                     if (FormInputEl.debug) {
-                        console.debug(this.toString() + '.onAdded: setting original value = "' + originalValue + '"');
+                        console.debug(this.toString() + '.onAdded: setting original value = "' + this.originalValue + '"');
                     }
                     // use this prototype's setValue because descendants might override setValue method (i.e. CheckBox, RadioGroup)
-                    FormInputEl.prototype.setValue.call(this, originalValue, true);
+                    FormInputEl.prototype.setValue.call(this, this.originalValue, true);
                 }
             });
 
@@ -47,6 +49,10 @@ module api.dom {
 
         getValue(): string {
             return this.doGetValue();
+        }
+
+        protected getOriginalValue(): string {
+            return String(this.originalValue); // returns copy of original value to avoid possible changing
         }
 
         /**
@@ -116,11 +122,16 @@ module api.dom {
         }
 
         isDirty(): boolean {
-            return this.originalValue != this.doGetValue();
+            return !api.ObjectHelper.stringEquals(this.originalValue, this.doGetValue());
         }
 
         toString(): string {
             return api.ClassHelper.getClassName(this) + '[' + this.getId() + ']';
+        }
+
+        resetBaseValues(value: string) {
+            this.originalValue = value;
+            this.oldValue = value;
         }
 
         private setDirty(dirty: boolean, silent?: boolean) {

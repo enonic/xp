@@ -13,6 +13,7 @@
     width: 100%;
     padding-right: 0;
     cursor: default;
+    position: relative;
 
     &:hover {
       background: none;
@@ -33,11 +34,12 @@
 
     .edit {
       .icon-pencil2;
-      margin: 0px 20px;
+      right: 30px;
     }
 
     .remove {
       .icon-close;
+      right: 5px;
     }
 
     .remove, .edit {
@@ -45,10 +47,11 @@
       .focusable();
 
       border: 1px solid transparent;
-      float: right;
+      position: absolute;
       font-size: 12px;
       text-decoration: none;
       cursor: pointer;
+      top: 9px;
     }
 
     &.non-editable {
@@ -59,6 +62,10 @@
       }
     }
   }
+}
+
+.display-validation-errors .invalid .selected-options:not(:empty) {
+  padding-bottom: 15px;
 }
 
 .option-cell() {

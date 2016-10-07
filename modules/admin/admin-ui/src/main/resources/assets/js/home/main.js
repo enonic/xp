@@ -10,16 +10,47 @@ $(function () {
     sessionExpiredDetector.startPolling();
 
     var xptour = require('./xptour');
-    xptour.init();
+    var tourDialog = xptour.init();
+
+    var enonicXPTourCookie = api.util.CookieHelper.getCookie("enonic_xp_tour");
+    if (!enonicXPTourCookie) {
+        api.util.CookieHelper.setCookie("enonic_xp_tour", "tour", 365);
+        setTimeout(function () {
+            tourDialog.open();
+        }, 100);
+    }
+
+    document.querySelector(".xp-tour").addEventListener("click", function () {
+        tourDialog.open();
+        setupBodyClickListeners(tourDialog);
+    });
+
 });
 
+function setupBodyClickListeners(dialog) {
+    var bodyEl = api.ui.mask.BodyMask.get().getHTMLElement(),
+        listener = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            if (dialog.isVisible()) {
+                dialog.close();
+            }
+            bodyEl.removeEventListener("click", listener);
+        };
+    bodyEl.addEventListener("click", listener);
+}
+
 function setupAboutDialog() {
-    var aboutDialog = new api.ui.dialog.ModalDialog({title: new api.ui.dialog.ModalDialogHeader("")});
+    var aboutDialog = new api.ui.dialog.ModalDialog({
+        title: new api.ui.dialog.ModalDialogHeader(""),
+        forceHorizontalCentering: true,
+        ignoreClickOutside: true
+    });
     aboutDialog.addClass("xp-about-dialog");
     aboutDialog.appendChildToContentPanel(getAboutDialogContent());
     document.querySelector(".xp-about").addEventListener("click", function () {
         aboutDialog.open();
-        aboutDialog.centerHorisontally();
+        setupBodyClickListeners(aboutDialog);
     });
     api.dom.Body.get().appendChild(aboutDialog);
 }
@@ -31,13 +62,17 @@ function getAboutDialogContent() {
                '    </div>' +
                '    <h1>Enonic XP</h1>' +
                '    <div class="xp-about-dialog-version-block">' +
-               '        <span class="xp-about-dialog-version">' + CONFIG.xpVersion + '</span>&nbsp;' +
+               '        <span class="xp-about-dialog-version">' + CONFIG.xpVersion + '</span>&nbsp;&nbsp;' +
                '        <a href="' + CONFIG.docLinkPrefix + '/appendix/release-notes/" target="_blank">What\'s new</a>' +
                '    </div>' +
                '    <div class="xp-about-dialog-text">' +
-               'Blend sites, applications and services together seamlessly. ' +
-               'Our powerful Web Operating System simplifies all stages of the ' +
-               'digital delivery process - focus on solution rather than technology.' +
+               'The Web Operating System - ‌‌Designed to simplify development and delivery of digital experiences and services.<br><br>' +
+               'Built with <span style="color: red;">♥</span> by the Enonic Team.' +
+               '    </div>' +
+               '    <div class="xp-about-dialog-footer">' +
+               '        <a href="https://github.com/enonic/xp/blob/master/LICENSE.txt" target="_blank">Licensing</a>' +
+               '        <a href="https://github.com/enonic/xp/" target="_blank">Source Code</a>' +
+               '        <a href="https://enonic.com/downloads" target="_blank">Downloads</a>' +
                '    </div>' +
                '</div>';
 

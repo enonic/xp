@@ -41,6 +41,4 @@ public interface Application
     Set<String> getFiles();
 
     URL resolveFile( String path );
-
-    boolean hasSiteDescriptor();
 }

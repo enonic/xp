@@ -1,8 +1,8 @@
 import "../../../../../api.ts";
-
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import {WidgetItemView} from "../../WidgetItemView";
 import {VersionsView} from "./VersionsView";
+
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class VersionsWidgetItemView extends WidgetItemView {
 
@@ -14,6 +14,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
 
     constructor() {
         super("version-widget-item-view");
+        this.managePublishEvent();
     }
 
     public layout(): wemQ.Promise<any> {
@@ -35,7 +36,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
         });
     }
 
-    public setItem(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
         if (VersionsWidgetItemView.debug) {
             console.debug('VersionsWidgetItemView.setItem: ', item);
         }
@@ -47,18 +48,45 @@ export class VersionsWidgetItemView extends WidgetItemView {
         return wemQ<any>(null);
     }
 
-    public reloadActivePanel(): wemQ.Promise<any> {
+    private managePublishEvent() {
+
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+
+        serverEvents.onContentPublished((contents: ContentSummaryAndCompareStatus[]) => {
+            if (this.versionsView && this.versionsView.getContentId()) {
+                // check for item because it can be null after publishing pending for delete item
+                var itemId = this.versionsView.getContentId();
+                var isPublished = contents.some((content) => {
+                    return itemId.equals(content.getContentId());
+                });
+
+                if (isPublished) {
+                    this.reloadActivePanel();
+                }
+            }
+        });
+    }
+
+    private reloadActivePanel(): wemQ.Promise<any> {
         if (VersionsWidgetItemView.debug) {
             console.debug('VersionsWidgetItemView.reloadActivePanel');
         }
 
-        this.gridLoadDeferred = wemQ.defer<any>();
-        if (this.versionsView) {
-            this.versionsView.reload();
-        } else {
-            this.gridLoadDeferred.resolve(null);
+        if (this.gridLoadDeferred) {
+            return this.gridLoadDeferred.promise;
         }
-        return this.gridLoadDeferred.promise;
+
+        if (this.versionsView) {
+            this.gridLoadDeferred = wemQ.defer<any>();
+            this.versionsView.reload()
+                .then(() => this.gridLoadDeferred.resolve(null))
+                .catch(reason => this.gridLoadDeferred.reject(reason))
+                .finally(() => this.gridLoadDeferred = null);
+
+            return this.gridLoadDeferred.promise;
+        } else {
+            return wemQ(null);
+        }
     }
 
 }

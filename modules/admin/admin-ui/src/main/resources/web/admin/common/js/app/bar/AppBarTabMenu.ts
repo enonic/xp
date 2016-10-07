@@ -62,11 +62,8 @@ module api.app.bar {
                 tabsInBar = barTabs.length,
                 tabsInMenu = menuTabs.length;
 
-            while (!(
-                // escape condition
-                exactTabs === tabsInBar ||
-                (exactTabs > tabsInBar && tabsInMenu === 0)
-            )) {
+            // escape condition
+            while (!(exactTabs === tabsInBar || (exactTabs > tabsInBar && tabsInMenu === 0))) {
 
                 if (exactTabs > tabsInBar) {
                     if (tabsInMenu > 0) {

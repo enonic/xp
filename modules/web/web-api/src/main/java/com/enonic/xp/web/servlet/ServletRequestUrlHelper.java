@@ -8,6 +8,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -228,5 +229,11 @@ public final class ServletRequestUrlHelper
 
         final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
         return "/" + Joiner.on( '/' ).join( parts );
+    }
+
+    public static String contentDispositionAttachment( final String fileName )
+    {
+        final String escapedFileName = UrlEscapers.urlPathSegmentEscaper().escape( fileName ).replace( ",", "%2c" );
+        return "attachment; filename=\"" + fileName + "\"; filename*=UTF-8''" + escapedFileName + "";
     }
 }

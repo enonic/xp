@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -8,6 +11,8 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -139,12 +144,30 @@ public class PushContentCommand
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
 
-        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
+        final Contents contents = getContents( pushNodesResult.getSuccessful().getKeys() );
+        final Contents failedContents = getContents(
+            pushNodesResult.getFailed().stream().map( failed -> failed.getNodeBranchEntry().getNodeId() ).collect( Collectors.toSet() ) );
+
+        this.resultBuilder.setFailed( failedContents );
+        this.resultBuilder.setPushed( contents );
+    }
+
+    private Contents getContents( final Set<NodeId> successfull )
+    {
+        final ContentIds successful = ContentNodeHelper.toContentIds( NodeIds.from( successfull ) );
+
+        return GetContentByIdsCommand.create( new GetContentByIdsParams( successful ) ).
+            contentTypeService( this.contentTypeService ).
+            eventPublisher( this.eventPublisher ).
+            nodeService( this.nodeService ).
+            translator( this.translator ).
+            build().
+            execute();
     }
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
-        this.resultBuilder.setDeleted( ContentNodeHelper.toContentIds( NodeIds.from( nodeIdsToDelete ) ) );
+        this.resultBuilder.setDeleted( getContents( nodeIdsToDelete.getSet() ) );
 
         final Context currentContext = ContextAccessor.current();
         deleteNodesInContext( nodeIdsToDelete, currentContext );

@@ -160,4 +160,14 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "10.0.0.1", ServletRequestUrlHelper.getRemoteAddress( this.req ) );
     }
+
+    @Test
+    public void contentDispositionAttachment_filename_with_comma()
+    {
+        final String fileName = "Prisliste for pakker, stykk- og partigods nasjonalt 01.12.2015.pdf";
+        assertEquals( "attachment; filename=\"Prisliste for pakker, stykk- og partigods nasjonalt 01.12.2015.pdf\"; " +
+                          "filename*=UTF-8''Prisliste%20for%20pakker%2c%20stykk-%20og%20partigods%20nasjonalt%2001.12.2015.pdf",
+                      ServletRequestUrlHelper.contentDispositionAttachment( fileName ) );
+    }
+
 }

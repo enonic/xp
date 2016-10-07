@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -95,24 +96,13 @@ public final class ApplicationResource
     public ListApplicationJson list( @QueryParam("query") final String query )
     {
         Applications applications = this.applicationService.getInstalledApplications();
-        if ( StringUtils.isNotBlank( query ) )
-        {
-            applications = Applications.from( applications.stream().
-                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
-                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
-                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
-                collect( Collectors.toList() ) );
-        }
+
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
 
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
-            if ( !application.hasSiteDescriptor() )
-            {
-                continue;
-            }
             final ApplicationKey applicationKey = application.getKey();
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
                 !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
@@ -128,6 +118,22 @@ public final class ApplicationResource
         }
 
         return json;
+    }
+
+    @GET
+    @Path("listKeys")
+    public List<String> listKeys( @QueryParam("query") final String query )
+    {
+        Applications applications = this.applicationService.getInstalledApplications();
+
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
+
+        return applications.getApplicationKeys().stream().filter(
+            applicationKey -> !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
+                !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
+                    applicationKey ) ) //TODO Remove after 7.0.0 refactoring
+            .map( applicationKey -> applicationKey.toString() ).collect( Collectors.toList() );
     }
 
     @GET
@@ -313,11 +319,61 @@ public final class ApplicationResource
     public MarketApplicationsJson getMarketApplications( final GetMarketApplicationsJson params )
         throws Exception
     {
-        final String version = params.getVersion() != null ? params.getVersion() : "1.0.0";
-        final int start = parseInt( params.getStart(), 0 );
-        final int count = parseInt( params.getCount(), 10 );
+        final String version = params.getVersion();
+        final int start = params.getStart();
+        final int count = params.getCount();
+        final List<String> ids = params.getIds();
 
-        return this.marketService.get( version, start, count );
+        return this.marketService.get( ids, version, start, count );
+    }
+
+
+    @GET
+    @Path("getSiteApplications")
+    public ListApplicationJson getSiteApplications( @QueryParam("query") final String query )
+    {
+        final ListApplicationJson json = new ListApplicationJson();
+
+        Applications applications = this.applicationService.getInstalledApplications();
+
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
+
+        for ( final Application application : applications )
+        {
+            final ApplicationKey applicationKey = application.getKey();
+            final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
+
+            if ( siteDescriptor != null )
+            {
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+                final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
+                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+            }
+        }
+        return json;
+    }
+
+    @GET
+    @Path("getIdProvider")
+    public ApplicationJson getIdProvider( @QueryParam("applicationKey") String key )
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
+
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+
+        if ( authDescriptor != null )
+        {
+            final Application application = this.applicationService.getInstalledApplication( applicationKey );
+            final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+
+            final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
+
+            final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( applicationKey );
+            return new ApplicationJson( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+        }
+        return null;
     }
 
     @GET
@@ -344,18 +400,6 @@ public final class ApplicationResource
         return json;
     }
 
-    private int parseInt( final String value, final int defaultValue )
-    {
-        try
-        {
-            return Integer.parseInt( value );
-        }
-        catch ( NumberFormatException e )
-        {
-            return defaultValue;
-        }
-    }
-
     private byte[] loadDefaultImage( final String imageName )
     {
         try (final InputStream in = getClass().getResourceAsStream( imageName ))
@@ -371,6 +415,29 @@ public final class ApplicationResource
         {
             throw new RuntimeException( "Failed to load default image: " + imageName, e );
         }
+    }
+
+    private Applications sortApplications( final Applications applications )
+    {
+        return Applications.from( applications.stream().
+            sorted( ( app1, app2 ) -> app1.getDisplayName().compareTo( app2.getDisplayName() ) ).
+            collect( Collectors.toList() ) );
+    }
+
+    private Applications filterApplications( final Applications applications, final String query )
+    {
+        if ( StringUtils.isNotBlank( query ) )
+        {
+            return Applications.from( applications.stream().
+                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
+                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
+                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
+                collect( Collectors.toList() ) );
+        }
+
+        return applications;
     }
 
     @Reference

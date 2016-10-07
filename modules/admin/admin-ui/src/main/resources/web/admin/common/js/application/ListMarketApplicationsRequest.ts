@@ -5,10 +5,16 @@ module api.application {
         private version: string;
         private start: number = 0;
         private count: number = 10;
+        private ids: string[] = [];
 
         constructor() {
             super();
             this.setMethod("POST");
+        }
+
+        setIds(ids: string[]): ListMarketApplicationsRequest {
+            this.ids = ids;
+            return this;
         }
 
         setVersion(version: string): ListMarketApplicationsRequest {
@@ -28,6 +34,7 @@ module api.application {
 
         getParams(): Object {
             return {
+                ids: this.ids,
                 version: this.version,
                 start: this.start,
                 count: this.count,

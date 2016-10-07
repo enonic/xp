@@ -19,6 +19,9 @@ import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
+import SecurityResourceRequest = api.security.SecurityResourceRequest;
+import StringHelper = api.util.StringHelper;
+import PrincipalJson = api.security.PrincipalJson;
 
 export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
@@ -221,7 +224,17 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     updatePersistedItem(): wemQ.Promise<Principal> {
-        throw new Error("Must be implemented by inheritors");
+        return this.produceUpdateRequest(this.assembleViewedItem()).sendAndParse().then((principal:Principal) => {
+            if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
+                this.notifyPrincipalNamed(principal);
+            }
+
+            var principalTypeName = StringHelper.capitalize(PrincipalType[principal.getType()].toLowerCase());
+            api.notify.showFeedback(principalTypeName + " '" + principal.getDisplayName() + "' was updated!");
+            new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
+
+            return principal;
+        });
     }
 
     hasUnsavedChanges(): boolean {
@@ -234,22 +247,12 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         }
     }
 
-    assembleViewedItem(): Principal {
-        var key = this.getPersistedItem().getKey(),
-            displayName = this.getWizardHeader().getDisplayName(),
-            modifiedTime = this.getPersistedItem().getModifiedTime();
-
-        var principal = Principal.create().setKey(key).setDisplayName(displayName).setModifiedTime(modifiedTime).build();
-        return principal;
+    protected produceUpdateRequest(viewedPrincipal: Principal): SecurityResourceRequest<PrincipalJson, Principal> {
+        throw new Error("Must be implemented by inheritors");
     }
 
-    resolvePrincipalNameForUpdateRequest(): string {
-        var wizardHeader = this.getWizardHeader();
-        if (api.util.StringHelper.isEmpty(wizardHeader.getName())) {
-            return this.getPersistedItem().getDisplayName();
-        } else {
-            return wizardHeader.getName();
-        }
+    protected assembleViewedItem():Principal {
+        throw new Error("Must be implemented by inheritors");
     }
 
     onPrincipalNamed(listener: (event: PrincipalNamedEvent)=>void) {

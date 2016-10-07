@@ -16,6 +16,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
+
 final class AttachmentHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {
@@ -48,7 +50,7 @@ final class AttachmentHandlerWorker
 
         if ( this.download )
         {
-            portalResponse.header( "Content-Disposition", "attachment; filename=" + attachment.getName() );
+            portalResponse.header( "Content-Disposition", contentDispositionAttachment( attachment.getName() ) );
         }
         if ( this.name.endsWith( ".svgz" ) )
         {
@@ -67,13 +69,32 @@ final class AttachmentHandlerWorker
 
     private Content getContent( final ContentId contentId )
     {
-        final Content content = this.contentService.getById( contentId );
+        final Content content = getContentById( contentId );
         if ( content == null )
         {
-            throw notFound( "Content with id [%s] not found", contentId.toString() );
+            if ( this.contentService.contentExists( contentId ) )
+            {
+                throw forbidden( "You don't have permission to access [%s]", contentId );
+            }
+            else
+            {
+                throw notFound( "Content with id [%s] not found", contentId.toString() );
+            }
         }
 
         return content;
+    }
+
+    private Content getContentById( final ContentId contentId )
+    {
+        try
+        {
+            return this.contentService.getById( contentId );
+        }
+        catch ( final Exception e )
+        {
+            return null;
+        }
     }
 
     private ByteSource resolveBinary( final ContentId id, final Attachment attachment )

@@ -85,11 +85,4 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
     isPersistedEqualsViewed(): boolean {
         throw new Error("Must be implemented by inheritors");
     }
-
-    show() {
-        setTimeout(() => {
-            super.show();
-        }, 0);
-
-    }
 }

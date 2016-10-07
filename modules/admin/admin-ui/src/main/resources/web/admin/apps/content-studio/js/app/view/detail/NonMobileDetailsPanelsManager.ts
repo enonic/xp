@@ -1,16 +1,17 @@
 import "../../../api.ts";
-
-import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
-import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import {DetailsPanel} from "./DetailsPanel";
+import {FloatingDetailsPanel} from "./FloatingDetailsPanel";
+import {DockedDetailsPanel} from "./DockedDetailsPanel";
 import {NonMobileDetailsPanelToggleButton} from "./button/NonMobileDetailsPanelToggleButton";
 import {ActiveDetailsPanelManager} from "./ActiveDetailsPanelManager";
+
+import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 export class NonMobileDetailsPanelsManager {
 
     private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
-    private defaultDockedDetailsPanel: DetailsPanel;
-    private floatingDetailsPanel: DetailsPanel;
+    private dockedDetailsPanel: DockedDetailsPanel;
+    private floatingDetailsPanel: FloatingDetailsPanel;
     private resizeEventMonitorLocked: boolean = false;
     private toggleButton: api.dom.DivEl = new NonMobileDetailsPanelToggleButton();
     private debouncedResizeHandler: () => void = api.util.AppHelper.debounce(this.doHandleResizeEvent, 300, false);
@@ -18,7 +19,7 @@ export class NonMobileDetailsPanelsManager {
     constructor(builder: NonMobileDetailsPanelsManagerBuilder) {
 
         this.splitPanelWithGridAndDetails = builder.getSplitPanelWithGridAndDetails();
-        this.defaultDockedDetailsPanel = builder.getDefaultDetailsPanel();
+        this.dockedDetailsPanel = builder.getDefaultDetailsPanel();
         this.floatingDetailsPanel = builder.getFloatingDetailsPanel();
 
         this.toggleButton.onClicked((event) => {
@@ -27,7 +28,7 @@ export class NonMobileDetailsPanelsManager {
             }
         });
 
-        this.defaultDockedDetailsPanel.onShown(() => {
+        this.dockedDetailsPanel.onShown(() => {
             this.splitPanelWithGridAndDetails.distribute();
         });
     }
@@ -42,7 +43,7 @@ export class NonMobileDetailsPanelsManager {
             if (this.needsSwitchToFloatingMode() || this.needsSwitchToDockedMode()) {
                 this.doPanelAnimation();
             } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
-                this.defaultDockedDetailsPanel.notifyPanelSizeChanged();
+                this.dockedDetailsPanel.notifyPanelSizeChanged();
             }
             else if (this.isFloatingDetailsPanelActive()) {
                 this.floatingDetailsPanel.notifyPanelSizeChanged();
@@ -64,12 +65,16 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private nonMobileDetailsPanelIsActive(): boolean {
-        return ActiveDetailsPanelManager.getActiveDetailsPanel() == this.defaultDockedDetailsPanel ||
+        return ActiveDetailsPanelManager.getActiveDetailsPanel() == this.dockedDetailsPanel ||
                ActiveDetailsPanelManager.getActiveDetailsPanel() == this.floatingDetailsPanel;
     }
 
     private doPanelAnimation(canSetActivePanel: boolean = true) {
+
+        this.splitPanelWithGridAndDetails.addClass("sliding");
+
         if (this.requiresFloatingPanelDueToShortWidth()) {
+            this.toggleButton.addClass("floating-mode");
             if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                 this.dockedToFloatingSync();
             }
@@ -86,18 +91,19 @@ export class NonMobileDetailsPanelsManager {
                 this.floatingDetailsPanel.slideOut();
             }
             this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
+            this.splitPanelWithGridAndDetails.removeClass("sliding");
 
         } else {
-
+            this.toggleButton.removeClass("floating-mode");
             if (this.floatingPanelIsShown()) {
                 this.floatingToDockedSync();
             }
 
             if (canSetActivePanel) {
-                ActiveDetailsPanelManager.setActiveDetailsPanel(this.defaultDockedDetailsPanel);
+                ActiveDetailsPanelManager.setActiveDetailsPanel(this.dockedDetailsPanel);
             }
 
-            this.defaultDockedDetailsPanel.addClass("left-bordered");
+            this.dockedDetailsPanel.addClass("left-bordered");
 
             if (this.isExpanded()) {
                 this.splitPanelWithGridAndDetails.showSecondPanel(false);
@@ -106,12 +112,13 @@ export class NonMobileDetailsPanelsManager {
             }
 
             setTimeout(() => {
-                this.defaultDockedDetailsPanel.removeClass("left-bordered");
+                this.dockedDetailsPanel.removeClass("left-bordered");
                 if (this.isExpanded()) {
                     this.splitPanelWithGridAndDetails.showSplitter();
-                    this.defaultDockedDetailsPanel.notifyPanelSizeChanged();
+                    this.dockedDetailsPanel.notifyPanelSizeChanged();
                 }
-            }, 500);
+                this.splitPanelWithGridAndDetails.removeClass("sliding");
+            }, 600);
         }
 
         this.ensureButtonHasCorrectState();
@@ -131,7 +138,7 @@ export class NonMobileDetailsPanelsManager {
     }
 
     getActivePanel(): DetailsPanel {
-        return this.requiresFloatingPanelDueToShortWidth() ? this.floatingDetailsPanel : this.defaultDockedDetailsPanel;
+        return this.requiresFloatingPanelDueToShortWidth() ? this.floatingDetailsPanel : this.dockedDetailsPanel;
     }
 
     private isExpanded(): boolean {
@@ -215,8 +222,8 @@ export class NonMobileDetailsPanelsManager {
 
 export class NonMobileDetailsPanelsManagerBuilder {
     private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
-    private defaultDockedDetailsPanel: DetailsPanel;
-    private floatingDetailsPanel: DetailsPanel;
+    private dockedDetailsPanel: DockedDetailsPanel;
+    private floatingDetailsPanel: FloatingDetailsPanel;
 
     constructor() {
     }
@@ -225,11 +232,11 @@ export class NonMobileDetailsPanelsManagerBuilder {
         this.splitPanelWithGridAndDetails = splitPanelWithGridAndDetails;
     }
 
-    setDefaultDetailsPanel(defaultDockedDetailsPanel: DetailsPanel) {
-        this.defaultDockedDetailsPanel = defaultDockedDetailsPanel;
+    setDefaultDetailsPanel(dockedDetailsPanel: DockedDetailsPanel) {
+        this.dockedDetailsPanel = dockedDetailsPanel;
     }
 
-    setFloatingDetailsPanel(floatingDetailsPanel: DetailsPanel) {
+    setFloatingDetailsPanel(floatingDetailsPanel: FloatingDetailsPanel) {
         this.floatingDetailsPanel = floatingDetailsPanel;
     }
 
@@ -237,11 +244,11 @@ export class NonMobileDetailsPanelsManagerBuilder {
         return this.splitPanelWithGridAndDetails;
     }
 
-    getDefaultDetailsPanel(): DetailsPanel {
-        return this.defaultDockedDetailsPanel;
+    getDefaultDetailsPanel(): DockedDetailsPanel {
+        return this.dockedDetailsPanel;
     }
 
-    getFloatingDetailsPanel(): DetailsPanel {
+    getFloatingDetailsPanel(): FloatingDetailsPanel {
         return this.floatingDetailsPanel;
     }
 

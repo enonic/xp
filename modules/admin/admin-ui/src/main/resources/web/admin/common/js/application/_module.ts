@@ -6,10 +6,11 @@
 ///<reference path='ApplicationInstallResult.ts' />
 ///<reference path='GetApplicationRequest.ts' />
 ///<reference path='ListApplicationsRequest.ts' />
+///<reference path='ListApplicationKeysRequest.ts' />
 ///<reference path='ApplicationListResult.ts' />
 ///<reference path='ApplicationLoader.ts' />
+///<reference path='SiteApplicationLoader.ts' />
 ///<reference path='ApplicationViewer.ts' />
-///<reference path='ApplicationComboBox.ts' />
 ///<reference path='StopApplicationRequest.ts' />
 ///<reference path='StartApplicationRequest.ts' />
 ///<reference path='ApplicationEvent.ts' />
@@ -26,4 +27,6 @@
 ///<reference path='MarketApplicationMetadata.ts' />
 ///<reference path='ListMarketApplicationsRequest.ts' />
 ///<reference path='UninstallApplicationRequest.ts' />
+///<reference path='ListSiteApplicationsRequest.ts' />
 ///<reference path='ListAuthApplicationsRequest.ts' />
+///<reference path='AuthApplicationRequest.ts' />

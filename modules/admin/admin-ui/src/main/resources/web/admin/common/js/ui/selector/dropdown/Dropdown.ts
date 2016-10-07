@@ -44,9 +44,9 @@ module api.ui.selector.dropdown {
 
         private selectedOptionView: SelectedOptionView<OPTION_DISPLAY_VALUE>;
 
-        private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
+        private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void}[] = [];
 
-        private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
+        private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>): void}[] = [];
 
         private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
 
@@ -119,8 +119,8 @@ module api.ui.selector.dropdown {
             });
         }
 
-        getInput(): DropdownOptionFilterInput {
-            return this.input;
+        isValid(): boolean {
+            return this.input.isValid();
         }
 
         setEmptyDropdownText(label: string) {
@@ -305,8 +305,10 @@ module api.ui.selector.dropdown {
 
         private setupListeners() {
             api.util.AppHelper.focusInOut(this, () => {
-                this.hideDropdown();
-                this.active = false;
+                if (this.isVisible()) {
+                    this.hideDropdown();
+                    this.active = false;
+                }
             });
 
             this.dropdownHandle.onClicked((event: any) => {
@@ -337,8 +339,12 @@ module api.ui.selector.dropdown {
                 }
             });
 
-            this.input.onKeyDown((event: KeyboardEvent) => {
+            this.input.onClicked((event: MouseEvent) => {
+                this.giveFocus();
+                this.input.setReadOnly(false);
+            });
 
+            this.input.onKeyDown((event: KeyboardEvent) => {
                 if (event.which == 9) { // tab
                     this.hideDropdown();
                     return;
@@ -347,10 +353,15 @@ module api.ui.selector.dropdown {
                     return;
                 }
 
-                //this.dropdownList.navigateToFirstRowIfNotActive();
-
                 if (!this.isDropdownShown()) {
-                    this.showDropdown();
+                    if (event.which == 40) { // down
+                        this.input.setReadOnly(true);
+                        this.showDropdown();
+                        this.dropdownList.navigateToRowIfNotActive();
+                        event.stopPropagation();
+                        event.preventDefault();
+                    }
+
                     return;
                 }
 
@@ -361,10 +372,13 @@ module api.ui.selector.dropdown {
                 } else if (event.which == 13) { // enter
                     this.selectRow(this.dropdownList.getActiveRow(), false, 13);
                     this.input.getEl().setValue("");
-                    event.preventDefault();
-                    event.stopPropagation();
                 } else if (event.which == 27) { // esc
                     this.hideDropdown();
+                }
+
+                if (event.which == 38 || event.which == 40 || event.which == 13 || event.which == 27) {
+                    event.stopPropagation();
+                    event.preventDefault();
                 }
 
                 this.input.getHTMLElement().focus();
@@ -393,17 +407,19 @@ module api.ui.selector.dropdown {
         }
 
         unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
-            this.optionFilterInputValueChangedListeners.filter((currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                return listener != currentListener;
-            })
+            this.optionFilterInputValueChangedListeners.filter(
+                (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                    return listener != currentListener;
+                })
         }
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
             var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
                 this.dropdownList.getDropdownGrid().getElement());
-            this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                listener(event);
-            });
+            this.optionFilterInputValueChangedListeners.forEach(
+                (listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                    listener(event);
+                });
         }
 
         onExpanded(listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) {

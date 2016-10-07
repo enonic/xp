@@ -4,20 +4,13 @@ module api.util.loader.event {
 
         private data: V[];
 
-        private postLoad: boolean;
-
         constructor(data: V[], postLoad?: boolean) {
-            super();
+            super(postLoad);
             this.data = data;
-            this.postLoad = postLoad;
         }
 
         getData(): V[] {
             return this.data;
-        }
-
-        isPostLoaded(): boolean {
-            return this.postLoad;
         }
     }
 }

@@ -21,7 +21,9 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
 
     setObject(object: MarketApplication, relativePath: boolean = false): wemQ.Promise<boolean> {
         this.relativePath = relativePath;
-        return super.setObject(object);
+        super.setObject(object);
+
+        return wemQ(true);
     }
 
     resolveDisplayName(object: MarketApplication): string {

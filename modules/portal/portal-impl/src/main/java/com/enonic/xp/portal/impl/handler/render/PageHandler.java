@@ -8,6 +8,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.web.WebRequest;
@@ -45,6 +46,8 @@ public final class PageHandler
     protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
+        WebHandlerHelper.checkAdminAccess( webRequest );
+        
         final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest );
         worker.setContentService( this.contentService );
         worker.rendererFactory = rendererFactory;

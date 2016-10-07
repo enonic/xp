@@ -26,6 +26,7 @@ import AccessControlList = api.security.acl.AccessControlList;
 import ContentId = api.content.ContentId;
 import ContentAccessControlList = api.security.acl.ContentAccessControlList;
 import Permission = api.security.acl.Permission;
+import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -117,35 +118,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.UNPUBLISH_CONTENT.setVisible(false);
     }
 
-    private resetDefaultActionsSingleItemSelected(contentBrowseItem: ContentBrowseItem) {
-        let contentSummary: ContentSummary = contentBrowseItem.getModel().getContentSummary();
-
-        let treePublishEnabled = true,
-            unpublishEnabled = true,
-            publishEnabled = !this.isOnline(contentBrowseItem.getModel().getCompareStatus()),
-            isPublished = this.isPublished(contentBrowseItem.getModel().getCompareStatus());
-
-        if (this.isEveryLeaf([contentSummary])) {
-            treePublishEnabled = false;
-            unpublishEnabled = isPublished;
-        } else if (this.isOneNonLeaf([contentSummary])) {
-            unpublishEnabled = isPublished;
-        }
-
-        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-        this.EDIT_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isEditable());
-        this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
-        this.DUPLICATE_CONTENT.setEnabled(true);
-        this.MOVE_CONTENT.setEnabled(true);
-        this.SORT_CONTENT.setEnabled(true);
-
-        this.PUBLISH_CONTENT.setEnabled(publishEnabled);
-        this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
-        this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
-        this.PUBLISH_CONTENT.setVisible(!isPublished);
-        this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
-    }
-
     private resetDefaultActionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[]) {
         let contentSummaries: ContentSummary[] = contentBrowseItems.map((elem: ContentBrowseItem) => {
             return elem.getModel().getContentSummary();
@@ -177,13 +149,15 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(false);
         this.MOVE_CONTENT.setEnabled(true);
-        this.SORT_CONTENT.setEnabled(false);
+        this.SORT_CONTENT.setEnabled(contentSummaries.length == 1);
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
         this.PUBLISH_CONTENT.setVisible(publishEnabled);
         this.UNPUBLISH_CONTENT.setVisible(!publishEnabled);
+
+        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
@@ -209,22 +183,21 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     private doUpdateActionsEnabledState(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
         switch (contentBrowseItems.length) {
         case 0:
-            this.resetDefaultActionsNoItemsSelected();
             return this.updateActionsByPermissionsNoItemsSelected();
             break;
         case 1:
-            this.resetDefaultActionsSingleItemSelected(contentBrowseItems[0]);
             return this.updateActionsByPermissionsSingleItemSelected(contentBrowseItems);
             break;
         default:
-            this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
             return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems);
         }
     }
 
     private updateActionsByPermissionsNoItemsSelected(): wemQ.Promise<any> {
-        return new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
-            (allowedPermissions: Permission[]) => {
+        return new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().
+            then((allowedPermissions: Permission[]) => {
+                this.resetDefaultActionsNoItemsSelected();
+
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(canCreate);
@@ -234,25 +207,21 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     private updateActionsByPermissionsSingleItemSelected(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
         var selectedItem = contentBrowseItems[0].getModel().getContentSummary();
 
-        this.checkIsDuplicateAllowedByPermissions(selectedItem).then((result: boolean) => {
-            this.DUPLICATE_CONTENT.setEnabled(result);
-        });
-
-        return this.checkIsChildrenAllowedByPermissions(selectedItem).then((contentTypesAllowChildren: boolean) => {
-            return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems, contentTypesAllowChildren);
+        return this.checkIsChildrenAllowedByContentType(selectedItem).then((contentTypeAllowsChildren: boolean) => {
+            return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems, contentTypeAllowsChildren).then(() => {
+                return this.updateCanDuplicateActionSingleItemSelected(selectedItem);
+            });
         });
     }
 
     private updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[],
                                                             contentTypesAllowChildren: boolean = true): wemQ.Promise<any> {
-        let selectedItemsIds: ContentId[] = contentBrowseItems.map((contentBrowseItem: ContentBrowseItem) => {
-            return contentBrowseItem.getModel().getContentId();
-        });
-
-        return new api.content.resource.GetPermittedActionsRequest().addContentIds(...selectedItemsIds).addPermissionsToBeChecked(
-            Permission.CREATE,
-            Permission.DELETE, Permission.PUBLISH).sendAndParse().then(
-            (allowedPermissions: Permission[]) => {
+        return new api.content.resource.GetPermittedActionsRequest().
+            addContentIds(...contentBrowseItems.map(contentBrowseItem => contentBrowseItem.getModel().getContentId())).
+            addPermissionsToBeChecked(Permission.CREATE, Permission.DELETE, Permission.PUBLISH).
+            sendAndParse().
+            then((allowedPermissions: Permission[]) => {
+                this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
 
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
@@ -273,11 +242,12 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 if (!canPublish) {
                     this.PUBLISH_CONTENT.setEnabled(false);
                     this.PUBLISH_TREE_CONTENT.setEnabled(false);
+                    this.UNPUBLISH_CONTENT.setEnabled(false);
                 }
-        });
+            });
     }
 
-    private checkIsChildrenAllowedByPermissions(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
+    private checkIsChildrenAllowedByContentType(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
         var deferred = wemQ.defer<boolean>();
 
         new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).sendAndParse().then(
@@ -288,47 +258,27 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return deferred.promise;
     }
 
-    private checkIsDuplicateAllowedByPermissions(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
-        var deferred = wemQ.defer<boolean>();
-
-        if (contentSummary.hasParent()) {
-            new api.content.resource.GetContentByPathRequest(contentSummary.getPath().getParentPath()).sendAndParse().then(
-                (parent: api.content.Content) => {
-                    new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-                        deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
-                            loginResult,
-                            parent.getPermissions()));
-                    });
-
-
-                });
-        } else {
-            new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
-                (allowedPermissions: Permission[]) => {
-                    deferred.resolve(allowedPermissions.indexOf(Permission.CREATE) > -1);
-            });
-        }
-
-        return deferred.promise;
-    }
-
     private anyEditable(contentSummaries: api.content.ContentSummary[]): boolean {
-        for (var i = 0; i < contentSummaries.length; i++) {
-            var content: api.content.ContentSummary = contentSummaries[i];
-            if (!!content && content.isEditable()) {
-                return true;
-            }
-        }
-        return false;
+        return contentSummaries.some((content) => {
+            return !!content && content.isEditable();
+        });
     }
 
     private anyDeletable(contentSummaries: api.content.ContentSummary[]): boolean {
-        for (var i = 0; i < contentSummaries.length; i++) {
-            var content: api.content.ContentSummary = contentSummaries[i];
-            if (!!content && content.isDeletable()) {
-                return true;
-            }
-        }
-        return false;
+        return contentSummaries.some((content) => {
+            return !!content && content.isDeletable();
+        });
+    }
+
+    private updateCanDuplicateActionSingleItemSelected(selectedItem: ContentSummary) {
+        // Need to check if parent allows content creation
+        new GetContentByPathRequest(selectedItem.getPath().getParentPath()).sendAndParse().then((content: Content) => {
+            new api.content.resource.GetPermittedActionsRequest().addContentIds(content.getContentId()).addPermissionsToBeChecked(
+                Permission.CREATE).sendAndParse().then((allowedPermissions: Permission[]) => {
+                let canDuplicate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+                this.DUPLICATE_CONTENT.setEnabled(canDuplicate);
+            });
+
+        })
     }
 }

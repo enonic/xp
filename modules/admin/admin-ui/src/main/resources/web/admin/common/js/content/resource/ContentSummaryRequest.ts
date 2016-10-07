@@ -10,8 +10,6 @@ module api.content.resource {
 
     export class ContentSummaryRequest extends api.rest.ResourceRequest<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary[]> {
 
-        private contentQuery: query.ContentQuery;
-
         private path: ContentPath;
 
         private searchString: string = "";
@@ -26,12 +24,12 @@ module api.content.resource {
 
         constructor() {
             super();
-            this.contentQuery = new query.ContentQuery();
             this.request =
-                new ContentQueryRequest<json.ContentSummaryJson, ContentSummary>(this.contentQuery).setExpand(api.rest.Expand.SUMMARY);
+                new ContentQueryRequest<json.ContentSummaryJson, ContentSummary>(new query.ContentQuery()).setExpand(api.rest.Expand.SUMMARY);
         }
 
-        getSearhchString(): string {
+
+        getSearchString(): string {
             return this.searchString;
         }
 
@@ -62,20 +60,20 @@ module api.content.resource {
 
             return this.request.sendAndParse().then(
                 (queryResult: api.content.resource.result.ContentQueryResult<ContentSummary,json.ContentSummaryJson>) => {
-                return queryResult.getContents();
-            });
+                    return queryResult.getContents();
+                });
         }
 
         setAllowedContentTypes(contentTypes: string[]) {
-            this.contentQuery.setContentTypeNames(this.createContentTypeNames(contentTypes));
+            this.request.getContentQuery().setContentTypeNames(this.createContentTypeNames(contentTypes));
         }
 
         setAllowedContentTypeNames(contentTypeNames: api.schema.content.ContentTypeName[]) {
-            this.contentQuery.setContentTypeNames(contentTypeNames);
+            this.request.getContentQuery().setContentTypeNames(contentTypeNames);
         }
 
         setSize(size: number) {
-            this.contentQuery.setSize(size);
+            this.request.getContentQuery().setSize(size);
         }
 
         setContentPath(path: ContentPath) {
@@ -86,8 +84,16 @@ module api.content.resource {
             this.searchString = value;
         }
 
+        isPartiallyLoaded(): boolean {
+            return this.request.isPartiallyLoaded();
+        }
+
+        resetParams() {
+            this.request.resetParams();
+        }
+
         private buildSearchQueryExpr() {
-            this.contentQuery.setQueryExpr(new QueryExpr(this.createSearchExpression(), ContentSummaryRequest.DEFAULT_ORDER));
+            this.request.getContentQuery().setQueryExpr(new QueryExpr(this.createSearchExpression(), ContentSummaryRequest.DEFAULT_ORDER));
         }
 
         protected createSearchExpression(): ConstraintExpr {

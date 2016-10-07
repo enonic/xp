@@ -100,6 +100,20 @@ public class HttpRequestHandlerTest
     }
 
     @Test
+    public void testSimpleHeadRequest()
+        throws Exception
+    {
+        server.enqueue( addResponse( "GET request" ) );
+
+        runFunction( "/site/test/request-test.js", "simpleHeadRequest", getServerHost() );
+
+        final RecordedRequest request = takeRequest();
+        assertEquals( "HEAD", request.getMethod() );
+        assertEquals( "/my/url", request.getPath() );
+        assertEquals( "", request.getBody().readString( Charsets.UTF_8 ) );
+    }
+
+    @Test
     public void testGetRequestWithParams()
         throws Exception
     {

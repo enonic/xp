@@ -10,9 +10,6 @@ module api.form.inputtype.text {
     import ContentSummary = api.content.ContentSummary;
     import Element = api.dom.Element;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-    import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
-    import ImageModalDialog = api.util.htmlarea.dialog.ImageModalDialog;
-    import AnchorModalDialog = api.util.htmlarea.dialog.AnchorModalDialog;
     import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
@@ -25,6 +22,7 @@ module api.form.inputtype.text {
         private content: api.content.ContentSummary;
         private contentPath: api.content.ContentPath;
         private applicationKeys: ApplicationKey[];
+        private hasStickyToolbar: boolean = false;
 
         private focusListeners: {(event: FocusEvent): void}[] = [];
 
@@ -148,6 +146,10 @@ module api.form.inputtype.text {
                         keyCode: e.keyCode,
                         charCode: e.charCode
                     });
+                } else if ((e.altKey) && e.keyCode === 9) {  // alt+tab for OSX
+                    e.preventDefault();
+                    api.dom.FormEl.moveFocusToNextFocusable(api.dom.Element.fromHtmlElement(<HTMLElement>document.activeElement),
+                        "iframe, input, select");
                 }
             };
 
@@ -180,8 +182,7 @@ module api.form.inputtype.text {
                 removeButtonEL.addEventListener("mouseleave", () => {
                     isMouseOverRemoveOccurenceButton = false;
                 });
-
-                    HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
+                
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
                         if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
@@ -198,7 +199,6 @@ module api.form.inputtype.text {
                     editor.focus();
                     return true;
                 } else {
-                    console.log("Element.giveFocus(): Failed to give focus to HtmlArea element: id = " + this.getId());
                     return false;
                 }
             };
@@ -211,6 +211,7 @@ module api.form.inputtype.text {
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
                 this.updateEditorToolbarPos(inputOccurence);
+                this.updateEditorToolbarWidth(inputOccurence);
             });
 
             this.onRemoved((event) => {
@@ -228,16 +229,33 @@ module api.form.inputtype.text {
 
         private updateStickyEditorToolbar(inputOccurence: Element) {
             if (!this.editorTopEdgeIsVisible(inputOccurence) && this.editorLowerEdgeIsVisible(inputOccurence)) {
-                inputOccurence.addClass("sticky-toolbar");
+                if (!this.hasStickyToolbar) {
+                    this.hasStickyToolbar = true;
+                    inputOccurence.addClass("sticky-toolbar");
+                    this.updateEditorToolbarWidth(inputOccurence);
+                }
                 this.updateEditorToolbarPos(inputOccurence);
             }
-            else {
-                inputOccurence.removeClass("sticky-toolbar")
+            else if (this.hasStickyToolbar) {
+                this.hasStickyToolbar = false;
+                inputOccurence.removeClass("sticky-toolbar");
+                this.updateEditorToolbarWidth(inputOccurence);
             }
         }
 
         private updateEditorToolbarPos(inputOccurence: Element) {
             wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").css({top: this.getToolbarOffsetTop(1)});
+        }
+
+        private updateEditorToolbarWidth(inputOccurence: Element) {
+            if (this.hasStickyToolbar) {
+                // Toolbar in sticky mode has position: fixed which makes it not
+                // inherit width of its parent, so we have to explicitly set width 
+                wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").width(inputOccurence.getEl().getWidth() - 3);
+            }
+            else {
+                wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").width('auto');
+            }
         }
 
         private editorTopEdgeIsVisible(inputOccurence: Element): boolean {
@@ -283,6 +301,7 @@ module api.form.inputtype.text {
             var editor = this.getEditor(editorId);
             if (editor) {
                 editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : "");
+                HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
             } else {
                 console.log("Editor with id '" + editorId + "' not found")
             }

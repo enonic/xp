@@ -70,10 +70,15 @@ exports.logout = function () {
  *
  * @example-ref examples/auth/getUser.js
  *
+ * @param {object} [params] JSON parameters.
+ * @param {boolean} [params.includeProfile=false] Include profile.
+ *
  * @returns {object} Information for logged-in user.
  */
-exports.getUser = function () {
+exports.getUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetUserHandler');
+
+    bean.includeProfile = params && params.includeProfile;
 
     return __.toNativeObject(bean.getUser());
 };
@@ -327,5 +332,69 @@ exports.findPrincipals = function (params) {
  */
 exports.getIdProviderConfig = function () {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function retrieves the profile of a user.
+ *
+ * @example-ref examples/auth/getProfile.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Principal key of the user.
+ * @param {string} [params.scope] Scope of the data to retrieve.
+ * @returns {object} The extra data as JSON
+ */
+exports.getProfile = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetProfileHandler');
+
+    bean.key = __.nullOrValue(params.key);
+    bean.scope = __.nullOrValue(params.scope);
+
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function retrieves the profile of a user and updates it.
+ *
+ * @example-ref examples/auth/modifyProfile.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Principal key of the user.
+ * @param {string} [params.scope] Scope of the data to retrieve and update.
+ * @param {function} params.editor Profile editor function to apply.
+ * @returns {object} The extra data as JSON
+ */
+exports.modifyProfile = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.ModifyProfileHandler');
+
+    bean.key = __.nullOrValue(params.key);
+    bean.scope = __.nullOrValue(params.scope);
+    bean.editor = __.toScriptValue(required(params, 'editor'));
+
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Search for users matching the specified query.
+ *
+ * @example-ref examples/auth/findUsers.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {string} params.query Query expression.
+ * @param {string} [params.sort] Sorting expression.
+ * @param {boolean} [params.includeProfile=false] Include profile.
+ *
+ * @returns {boolean} Result of query.
+ */
+exports.findUsers = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.FindUsersHandler');
+    bean.start = params.start;
+    bean.count = params.count;
+    bean.query = nullOrValue(params.query);
+    bean.sort = nullOrValue(params.sort);
+    bean.includeProfile = !!params.includeProfile;
     return __.toNativeObject(bean.execute());
 };

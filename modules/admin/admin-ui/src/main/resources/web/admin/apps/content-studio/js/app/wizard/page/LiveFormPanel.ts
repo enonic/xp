@@ -87,6 +87,8 @@ export interface LiveFormPanelConfig {
 
 export class LiveFormPanel extends api.ui.panel.Panel {
 
+    public static debug: boolean = false;
+
     private defaultModels: DefaultModels;
 
     private content: Content;
@@ -152,7 +154,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.insertablesPanel = new InsertablesPanel({
             liveEditPage: proxy,
-            content: this.content
+            contentWizardPanel: this.contentWizardPanel
         });
 
         return new ContextWindow(<ContextWindowConfig>{
@@ -168,7 +170,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         var saveAction = new api.ui.Action('Apply');
         saveAction.onExecuted(() => {
             if (!this.pageView) {
-                this.saveAndReloadPage();
+                this.contentWizardPanel.saveChanges();
                 return;
             }
 
@@ -176,17 +178,17 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                 this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
             } else if (this.pageView.isLocked() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
-                this.saveAndReloadPage();
+                this.contentWizardPanel.saveChanges();
             }
         });
 
-        this.contentInspectionPanel = new ContentInspectionPanel(this.content);
+        this.contentInspectionPanel = new ContentInspectionPanel();
 
-        this.pageInspectionPanel = new PageInspectionPanel(model);
-        this.partInspectionPanel = new PartInspectionPanel(model);
-        this.layoutInspectionPanel = new LayoutInspectionPanel(model);
-        this.imageInspectionPanel = new ImageInspectionPanel(model);
-        this.fragmentInspectionPanel = new FragmentInspectionPanel(model);
+        this.pageInspectionPanel = new PageInspectionPanel();
+        this.partInspectionPanel = new PartInspectionPanel();
+        this.layoutInspectionPanel = new LayoutInspectionPanel();
+        this.imageInspectionPanel = new ImageInspectionPanel();
+        this.fragmentInspectionPanel = new FragmentInspectionPanel();
 
         this.textInspectionPanel = new TextInspectionPanel();
         this.regionInspectionPanel = new RegionInspectionPanel();
@@ -205,7 +207,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     doRender(): Q.Promise<boolean> {
-        return super.doRender().then((rendered) => {
+        return super.doRender().then((rendered: boolean) => {
 
             api.dom.WindowDOM.get().onBeforeUnload((event) => {
                 console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
@@ -214,12 +216,18 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 this.liveEditPageProxy.skipNextReloadConfirmation(true);
             });
 
+            this.liveEditPageProxy.getPlaceholderIFrame().onShown(() => {
+                // If we are about to show blank placeholder in the editor then remove
+                // "rendering" class from the panel so that it's instantly visible
+                this.removeClass("rendering");
+            });
+
             this.frameContainer = new Panel("frame-container");
-            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(), this.liveEditPageProxy.getDragMask());
+            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(), this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
+
 
             // append mask here in order for the context window to be above
             this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow);
-
 
             this.contextWindow.onDisplayModeChanged(() => {
                 if (!this.contextWindow.isFloating()) {
@@ -231,7 +239,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.liveEditListen();
 
             // delay rendered event until live edit page is fully loaded
-            var liveEditDeferred = wemQ.defer();
+            var liveEditDeferred = wemQ.defer<boolean>();
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
                 liveEditDeferred.resolve(rendered);
@@ -280,7 +288,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
 
             if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
-                this.saveAndReloadPage(false);
+                this.contentWizardPanel.saveChanges();
             }
             else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
 
@@ -290,7 +298,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                       !this.pageModel.hasController())) {
                     this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
                     this.lockPageAfterProxyLoad = true;
-                    this.saveAndReloadPage(false);
+                    this.contentWizardPanel.saveChanges();
                 }
             }
         });
@@ -339,6 +347,11 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 }
             }
         });
+
+        this.pageModel.onReset(() => {
+            this.contextWindow.slideOut();
+            this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
+        });
     }
 
     skipNextReloadConfirmation(skip: boolean) {
@@ -346,6 +359,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     loadPage(clearInspection: boolean = true) {
+        if (LiveFormPanel.debug) {
+            console.debug("LiveFormPanel.loadPage at " + new Date().toISOString());
+        }
         if (this.pageSkipReload == false && !this.pageLoading) {
 
             if (clearInspection) {
@@ -353,8 +369,15 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             }
 
             this.pageLoading = true;
+            if (this.liveEditModel.isRenderableSiteOrTemplate()) {
+                this.contentWizardPanel.getLiveMask().show();
+            }
             this.liveEditPageProxy.load();
             this.liveEditPageProxy.onLoaded(() => {
+                if (this.isRendered()) {
+                    // If LiveEdit is not rendered yet, don't remove the spinner - WizardPanel will do that in onRendered()
+                    this.contentWizardPanel.getLiveMask().hide();
+                }
                 this.pageLoading = false;
                 if (this.lockPageAfterProxyLoad) {
                     this.pageView.setLocked(true);
@@ -362,17 +385,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 }
             });
         }
-    }
-
-    saveAndReloadPage(clearInspection: boolean = false) {
-        this.pageSkipReload = true;
-        this.contentWizardPanel.saveChanges().then(() => {
-            this.pageSkipReload = false;
-            if (clearInspection) {
-                this.contextWindow.clearSelection();
-            }
-            this.liveEditPageProxy.load();
-        }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
     }
 
     saveAndReloadOnlyComponent(componentView: ComponentView<Component>) {

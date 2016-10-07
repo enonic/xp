@@ -135,8 +135,11 @@ module api.content.form.inputtype.upload {
                     this.mediaUploaderEl.getResultContainer().removeChildren();
                     this.uploaderWrapper.addClass("empty");
                     property.setValue(this.newInitialValue());
-
-                    api.notify.showFeedback('\"' + result.getDeleted()[0].getName() + '\" deleted');
+                    
+                    if (result.getDeleted() > 0) {
+                        var itemStr = (result.getDeleted() == 1) ? " item was" : " items were";
+                        api.notify.showSuccess(result.getDeleted() + itemStr + ' deleted');
+                    }
                 }).catch((reason: any) => {
                     if (reason && reason.message) {
                         api.notify.showError(reason.message);

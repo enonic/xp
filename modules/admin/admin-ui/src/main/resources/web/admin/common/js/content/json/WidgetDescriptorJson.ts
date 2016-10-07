@@ -6,5 +6,6 @@ module api.content.json {
         displayName: string;
         interfaces: string[];
         key: string;
+        config: { [key: string]: string };
     }
 }

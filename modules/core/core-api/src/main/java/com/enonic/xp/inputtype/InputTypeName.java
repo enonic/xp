@@ -13,6 +13,8 @@ public final class InputTypeName
 
     public final static InputTypeName CONTENT_SELECTOR = InputTypeName.from( "ContentSelector" );
 
+    public final static InputTypeName CUSTOM_SELECTOR = InputTypeName.from( "CustomSelector" );
+
     public final static InputTypeName CONTENT_TYPE_FILTER = InputTypeName.from( "ContentTypeFilter" );
 
     public final static InputTypeName DATE = InputTypeName.from( "Date" );

@@ -70,7 +70,8 @@ module api.app.browse {
                 }
             });
 
-            this.treeGrid.onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
+            let selectionChangedDebouncedHandler = api.util.AppHelper.debounce(
+                (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 let changes = this.browseItemPanel.setItems(browseItems);
                 this.treeGrid.getContextMenu().getActions()
@@ -78,7 +79,9 @@ module api.app.browse {
                     .then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);
-            });
+                }, 200, false);
+
+            this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.checkFilterPanelToBeShownFullScreen(item);
@@ -111,15 +114,36 @@ module api.app.browse {
 
                 if (this.filterPanel) {
                     this.gridAndToolbarPanel = new api.ui.panel.Panel();
-                    this.gridAndToolbarPanel.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
+
+                    this.gridAndToolbarPanel.onAdded(() => {
+                        this.gridAndItemsSplitPanel.setDoOffset(true);
+                    });
 
                     this.filterAndGridSplitPanel = this.setupFilterPanel();
-                    this.appendChild(this.filterAndGridSplitPanel);
                     if (this.filterPanelIsHiddenByDefault) {
                         this.hideFilterPanel();
                     }
+                    this.appendChild(this.filterAndGridSplitPanel);
+
+                    // Hack: Places the append calls farther in the engine call stack.
+                    // Prevent toolbar and gridPanel not being visible when the width/height
+                    // is requested and elements resize/change position/etc.
+                    setTimeout(() => {
+                        this.gridAndToolbarPanel.appendChild(this.browseToolbar);
+                    });
+                    this.browseToolbar.onRendered(() => {
+                        setTimeout(() => {
+                            this.gridAndToolbarPanel.appendChild(this.gridAndItemsSplitPanel);
+                        });
+                    });
                 } else {
-                    this.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
+                    this.appendChild(this.browseToolbar);
+                    // Hack: Same hack.
+                    this.browseToolbar.onRendered(() => {
+                        setTimeout(() => {
+                            this.appendChild(this.gridAndItemsSplitPanel)
+                        });
+                    });
                 }
                 return rendered;
             });
@@ -200,6 +224,7 @@ module api.app.browse {
 
         private setupFilterPanel() {
             var splitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndToolbarPanel)
+                .setFirstPanelMinSize(215, api.ui.panel.SplitPanelUnit.PIXEL)
                 .setFirstPanelSize(215, api.ui.panel.SplitPanelUnit.PIXEL)
                 .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)
                 .setAnimationDelay(100)     // filter panel animation time
