@@ -195,31 +195,90 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.browseActions, detailsView);
 
-        let updatePreviewItem = () => {
-            if (this.isNonZeroSelectionInMobileMode()) {
-                var browseItem = this.getFirstSelectedBrowseItem();
-                new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
-                    (renderable: boolean) => {
-                        var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItem.toViewItem();
-                        item.setRenderable(renderable);
-                        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
-                    });
-            }
+        // let updatePreviewItem = () => {
+        //     if (this.isNonZeroSelectionInMobileMode()) {
+        //         var browseItem = this.getFirstSelectedBrowseItem();
+        //         new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
+        //             (renderable: boolean) => {
+        //                 var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItem.toViewItem();
+        //                 item.setRenderable(renderable);
+        //                 this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+        //             });
+        //     }
+        // };
+        //
+        // this.contentTreeGrid.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
+        //                                          fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+        //     if (this.isNonZeroSelectionInMobileMode()) {
+        //         this.updateMobilePanel(fullSelection);
+        //     }
+        // });
+        //
+        // api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
+        //     if (this.isNonZeroSelectionInMobileMode()) {
+        //         if (event.isRepeatedSelection()) {
+        //             this.updateMobilePanel();
+        //         } else {
+        //             updatePreviewItem();
+        //         }
+        //     }
+        // });
+
+        const showMobilePanel = () => {
+            this.mobileContentItemStatisticsPanel.slideIn();
         };
 
-        this.contentTreeGrid.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
-                                                 fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-            if (this.isNonZeroSelectionInMobileMode()) {
-                this.updateMobilePanel(fullSelection);
+        const updateMobilePanel = () => {
+            const defer = wemQ.defer();
+
+            const prevItem = this.mobileContentItemStatisticsPanel.getPreviewPanel().getItem();
+            const browseItem = this.getFirstSelectedBrowseItem();
+            const item = browseItem.toViewItem();
+
+            const itemChanged = !prevItem || !prevItem.getModel() || prevItem.getModel().getId() !== browseItem.getId();
+
+            if (itemChanged) {
+                new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
+                    (renderable: boolean) => {
+                        item.setRenderable(renderable);
+                        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                        this.mobileContentItemStatisticsPanel.setItem(item);
+                        defer.resolve(true);
+                    });
+            } else {
+                defer.resolve(true);
+            }
+
+            return defer.promise;
+        };
+
+        const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
+
+        // selection changed
+        this.contentTreeGrid.onSelectionChanged(() => {
+            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
+            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
+
+            if (isNonZeroSelectionInMobileMode) {
+                // update
+
+                if (isNewlySelected) {
+                    // show
+                    updateAndShowMobilePanel();
+                }
             }
         });
 
+        // Handle click for selection [many] -> [single],
+        // [single] is a subset of [many]
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
-            if (this.isNonZeroSelectionInMobileMode()) {
-                if (event.isRepeatedSelection()) {
-                    this.updateMobilePanel();
-                } else {
-                    updatePreviewItem();
+            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
+            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
+
+            if (isNonZeroSelectionInMobileMode) {
+                if (!isNewlySelected) {
+                    // show
+                    updateAndShowMobilePanel();
                 }
             }
         });
@@ -242,11 +301,17 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return item;
     }
 
+    private isNonZeroSelection(): boolean {
+        return this.getFirstSelectedBrowseItem() != null;
+    }
+
+    private isMobileMode(): boolean {
+        // return ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel();
+        return this.mobileContentItemStatisticsPanel.isVisible();
+    }
+
     private isNonZeroSelectionInMobileMode(): boolean {
-        if (ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
-            return this.getFirstSelectedBrowseItem() != null;
-        }
-        return false;
+        return this.isMobileMode() && this.isNonZeroSelection();
     }
 
     private setActiveDetailsPanel(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
