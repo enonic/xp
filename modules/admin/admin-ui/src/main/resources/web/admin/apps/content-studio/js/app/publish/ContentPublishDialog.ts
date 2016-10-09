@@ -30,6 +30,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
+    private stashedCount: {[checked: string]: number} = {};
 
     private progressBar: api.ui.ProgressBar;
 
@@ -109,14 +110,23 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
 
     show() {
-        super.show(this.isPublishing() );
+        super.show(this.isProgressBarEnabled() );
+    }
+    
+    onPublishComplete() {
+        if (this.isProgressBarEnabled()) {
+            this.disableProgressBar();
+        }
+        
+        if (this.isVisible()) {
+            this.close();
+            return;
+        }
+        
+        this.hide();
     }
     
     close() {
-        if (this.isPublishing() && (!this.progressBar || this.progressBar.isComplete())) {
-            this.disableProgressBar();
-        }
-
         super.close();
         this.childrenCheckbox.setChecked(false);
         this.hideLoadingSpinner();
@@ -131,12 +141,19 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.stash[String(this.childrenCheckbox.isChecked())] = items.slice();
     }
 
+    private setStashedCount(count: number) {
+        this.stashedCount[String(this.childrenCheckbox.isChecked())] = count;
+    }
+
+    private getStashedCount(): number {
+        return this.stashedCount[String(this.childrenCheckbox.isChecked())];
+    }
+
     private clearStashedItems() {
         this.stash = {};
     }
 
     private refreshPublishDependencies(): wemQ.Promise<void> {
-
         var stashedItems = this.getStashedItems();
         // null - means items have not been loaded yet or we had to clear it because of selection change
         if (!stashedItems) {
@@ -149,7 +166,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
             setTimeout(() => {
                 this.setDependantItems(stashedItems.slice());
                 this.centerMyself();
-                this.actionButton.setEnabled(stashedItems.length > 0);
+                this.actionButton.setEnabled(true);
                 this.loadMask.hide();
             }, 100);
             return wemQ<void>(null);
@@ -157,7 +174,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
-        if (this.isPublishing() ) {
+        if (this.isProgressBarEnabled() ) {
             return wemQ<void>(null);
         }
         this.actionButton.setEnabled(false);
@@ -180,6 +197,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
             this.dependantIds = result.getDependants();
+            this.setStashedCount(this.dependantIds.length)
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
@@ -192,6 +210,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 this.enableCheckbox();
 
                 this.setStashedItems(dependants.slice());
+                this.updateSubTitleAndButtonCount();
 
                 if (this.childrenCheckbox.isChecked()) {
                     this.childrenLoaded = true;
@@ -206,8 +225,15 @@ export class ContentPublishDialog extends DependantItemsDialog {
         });
     }
 
+    private updateSubTitleAndButtonCount() {
+        let count = this.countTotal();
+
+        this.updateSubTitle(count);
+        this.updateButtonCount("Publish", count);
+    }
+
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
-        if (this.isPublishing() ) {
+        if (this.isProgressBarEnabled() ) {
             return;
         }
         var itemsToRemove = this.getDependantList().getItems().filter(
@@ -223,23 +249,18 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
-        if (this.isPublishing() ) {
+        if (this.isProgressBarEnabled() ) {
             return;
         }
         super.setDependantItems(items);
 
-        let count = this.countTotal();
-
-        this.updateSubTitle(count);
-        this.updateButtonCount("Publish", count);
-
-        if (this.extendsWindowHeightSize()) {
-            this.centerMyself();
+        if (this.getStashedItems()) {
+            this.updateSubTitleAndButtonCount();
         }
     }
 
     setContentToPublish(contents: ContentSummaryAndCompareStatus[]) {
-        if (this.isPublishing() ) {
+        if (this.isProgressBarEnabled() ) {
             return this;
         }
         this.setIgnoreItemsChanged(true);
@@ -273,21 +294,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
         })
     }
 
-    private extendsWindowHeightSize(): boolean {
-        if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
-            var el = this.getEl(),
-                bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty('top')) || 0) +
-                                         el.getMarginTop() +
-                                         el.getHeightWithBorder() +
-                                         el.getMarginBottom();
-
-            if (window.innerHeight < bottomPosition) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private doPublish() {
 
         this.showLoadingSpinner();
@@ -314,6 +320,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private enableProgressBar() {
         api.dom.Body.get().addClass(ContentPublishDialog.isPublishingClass);
+        ContentPublishMenuManager.getProgressBar().setValue(0);
         this.addClass(ContentPublishDialog.isPublishingClass);
         this.hideLoadingSpinner();
         this.progressBar = this.createProgressBar();
@@ -324,13 +331,13 @@ export class ContentPublishDialog extends DependantItemsDialog {
         api.dom.Body.get().removeClass(ContentPublishDialog.isPublishingClass);
     }
 
-    private isPublishing() {
+    private isProgressBarEnabled() {
         return this.hasClass(ContentPublishDialog.isPublishingClass);
     }
     
     private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ContentPublishDialog.pollInterval) {
         setTimeout(() => {
-            if (!this.isPublishing() && elapsed >= ContentPublishDialog.progressBarDelay) {
+            if (!this.isProgressBarEnabled() && elapsed >= ContentPublishDialog.progressBarDelay) {
                 this.enableProgressBar();
             }
 
@@ -344,12 +351,11 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
                 if (state == api.task.TaskState.FINISHED) {
                     this.setProgressValue(100);
-                    this.close();
+                    this.onPublishComplete();
 
                     api.notify.showSuccess(progress.getInfo());
                 } else if (state == api.task.TaskState.FAILED) {
-                    this.disableProgressBar();
-                    this.close();
+                    this.onPublishComplete();
 
                     api.notify.showError('Publishing failed: ' + progress.getInfo());
                 } else {
@@ -358,8 +364,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 }
 
             }).catch((reason: any) => {
-                this.disableProgressBar();
-                this.close();
+                this.onPublishComplete();
 
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -368,7 +373,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private setProgressValue(value: number) {
-        if (this.isPublishing()) {
+        if (this.isProgressBarEnabled()) {
             this.progressBar.setValue(value);
             if (!api.dom.Body.get().isShowingModalDialog()) {
                 ContentPublishMenuManager.getProgressBar().setValue(value);
@@ -377,8 +382,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     protected countTotal(): number {
-        return this.countToPublish(this.getItemList().getItems())
-               + this.dependantIds.length;
+        return this.countToPublish(this.getItemList().getItems()) + this.getStashedCount();
     }
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
@@ -400,7 +404,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     protected updateButtonCount(actionString: string, count: number) {
-
         super.updateButtonCount(actionString, count);
 
         let canPublish = count > 0 && this.areItemsAndDependantsValid();

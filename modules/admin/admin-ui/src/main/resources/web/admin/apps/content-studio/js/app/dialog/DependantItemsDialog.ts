@@ -14,6 +14,7 @@ import SelectionItem = api.app.browse.SelectionItem;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
+import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
@@ -157,8 +158,27 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         }
     }
 
+    private extendsWindowHeightSize(): boolean {
+        if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
+            var el = this.getEl(),
+                bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty('top')) || 0) +
+                                         el.getMarginTop() +
+                                         el.getHeightWithBorder() +
+                                         el.getMarginBottom();
+
+            if (window.innerHeight < bottomPosition) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.setItems(items);
+        
+        if (this.extendsWindowHeightSize()) {
+            this.centerMyself();
+        }
     }
 
     addDependantItems(items: ContentSummaryAndCompareStatus[]) {
