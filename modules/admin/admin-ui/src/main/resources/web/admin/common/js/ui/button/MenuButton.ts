@@ -21,7 +21,7 @@ module api.ui.button {
 
             this.initListeners();
 
-            let children = [this.dropdownHandle, this.actionButton,this.menu];
+            let children = [this.dropdownHandle, this.actionButton, this.menu];
             this.appendChildren(...children);
         }
 
@@ -37,16 +37,20 @@ module api.ui.button {
             this.menu = new Menu(actions);
             this.setDropdownHandleEnabled(actions.length > 0);
 
-            let updateActionEnabled = () => {
-                let allActionsDisabled = actions.every((action) => !action.isEnabled());
-                this.setDropdownHandleEnabled(!allActionsDisabled);
-            };
+            this.updateActionEnabled();
 
-            updateActionEnabled();
-
-            actions.forEach((action) => {
-                action.onPropertyChanged(updateActionEnabled);
+            this.getMenuActions().forEach((action) => {
+                action.onPropertyChanged(this.updateActionEnabled.bind(this));
             });
+        }
+
+        private getMenuActions() {
+            return this.menu.getMenuItems().map(item => item.getAction());
+        }
+
+        private updateActionEnabled() {
+            let allActionsDisabled = this.getMenuActions().every((action) => !action.isEnabled());
+            this.setDropdownHandleEnabled(!allActionsDisabled);
         }
 
         private initListeners() {
@@ -89,6 +93,27 @@ module api.ui.button {
         
         hideDropdown(hidden: boolean = true) {
             this.toggleClass('hidden-dropdown', hidden);
+        }
+
+        minimize() {
+            if (!this.hasClass('minimized')) {
+                const action = this.actionButton.getAction();
+                const actions = [action, ...this.getMenuActions()];
+                this.menu.setActions(actions);
+                action.onPropertyChanged(this.updateActionEnabled.bind(this));
+                this.addClass('minimized');
+                setTimeout(this.updateActionEnabled.bind(this), 15);
+            }
+        }
+
+        maximize() {
+            if (this.hasClass('minimized')) {
+                const action = this.actionButton.getAction();
+                this.menu.removeAction(action);
+                action.unPropertyChanged(this.updateActionEnabled.bind(this));
+                this.removeClass('minimized');
+                setTimeout(this.updateActionEnabled.bind(this), 15);
+            }
         }
     }
 }

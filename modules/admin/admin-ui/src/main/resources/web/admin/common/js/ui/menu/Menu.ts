@@ -44,6 +44,10 @@ module api.ui.menu {
             return this;
         }
 
+        // getActions(): api.ui.Action[] {
+        //     return this.menuItems.map(item => item.getAction());
+        // }
+
         removeActions(actions: api.ui.Action[]): Menu {
             actions.forEach((action: api.ui.Action) => {
                 this.removeAction(action);
@@ -107,6 +111,10 @@ module api.ui.menu {
                 }
             }
             return null;
+        }
+
+        getMenuItems() {
+            return this.menuItems;
         }
     }
 

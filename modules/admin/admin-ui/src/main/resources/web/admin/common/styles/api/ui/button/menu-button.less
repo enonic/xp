@@ -4,12 +4,22 @@
   height: 40px;
 
   &.hidden-dropdown {
-    .dropdown-handle, .menu {
+    .@{_COMMON_PREFIX}dropdown-handle, .menu {
       display: none;
     }
 
     .action-button {
       margin-left: 0px;
+    }
+  }
+
+  &.minimized {
+    .action-button {
+      display: none !important;
+    }
+
+    .@{_COMMON_PREFIX}dropdown-handle {
+      position: static;
     }
   }
 
