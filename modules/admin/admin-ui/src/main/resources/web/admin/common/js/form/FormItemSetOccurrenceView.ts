@@ -92,6 +92,8 @@ module api.form {
 
                 this.label.appendChild(this.helpText.getToggler());
                 this.appendChild(this.helpText.getHelpText());
+
+                this.toggleHelpText(this.formItemSet.isHelpTextOn());
             }
 
 
@@ -224,7 +226,12 @@ module api.form {
             return result;
         }
 
-
+        toggleHelpText(show?: boolean) {
+            if (!!this.helpText) {
+                this.helpText.toggleHelpText(show);
+            }
+        }
+        
         validate(silent: boolean = true): ValidationRecording {
 
             var allRecordings = new ValidationRecording();

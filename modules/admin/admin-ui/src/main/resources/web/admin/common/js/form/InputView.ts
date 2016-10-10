@@ -43,10 +43,6 @@ module api.form {
 
         private helpText: HelpTextContainer;
 
-        /*   private helpTextDiv: api.dom.Element;
-
-         private helpTextToggler: api.dom.DivEl;*/
-
         public static debug: boolean = false;
 
         constructor(config: InputViewConfig) {
@@ -136,18 +132,6 @@ module api.form {
 
                 this.refresh(validate);
             });
-        }
-
-        private appendHelpText(helpText: string): api.dom.Element {
-            var helpTextDiv = new api.dom.DivEl("help-text");
-            var pEl = new api.dom.PEl();
-            pEl.getEl().setText(helpText);
-
-            helpTextDiv.appendChild(pEl);
-
-            this.appendChild(helpTextDiv);
-
-            return helpTextDiv;
         }
 
         private getPropertyArray(propertySet: PropertySet): PropertyArray {
@@ -338,7 +322,13 @@ module api.form {
         unBlur(listener: (event: FocusEvent) => void) {
             this.inputTypeView.unBlur(listener);
         }
-
+        
+        toggleHelpText(show?: boolean) {
+            if (!!this.helpText) {
+                this.helpText.toggleHelpText(show);
+            }
+        }
+        
         hasHelpText(): boolean {
             return !!this.input.getHelpText();
         }
