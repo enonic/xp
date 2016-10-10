@@ -25,15 +25,20 @@ module api.content.page {
 
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {
 
-            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse());
+            if (this.applicationKeys.length > 0) {
+                var promises = this.applicationKeys.map(
+                    (applicationKey: ApplicationKey) => new GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse());
 
-            return wemQ.all(promises).then((results: PageDescriptor[][]) => {
-                var all: PageDescriptor[] = [];
-                results.forEach((descriptors: PageDescriptor[]) => {
-                    Array.prototype.push.apply(all, descriptors);
+                return wemQ.all(promises).then((results: PageDescriptor[][]) => {
+                    var all: PageDescriptor[] = [];
+                    results.forEach((descriptors: PageDescriptor[]) => {
+                        Array.prototype.push.apply(all, descriptors);
+                    });
+                    return all;
                 });
-                return all;
-            });
+            } else {
+                return wemQ.resolve([]);
+            }
         }
     }
 }

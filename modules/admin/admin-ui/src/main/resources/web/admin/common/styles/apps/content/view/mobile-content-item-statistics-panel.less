@@ -78,6 +78,10 @@
     .icon-trending_neutral();
   }
 
+  .content-item-preview-panel {
+    padding-top: 36px;
+  }
+
   .details-panel {
 
     background-color: @admin-bg-almost-white;
@@ -189,8 +193,7 @@
     bottom: 0px;
     width: 100%;
     border-top: 1px solid @admin-bg-light-gray;
-    background-color: @admin-white;
-    opacity: 0.95;
+    background-color: fade(@admin-bg-almost-white, 95%);
 
     .fold-button {
       border: 0px;

@@ -32,7 +32,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private alreadyFetchedCustomWidgets: boolean;
 
-    private sizeChangedListeners: {() : void}[] = [];
+    private sizeChangedListeners: {(): void}[] = [];
 
     public static debug = false;
 
@@ -205,15 +205,14 @@ export class DetailsView extends api.dom.DivEl {
 
         this.updateViewer();
 
-        this.showLoadMask();
-
         return this.activeWidget.updateWidgetItemViews().then(() => {
             // update active widget's height
             setTimeout(() => {
                 this.setDetailsContainerHeight();
-            }, 400)
+            }, 400);
+            
             this.activeWidget.slideIn();
-        }).finally(() => this.hideLoadMask());
+        })
     }
 
     public showLoadMask() {

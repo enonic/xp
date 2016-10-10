@@ -16,8 +16,12 @@ module api.liveedit {
         }
 
         setTextForContent(contentTypeDisplayName: string) {
-            this.line1.setHtml("Select a controller below to set up a customized page");
+            this.setBaseHeader();
             this.line2.setHtml('No page templates supporting content type "' + contentTypeDisplayName + '" found');
+        }
+
+        setBaseHeader(value?: string) {
+            this.line1.setHtml(api.util.StringHelper.isEmpty(value) ? "Select a controller below to set up a customized page" : value);
         }
 
         setNoControllersAvailableText() {
