@@ -195,32 +195,56 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.browseActions, detailsView);
 
-        let updatePreviewItem = () => {
-            if (this.isSingleItemSelectedInMobileMode()) {
-                var browseItem = this.getFirstSelectedBrowseItem();
+        const updateMobilePanel = () => {
+            const defer = wemQ.defer();
+
+            const prevItem = this.mobileContentItemStatisticsPanel.getPreviewPanel().getItem();
+            const browseItem = this.getFirstSelectedBrowseItem();
+            const item = browseItem.toViewItem();
+
+            const itemChanged = !prevItem || !prevItem.getModel() || prevItem.getModel().getId() !== browseItem.getId();
+
+            if (itemChanged) {
                 new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
                     (renderable: boolean) => {
-                        var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItem.toViewItem();
                         item.setRenderable(renderable);
                         this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                        this.mobileContentItemStatisticsPanel.setItem(item);
+                        defer.resolve(true);
                     });
+            } else {
+                defer.resolve(true);
             }
+
+            return defer.promise;
         };
 
-        this.contentTreeGrid.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
-                                                 fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-            if (this.isSingleItemSelectedInMobileMode()) {
-                this.updateMobilePanel(fullSelection);
+        const showMobilePanel = () => this.mobileContentItemStatisticsPanel.slideIn();
+
+        const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
+
+        this.contentTreeGrid.onSelectionChanged(() => {
+            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
+            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
+
+            const needUpdate = isNonZeroSelectionInMobileMode && isNewlySelected;
+
+            if (needUpdate) {
+                updateAndShowMobilePanel();
             }
         });
 
+        // Handles specific case, not handled by function above
+        // Handles click for selection [many] -> [single],
+        // where: [single] is a subset of [many]
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
-            if (this.isSingleItemSelectedInMobileMode()) {
-                if (event.isRepeatedSelection()) {
-                    this.updateMobilePanel();
-                } else {
-                    updatePreviewItem();
-                }
+            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
+            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
+
+            const needUpdate = isNonZeroSelectionInMobileMode && !isNewlySelected;
+
+            if (needUpdate) {
+                updateAndShowMobilePanel();
             }
         });
 
@@ -242,11 +266,17 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return item;
     }
 
-    private isSingleItemSelectedInMobileMode(): boolean {
-        if (ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
-            return this.getFirstSelectedBrowseItem() != null;
-        }
-        return false;
+    private isNonZeroSelection(): boolean {
+        return this.getFirstSelectedBrowseItem() != null;
+    }
+
+    private isMobileMode(): boolean {
+        // return ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel();
+        return this.mobileContentItemStatisticsPanel.isVisible();
+    }
+
+    private isNonZeroSelectionInMobileMode(): boolean {
+        return this.isMobileMode() && this.isNonZeroSelection();
     }
 
     private setActiveDetailsPanel(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {

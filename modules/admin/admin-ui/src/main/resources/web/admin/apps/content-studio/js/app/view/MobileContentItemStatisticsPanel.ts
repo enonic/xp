@@ -99,7 +99,6 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
                 this.setName(this.makeDisplayName(item));
             }
         }
-        this.slideIn();
     }
 
     private makeDisplayName(item: ViewItem<ContentSummaryAndCompareStatus>): string {
@@ -127,11 +126,13 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         this.detailsToggleButton.removeClass("expanded");
     }
 
+    // hide
     slideOut() {
         this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
         api.dom.Body.get().getHTMLElement().classList.remove("mobile-statistics-panel");
     }
 
+    // show
     slideIn() {
         api.dom.Body.get().getHTMLElement().classList.add("mobile-statistics-panel");
         this.getEl().setRightPx(0);
