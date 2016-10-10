@@ -296,7 +296,11 @@ module api.app.wizard {
             return this.stepToolbar;
         }
 
-        protected doRenderOnDataLoaded(rendered: boolean): wemQ.Promise<boolean> {
+        protected doRenderOnDataLoaded(rendered: boolean, delayMask?: boolean): wemQ.Promise<boolean> {
+            let formMaskFn = () => {
+                this.formMask = new api.ui.mask.LoadMask(this.formPanel);
+                this.formMask.show();
+            };
             if (WizardPanel.debug) {
                 console.debug("WizardPanel.doRenderOnDataLoaded");
             }
@@ -314,11 +318,11 @@ module api.app.wizard {
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel: formPanel.onAdded");
                 }
-                setTimeout(() => {
-                    // Must be delayed due to delay in SplitPanel.onAdded, to prevent spinner jumping
-                    this.formMask = new api.ui.mask.LoadMask(this.formPanel);
-                    this.formMask.show();
-                }, 1);
+                if (delayMask) {
+                    setTimeout(formMaskFn, 1);
+                } else {
+                    formMaskFn();
+                }
             });
 
             var firstShow;
