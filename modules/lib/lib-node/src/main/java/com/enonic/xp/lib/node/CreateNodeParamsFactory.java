@@ -1,20 +1,14 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.script.ScriptValue;
 
 import static com.enonic.xp.lib.node.NodePropertyConstants.CHILD_ORDER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.INDEX_CONFIG;
@@ -30,10 +24,8 @@ public class CreateNodeParamsFactory
     {
     }
 
-    public CreateNodeParams create( final ScriptValue value )
+    public CreateNodeParams create( final PropertyTree properties )
     {
-        final PropertyTree properties = new JsonToPropertyTreeTranslator().translate( createJson( value.getMap() ) );
-
         final String name = properties.getString( NODE_NAME );
         final String parentPath = properties.getString( PARENT_PATH );
         final Long manualOrderValue = properties.getLong( MANUAL_ORDER_VALUE );
@@ -50,7 +42,7 @@ public class CreateNodeParamsFactory
             parent( Strings.isNullOrEmpty( parentPath ) ? NodePath.ROOT : NodePath.create( parentPath ).build() ).
             manualOrderValue( manualOrderValue ).
             childOrder( ChildOrder.from( childOrder ) ).
-            nodeType( NodeType.from( nodeType ) ).
+            nodeType( Strings.isNullOrEmpty( nodeType ) ? NodeType.DEFAULT_NODE_COLLECTION : NodeType.from( nodeType ) ).
             indexConfigDocument( new IndexConfigFactory( indexConfig ).create() ).
             permissions( new PermissionsFactory( permissions ).create() ).
             build();
@@ -83,12 +75,5 @@ public class CreateNodeParamsFactory
             builder.name( name );
         }
     }
-
-    private JsonNode createJson( final Map<?, ?> value )
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
-    }
-
 
 }

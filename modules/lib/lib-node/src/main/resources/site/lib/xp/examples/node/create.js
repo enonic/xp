@@ -4,7 +4,8 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Creates a content.
 var result1 = nodeLib.create({
-    displayName: "This is my node",
+    _name : "myName",
+    displayName: "This is brand new node",
     someData: {
         cars: [
             "skoda", "tesla model X"
@@ -49,19 +50,20 @@ log.info('Node created with id ' + result1._id);
 // BEGIN
 // Node created.
 var expected = {
-        "_id": "123456",
-        "_name": "myNode",
-        "_path": "/myNode",
+        "_id": "myId",
+        "_name": "myName",
+        "_path": "/myName",
         "_childOrder": "_timestamp DESC",
         "_indexConfig": {
-            "analyzer": "myAnalyzer",
             "default": {
-                "decideByType": true,
+                "decideByType": false,
                 "enabled": true,
                 "nGram": false,
                 "fulltext": false,
                 "includeInAllText": false,
-                "indexValueProcessors": []
+                "indexValueProcessors": [
+
+                ]
             },
             "configs": [
                 {
@@ -72,31 +74,9 @@ var expected = {
                         "nGram": true,
                         "fulltext": true,
                         "includeInAllText": true,
-                        "indexValueProcessors": []
-                    }
-                },
-                {
-                    "path": "myHtmlField",
-                    "config": {
-                        "decideByType": false,
-                        "enabled": true,
-                        "nGram": false,
-                        "fulltext": false,
-                        "includeInAllText": true,
                         "indexValueProcessors": [
-                            "myProcessor"
+
                         ]
-                    }
-                },
-                {
-                    "path": "type",
-                    "config": {
-                        "decideByType": false,
-                        "enabled": false,
-                        "nGram": false,
-                        "fulltext": false,
-                        "includeInAllText": false,
-                        "indexValueProcessors": []
                     }
                 }
             ]
@@ -108,7 +88,9 @@ var expected = {
                 "allow": [
                     "READ"
                 ],
-                "deny": []
+                "deny": [
+
+                ]
             },
             {
                 "principal": "role:admin",
@@ -121,39 +103,23 @@ var expected = {
                     "READ_PERMISSIONS",
                     "WRITE_PERMISSIONS"
                 ],
-                "deny": []
-            },
-            {
-                "principal": "role:everyone",
-                "allow": [
-                    "READ"
-                ],
-                "deny": []
-            },
-            {
-                "principal": "role:authenticated",
-                "allow": [
-                    "READ",
-                    "CREATE",
-                    "MODIFY",
-                    "DELETE",
-                    "PUBLISH",
-                    "READ_PERMISSIONS",
-                    "WRITE_PERMISSIONS"
-                ],
-                "deny": []
+                "deny": [
+
+                ]
             }
         ],
         "_state": "DEFAULT",
-        "_nodeType": "myNodeType",
-        "_versionKey": "versionId",
-        "_manualOrderValue": 0,
+        "_versionKey": "versionKey",
         "_timestamp": "2010-10-10T10:10:10.100Z",
-        "myHtmlField": "<h1>Html here</h1>",
-        "displayName": "House1",
-        "type": "com.enonic.app.features:house",
-        "owner": "user:system:su",
-        "modifiedTime": "2015-10-05T12:11:01.272Z"
+        "displayName": "This is brand new node",
+        "someData": {
+            "cars": [
+                "skoda",
+                "tesla model x"
+            ],
+            "likes": "plywood",
+            "numberOfUselessGadgets": 123
+        }
     }
     ;
 // END
