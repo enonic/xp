@@ -248,7 +248,7 @@ export class LiveEditPageProxy {
             this.pageView.remove();
             this.pageView = null;
         }
-        if (this.liveEditModel.isRenderableSiteOrTemplate()) {
+        if (this.liveEditModel.isRenderableContent()) {
             this.showLoadMaskHandler();
         }
 
@@ -261,7 +261,7 @@ export class LiveEditPageProxy {
 
         this.liveEditIFrame.setSrc(pageUrl);
 
-        if (this.liveEditModel.isRenderableSiteOrTemplate()) {
+        if (this.liveEditModel.isRenderableContent()) {
             if (LiveEditPageProxy.debug) {
                 console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
             }
