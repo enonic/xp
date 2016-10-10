@@ -41,9 +41,7 @@ module api.form {
 
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
-        private helpTextDiv: api.dom.Element;
-
-        private helpTextToggler: api.dom.DivEl;
+        private helpText: HelpTextContainer;
 
         public static debug: boolean = false;
 
@@ -75,14 +73,9 @@ module api.form {
             }
 
             if (this.input.getHelpText()) {
-                this.helpTextToggler = new api.dom.DivEl("help-text-toggler");
-                this.helpTextToggler.setHtml("?");
-                this.helpTextToggler.onClicked(() => {
-                    this.helpTextDiv.toggleClass("visible");
-                    this.helpTextToggler.toggleClass("on");
-                });
+                this.helpText = new HelpTextContainer(this.input.getHelpText());
 
-                this.appendChild(this.helpTextToggler);
+                this.appendChild(this.helpText.getToggler());
             }
 
             if (this.input.isMaximizeUIInputWidth()) {
@@ -99,8 +92,8 @@ module api.form {
             return this.inputTypeView.layout(this.input, this.propertyArray).then(() => {
                 this.appendChild(this.inputTypeView.getElement());
 
-                if (this.input.getHelpText()) {
-                    this.helpTextDiv = this.appendHelpText(this.input.getHelpText());
+                if (!!this.helpText) {
+                    this.appendChild(this.helpText.getHelpText());
                 }
 
                 if (!this.inputTypeView.isManagingAdd()) {
@@ -139,18 +132,6 @@ module api.form {
 
                 this.refresh(validate);
             });
-        }
-
-        private appendHelpText(helpText: string): api.dom.Element {
-            var helpTextDiv = new api.dom.DivEl("help-text");
-            var pEl = new api.dom.PEl();
-            pEl.getEl().setText(helpText);
-
-            helpTextDiv.appendChild(pEl);
-
-            this.appendChild(helpTextDiv);
-
-            return helpTextDiv;
         }
 
         private getPropertyArray(propertySet: PropertySet): PropertyArray {
@@ -341,15 +322,13 @@ module api.form {
         unBlur(listener: (event: FocusEvent) => void) {
             this.inputTypeView.unBlur(listener);
         }
-
+        
         toggleHelpText(show?: boolean) {
-            if (this.helpTextDiv) {
-                this.helpTextDiv.toggleClass("visible", show);
-                this.helpTextToggler.toggleClass("on", show);
+            if (!!this.helpText) {
+                this.helpText.toggleHelpText(show);
             }
-
         }
-
+        
         hasHelpText(): boolean {
             return !!this.input.getHelpText();
         }
