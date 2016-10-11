@@ -219,33 +219,36 @@ module api.form.optionset {
             var validationRecordingPath = this.resolveValidationRecordingPath();
 
             var occurrenceViews = this.formOptionSetOccurrences.getOccurrenceViews();
-            var occurrenceRecording = new ValidationRecording();
+            var occurrenceRecording = new ValidationRecording(); // validity state of occurrences
 
             var numberOfValids = 0;
             occurrenceViews.forEach((occurrenceView: FormOptionSetOccurrenceView) => {
-                var recordingForOccurrence = occurrenceView.getLastValidationRecording();
-                if (recordingForOccurrence && recordingForOccurrence.isValid()) {
-                    numberOfValids++;
+                var recordingForOccurrence = occurrenceView.getValidationRecording();
+                if (recordingForOccurrence) {
+                    if (recordingForOccurrence.isValid()) {
+                        numberOfValids++;
+                    } else {
+                        occurrenceRecording.flatten(recordingForOccurrence);
+                    }
                 }
             });
 
-            if (numberOfValids < this.formOptionSet.getOccurrences().getMinimum() ||
-                numberOfValids < this.formOptionSet.getMultiselection().getMinimum()) {
+            // We ensure that previousValidationRecording is invalid both when at least on of its occurrences is invalid
+            // or number of occurrences breaks contract.
+
+            if (numberOfValids < this.formOptionSet.getOccurrences().getMinimum()) {
                 this.previousValidationRecording.breaksMinimumOccurrences(validationRecordingPath);
-                occurrenceRecording.breaksMinimumOccurrences(validationRecordingPath);
-            } else {
-                this.previousValidationRecording.removeUnreachedMinimumOccurrencesByPath(validationRecordingPath, true);
+            } else if (!occurrenceRecording.containsPathInBreaksMin(validationRecordingPath)) {
+                this.previousValidationRecording.removeUnreachedMinimumOccurrencesByPath(validationRecordingPath, false);
             }
 
-            if (this.formOptionSet.getOccurrences().maximumBreached(numberOfValids) ||
-                this.formOptionSet.getMultiselection().maximumBreached(numberOfValids)) {
+            if (this.formOptionSet.getOccurrences().maximumBreached(numberOfValids)) {
                 this.previousValidationRecording.breaksMaximumOccurrences(validationRecordingPath);
-                occurrenceRecording.breaksMaximumOccurrences(validationRecordingPath);
-            } else {
-                this.previousValidationRecording.removeBreachedMaximumOccurrencesByPath(validationRecordingPath, true);
+            } else if (!occurrenceRecording.containsPathInBreaksMax(validationRecordingPath)) {
+                this.previousValidationRecording.removeBreachedMaximumOccurrencesByPath(validationRecordingPath, false);
             }
 
-            this.renderValidationErrors(occurrenceRecording);
+            this.renderValidationErrors(this.previousValidationRecording);
 
             if (previousValidState != this.previousValidationRecording.isValid()) {
                 this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
@@ -296,13 +299,11 @@ module api.form.optionset {
             return result;
         }
 
-
         validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {
 
             var validationRecordingPath = this.resolveValidationRecordingPath(),
                 wholeRecording = new ValidationRecording(),
                 occurrenceViews = this.formOptionSetOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation),
-                occurrenceRecording = new ValidationRecording(),
                 numberOfValids = 0;
 
             occurrenceViews.forEach((occurrenceView: FormOptionSetOccurrenceView) => {
@@ -315,11 +316,9 @@ module api.form.optionset {
 
             if (numberOfValids < this.formOptionSet.getOccurrences().getMinimum()) {
                 wholeRecording.breaksMinimumOccurrences(validationRecordingPath);
-                occurrenceRecording.breaksMinimumOccurrences(validationRecordingPath);
             }
             if (this.formOptionSet.getOccurrences().maximumBreached(numberOfValids)) {
                 wholeRecording.breaksMaximumOccurrences(validationRecordingPath);
-                occurrenceRecording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
             if (!silent && wholeRecording.validityChanged(this.previousValidationRecording)) {
@@ -327,7 +326,7 @@ module api.form.optionset {
             }
 
             // display only errors related to occurrences
-            this.renderValidationErrors(occurrenceRecording);
+            this.renderValidationErrors(wholeRecording);
 
             this.previousValidationRecording = wholeRecording;
 

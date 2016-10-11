@@ -44,7 +44,7 @@ module api.form.optionset {
 
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
-        private previousValidationRecording: ValidationRecording;
+        private currentValidationState: ValidationRecording;
 
         constructor(config: FormOptionSetOccurrenceViewConfig) {
             super("form-option-set-occurrence-view", config.formOptionSetOccurrence);
@@ -54,6 +54,7 @@ module api.form.optionset {
             this.parent = config.parent;
             this.constructedWithData = config.dataSet != null;
             this.propertySet = config.dataSet;
+            this.ensureSelectionArrayExists(this.propertySet);
 
             this.formItemLayer = new FormItemLayer(config.context);
         }
@@ -83,8 +84,6 @@ module api.form.optionset {
             this.formOptionSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
             this.appendChild(this.formOptionSetOccurrencesContainer);
 
-            this.ensureSelectionArrayExists(this.propertySet);
-
             var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
                 setFormItems(this.formOptionSet.getFormItems()).
                 setParentElement(this.formOptionSetOccurrencesContainer).
@@ -101,38 +100,42 @@ module api.form.optionset {
                 this.formItemViews.forEach((formItemView: FormItemView) => {
                     formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
 
-                        if (!this.previousValidationRecording) {
-                            return; // previousValidationRecording is initialized on validate() call which may not be triggered in some cases
+                        if (!this.currentValidationState) {
+                            return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                         }
 
-                        var previousValidState = this.previousValidationRecording.isValid();
-                        if (event.isValid()) {
-                            this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
-                        } else {
-                            this.previousValidationRecording.flatten(event.getRecording());
+                        var previousValidState = this.currentValidationState.isValid();
+                        if (previousValidState != event.isValid()) { //one form item may affect validity state of whole option set
+                            this.validate(); // so let's re-validate it all
+                        } else { // otherwise, just update validation state
+                            if (event.isValid()) {
+                                this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
+                            } else {
+                                this.currentValidationState.flatten(event.getRecording());
+                            }
                         }
 
-                        if (previousValidState != this.previousValidationRecording.isValid()) {
-                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
+                        if (previousValidState != this.currentValidationState.isValid()) {
+                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                                 this.resolveValidationRecordingPath()).setIncludeChildren(true));
                         }
                     });
 
                     (<FormOptionSetOptionView> formItemView).onSelectionChanged(() => {
-                        if (!this.previousValidationRecording) {
-                            return; // previousValidationRecording is initialized on validate() call which may not be triggered in some cases
+                        if (!this.currentValidationState) {
+                            return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                         }
 
-                        var previousValidState = this.previousValidationRecording.isValid(),
-                            multiselectionValidationRecording = this.validateMultiselection();
-                        if (multiselectionValidationRecording.isValid()) {
-                            this.previousValidationRecording.removeByPath(this.resolveValidationRecordingPath(), false);
+                        var previousValidState = this.currentValidationState.isValid();
+                        this.validate();
+                        if (this.currentValidationState.isValid()) {
+                            this.currentValidationState.removeByPath(this.resolveValidationRecordingPath(), true);
                         } else {
-                            this.previousValidationRecording.flatten(multiselectionValidationRecording);
+                            this.currentValidationState.flatten(this.currentValidationState);
                         }
 
-                        if (previousValidState != this.previousValidationRecording.isValid()) {
-                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
+                        if (previousValidState != this.currentValidationState.isValid()) {
+                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                                 this.resolveValidationRecordingPath()).setIncludeChildren(true));
                         }
                     })
@@ -253,8 +256,8 @@ module api.form.optionset {
             return new ValidationRecordingPath(this.getDataPath(), null);
         }
 
-        getLastValidationRecording(): ValidationRecording {
-            return this.previousValidationRecording;
+        getValidationRecording(): ValidationRecording {
+            return this.currentValidationState;
         }
 
         public displayValidationErrors(value: boolean) {
@@ -292,11 +295,11 @@ module api.form.optionset {
             allRecordings.flatten(this.validateMultiselection());
 
             if (!silent) {
-                if (allRecordings.validityChanged(this.previousValidationRecording)) {
+                if (allRecordings.validityChanged(this.currentValidationState)) {
                     this.notifyValidityChanged(new RecordingValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
                 }
             }
-            this.previousValidationRecording = allRecordings;
+            this.currentValidationState = allRecordings;
             return allRecordings;
         }
 
@@ -313,17 +316,17 @@ module api.form.optionset {
                 multiselectionRecording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
-            if (this.previousValidationRecording) {
+            if (this.currentValidationState) {
                 if (selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMinimum()) {
-                    this.previousValidationRecording.breaksMinimumOccurrences(validationRecordingPath);
+                    this.currentValidationState.breaksMinimumOccurrences(validationRecordingPath);
                 } else {
-                    this.previousValidationRecording.removeUnreachedMinimumOccurrencesByPath(validationRecordingPath, true);
+                    this.currentValidationState.removeUnreachedMinimumOccurrencesByPath(validationRecordingPath, false);
                 }
 
                 if (this.formOptionSet.getMultiselection().maximumBreached(selectionPropertyArray.getSize())) {
-                    this.previousValidationRecording.breaksMaximumOccurrences(validationRecordingPath);
+                    this.currentValidationState.breaksMaximumOccurrences(validationRecordingPath);
                 } else {
-                    this.previousValidationRecording.removeBreachedMaximumOccurrencesByPath(validationRecordingPath, true);
+                    this.currentValidationState.removeBreachedMaximumOccurrencesByPath(validationRecordingPath, false);
                 }
             }
 
