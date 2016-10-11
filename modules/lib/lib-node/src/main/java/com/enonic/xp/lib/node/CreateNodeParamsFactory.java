@@ -27,7 +27,7 @@ public class CreateNodeParamsFactory
     public CreateNodeParams create( final PropertyTree properties )
     {
         final String name = properties.getString( NODE_NAME );
-        final String parentPath = properties.getString( PARENT_PATH );
+        final String parentPath =  properties.getString( PARENT_PATH ) ;
         final Long manualOrderValue = properties.getLong( MANUAL_ORDER_VALUE );
         final String childOrder = properties.getString( CHILD_ORDER );
         final String nodeType = properties.getString( NODE_TYPE );

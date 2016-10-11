@@ -127,7 +127,7 @@ public class AbstractQuery
 
         private final Filters.Builder queryFilters = Filters.create();
 
-        private final Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
+        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
         private QueryExpr query;
 
@@ -180,6 +180,13 @@ public class AbstractQuery
         public B addAggregationQueries( final AggregationQueries aggregationQueries )
         {
             this.aggregationQueries.addAll( aggregationQueries.getSet() );
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B aggregationQueries( final Set<AggregationQuery> aggregationQueries )
+        {
+            this.aggregationQueries = aggregationQueries;
             return (B) this;
         }
 
