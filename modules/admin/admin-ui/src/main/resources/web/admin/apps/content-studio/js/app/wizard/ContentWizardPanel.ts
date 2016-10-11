@@ -384,7 +384,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
 
-        return super.doRenderOnDataLoaded(rendered).then((rendered) => {
+        return super.doRenderOnDataLoaded(rendered, true).then((rendered) => {
             if (ContentWizardPanel.debug) {
                 console.debug("ContentWizardPanel.doRenderOnDataLoaded at " + new Date().toISOString());
             }
