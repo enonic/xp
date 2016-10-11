@@ -164,7 +164,10 @@ export class LiveEditPageProxy {
     private createLiveEditIFrame(): api.dom.IFrameEl {
         var liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
         liveEditIFrame.hide();
-        liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
+        liveEditIFrame.onLoaded(() => {
+            liveEditIFrame.getHTMLElement().style.display = "";
+            this.handleIFrameLoadedEvent()
+        });
 
         return liveEditIFrame;
     }
