@@ -18,7 +18,7 @@ public class ContentIdsHtmlParser
 
     private final static String BASE_START = "<a\\s+(?:[^>]*?\\s+)?href=[\"\']content://";
 
-    private final static Pattern BASE_PATTERN = Pattern.compile( BASE_START + NodeId.getPattern() + "[\"\']>" );
+    private final static Pattern BASE_PATTERN = Pattern.compile( BASE_START + NodeId.VALID_NODE_ID_PATTERN + "[\"\']>" );
 
     @Override
     public ContentIds parse( final String source )

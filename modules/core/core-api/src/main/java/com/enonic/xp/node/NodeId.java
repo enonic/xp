@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 @Beta
 public class NodeId
 {
-    private static final String VALID_NODE_ID_PATTERN = "([a-z0-9A-Z_\\-\\.:]*)";
+    public static final String VALID_NODE_ID_PATTERN = "([a-z0-9A-Z_\\-\\.:]*)";
 
     private final String value;
 
@@ -37,11 +37,6 @@ public class NodeId
     {
         Preconditions.checkNotNull( object, "object cannot be null" );
         return new NodeId( object.toString() );
-    }
-
-    public static String getPattern()
-    {
-        return VALID_NODE_ID_PATTERN;
     }
 
     @Override
