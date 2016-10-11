@@ -48,6 +48,8 @@ public class ContentConstants
 
     public static final NodeType CONTENT_NODE_COLLECTION = NodeType.from( "content" );
 
+    public static final ChildOrder DEFAULT_CONTENT_REPO_ROOT_ORDER = ChildOrder.from( "_name ASC" );
+
     public static final ChildOrder DEFAULT_CHILD_ORDER = ChildOrder.create().
         add( FieldOrderExpr.create( ContentIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).
         build();

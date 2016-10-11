@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +13,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
@@ -89,8 +88,7 @@ public final class ContentInitializer
         {
             initializeRepository();
 
-            final Node rootNode = runAsAdmin( this::doInitNodeRoot );
-            runAsAdmin( () -> this.doInitContentRootNode( rootNode ) );
+            runAsAdmin( this::doInitContentRootNode );
         }
     }
 
@@ -98,13 +96,16 @@ public final class ContentInitializer
     {
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( "cms-repo" ) ).
+            rootPermissions( CONTENT_REPO_DEFAULT_ACL ).
+            rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER ).
             build();
 
         this.repositoryService.create( createRepositoryParams );
     }
 
-    private void doInitContentRootNode( final Node rootNode )
+    private void doInitContentRootNode()
     {
+
         final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
 
         final User user = ContextAccessor.current().getAuthInfo().getUser();
@@ -124,7 +125,7 @@ public final class ContentInitializer
             final Node root = nodeService.create( CreateNodeParams.create().
                 data( data ).
                 name( ContentConstants.CONTENT_ROOT_NAME ).
-                parent( rootNode.path() ).
+                parent( NodePath.ROOT ).
                 permissions( CONTENT_ROOT_DEFAULT_ACL ).
                 childOrder( CONTENT_DEFAULT_CHILD_ORDER ).
                 build() );
@@ -147,41 +148,12 @@ public final class ContentInitializer
             runWith( runnable );
     }
 
-    private <T> T runAsAdmin( final Callable<T> callable )
-    {
-        final AuthenticationInfo authInfo = createAdminAuthInfo();
-
-        return ContextBuilder.from( ContentConstants.CONTEXT_DRAFT ).
-            authInfo( authInfo ).
-            build().
-            callWith( callable );
-    }
-
     private AuthenticationInfo createAdminAuthInfo()
     {
         return AuthenticationInfo.create().
             principals( RoleKeys.ADMIN ).
             user( SUPER_USER ).
             build();
-    }
-
-    private Node doInitNodeRoot()
-    {
-        final Node existingRoot = this.nodeService.getRoot();
-
-        if ( existingRoot == null )
-        {
-            final Node rootNode = this.nodeService.createRootNode( CreateRootNodeParams.create().
-                childOrder( ChildOrder.from( "_name ASC" ) ).
-                permissions( CONTENT_REPO_DEFAULT_ACL ).
-                build() );
-
-            nodeService.push( NodeIds.from( rootNode.id() ), ContentConstants.BRANCH_MASTER );
-
-            return rootNode;
-        }
-
-        return existingRoot;
     }
 
 }

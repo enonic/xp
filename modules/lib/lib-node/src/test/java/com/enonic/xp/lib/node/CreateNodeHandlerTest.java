@@ -17,6 +17,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -87,6 +89,12 @@ public class CreateNodeHandlerTest
     public void testExample()
     {
         mockCreateNode();
+
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+            thenReturn( Repository.create().
+                id( RepositoryId.from( "cms-repo" ) ).
+                build() );
+
         runScript( "/site/lib/xp/examples/node/create.js" );
     }
 

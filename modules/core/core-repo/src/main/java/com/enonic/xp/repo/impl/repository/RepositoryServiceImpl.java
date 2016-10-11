@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentMap;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
@@ -33,6 +35,8 @@ public class RepositoryServiceImpl
     private NodeRepositoryService nodeRepositoryService;
 
     private NodeStorageService nodeStorageService;
+
+    private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
 
     @SuppressWarnings("unused")
     @Activate
@@ -80,25 +84,24 @@ public class RepositoryServiceImpl
                 build().
                 callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
 
-            //createRootNodeTemp( repository.getId() );
+            createRootNode( params );
 
             return repository;
         } );
     }
 
-    private void createRootNodeTemp( final RepositoryId repositoryId )
+    private void createRootNode( final CreateRepositoryParams params )
     {
-        final Node rootNode = Node.createRoot().
-            build();
+        final Node rootNode = this.nodeStorageService.store( Node.createRoot().
+            permissions( params.getRootPermissions() ).
+            inheritPermissions( params.isInheritPermissions() ).
+            childOrder( params.getRootChildOrder() ).
+            build(), InternalContext.create( ContextAccessor.current() ).
+            repositoryId( params.getRepositoryId() ).
+            build() );
 
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repositoryId ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build().
-            callWith( () -> nodeStorageService.store( rootNode, InternalContext.from( ContextAccessor.current() ) ) );
-
+        LOG.info( "Created root node in  with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
     }
-
 
     @Override
     public Repository get( final RepositoryId repositoryId )

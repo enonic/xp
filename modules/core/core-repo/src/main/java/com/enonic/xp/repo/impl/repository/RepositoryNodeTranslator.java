@@ -12,6 +12,7 @@ import com.enonic.xp.repository.IndexConfigs;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.repository.ValidationSettings;

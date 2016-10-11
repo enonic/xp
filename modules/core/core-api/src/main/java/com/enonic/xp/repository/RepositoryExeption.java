@@ -3,7 +3,7 @@ package com.enonic.xp.repository;
 import com.google.common.annotations.Beta;
 
 @Beta
-class RepositoryExeption
+public class RepositoryExeption
     extends RuntimeException
 {
     public RepositoryExeption( final String message )

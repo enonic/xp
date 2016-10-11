@@ -148,6 +148,7 @@ public class SecurityServiceImplTest
         securityService.setIndexService( indexService );
 
         runAsAdmin( () -> securityService.initialize() );
+
     }
 
     @Test

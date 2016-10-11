@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
@@ -30,6 +31,9 @@ public class SystemRepoInitializer
             {
                 final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
                     repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+                    rootChildOrder( ChildOrder.from( "_name ASC" ) ).
+                    rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
+                    inheritPermissions( true ).
                     build();
 
                 this.repositoryService.create( createRepositoryParams );

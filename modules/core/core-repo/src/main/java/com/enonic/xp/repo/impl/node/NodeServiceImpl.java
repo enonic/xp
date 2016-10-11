@@ -93,10 +93,6 @@ public class NodeServiceImpl
     @Activate
     public void initialize()
     {
-        if ( this.indexServiceInternal.isMaster() )
-        {
-            new SystemNodeInitializer( this ).initialize();
-        }
     }
 
     @Override

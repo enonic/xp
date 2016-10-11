@@ -4,7 +4,7 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Creates a content.
 var result1 = nodeLib.create({
-    _name : "myName",
+    _name: "myName",
     displayName: "This is brand new node",
     someData: {
         cars: [
@@ -61,9 +61,7 @@ var expected = {
                 "nGram": false,
                 "fulltext": false,
                 "includeInAllText": false,
-                "indexValueProcessors": [
-
-                ]
+                "indexValueProcessors": []
             },
             "configs": [
                 {
@@ -74,9 +72,7 @@ var expected = {
                         "nGram": true,
                         "fulltext": true,
                         "includeInAllText": true,
-                        "indexValueProcessors": [
-
-                        ]
+                        "indexValueProcessors": []
                     }
                 }
             ]
@@ -88,9 +84,7 @@ var expected = {
                 "allow": [
                     "READ"
                 ],
-                "deny": [
-
-                ]
+                "deny": []
             },
             {
                 "principal": "role:admin",
@@ -103,12 +97,11 @@ var expected = {
                     "READ_PERMISSIONS",
                     "WRITE_PERMISSIONS"
                 ],
-                "deny": [
-
-                ]
+                "deny": []
             }
         ],
         "_state": "DEFAULT",
+        "_nodeType": "default",
         "_versionKey": "versionKey",
         "_timestamp": "2010-10-10T10:10:10.100Z",
         "displayName": "This is brand new node",
