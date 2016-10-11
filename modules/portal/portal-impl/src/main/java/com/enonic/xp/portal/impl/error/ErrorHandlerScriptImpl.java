@@ -48,7 +48,7 @@ final class ErrorHandlerScriptImpl
         else
         {
             return new PortalResponseSerializer( result, portalError.getStatus() ).
-                postProcess( false ).
+                defaultPostProcess( false ).
                 applyFilters( false ).
                 serialize();
         }
