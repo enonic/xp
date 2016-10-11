@@ -230,7 +230,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow);
 
             this.contextWindow.onDisplayModeChanged(() => {
-                if (!this.contextWindow.isFloating()) {
+                const enabled = this.contentWizardPanel.getComponentsViewToggler().isEnabled();
+                if (!this.contextWindow.isFloating() && enabled) {
                     this.contentWizardPanel.getContextWindowToggler().setActive(true);
                     this.contextWindow.slideIn();
                 }
