@@ -369,7 +369,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             }
 
             this.pageLoading = true;
-            if (this.liveEditModel.isRenderableSiteOrTemplate()) {
+            if (this.liveEditModel.isRenderableContent()) {
                 this.contentWizardPanel.getLiveMask().show();
             }
             this.liveEditPageProxy.load();
