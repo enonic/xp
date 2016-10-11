@@ -2,7 +2,6 @@ import "../../api.ts";
 import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
 
 import MenuButton = api.ui.button.MenuButton;
-import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
 export class ContentPublishMenuManager {
 

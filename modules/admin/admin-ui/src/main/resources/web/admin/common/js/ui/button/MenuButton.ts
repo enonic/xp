@@ -102,7 +102,7 @@ module api.ui.button {
                 this.menu.setActions(actions);
                 action.onPropertyChanged(this.updateActionEnabled.bind(this));
                 this.addClass('minimized');
-                setTimeout(this.updateActionEnabled.bind(this), 15);
+                this.updateActionEnabled();
             }
         }
 
@@ -112,7 +112,7 @@ module api.ui.button {
                 this.menu.removeAction(action);
                 action.unPropertyChanged(this.updateActionEnabled.bind(this));
                 this.removeClass('minimized');
-                setTimeout(this.updateActionEnabled.bind(this), 15);
+                this.updateActionEnabled();
             }
         }
     }

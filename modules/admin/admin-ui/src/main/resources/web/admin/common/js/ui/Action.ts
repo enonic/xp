@@ -207,7 +207,6 @@ module api.ui {
             });
         }
 
-
         onBeforeExecute(listener: (action: Action) => void) {
             this.beforeExecuteListeners.push(listener);
         }

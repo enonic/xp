@@ -22,6 +22,10 @@ module api.ui.menu {
             return this.hideOnItemClick;
         }
 
+        getMenuItems() {
+            return this.menuItems;
+        }
+
         addAction(action: api.ui.Action): Menu {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
@@ -43,10 +47,6 @@ module api.ui.menu {
             }
             return this;
         }
-
-        // getActions(): api.ui.Action[] {
-        //     return this.menuItems.map(item => item.getAction());
-        // }
 
         removeActions(actions: api.ui.Action[]): Menu {
             actions.forEach((action: api.ui.Action) => {
@@ -111,10 +111,6 @@ module api.ui.menu {
                 }
             }
             return null;
-        }
-
-        getMenuItems() {
-            return this.menuItems;
         }
     }
 
