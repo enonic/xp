@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.node;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.lib.node.mapper.NodeMapper;
@@ -27,6 +28,7 @@ public final class GetNodeHandler
         {
             return Arrays.stream( keys ).
                 map( this::getByKey ).
+                filter( Objects::nonNull ).
                 collect( Collectors.toList() );
         }
     }
