@@ -262,6 +262,18 @@ module api.ui.tab {
             this.tabs = [];
         }
 
+        resetItemsVisibility() {
+            let items = this.getNavigationItems();
+            if (!!items) {
+                items.forEach(item => {
+                    if (!item.isVisibleInMenu()) {
+                        item.setVisibleInMenu(true);
+                    }
+                });
+            }
+        }
+
+
         updateActiveTab(tabIndex: number) {
             this.tabs.forEach((tab: TabMenuItem, index: number) => {
                 var activate = (tabIndex == index);

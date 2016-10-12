@@ -36,21 +36,17 @@ Javascript library licenses used by this product:
     Liberal license from Marijn Haverbeke
     https://github.com/codemirror/CodeMirror/blob/master/LICENSE
 
-    MediumEditor
-    Very liberal license from Davi Ferreira
-    https://github.com/daviferreira/medium-editor/blob/master/LICENSE
-
-    Plupload
-    GNU General Public License - Version 2
-    http://www.plupload.com/license/gplv2
-
-    SlickGrid
-    MIT License
-    https://github.com/mleibman/SlickGrid/blob/master/MIT-LICENSE.txt
-
     Crossroads.js
     MIT License
     http://millermedeiros.github.io/crossroads.js
+
+    Fine Uploader
+    MIT License
+    http://fineuploader.com/
+
+    MediumEditor
+    Very liberal license from Davi Ferreira
+    https://github.com/daviferreira/medium-editor/blob/master/LICENSE
 
     Hasher
     MIT License
@@ -67,6 +63,10 @@ Javascript library licenses used by this product:
     Q.js
     Very liberal license from Kristopher Michael Kowal
     https://github.com/kriskowal/q/blob/v1/LICENSE
+
+    SlickGrid
+    MIT License
+    https://github.com/mleibman/SlickGrid/blob/master/MIT-LICENSE.txt
 
 Artwork licenses used by this product:
 

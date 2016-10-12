@@ -271,10 +271,13 @@ module api.ui.panel {
             }
 
             this.onAdded((event: api.dom.ElementShownEvent) => {
-                let splitPanelSize = this.isHorizontal() ? this.getEl().getHeight() : this.getEl().getWidth();
-                api.util.assert(this.firstPanelMinSize + this.secondPanelMinSize <= splitPanelSize,
-                    "warning: total sum of first and second panel minimum sizes exceed total split panel size");
-                this.updateAlignment();
+                // wait 1ms to ensure browser calculated element dimensions and styles
+                setTimeout(() => {
+                    let splitPanelSize = this.isHorizontal() ? this.getEl().getHeight() : this.getEl().getWidth();
+                    api.util.assert(this.firstPanelMinSize + this.secondPanelMinSize <= splitPanelSize,
+                        "warning: total sum of first and second panel minimum sizes exceed total split panel size");
+                    this.updateAlignment();
+                }, 1);
             });
 
             // Add all elements, needed to be tracked

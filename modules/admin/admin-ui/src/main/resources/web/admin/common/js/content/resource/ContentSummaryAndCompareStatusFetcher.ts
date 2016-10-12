@@ -99,13 +99,12 @@ module api.content.resource {
             return deferred.promise;
         }
 
-        static fetchChildrenIds(parentContentId: ContentId, from: number = 0,
-                                size: number = -1): wemQ.Promise<ContentResponse<ContentSummary>> {
+        static fetchChildrenIds(parentContentId: ContentId): wemQ.Promise<ContentId[]> {
 
-            var deferred = wemQ.defer<ContentResponse<ContentSummary>>();
+            var deferred = wemQ.defer<ContentId[]>();
 
-            new ListContentByIdRequest(parentContentId).setFrom(from).setSize(size).setExpand(api.rest.Expand.NONE).sendAndParse().then(
-                (response: ContentResponse<ContentSummary>)=> {
+            new GetContentIdsByParentRequest().setParentId(parentContentId).sendAndParse().then(
+                (response: ContentId[])=> {
                     deferred.resolve(response);
                 });
 

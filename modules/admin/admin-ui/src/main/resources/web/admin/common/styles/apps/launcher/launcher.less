@@ -238,14 +238,13 @@ body.mobile-statistics-panel {
 
     .user-info {
       vertical-align: middle;
-      padding: 10px 15px 0 0;
-      width: 100%;
+      padding: 11px 15px 0 0;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
 
       > * {
-        vertical-align: middle
+        vertical-align: middle;
       }
     }
     .user-logout {
@@ -262,9 +261,15 @@ body.mobile-statistics-panel {
       width: 24px;
       height: 24px; // For IE
       margin-right: 10px;
+      float: left;
     }
-    span {
+    p {
       vertical-align: middle;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 160px;
+      line-height: 22px;
     }
   }
 }

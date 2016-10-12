@@ -83,4 +83,12 @@ export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
     giveFocus(): boolean {
         return this.formView.giveFocus();
     }
+
+    toggleHelpText(show?: boolean) {
+        this.formView.toggleHelpText(show);
+    }
+
+    hasHelpText(): boolean {
+        return this.formView.hasHelpText();
+    }
 }

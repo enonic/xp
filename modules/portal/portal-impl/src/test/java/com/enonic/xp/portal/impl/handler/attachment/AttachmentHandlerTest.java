@@ -180,7 +180,7 @@ public class AttachmentHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
-        assertEquals( "attachment; filename=logo.png", res.getHeaders().get( "Content-Disposition" ) );
+        assertEquals( "attachment; filename=\"logo.png\"; filename*=UTF-8''logo.png", res.getHeaders().get( "Content-Disposition" ) );
         assertSame( this.mediaBytes, res.getBody() );
     }
 

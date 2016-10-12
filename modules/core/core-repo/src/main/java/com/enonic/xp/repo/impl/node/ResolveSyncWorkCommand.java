@@ -151,22 +151,52 @@ public class ResolveSyncWorkCommand
             build().
             execute();
 
-        return NodeIds.from( dependencies.getSet().stream().
+        final NodeIds filtered = NodeIds.from( dependencies.getSet().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
             collect( Collectors.toSet() ) );
+
+        return filtered;
     }
 
     private void addNewAndMovedParents( final Set<NodeComparison> comparisons )
     {
-        final NodePaths.Builder parentPathsBuilder = NodePaths.create();
+        final NodePaths parentPaths = getPathsFromComparisons( comparisons );
 
-        for ( final NodeComparison comparison : comparisons )
+        final NodeIds parentIds = getParentIdsFromPaths( parentPaths );
+
+        final NodeIds parentsDependencies = getNodeDependencies( parentIds );
+
+        final NodeComparisons newComparisonsToConsider = CompareNodesCommand.create().
+            nodeIds( NodeIds.create().
+                addAll( parentsDependencies ).
+                addAll( parentIds ).
+                build() ).
+            target( this.target ).
+            storageService( this.storageService ).
+            build().
+            execute();
+
+        final Set<NodeComparison> newAndMoved = getNewAndMoved( newComparisonsToConsider );
+
+        addToResult( NodeComparisons.create().addAll( newAndMoved ).build() );
+
+        if ( !newAndMoved.isEmpty() )
         {
-            addParentPaths( parentPathsBuilder, comparison.getSourcePath() );
+            addNewAndMovedParents( newAndMoved );
         }
+    }
 
-        final NodePaths parentPaths = parentPathsBuilder.build();
+    private Set<NodeComparison> getNewAndMoved( final NodeComparisons parentComparisons )
+    {
+        return parentComparisons.getComparisons().stream().
+            filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
+                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
+            filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
+            collect( Collectors.toSet() );
+    }
 
+    private NodeIds getParentIdsFromPaths( final NodePaths parentPaths )
+    {
         final NodeIds.Builder parentIdBuilder = NodeIds.create();
 
         for ( final NodePath parent : parentPaths )
@@ -181,27 +211,19 @@ public class ResolveSyncWorkCommand
             parentIdBuilder.add( parentId );
         }
 
-        final NodeIds parentIds = parentIdBuilder.build();
-
-        final NodeIds parentsDependencies = getNodeDependencies( parentIds );
-
-        doAddNewAndMoved( CompareNodesCommand.create().
-            nodeIds( NodeIds.create().
-                addAll( parentsDependencies ).
-                addAll( parentIds ).
-                build() ).
-            target( this.target ).
-            storageService( this.storageService ).
-            build().
-            execute() );
+        return parentIdBuilder.build();
     }
 
-    private void doAddNewAndMoved( final NodeComparisons parentComparisons )
+    private NodePaths getPathsFromComparisons( final Set<NodeComparison> comparisons )
     {
-        parentComparisons.getComparisons().stream().
-            filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
-                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
-            forEach( this::addToResult );
+        final NodePaths.Builder parentPathsBuilder = NodePaths.create();
+
+        for ( final NodeComparison comparison : comparisons )
+        {
+            addParentPaths( parentPathsBuilder, comparison.getSourcePath() );
+        }
+
+        return parentPathsBuilder.build();
     }
 
     private void markPendingDeleteChildrenForDeletion( final Set<NodeComparison> comparisons )

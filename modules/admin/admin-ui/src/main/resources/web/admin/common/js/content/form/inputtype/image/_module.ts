@@ -7,3 +7,4 @@
 ///<reference path='ImageSelectorDisplayValue.ts' />
 ///<reference path='ImageSelectorViewer.ts' />
 ///<reference path='ImageContentComboBox.ts' />
+///<reference path='ImageSelectorLoader.ts' />

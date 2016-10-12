@@ -13,12 +13,15 @@ module api.dom {
         /* 1px x 1px gif with a 1bit palette */
         public static PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
-        constructor(src?: string, className?: string) {
+        constructor(src?: string, className?: string, usePlaceholder: boolean = false) {
             super(new NewElementBuilder().
                 setTagName("img").
                 setHelper(ImgHelper.create()).
                 setClassName(className));
-            this.getEl().setSrc(src ? src : ImgEl.PLACEHOLDER);
+
+            if (src || usePlaceholder) {
+                this.getEl().setSrc(src ? src : ImgEl.PLACEHOLDER);
+            }
             this.onImgElLoaded((event: UIEvent) => {
                 this.loaded = true;
                 if (ImgEl.debug) {

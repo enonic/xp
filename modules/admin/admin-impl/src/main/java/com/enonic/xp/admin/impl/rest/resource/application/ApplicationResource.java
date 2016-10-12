@@ -96,16 +96,9 @@ public final class ApplicationResource
     public ListApplicationJson list( @QueryParam("query") final String query )
     {
         Applications applications = this.applicationService.getInstalledApplications();
-        if ( StringUtils.isNotBlank( query ) )
-        {
-            applications = Applications.from( applications.stream().
-                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
-                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
-                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
-                collect( Collectors.toList() ) );
-        }
+
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
 
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
@@ -125,6 +118,22 @@ public final class ApplicationResource
         }
 
         return json;
+    }
+
+    @GET
+    @Path("listKeys")
+    public List<String> listKeys( @QueryParam("query") final String query )
+    {
+        Applications applications = this.applicationService.getInstalledApplications();
+
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
+
+        return applications.getApplicationKeys().stream().filter(
+            applicationKey -> !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
+                !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
+                    applicationKey ) ) //TODO Remove after 7.0.0 refactoring
+            .map( applicationKey -> applicationKey.toString() ).collect( Collectors.toList() );
     }
 
     @GET
@@ -326,16 +335,9 @@ public final class ApplicationResource
         final ListApplicationJson json = new ListApplicationJson();
 
         Applications applications = this.applicationService.getInstalledApplications();
-        if ( StringUtils.isNotBlank( query ) )
-        {
-            applications = Applications.from( applications.stream().
-                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
-                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
-                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
-                collect( Collectors.toList() ) );
-        }
+
+        applications = this.filterApplications( applications, query );
+        applications = this.sortApplications( applications );
 
         for ( final Application application : applications )
         {
@@ -413,6 +415,29 @@ public final class ApplicationResource
         {
             throw new RuntimeException( "Failed to load default image: " + imageName, e );
         }
+    }
+
+    private Applications sortApplications( final Applications applications )
+    {
+        return Applications.from( applications.stream().
+            sorted( ( app1, app2 ) -> app1.getDisplayName().compareTo( app2.getDisplayName() ) ).
+            collect( Collectors.toList() ) );
+    }
+
+    private Applications filterApplications( final Applications applications, final String query )
+    {
+        if ( StringUtils.isNotBlank( query ) )
+        {
+            return Applications.from( applications.stream().
+                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
+                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
+                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
+                collect( Collectors.toList() ) );
+        }
+
+        return applications;
     }
 
     @Reference

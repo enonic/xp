@@ -105,7 +105,7 @@ module api.ui.image {
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
 
-            this.image = new ImgEl(null, 'image-bg');
+            this.image = new ImgEl(null, 'image-bg', true);
 
             let resizeListener = (item) => {
                 if (this.isVisible()) {
@@ -1478,11 +1478,13 @@ module api.ui.image {
                 } else if (dragMouseDown) {
 
                     var deltaY = this.getOffsetY(event) - lastPos.y,
+                        toolbarEl = this.stickyToolbar.getEl(),
+                        topBoundary = toolbarEl.getHeight() + toolbarEl.getOffsetTop() - this.frame.getEl().getOffsetTop(),
                         distBetweenCropAndZoomBottoms = this.zoomData.h - this.cropData.h - this.cropData.y,
                         newH = this.cropData.h +
                                (deltaY > distBetweenCropAndZoomBottoms ? distBetweenCropAndZoomBottoms : deltaY);
 
-                    if (newH > 0 && newH != this.cropData.h) {
+                    if (newH > topBoundary && newH != this.cropData.h) {
 
                         this.setCropPositionPx({
                             x: this.cropData.x,
