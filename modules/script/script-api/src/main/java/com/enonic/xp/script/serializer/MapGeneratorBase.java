@@ -154,6 +154,11 @@ public abstract class MapGeneratorBase
             return value;
         }
 
+        if ( value instanceof Exception )
+        {
+            return value;
+        }
+
         return value.toString();
     }
 

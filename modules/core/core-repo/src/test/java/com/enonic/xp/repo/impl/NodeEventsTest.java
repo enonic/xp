@@ -124,7 +124,8 @@ public class NodeEventsTest
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_MOVED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/before, newPath=/mynode1/after}]", event.getValue( "nodes" ).get().toString() );
+        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, newPath=/mynode1/after}]",
+                      event.getValue( "nodes" ).get().toString() );
     }
 
     @Test
@@ -138,7 +139,7 @@ public class NodeEventsTest
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_RENAMED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/before, newPath=/mynode1/child1/after}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, newPath=/mynode1/child1/after}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 

@@ -2,9 +2,9 @@
   border: 1px solid @color;
 }
 
-.input-font() {
+.input-font(@size: 15px) {
   font-family: @admin-font-family;
-  font-size: 15px;
+  font-size: @size;
 }
 
 ::-ms-clear {
@@ -73,7 +73,7 @@
 
   &:not(.no-label) {
     .input-label {
-      display: block !important;
+      display: inline-block !important;
     }
   }
 
@@ -126,50 +126,6 @@
 
     button {
       margin-top: 7px;
-    }
-  }
-
-  .help-text {
-    font-family: 'Shadows Into Light', cursive;
-    font-size: 14px;
-    padding-top: 2px;
-    letter-spacing: 1px;
-
-    p {
-      color: @admin-font-gray1;
-      font-style: italic;
-      text-align: justify;
-    }
-
-    span {
-      display: none;
-      float: right;
-      color: @admin-button-blue2;
-    }
-
-    &.overflow {
-      p {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-
-    }
-
-    &.overflow.collapsed {
-      p {
-        width: 93%;
-        float: left;
-      }
-      span {
-        display: block;
-        float: right;
-        cursor: pointer;
-
-        &:hover {
-          font-weight: bold;
-        }
-      }
     }
   }
 

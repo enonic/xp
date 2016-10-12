@@ -1,0 +1,11 @@
+version: "{branch} {build}"
+
+build:
+  verbosity: detailed
+
+build_script:
+  - gradlew clean build
+
+cache:
+  - C:\Users\appveyor\.gradle
+

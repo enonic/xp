@@ -1,3 +1,5 @@
+@image-cropping-selector-height: 26px;
+
 .html-area-modal-dialog.image-modal-dialog {
 
   .hasSelectedItemPreview();
@@ -108,20 +110,27 @@
     }
 
     .image-cropping-selector {
-
+      height: @image-cropping-selector-height;
       width: 220px;
       margin-left: 15px;
-      bottom: 4px;
+      top: 4px;
 
       .option-filter-input {
-        height: 26px;
+        position: absolute;
+        height: @image-cropping-selector-height;
 
         .placeholder(1em, normal);
       }
 
       .selected-option {
-        min-height: 26px;
-        top: 4px;
+        height: @image-cropping-selector-height;
+        min-height: @image-cropping-selector-height;
+        position: absolute;
+        padding: 4px 37px 4px 10px;
+
+        .option-value {
+          margin: 0;
+        }
       }
 
       .options-container {

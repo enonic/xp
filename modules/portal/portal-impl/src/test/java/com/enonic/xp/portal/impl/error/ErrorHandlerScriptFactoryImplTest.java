@@ -35,4 +35,19 @@ public class ErrorHandlerScriptFactoryImplTest
         assertNull( this.portalResponse );
     }
 
+    @Test
+    public void testRedirectInErrorHandler()
+    {
+        execute( "myapplication:/error/errorRedirect.js", HttpStatus.INTERNAL_SERVER_ERROR );
+        assertEquals( HttpStatus.SEE_OTHER, this.portalResponse.getStatus() );
+        assertEquals( "/other/page", this.portalResponse.getHeaders().get( "Location" ) );
+    }
+
+    @Test
+    public void testChangeStatusInErrorHandler()
+    {
+        execute( "myapplication:/error/errorChangeStatus.js", HttpStatus.INTERNAL_SERVER_ERROR );
+        assertEquals( HttpStatus.MOVED_PERMANENTLY, this.portalResponse.getStatus() );
+        assertEquals( "/another/page", this.portalResponse.getHeaders().get( "Location" ) );
+    }
 }

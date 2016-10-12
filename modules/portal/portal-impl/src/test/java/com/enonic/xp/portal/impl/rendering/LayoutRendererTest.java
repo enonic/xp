@@ -2,17 +2,33 @@ package com.enonic.xp.portal.impl.rendering;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.controller.ControllerScript;
+import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.RegionDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.websocket.WebSocketEvent;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 public class LayoutRendererTest
 {
@@ -100,5 +116,96 @@ public class LayoutRendererTest
         String result =
             "<div data-portal-component-type=\"layout\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\"></span></div>";
         assertEquals( result, portalResponse.getAsString() );
+    }
+
+    @Test
+    public void htmlResponseComponentEditMode()
+    {
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
+            name( "myLayoutComponent" ).
+            displayName( "My layout component" ).
+            config( Form.create().build() ).
+            key( DescriptorKey.from( "module:myLayoutComponent" ) ).
+            regions( RegionDescriptors.create().
+                add( RegionDescriptor.create().name( "left" ).build() ).
+                add( RegionDescriptor.create().name( "right" ).build() ).
+                build() ).
+            build();
+        final ControllerScript controllerScript = new ControllerScript()
+        {
+            public PortalResponse execute( final PortalRequest portalRequest )
+            {
+                return PortalResponse.create().body(
+                    "<div class=\"row\"><div data-portal-region=\"left\" class=\"col-left\"></div><div data-portal-region=\"right\" class=\"col-right\"></div></div>" ).contentType(
+                    MediaType.HTML_UTF_8 ).status( HttpStatus.OK ).build();
+            }
+
+            public void onSocketEvent( final WebSocketEvent event )
+            {
+            }
+        };
+
+        final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
+        renderer = new LayoutRenderer();
+        renderer.setLayoutDescriptorService( layoutDescriptorService );
+        renderer.setControllerScriptFactory( controllerScriptFactory );
+
+        when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
+        when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
+        portalRequest.setMode( RenderMode.EDIT );
+        layoutComponent = LayoutComponent.create().name( "myLayoutComponent" ).descriptor( layoutDescriptor.getKey() ).build();
+
+        // exercise
+        portalResponse = renderer.render( layoutComponent, portalRequest );
+
+        // verify
+        String expected =
+            "<div data-portal-component-type=\"layout\" class=\"row\"><div data-portal-region=\"left\" class=\"col-left\"></div><div data-portal-region=\"right\" class=\"col-right\"></div></div>";
+        assertEquals( expected, portalResponse.getAsString() );
+    }
+
+    @Test
+    public void nullResponseComponentEditMode()
+    {
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
+            name( "myLayoutComponent" ).
+            displayName( "My layout component" ).
+            config( Form.create().build() ).
+            key( DescriptorKey.from( "module:myLayoutComponent" ) ).
+            regions( RegionDescriptors.create().
+                add( RegionDescriptor.create().name( "left" ).build() ).
+                add( RegionDescriptor.create().name( "right" ).build() ).
+                build() ).
+            build();
+        final ControllerScript controllerScript = new ControllerScript()
+        {
+            public PortalResponse execute( final PortalRequest portalRequest )
+            {
+                return new PortalResponseSerializer( null ).serialize();
+            }
+
+            public void onSocketEvent( final WebSocketEvent event )
+            {
+            }
+        };
+
+        final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
+        renderer = new LayoutRenderer();
+        renderer.setLayoutDescriptorService( layoutDescriptorService );
+        renderer.setControllerScriptFactory( controllerScriptFactory );
+
+        when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
+        when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
+        portalRequest.setMode( RenderMode.EDIT );
+        layoutComponent = LayoutComponent.create().name( "myLayoutComponent" ).descriptor( layoutDescriptor.getKey() ).build();
+
+        // exercise
+        portalResponse = renderer.render( layoutComponent, portalRequest );
+
+        // verify
+        String expected = "<div data-portal-component-type=\"layout\"></div>";
+        assertEquals( expected, portalResponse.getAsString() );
     }
 }

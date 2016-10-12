@@ -122,7 +122,7 @@ module api.dom {
         }
 
         isDirty(): boolean {
-            return this.originalValue != this.doGetValue();
+            return !api.ObjectHelper.stringEquals(this.originalValue, this.doGetValue());
         }
 
         toString(): string {

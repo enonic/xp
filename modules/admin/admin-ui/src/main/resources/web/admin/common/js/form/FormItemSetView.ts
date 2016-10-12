@@ -391,6 +391,19 @@ module api.form {
             this.draggingIndex = -1;
         }
 
+        toggleHelpText(show?: boolean) {
+            if (!!this.formItemSet.getHelpText()) {
+                this.formItemSet.toggleHelpText(show);
+                this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView) => {
+                    formItemSetOccurrenceView.toggleHelpText(show);
+                })
+            }
+        }
+
+        hasHelpText(): boolean {
+            return !!this.formItemSet.getHelpText();
+        }
+        
         onFocus(listener: (event: FocusEvent) => void) {
             this.formItemSetOccurrences.onFocus(listener);
         }

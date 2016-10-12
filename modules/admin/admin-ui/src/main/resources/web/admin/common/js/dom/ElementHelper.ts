@@ -290,7 +290,7 @@ module api.dom {
             this.el.style.maxWidth = value;
             return this;
         }
-
+        
         setMaxWidthPx(value: number): ElementHelper {
             this.setMaxWidth(value + "px");
             return this;
@@ -314,6 +314,10 @@ module api.dom {
 
         getMinWidth(): number {
             return parseFloat(this.getComputedProperty('min-width')) || 0;
+        }
+
+        getMaxWidth(): number {
+            return parseFloat(this.getComputedProperty('max-width')) || 0;
         }
 
         setHeight(value: string): ElementHelper {

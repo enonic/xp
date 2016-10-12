@@ -114,5 +114,13 @@ module api.form {
         unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             //Should be implemented in child classes
         }
+
+        toggleHelpText(show?: boolean) {
+            // TO BE IMPLEMENTED BY INHERITORS
+        }
+
+        hasHelpText(): boolean {
+            return false;
+        }
     }
 }

@@ -59,9 +59,9 @@ test {
 
     testLogging {
         events "skipped", "failed"
+        exceptionFormat "full"
     }
 }
-
 
 jar {
     manifest {
