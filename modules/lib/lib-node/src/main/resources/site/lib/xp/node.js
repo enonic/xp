@@ -43,19 +43,26 @@ exports.create = function (params) {
 };
 
 /**
- * This function fetches a node.
+ * This function fetches nodes. If key is defined, the fetched node will be returned as JSON (null if not found).
+ * If keys is defined, the fetched nodes will be return as a JSON array.
  *
  * @example-ref examples/node/get.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key Path or id to the node.
+ * @param {string} [params.key] Path or id to the node.
+ * @param {string} [params.keys] Path or id array to the nodes.
  * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
- * @returns {object} The content (as JSON) fetched from the repository.
+ * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
 exports.get = function (params) {
+    if (params.key === undefined && params.keys === undefined) {
+        throw "Parameter 'key' or 'keys' is required";
+    }
+
     var bean = __.newBean('com.enonic.xp.lib.node.GetNodeHandler');
-    bean.key = required(params, 'key');
+    bean.key = params.key ? params.key : null;
+    bean.keys = params.keys ? params.keys : [];
     bean.branch = nullOrValue(params.branch);
     return __.toNativeObject(bean.execute());
 };
