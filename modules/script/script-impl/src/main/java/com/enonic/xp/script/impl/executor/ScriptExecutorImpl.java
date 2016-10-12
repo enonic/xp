@@ -51,6 +51,8 @@ final class ScriptExecutorImpl
 
     private Map<String, Object> mocks;
 
+    private Map<ResourceKey, Runnable> disposers;
+
     private RunMode runMode;
 
     private ScriptValueFactory scriptValueFactory;
@@ -95,6 +97,7 @@ final class ScriptExecutorImpl
     public void initialize()
     {
         this.mocks = Maps.newHashMap();
+        this.disposers = Maps.newHashMap();
         this.exportsCache = new ScriptExportsCache();
 
         final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
@@ -132,6 +135,7 @@ final class ScriptExecutorImpl
         if ( this.exportsCache.isExpired() )
         {
             this.exportsCache.clear();
+            runDisposers();
         }
     }
 
@@ -297,5 +301,17 @@ final class ScriptExecutorImpl
     public JavascriptHelper getJavascriptHelper()
     {
         return this.javascriptHelper;
+    }
+
+    @Override
+    public void registerDisposer( final ResourceKey key, final Runnable callback )
+    {
+        this.disposers.put( key, callback );
+    }
+
+    @Override
+    public void runDisposers()
+    {
+        this.disposers.values().forEach( Runnable::run );
     }
 }

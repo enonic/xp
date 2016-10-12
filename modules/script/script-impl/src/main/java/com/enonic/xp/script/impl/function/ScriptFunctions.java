@@ -87,4 +87,9 @@ public final class ScriptFunctions
     {
         this.executor.registerMock( name, value );
     }
+
+    public void disposer( final Runnable runnable )
+    {
+        this.executor.registerDisposer( this.script, runnable );
+    }
 }

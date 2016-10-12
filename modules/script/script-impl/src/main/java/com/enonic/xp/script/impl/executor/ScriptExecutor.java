@@ -29,4 +29,8 @@ public interface ScriptExecutor
     JavascriptHelper getJavascriptHelper();
 
     void registerMock( String name, Object value );
+
+    void registerDisposer( final ResourceKey key, Runnable callback );
+
+    void runDisposers();
 }
