@@ -27,6 +27,8 @@ public class FormOptionSet
 
     private final Occurrences multiselection;
 
+    private final String helpText;
+
     private FormOptionSet( Builder builder )
     {
         super();
@@ -40,6 +42,7 @@ public class FormOptionSet
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
+        this.helpText = builder.helpText;
         this.optionSetOptions = builder.setOptionsList.stream().collect( Collectors.toList() );
     }
 
@@ -147,6 +150,8 @@ public class FormOptionSet
 
         private Occurrences multiselection = Occurrences.create( 0, 1 );
 
+        private String helpText;
+
         private Builder()
         {
             this.setOptionsList = new ArrayList<>();
@@ -160,6 +165,7 @@ public class FormOptionSet
             this.expanded = source.expanded;
             this.occurrences = source.occurrences;
             this.multiselection = source.multiselection;
+            this.helpText = source.helpText;
         }
 
         public Builder name( final String name )
@@ -189,6 +195,12 @@ public class FormOptionSet
         public Builder multiselection( final Occurrences value )
         {
             multiselection = value;
+            return this;
+        }
+
+        public Builder helpText( String value )
+        {
+            helpText = value;
             return this;
         }
 
