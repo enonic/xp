@@ -87,6 +87,10 @@ module api.liveedit {
 
         private itemViewIdProducer: ItemViewIdProducer;
 
+        private static isHighlightingAllowed: boolean = true;
+
+        private static isNextClickDisabled: boolean = false;
+
         private placeholder: ItemViewPlaceholder;
 
         private type: ItemType;
@@ -279,7 +283,7 @@ module api.liveedit {
         }
 
         highlight() {
-            if (this.isViewInsideSelectedContainer()) {
+            if (!ItemView.isHighlightingAllowed || this.isViewInsideSelectedContainer()) {
                 return;
             }
             Highlighter.get().highlightItemView(this);
@@ -298,6 +302,10 @@ module api.liveedit {
         }
 
         highlightSelected() {
+            if (!ItemView.isHighlightingAllowed) {
+                return;
+            }
+            
             SelectedHighlighter.get().highlightItemView(this);
         }
 
@@ -489,6 +497,12 @@ module api.liveedit {
         }
 
         handleClick(event: MouseEvent) {
+            if (ItemView.isNextClickDisabled) {
+                ItemView.isNextClickDisabled = false;
+                event.stopPropagation();
+                return;
+            }
+            
             let rightClicked = event.which === 3;
             event.stopPropagation();
 
@@ -510,8 +524,15 @@ module api.liveedit {
                 // Also allow selecting the same component again (i.e. to show context menu)
                 if (!selectedView || selectedView == this || !isViewInsideSelectedContainer) {
                     let menuPosition = rightClicked ? null : ItemViewContextMenuPosition.NONE;
-                    //
-                    this.select(clickPosition, menuPosition, false, rightClicked);
+
+                    if (this.getPageView().isTextEditMode()) { // if in text edit mode don't select on first click
+                        this.getPageView().setTextEditMode(false);
+                        this.unhighlight();
+                    }
+                    else {
+                        this.select(clickPosition, menuPosition, false, rightClicked);
+                    }
+
                 }
                 else if (isViewInsideSelectedContainer && rightClicked) {
                     SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);
@@ -936,6 +957,14 @@ module api.liveedit {
 
         private isViewInsideSelectedContainer() {
             return SelectedHighlighter.get().isViewInsideSelectedContainer(this);
+        }
+
+        static setHighlightingEnabled(value: boolean) {
+            ItemView.isHighlightingAllowed = value;
+        }
+
+        static setNextClickDisabled(value: boolean) {
+            ItemView.isNextClickDisabled = value;
         }
     }
 }
