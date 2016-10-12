@@ -7,6 +7,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -150,12 +151,7 @@ final class ScriptExecutorImpl
             return cached;
         }
 
-        final SimpleBindings bindings = new SimpleBindings();
-        bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
-
-        final ScriptObjectMirror func = doExecute( bindings, resource );
-        final Object result = executeRequire( key, func );
-
+        final Object result = requireJsOrJson( resource );
         this.exportsCache.put( resource, result );
         return result;
     }
@@ -170,17 +166,17 @@ final class ScriptExecutorImpl
         return resource.getKey().toString();
     }
 
-    private Object executeRequire( final ResourceKey script, final ScriptObjectMirror func )
+    private Object executeRequire( final ResourceKey key, final ScriptObjectMirror func )
     {
         try
         {
             final ScriptObjectMirror exports = this.javascriptHelper.newJsObject();
 
             final ScriptObjectMirror module = this.javascriptHelper.newJsObject();
-            module.put( "id", script.toString() );
+            module.put( "id", key.toString() );
             module.put( "exports", exports );
 
-            final ScriptFunctions functions = new ScriptFunctions( script, this );
+            final ScriptFunctions functions = new ScriptFunctions( key, this );
             func.call( exports, functions.getLog(), functions.getRequire(), functions.getResolve(), functions, exports, module );
             return module.get( "exports" );
         }
@@ -223,6 +219,42 @@ final class ScriptExecutorImpl
         }
 
         return null;
+    }
+
+    private Object requireJs( final Resource resource )
+    {
+        final SimpleBindings bindings = new SimpleBindings();
+        bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
+
+        final ScriptObjectMirror func = doExecute( bindings, resource );
+        final Object result = executeRequire( resource.getKey(), func );
+
+        this.exportsCache.put( resource, result );
+        return result;
+    }
+
+    private Object requireJsOrJson( final Resource resource )
+    {
+        final String ext = Strings.nullToEmpty( resource.getKey().getExtension() );
+        if ( ext.equals( "json" ) )
+        {
+            return requireJson( resource );
+        }
+
+        return requireJs( resource );
+    }
+
+    private Object requireJson( final Resource resource )
+    {
+        try
+        {
+            final String text = resource.readString();
+            return this.javascriptHelper.parseJson( text );
+        }
+        catch ( final Exception e )
+        {
+            throw ErrorHelper.handleError( e );
+        }
     }
 
     @Override
