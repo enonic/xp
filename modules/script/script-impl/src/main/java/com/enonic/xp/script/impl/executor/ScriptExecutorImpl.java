@@ -16,7 +16,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.impl.function.ApplicationInfo;
+import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.function.ScriptFunctions;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.ErrorHelper;
@@ -96,15 +96,22 @@ final class ScriptExecutorImpl
         this.mocks = Maps.newHashMap();
         this.exportsCache = new ScriptExportsCache();
 
-        final Bindings global = new SimpleBindings();
-        global.putAll( this.scriptSettings.getGlobalVariables() );
-        global.put( "app", new ApplicationInfo( this.application ) );
-        this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
-
         final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
         this.javascriptHelper = javascriptHelperFactory.create();
-
         this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
+
+        final Bindings global = new SimpleBindings();
+        global.putAll( this.scriptSettings.getGlobalVariables() );
+        global.put( "app", buildAppInfo() );
+        this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
+    }
+
+    private ScriptObjectMirror buildAppInfo()
+    {
+        final ApplicationInfoBuilder builder = new ApplicationInfoBuilder();
+        builder.application( this.application );
+        builder.javascriptHelper( this.javascriptHelper );
+        return builder.build();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.enonic.xp.script.impl.function;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.bean.BeanContextImpl;
@@ -18,8 +19,6 @@ public final class ScriptFunctions
 
     private final ScriptBeanFactory scriptBeanFactory;
 
-    private final ApplicationInfo applicationInfo;
-
     private final JsObjectConverter converter;
 
     private final ScriptLogger logger;
@@ -34,7 +33,6 @@ public final class ScriptFunctions
         beanContext.setResourceKey( this.script );
 
         this.scriptBeanFactory = new ScriptBeanFactoryImpl( this.executor.getClassLoader(), beanContext );
-        this.applicationInfo = new ApplicationInfo( this.executor.getApplication() );
         this.converter = new JsObjectConverter( this.executor.getJavascriptHelper() );
         this.logger = new ScriptLogger( this.script, this.executor.getJavascriptHelper() );
     }
@@ -59,9 +57,9 @@ public final class ScriptFunctions
         return new ResolveFunction( this.script, this.executor );
     }
 
-    public ApplicationInfo getApp()
+    public Application getApp()
     {
-        return this.applicationInfo;
+        return this.executor.getApplication();
     }
 
     public Object newBean( final String type )
