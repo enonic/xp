@@ -296,7 +296,11 @@ module api.app.wizard {
             return this.stepToolbar;
         }
 
-        protected doRenderOnDataLoaded(rendered: boolean): wemQ.Promise<boolean> {
+        protected doRenderOnDataLoaded(rendered: boolean, delayMask?: boolean): wemQ.Promise<boolean> {
+            let formMaskFn = () => {
+                this.formMask = new api.ui.mask.LoadMask(this.formPanel);
+                this.formMask.show();
+            };
             if (WizardPanel.debug) {
                 console.debug("WizardPanel.doRenderOnDataLoaded");
             }
@@ -314,8 +318,11 @@ module api.app.wizard {
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel: formPanel.onAdded");
                 }
-                this.formMask = new api.ui.mask.LoadMask(this.formPanel);
-                this.formMask.show();
+                if (delayMask) {
+                    setTimeout(formMaskFn, 1);
+                } else {
+                    formMaskFn();
+                }
             });
 
             var firstShow;
@@ -416,7 +423,6 @@ module api.app.wizard {
                         console.debug("WizardPanel: livePanel.onAdded");
                     }
                     this.liveMask = new api.ui.mask.LoadMask(this.livePanel);
-                    this.liveMask.show();
                 });
 
                 this.livePanel.onRendered((event) => {

@@ -45,9 +45,11 @@ module api.form {
 
         private formItemViews: FormItemView[] = [];
 
+        private helpText: HelpTextContainer;
+
         private formItemSetOccurrencesContainer: api.dom.DivEl;
 
-        private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: RecordingValidityChangedEvent): void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
 
@@ -84,15 +86,23 @@ module api.form {
             this.label = new FormItemSetLabel(this.formItemSet);
             this.appendChild(this.label);
 
+
+            if (this.formItemSet.getHelpText()) {
+                this.helpText = new HelpTextContainer(this.formItemSet.getHelpText());
+
+                this.label.appendChild(this.helpText.getToggler());
+                this.appendChild(this.helpText.getHelpText());
+
+                this.toggleHelpText(this.formItemSet.isHelpTextOn());
+            }
+
+
             this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-item-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);
 
-
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
-                setFormItems(this.formItemSet.getFormItems()).
-                setParentElement(this.formItemSetOccurrencesContainer).
-                setParent(this).
-                layout(this.propertySet, validate);
+            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(
+                this.formItemSet.getFormItems()).setParentElement(this.formItemSetOccurrencesContainer).setParent(this).layout(
+                this.propertySet, validate);
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
@@ -220,7 +230,12 @@ module api.form {
             return result;
         }
 
-
+        toggleHelpText(show?: boolean) {
+            if (!!this.helpText) {
+                this.helpText.toggleHelpText(show);
+            }
+        }
+        
         validate(silent: boolean = true): ValidationRecording {
 
             var allRecordings = new ValidationRecording();

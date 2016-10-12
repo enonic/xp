@@ -17,6 +17,8 @@
 
   @media screen and (max-width: 540px) {
     display: block;
+    // Hack: prevents wrong rendering of the preview and details panel
+    overflow: initial;
   }
 
   .mobile-content-item-statistics-header {
@@ -76,6 +78,10 @@
     cursor: pointer;
 
     .icon-trending_neutral();
+  }
+
+  .content-item-preview-panel {
+    padding-top: 36px;
   }
 
   .details-panel {
@@ -189,8 +195,7 @@
     bottom: 0px;
     width: 100%;
     border-top: 1px solid @admin-bg-light-gray;
-    background-color: @admin-white;
-    opacity: 0.95;
+    background-color: fade(@admin-bg-almost-white, 95%);
 
     .fold-button {
       border: 0px;
