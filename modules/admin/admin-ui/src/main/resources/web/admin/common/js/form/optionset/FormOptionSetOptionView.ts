@@ -149,20 +149,27 @@ module api.form.optionset {
             var selectedProperty = this.selectedOptionsPropertyArray.get(0);
             var checked = !!selectedProperty && selectedProperty.getString() == this.getName();
             var button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked);
+            var subscribedOnDeselect = false;
             button.onChange(() => {
                 var selectedProperty = this.selectedOptionsPropertyArray.get(0);
                 if (!selectedProperty) {
-                    var property = this.selectedOptionsPropertyArray.set(0, new Value(this.getName(), new api.data.ValueTypeString()));
-                    this.subscribeOnRadioDeselect(property);
+                    selectedProperty = this.selectedOptionsPropertyArray.set(0, new Value(this.getName(), new api.data.ValueTypeString()));
+                    this.subscribeOnRadioDeselect(selectedProperty);
+                    subscribedOnDeselect = true;
+                    this.notifySelectionChanged();
                 } else {
                     selectedProperty.setValue(new Value(this.getName(), new api.data.ValueTypeString()))
+                    if (!subscribedOnDeselect) {
+                        this.subscribeOnRadioDeselect(selectedProperty);
+                        subscribedOnDeselect = true;
+                    }
                 }
-                this.notifySelectionChanged();
                 this.expand();
                 this.enableFormItems();
             });
             if (!!selectedProperty) {
                 this.subscribeOnRadioDeselect(selectedProperty);
+                subscribedOnDeselect = true;
             }
             return button;
         }
@@ -173,6 +180,7 @@ module api.form.optionset {
                     this.expand(this.isOptionSetExpandedByDefault());
                     this.disableAndResetAllFormItems();
                     this.cleanValidationForThisOption();
+                    this.notifySelectionChanged();
                 }
             }
             property.onPropertyValueChanged(radioDeselectHandler);
@@ -249,13 +257,8 @@ module api.form.optionset {
         private disableAndResetAllFormItems(): void {
             this.disableFormItems();
 
-            var array = this.getOptionItemsPropertyArray(this.parentDataSet),
-                length = array.getSize();
-
-            for (let i = 0; i < length; i++) {
-                array.remove(i);
-            }
-
+            var array = this.getOptionItemsPropertyArray(this.parentDataSet);
+            array.getSet(0).reset();
             this.update(this.parentDataSet);
         }
 
