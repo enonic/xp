@@ -51,7 +51,6 @@ exports.create = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {string} [params.key] Path or id to the node.
  * @param {string} [params.keys] Path or id array to the nodes.
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
  * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
@@ -63,7 +62,6 @@ exports.get = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.node.GetNodeHandler');
     bean.key = params.key ? params.key : null;
     bean.keys = params.keys ? params.keys : [];
-    bean.branch = nullOrValue(params.branch);
     return __.toNativeObject(bean.execute());
 };
 

@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 
 public final class GetNodeHandler
-    extends BaseContextHandler
+    extends BaseNodeHandler
 {
     private String key;
 
