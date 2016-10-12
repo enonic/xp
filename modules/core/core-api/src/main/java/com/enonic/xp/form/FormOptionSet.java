@@ -78,6 +78,11 @@ public class FormOptionSet
         return multiselection;
     }
 
+    public String getHelpText()
+    {
+        return helpText;
+    }
+
     public boolean isExpanded()
     {
         return expanded;

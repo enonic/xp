@@ -56,6 +56,11 @@ module api.form.optionset {
             this.addClass(this.formOptionSet.getPath().getElements().length % 2 ? "even" : "odd");
         }
 
+
+        toggleHelpText(show?: boolean) {
+            return this.formOptionSetOccurrences.toggleHelpText(show);
+        }
+
         public layout(validate: boolean = true): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 

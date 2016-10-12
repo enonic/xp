@@ -51,6 +51,11 @@ public class FormOptionSetJson
         return multiselection;
     }
 
+    public String getHelpText()
+    {
+        return formOptionSet.getHelpText();
+    }
+
     public List<FormOptionSetOptionJson> getOptions()
     {
         return this.options;

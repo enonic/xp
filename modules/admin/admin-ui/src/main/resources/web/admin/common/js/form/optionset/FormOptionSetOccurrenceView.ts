@@ -40,6 +40,8 @@ module api.form.optionset {
 
         private formItemViews: FormItemView[] = [];
 
+        private helpText: HelpTextContainer;
+
         private formOptionSetOccurrencesContainer: api.dom.DivEl;
 
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
@@ -80,6 +82,15 @@ module api.form.optionset {
             this.label = new FormOccurrenceDraggableLabel(this.formOptionSet.getLabel(), this.formOptionSet.getOccurrences(),
                 this.makeMultiselectionNote());
             this.appendChild(this.label);
+
+            if (this.formOptionSet.getHelpText()) {
+                this.helpText = new HelpTextContainer(this.formOptionSet.getHelpText());
+
+                this.label.appendChild(this.helpText.getToggler());
+                this.appendChild(this.helpText.getHelpText());
+
+                this.toggleHelpText(this.formOptionSet.isHelpTextOn());
+            }
 
             this.formOptionSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
             this.appendChild(this.formOptionSetOccurrencesContainer);
@@ -281,6 +292,12 @@ module api.form.optionset {
                 }
             });
             return result;
+        }
+
+        toggleHelpText(show?: boolean) {
+            if (!!this.helpText) {
+                this.helpText.toggleHelpText(show);
+            }
         }
 
         validate(silent: boolean = true): ValidationRecording {

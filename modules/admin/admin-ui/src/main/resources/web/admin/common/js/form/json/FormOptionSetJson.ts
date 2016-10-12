@@ -11,5 +11,7 @@ module api.form.json {
         occurrences: OccurrencesJson;
 
         multiselection: OccurrencesJson;
+
+        helpText: string;
     }
 }
