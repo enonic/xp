@@ -18,7 +18,7 @@ import com.enonic.xp.script.ScriptValue;
 
 @SuppressWarnings("unused")
 public class CreateNodeHandler
-    extends BaseContextHandler
+    extends BaseNodeHandler
 {
     private Map<String, Object> params;
 
