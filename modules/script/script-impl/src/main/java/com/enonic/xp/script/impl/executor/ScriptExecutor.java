@@ -12,7 +12,9 @@ public interface ScriptExecutor
 {
     Application getApplication();
 
-    Object executeRequire( ResourceKey script );
+    Object executeMain( ResourceKey key );
+
+    Object executeRequire( ResourceKey key );
 
     ScriptValue newScriptValue( Object value );
 

@@ -115,6 +115,26 @@ final class ScriptExecutorImpl
     }
 
     @Override
+    public Object executeMain( final ResourceKey key )
+    {
+        expireCacheIfNeeded();
+        return executeRequire( key );
+    }
+
+    private void expireCacheIfNeeded()
+    {
+        if ( this.runMode != RunMode.DEV )
+        {
+            return;
+        }
+
+        if ( this.exportsCache.isExpired() )
+        {
+            this.exportsCache.clear();
+        }
+    }
+
+    @Override
     public Object executeRequire( final ResourceKey key )
     {
         final Object mock = this.mocks.get( key.getPath() );
@@ -200,17 +220,6 @@ final class ScriptExecutorImpl
         if ( cached == null )
         {
             return loadResource( key );
-        }
-
-        if ( this.runMode != RunMode.DEV )
-        {
-            return null;
-        }
-
-        final Resource resource = loadResource( key );
-        if ( this.exportsCache.isModified( resource ) )
-        {
-            return resource;
         }
 
         return null;
