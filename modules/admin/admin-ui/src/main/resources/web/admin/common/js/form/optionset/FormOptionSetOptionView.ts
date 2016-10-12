@@ -166,6 +166,7 @@ module api.form.optionset {
                 }
                 this.expand();
                 this.enableFormItems();
+                api.dom.FormEl.moveFocusToNextFocusable(button.getFirstChild(), "input, select");
             });
             if (!!selectedProperty) {
                 this.subscribeOnRadioDeselect(selectedProperty);
@@ -198,6 +199,7 @@ module api.form.optionset {
                     this.selectedOptionsPropertyArray.add(new Value(this.getName(), new api.data.ValueTypeString()));
                     this.expand();
                     this.enableFormItems();
+                    api.dom.FormEl.moveFocusToNextFocusable(button.getFirstChild(), "input, select");
                 } else {
                     var property = this.getThisPropertyFromSelectedOptionsArray();
                     if (!!property) {
