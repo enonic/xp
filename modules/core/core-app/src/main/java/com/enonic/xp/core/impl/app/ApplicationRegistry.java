@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.server.RunMode;
@@ -23,11 +24,14 @@ final class ApplicationRegistry
 
     private final ApplicationFactory factory;
 
+    private final List<ApplicationInvalidator> invalidators;
+
     public ApplicationRegistry( final BundleContext context )
     {
         this.context = context;
         this.applications = Maps.newConcurrentMap();
         this.factory = new ApplicationFactory( RunMode.get() );
+        this.invalidators = Lists.newCopyOnWriteArrayList();
     }
 
     public ApplicationKeys getKeys()
@@ -52,6 +56,11 @@ final class ApplicationRegistry
     public void invalidate( final ApplicationKey key )
     {
         this.applications.remove( key );
+
+        for ( final ApplicationInvalidator invalidator : this.invalidators )
+        {
+            invalidator.invalidate( key );
+        }
     }
 
     public Application get( final ApplicationKey key )
@@ -97,5 +106,15 @@ final class ApplicationRegistry
         }
 
         return null;
+    }
+
+    public void addInvalidator( final ApplicationInvalidator invalidator )
+    {
+        this.invalidators.add( invalidator );
+    }
+
+    public void removeInvalidator( final ApplicationInvalidator invalidator )
+    {
+        this.invalidators.remove( invalidator );
     }
 }
