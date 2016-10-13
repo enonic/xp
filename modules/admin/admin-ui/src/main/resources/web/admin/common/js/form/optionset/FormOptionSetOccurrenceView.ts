@@ -173,58 +173,12 @@ module api.form {
             });
         }
 
-        getFormItemViews(): FormItemView[] {
-            return this.formItemViews;
-        }
-
-        giveFocus() {
-            var focusGiven = false;
-            this.getFormItemViews().forEach((formItemView: FormItemView) => {
-                if (!focusGiven && formItemView.giveFocus()) {
-                    focusGiven = true;
-                }
-            });
-            return focusGiven;
-        }
-
-        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.onEditContentRequest(listener);
-            });
-        }
-
-        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.unEditContentRequest(listener);
-            });
-        }
-
         showContainer(show: boolean) {
             if (show) {
                 this.formOptionSetOccurrencesContainer.show();
             } else {
                 this.formOptionSetOccurrencesContainer.hide();
             }
-        }
-
-        private resolveValidationRecordingPath(): ValidationRecordingPath {
-            return new ValidationRecordingPath(this.getDataPath(), null);
-        }
-
-        getValidationRecording(): ValidationRecording {
-            return this.currentValidationState;
-        }
-
-        public displayValidationErrors(value: boolean) {
-            this.formItemViews.forEach((view: FormItemView) => {
-                view.displayValidationErrors(value);
-            });
-        }
-
-        public setHighlightOnValidityChange(highlight: boolean) {
-            this.formItemViews.forEach((view: FormItemView) => {
-                view.setHighlightOnValidityChange(highlight);
-            });
         }
 
         validate(silent: boolean = true): ValidationRecording {

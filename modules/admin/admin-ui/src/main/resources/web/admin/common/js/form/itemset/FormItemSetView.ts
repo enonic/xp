@@ -216,7 +216,7 @@ module api.form {
 
             var numberOfValids = 0;
             occurrenceViews.forEach((occurrenceView: FormItemSetOccurrenceView) => {
-                var recordingForOccurrence = occurrenceView.getLastValidationRecording();
+                var recordingForOccurrence = occurrenceView.getValidationRecording();
                 if (recordingForOccurrence && recordingForOccurrence.isValid()) {
                     numberOfValids++;
                 }
