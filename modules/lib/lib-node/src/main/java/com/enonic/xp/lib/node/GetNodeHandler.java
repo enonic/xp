@@ -71,7 +71,7 @@ public final class GetNodeHandler
 
     private NodeMapper convert( final Node content )
     {
-        return new NodeMapper( content );
+        return content == null ? null : new NodeMapper( content );
     }
 
     public void setKey( final String key )

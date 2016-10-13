@@ -15,9 +15,9 @@ public class GetNodeHandlerTest
     private void mockGetNode()
     {
         final Node node = createNode();
-        Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).
+        Mockito.when( this.nodeService.getById( NodeId.from( "nodeId" ) ) ).
             thenReturn( node );
-        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
+        Mockito.when( this.nodeService.getByPath( NodePath.create( "/node2Path" ).build() ) ).
             thenReturn( node );
     }
 
