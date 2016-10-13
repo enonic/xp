@@ -2,6 +2,7 @@ package com.enonic.xp.app;
 
 import java.net.URL;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -41,4 +42,6 @@ public interface Application
     Set<String> getFiles();
 
     URL resolveFile( String path );
+
+    Map<String, String> getConfig();
 }

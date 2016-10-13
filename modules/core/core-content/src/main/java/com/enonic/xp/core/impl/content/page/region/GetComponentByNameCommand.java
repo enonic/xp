@@ -13,6 +13,8 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorNotFoundException;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 
 class GetComponentByNameCommand
 {
@@ -24,12 +26,14 @@ class GetComponentByNameCommand
 
     private LayoutDescriptorService layoutDescriptorService;
 
+    private ResourceService resourceService;
+
     public Component execute()
     {
         final String componentDescriptorName = name.toString();
 
         final PartDescriptor partDescriptor = getPartDescriptor( componentDescriptorName );
-        if ( partDescriptor != null )
+        if ( partDescriptor != null && componentExists( partDescriptor.getComponentPath() ) )
         {
             return PartComponent.create().
                 name( this.name ).
@@ -37,7 +41,7 @@ class GetComponentByNameCommand
                 build();
         }
         final LayoutDescriptor layoutDescriptor = getLayoutDescriptor( componentDescriptorName );
-        if ( layoutDescriptor != null )
+        if ( layoutDescriptor != null && componentExists( layoutDescriptor.getComponentPath() ) )
         {
             return LayoutComponent.create().
                 name( this.name ).
@@ -45,6 +49,11 @@ class GetComponentByNameCommand
                 build();
         }
         return null;
+    }
+
+    private boolean componentExists( final ResourceKey componentPath )
+    {
+        return resourceService.getResource( componentPath ).exists();
     }
 
     private PartDescriptor getPartDescriptor( final String descriptorName )
@@ -94,6 +103,12 @@ class GetComponentByNameCommand
     public GetComponentByNameCommand layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;
+        return this;
+    }
+
+    public GetComponentByNameCommand resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
         return this;
     }
 }

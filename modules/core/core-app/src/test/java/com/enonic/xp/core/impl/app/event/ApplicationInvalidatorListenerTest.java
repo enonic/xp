@@ -6,15 +6,13 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.event.Event;
 
 public class ApplicationInvalidatorListenerTest
 {
-    private ApplicationInvalidator invalidator1;
-
-    private ApplicationInvalidator invalidator2;
+    private ApplicationService service;
 
     private ApplicationInvalidatorListener listener;
 
@@ -25,12 +23,10 @@ public class ApplicationInvalidatorListenerTest
     @Before
     public void setup()
     {
-        this.invalidator1 = Mockito.mock( ApplicationInvalidator.class );
-        this.invalidator2 = Mockito.mock( ApplicationInvalidator.class );
+        this.service = Mockito.mock( ApplicationService.class );
 
         this.listener = new ApplicationInvalidatorListener();
-        this.listener.addListener( this.invalidator1 );
-        this.listener.addListener( this.invalidator2 );
+        this.listener.setApplicationService( this.service );
 
         this.appKey = ApplicationKey.from( "myapp" );
 
@@ -45,20 +41,6 @@ public class ApplicationInvalidatorListenerTest
     public void testInvalidate()
     {
         this.listener.onEvent( this.event );
-
-        Mockito.verify( this.invalidator1, Mockito.times( 1 ) ).invalidate( this.appKey );
-        Mockito.verify( this.invalidator2, Mockito.times( 1 ) ).invalidate( this.appKey );
-    }
-
-    @Test
-    public void testInvalidate_noListeners()
-    {
-        this.listener.removeListener( this.invalidator1 );
-        this.listener.removeListener( this.invalidator2 );
-
-        this.listener.onEvent( this.event );
-
-        Mockito.verify( this.invalidator1, Mockito.times( 0 ) ).invalidate( this.appKey );
-        Mockito.verify( this.invalidator2, Mockito.times( 0 ) ).invalidate( this.appKey );
+        Mockito.verify( this.service, Mockito.times( 1 ) ).invalidate( this.appKey );
     }
 }

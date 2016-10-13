@@ -46,17 +46,20 @@ public class ExceptionRendererImplTest
 
     private ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
+    private MockPostProcessor postProcessor;
+
     @Before
     public void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );
         this.contentService = Mockito.mock( ContentService.class );
         this.errorHandlerScriptFactory = Mockito.mock( ErrorHandlerScriptFactory.class );
-
+        this.postProcessor = new MockPostProcessor();
         this.renderer = new ExceptionRendererImpl();
         this.renderer.setResourceService( resourceService );
         this.renderer.setContentService( contentService );
         this.renderer.setErrorHandlerScriptFactory( errorHandlerScriptFactory );
+        this.renderer.setPostProcessor( this.postProcessor );
         this.request = new PortalRequest();
 
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
@@ -131,7 +134,7 @@ public class ExceptionRendererImplTest
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript =
             ( portalError, handlerMethod ) -> PortalResponse.create().body( "Custom message page" ).status(
-                HttpStatus.BAD_REQUEST ).build();
+                HttpStatus.BAD_REQUEST ).postProcess( false ).build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
         final Resource resource = Mockito.mock( Resource.class );
@@ -143,6 +146,7 @@ public class ExceptionRendererImplTest
 
         assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
         assertEquals( "Custom message page", res.getBody().toString() );
+        assertFalse( postProcessor.isExecuted() );
     }
 
     @Test
@@ -158,7 +162,8 @@ public class ExceptionRendererImplTest
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript =
-            ( portalError, handleMethod ) -> PortalResponse.create().body( "Custom message page" ).status( HttpStatus.NOT_FOUND ).build();
+            ( portalError, handleMethod ) -> PortalResponse.create().body( "Custom message page" ).status(
+                HttpStatus.NOT_FOUND ).postProcess( false ).build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
         final Resource resource = Mockito.mock( Resource.class );
@@ -170,6 +175,7 @@ public class ExceptionRendererImplTest
 
         assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
         assertEquals( "Custom message page", res.getBody().toString() );
+        assertFalse( postProcessor.isExecuted() );
     }
 
     @Test
@@ -179,7 +185,8 @@ public class ExceptionRendererImplTest
         final Site site = newSite();
         this.request.setSite( site );
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
-        final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) -> {
+        final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) ->
+        {
             throw new RuntimeException( "Something went wrong in the handler script" );
         };
 
@@ -194,6 +201,29 @@ public class ExceptionRendererImplTest
         final String body = res.getBody().toString();
         assertTrue( body.contains( "400 Bad Request" ) );
         assertTrue( body.contains( "Custom message" ) );
+    }
+
+    @Test
+    public void customErrorWithPostProcessing()
+    {
+        this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
+        final Site site = newSite();
+        this.request.setSite( site );
+        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
+        final ErrorHandlerScript errorHandlerScript = ( portalError, handlerMethod ) -> PortalResponse.create().body(
+            "<h1>Custom message page</h1><!--#COMPONENT module:myPart -->" ).status( HttpStatus.BAD_REQUEST ).postProcess( true ).build();
+
+        when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
+        final Resource resource = Mockito.mock( Resource.class );
+        when( resource.exists() ).thenReturn( true );
+        when( this.resourceService.getResource( errorResource ) ).thenReturn( resource );
+
+        final RuntimeException cause = new RuntimeException( "Custom message" );
+        final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
+
+        assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
+        assertEquals( "<h1>Custom message page</h1><h3>My Part</h3>", res.getBody().toString() );
+        assertTrue( postProcessor.isExecuted() );
     }
 
     private Site newSite()

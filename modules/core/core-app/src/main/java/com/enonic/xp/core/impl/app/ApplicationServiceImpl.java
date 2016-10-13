@@ -10,9 +10,12 @@ import java.util.concurrent.ConcurrentMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +40,7 @@ import com.enonic.xp.util.Exceptions;
 
 @Component
 public final class ApplicationServiceImpl
-    implements ApplicationService, ApplicationInvalidator
+    implements ApplicationService
 {
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
 
@@ -51,11 +54,14 @@ public final class ApplicationServiceImpl
 
     private EventPublisher eventPublisher;
 
+    private ConfigurationAdmin configurationAdmin;
+
     @Activate
     public void activate( final BundleContext context )
     {
-        this.registry = new ApplicationRegistry( context );
+        this.registry = new ApplicationRegistry( context, this.configurationAdmin );
         this.context = context;
+
         ApplicationHelper.runAsAdmin( this::installAllStoredApplications );
     }
 
@@ -524,5 +530,22 @@ public final class ApplicationServiceImpl
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addInvalidator( final ApplicationInvalidator invalidator )
+    {
+        this.registry.addInvalidator( invalidator );
+    }
+
+    public void removeInvalidator( final ApplicationInvalidator invalidator )
+    {
+        this.registry.removeInvalidator( invalidator );
+    }
+
+    @Reference
+    public void setConfigurationAdmin( final ConfigurationAdmin configurationAdmin )
+    {
+        this.configurationAdmin = configurationAdmin;
     }
 }
