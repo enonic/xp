@@ -390,6 +390,11 @@ public final class PropertyTree
         return this.root.addReferences( name, value );
     }
 
+    public Property[] addReferences( final String name, final Collection<Reference> value )
+    {
+        return this.root.addReferences( name, value );
+    }
+
     // setting link
 
     public Property setLink( final PropertyPath path, final Link value )

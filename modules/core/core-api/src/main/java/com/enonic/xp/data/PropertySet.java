@@ -24,11 +24,11 @@ import com.enonic.xp.util.Reference;
 @Beta
 public final class PropertySet
 {
+    private final LinkedHashMap<String, PropertyArray> propertyArrayByName = new LinkedHashMap<>();
+
     private PropertyTree tree;
 
     private Property property;
-
-    private final LinkedHashMap<String, PropertyArray> propertyArrayByName = new LinkedHashMap<>();
 
     private boolean ifNotNull = false;
 
@@ -59,6 +59,11 @@ public final class PropertySet
     public Property getProperty()
     {
         return property;
+    }
+
+    void setProperty( final Property property )
+    {
+        this.property = property;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -168,11 +173,6 @@ public final class PropertySet
             throw new UnsupportedOperationException( "The PropertySet must be attached to a Property before this method can be invoked" );
         }
         return this.property.countAncestors();
-    }
-
-    void setProperty( final Property property )
-    {
-        this.property = property;
     }
 
     public PropertySet ifNotNull()
@@ -977,6 +977,14 @@ public final class PropertySet
             properties[i] = this.addProperty( name, ValueFactory.newReference( values[i] ) );
         }
         return properties;
+    }
+
+    public Property[] addReferences( final String name, final Collection<Reference> values )
+    {
+        return values.stream().
+            map( ( value ) -> addProperty( name, ValueFactory.newReference( value ) ) ).
+            toArray( Property[]::new );
+
     }
 
     // setting reference
