@@ -45,7 +45,7 @@ public final class MoveNodeHandler
         if ( target.endsWith( "/" ) )
         {
             //Moves the node to the target parent path
-            return move( sourceId, NodePath.create( target ).absolute( true ).build() );
+            return move( sourceId, NodePath.create( target ).build() );
         }
         else if ( !target.startsWith( "/" ) )
         {
