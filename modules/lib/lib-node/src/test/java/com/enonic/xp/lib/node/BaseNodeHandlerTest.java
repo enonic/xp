@@ -56,7 +56,7 @@ public class BaseNodeHandlerTest
             build();
 
         return Node.create().
-            id( NodeId.from( "myId" ) ).
+            id( NodeId.from( "nodeId" ) ).
             parentPath( NodePath.ROOT ).
             name( "myName" ).
             data( data ).

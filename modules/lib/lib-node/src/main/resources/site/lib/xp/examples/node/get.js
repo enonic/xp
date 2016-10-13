@@ -3,12 +3,12 @@ var assert = require('/lib/xp/assert');
 
 // BEGIN
 // Fetches a node.
-var result = nodeLib.get({
-    key: 'myId'
+var result1 = nodeLib.get({
+    key: 'nodeId'
 });
 
-if (result) {
-    log.info('Node "' + result._id + '" found');
+if (result1) {
+    log.info('Node "' + result1._id + '" found');
 } else {
     log.info('Node not found.');
 }
@@ -16,17 +16,17 @@ if (result) {
 
 // BEGIN
 // Fetches nodes.
-var results = nodeLib.get({
-    keys: ['/myName', 'anotherId']
+var result2 = nodeLib.get({
+    keys: ['nodeId', '/node2Path', 'node3Id', '/node4/path']
 });
 
-log.info(results.length + ' nodes found.');
+log.info(result2.length + ' nodes found.');
 // END
 
 // BEGIN
 // Node fetched.
 var expected = {
-    "_id": "myId",
+    "_id": "nodeId",
     "_name": "myName",
     "_path": "/myName",
     "_childOrder": "_timestamp DESC",
@@ -92,5 +92,6 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, result);
-assert.assertJsonEquals(expected, results[0]);
+assert.assertJsonEquals(expected, result1);
+assert.assertJsonEquals(2, result2.length);
+assert.assertJsonEquals(expected, result2[0]);
