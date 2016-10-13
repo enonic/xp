@@ -91,7 +91,9 @@ exports.delete = function (params) {
 /**
  * Rename a node or move it to a new path.
  *
- * @example-ref examples/node/move.js
+ * @example-ref examples/node/move-1.js
+ * @example-ref examples/node/move-2.js
+ * @example-ref examples/node/move-3.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.source Path or id of the node to be moved or renamed.
