@@ -42,6 +42,11 @@ public class BaseNodeHandlerTest
 
     protected Node createNode()
     {
+        return createNode( NodePath.ROOT, "my-name" );
+    }
+
+    protected Node createNode( final NodePath parentPath, final String name )
+    {
         final PropertyTree data = new PropertyTree();
         data.setString( "displayName", "This is brand new node" );
         final PropertySet someData = data.addSet( "someData" );
@@ -57,8 +62,8 @@ public class BaseNodeHandlerTest
 
         return Node.create().
             id( NodeId.from( "nodeId" ) ).
-            parentPath( NodePath.ROOT ).
-            name( "myName" ).
+            parentPath( parentPath ).
+            name( name ).
             data( data ).
             indexConfigDocument( indexConfig ).
             permissions( AccessControlList.create().

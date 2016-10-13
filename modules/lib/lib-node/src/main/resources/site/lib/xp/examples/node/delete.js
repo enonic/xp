@@ -13,7 +13,7 @@ log.info(result1.length + ' nodes deleted.');
 // BEGIN
 // Deletes nodes.
 var result2 = nodeLib.delete({
-    keys: ['nodeId', '/aNodePath', 'anotherNodeId', '/another/node/path']
+    keys: ['nodeId', '/node2-path', 'anotherNodeId']
 });
 
 log.info(result2.length + ' nodes deleted.');

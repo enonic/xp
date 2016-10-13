@@ -89,6 +89,25 @@ exports.delete = function (params) {
 
 
 /**
+ * Rename a node or move it to a new path.
+ *
+ * @example-ref examples/node/move.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.source Path or id of the node to be moved or renamed.
+ * @param {string} params.target New path or name for the node. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the node.
+ *
+ * @returns {boolean} True if the node was successfully moved or renamed, false otherwise.
+ */
+exports.move = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.node.MoveNodeHandler');
+    bean.source = required(params, 'source');
+    bean.target = required(params, 'target');
+    return __.toNativeObject(bean.execute());
+};
+
+
+/**
  * This command queries nodes.
  *
  * @example-ref examples/node/query.js

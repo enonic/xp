@@ -17,7 +17,7 @@ if (result1) {
 // BEGIN
 // Fetches nodes.
 var result2 = nodeLib.get({
-    keys: ['nodeId', '/node2Path', 'node3Id', '/node4/path']
+    keys: ['nodeId', '/node2-path', 'node3Id']
 });
 
 log.info(result2.length + ' nodes found.');
@@ -27,8 +27,8 @@ log.info(result2.length + ' nodes found.');
 // Node fetched.
 var expected = {
     "_id": "nodeId",
-    "_name": "myName",
-    "_path": "/myName",
+    "_name": "my-name",
+    "_path": "/my-name",
     "_childOrder": "_timestamp DESC",
     "_indexConfig": {
         "default": {

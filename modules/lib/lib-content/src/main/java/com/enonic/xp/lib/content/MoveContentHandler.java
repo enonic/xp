@@ -70,8 +70,9 @@ public final class MoveContentHandler
                 throw new ContentAlreadyExistsException( targetPath );
             }
 
-            // needs to be renamed before move to avoid clashing with siblings with same name in either source or target
+            // needs to be first renamed to temporary unique name to avoid clashing with siblings with same target name in source parent or with siblings with source name in target parent
             rename( sourceId, uniqueName() );
+
             move( sourceId, targetParent );
             return rename( sourceId, targetPath.getName() );
         }
