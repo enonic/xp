@@ -86,6 +86,10 @@ module api.content.site.inputtype.authappselector {
             }
         }
 
+        reset() {
+            this.comboBox.resetBaseValues();
+        }
+
 
         private saveToSet(siteConfig: SiteConfig, index) {
 

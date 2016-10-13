@@ -198,6 +198,10 @@ module api.form {
             return this.formItemSetOccurrences.update(propertyArray, unchangedOnly);
         }
 
+        reset() {
+            this.formItemSetOccurrences.reset();
+        }
+
         private handleFormItemSetOccurrenceViewValidityChanged(event: RecordingValidityChangedEvent) {
 
             if (!this.previousValidationRecording) {

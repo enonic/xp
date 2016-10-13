@@ -63,6 +63,12 @@ module api.content.form.inputtype.time {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <DateTimePicker> occurrence;
+
+            input.resetBase();
+        }
+
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
             var dateTimePicker = <api.ui.time.DateTimePicker>inputElement;
             return dateTimePicker.isValid();

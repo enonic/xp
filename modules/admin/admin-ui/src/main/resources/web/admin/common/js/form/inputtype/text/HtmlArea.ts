@@ -99,6 +99,12 @@ module api.form.inputtype.text {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.text.TextArea> occurrence;
+
+            input.resetBaseValues();
+        }
+
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
             var focusedEditorCls = "html-area-focused";
             var baseUrl = CONFIG.assetsUri;

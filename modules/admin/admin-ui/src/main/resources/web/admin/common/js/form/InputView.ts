@@ -167,6 +167,10 @@ module api.form {
             return this.inputTypeView.update(this.propertyArray, unchangedOnly);
         }
 
+        public reset() {
+            this.inputTypeView.reset();
+        }
+
         public getInputTypeView(): api.form.inputtype.InputTypeView<any> {
             return this.inputTypeView;
         }

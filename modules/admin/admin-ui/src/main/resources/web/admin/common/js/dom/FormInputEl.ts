@@ -122,16 +122,21 @@ module api.dom {
         }
 
         isDirty(): boolean {
-            return !api.ObjectHelper.stringEquals(this.originalValue, this.doGetValue());
+            return this.dirty;
         }
 
         toString(): string {
             return api.ClassHelper.getClassName(this) + '[' + this.getId() + ']';
         }
 
-        resetBaseValues(value: string) {
-            this.originalValue = value;
-            this.oldValue = value;
+        public resetBaseValues() {
+            this.originalValue = this.getValue();
+            this.oldValue = this.getValue();
+            this.dirty = false;
+        }
+
+        private calculateDirty(): boolean {
+            return !api.ObjectHelper.stringEquals(this.originalValue, this.doGetValue());
         }
 
         private setDirty(dirty: boolean, silent?: boolean) {
@@ -151,7 +156,7 @@ module api.dom {
          * @param silent
          */
         protected refreshDirtyState(silent?: boolean) {
-            this.setDirty(this.isDirty(), silent);
+            this.setDirty(this.calculateDirty(), silent);
         }
 
         /**

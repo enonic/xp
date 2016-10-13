@@ -151,6 +151,12 @@ module api.form {
             }).catch(api.DefaultErrorHandler.handle);
         }
 
+        reset() {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.reset();
+            });
+        }
+
         toggleHelpText(show?: boolean) {
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.toggleHelpText(show);
