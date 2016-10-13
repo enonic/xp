@@ -113,6 +113,7 @@ public class FormItemJsonTest
         final FormOptionSetJson formOptionSetJson = new FormOptionSetJson( FormOptionSet.create().
             name( "myOptionSet" ).
             label( "My option set" ).
+            helpText( "Option set help text" ).
             multiselection( Occurrences.create( 1, 3 ) ).
             addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).
                 addFormItem(

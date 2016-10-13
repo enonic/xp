@@ -120,6 +120,7 @@ public class FormOptionSet
             Objects.equals( expanded, that.expanded ) &&
             Objects.equals( name, that.name ) &&
             Objects.equals( label, that.label ) &&
+            Objects.equals( helpText, that.helpText ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) &&
             Objects.equals( occurrences, that.occurrences ) &&
             Objects.equals( multiselection, that.multiselection );
