@@ -21,8 +21,6 @@ module api.form {
 
         private formItemSet: FormItemSet;
 
-        private formItemSetOccurrencesContainer: api.dom.DivEl;
-
         constructor(config: FormItemSetOccurrenceViewConfig) {
             super("form-item-set-occurrence-view", config.formItemSetOccurrence);
             this.formItemOccurrence = config.formItemSetOccurrence;
@@ -98,14 +96,6 @@ module api.form {
             }).done();
 
             return deferred.promise;
-        }
-
-        showContainer(show: boolean) {
-            if (show) {
-                this.formItemSetOccurrencesContainer.show();
-            } else {
-                this.formItemSetOccurrencesContainer.hide();
-            }
         }
 
         validate(silent: boolean = true): ValidationRecording {

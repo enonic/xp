@@ -19,6 +19,8 @@ module api.form {
 
         protected propertySet: PropertySet;
 
+        protected formItemSetOccurrencesContainer: api.dom.DivEl;
+
         constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className, formItemOccurrence);
         }
@@ -41,6 +43,14 @@ module api.form {
                 }
             });
             return result;
+        }
+
+        showContainer(show: boolean) {
+            if (show) {
+                this.formItemSetOccurrencesContainer.show();
+            } else {
+                this.formItemSetOccurrencesContainer.hide();
+            }
         }
 
         refresh() {

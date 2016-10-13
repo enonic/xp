@@ -18,11 +18,8 @@
 ///<reference path='FormItemOccurrences.ts' />
 ///<reference path='FormItemOccurrence.ts' />
 ///<reference path='FormItemView.ts' />
-///<reference path='FormSetOccurrenceView.ts' />
 ///<reference path='FormOccurrenceDraggableLabel.ts' />
-///<reference path='itemset/_module.ts' />
-///<reference path='optionset/_module.ts' />
-///<reference path='fieldset/_module.ts' />
+///<reference path='set/_module.ts' />
 ///<reference path='FormItemLayer.ts' />
 
 ///<reference path='InputLabel.ts' />

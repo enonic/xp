@@ -22,8 +22,6 @@ module api.form {
 
         private formOptionSet: FormOptionSet;
 
-        private formOptionSetOccurrencesContainer: api.dom.DivEl;
-
         constructor(config: FormOptionSetOccurrenceViewConfig) {
             super("form-option-set-occurrence-view", config.formOptionSetOccurrence);
             this.formItemOccurrence = config.formOptionSetOccurrence;
@@ -56,12 +54,12 @@ module api.form {
                 this.makeMultiselectionNote());
             this.appendChild(this.label);
 
-            this.formOptionSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
-            this.appendChild(this.formOptionSetOccurrencesContainer);
+            this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
+            this.appendChild(this.formItemSetOccurrencesContainer);
 
             var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
                 setFormItems(this.formOptionSet.getFormItems()).
-                setParentElement(this.formOptionSetOccurrencesContainer).
+                setParentElement(this.formItemSetOccurrencesContainer).
                 setParent(this).
                 layout(this.propertySet, validate);
 
@@ -171,14 +169,6 @@ module api.form {
                     selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()))
                 }
             });
-        }
-
-        showContainer(show: boolean) {
-            if (show) {
-                this.formOptionSetOccurrencesContainer.show();
-            } else {
-                this.formOptionSetOccurrencesContainer.hide();
-            }
         }
 
         validate(silent: boolean = true): ValidationRecording {
