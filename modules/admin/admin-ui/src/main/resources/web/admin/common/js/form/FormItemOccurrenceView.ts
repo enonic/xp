@@ -4,7 +4,7 @@ module api.form {
 
     export class FormItemOccurrenceView extends api.dom.DivEl {
 
-        private formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>;
+        protected formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>;
 
         private removeButtonClickedListeners: {(event: RemoveButtonClickedEvent<FormItemOccurrenceView>):void}[] = [];
 

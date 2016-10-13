@@ -1,4 +1,4 @@
-module api.form.optionset {
+module api.form {
 
     import PropertySet = api.data.PropertySet;
     import Property = api.data.Property;

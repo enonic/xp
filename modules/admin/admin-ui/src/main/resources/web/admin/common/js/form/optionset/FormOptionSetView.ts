@@ -1,4 +1,4 @@
-module api.form.optionset {
+module api.form {
 
     import PropertySet = api.data.PropertySet;
     import Property = api.data.Property;
@@ -114,17 +114,7 @@ module api.form.optionset {
             if (!existingPropertyArray) {
                 parentPropertySet.addPropertySet(this.formOptionSet.getName());
             }
-            var propertyArray = parentPropertySet.getPropertyArray(this.formOptionSet.getName());
-            /*if (!propertyArray) {
-             propertyArray = PropertyArray.create().
-             setType(ValueTypes.DATA).
-             setName(this.formOptionSet.getName()).
-             setParent(this.parentDataSet).
-             build();
-             propertySet.addPropertyArray(propertyArray);
-             }*/
-
-            return propertyArray;
+            return parentPropertySet.getPropertyArray(this.formOptionSet.getName());
         }
 
         private subscribeFormOptionSetOccurrencesOnEvents() {

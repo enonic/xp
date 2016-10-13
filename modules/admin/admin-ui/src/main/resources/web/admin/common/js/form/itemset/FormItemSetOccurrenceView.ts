@@ -17,41 +17,16 @@ module api.form {
         dataSet: PropertySet
     }
 
-    export class FormItemSetOccurrenceView extends FormItemOccurrenceView {
-
-        private context: FormContext;
-
-        private formItemSetOccurrence: FormItemSetOccurrence;
+    export class FormItemSetOccurrenceView extends FormSetOccurrenceView {
 
         private formItemSet: FormItemSet;
 
-        private removeButton: api.dom.AEl;
-
-        private label: FormOccurrenceDraggableLabel;
-
-        private constructedWithData: boolean;
-
-        private parent: FormItemSetOccurrenceView;
-
-        private propertySet: PropertySet;
-
-        private formItemLayer: FormItemLayer;
-
-        private formItemViews: FormItemView[] = [];
-
         private formItemSetOccurrencesContainer: api.dom.DivEl;
-
-        private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
-
-        private previousValidationRecording: ValidationRecording;
 
         constructor(config: FormItemSetOccurrenceViewConfig) {
             super("form-item-set-occurrence-view", config.formItemSetOccurrence);
-            this.context = config.context;
-            this.formItemSetOccurrence = config.formItemSetOccurrence;
+            this.formItemOccurrence = config.formItemSetOccurrence;
             this.formItemSet = config.formItemSet;
-            this.parent = config.parent;
-            this.constructedWithData = config.dataSet != null;
             this.propertySet = config.dataSet;
 
             this.formItemLayer = new FormItemLayer(config.context);
@@ -98,19 +73,19 @@ module api.form {
                 this.formItemViews.forEach((formItemView: FormItemView) => {
                     formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
 
-                        if (!this.previousValidationRecording) {
-                            return; // previousValidationRecording is initialized on validate() call which may not be triggered in some cases
+                        if (!this.currentValidationState) {
+                            return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                         }
 
-                        var previousValidState = this.previousValidationRecording.isValid();
+                        var previousValidState = this.currentValidationState.isValid();
                         if (event.isValid()) {
-                            this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
+                            this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
                         } else {
-                            this.previousValidationRecording.flatten(event.getRecording());
+                            this.currentValidationState.flatten(event.getRecording());
                         }
 
-                        if (previousValidState != this.previousValidationRecording.isValid()) {
-                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
+                        if (previousValidState != this.currentValidationState.isValid()) {
+                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                                 this.resolveValidationRecordingPath()).setIncludeChildren(true));
                         }
                     });
@@ -125,15 +100,6 @@ module api.form {
             return deferred.promise;
         }
 
-        public update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            var set = propertyArray.getSet(this.formItemSetOccurrence.getIndex());
-            if (!set) {
-                set = propertyArray.addSet();
-            }
-            this.propertySet = set;
-            return this.formItemLayer.update(this.propertySet, unchangedOnly);
-        }
-
         getFormItemViews(): FormItemView[] {
             return this.formItemViews;
         }
@@ -146,17 +112,6 @@ module api.form {
                 }
             });
             return focusGiven;
-        }
-
-        refresh() {
-
-            if (!this.formItemSetOccurrence.oneAndOnly()) {
-                this.label.addClass("drag-control");
-            } else {
-                this.label.removeClass("drag-control");
-            }
-
-            this.removeButton.setVisible(this.formItemSetOccurrence.isRemoveButtonRequired());
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
@@ -184,7 +139,7 @@ module api.form {
         }
 
         getLastValidationRecording(): ValidationRecording {
-            return this.previousValidationRecording;
+            return this.currentValidationState;
         }
 
         public displayValidationErrors(value: boolean) {
@@ -199,18 +154,6 @@ module api.form {
             });
         }
 
-        hasValidUserInput(): boolean {
-
-            var result = true;
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                if (!formItemView.hasValidUserInput()) {
-                    result = false;
-                }
-            });
-            return result;
-        }
-
-
         validate(silent: boolean = true): ValidationRecording {
 
             var allRecordings = new ValidationRecording();
@@ -221,52 +164,12 @@ module api.form {
             });
 
             if (!silent) {
-                if (allRecordings.validityChanged(this.previousValidationRecording)) {
+                if (allRecordings.validityChanged(this.currentValidationState)) {
                     this.notifyValidityChanged(new RecordingValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
                 }
             }
-            this.previousValidationRecording = allRecordings;
+            this.currentValidationState = allRecordings;
             return allRecordings;
-        }
-
-        onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
-            this.validityChangedListeners.push(listener);
-        }
-
-        unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
-            this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValidityChanged(event: RecordingValidityChangedEvent) {
-            this.validityChangedListeners.forEach((listener: (event: RecordingValidityChangedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onFocus(listener: (event: FocusEvent) => void) {
-            this.formItemViews.forEach((formItemView) => {
-                formItemView.onFocus(listener);
-            });
-        }
-
-        unFocus(listener: (event: FocusEvent) => void) {
-            this.formItemViews.forEach((formItemView) => {
-                formItemView.unFocus(listener);
-            });
-        }
-
-        onBlur(listener: (event: FocusEvent) => void) {
-            this.formItemViews.forEach((formItemView) => {
-                formItemView.onBlur(listener);
-            });
-        }
-
-        unBlur(listener: (event: FocusEvent) => void) {
-            this.formItemViews.forEach((formItemView) => {
-                formItemView.unBlur(listener);
-            });
         }
     }
 
