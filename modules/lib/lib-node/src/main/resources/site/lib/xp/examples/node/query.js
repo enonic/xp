@@ -6,58 +6,31 @@ var assert = require('/lib/xp/assert');
 var result = nodeLib.query({
     start: 0,
     count: 2,
-    sort: "modifiedTime DESC, geoDistance('location', '59.91,10.75')",
-    query: "city = 'Oslo' AND fulltext('description', 'garden', 'AND') ",
+    query: "startTime > instant('2016-10-11T14:38:54.454Z')",
+    sort: "duration DESC",
     aggregations: {
-        floors: {
+        urls: {
             terms: {
-                field: "data.number_floor",
-                order: "_count asc"
+                field: "url",
+                order: "_count desc",
+                size: 2
             },
             aggregations: {
-                prices: {
+                duration: {
                     histogram: {
-                        field: "data.price",
-                        interval: 1000000,
-                        extendedBoundMin: 1000000,
-                        extendedBoundMax: 3000000,
-                        minDocCount: 0,
+                        field: "duration",
+                        interval: 100,
+                        minDocCount: 1,
+                        extendedBoundMin: 0,
+                        extendedBoundMax: 10000,
                         order: "_key desc"
                     }
+                },
+                durationStats: {
+                    stats: {
+                        field: "duration"
+                    }
                 }
-            }
-        },
-        by_month: {
-            dateHistogram: {
-                field: "data.publish_date",
-                interval: "1M",
-                minDocCount: 0,
-                format: "MM-yyyy"
-            }
-        },
-        price_ranges: {
-            range: {
-                field: "data.price",
-                ranges: [
-                    {to: 2000000},
-                    {from: 2000000, to: 3000000},
-                    {from: 3000000}
-                ]
-            }
-        },
-        my_date_range: {
-            dateRange: {
-                field: "data.publish_date",
-                format: "MM-yyyy",
-                ranges: [
-                    {to: "now-10M/M"},
-                    {from: "now-10M/M"}
-                ]
-            }
-        },
-        price_stats: {
-            stats: {
-                field: "data.price"
             }
         }
     }
@@ -66,127 +39,85 @@ var result = nodeLib.query({
 log.info('Found ' + result.total + ' number of contents');
 
 for (var i = 0; i < result.hits.length; i++) {
-    var content = result.hits[i];
-    log.info('Content ' + content._name + ' found');
+    var node = result.hits[i];
+    log.info('Node ' + node.id + ' found');
 }
 // END
 
 // BEGIN
 // Result set returned.
-var expected = {
-    "total": 20,
+var expected ={
+    "total": 12902,
     "count": 2,
     "hits": [
         {
-            "_id": "id1",
-            "_name": "name1",
-            "_path": "/a/b/name1",
-            "creator": "user:system:admin",
-            "modifier": "user:system:admin",
-            "createdTime": "1970-01-01T00:00:00Z",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "type": "base:unstructured",
-            "displayName": "My Content 1",
-            "hasChildren": false,
-            "valid": false,
-            "data": {},
-            "x": {},
-            "page": {},
-            "attachments": {}
+            "id": "b186d24f-ac38-42ca-a6db-1c1bda6c6c26"
         },
         {
-            "_id": "id2",
-            "_name": "name2",
-            "_path": "/a/b/name2",
-            "creator": "user:system:admin",
-            "modifier": "user:system:admin",
-            "createdTime": "1970-01-01T00:00:00Z",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "type": "base:unstructured",
-            "displayName": "My Content 2",
-            "hasChildren": false,
-            "valid": false,
-            "data": {},
-            "x": {},
-            "page": {},
-            "attachments": {}
+            "id": "350ba4a6-589c-498b-8af0-f183850e1120"
         }
     ],
     "aggregations": {
-        "genders": {
+        "urls": {
             "buckets": [
                 {
-                    "key": "male",
-                    "docCount": 10
+                    "key": "/portal/draft/superhero/search",
+                    "docCount": 6762,
+                    "duration": {
+                        "buckets": [
+                            {
+                                "key": "1600",
+                                "docCount": 2
+                            },
+                            {
+                                "key": "1400",
+                                "docCount": 1
+                            },
+                            {
+                                "key": "1300",
+                                "docCount": 5
+                            }
+                        ]
+                    },
+                    "durationStats": {
+                        "count": 6762.0,
+                        "min": 12.0,
+                        "max": 1649.0,
+                        "avg": 286.59,
+                        "sum": 1937941.0
+                    }
                 },
                 {
-                    "key": "female",
-                    "docCount": 12
+                    "key": "/portal/draft/superhero",
+                    "docCount": 1245,
+                    "duration": {
+                        "buckets": [
+                            {
+                                "key": "1600",
+                                "docCount": 2
+                            },
+                            {
+                                "key": "1400",
+                                "docCount": 1
+                            },
+                            {
+                                "key": "1300",
+                                "docCount": 5
+                            }
+                        ]
+                    },
+                    "durationStats": {
+                        "count": 6762.0,
+                        "min": 12.0,
+                        "max": 1649.0,
+                        "avg": 286.59,
+                        "sum": 1937941.0
+                    }
                 }
             ]
-        },
-        "by_month": {
-            "buckets": [
-                {
-                    "key": "2014-01",
-                    "docCount": 8
-                },
-                {
-                    "key": "2014-02",
-                    "docCount": 10
-                },
-                {
-                    "key": "2014-03",
-                    "docCount": 12
-                }
-            ]
-        },
-        "price_ranges": {
-            "buckets": [
-                {
-                    "key": "a",
-                    "docCount": 2,
-                    "to": 50
-                },
-                {
-                    "key": "b",
-                    "docCount": 4,
-                    "from": 50,
-                    "to": 100
-                },
-                {
-                    "key": "c",
-                    "docCount": 4,
-                    "from": 100
-                }
-            ]
-        },
-        "my_date_range": {
-            "buckets": [
-                {
-                    "docCount": 2,
-                    "from": "2014-09-01T00:00:00Z"
-                },
-                {
-                    "docCount": 5,
-                    "from": "2014-10-01T00:00:00Z",
-                    "to": "2014-09-01T00:00:00Z"
-                },
-                {
-                    "docCount": 7,
-                    "to": "2014-11-01T00:00:00Z"
-                }
-            ]
-        },
-        "item_count": {
-            "count": 5,
-            "min": 1,
-            "max": 5,
-            "avg": 3,
-            "sum": 15
         }
     }
 };
 // END
 
-//assert.assertJsonEquals(expected, result);
+assert.assertJsonEquals(expected, result);
