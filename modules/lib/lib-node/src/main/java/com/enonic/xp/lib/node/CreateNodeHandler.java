@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.lib.node.mapper.NodeMapper;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -20,7 +19,7 @@ import com.enonic.xp.script.ScriptValue;
 public class CreateNodeHandler
     extends BaseNodeHandler
 {
-    private Map<String, Object> params;
+    private ScriptValue params;
 
     @Override
     protected Object doExecute()
@@ -46,11 +45,10 @@ public class CreateNodeHandler
         }
     }
 
-    private PropertyTree toPropertyTree( final Map<String, Object> params )
+    private PropertyTree toPropertyTree( final ScriptValue params )
     {
-        return new JsonToPropertyTreeTranslator().translate( createJson( params ) );
+        return ScriptValueTranslator.translate( params );
     }
-
 
     private JsonNode createJson( final Map<?, ?> value )
     {
@@ -61,6 +59,6 @@ public class CreateNodeHandler
     @SuppressWarnings("unused")
     public void setParams( final ScriptValue params )
     {
-        this.params = params.getMap();
+        this.params = params;
     }
 }

@@ -8,7 +8,6 @@ import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
-import com.enonic.xp.aggregation.StatsAggregation;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
@@ -36,26 +35,18 @@ public class QueryNodeHandlerTest
                 build() ).
             build();
 
-        final StatsAggregation durationStats = StatsAggregation.create( "durationStats" ).
-            avg( 286.59 ).
-            count( 6762.0 ).
-            max( 1649.0 ).
-            min( 12.0 ).
-            sum( 1937941.0 ).
-            build();
-
         final Aggregations agg = Aggregations.create().
             add( Aggregation.bucketAggregation( "urls" ).
                 buckets( Buckets.create().
                     add( Bucket.create().
                         key( "/portal/draft/superhero/search" ).
                         docCount( 6762L ).
-                        addAggregations( Aggregations.from( duration, durationStats ) ).
+                        addAggregations( Aggregations.from( duration ) ).
                         build() ).
                     add( Bucket.create().
                         key( "/portal/draft/superhero" ).
                         docCount( 1245 ).
-                        addAggregations( Aggregations.from( duration, durationStats ) ).
+                        addAggregations( Aggregations.from( duration ) ).
                         build() ).
                     build() ).
                 build() ).

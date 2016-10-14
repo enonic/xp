@@ -46,7 +46,7 @@ for (var i = 0; i < result.hits.length; i++) {
 
 // BEGIN
 // Result set returned.
-var expected ={
+var expected = {
     "total": 12902,
     "count": 2,
     "hits": [
@@ -78,13 +78,6 @@ var expected ={
                                 "docCount": 5
                             }
                         ]
-                    },
-                    "durationStats": {
-                        "count": 6762.0,
-                        "min": 12.0,
-                        "max": 1649.0,
-                        "avg": 286.59,
-                        "sum": 1937941.0
                     }
                 },
                 {
@@ -105,13 +98,6 @@ var expected ={
                                 "docCount": 5
                             }
                         ]
-                    },
-                    "durationStats": {
-                        "count": 6762.0,
-                        "min": 12.0,
-                        "max": 1649.0,
-                        "avg": 286.59,
-                        "sum": 1937941.0
                     }
                 }
             ]

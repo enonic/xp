@@ -1,0 +1,9 @@
+{
+  "_indexConfig": {
+    "default": "minimal",
+    "configs": {
+      "path": "displayName",
+      "config": "fulltext"
+    }
+  }
+}

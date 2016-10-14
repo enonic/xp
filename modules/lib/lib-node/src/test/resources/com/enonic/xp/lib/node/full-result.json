@@ -1,0 +1,25 @@
+{
+  "_name" : "myName",
+  "displayName" : "This is brand new node",
+  "someData" : {
+    "cars" : [ "skoda", "tesla model X" ],
+    "likes" : "plywood",
+    "numberOfUselessGadgets" : 123,
+    "myGeoPoint" : "80.0,-80.0",
+    "myInstant" : "2016-08-01T11:22:00Z"
+  },
+  "_indexConfig" : {
+    "default" : "minimal",
+    "configs" : {
+      "path" : "displayName",
+      "config" : "fulltext"
+    }
+  },
+  "_permissions" : [ {
+    "principal" : "user:system:anonymous",
+    "allow" : "READ"
+  }, {
+    "principal" : "role:admin",
+    "allow" : [ "READ", "CREATE", "MODIFY", "DELETE", "PUBLISH", "READ_PERMISSIONS", "WRITE_PERMISSIONS" ]
+  } ]
+}

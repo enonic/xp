@@ -2,7 +2,7 @@ package com.enonic.xp.lib.node;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +46,7 @@ final class QueryAggregationParams
             return Collections.emptySet();
         }
 
-        final Set<AggregationQuery> aggregations = new HashSet<>();
+        final Set<AggregationQuery> aggregations = new LinkedHashSet<>();
         for ( String name : aggregationsMap.keySet() )
         {
             final Map<String, Object> aggregationQueryMap = (Map<String, Object>) aggregationsMap.get( name );

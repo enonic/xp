@@ -11,7 +11,13 @@ var result1 = nodeLib.create({
             "skoda", "tesla model X"
         ],
         likes: "plywood",
-        numberOfUselessGadgets: 123
+        numberOfUselessGadgets: 123,
+        myGeoPoint: nodeLib.geoPoint(80, -80),
+        myInstant: nodeLib.instant("2016-08-01T11:22:00Z"),
+        myReference: nodeLib.reference("1234"),
+        myLocalDateTime: nodeLib.localDateTime("2016-01-08T10:00:00.000"),
+        myLocalDate: nodeLib.localDate("2016-01-08"),
+        myLocalTime: nodeLib.localTime("10:00:00.000")
     },
     _indexConfig: {
         default: "minimal",
