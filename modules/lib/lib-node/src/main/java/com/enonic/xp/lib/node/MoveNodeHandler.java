@@ -19,7 +19,7 @@ public final class MoveNodeHandler
     @Override
     protected Object doExecute()
     {
-        return executeMove() != null;
+        return convert( executeMove() );
     }
 
     private Node executeMove()
@@ -45,7 +45,7 @@ public final class MoveNodeHandler
         if ( target.endsWith( "/" ) )
         {
             //Moves the node to the target parent path
-            return move( sourceId, NodePath.create( target ).build() );
+            return move( sourceId, NodePath.create( target ).trailingDivider( false ).build() );
         }
         else if ( !target.startsWith( "/" ) )
         {
