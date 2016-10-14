@@ -15,6 +15,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.lib.node.mapper.PropertyTreeMapper;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
@@ -22,7 +23,7 @@ import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 
-public class ScriptValueTranslatorTest
+public class CreateNodeHandlerParamsFactoryTest
     extends ScriptTestSupport
 {
     private ObjectMapper mapper;
@@ -151,6 +152,19 @@ public class ScriptValueTranslatorTest
         assertJson( "indexConfig-result", properties );
     }
 
+    @Test
+    public void binary()
+        throws Exception
+    {
+        final CreateNodeHandlerParams params = getCreateNodeHandlerParams( "binary" );
+        final PropertyTree properties = params.getPropertyTree();
+
+        assertNotNull( properties.getBinaryReference( "myBinary" ) );
+        validateType( properties, "myBinary", ValueTypes.BINARY_REFERENCE );
+
+        final BinaryAttachments binaryAttachments = params.getBinaryAttachments();
+        assertEquals( 1, binaryAttachments.getSize() );
+    }
 
     @Test
     public void full()
@@ -181,10 +195,15 @@ public class ScriptValueTranslatorTest
 
     private PropertyTree getPropertyTree( final String name )
     {
+        return getCreateNodeHandlerParams( name ).getPropertyTree();
+    }
+
+    private CreateNodeHandlerParams getCreateNodeHandlerParams( final String name )
+    {
         final ScriptExports exports = runScript( "/com/enonic/xp/lib/node/script-values.js" );
         final ScriptValue value = exports.executeMethod( name );
 
-        return ScriptValueTranslator.translate( value );
+        return new CreateNodeHandlerParamsFactory().create( value );
     }
 
 }

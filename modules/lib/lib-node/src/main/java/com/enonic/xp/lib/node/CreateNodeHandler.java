@@ -1,12 +1,14 @@
 package com.enonic.xp.lib.node;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.node.mapper.NodeMapper;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -21,14 +23,15 @@ public class CreateNodeHandler
 {
     private ScriptValue params;
 
+    private List<ByteSource> binaries = Lists.newArrayList();
+
     @Override
     protected Object doExecute()
     {
         validateRepo();
 
-        final CreateNodeParams createNodeParams;
-
-        createNodeParams = new CreateNodeParamsFactory().create( toPropertyTree( this.params ) );
+        final CreateNodeHandlerParams params = getParams( this.params );
+        final CreateNodeParams createNodeParams = new CreateNodeParamsFactory().create( params );
         final Node node = this.nodeService.create( createNodeParams );
         return new NodeMapper( node );
     }
@@ -45,9 +48,9 @@ public class CreateNodeHandler
         }
     }
 
-    private PropertyTree toPropertyTree( final ScriptValue params )
+    private CreateNodeHandlerParams getParams( final ScriptValue params )
     {
-        return ScriptValueTranslator.translate( params );
+        return new CreateNodeHandlerParamsFactory().create( params );
     }
 
     private JsonNode createJson( final Map<?, ?> value )
@@ -61,4 +64,10 @@ public class CreateNodeHandler
     {
         this.params = params;
     }
+
+    public void addBinary( final ByteSource binary )
+    {
+        this.binaries.add( binary );
+    }
+
 }

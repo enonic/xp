@@ -9,24 +9,34 @@ import java.util.Map;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-class ScriptValueTranslator
+class CreateNodeHandlerParamsFactory
 {
-    public static PropertyTree translate( final ScriptValue value )
+    private final PropertyTree propertyTree;
+
+    private final BinaryAttachments.Builder binaryAttachmentsBuilder;
+
+    CreateNodeHandlerParamsFactory()
+    {
+        this.propertyTree = new PropertyTree();
+        this.binaryAttachmentsBuilder = BinaryAttachments.create();
+    }
+
+    public CreateNodeHandlerParams create( final ScriptValue value )
     {
         final Map<String, Object> map = value.getMap();
 
-        final PropertyTree tree = new PropertyTree();
+        handleMap( this.propertyTree.getRoot(), map );
 
-        handleMap( tree.getRoot(), map );
-
-        return tree;
+        return new CreateNodeHandlerParams( this.propertyTree, this.binaryAttachmentsBuilder.build() );
     }
 
-    private static void handleElement( final PropertySet parent, final String name, final Object value )
+    private void handleElement( final PropertySet parent, final String name, final Object value )
     {
         if ( value instanceof Map )
         {
@@ -43,7 +53,7 @@ class ScriptValueTranslator
         }
     }
 
-    private static void handleMap( final PropertySet parent, final Map map )
+    private void handleMap( final PropertySet parent, final Map map )
     {
         for ( final Object key : map.keySet() )
         {
@@ -51,7 +61,7 @@ class ScriptValueTranslator
         }
     }
 
-    private static void handleArray( final PropertySet parent, final String name, final Collection values )
+    private void handleArray( final PropertySet parent, final String name, final Collection values )
     {
         for ( final Object value : values )
         {
@@ -59,7 +69,7 @@ class ScriptValueTranslator
         }
     }
 
-    private static void handleValue( final PropertySet parent, final String name, final Object value )
+    private void handleValue( final PropertySet parent, final String name, final Object value )
     {
         if ( value instanceof Instant )
         {
@@ -97,10 +107,17 @@ class ScriptValueTranslator
         {
             parent.addReference( name, (Reference) value );
         }
+        else if ( value instanceof BinaryAttachment )
+        {
+            final BinaryAttachment binaryAttachment = (BinaryAttachment) value;
+            parent.addBinaryReference( name, binaryAttachment.getReference() );
+            this.binaryAttachmentsBuilder.add( new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
+        }
         else
         {
             parent.addString( name, value.toString() );
         }
 
     }
+
 }

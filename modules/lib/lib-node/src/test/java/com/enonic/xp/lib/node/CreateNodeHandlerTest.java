@@ -3,8 +3,8 @@ package com.enonic.xp.lib.node;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.data.Value;
-import com.enonic.xp.index.IndexValueProcessor;
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.repository.Repository;
@@ -20,23 +20,6 @@ public class CreateNodeHandlerTest
             thenReturn( node );
     }
 
-    private IndexValueProcessor createIndexValueProcessor()
-    {
-        return new IndexValueProcessor()
-        {
-            @Override
-            public Value process( final Value value )
-            {
-                return null;
-            }
-
-            @Override
-            public String getName()
-            {
-                return "myProcessor";
-            }
-        };
-    }
 
     @Test
     public void testExample()
@@ -51,4 +34,9 @@ public class CreateNodeHandlerTest
         runScript( "/site/lib/xp/examples/node/create.js" );
     }
 
+    @SuppressWarnings("unused")
+    public static ByteSource createByteSource( final String value )
+    {
+        return ByteSource.wrap( value.getBytes() );
+    }
 }

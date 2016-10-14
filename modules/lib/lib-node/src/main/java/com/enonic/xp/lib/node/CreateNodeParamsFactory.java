@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -18,16 +19,22 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.PARENT_PATH;
 import static com.enonic.xp.lib.node.NodePropertyConstants.PERMISSIONS;
 
-public class CreateNodeParamsFactory
+class CreateNodeParamsFactory
 {
-    public CreateNodeParamsFactory()
+    public CreateNodeParams create( final PropertyTree properties, BinaryAttachments binaryAttachments )
     {
+        return doCreate( properties, binaryAttachments );
     }
 
-    public CreateNodeParams create( final PropertyTree properties )
+    public CreateNodeParams create( final CreateNodeHandlerParams params )
+    {
+        return doCreate( params.getPropertyTree(), params.getBinaryAttachments() );
+    }
+
+    private CreateNodeParams doCreate( final PropertyTree properties, BinaryAttachments createAttachments )
     {
         final String name = properties.getString( NODE_NAME );
-        final String parentPath =  properties.getString( PARENT_PATH ) ;
+        final String parentPath = properties.getString( PARENT_PATH );
         final Long manualOrderValue = properties.getLong( MANUAL_ORDER_VALUE );
         final String childOrder = properties.getString( CHILD_ORDER );
         final String nodeType = properties.getString( NODE_TYPE );
@@ -45,6 +52,7 @@ public class CreateNodeParamsFactory
             nodeType( Strings.isNullOrEmpty( nodeType ) ? NodeType.DEFAULT_NODE_COLLECTION : NodeType.from( nodeType ) ).
             indexConfigDocument( new IndexConfigFactory( indexConfig ).create() ).
             permissions( new PermissionsFactory( permissions ).create() ).
+            setBinaryAttachments( createAttachments ).
             build();
     }
 

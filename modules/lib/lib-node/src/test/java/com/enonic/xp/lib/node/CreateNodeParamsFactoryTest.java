@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeType;
 
@@ -38,7 +39,7 @@ public class CreateNodeParamsFactoryTest
     {
         final PropertyTree properties = new PropertyTree();
         properties.setLong( MANUAL_ORDER_VALUE, 3L );
-        final CreateNodeParams createNodeParams = new CreateNodeParamsFactory().create( properties );
+        final CreateNodeParams createNodeParams = new CreateNodeParamsFactory().create( properties, BinaryAttachments.empty() );
         assertEquals( 3L, createNodeParams.getManualOrderValue().longValue() );
     }
 
@@ -58,13 +59,10 @@ public class CreateNodeParamsFactoryTest
         assertEquals( NodeType.from( "myNodeType" ), createNodeParams.getNodeType() );
     }
 
-
     private CreateNodeParams createWithStringProperty( final String nodeName, final String myNode )
     {
         final PropertyTree properties = new PropertyTree();
         properties.setString( nodeName, myNode );
-        return new CreateNodeParamsFactory().create( properties );
+        return new CreateNodeParamsFactory().create( new CreateNodeHandlerParams( properties, BinaryAttachments.empty() ) );
     }
-
-
 }

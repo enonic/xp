@@ -13,7 +13,8 @@ var LocalDateType = Java.type("java.time.LocalDate");
 var LocalDateTimeType = Java.type("java.time.LocalDateTime");
 var LocalTimeType = Java.type("java.time.LocalTime");
 var ReferenceType = Java.type("com.enonic.xp.util.Reference");
-
+var BinaryReferenceType = Java.type("com.enonic.xp.util.BinaryReference");
+var BinaryAttachmentType = Java.type("com.enonic.xp.node.BinaryAttachment");
 
 function required(params, name) {
     var value = params[name];
@@ -55,6 +56,11 @@ exports.localDate = function (value) {
 exports.localTime = function (value) {
     return LocalTimeType.parse(value);
 };
+
+exports.binary = function (name, source) {
+    return new BinaryAttachmentType(BinaryReferenceType.from(name), source);
+};
+
 /**
  * This function creates a node.
  *
@@ -69,9 +75,9 @@ exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.node.CreateNodeHandler');
     params = params || {};
     bean.params = __.toScriptValue(params);
-
     return __.toNativeObject(bean.execute());
 };
+
 
 /**
  * This function fetches nodes. If key is defined, the fetched node will be returned as a JSON object or null if not found.

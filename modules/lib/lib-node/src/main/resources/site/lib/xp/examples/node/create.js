@@ -1,6 +1,10 @@
 var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
+var TestClass = Java.type('com.enonic.xp.lib.node.CreateNodeHandlerTest');
+var stream1 = TestClass.createByteSource('Hello World');
+var stream2 = TestClass.createByteSource('Hello World2');
+
 // BEGIN
 // Creates a content.
 var result1 = nodeLib.create({
@@ -17,7 +21,9 @@ var result1 = nodeLib.create({
         myReference: nodeLib.reference("1234"),
         myLocalDateTime: nodeLib.localDateTime("2016-01-08T10:00:00.000"),
         myLocalDate: nodeLib.localDate("2016-01-08"),
-        myLocalTime: nodeLib.localTime("10:00:00.000")
+        myLocalTime: nodeLib.localTime("10:00:00.000"),
+        myBinaryReference: nodeLib.binary('myFile', stream1),
+        myBinaryReference2: nodeLib.binary('myFile2', stream2)
     },
     _indexConfig: {
         default: "minimal",
