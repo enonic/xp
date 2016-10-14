@@ -2,14 +2,17 @@ package com.enonic.xp.repository;
 
 public class ValidationSettings
 {
-    private boolean checkParentExists;
+    private final boolean checkParentExists;
 
-    private boolean checkExists;
+    private final boolean checkExists;
+
+    private final boolean checkPermissions;
 
     private ValidationSettings( final Builder builder )
     {
         checkParentExists = builder.checkParentExists;
         checkExists = builder.checkExists;
+        checkPermissions = builder.checkPermissions;
     }
 
     public boolean isCheckExists()
@@ -20,6 +23,11 @@ public class ValidationSettings
     public boolean isCheckParentExists()
     {
         return checkParentExists;
+    }
+
+    public boolean isCheckPermissions()
+    {
+        return checkPermissions;
     }
 
     public static Builder create()
@@ -34,6 +42,8 @@ public class ValidationSettings
 
         private boolean checkExists = true;
 
+        private boolean checkPermissions = true;
+
         private Builder()
         {
         }
@@ -47,6 +57,12 @@ public class ValidationSettings
         public Builder checkExists( final boolean checkExists )
         {
             this.checkExists = checkExists;
+            return this;
+        }
+
+        public Builder checkPermissions( final boolean checkExists )
+        {
+            this.checkPermissions = checkPermissions;
             return this;
         }
 
