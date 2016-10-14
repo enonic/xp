@@ -206,6 +206,7 @@ public class CompareNodeCommandTest
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
     }

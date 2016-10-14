@@ -42,7 +42,6 @@ public class ResolveSyncWorkCommandTest
         this.createDefaultRootNode();
     }
 
-
     @Test
     public void detect_children_marked_for_deletion()
         throws Exception
