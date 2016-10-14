@@ -87,7 +87,7 @@ public class MoveNodeCommand
     {
         requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
 
-        if ( skipParentNodeExistsVerification() && skipPermissionsVerification() )
+        if ( !( skipParentNodeExistsVerification() && skipPermissionsVerification() ) )
         {
             final Node newParentNode = GetNodeByPathCommand.create( this ).
                 nodePath( newParentPath ).
