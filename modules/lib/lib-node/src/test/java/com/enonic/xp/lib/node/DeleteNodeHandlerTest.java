@@ -22,7 +22,7 @@ public class DeleteNodeHandlerTest
         final NodeIds nodeIds = NodeIds.from( "nodeId", "aSubNodeId" );
         Mockito.when( this.nodeService.deleteById( NodeId.from( "nodeId" ) ) ).
             thenReturn( nodeIds );
-        Mockito.when( this.nodeService.deleteByPath( NodePath.create( "/aNodePath" ).build() ) ).
+        Mockito.when( this.nodeService.deleteByPath( NodePath.create( "/node2-path" ).build() ) ).
             thenReturn( nodeIds );
     }
 

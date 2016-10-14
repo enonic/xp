@@ -51,8 +51,8 @@ log.info('Node created with id ' + result1._id);
 // Node created.
 var expected = {
         "_id": "nodeId",
-        "_name": "myName",
-        "_path": "/myName",
+        "_name": "my-name",
+        "_path": "/my-name",
         "_childOrder": "_timestamp DESC",
         "_indexConfig": {
             "default": {
