@@ -6,8 +6,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.enonic.xp.util.Exceptions;
-
 final class LogArgConverter
 {
     private final ObjectMapper mapper;
@@ -53,7 +51,7 @@ final class LogArgConverter
         return arg;
     }
 
-    private String toJson( final Object value )
+    private Object toJson( final Object value )
     {
         try
         {
@@ -61,7 +59,7 @@ final class LogArgConverter
         }
         catch ( final Exception e )
         {
-            throw Exceptions.unchecked( e );
+            return value;
         }
     }
 }

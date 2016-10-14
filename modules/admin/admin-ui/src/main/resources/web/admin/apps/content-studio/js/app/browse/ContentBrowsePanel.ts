@@ -120,18 +120,17 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             this.setActiveDetailsPanel(nonMobileDetailsPanelsManager);
 
-            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
-
             this.onShown(() => {
                 if (!!nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget()) {
                     nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget().slideIn();
                 }
             });
 
-            this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-
             let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
+            this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
             this.toolbar.appendChild(ContentPublishMenuManager.getPublishMenuButton());
+
+            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuManager);
 
             return rendered;
         }).catch((error) => {
@@ -140,7 +139,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
+    private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager,
+                                           contentPublishMenuManager: ContentPublishMenuManager) {
 
         this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
                                                fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
@@ -153,10 +153,14 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue()) &&
-                item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
-                nonMobileDetailsPanelsManager.hideActivePanel();
-                ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
+            if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
+                contentPublishMenuManager.getPublishMenuButton().maximize();
+                if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                    nonMobileDetailsPanelsManager.hideActivePanel();
+                    ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
+                }
+            } else {
+                contentPublishMenuManager.getPublishMenuButton().minimize();
             }
         });
     }

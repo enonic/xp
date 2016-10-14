@@ -57,6 +57,12 @@ module api.content.form.inputtype.time {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.time.DatePicker> occurrence;
+
+            input.resetBase();
+        }
+
         valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.LOCAL_DATE);
         }

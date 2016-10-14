@@ -92,6 +92,10 @@ module api.content.form.inputtype.customselector {
             }
         }
 
+        reset() {
+            this.comboBox.resetBaseValues();
+        }
+
         createComboBox(input: api.form.Input, propertyArray: PropertyArray): RichComboBox<CustomSelectorItem> {
 
             var comboBox = new CustomSelectorComboBox(input, this.requestPath, this.getValueFromPropertyArray(propertyArray));

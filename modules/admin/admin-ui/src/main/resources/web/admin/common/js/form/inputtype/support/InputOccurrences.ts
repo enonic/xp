@@ -132,6 +132,10 @@ module api.form.inputtype.support {
             return occurrenceView.update(propertyArray, unchangedOnly);
         }
 
+        resetOccurrenceView(occurrenceView: InputOccurrenceView) {
+            occurrenceView.reset();
+        }
+
         private getPropertyFromArray(index: number): Property {
             var property = this.propertyArray.get(index);
             if (!property) {
