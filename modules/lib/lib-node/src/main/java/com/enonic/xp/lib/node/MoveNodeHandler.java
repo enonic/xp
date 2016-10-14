@@ -19,7 +19,7 @@ public final class MoveNodeHandler
     @Override
     protected Object doExecute()
     {
-        return convert( executeMove() );
+        return executeMove() != null;
     }
 
     private Node executeMove()
