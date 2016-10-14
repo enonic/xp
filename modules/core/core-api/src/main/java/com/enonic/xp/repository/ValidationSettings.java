@@ -60,7 +60,7 @@ public class ValidationSettings
             return this;
         }
 
-        public Builder checkPermissions( final boolean checkExists )
+        public Builder checkPermissions( final boolean checkPermissions )
         {
             this.checkPermissions = checkPermissions;
             return this;

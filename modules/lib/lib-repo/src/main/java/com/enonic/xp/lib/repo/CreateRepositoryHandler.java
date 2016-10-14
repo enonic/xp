@@ -8,6 +8,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
+import com.enonic.xp.repository.ValidationSettings;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -16,9 +17,11 @@ public class CreateRepositoryHandler
 {
     private RepositoryId repositoryId;
 
-    private boolean checkExists;
+    private boolean checkExists = true;
 
-    private boolean checkParentExists;
+    private boolean checkParentExists = true;
+
+    private boolean checkPermissions = true;
 
     private Supplier<RepositoryService> repositoryServiceSupplier;
 
@@ -27,21 +30,40 @@ public class CreateRepositoryHandler
         this.repositoryId = repositoryId == null ? null : RepositoryId.from( repositoryId );
     }
 
-    public void setCheckExists( final boolean checkExists )
+    public void setCheckExists( final Boolean checkExists )
     {
-        this.checkExists = checkExists;
+        if ( checkExists != null )
+        {
+            this.checkExists = checkExists;
+        }
     }
 
-    public void setCheckParentExists( final boolean checkParentExists )
+    public void setCheckParentExists( final Boolean checkParentExists )
     {
-        this.checkParentExists = checkParentExists;
+        if ( checkParentExists != null )
+        {
+            this.checkParentExists = checkParentExists;
+        }
+    }
+
+    public void setCheckPermissions( final Boolean checkPermissions )
+    {
+        if ( checkPermissions != null )
+        {
+            this.checkPermissions = checkPermissions;
+        }
     }
 
     public RepositoryMapper execute()
     {
+        final ValidationSettings validationSettings = ValidationSettings.create().
+            checkExists( checkExists ).
+            checkParentExists( checkParentExists ).
+            checkPermissions( checkPermissions ).
+            build();
         final RepositorySettings repositorySettings = RepositorySettings.create().
             indexConfigs( null ).
-            validationSettings( null ).
+            validationSettings( validationSettings ).
             build();
 
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
