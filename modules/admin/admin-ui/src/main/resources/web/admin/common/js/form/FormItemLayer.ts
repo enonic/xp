@@ -3,10 +3,6 @@ module api.form {
     import PropertySet = api.data.PropertySet;
     import PropertyArray = api.data.PropertyArray;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
-    import FormOptionSet = api.form.optionset.FormOptionSet;
-    import FormOptionSetViewConfig = api.form.optionset.FormOptionSetViewConfig;
-    import FormOptionSetOption = api.form.optionset.FormOptionSetOption;
-    import FormOptionSetOptionViewConfig = api.form.optionset.FormOptionSetOptionViewConfig;
 
     export class FormItemLayer {
 
@@ -122,7 +118,7 @@ module api.form {
                             this.context.setShowEmptyFormItemSetOccurrences(false);
                         }
                     }
-                    var formOptionSetView = new api.form.optionset.FormOptionSetView(<FormOptionSetViewConfig>{
+                    var formOptionSetView = new api.form.FormOptionSetView(<FormOptionSetViewConfig>{
                         context: this.context,
                         formOptionSet: formOptionSet,
                         parent: this.parent,
@@ -135,7 +131,7 @@ module api.form {
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormOptionSetOption)) {
 
                     var formOptionSetOption: FormOptionSetOption = <FormOptionSetOption>formItem;
-                    var formOptionSetOptionView = new api.form.optionset.FormOptionSetOptionView(<FormOptionSetOptionViewConfig>{
+                    var formOptionSetOptionView = new api.form.FormOptionSetOptionView(<FormOptionSetOptionViewConfig>{
                         context: this.context,
                         formOptionSetOption: formOptionSetOption,
                         parent: this.parent,

@@ -9,5 +9,7 @@ module api.form.json {
         FieldSet?: FieldSetJson;
 
         FormOptionSet?: FormOptionSetJson;
+
+        FormOptionSetOption?: FormOptionSetOptionJson;
     }
 }
