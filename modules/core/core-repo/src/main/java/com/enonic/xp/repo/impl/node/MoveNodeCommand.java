@@ -87,17 +87,20 @@ public class MoveNodeCommand
     {
         requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
 
-        final Node newParentNode = GetNodeByPathCommand.create( this ).
-            nodePath( newParentPath ).
-            build().
-            execute();
-
-        if ( newParentNode == null )
+        if ( skipParentNodeExistsVerification() && skipPermissionsVerification() )
         {
-            throw new NodeNotFoundException( "Cannot move node to parent with path '" + newParentPath + "', does not exist" );
-        }
+            final Node newParentNode = GetNodeByPathCommand.create( this ).
+                nodePath( newParentPath ).
+                build().
+                execute();
 
-        requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
+            if ( newParentNode == null )
+            {
+                throw new NodeNotFoundException( "Cannot move node to parent with path '" + newParentPath + "', does not exist" );
+            }
+
+            requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
+        }
     }
 
     private NodePath resolvePath( final Node existingNode )
