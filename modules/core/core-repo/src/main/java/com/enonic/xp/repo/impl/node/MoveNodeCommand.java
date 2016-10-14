@@ -85,7 +85,7 @@ public class MoveNodeCommand
 
     private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )
     {
-        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
+        requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
 
         final Node newParentNode = GetNodeByPathCommand.create( this ).
             nodePath( newParentPath ).
@@ -97,7 +97,7 @@ public class MoveNodeCommand
             throw new NodeNotFoundException( "Cannot move node to parent with path '" + newParentPath + "', does not exist" );
         }
 
-        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
+        requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
     }
 
     private NodePath resolvePath( final Node existingNode )
@@ -130,9 +130,9 @@ public class MoveNodeCommand
 
     private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath )
     {
-        if ( newParentPath.equals( existingNode.path() ) || newParentPath.getParentPaths().contains( existingNode.path() ))
+        if ( newParentPath.equals( existingNode.path() ) || newParentPath.getParentPaths().contains( existingNode.path() ) )
         {
-            throw new MoveNodeException( "Not allowed to move content to itself (" + newParentPath + ")");
+            throw new MoveNodeException( "Not allowed to move content to itself (" + newParentPath + ")" );
         }
     }
 

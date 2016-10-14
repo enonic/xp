@@ -16,10 +16,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.Exceptions;
 
-import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermissionOrAdmin;
-
 public final class UpdateNodeCommand
-    extends AbstractNodeCommand
+    extends RepositorySpecificNodeCommand
 {
     private final UpdateNodeParams params;
 
@@ -110,14 +108,14 @@ public final class UpdateNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
+    public static Builder create( final RepositorySpecificNodeCommand source )
     {
         return new Builder( source );
     }
 
 
     public static class Builder
-        extends AbstractNodeCommand.Builder<Builder>
+        extends RepositorySpecificNodeCommand.Builder<Builder>
     {
         private UpdateNodeParams params;
 
@@ -128,7 +126,7 @@ public final class UpdateNodeCommand
             super();
         }
 
-        private Builder( final AbstractNodeCommand source )
+        private Builder( final RepositorySpecificNodeCommand source )
         {
             super( source );
         }
