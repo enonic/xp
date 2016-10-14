@@ -9,11 +9,11 @@ export class ContentPublishMenuManager {
 
     private static publishMenuButton: MenuButton;
     private static progressBar: ProgressBar;
-
+    
     constructor(actions: ContentTreeGridActions) {
         this.initPublishMenuButton(actions);
     }
-
+    
     private initPublishMenuButton(actions: ContentTreeGridActions) {
         let mainAction = actions.PUBLISH_CONTENT;
         let menuAction = [actions.PUBLISH_TREE_CONTENT, actions.UNPUBLISH_CONTENT];

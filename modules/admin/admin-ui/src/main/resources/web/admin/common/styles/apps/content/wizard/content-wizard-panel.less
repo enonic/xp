@@ -240,3 +240,23 @@
     display: none;
   }
 }
+
+.is-publishing {
+  .content-wizard-toolbar-publish-button {
+    cursor: default;
+    pointer-events: none;
+
+    .xp-admin-common-dropdown-handle {
+      background-color: @form-button-bg-disabled;
+    }
+
+    .action-button {
+      background-color: @form-button-bg;
+      opacity: 0.5;
+    }
+  }
+
+  .mobile-edit-publish-button {
+    display: none !important;
+  }
+}
