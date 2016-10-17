@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Sets;
 
@@ -12,6 +13,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.node.NodeId;
 
+@Component
 public class ContentIdsHtmlParser
     implements Parser<ContentIds>
 {
