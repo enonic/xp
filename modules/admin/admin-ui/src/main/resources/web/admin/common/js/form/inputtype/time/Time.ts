@@ -51,6 +51,12 @@ module api.content.form.inputtype.time {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.time.TimePicker> occurrence;
+
+            input.resetBase();
+        }
+
         private getValueFromProperty(property: api.data.Property): {hours: number; minutes: number} {
             var hours = -1,
                 minutes = -1;

@@ -166,6 +166,10 @@ module api.form {
             return collapseButton;
         }
 
+        reset() {
+            this.formItemSetOccurrences.reset();
+        }
+        
         private handleFormItemSetOccurrenceViewValidityChanged(event: RecordingValidityChangedEvent) {
 
             if (!this.previousValidationRecording) {

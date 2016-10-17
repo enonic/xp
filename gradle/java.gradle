@@ -52,11 +52,6 @@ test {
     systemProperty 'java.awt.headless', 'true'
     jvmArgs '-Xmx2048m'
 
-    jacoco {
-        enabled = ( project.properties['ci.build'] == 'true' )
-        destinationFile = file( "${rootProject.buildDir}/jacoco/test.exec" )
-    }
-
     testLogging {
         events "skipped", "failed"
         exceptionFormat "full"
