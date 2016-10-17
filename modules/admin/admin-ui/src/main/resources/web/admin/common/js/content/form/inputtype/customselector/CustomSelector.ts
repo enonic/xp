@@ -23,7 +23,6 @@ module api.content.form.inputtype.customselector {
     import ElementBuilder = api.dom.ElementBuilder;
     import NewElementBuilder = api.dom.NewElementBuilder;
     import RichComboBox = api.ui.selector.combobox.RichComboBox;
-    import UriHelper = api.util.UriHelper;
 
     export class CustomSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<CustomSelectorItem> {
 
