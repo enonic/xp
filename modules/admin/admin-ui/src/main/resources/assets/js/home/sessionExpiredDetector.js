@@ -22,8 +22,8 @@ function doPoll() {
 
 function createGetStatusRequest() {
     var xhr = new XMLHttpRequest();
-    xhr.timeout = 10000;
     xhr.open('GET', statusUrl, true);
+    xhr.timeout = 10000;
 
     return xhr;
 }
