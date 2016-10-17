@@ -9,12 +9,14 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repo.impl.elasticsearch.NodeStoreDocumentFactory;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
+import com.enonic.xp.repo.impl.elasticsearch.executor.ExecutorProgressListener;
 import com.enonic.xp.repo.impl.search.SearchStorageName;
 import com.enonic.xp.repo.impl.search.SearchStorageType;
 import com.enonic.xp.repository.RepositoryId;
@@ -112,8 +114,16 @@ public class IndexDataServiceImpl
 
 
     @Override
-    public void push( final NodeIds nodeIds, final Branch targetBranch, final RepositoryId targetRepo, final InternalContext context )
+    public void push( final NodeIds nodeIds, final Branch targetBranch, final RepositoryId targetRepo, final PushNodesListener pushListener,
+                      final InternalContext context )
     {
+        final ExecutorProgressListener progressListener = ( count ) ->
+        {
+            if ( pushListener != null )
+            {
+                pushListener.nodesPushed( count );
+            }
+        };
         this.storageDao.copy( CopyRequest.create().
             storageSettings( StorageSettings.create().
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
@@ -122,6 +132,7 @@ public class IndexDataServiceImpl
             nodeIds( nodeIds ).
             targetBranch( targetBranch ).
             targetRepo( targetRepo ).
+            progressListener( progressListener ).
             build() );
     }
 

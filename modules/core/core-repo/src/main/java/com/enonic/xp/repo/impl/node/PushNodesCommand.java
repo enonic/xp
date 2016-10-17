@@ -18,7 +18,6 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
@@ -45,7 +44,7 @@ public class PushNodesCommand
         super( builder );
         this.target = builder.target;
         this.ids = builder.ids;
-        this.pushListener = builder.pushListener == null ? this::doNothingPushListener : builder.pushListener;
+        this.pushListener = builder.pushListener;
     }
 
     public static Builder create()
@@ -98,21 +97,21 @@ public class PushNodesCommand
             if ( !hasPublishPermission )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ACCESS_DENIED );
-                pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.FAILED );
+                nodePushed( 1 );
                 continue;
             }
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
                 builder.addSuccess( nodeBranchEntry );
-                pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.PUSHED );
+                nodePushed( 1 );
                 continue;
             }
 
             if ( !targetParentExists( nodeBranchEntry.getNodePath(), builder, context ) )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
-                pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.FAILED );
+                nodePushed( 1 );
                 continue;
             }
 
@@ -122,7 +121,6 @@ public class PushNodesCommand
                 build() );
 
             builder.addSuccess( nodeBranchEntry );
-            pushListener.nodePushed( branchEntry.getNodeId(), PushNodesListener.PushResult.PUSHED );
 
             if ( comparison.getCompareStatus() == CompareStatus.MOVED )
             {
@@ -130,9 +128,17 @@ public class PushNodesCommand
             }
         }
 
-        this.storageService.publish( publishBuilder.build(), InternalContext.from( context ) );
+        this.storageService.publish( publishBuilder.build(), pushListener, InternalContext.from( context ) );
 
         return builder;
+    }
+
+    private void nodePushed( final int count )
+    {
+        if ( pushListener != null )
+        {
+            pushListener.nodesPushed( count );
+        }
     }
 
     private NodeComparisons getNodeComparisons( final NodeBranchEntries nodeBranchEntries )
@@ -230,10 +236,6 @@ public class PushNodesCommand
         }
 
         return targetContext.build();
-    }
-
-    private void doNothingPushListener( NodeId nodeId, PushNodesListener.PushResult pushResult )
-    {
     }
 
     public static class Builder

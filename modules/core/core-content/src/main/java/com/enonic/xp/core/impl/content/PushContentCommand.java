@@ -9,7 +9,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
@@ -29,8 +28,6 @@ public class PushContentCommand
     extends AbstractContentCommand
     implements PushNodesListener
 {
-    private final static PushContentListener NULL_LISTENER = new NullPushContentListener();
-
     private final ContentIds contentIds;
 
     private final ContentIds excludedContentIds;
@@ -54,7 +51,7 @@ public class PushContentCommand
         this.resolveSyncWork = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
-        this.pushContentListener = builder.pushContentListener == null ? NULL_LISTENER : builder.pushContentListener;
+        this.pushContentListener = builder.pushContentListener;
     }
 
     public static Builder create()
@@ -80,7 +77,7 @@ public class PushContentCommand
                 build().
                 execute();
         }
-        pushContentListener.contentResolved( results.size() );
+        nodesPushed( results.size() );
         pushAndDelete( results );
 
         this.nodeService.refresh( RefreshMode.ALL );
@@ -188,10 +185,7 @@ public class PushContentCommand
             branch( target ).
             build() );
 
-        for ( Content content : deletedContents )
-        {
-            pushContentListener.contentPushed( content.getId(), PushContentListener.PushResult.DELETED );
-        }
+        nodesPushed( deletedContents.getSize() );
     }
 
     private void deleteNodesInContext( final NodeIds nodeIds, final Context context )
@@ -204,12 +198,12 @@ public class PushContentCommand
     }
 
     @Override
-    public void nodePushed( final NodeId nodeId, final PushResult result )
+    public void nodesPushed( final int count )
     {
-        final ContentId contentId = ContentId.from( nodeId.toString() );
-        final PushContentListener.PushResult pushResult =
-            result == PushResult.FAILED ? PushContentListener.PushResult.FAILED : PushContentListener.PushResult.PUSHED;
-        pushContentListener.contentPushed( contentId, pushResult );
+        if ( pushContentListener != null )
+        {
+            pushContentListener.contentPushed( count );
+        }
     }
 
     public static class Builder
@@ -277,23 +271,5 @@ public class PushContentCommand
             return new PushContentCommand( this );
         }
 
-    }
-
-    private static class NullPushContentListener
-        implements PushContentListener
-    {
-        private NullPushContentListener()
-        {
-        }
-
-        @Override
-        public void contentPushed( final ContentId contentId, final PushResult result )
-        {
-        }
-
-        @Override
-        public void contentResolved( final int count )
-        {
-        }
     }
 }

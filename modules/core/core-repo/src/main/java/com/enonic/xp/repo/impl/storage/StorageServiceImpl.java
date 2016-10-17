@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.storage;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -21,6 +20,7 @@ import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
@@ -138,22 +138,7 @@ public class StorageServiceImpl
     }
 
     @Override
-    public void publish( final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId, final InternalContext context,
-                         final Branch source )
-    {
-        this.branchService.store( NodeBranchEntry.create().
-            nodeVersionId( nodeVersionId ).
-            nodeId( nodeBranchEntry.getNodeId() ).
-            nodeState( nodeBranchEntry.getNodeState() ).
-            timestamp( nodeBranchEntry.getTimestamp() ).
-            nodePath( nodeBranchEntry.getNodePath() ).
-            build(), context );
-
-        this.indexServiceInternal.copy( nodeBranchEntry.getNodeId(), context.getRepositoryId(), source, context.getBranch() );
-    }
-
-    @Override
-    public void publish( final PushNodeEntries entries, final InternalContext context )
+    public void publish( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context )
     {
         for ( final PushNodeEntry entry : entries )
         {
@@ -168,9 +153,13 @@ public class StorageServiceImpl
                 build(), InternalContext.create( context ).
                 branch( entries.getTargetBranch() ).
                 build() );
+            if ( pushListener != null )
+            {
+                pushListener.nodesPushed( 1 );
+            }
         }
 
-        this.indexDataService.push( entries.getNodeIds(), entries.getTargetBranch(), entries.getTargetRepo(), context );
+        this.indexDataService.push( entries.getNodeIds(), entries.getTargetBranch(), entries.getTargetRepo(), pushListener, context );
     }
 
     @Override

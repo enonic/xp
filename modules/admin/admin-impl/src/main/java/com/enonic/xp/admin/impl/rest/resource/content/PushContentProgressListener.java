@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.task.ProgressReporter;
 
@@ -19,16 +18,16 @@ final class PushContentProgressListener
     }
 
     @Override
-    public void contentPushed( final ContentId contentId, final PushResult result )
+    public void contentPushed( final int count )
     {
-        progressCount++;
+        progressCount = progressCount + count;
         progressReporter.progress( progressCount, total );
     }
 
     @Override
     public void contentResolved( final int count )
     {
-        total = count;
+        total = count * 2; // progress for resolving + copying
         progressReporter.progress( progressCount, total );
     }
 }
