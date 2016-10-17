@@ -2,35 +2,27 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.repo.impl.elasticsearch.executor.ExecutorProgressListener;
 import com.enonic.xp.repository.RepositoryId;
 
-public class CopyRequest
+public final class IndexPushNodeParams
     implements ExecutorProgressListener
 {
-    private final StorageSettings storageSettings;
-
     private final NodeIds nodeIds;
 
     private final Branch targetBranch;
 
     private final RepositoryId targetRepo;
 
-    private final ExecutorProgressListener progressListener;
+    private final PushNodesListener pushListener;
 
-    private CopyRequest( final Builder builder )
+    private IndexPushNodeParams( Builder builder )
     {
-        storageSettings = builder.storageSettings;
         nodeIds = builder.nodeIds;
         targetBranch = builder.targetBranch;
         targetRepo = builder.targetRepo;
-        progressListener = builder.progressListener;
-    }
-
-    public StorageSettings getStorageSettings()
-    {
-        return storageSettings;
+        pushListener = builder.pushListener;
     }
 
     public NodeIds getNodeIds()
@@ -48,17 +40,17 @@ public class CopyRequest
         return targetRepo;
     }
 
-    public ExecutorProgressListener getProgressListener()
+    public PushNodesListener getPushListener()
     {
-        return progressListener;
+        return pushListener;
     }
 
     @Override
     public void progress( final int count )
     {
-        if ( progressListener != null )
+        if ( pushListener != null )
         {
-            progressListener.progress( count );
+            pushListener.nodesPushed( count );
         }
     }
 
@@ -67,56 +59,47 @@ public class CopyRequest
         return new Builder();
     }
 
-
     public static final class Builder
     {
-        private StorageSettings storageSettings;
-
         private NodeIds nodeIds;
 
         private Branch targetBranch;
 
         private RepositoryId targetRepo;
 
-        private ExecutorProgressListener progressListener;
+        private PushNodesListener pushListener;
 
         private Builder()
         {
         }
 
-        public Builder storageSettings( final StorageSettings val )
+        public Builder nodeIds( final NodeIds nodeIds )
         {
-            storageSettings = val;
+            this.nodeIds = nodeIds;
             return this;
         }
 
-        public Builder nodeIds( final NodeIds val )
+        public Builder targetBranch( final Branch targetBranch )
         {
-            nodeIds = val;
+            this.targetBranch = targetBranch;
             return this;
         }
 
-        public Builder targetBranch( final Branch val )
+        public Builder targetRepo( final RepositoryId targetRepo )
         {
-            targetBranch = val;
+            this.targetRepo = targetRepo;
             return this;
         }
 
-        public Builder targetRepo( final RepositoryId val )
+        public Builder pushListener( final PushNodesListener pushListener )
         {
-            targetRepo = val;
+            this.pushListener = pushListener;
             return this;
         }
 
-        public Builder progressListener( final ExecutorProgressListener progressListener )
+        public IndexPushNodeParams build()
         {
-            this.progressListener = progressListener;
-            return this;
-        }
-
-        public CopyRequest build()
-        {
-            return new CopyRequest( this );
+            return new IndexPushNodeParams( this );
         }
     }
 }
