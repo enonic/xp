@@ -30,6 +30,10 @@ module api.form {
             super(config);
         }
 
+        reset() {
+            this.formItemOccurrences.reset();
+        }
+
         broadcastFormSizeChanged() {
             this.formItemOccurrences.getOccurrenceViews().forEach((occurrenceView: FormSetOccurrenceView) => {
                 occurrenceView.getFormItemViews().forEach((formItemView: FormItemView) => {
