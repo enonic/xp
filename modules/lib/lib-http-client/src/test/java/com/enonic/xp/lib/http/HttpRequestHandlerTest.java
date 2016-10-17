@@ -276,4 +276,19 @@ public class HttpRequestHandlerTest
         this.server.enqueue( addResponse( "POST request" ) );
         runScript( "/site/lib/xp/examples/http-client/multipart.js" );
     }
+
+    @Test
+    public void testBasicAuthentication()
+        throws Exception
+    {
+        final MockResponse response = addResponse( "POST request" );
+        response.setResponseCode( 401 );
+        response.setHeader( "WWW-Authenticate", "Basic realm=\"foo\", charset=\"UTF-8\"" );
+        this.server.enqueue( response );
+        runScript( "/site/lib/xp/examples/http-client/basicauth.js" );
+
+        final RecordedRequest request = takeRequest();
+        assertEquals( "GET", request.getMethod() );
+        assertEquals( "Basic dXNlcm5hbWU6c2VjcmV0", request.getHeader( "Authorization" ) );
+    }
 }
