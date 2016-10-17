@@ -1,4 +1,4 @@
-module api.form.optionset {
+module api.form {
 
     import FormOptionSetOptionJson = api.form.json.FormOptionSetOptionJson;
 

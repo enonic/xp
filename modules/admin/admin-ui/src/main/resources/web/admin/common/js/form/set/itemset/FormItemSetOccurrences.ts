@@ -23,15 +23,9 @@ module api.form {
     /*
      * A kind of a controller, which adds/removes FormItemSetOccurrenceView-s
      */
-    export class FormItemSetOccurrences extends FormItemOccurrences<FormItemSetOccurrenceView> {
-
-        private context: FormContext;
+    export class FormItemSetOccurrences extends FormSetOccurrences<FormItemSetOccurrenceView> {
 
         private formItemSet: FormItemSet;
-
-        private parent: FormItemSetOccurrenceView;
-
-        private occurrencesCollapsed: boolean;
 
         constructor(config: FormItemSetOccurrencesConfig) {
             this.occurrencesCollapsed = false;
@@ -106,38 +100,6 @@ module api.form {
                 this.removeOccurrenceView(event.getView());
             });
             return newOccurrenceView;
-        }
-
-        updateOccurrenceView(occurrenceView: FormItemSetOccurrenceView, propertyArray: PropertyArray,
-                             unchangedOnly?: boolean): wemQ.Promise<void> {
-            this.propertyArray = propertyArray;
-
-            return occurrenceView.update(propertyArray);
-        }
-
-        private getSetFromArray(occurrence): PropertySet {
-            var dataSet = this.propertyArray.getSet(occurrence.getIndex());
-            if (!dataSet) {
-                dataSet = this.propertyArray.addSet();
-            }
-            return dataSet;
-        }
-
-        showOccurrences(show: boolean) {
-            var views = <FormItemSetOccurrenceView[]>this.getOccurrenceViews();
-            this.occurrencesCollapsed = !show;
-            views.forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView) => {
-                formItemSetOccurrenceView.showContainer(show);
-            });
-        }
-
-        isCollapsed(): boolean {
-            return this.occurrencesCollapsed;
-        }
-
-        moveOccurrence(index: number, destinationIndex: number) {
-            super.moveOccurrence(index, destinationIndex);
-            //this.propertyArray.move(index, destinationIndex);
         }
     }
 }

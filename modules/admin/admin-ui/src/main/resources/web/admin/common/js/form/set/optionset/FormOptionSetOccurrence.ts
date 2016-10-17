@@ -1,4 +1,4 @@
-module api.form.optionset {
+module api.form {
 
     export class FormOptionSetOccurrence extends FormItemOccurrence<FormOptionSetOccurrenceView> {
 

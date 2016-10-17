@@ -1,4 +1,4 @@
-module api.form.optionset {
+module api.form {
 
     import PropertySet = api.data.PropertySet;
     import Property = api.data.Property;
@@ -146,23 +146,30 @@ module api.form.optionset {
         }
 
         private makeSelectionRadioButton(): api.ui.RadioButton {
-            var selectedProperty = this.selectedOptionsPropertyArray.get(0);
-            var checked = !!selectedProperty && selectedProperty.getString() == this.getName();
-            var button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked);
+            var selectedProperty = this.selectedOptionsPropertyArray.get(0),
+                checked = !!selectedProperty && selectedProperty.getString() == this.getName(),
+                button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked),
+                subscribedOnDeselect = false;
+
             button.onChange(() => {
                 var selectedProperty = this.selectedOptionsPropertyArray.get(0);
                 if (!selectedProperty) {
-                    var property = this.selectedOptionsPropertyArray.set(0, new Value(this.getName(), new api.data.ValueTypeString()));
-                    this.subscribeOnRadioDeselect(property);
+                    selectedProperty = this.selectedOptionsPropertyArray.set(0, new Value(this.getName(), new api.data.ValueTypeString()));
+                    this.subscribeOnRadioDeselect(selectedProperty);
+                    subscribedOnDeselect = true;
+                    this.notifySelectionChanged();
                 } else {
                     selectedProperty.setValue(new Value(this.getName(), new api.data.ValueTypeString()))
+                    if (!subscribedOnDeselect) {
+                        this.subscribeOnRadioDeselect(selectedProperty);
+                        subscribedOnDeselect = true;
+                    }
                 }
-                this.notifySelectionChanged();
-                this.expand();
-                this.enableFormItems();
+                this.selectHandle(button.getFirstChild());
             });
             if (!!selectedProperty) {
                 this.subscribeOnRadioDeselect(selectedProperty);
+                subscribedOnDeselect = true;
             }
             return button;
         }
@@ -170,17 +177,16 @@ module api.form.optionset {
         private subscribeOnRadioDeselect(property: Property) {
             var radioDeselectHandler = (event: api.data.PropertyValueChangedEvent) => {
                 if (event.getPreviousValue().getString() == this.getName()) {
-                    this.expand(this.isOptionSetExpandedByDefault());
-                    this.disableAndResetAllFormItems();
-                    this.cleanValidationForThisOption();
+                    this.deselectHandle();
+                    this.notifySelectionChanged();
                 }
             }
             property.onPropertyValueChanged(radioDeselectHandler);
         }
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
-            var checked = this.getThisPropertyFromSelectedOptionsArray() != null;
-            var button = api.ui.Checkbox.create().setLabelPosition(api.ui.LabelPosition.RIGHT).
+            var checked = this.getThisPropertyFromSelectedOptionsArray() != null,
+                button = api.ui.Checkbox.create().setLabelPosition(api.ui.LabelPosition.RIGHT).
                 setLabelText(this.formOptionSetOption.getLabel()).
                 setChecked(checked).
                 build();
@@ -188,16 +194,13 @@ module api.form.optionset {
             button.onChange(() => {
                 if (button.isChecked()) {
                     this.selectedOptionsPropertyArray.add(new Value(this.getName(), new api.data.ValueTypeString()));
-                    this.expand();
-                    this.enableFormItems();
+                    this.selectHandle(button.getFirstChild());
                 } else {
                     var property = this.getThisPropertyFromSelectedOptionsArray();
                     if (!!property) {
                         this.selectedOptionsPropertyArray.remove(property.getIndex());
                     }
-                    this.expand(this.isOptionSetExpandedByDefault());
-                    this.disableAndResetAllFormItems();
-                    this.cleanValidationForThisOption();
+                    this.deselectHandle();
                 }
                 this.notifySelectionChanged();
             });
@@ -211,6 +214,18 @@ module api.form.optionset {
             this.selectedOptionsPropertyArray.onPropertyAdded(checkboxEnabledStatusHandler);
             this.selectedOptionsPropertyArray.onPropertyRemoved(checkboxEnabledStatusHandler);
             return button;
+        }
+
+        private selectHandle(input: api.dom.Element) {
+            this.expand();
+            this.enableFormItems();
+            api.dom.FormEl.moveFocusToNextFocusable(input, "input, select");
+        }
+
+        private deselectHandle() {
+            this.expand(this.isOptionSetExpandedByDefault());
+            this.disableAndResetAllFormItems();
+            this.cleanValidationForThisOption();
         }
 
         private cleanValidationForThisOption() {
@@ -249,13 +264,8 @@ module api.form.optionset {
         private disableAndResetAllFormItems(): void {
             this.disableFormItems();
 
-            var array = this.getOptionItemsPropertyArray(this.parentDataSet),
-                length = array.getSize();
-
-            for (let i = 0; i < length; i++) {
-                array.remove(i);
-            }
-
+            var array = this.getOptionItemsPropertyArray(this.parentDataSet);
+            array.getSet(0).reset();
             this.update(this.parentDataSet);
         }
 
