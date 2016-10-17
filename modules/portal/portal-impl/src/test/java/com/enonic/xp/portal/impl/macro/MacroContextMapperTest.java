@@ -82,6 +82,7 @@ public class MacroContextMapperTest
             param( "firstParam", "firstParamValue" ).
             param( "secondParam", "secondParamValue" ).
             request( portalRequest ).
+            document( "<h1>document</h1>" ).
             build();
     }
 

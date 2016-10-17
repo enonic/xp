@@ -30,5 +30,6 @@ public final class MacroContextMapper
             new PortalRequestMapper( request ).serialize( gen );
         }
         gen.end();
+        gen.value( "document", macroContext.getDocument() );
     }
 }

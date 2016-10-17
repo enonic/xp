@@ -56,6 +56,7 @@ public class MacroProcessorScriptTest
             body( "body" ).
             param( "firstParam", "firstParamValue" ).
             param( "secondParam", "secondParamValue" ).
+            document( "<h1>document</h1>" ).
             build();
 
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
@@ -104,7 +105,7 @@ public class MacroProcessorScriptTest
     {
         final PortalResponse response = execute( "myapplication:/macro/macro.js" );
         assertEquals(
-            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{}}",
+            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{},\"document\":\"<h1>document</h1>\"}",
             response.getBody() );
         assertEquals( 1, response.getContributions( HtmlTag.HEAD_END ).size() );
         assertEquals( 1, response.getContributions( HtmlTag.BODY_END ).size() );

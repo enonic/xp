@@ -3,6 +3,7 @@ package com.enonic.xp.portal.macro;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Ascii;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
@@ -19,12 +20,15 @@ public final class MacroContext
 
     private final PortalRequest request;
 
+    private final String document;
+
     private MacroContext( final Builder builder )
     {
         this.name = builder.name;
         this.body = builder.body;
         this.params = builder.paramsBuilder.build();
         this.request = builder.request;
+        this.document = builder.document == null ? "" : builder.document;
     }
 
     public String getName()
@@ -52,6 +56,11 @@ public final class MacroContext
         return request;
     }
 
+    public String getDocument()
+    {
+        return document;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -67,13 +76,14 @@ public final class MacroContext
         return Objects.equals( name, that.name ) &&
             Objects.equals( body, that.body ) &&
             Objects.equals( params, that.params ) &&
-            Objects.equals( request, that.request );
+            Objects.equals( request, that.request ) &&
+            Objects.equals( document, that.document );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, body, params, request );
+        return Objects.hash( name, body, params, request, document );
     }
 
     @Override
@@ -83,7 +93,9 @@ public final class MacroContext
             add( "name", name ).
             add( "body", body ).
             add( "params", params ).
-            add( "request", request ).toString();
+            add( "request", request ).
+            add( "document", Ascii.truncate( document, 20, "..." ) ).
+            toString();
     }
 
     public static Builder create()
@@ -107,6 +119,8 @@ public final class MacroContext
 
         private PortalRequest request;
 
+        private String document;
+
         public Builder()
         {
             this.paramsBuilder = ImmutableMap.builder();
@@ -119,6 +133,7 @@ public final class MacroContext
             this.paramsBuilder = ImmutableMap.builder();
             this.paramsBuilder.putAll( macroContext.params );
             this.request = macroContext.request;
+            this.document = macroContext.getDocument();
         }
 
         public Builder name( final String name )
@@ -142,6 +157,12 @@ public final class MacroContext
         public Builder request( final PortalRequest request )
         {
             this.request = request;
+            return this;
+        }
+
+        public Builder document( final String document )
+        {
+            this.document = document;
             return this;
         }
 
