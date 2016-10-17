@@ -31,7 +31,7 @@ public interface StorageService
 
     void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
 
-    void publish( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context );
+    void push( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context );
 
     Node get( final NodeId nodeId, final InternalContext context );
 

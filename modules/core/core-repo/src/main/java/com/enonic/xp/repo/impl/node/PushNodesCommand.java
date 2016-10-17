@@ -128,7 +128,7 @@ public class PushNodesCommand
             }
         }
 
-        this.storageService.publish( publishBuilder.build(), pushListener, InternalContext.from( context ) );
+        this.storageService.push( publishBuilder.build(), pushListener, InternalContext.from( context ) );
 
         return builder;
     }

@@ -138,7 +138,7 @@ public class StorageServiceImpl
     }
 
     @Override
-    public void publish( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context )
+    public void push( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context )
     {
         for ( final PushNodeEntry entry : entries )
         {
@@ -159,7 +159,12 @@ public class StorageServiceImpl
             }
         }
 
-        this.indexDataService.push( entries.getNodeIds(), entries.getTargetBranch(), entries.getTargetRepo(), pushListener, context );
+        this.indexDataService.push( IndexPushNodeParams.create().
+            nodeIds( entries.getNodeIds() ).
+            targetBranch( entries.getTargetBranch() ).
+            targetRepo( entries.getTargetRepo() ).
+            pushListener( pushListener ).
+            build(), context );
     }
 
     @Override
