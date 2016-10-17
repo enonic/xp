@@ -35,12 +35,6 @@ module api.form {
             });
         }
 
-        toggleHelpText(show?: boolean) {
-            this.getOccurrenceViews().forEach((view) => {
-                view.toggleHelpText(show);
-            })
-        }
-
         getFormOptionSet(): FormOptionSet {
             return this.formOptionSet;
         }

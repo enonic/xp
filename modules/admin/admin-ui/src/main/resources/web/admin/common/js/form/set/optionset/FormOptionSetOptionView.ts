@@ -52,6 +52,10 @@ module api.form {
             this.formItemLayer = new FormItemLayer(config.context);
         }
 
+        toggleHelpText(show?: boolean) {
+            this.formItemLayer.toggleHelpText(show);
+        }
+
         public layout(validate: boolean = true): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 

@@ -38,11 +38,8 @@ module api.form {
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
             var propertyArray = propertySet.getPropertyArray(this.formItemSet.getName());
             if (!propertyArray) {
-                propertyArray = PropertyArray.create().
-                    setType(ValueTypes.DATA).
-                    setName(this.formItemSet.getName()).
-                    setParent(this.parentDataSet).
-                    build();
+                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formItemSet.getName()).setParent(
+                    this.parentDataSet).build();
                 propertySet.addPropertyArray(propertyArray);
             }
             return propertyArray;
@@ -287,18 +284,12 @@ module api.form {
         toggleHelpText(show?: boolean) {
             if (!!this.formItemSet.getHelpText()) {
                 this.formItemSet.toggleHelpText(show);
-                this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView) => {
-                    formItemSetOccurrenceView.toggleHelpText(show);
-                })
+                this.formItemOccurrences.toggleHelpText(show);
             }
         }
 
         hasHelpText(): boolean {
             return !!this.formItemSet.getHelpText();
-        }
-        
-        onFocus(listener: (event: FocusEvent) => void) {
-            this.formItemSetOccurrences.onFocus(listener);
         }
 
     }

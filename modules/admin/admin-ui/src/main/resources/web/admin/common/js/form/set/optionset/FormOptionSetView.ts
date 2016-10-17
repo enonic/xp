@@ -35,11 +35,6 @@ module api.form {
             this.addClass(this.formOptionSet.getPath().getElements().length % 2 ? "even" : "odd");
         }
 
-
-        toggleHelpText(show?: boolean) {
-            return this.formOptionSetOccurrences.toggleHelpText(show);
-        }
-
         public layout(validate: boolean = true): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
@@ -228,6 +223,17 @@ module api.form {
 
             return new ValidationRecordingPath(this.parentDataSet.getPropertyPath(), this.formOptionSet.getName(),
                 this.formOptionSet.getOccurrences().getMinimum(), this.formOptionSet.getOccurrences().getMaximum());
+        }
+
+        toggleHelpText(show?: boolean) {
+            if (!!this.formOptionSet.getHelpText()) {
+                this.formOptionSet.toggleHelpText(show);
+                this.formItemOccurrences.toggleHelpText(show);
+            }
+        }
+
+        hasHelpText(): boolean {
+            return !!this.formOptionSet.getHelpText();
         }
 
         validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {

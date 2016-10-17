@@ -22,8 +22,6 @@ module api.form {
 
         private formOptionSet: FormOptionSet;
 
-        private helpText: HelpTextContainer;
-
         constructor(config: FormOptionSetOccurrenceViewConfig) {
             super("form-option-set-occurrence-view", config.formOptionSetOccurrence);
             this.formItemOccurrence = config.formOptionSetOccurrence;
@@ -180,12 +178,6 @@ module api.form {
                     selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()))
                 }
             });
-        }
-
-        toggleHelpText(show?: boolean) {
-            if (!!this.helpText) {
-                this.helpText.toggleHelpText(show);
-            }
         }
         
         validate(silent: boolean = true): ValidationRecording {

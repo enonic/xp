@@ -25,6 +25,11 @@ module api.form {
             super(className, formItemOccurrence);
         }
 
+        toggleHelpText(show?: boolean): any {
+            this.formItemLayer.toggleHelpText(show);
+            return super.toggleHelpText(show);
+        }
+
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
             var set = propertyArray.getSet(this.formItemOccurrence.getIndex());
             if (!set) {
