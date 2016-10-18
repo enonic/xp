@@ -212,10 +212,13 @@ module api.form {
             });
 
             var checkboxEnabledStatusHandler: () => void = () => {
-                var canCheckMoreOptions = !button.isChecked() && this.cantSelectMoreOptions();
-                button.setDisabled(canCheckMoreOptions);
-                button.toggleClass("disabled", canCheckMoreOptions);
+                var buttonShouldBeDisabled = !button.isChecked() && this.cantSelectMoreOptions();
+                button.setDisabled(buttonShouldBeDisabled);
+                button.toggleClass("disabled", buttonShouldBeDisabled);
             }
+
+            button.setDisabled(!checked && this.cantSelectMoreOptions());
+            button.toggleClass("disabled", !checked && this.cantSelectMoreOptions());
 
             this.selectedOptionsPropertyArray.onPropertyAdded(checkboxEnabledStatusHandler);
             this.selectedOptionsPropertyArray.onPropertyRemoved(checkboxEnabledStatusHandler);

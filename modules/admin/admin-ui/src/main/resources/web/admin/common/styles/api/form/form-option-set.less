@@ -1,18 +1,60 @@
 .form-view {
 
+  &:not(.display-validation-errors) .form-option-set-occurrence-view .form-option-set-option-view {
+      &.selected.invalid {
+        .option-items-container .input-view.highlight-validity-change.invalid {
+          background-color: @admin-white;
+
+          .upload-button &:hover {
+              box-shadow: 0 0 5px @admin-input-red;
+              border: 1px solid @admin-input-red;
+          }
+        }
+      }
+  }
+
   &.display-validation-errors {
     .form-option-set-occurrence-view {
       .form-option-set-option-view {
-        &.selected {
-          &.invalid {
-            border-left: 6px solid @input-red-text;
-            border-right: 6px solid @input-red-text;
-            border-bottom: 6px solid @input-red-text;
+        &.selected.invalid {
+            border-left: 6px solid @input-light-red;
+            border-right: 6px solid @input-light-red;
+            border-bottom: 6px solid @input-light-red;
 
             > .form-input {
-              background-color: @input-red-text;
+              background-color: @input-light-red;
+
+              label {
+                color: @admin-font-gray2;
+              }
+
+              &.checkbox:hover label {
+                color: @admin-dark-gray !important;
+              }
             }
-          }
+
+            .option-items-container {
+              .input-view.invalid {
+                background-color: @admin-white;
+
+                .input-type-view {
+                  border: 1px solid @admin-input-red;
+
+                  &.@{_COMMON_PREFIX}text-input:focus {
+                    box-shadow: 0 0 5px @admin-input-red;
+                  }
+
+                  .upload-button {
+                    border-left: 1px solid @admin-input-red;
+
+                    &:hover {
+                      box-shadow: 0 0 5px @admin-input-red;
+                      border: 1px solid @admin-input-red;
+                    }
+                  }
+                }
+              }
+            }
         }
       }
     }
@@ -24,9 +66,9 @@
     .form-option-set-option-view {
       &.selected {
 
-        border-left: 6px solid @admin-input-blue;
-        border-right: 6px solid @admin-input-blue;
-        border-bottom: 6px solid @admin-input-blue;
+        border-left: 6px solid @admin-blue;
+        border-right: 6px solid @admin-blue;
+        border-bottom: 6px solid @admin-blue;
 
         box-sizing: border-box;
 
@@ -43,7 +85,7 @@
 
           display: inline-block;
           width: 100%;
-          background-color: @admin-input-blue;
+          background-color: @admin-blue;
 
           input[type="radio"] {
             margin-left: 4px;
@@ -81,14 +123,6 @@
         border-bottom: 1px solid @admin-bg-light-gray;
       }
 
-      &.expandable {
-        > .form-input {
-          input[type="radio"], label {
-            cursor: pointer;
-          }
-        }
-      }
-
       .option-items-container {
         display: none;
         opacity: 0.5;
@@ -98,6 +132,10 @@
 
           .selected-options {
             padding-bottom: 0px !important;
+          }
+
+          &.invalid .input-label .label {
+            color: @admin-font-gray2;
           }
         }
 
@@ -118,20 +156,32 @@
 
         input[type="radio"] {
           margin-left: 10px;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          width: 15px;
+          height: 15px;
+          border: 1px solid darkgray;
+          border-radius: 50%;
+          outline: none;
+          background-color: white;
+
+          &:checked {
+            box-shadow: 0 0 0 3px @admin-white inset;
+            background-color: @admin-dark-gray;
+          }
+
+          &:not(:checked):hover {
+            box-shadow:0 0 1px 0px @admin-dark-gray inset;
+          }
         }
 
         input[type="radio"], label {
           vertical-align: middle;
+          cursor: pointer;
         }
 
         input[type="radio"] + label {
           padding: 0px 5px 0px 7px;
-        }
-
-        &.expand-action {
-          input[type="radio"], label {
-            cursor: pointer;
-          }
         }
 
         input[type="checkbox"] + label {
@@ -140,6 +190,10 @@
             margin-top: 10px;
             left: 10px;
           }
+        }
+
+        &.checkbox:hover label {
+          color: @admin-dark-gray !important;
         }
 
         input[type="checkbox"]:disabled + label {
