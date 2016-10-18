@@ -3,13 +3,13 @@ package com.enonic.xp.repository;
 import com.google.common.annotations.Beta;
 
 @Beta
-public class IndexConfig
+public class IndexDefinition
 {
     private final IndexSettings settings;
 
     private final IndexMapping mapping;
 
-    private IndexConfig( final Builder builder )
+    private IndexDefinition( final Builder builder )
     {
         settings = builder.settings;
         mapping = builder.mapping;
@@ -52,9 +52,9 @@ public class IndexConfig
             return this;
         }
 
-        public IndexConfig build()
+        public IndexDefinition build()
         {
-            return new IndexConfig( this );
+            return new IndexDefinition( this );
         }
     }
 }

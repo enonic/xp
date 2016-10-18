@@ -117,7 +117,6 @@ public class SecurityServiceImplTest
         storageService.setBranchService( branchService );
         storageService.setVersionService( versionService );
         storageService.setNodeVersionService( nodeDao );
-        storageService.setIndexServiceInternal( this.indexServiceInternal );
         storageService.setIndexDataService( indexedDataService );
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();

@@ -10,17 +10,23 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
 
@@ -55,52 +61,97 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public Repository create( final CreateRepositoryParams params )
+    public Repository createRepository( final CreateRepositoryParams params )
     {
         return repositorySettingsMap.compute( params.getRepositoryId(), ( key, previousValue ) -> {
 
-            if ( previousValue != null || repositoryNodeExists( key ) )
-            {
-                throw new RepositoryAlreadyExistException( key );
-            }
-
-            final Repository repository;
-            if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
-            {
-                repository = this.nodeRepositoryService.create( params );
-            }
-            else
-            {
-                repository = Repository.create().
-                    id( params.getRepositoryId() ).
-                    settings( params.getRepositorySettings() ).
-                    build();
-            }
-
-            final Node node = RepositoryNodeTranslator.toNode( repository );
-            ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-                branch( SystemConstants.BRANCH_SYSTEM ).
-                build().
-                callWith( () -> nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ) );
-
-            createRootNode( params );
+            final Repository repository = createRepository( params, key, previousValue );
+            createRootNode( params, RepositoryConstants.MASTER_BRANCH );
+            storeRepositoryEntry( repository );
 
             return repository;
         } );
     }
 
-    private void createRootNode( final CreateRepositoryParams params )
+    @Override
+    public Branch createBranch( final CreateBranchParams createBranchParams )
     {
+        final Context context = ContextAccessor.current();
+
+        final RepositoryId repositoryId = context.getRepositoryId();
+
+        final Repository currentRepo = this.repositorySettingsMap.get( repositoryId );
+
+        if ( currentRepo == null )
+        {
+            throw new RepositoryNotFoundException( "Cannot create branch in repository [" + repositoryId + "], not found" );
+        }
+
+        return doCreateBranch( createBranchParams, currentRepo );
+    }
+
+    private Repository createRepository( final CreateRepositoryParams params, final RepositoryId key, final Repository previousValue )
+    {
+        if ( previousValue != null || repositoryNodeExists( key ) )
+        {
+            throw new RepositoryAlreadyExistException( key );
+        }
+
+        final Repository repository;
+
+        if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
+        {
+            repository = this.nodeRepositoryService.create( params );
+        }
+        else
+        {
+            repository = Repository.create().
+                id( params.getRepositoryId() ).
+                settings( params.getRepositorySettings() ).
+                build();
+        }
+        return repository;
+    }
+
+    private void storeRepositoryEntry( final Repository repository )
+    {
+        final Node node = RepositoryNodeTranslator.toNode( repository );
+
+        nodeStorageService.store( node, InternalContext.create( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build() );
+    }
+
+    private void createRootNode( final CreateRepositoryParams params, final Branch branch )
+    {
+        final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
+            repositoryId( params.getRepositoryId() ).
+            branch( branch ).
+            build();
+
         final Node rootNode = this.nodeStorageService.store( Node.createRoot().
             permissions( params.getRootPermissions() ).
             inheritPermissions( params.isInheritPermissions() ).
             childOrder( params.getRootChildOrder() ).
-            build(), InternalContext.create( ContextAccessor.current() ).
-            repositoryId( params.getRepositoryId() ).
-            build() );
+            build(), rootNodeContext );
 
         LOG.info( "Created root node in  with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
+    }
+
+    private Branch doCreateBranch( final CreateBranchParams createBranchParams, final Repository currentRepo )
+    {
+        final Context context = ContextAccessor.current();
+        final Node rootNode = this.nodeStorageService.get( Node.ROOT_UUID, InternalContext.from( context ) );
+
+        if ( rootNode == null )
+        {
+            throw new NodeNotFoundException( "Cannot find root-node in repository [" + currentRepo + "]" );
+        }
+
+        this.nodeStorageService.push( rootNode, createBranchParams.getBranch(), InternalContext.from( context ) );
+
+        return createBranchParams.getBranch();
     }
 
     @Override

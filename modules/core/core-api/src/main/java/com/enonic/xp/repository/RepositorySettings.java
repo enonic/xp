@@ -7,11 +7,11 @@ import com.enonic.xp.index.IndexType;
 @Beta
 public class RepositorySettings
 {
-    private final IndexConfigs indexConfigs;
+    private final IndexDefinitions indexDefinitions;
 
     private RepositorySettings( final Builder builder )
     {
-        indexConfigs = builder.indexConfigs;
+        indexDefinitions = builder.indexDefinitions;
     }
 
     public static Builder create()
@@ -19,21 +19,21 @@ public class RepositorySettings
         return new Builder();
     }
 
-    public IndexConfigs getIndexConfigs()
+    public IndexDefinitions getIndexConfigs()
     {
-        return indexConfigs;
+        return indexDefinitions;
     }
 
     public IndexSettings getIndexSettings( final IndexType indexType )
     {
-        if ( this.indexConfigs == null )
+        if ( this.indexDefinitions == null )
         {
             return null;
         }
 
-        if ( this.indexConfigs.get( indexType ) != null )
+        if ( this.indexDefinitions.get( indexType ) != null )
         {
-            return this.indexConfigs.get( indexType ).getSettings();
+            return this.indexDefinitions.get( indexType ).getSettings();
         }
 
         return null;
@@ -41,14 +41,14 @@ public class RepositorySettings
 
     public IndexMapping getIndexMappings( final IndexType indexType )
     {
-        if ( this.indexConfigs == null )
+        if ( this.indexDefinitions == null )
         {
             return null;
         }
 
-        if ( this.indexConfigs.get( indexType ) != null )
+        if ( this.indexDefinitions.get( indexType ) != null )
         {
-            return this.indexConfigs.get( indexType ).getMapping();
+            return this.indexDefinitions.get( indexType ).getMapping();
         }
 
         return null;
@@ -56,15 +56,15 @@ public class RepositorySettings
 
     public static final class Builder
     {
-        private IndexConfigs indexConfigs;
+        private IndexDefinitions indexDefinitions;
 
         private Builder()
         {
         }
 
-        public Builder indexConfigs( final IndexConfigs val )
+        public Builder indexConfigs( final IndexDefinitions val )
         {
-            indexConfigs = val;
+            indexDefinitions = val;
             return this;
         }
 

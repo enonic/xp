@@ -1,5 +1,6 @@
 package com.enonic.xp.repository;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.RoleKeys;
@@ -24,5 +25,8 @@ public class RepositoryConstants
         build();
 
     public static final AccessControlList DEFAULT_REPO_PERMISSIONS = AccessControlList.of( adminFullAccess, authenticatedRead );
+
+    public static final Branch MASTER_BRANCH = Branch.from( "master" );
+
 
 }

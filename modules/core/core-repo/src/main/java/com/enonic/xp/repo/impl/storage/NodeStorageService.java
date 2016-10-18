@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -27,6 +28,8 @@ public interface NodeStorageService
     Node updateMetadata( final Node node, final InternalContext context );
 
     void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
+
+    void push( final Node node, final Branch target, final InternalContext context );
 
     void publish( final PushNodeEntries entries, final InternalContext context );
 

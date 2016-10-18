@@ -11,6 +11,7 @@ import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
+@SuppressWarnings("unused")
 public class CreateRepositoryHandler
     implements ScriptBean
 {
@@ -36,7 +37,7 @@ public class CreateRepositoryHandler
 
         final Repository repository = repositoryServiceSupplier.
             get().
-            create( createRepositoryParams );
+            createRepository( createRepositoryParams );
 
         return repository == null ? null : new RepositoryMapper( repository );
     }
