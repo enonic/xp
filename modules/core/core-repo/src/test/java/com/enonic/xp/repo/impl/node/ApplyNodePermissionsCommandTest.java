@@ -125,7 +125,6 @@ public class ApplyNodePermissionsCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -246,7 +245,6 @@ public class ApplyNodePermissionsCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            repositoryService( this.repositoryService ).
             build().
             execute();
 

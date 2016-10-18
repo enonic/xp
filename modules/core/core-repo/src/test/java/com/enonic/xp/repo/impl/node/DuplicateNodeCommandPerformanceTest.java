@@ -59,7 +59,6 @@ public class DuplicateNodeCommandPerformanceTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            repositoryService( this.repositoryService ).
             binaryService( this.binaryService ).
             build().
             execute();

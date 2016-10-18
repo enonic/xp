@@ -15,10 +15,7 @@ log.info('Repository created with id ' + result1.id);
 var result2 = repoLib.create({
     id: 'test-repo2',
     settings: {
-        validationSettings: {
-            checkExists: false,
-            checkParentExists: false
-        }
+        //TODO
     }
 });
 
@@ -30,10 +27,7 @@ log.info('Repository created with id ' + result2.id);
 var expected1 = {
     "id": "test-repo",
     settings: {
-        validationSettings: {
-            checkExists: true,
-            checkParentExists: true
-        }
+        //TODO
     }
 };
 // END
@@ -42,10 +36,7 @@ assert.assertJsonEquals(expected1, result1);
 var expected2 = {
     "id": "test-repo2",
     settings: {
-        validationSettings: {
-            checkExists: false,
-            checkParentExists: false
-        }
+        //TODO
     }
 };
 assert.assertJsonEquals(expected2, result2);

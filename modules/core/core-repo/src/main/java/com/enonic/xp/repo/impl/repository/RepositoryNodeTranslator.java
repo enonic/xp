@@ -15,7 +15,6 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
-import com.enonic.xp.repository.ValidationSettings;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public class RepositoryNodeTranslator
@@ -26,20 +25,11 @@ public class RepositoryNodeTranslator
 
     private static final String SETTINGS_KEY = "settings";
 
-    private static final String VALIDATION_SETTINGS_KEY = "validationSettings";
-
-    private static final String CHECK_PARENT_EXISTS_KEY = "checkParentExists";
-
-    private static final String CHECK_EXISTS_KEY = "checkExists";
-
-    private static final String CHECK_PERMISSIONS_KEY = "checkExists";
-
     public static Node toNode( final Repository repository )
     {
         final PropertyTree repositoryData = new PropertyTree();
         final RepositorySettings repositorySettings = repository.getSettings();
         toNodeData( repositorySettings.getIndexConfigs(), repositoryData );
-        toNodeData( repositorySettings.getValidationSettings(), repositoryData );
 
         return Node.create().
             id( NodeId.from( repository.getId() ) ).
@@ -83,23 +73,11 @@ public class RepositoryNodeTranslator
         }
     }
 
-    private static void toNodeData( final ValidationSettings validationSettings, final PropertyTree data )
-    {
-        if ( validationSettings != null )
-        {
-            final PropertySet validationSettingsSet = data.addSet( VALIDATION_SETTINGS_KEY );
-            validationSettingsSet.setBoolean( CHECK_EXISTS_KEY, validationSettings.isCheckExists() );
-            validationSettingsSet.setBoolean( CHECK_PARENT_EXISTS_KEY, validationSettings.isCheckParentExists() );
-            validationSettingsSet.setBoolean( CHECK_PERMISSIONS_KEY, validationSettings.isCheckPermissions() );
-        }
-    }
-
     public static Repository toRepository( final Node node )
     {
         final PropertyTree nodeData = node.data();
 
         final RepositorySettings repositorySettings = RepositorySettings.create().
-            validationSettings( toValidationSettings( nodeData ) ).
             indexConfigs( toIndexConfigs( nodeData ) ).
             build();
 
@@ -107,20 +85,6 @@ public class RepositoryNodeTranslator
             id( RepositoryId.from( node.id().toString() ) ).
             settings( repositorySettings ).
             build();
-    }
-
-    private static ValidationSettings toValidationSettings( final PropertyTree nodeData )
-    {
-        final PropertySet validationSettingsSet = nodeData.getSet( VALIDATION_SETTINGS_KEY );
-        if ( validationSettingsSet != null )
-        {
-            return ValidationSettings.create().
-                checkParentExists( validationSettingsSet.getBoolean( CHECK_PARENT_EXISTS_KEY ) ).
-                checkExists( validationSettingsSet.getBoolean( CHECK_EXISTS_KEY ) ).
-                checkPermissions( validationSettingsSet.getBoolean( CHECK_PERMISSIONS_KEY ) ).
-                build();
-        }
-        return null;
     }
 
     private static IndexConfigs toIndexConfigs( final PropertyTree nodeData )

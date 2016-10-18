@@ -19,10 +19,7 @@ if (result) {
 var expected = {
     "id": "test-repo",
     settings: {
-        validationSettings: {
-            checkExists: true,
-            checkParentExists: true
-        }
+        //TODO
     }
 };
 // END
