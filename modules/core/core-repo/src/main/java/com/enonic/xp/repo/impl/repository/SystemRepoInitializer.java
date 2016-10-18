@@ -14,7 +14,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class SystemRepoInitializer
 {
-    public static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
+    private static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
     private final RepositoryService repositoryService;
 
@@ -36,7 +36,7 @@ public class SystemRepoInitializer
                     inheritPermissions( true ).
                     build();
 
-                this.repositoryService.create( createRepositoryParams );
+                this.repositoryService.createRepository( createRepositoryParams );
             }
         } );
     }

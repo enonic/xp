@@ -164,7 +164,6 @@ public abstract class AbstractNodeTest
         this.storageService = new NodeStorageServiceImpl();
         this.storageService.setVersionService( this.versionService );
         this.storageService.setBranchService( this.branchService );
-        this.storageService.setIndexServiceInternal( this.indexServiceInternal );
         this.storageService.setNodeVersionService( this.nodeDao );
         this.storageService.setIndexDataService( this.indexedDataService );
 
@@ -205,7 +204,7 @@ public abstract class AbstractNodeTest
 
     void createRepository( final Repository repository )
     {
-        this.repositoryService.create( CreateRepositoryParams.create().
+        this.repositoryService.createRepository( CreateRepositoryParams.create().
             repositoryId( repository.getId() ).
             build() );
 

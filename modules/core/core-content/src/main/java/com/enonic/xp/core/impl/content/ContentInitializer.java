@@ -19,6 +19,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
+import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
@@ -86,10 +87,17 @@ public final class ContentInitializer
 
         if ( !initialized )
         {
-            initializeRepository();
-
-            runAsAdmin( this::doInitContentRootNode );
+            runAsAdmin( () -> {
+                initializeRepository();
+                createDraftBranch();
+                initContentNode();
+            } );
         }
+    }
+
+    private void createDraftBranch()
+    {
+        this.repositoryService.createBranch( CreateBranchParams.from( ContentConstants.BRANCH_DRAFT.getValue() ) );
     }
 
     private void initializeRepository()
@@ -100,12 +108,11 @@ public final class ContentInitializer
             rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER ).
             build();
 
-        this.repositoryService.create( createRepositoryParams );
+        this.repositoryService.createRepository( createRepositoryParams );
     }
 
-    private void doInitContentRootNode()
+    private void initContentNode()
     {
-
         final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
 
         final User user = ContextAccessor.current().getAuthInfo().getUser();
@@ -122,7 +129,7 @@ public final class ContentInitializer
             data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
             data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
 
-            final Node root = nodeService.create( CreateNodeParams.create().
+            final Node contentRoot = nodeService.create( CreateNodeParams.create().
                 data( data ).
                 name( ContentConstants.CONTENT_ROOT_NAME ).
                 parent( NodePath.ROOT ).
@@ -130,11 +137,11 @@ public final class ContentInitializer
                 childOrder( CONTENT_DEFAULT_CHILD_ORDER ).
                 build() );
 
-            LOG.info( "Created content root-node: " + root.path() );
+            LOG.info( "Created content root-node: " + contentRoot.path() );
 
             nodeService.refresh( RefreshMode.ALL );
 
-            nodeService.push( NodeIds.from( root.id() ), ContentConstants.BRANCH_MASTER );
+            nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_DRAFT );
         }
     }
 
@@ -142,7 +149,7 @@ public final class ContentInitializer
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
 
-        ContextBuilder.from( ContentConstants.CONTEXT_DRAFT ).
+        ContextBuilder.from( ContentConstants.CONTEXT_MASTER ).
             authInfo( authInfo ).
             build().
             runWith( runnable );

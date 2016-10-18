@@ -19,7 +19,7 @@ public class CreateRepositoryScriptTest
     {
         super.initialize();
         repositoryService = Mockito.mock( RepositoryService.class );
-        Mockito.when( repositoryService.create( Mockito.any() ) ).
+        Mockito.when( repositoryService.createRepository( Mockito.isA( CreateRepositoryParams.class ) ) ).
             thenAnswer( invocation -> {
                 final CreateRepositoryParams params = (CreateRepositoryParams) invocation.getArguments()[0];
                 return Repository.create().
@@ -34,6 +34,6 @@ public class CreateRepositoryScriptTest
     public void testExample()
     {
         runScript( "/site/lib/xp/examples/repo/create.js" );
-        Mockito.verify( this.repositoryService, Mockito.times( 2 ) ).create( Mockito.any() );
+        Mockito.verify( this.repositoryService, Mockito.times( 2 ) ).createRepository( Mockito.isA( CreateRepositoryParams.class ) );
     }
 }

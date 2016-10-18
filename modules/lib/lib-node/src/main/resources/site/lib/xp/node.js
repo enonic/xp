@@ -37,6 +37,10 @@ exports.geoPoint = function (lat, lon) {
     return new GeoPointType(lat, lon);
 };
 
+exports.geoPointString = function (value) {
+    return GeoPointType.from(value);
+};
+
 exports.instant = function (value) {
     return InstantType.parse(value);
 };

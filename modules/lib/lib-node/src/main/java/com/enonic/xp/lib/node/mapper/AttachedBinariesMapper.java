@@ -25,7 +25,6 @@ class AttachedBinariesMapper
         binaries.forEach( ( binary ) -> {
             gen.map();
             gen.value( "binaryReference", binary.getBinaryReference().toString() );
-            gen.value( "blobKey", binary.getBlobKey() );
             gen.end();
         } );
 

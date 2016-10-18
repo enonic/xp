@@ -182,7 +182,6 @@ public class AbstractContentServiceTest
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
         this.storageService.setNodeVersionService( this.nodeDao );
-        this.storageService.setIndexServiceInternal( this.indexService );
         this.storageService.setIndexDataService( this.indexedDataService );
 
         this.searchService = new NodeSearchServiceImpl();

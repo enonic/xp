@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.storage;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -24,7 +25,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 import com.enonic.xp.repo.impl.version.VersionService;
@@ -42,8 +42,6 @@ public class NodeStorageServiceImpl
     private BranchService branchService;
 
     private NodeVersionService nodeVersionService;
-
-    private IndexServiceInternal indexServiceInternal;
 
     private IndexDataService indexDataService;
 
@@ -147,6 +145,18 @@ public class NodeStorageServiceImpl
         }
 
         this.indexDataService.push( entries.getNodeIds(), entries.getTargetBranch(), entries.getTargetRepo(), context );
+    }
+
+    @Override
+    public void push( final Node node, final Branch target, final InternalContext context )
+    {
+        final NodeBranchEntry entry = this.branchService.get( node.id(), context );
+
+        this.branchService.store( entry, InternalContext.create( context ).
+            branch( target ).
+            build() );
+
+        this.indexDataService.push( NodeIds.from( node.id() ), target, context.getRepositoryId(), context );
     }
 
     @Override
@@ -364,12 +374,6 @@ public class NodeStorageServiceImpl
     public void setNodeVersionService( final NodeVersionService nodeVersionService )
     {
         this.nodeVersionService = nodeVersionService;
-    }
-
-    @Reference
-    public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
-    {
-        this.indexServiceInternal = indexServiceInternal;
     }
 
     @Reference
