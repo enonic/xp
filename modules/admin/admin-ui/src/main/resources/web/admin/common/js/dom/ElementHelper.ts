@@ -151,6 +151,15 @@ module api.dom {
             return this;
         }
 
+        toggleClass(className: string, condition?: boolean): ElementHelper {
+            if (condition == false || condition == undefined && this.hasClass(className)) {
+                this.removeClass(className);
+            } else {
+                this.addClass(className);
+            }
+            return this;
+        }
+
         addClass(clsName: string): ElementHelper {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
@@ -290,7 +299,7 @@ module api.dom {
             this.el.style.maxWidth = value;
             return this;
         }
-        
+
         setMaxWidthPx(value: number): ElementHelper {
             this.setMaxWidth(value + "px");
             return this;
@@ -604,12 +613,12 @@ module api.dom {
          * Calculate offset relative to document
          * @returns {{left: number, top: number}}
          */
-        getOffset(): { top:number; left:number;
+        getOffset(): { top: number; left: number;
         } {
             return wemjq(this.el).offset();
         }
 
-        setOffset(offset: { top:number; left:number; }): ElementHelper {
+        setOffset(offset: { top: number; left: number; }): ElementHelper {
             wemjq(this.el).offset(offset);
             return this;
         }
@@ -649,7 +658,7 @@ module api.dom {
          * Calculates offset relative to first positioned parent ( element with position: relative, absolute or fixed )
          * @returns {{top: number, left: number}}
          */
-        getOffsetToParent(): { top:number; left:number;
+        getOffsetToParent(): { top: number; left: number;
         } {
             return wemjq(this.el).position();
         }
@@ -668,6 +677,10 @@ module api.dom {
 
         getOffsetLeftRelativeToParent(): number {
             return this.el.offsetLeft;
+        }
+
+        isScrollable(): boolean {
+            return this.el.style.overflow == "auto" || this.el.style.overflowY == "auto" || this.hasClass("slimScrollDiv");
         }
 
         getComputedProperty(name: string, pseudoElement: string = null): string {
@@ -714,7 +727,7 @@ module api.dom {
                        return (childNode.nodeType == Node.ELEMENT_NODE);
                    });
         }
-        
+
         isOverflown() {
             return this.el.offsetWidth < this.el.scrollWidth;
         }

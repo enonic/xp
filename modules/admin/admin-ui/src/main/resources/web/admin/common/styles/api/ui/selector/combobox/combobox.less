@@ -39,6 +39,10 @@
     .box-shadow(2px 2px 2px @admin-medium-gray-border);
     background: white;
     z-index: @z-index-wizard-filed-element;
+
+    &.reverted {
+      .box-shadow(2px 0px 2px @admin-medium-gray-border);
+    }
   }
 
   .slick-viewport {
