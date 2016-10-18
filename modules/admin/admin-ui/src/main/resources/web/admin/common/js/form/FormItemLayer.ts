@@ -141,7 +141,7 @@ module api.form {
                     this.parentEl.appendChild(formOptionSetOptionView);
                     this.formItemViews.push(formOptionSetOptionView);
 
-                    layoutPromises.push(formOptionSetOptionView.layout());
+                    layoutPromises.push(formOptionSetOptionView.layout(validate));
                 }
             });
 
