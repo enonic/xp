@@ -455,6 +455,7 @@ module api.liveedit {
         }
 
         setTextEditMode(flag: boolean) {
+            ItemView.setHighlightingEnabled(!flag);
             this.toggleClass('text-edit-mode', flag);
 
             var textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
