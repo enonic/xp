@@ -287,7 +287,11 @@ module api.liveedit.text {
 
             setTimeout(() => {
                 if (!this.anyEditorHasFocus()) {
-                    this.closePageTextEditMode();
+                    var pageView = this.getPageView();
+                    if (pageView.isTextEditMode()) {
+                        pageView.setTextEditMode(false);
+                        ItemView.setNextClickDisabled(true);
+                    }
                 }
             }, 50);
         }
@@ -410,11 +414,16 @@ module api.liveedit.text {
         }
 
         private startPageTextEditMode() {
-            this.deselect();
             var pageView = this.getPageView();
+
+            if (pageView.hasSelectedView()) {
+                pageView.getSelectedView().deselect();
+            }
+
             if (!pageView.isTextEditMode()) {
                 pageView.setTextEditMode(true);
             }
+
             this.giveFocus();
         }
 
