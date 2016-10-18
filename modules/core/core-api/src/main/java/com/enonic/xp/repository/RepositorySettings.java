@@ -9,12 +9,12 @@ public class RepositorySettings
 {
     private final ValidationSettings validationSettings;
 
-    private final IndexConfigs indexConfigs;
+    private final IndexDefinitions indexDefinitions;
 
     private RepositorySettings( final Builder builder )
     {
         validationSettings = builder.validationSettings == null ? createDefaultValidationSettings() : builder.validationSettings;
-        indexConfigs = builder.indexConfigs;
+        indexDefinitions = builder.indexDefinitions;
     }
 
     public static Builder create()
@@ -27,21 +27,21 @@ public class RepositorySettings
         return validationSettings;
     }
 
-    public IndexConfigs getIndexConfigs()
+    public IndexDefinitions getIndexDefinitions()
     {
-        return indexConfigs;
+        return indexDefinitions;
     }
 
     public IndexSettings getIndexSettings( final IndexType indexType )
     {
-        if ( this.indexConfigs == null )
+        if ( this.indexDefinitions == null )
         {
             return null;
         }
 
-        if ( this.indexConfigs.get( indexType ) != null )
+        if ( this.indexDefinitions.get( indexType ) != null )
         {
-            return this.indexConfigs.get( indexType ).getSettings();
+            return this.indexDefinitions.get( indexType ).getSettings();
         }
 
         return null;
@@ -49,14 +49,14 @@ public class RepositorySettings
 
     public IndexMapping getIndexMappings( final IndexType indexType )
     {
-        if ( this.indexConfigs == null )
+        if ( this.indexDefinitions == null )
         {
             return null;
         }
 
-        if ( this.indexConfigs.get( indexType ) != null )
+        if ( this.indexDefinitions.get( indexType ) != null )
         {
-            return this.indexConfigs.get( indexType ).getMapping();
+            return this.indexDefinitions.get( indexType ).getMapping();
         }
 
         return null;
@@ -71,7 +71,7 @@ public class RepositorySettings
     {
         private ValidationSettings validationSettings;
 
-        private IndexConfigs indexConfigs;
+        private IndexDefinitions indexDefinitions;
 
         private Builder()
         {
@@ -83,9 +83,9 @@ public class RepositorySettings
             return this;
         }
 
-        public Builder indexConfigs( final IndexConfigs val )
+        public Builder indexConfigs( final IndexDefinitions val )
         {
-            indexConfigs = val;
+            indexDefinitions = val;
             return this;
         }
 

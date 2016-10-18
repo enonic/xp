@@ -8,11 +8,11 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.index.IndexType;
 
 @Beta
-public class IndexConfigs
+public class IndexDefinitions
 {
-    private final Map<IndexType, IndexConfig> configs;
+    private final Map<IndexType, IndexDefinition> configs;
 
-    private IndexConfigs( final Builder builder )
+    private IndexDefinitions( final Builder builder )
     {
         this.configs = builder.configs;
     }
@@ -22,28 +22,28 @@ public class IndexConfigs
         return new Builder();
     }
 
-    public IndexConfig get( final IndexType indexType )
+    public IndexDefinition get( final IndexType indexType )
     {
         return configs.get( indexType );
     }
 
     public static final class Builder
     {
-        private final Map<IndexType, IndexConfig> configs = Maps.newHashMap();
+        private final Map<IndexType, IndexDefinition> configs = Maps.newHashMap();
 
         private Builder()
         {
         }
 
-        public Builder add( final IndexType type, final IndexConfig config )
+        public Builder add( final IndexType type, final IndexDefinition config )
         {
             this.configs.put( type, config );
             return this;
         }
 
-        public IndexConfigs build()
+        public IndexDefinitions build()
         {
-            return new IndexConfigs( this );
+            return new IndexDefinitions( this );
         }
     }
 
