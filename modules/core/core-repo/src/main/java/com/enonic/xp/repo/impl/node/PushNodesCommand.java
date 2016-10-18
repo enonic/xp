@@ -30,7 +30,7 @@ import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
 public class PushNodesCommand
-    extends RepositorySpecificNodeCommand
+    extends AbstractNodeCommand
 {
     private final Branch target;
 
@@ -191,11 +191,6 @@ public class PushNodesCommand
 
     private boolean targetParentExists( final NodePath nodePath, final PushNodesResult.Builder builder, final Context currentContext )
     {
-        if ( skipParentNodeExistsVerification() )
-        {
-            return true;
-        }
-
         if ( nodePath.isRoot() || nodePath.getParentPath().equals( NodePath.ROOT ) )
         {
             return true;
@@ -229,7 +224,7 @@ public class PushNodesCommand
     }
 
     public static class Builder
-        extends RepositorySpecificNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private Branch target;
 

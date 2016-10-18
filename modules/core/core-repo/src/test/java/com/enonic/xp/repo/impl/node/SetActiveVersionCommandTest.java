@@ -57,7 +57,6 @@ public class SetActiveVersionCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
-            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -90,8 +89,6 @@ public class SetActiveVersionCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
-            repositoryService( this.repositoryService ).
-            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -104,7 +101,6 @@ public class SetActiveVersionCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
-            repositoryService( this.repositoryService ).
             build().
             execute();
 
@@ -140,7 +136,6 @@ public class SetActiveVersionCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
-            repositoryService( this.repositoryService ).
             build().
             execute();
     }
@@ -167,7 +162,6 @@ public class SetActiveVersionCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
-            repositoryService( this.repositoryService ).
             build().
             execute();
     }

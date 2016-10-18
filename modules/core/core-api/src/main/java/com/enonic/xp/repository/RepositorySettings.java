@@ -7,24 +7,16 @@ import com.enonic.xp.index.IndexType;
 @Beta
 public class RepositorySettings
 {
-    private final ValidationSettings validationSettings;
-
     private final IndexDefinitions indexDefinitions;
 
     private RepositorySettings( final Builder builder )
     {
-        validationSettings = builder.validationSettings == null ? createDefaultValidationSettings() : builder.validationSettings;
         indexDefinitions = builder.indexDefinitions;
     }
 
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public ValidationSettings getValidationSettings()
-    {
-        return validationSettings;
     }
 
     public IndexDefinitions getIndexDefinitions()
@@ -62,25 +54,12 @@ public class RepositorySettings
         return null;
     }
 
-    private ValidationSettings createDefaultValidationSettings()
-    {
-        return ValidationSettings.create().build();
-    }
-
     public static final class Builder
     {
-        private ValidationSettings validationSettings;
-
         private IndexDefinitions indexDefinitions;
 
         private Builder()
         {
-        }
-
-        public Builder validationSettings( final ValidationSettings val )
-        {
-            validationSettings = val;
-            return this;
         }
 
         public Builder indexConfigs( final IndexDefinitions val )

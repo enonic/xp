@@ -18,7 +18,7 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.Permission;
 
 public class SetNodeChildOrderCommand
-    extends RepositorySpecificNodeCommand
+    extends AbstractNodeCommand
 {
 
     private static final int BATCH_SIZE = 10_000;
@@ -43,7 +43,7 @@ public class SetNodeChildOrderCommand
     {
         final Node parentNode = doGetById( nodeId );
 
-        requireContextUserPermissionOrAdmin( Permission.CREATE, parentNode );
+        checkContextUserPermissionOrAdmin( parentNode );
 
         final boolean newOrderingIsManual = childOrder.isManualOrder();
         final boolean childrenAreUnordered = !parentNode.getChildOrder().isManualOrder();
@@ -65,6 +65,11 @@ public class SetNodeChildOrderCommand
             execute();
 
         return doGetById( editedNode.id() );
+    }
+
+    private void checkContextUserPermissionOrAdmin( final Node parentNode )
+    {
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, parentNode );
     }
 
     private void orderChildNodes( final Node parentNode )
@@ -95,7 +100,7 @@ public class SetNodeChildOrderCommand
     }
 
     public static final class Builder
-        extends RepositorySpecificNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private NodeId nodeId;
 

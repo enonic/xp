@@ -24,7 +24,7 @@ import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
 public class MoveNodeCommand
-    extends RepositorySpecificNodeCommand
+    extends AbstractNodeCommand
 {
     private final NodeId nodeId;
 
@@ -45,7 +45,7 @@ public class MoveNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final RepositorySpecificNodeCommand source )
+    public static Builder create( final AbstractNodeCommand source )
     {
         return new Builder( source );
     }
@@ -85,22 +85,19 @@ public class MoveNodeCommand
 
     private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )
     {
-        requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
 
-        if ( !( skipParentNodeExistsVerification() && skipPermissionsVerification() ) )
+        final Node newParentNode = GetNodeByPathCommand.create( this ).
+            nodePath( newParentPath ).
+            build().
+            execute();
+
+        if ( newParentNode == null )
         {
-            final Node newParentNode = GetNodeByPathCommand.create( this ).
-                nodePath( newParentPath ).
-                build().
-                execute();
-
-            if ( newParentNode == null )
-            {
-                throw new NodeNotFoundException( "Cannot move node to parent with path '" + newParentPath + "', does not exist" );
-            }
-
-            requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
+            throw new NodeNotFoundException( "Cannot move node to parent with path '" + newParentPath + "', does not exist" );
         }
+
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
     }
 
     private NodePath resolvePath( final Node existingNode )
@@ -133,7 +130,7 @@ public class MoveNodeCommand
 
     private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath )
     {
-        if ( newParentPath.equals( existingNode.path() ) || newParentPath.getParentPaths().contains( existingNode.path() ) )
+        if ( newParentPath.equals( existingNode.path() ) || newParentPath.getParentPaths().contains( existingNode.path() ))
         {
             throw new MoveNodeException( "Not allowed to move content to itself (" + newParentPath + ")" );
         }
@@ -211,11 +208,6 @@ public class MoveNodeCommand
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )
     {
-        if ( skipNodeExistsVerification() )
-        {
-            return;
-        }
-
         final NodePath newNodePath = NodePath.create( newParentPath, newNodeName.toString() ).build();
 
         final boolean exists = CheckNodeExistsCommand.create( this ).
@@ -230,7 +222,7 @@ public class MoveNodeCommand
     }
 
     public static class Builder
-        extends RepositorySpecificNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private NodeId id;
 
@@ -243,7 +235,7 @@ public class MoveNodeCommand
             super();
         }
 
-        private Builder( final RepositorySpecificNodeCommand source )
+        private Builder( final AbstractNodeCommand source )
         {
             super( source );
         }

@@ -31,8 +31,10 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermission;
+
 public final class CreateNodeCommand
-    extends RepositorySpecificNodeCommand
+    extends AbstractNodeCommand
 {
     private final CreateNodeParams params;
 
@@ -53,7 +55,7 @@ public final class CreateNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final RepositorySpecificNodeCommand source )
+    public static Builder create( final AbstractNodeCommand source )
     {
         return new Builder( source );
     }
@@ -65,11 +67,13 @@ public final class CreateNodeCommand
 
         NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
         final Node parentNode = NodeHelper.runAsAdmin( this::verifyParentExists );
+
         if ( parentNode == null )
         {
             throw new NodeNotFoundException(
                 "Parent node to node with name '" + params.getName() + "' with parent path '" + params.getParent() + "' not found" );
         }
+
         requireContextUserPermission( Permission.CREATE, parentNode );
 
         final PrincipalKey user = getCurrentPrincipalKey();
@@ -259,11 +263,6 @@ public final class CreateNodeCommand
 
     private void verifyNotExistsAlready()
     {
-        if ( skipNodeExistsVerification() )
-        {
-            return;
-        }
-
         if ( this.params.getNodeId() != null )
         {
             final Node existingNode = doGetById( this.params.getNodeId() );
@@ -288,7 +287,7 @@ public final class CreateNodeCommand
     }
 
     public static class Builder
-        extends RepositorySpecificNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private CreateNodeParams params;
 
@@ -301,7 +300,7 @@ public final class CreateNodeCommand
             super();
         }
 
-        private Builder( final RepositorySpecificNodeCommand source )
+        private Builder( final AbstractNodeCommand source )
         {
             super( source );
         }

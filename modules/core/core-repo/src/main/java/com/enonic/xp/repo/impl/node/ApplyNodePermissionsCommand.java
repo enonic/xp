@@ -16,8 +16,10 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.contextUserHasPermissionOrAdmin;
+
 final class ApplyNodePermissionsCommand
-    extends RepositorySpecificNodeCommand
+    extends AbstractNodeCommand
 {
     private final static Logger LOG = LoggerFactory.getLogger( ApplyNodePermissionsCommand.class );
 
@@ -116,7 +118,7 @@ final class ApplyNodePermissionsCommand
     }
 
     public static class Builder
-        extends RepositorySpecificNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private ApplyNodePermissionsParams params;
 

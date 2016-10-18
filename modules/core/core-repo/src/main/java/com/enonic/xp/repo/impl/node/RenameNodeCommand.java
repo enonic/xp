@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RenameNodeParams;
 
 public final class RenameNodeCommand
-    extends RepositorySpecificNodeCommand
+    extends AbstractNodeCommand
 {
     private final RenameNodeParams params;
 
@@ -27,8 +27,7 @@ public final class RenameNodeCommand
 
         final Node nodeToBeRenamed = doGetById( nodeId );
 
-        final NodePath parentPath = nodeToBeRenamed.parentPath().asAbsolute();
-        verifyNodeNotExistAtNewPath( parentPath, nodeToBeRenamed.id() );
+        final NodePath parentPath = verifyNodeNotExistAtNewPath( nodeToBeRenamed );
 
         return MoveNodeCommand.create( this ).
             id( params.getNodeId() ).
@@ -38,23 +37,21 @@ public final class RenameNodeCommand
             execute();
     }
 
-    private void verifyNodeNotExistAtNewPath( final NodePath parentPath, final NodeId id )
+    private NodePath verifyNodeNotExistAtNewPath( final Node nodeToBeRenamed )
     {
-        if ( skipNodeExistsVerification() )
-        {
-            return;
-        }
-        
+        final NodePath parentPath = nodeToBeRenamed.parentPath().asAbsolute();
         final NodePath targetPath = new NodePath( parentPath, params.getNewNodeName() );
         final Node existingNodeAtTargetPath = GetNodeByPathCommand.create( this ).
             nodePath( targetPath ).
             build().
             execute();
 
-        if ( ( existingNodeAtTargetPath != null ) && !id.equals( existingNodeAtTargetPath.id() ) )
+        if ( ( existingNodeAtTargetPath != null ) && !nodeToBeRenamed.id().equals( existingNodeAtTargetPath.id() ) )
         {
             throw new NodeAlreadyExistAtPathException( targetPath );
         }
+
+        return parentPath;
     }
 
 
@@ -64,7 +61,7 @@ public final class RenameNodeCommand
     }
 
     public static class Builder
-        extends RepositorySpecificNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         Builder()
         {
