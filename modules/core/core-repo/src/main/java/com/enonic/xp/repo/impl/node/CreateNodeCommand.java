@@ -31,8 +31,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermission;
-
 public final class CreateNodeCommand
     extends RepositorySpecificNodeCommand
 {
@@ -67,13 +65,11 @@ public final class CreateNodeCommand
 
         NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
         final Node parentNode = NodeHelper.runAsAdmin( this::verifyParentExists );
-
         if ( parentNode == null )
         {
             throw new NodeNotFoundException(
                 "Parent node to node with name '" + params.getName() + "' with parent path '" + params.getParent() + "' not found" );
         }
-
         requireContextUserPermission( Permission.CREATE, parentNode );
 
         final PrincipalKey user = getCurrentPrincipalKey();

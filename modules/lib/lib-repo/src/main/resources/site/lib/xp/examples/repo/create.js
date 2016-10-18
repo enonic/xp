@@ -43,8 +43,8 @@ var expected2 = {
     "id": "test-repo2",
     settings: {
         validationSettings: {
-            checkExists: true,
-            checkParentExists: true
+            checkExists: false,
+            checkParentExists: false
         }
     }
 };

@@ -168,6 +168,7 @@ public class ReorderChildNodeCommandTest
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 

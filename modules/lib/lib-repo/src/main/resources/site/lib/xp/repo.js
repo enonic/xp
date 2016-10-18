@@ -47,6 +47,7 @@ exports.refresh = function (params) {
  * @param {object} [params.settings.validationSettings] Validation settings.
  * @param {boolean} [params.settings.validationSettings.checkExists=true] Activate node existence check.
  * @param {boolean} [params.settings.validationSettings.checkParentExists=true] Activate parent node existence check.
+ * @param {boolean} [params.settings.validationSettings.checkPermissions=true] Activate permissions check.
  * @param {boolean} [params.settings.indexConfigs] TBD.
  *
  */
@@ -58,6 +59,7 @@ exports.create = function (params) {
     var validationSettings = settings.validationSettings || {};
     bean.checkExists = __.nullOrValue(validationSettings.checkExists);
     bean.checkParentExists = __.nullOrValue(validationSettings.checkParentExists);
+    bean.checkPermissions = __.nullOrValue(validationSettings.checkPermissions);
 
     return __.toNativeObject(bean.execute());
 };

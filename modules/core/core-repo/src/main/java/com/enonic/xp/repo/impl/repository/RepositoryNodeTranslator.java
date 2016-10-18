@@ -28,9 +28,11 @@ public class RepositoryNodeTranslator
 
     private static final String VALIDATION_SETTINGS_KEY = "validationSettings";
 
+    private static final String CHECK_PARENT_EXISTS_KEY = "checkParentExists";
+
     private static final String CHECK_EXISTS_KEY = "checkExists";
 
-    private static final String CHECK_PARENT_EXISTS_KEY = "checkParentExists";
+    private static final String CHECK_PERMISSIONS_KEY = "checkExists";
 
     public static Node toNode( final Repository repository )
     {
@@ -88,6 +90,7 @@ public class RepositoryNodeTranslator
             final PropertySet validationSettingsSet = data.addSet( VALIDATION_SETTINGS_KEY );
             validationSettingsSet.setBoolean( CHECK_EXISTS_KEY, validationSettings.isCheckExists() );
             validationSettingsSet.setBoolean( CHECK_PARENT_EXISTS_KEY, validationSettings.isCheckParentExists() );
+            validationSettingsSet.setBoolean( CHECK_PERMISSIONS_KEY, validationSettings.isCheckPermissions() );
         }
     }
 
@@ -112,8 +115,9 @@ public class RepositoryNodeTranslator
         if ( validationSettingsSet != null )
         {
             return ValidationSettings.create().
-                checkExists( validationSettingsSet.getBoolean( CHECK_EXISTS_KEY ) ).
                 checkParentExists( validationSettingsSet.getBoolean( CHECK_PARENT_EXISTS_KEY ) ).
+                checkExists( validationSettingsSet.getBoolean( CHECK_EXISTS_KEY ) ).
+                checkPermissions( validationSettingsSet.getBoolean( CHECK_PERMISSIONS_KEY ) ).
                 build();
         }
         return null;

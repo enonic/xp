@@ -197,6 +197,7 @@ public class SetNodeChildOrderCommandTest
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
     }
@@ -215,6 +216,7 @@ public class SetNodeChildOrderCommandTest
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 

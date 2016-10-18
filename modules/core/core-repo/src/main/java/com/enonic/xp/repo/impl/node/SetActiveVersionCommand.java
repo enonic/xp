@@ -9,7 +9,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.Permission;
 
 public class SetActiveVersionCommand
-    extends AbstractNodeCommand
+    extends RepositorySpecificNodeCommand
 {
     private final static Permission REQUIRED_PERMISSION = Permission.MODIFY;
 
@@ -46,7 +46,7 @@ public class SetActiveVersionCommand
             throw new NodeNotFoundException( "NodeVersionId [" + nodeVersionId + "] not a version of Node with id [" + nodeId + "]" );
         }
 
-        NodePermissionsResolver.requireContextUserPermissionOrAdmin( REQUIRED_PERMISSION, node );
+        requireContextUserPermissionOrAdmin( REQUIRED_PERMISSION, node );
 
         this.nodeStorageService.updateVersion( node, nodeVersionId, context );
 
@@ -54,7 +54,7 @@ public class SetActiveVersionCommand
     }
 
     public static final class Builder
-        extends AbstractNodeCommand.Builder<Builder>
+        extends RepositorySpecificNodeCommand.Builder<Builder>
     {
         private NodeId nodeId;
 
