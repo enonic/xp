@@ -288,6 +288,7 @@ module api.liveedit.text {
             setTimeout(() => {
                 if (!this.anyEditorHasFocus()) {
                     this.closePageTextEditMode();
+                    ItemView.setNextClickDisabled(true);
                 }
             }, 50);
         }
