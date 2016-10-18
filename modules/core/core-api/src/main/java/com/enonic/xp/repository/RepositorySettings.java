@@ -19,7 +19,7 @@ public class RepositorySettings
         return new Builder();
     }
 
-    public IndexDefinitions getIndexConfigs()
+    public IndexDefinitions getIndexDefinitions()
     {
         return indexDefinitions;
     }

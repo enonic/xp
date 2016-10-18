@@ -15,7 +15,6 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
-import com.enonic.xp.repository.ValidationSettings;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public class RepositoryNodeTranslator
@@ -25,14 +24,6 @@ public class RepositoryNodeTranslator
     private static final String MAPPING_KEY = "mapping";
 
     private static final String SETTINGS_KEY = "settings";
-
-    private static final String VALIDATION_SETTINGS_KEY = "validationSettings";
-
-    private static final String CHECK_PARENT_EXISTS_KEY = "checkParentExists";
-
-    private static final String CHECK_EXISTS_KEY = "checkExists";
-
-    private static final String CHECK_PERMISSIONS_KEY = "checkExists";
 
     public static Node toNode( final Repository repository )
     {
