@@ -37,6 +37,14 @@ public class ContentIdsHtmlParserTest
     }
 
     @Test
+    public void test_with_args()
+        throws IOException
+    {
+        final ContentIds contentIds = parser.parse( this.loadHtml( "ParserTest_with_args.html" ) );
+        assertEquals( 1, contentIds.getSize() );
+    }
+
+    @Test
     public void test_invalid_character()
         throws IOException
     {
