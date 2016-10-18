@@ -149,6 +149,8 @@ module api.util.htmlarea.editor {
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
             this.checkRequiredFieldsAreSet();
 
+            this.addSourceCodeToolForInlineMode();
+
             var deferred = wemQ.defer<HtmlAreaEditor>();
 
             tinymce.init({
@@ -334,6 +336,12 @@ module api.util.htmlarea.editor {
             this.hasActiveDialog = true;
             this.notifyCreateDialog(event);
             event.fire();
+        }
+
+        private addSourceCodeToolForInlineMode() {
+            if (this.inline) {
+                this.includeTools([{value: "code"}]);
+            }
         }
     }
 }
