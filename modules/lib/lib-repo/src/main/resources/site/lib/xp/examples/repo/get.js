@@ -18,9 +18,7 @@ if (result) {
 // Repository retrieved.
 var expected = {
     "id": "test-repo",
-    settings: {
-        //TODO
-    }
+    settings: {}
 };
 // END
 assert.assertJsonEquals(expected, result);

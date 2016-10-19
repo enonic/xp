@@ -78,7 +78,7 @@ public class RepositoryNodeTranslator
         final PropertyTree nodeData = node.data();
 
         final RepositorySettings repositorySettings = RepositorySettings.create().
-            indexConfigs( toIndexConfigs( nodeData ) ).
+            indexDefinitions( toIndexConfigs( nodeData ) ).
             build();
 
         return Repository.create().

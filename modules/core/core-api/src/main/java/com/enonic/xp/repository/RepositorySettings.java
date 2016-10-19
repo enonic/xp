@@ -62,7 +62,7 @@ public class RepositorySettings
         {
         }
 
-        public Builder indexConfigs( final IndexDefinitions val )
+        public Builder indexDefinitions( final IndexDefinitions val )
         {
             indexDefinitions = val;
             return this;
