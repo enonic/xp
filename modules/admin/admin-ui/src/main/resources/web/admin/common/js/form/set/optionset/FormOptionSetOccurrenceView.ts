@@ -93,13 +93,13 @@ module api.form {
                         }
                     });
 
-                    (<FormOptionSetOptionView> formItemView).onSelectionChanged(() => {
+                    (<FormOptionSetOptionView> formItemView).onSelectionChanged((view: FormOptionSetOptionView) => {
                         if (!this.currentValidationState) {
                             return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                         }
 
                         var previousValidState = this.currentValidationState.isValid();
-                        this.validate();
+                        this.validate(true, view);
                         if (this.currentValidationState.isValid()) {
                             this.currentValidationState.removeByPath(this.resolveValidationRecordingPath(), true);
                         } else {
@@ -170,13 +170,15 @@ module api.form {
             });
         }
 
-        validate(silent: boolean = true): ValidationRecording {
+        validate(silent: boolean = true, viewToSkipValidation?: FormOptionSetOptionView): ValidationRecording {
 
             var allRecordings = new ValidationRecording();
 
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                var currRecording = formItemView.validate(silent);
-                allRecordings.flatten(currRecording);
+                if (viewToSkipValidation != formItemView) {
+                    var currRecording = formItemView.validate(silent);
+                    allRecordings.flatten(currRecording);
+                }
             });
 
             allRecordings.flatten(this.validateMultiselection());

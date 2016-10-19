@@ -33,7 +33,7 @@ module api.form {
 
         private selectedOptionsPropertyArray: PropertyArray;
 
-        private selectionChangedListeners: {() : void}[] = [];
+        private selectionChangedListeners: {(view: FormOptionSetOptionView): void}[] = [];
 
         constructor(config: FormOptionSetOptionViewConfig) {
             super(<FormItemViewConfig> {
@@ -163,7 +163,6 @@ module api.form {
                     selectedProperty = this.selectedOptionsPropertyArray.set(0, new Value(this.getName(), new api.data.ValueTypeString()));
                     this.subscribeOnRadioDeselect(selectedProperty);
                     subscribedOnDeselect = true;
-                    this.notifySelectionChanged();
                 } else {
                     selectedProperty.setValue(new Value(this.getName(), new api.data.ValueTypeString()))
                     if (!subscribedOnDeselect) {
@@ -172,6 +171,7 @@ module api.form {
                     }
                 }
                 this.selectHandle(button.getFirstChild());
+                this.notifySelectionChanged(this);
             });
             if (!!selectedProperty) {
                 this.subscribeOnRadioDeselect(selectedProperty);
@@ -184,7 +184,6 @@ module api.form {
             var radioDeselectHandler = (event: api.data.PropertyValueChangedEvent) => {
                 if (event.getPreviousValue().getString() == this.getName()) {
                     this.deselectHandle();
-                    this.notifySelectionChanged();
                 }
             }
             property.onPropertyValueChanged(radioDeselectHandler);
@@ -208,7 +207,7 @@ module api.form {
                     }
                     this.deselectHandle();
                 }
-                this.notifySelectionChanged();
+                this.notifySelectionChanged(this);
             });
 
             var checkboxEnabledStatusHandler: () => void = () => {
@@ -248,6 +247,8 @@ module api.form {
                 wemjq(elem).removeClass("invalid");
                 wemjq(elem).find(".validation-viewer ul").html("");
             });
+
+            this.removeClass("invalid");
         }
 
         private isOptionSetExpandedByDefault(): boolean {
@@ -357,18 +358,18 @@ module api.form {
             });
         }
 
-        onSelectionChanged(listener: ()=> void) {
+        onSelectionChanged(listener: (view: FormOptionSetOptionView)=> void) {
             this.selectionChangedListeners.push(listener);
         }
 
         unSelectionChanged(listener: ()=> void) {
-            this.selectionChangedListeners.filter((currentListener: () => void) => {
+            this.selectionChangedListeners.filter((currentListener: (view: FormOptionSetOptionView) => void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifySelectionChanged() {
-            this.selectionChangedListeners.forEach((listener: () => void) => listener());
+        private notifySelectionChanged(viewToSkipValidation?: FormOptionSetOptionView) {
+            this.selectionChangedListeners.forEach((listener: (view: FormOptionSetOptionView) => void) => listener(viewToSkipValidation));
         }
 
         giveFocus(): boolean {
