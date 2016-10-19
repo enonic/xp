@@ -1,1 +1,1 @@
-///<reference path='ClassHelper.ts' />
+///<reference path='ClassHelper.spec.ts' />
