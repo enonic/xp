@@ -74,6 +74,8 @@ module api.form {
 
             var deferred = wemQ.defer<void>();
 
+            this.removeChildren();
+
             this.removeButton = new api.dom.AEl("remove-button");
             this.appendChild(this.removeButton);
             this.removeButton.onClicked((event: MouseEvent) => {
