@@ -404,7 +404,9 @@ module api.form.inputtype.text {
         private reInitEditor(id: string) {
             var savedEditor: HtmlAreaOccurrenceInfo = api.util.ArrayHelper.findElementByFieldValue(this.editors, "id", id);
 
-            this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);
+            if (!!savedEditor) {
+                this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);
+            }
         }
 
     }
