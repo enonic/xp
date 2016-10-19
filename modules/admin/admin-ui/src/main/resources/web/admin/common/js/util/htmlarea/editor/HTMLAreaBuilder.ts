@@ -155,7 +155,6 @@ module api.util.htmlarea.editor {
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
             this.checkRequiredFieldsAreSet();
 
-            debugger;
             if (this.inline && !this.isToolExcluded("code")) {
                 this.includeTool("code");
             }
