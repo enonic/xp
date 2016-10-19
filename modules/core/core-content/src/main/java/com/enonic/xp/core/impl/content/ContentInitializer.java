@@ -83,16 +83,15 @@ public final class ContentInitializer
 
     public final void initialize()
     {
-        final boolean initialized = repositoryService.isInitialized( ContentConstants.CONTENT_REPO.getId() );
-
-        if ( !initialized )
-        {
-            runAsAdmin( () -> {
+        runAsAdmin( () -> {
+            final boolean initialized = repositoryService.isInitialized( ContentConstants.CONTENT_REPO.getId() );
+            if ( !initialized )
+            {
                 initializeRepository();
                 createDraftBranch();
                 initContentNode();
-            } );
-        }
+            }
+        } );
     }
 
     private void createDraftBranch()

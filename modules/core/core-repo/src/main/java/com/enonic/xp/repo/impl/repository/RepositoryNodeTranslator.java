@@ -15,7 +15,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
-import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.SystemConstants;
 
 public class RepositoryNodeTranslator
 {
@@ -37,7 +37,7 @@ public class RepositoryNodeTranslator
             data( repositoryData ).
             name( repository.getId().toString() ).
             parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
-            permissions( AccessControlList.empty() ).
+            permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
             build();
     }
 
