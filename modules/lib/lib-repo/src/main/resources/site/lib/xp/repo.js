@@ -44,12 +44,20 @@ exports.refresh = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
  * @param {object} [params.settings] Repository settings.
+ * @param {object} [params.settings.definitions] Index definitions.
+ * @param {object} [params.settings.definitions.(search|version|branch)] Index definition.
+ * @param {object} [params.settings.definitions.(search|version|branch).(settings|mappings)] Index definition settings/mappings.
  * @param {boolean} [params.settings.indexConfigs] TBD.
  *
  */
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
     bean.repositoryId = required(params, 'id');
+
+    if (params.settings && params.settings.definitions) {
+        bean.indexDefinitions = __.toScriptValue(params.settings.definitions);
+    }
+
     return __.toNativeObject(bean.execute());
 };
 
