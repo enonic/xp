@@ -64,11 +64,13 @@
   .form-option-set-occurrence-view {
 
     .form-option-set-option-view {
+
+      margin-bottom: 5px;
+
       &.selected {
 
-        border-left: 6px solid @admin-blue;
-        border-right: 6px solid @admin-blue;
-        border-bottom: 6px solid @admin-blue;
+        border: 6px solid @admin-blue;
+        border-top: none;
 
         box-sizing: border-box;
 
@@ -109,7 +111,7 @@
 
         &:not(.expandable) {
 
-          border-bottom: none;
+          border-bottom-color: @admin-blue;
 
           > .form-input {
             label {
@@ -119,7 +121,7 @@
         }
       }
 
-      &:not(.selected):not(:last-child) {
+      &:not(:last-child) {
         border-bottom: 1px solid @admin-bg-light-gray;
       }
 
@@ -157,7 +159,6 @@
         input[type="radio"] {
           margin-left: 10px;
           -webkit-appearance: none;
-          -moz-appearance: none;
           width: 15px;
           height: 15px;
           border: 1px solid darkgray;
@@ -168,6 +169,7 @@
           &:checked {
             box-shadow: 0 0 0 3px @admin-white inset;
             background-color: @admin-dark-gray;
+            -moz-appearance: none;
           }
 
           &:not(:checked):hover {
