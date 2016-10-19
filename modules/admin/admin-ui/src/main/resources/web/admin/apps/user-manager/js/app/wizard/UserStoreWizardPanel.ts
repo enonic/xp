@@ -62,7 +62,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
                     console.debug("UserStoreWizardPanel.doLoadData: loaded data", loader);
                 }
                 if (loader.userStore) {
-                    this.isNew = false;
+                    this.formState.setIsNew(false);
                     this.setPersistedItem(loader.userStore);
                 }
                 this.defaultUserStore = loader.defaultUserStore;

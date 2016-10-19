@@ -72,6 +72,10 @@
         border: 6px solid @admin-blue;
         border-top: none;
 
+        &:not(.expandable) {
+          border-bottom: none;
+        }
+
         box-sizing: border-box;
 
         .option-items-container {
@@ -121,7 +125,7 @@
         }
       }
 
-      &:not(:last-child) {
+      &:not(:last-child):not(.selected) {
         border-bottom: 1px solid @admin-bg-light-gray;
       }
 
