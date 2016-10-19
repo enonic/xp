@@ -40,5 +40,9 @@ module api.dom {
             }
             return this;
         }
+        
+        isShowingModalDialog() {
+            return Body.get().hasClass("modal-dialog");
+        }
     }
 }

@@ -79,13 +79,13 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.TaskResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
@@ -118,7 +118,6 @@ import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
@@ -140,6 +139,7 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
@@ -167,6 +167,10 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -213,6 +217,8 @@ public final class ContentResource
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     private BinaryExtractor extractor;
+
+    private TaskService taskService;
 
     @POST
     @Path("create")
@@ -468,10 +474,20 @@ public final class ContentResource
 
     @POST
     @Path("publish")
-    public PublishContentResultJson publish( final PublishContentJson params )
+    public TaskResultJson publish( final PublishContentJson params )
+    {
+        final RunnableTask runnableTask = ( id, progressReporter ) -> publishTask( params, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Publish content" );
+        return new TaskResultJson( taskId );
+    }
+
+    private void publishTask( final PublishContentJson params, final ProgressReporter progressReporter )
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
+        final Context ctx = ContextAccessor.current();
+        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
+        progressReporter.info( "Publishing content" );
 
         final PublishContentResult result = contentService.publish( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
@@ -479,32 +495,68 @@ public final class ContentResource
             excludedContentIds( excludeContentIds ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
+            pushListener( new PushContentProgressListener( progressReporter ) ).
             build() );
 
         final ContentIds pushedContents = result.getPushedContents();
         final ContentIds deletedContents = result.getDeletedContents();
         final ContentIds failedContents = result.getFailedContents();
 
-        final PublishContentResultJson.Builder json = PublishContentResultJson.create();
-
+        String contentName = "";
         if ( ( pushedContents.getSize() + deletedContents.getSize() + failedContents.getSize() ) == 1 )
         {
             if ( pushedContents.getSize() == 1 )
             {
-                json.contentName( contentService.getById( pushedContents.first() ).getDisplayName() );
+                contentName = contentService.getById( pushedContents.first() ).getDisplayName();
             }
 
             if ( failedContents.getSize() == 1 )
             {
-                json.contentName( contentService.getById( failedContents.first() ).getDisplayName() );
+                contentName = contentService.getById( failedContents.first() ).getDisplayName();
             }
         }
 
-        return json.
-            successSize( pushedContents.getSize() ).
-            deletedSize( deletedContents.getSize() ).
-            failuresSize( failedContents.getSize() ).
-            build();
+        progressReporter.info(
+            getPublishMessage( pushedContents.getSize(), failedContents.getSize(), deletedContents.getSize(), contentName ) );
+    }
+
+    private String getPublishMessage( final int succeeded, final int failed, final int deleted, final String contentName )
+    {
+        final int total = succeeded + failed + deleted;
+        switch ( total )
+        {
+            case 0:
+                return "Nothing to publish.";
+
+            case 1:
+                if ( succeeded == 1 )
+                {
+                    return "'" + contentName + "' published";
+                }
+                else if ( failed == 1 )
+                {
+                    return "'" + contentName + "' failed";
+                }
+                else
+                {
+                    return "Pending item was deleted";
+                }
+
+            default:
+                if ( succeeded > 0 )
+                {
+                    return succeeded + " items were published";
+                }
+                if ( deleted > 0 )
+                {
+                    return deleted + " pending items were deleted";
+                }
+                if ( failed > 0 )
+                {
+                    return failed + " items failed to publish";
+                }
+        }
+        return "";
     }
 
     @POST
@@ -562,17 +614,16 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content ->
-                     {
-                         //Creates a ContentPublishItem
-                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                         return ContentPublishItemJson.create().
-                             content( content ).
-                             compareStatus( compareContentResult.getCompareStatus().name() ).
-                             iconUrl( contentIconUrlResolver.resolve( content ) ).
-                             build();
-                     } ).
-                collect( Collectors.toList() );
+                map( content -> {
+                //Creates a ContentPublishItem
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                return ContentPublishItemJson.create().
+                    content( content ).
+                    compareStatus( compareContentResult.getCompareStatus().name() ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).
+                    build();
+            } ).
+            collect( Collectors.toList() );
     }
 
     @POST
@@ -794,13 +845,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }
@@ -1215,22 +1265,6 @@ public final class ContentResource
         return permissionsJson;
     }
 
-    @GET
-    @Path("listIds")
-    public List<ContentIdJson> listChildrenIds( @QueryParam("parentId") final String parentId,
-                                                @QueryParam("childOrder") @DefaultValue("") final String childOrder )
-    {
-
-        final FindContentByParentParams params = FindContentByParentParams.create().
-            parentId( StringUtils.isNotEmpty( parentId ) ? ContentId.from( parentId ) : null ).
-            childOrder( StringUtils.isNotEmpty( childOrder ) ? ChildOrder.from( childOrder ) : null ).
-            build();
-
-        final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
-        return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
-    }
-
-
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
     {
         final MultipartItem mediaFile = form.get( "file" );
@@ -1378,5 +1412,11 @@ public final class ContentResource
     public void setExtractor( final BinaryExtractor extractor )
     {
         this.extractor = extractor;
+    }
+
+    @Reference
+    public void setTaskService( final TaskService taskService )
+    {
+        this.taskService = taskService;
     }
 }
