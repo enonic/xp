@@ -181,7 +181,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getSaveAction().onExecuted(() => {
-            if (this.isNew) { // validation might have not been called for some cases for new item
+            if (this.formState.isNew()) { // validation might have not been called for some cases for new item
                 this.contentWizardStepForm.validate();
             }
             this.displayValidationErrors();
@@ -284,7 +284,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 if (loader.content) {
                     // in case of new content will be created in super.loadData()
-                    this.isNew = false;
+                    this.formState.setIsNew(false);
                     this.setPersistedItem(loader.content);
                 }
                 this.defaultModels = loader.defaultModels;
@@ -411,7 +411,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 var thumbnailUploader = this.getFormIcon();
                 thumbnailUploader.toggleClass("invalid", isThisValid);
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
-                if (!this.isNew) {
+                if (!this.formState.isNew()) {
                     this.displayValidationErrors();
                 }
             });
@@ -1006,7 +1006,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
                     this.contentWizardStepForm.getFormView().addClass("panel-may-display-validation-errors");
-                    if (this.isNew) {
+                    if (this.formState.isNew()) {
                         this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
                     } else {
                         this.displayValidationErrors();
@@ -1412,14 +1412,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 content.isInheritPermissionsEnabled()).setPermissions(content.getPermissions().clone()).build();
             this.setPersistedItem(updatedContent);
         }
-
     }
 
     private createFormContext(content: Content): ContentFormContext {
         var formContext: ContentFormContext = <ContentFormContext>ContentFormContext.create().setSite(this.site).setParentContent(
             this.parentContent).setPersistedContent(content).setContentTypeName(
-            this.contentType ? this.contentType.getContentTypeName() : undefined).setShowEmptyFormItemSetOccurrences(
-            this.isItemPersisted()).build();
+            this.contentType ? this.contentType.getContentTypeName() : undefined).setFormState(
+            this.formState).setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).build();
         return formContext;
     }
 
