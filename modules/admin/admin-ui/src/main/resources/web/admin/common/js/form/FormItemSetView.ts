@@ -34,7 +34,7 @@ module api.form {
 
         private collapseButton: api.dom.AEl;
 
-        private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: RecordingValidityChangedEvent): void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
 
@@ -382,6 +382,7 @@ module api.form {
             this.draggingIndex = draggedElement.getSiblingIndex();
 
             ui.placeholder.html("Drop form item set here");
+            api.ui.DragHelper.get().setDropAllowed(true);
         }
 
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
@@ -393,6 +394,14 @@ module api.form {
 
                 this.formItemSetOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);
             }
+            api.ui.DragHelper.get().setDropAllowed(false);
+
+
+            this.occurrenceViewsContainer.getChildren().forEach(child => {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(child, FormItemSetOccurrenceView) && child.getId() == draggedElement.getId()) {
+                    (<FormItemSetOccurrenceView>child).layout();
+                }
+            });
 
             this.draggingIndex = -1;
         }
