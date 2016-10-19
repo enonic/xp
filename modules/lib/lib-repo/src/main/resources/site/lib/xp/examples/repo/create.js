@@ -100,9 +100,7 @@ log.info('Repository created with id ' + result2.id);
 // First repository created.
 var expected1 = {
     "id": "test-repo",
-    settings: {
-        //TODO
-    }
+    settings: {}
 };
 // END
 assert.assertJsonEquals(expected1, result1);
@@ -130,7 +128,7 @@ var expected2 = {
                 mapping: {
                     "version": {
                         "_all": {
-                            "enabled": "false" //TODO Should be a boolean
+                            "enabled": "false" //TODO Should be a boolean. JsonToPropertyTreeTranslator does not treat boolean values
                         },
                         "_source": {
                             "enabled": "true"
