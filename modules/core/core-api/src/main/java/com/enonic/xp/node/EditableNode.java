@@ -11,7 +11,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 @Beta
 public class EditableNode
 {
-    private Node source;
+    public Node source;
 
     public NodeName name;
 
