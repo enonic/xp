@@ -25,8 +25,6 @@ module api.form {
 
         private parentDataSet: PropertySet;
 
-        private collapseButton: api.dom.AEl;
-
         private optionItemsContainer: api.dom.DivEl;
 
         private formItemViews: FormItemView[] = [];
@@ -77,15 +75,23 @@ module api.form {
                 if (this.isOptionSetExpandedByDefault() && this.getThisPropertyFromSelectedOptionsArray() == null) {
                     this.disableFormItems();
                 }
-
-                if (this.formOptionSetOption.getFormItems().length > 0) {
-                    this.collapseButton = this.makeCollapseButton();
-                    this.prependChild(this.collapseButton);
+                
+                if(this.getThisPropertyFromSelectedOptionsArray() != null) {
+                    this.addClass("selected");
                 }
 
+                if(this.formOptionSetOption.getFormItems().length > 0) {
+                    this.addClass("expandable");
+                }
+                
                 this.prependChild(this.makeSelectionButton());
 
                 this.formItemViews = formItemViews;
+
+                this.onValidityChanged((event: RecordingValidityChangedEvent) => {
+                    this.toggleClass("invalid", !event.isValid());
+                })
+
                 if (validate) {
                     this.validate(true);
                 }
@@ -206,10 +212,13 @@ module api.form {
             });
 
             var checkboxEnabledStatusHandler: () => void = () => {
-                var canCheckMoreOptions = !button.isChecked() && this.cantSelectMoreOptions();
-                button.setDisabled(canCheckMoreOptions);
-                button.toggleClass("disabled", canCheckMoreOptions);
+                var buttonShouldBeDisabled = !button.isChecked() && this.cantSelectMoreOptions();
+                button.setDisabled(buttonShouldBeDisabled);
+                button.toggleClass("disabled", buttonShouldBeDisabled);
             }
+
+            button.setDisabled(!checked && this.cantSelectMoreOptions());
+            button.toggleClass("disabled", !checked && this.cantSelectMoreOptions());
 
             this.selectedOptionsPropertyArray.onPropertyAdded(checkboxEnabledStatusHandler);
             this.selectedOptionsPropertyArray.onPropertyRemoved(checkboxEnabledStatusHandler);
@@ -220,12 +229,14 @@ module api.form {
             this.expand();
             this.enableFormItems();
             api.dom.FormEl.moveFocusToNextFocusable(input, "input, select");
+            this.addClass("selected");
         }
 
         private deselectHandle() {
             this.expand(this.isOptionSetExpandedByDefault());
             this.disableAndResetAllFormItems();
             this.cleanValidationForThisOption();
+            this.removeClass("selected");
         }
 
         private cleanValidationForThisOption() {
@@ -281,19 +292,6 @@ module api.form {
             return (<FormOptionSet>this.formOptionSetOption.getParent()).getMultiselection();
         }
 
-        private makeCollapseButton(): api.dom.AEl {
-            var collapseButton = new api.dom.AEl("collapse-button");
-
-            collapseButton.onClicked((event: MouseEvent) => {
-                this.toggleClass("expanded");
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-
-            return collapseButton;
-        }
-
         update(propertySet: api.data.PropertySet, unchangedOnly?: boolean): Q.Promise<void> {
             this.parentDataSet = propertySet;
             var propertyArray = this.getOptionItemsPropertyArray(propertySet);
@@ -342,6 +340,8 @@ module api.form {
                 recording.flatten(formItemView.validate(silent));
             });
 
+            this.toggleClass("invalid", !recording.isValid());
+            
             return recording;
         }
 

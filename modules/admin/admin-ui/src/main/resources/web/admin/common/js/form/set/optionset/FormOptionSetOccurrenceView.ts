@@ -50,8 +50,7 @@ module api.form {
                 return false;
             });
 
-            this.label = new FormOccurrenceDraggableLabel(this.formOptionSet.getLabel(), this.formOptionSet.getOccurrences(),
-                this.makeMultiselectionNote());
+            this.label = new FormOccurrenceDraggableLabel(this.formOptionSet.getLabel(), this.formOptionSet.getOccurrences());
             this.appendChild(this.label);
 
             this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
