@@ -11,11 +11,85 @@ log.info('Repository created with id ' + result1.id);
 // END
 
 // BEGIN
-// Creates a repository with checks disabled
+// Creates a repository with specific settings
 var result2 = repoLib.create({
     id: 'test-repo2',
     settings: {
-        //TODO
+        definitions: {
+            version: {
+                settings: {
+                    "index": {
+                        "number_of_shards": 1,
+                        "number_of_replicas": 1
+                    },
+                    "analysis": {
+                        "analyzer": {
+                            "keywordlowercase": {
+                                "type": "custom",
+                                "tokenizer": "keyword",
+                                "filter": [
+                                    "lowercase"
+                                ]
+                            }
+                        }
+                    }
+                },
+                mapping: {
+                    "version": {
+                        "_all": {
+                            "enabled": false
+                        },
+                        "_source": {
+                            "enabled": true
+                        },
+                        "date_detection": false,
+                        "numeric_detection": false,
+                        "properties": {
+                            "nodeid": {
+                                "type": "string",
+                                "store": "true",
+                                "index": "not_analyzed"
+                            },
+                            "versionid": {
+                                "type": "string",
+                                "store": "true",
+                                "index": "not_analyzed"
+                            },
+                            "timestamp": {
+                                "type": "date",
+                                "store": "true",
+                                "index": "not_analyzed"
+                            },
+                            "nodepath": {
+                                "type": "string",
+                                "store": "true",
+                                "index": "analyzed",
+                                "analyzer": "keywordlowercase"
+                            }
+                        }
+                    }
+                }
+            },
+            branch: {
+                settings: {
+                    "index": {
+                        "number_of_shards": 1,
+                        "number_of_replicas": 1
+                    },
+                    "analysis": {
+                        "analyzer": {
+                            "keywordlowercase": {
+                                "type": "custom",
+                                "tokenizer": "keyword",
+                                "filter": [
+                                    "lowercase"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 });
 
@@ -36,7 +110,77 @@ assert.assertJsonEquals(expected1, result1);
 var expected2 = {
     "id": "test-repo2",
     settings: {
-        //TODO
+        definitions: {
+            version: {
+                settings: {
+                    "index": {
+                        "number_of_shards": 1,
+                        "number_of_replicas": 1
+                    },
+                    "analysis": {
+                        "analyzer": {
+                            "keywordlowercase": {
+                                "type": "custom",
+                                "tokenizer": "keyword",
+                                "filter": "lowercase"
+                            }
+                        }
+                    }
+                },
+                mapping: {
+                    "version": {
+                        "_all": {
+                            "enabled": "false" //TODO Should be a boolean
+                        },
+                        "_source": {
+                            "enabled": "true"
+                        },
+                        "date_detection": "false",
+                        "numeric_detection": "false",
+                        "properties": {
+                            "nodeid": {
+                                "type": "string",
+                                "store": "true",
+                                "index": "not_analyzed"
+                            },
+                            "versionid": {
+                                "type": "string",
+                                "store": "true",
+                                "index": "not_analyzed"
+                            },
+                            "timestamp": {
+                                "type": "date",
+                                "store": "true",
+                                "index": "not_analyzed"
+                            },
+                            "nodepath": {
+                                "type": "string",
+                                "store": "true",
+                                "index": "analyzed",
+                                "analyzer": "keywordlowercase"
+                            }
+                        }
+                    }
+                }
+            },
+            branch: {
+                settings: {
+                    "index": {
+                        "number_of_shards": 1,
+                        "number_of_replicas": 1
+                    },
+                    "analysis": {
+                        "analyzer": {
+                            "keywordlowercase": {
+                                "type": "custom",
+                                "tokenizer": "keyword",
+                                "filter": "lowercase"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 };
 assert.assertJsonEquals(expected2, result2);
