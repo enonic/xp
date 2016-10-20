@@ -49,7 +49,7 @@ module api.app.wizard {
 
         private dataLoaded: boolean = false;
 
-        protected isNew: boolean = true;
+        protected formState: FormState = new FormState(true);
 
         private closedListeners: {(event: WizardClosedEvent): void}[] = [];
 
@@ -88,7 +88,7 @@ module api.app.wizard {
 
             if (params.persistedItem) {
                 this.setPersistedItem(params.persistedItem);
-                this.isNew = false;
+                this.formState.setIsNew(false);
             }
 
             // have to be in constructor because onValidityChanged uses it
@@ -497,9 +497,9 @@ module api.app.wizard {
 
         updateToolbarActions() {
             if (WizardPanel.debug) {
-                console.debug("WizardPanel.updateToolbarActions: isNew", this.isNew);
+                console.debug("WizardPanel.updateToolbarActions: isNew", this.formState.isNew());
             }
-            if (this.isNew) {
+            if (this.formState.isNew()) {
                 this.params.actions.enableActionsForNew();
             } else {
                 this.params.actions.enableActionsForExisting(this.getPersistedItem());
@@ -650,7 +650,7 @@ module api.app.wizard {
                 return this.updatePersistedItem().then((persistedItem: EQUITABLE) => {
                     this.setPersistedItem(persistedItem);
                     this.isChanged = false;
-                    this.isNew = false;
+                    this.formState.setIsNew(false);
                     this.updateToolbarActions();
                     return this.postUpdatePersistedItem(persistedItem);
                 });
@@ -661,7 +661,7 @@ module api.app.wizard {
                     this.isChanged = false;
                     // persist new happens before render to init dummy entity and is still considered as new
                     if (this.isRendered()) {
-                        this.isNew = false;
+                        this.formState.setIsNew(false);
                         this.updateToolbarActions();
                     }
                     return this.postPersistNewItem(persistedItem);
@@ -779,6 +779,23 @@ module api.app.wizard {
 
         isValid() {
             return this.validityManager.isAllValid();
+        }
+    }
+
+    export class FormState {
+
+        private formIsNew: boolean;
+
+        constructor(isNew: boolean) {
+            this.formIsNew = isNew;
+        }
+
+        setIsNew(value: boolean) {
+            this.formIsNew = value;
+        }
+
+        isNew() {
+            return this.formIsNew;
         }
     }
 }
