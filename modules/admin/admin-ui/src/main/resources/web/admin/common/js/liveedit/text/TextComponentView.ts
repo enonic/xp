@@ -287,7 +287,12 @@ module api.liveedit.text {
 
             setTimeout(() => {
                 if (!this.anyEditorHasFocus()) {
-                    this.closePageTextEditMode();
+                    var pageView = this.getPageView();
+                    if (pageView.isTextEditMode()) {
+                        pageView.setTextEditMode(false);
+                        ItemView.setNextClickDisabled(true); // preventing mouse click event that triggered blur from further processing in ItemView
+                        setTimeout(() => ItemView.setNextClickDisabled(false), 200); // enable mouse click handling if click's target was not ItemView
+                    }
                 }
             }, 50);
         }
@@ -410,11 +415,16 @@ module api.liveedit.text {
         }
 
         private startPageTextEditMode() {
-            this.deselect();
             var pageView = this.getPageView();
+
+            if (pageView.hasSelectedView()) {
+                pageView.getSelectedView().deselect();
+            }
+
             if (!pageView.isTextEditMode()) {
                 pageView.setTextEditMode(true);
             }
+
             this.giveFocus();
         }
 
