@@ -22,6 +22,8 @@ module api.form {
 
         private formOptionSet: FormOptionSet;
 
+        private context: FormContext;
+
         constructor(config: FormOptionSetOccurrenceViewConfig) {
             super("form-option-set-occurrence-view", config.formOptionSetOccurrence);
             this.formItemOccurrence = config.formOptionSetOccurrence;
@@ -30,6 +32,7 @@ module api.form {
             this.ensureSelectionArrayExists(this.propertySet);
 
             this.formItemLayer = new FormItemLayer(config.context);
+            this.context = config.context;
         }
 
         getDataPath(): PropertyPath {
@@ -76,6 +79,11 @@ module api.form {
                             return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                         }
 
+                        if (this.isNew()) {
+                            this.currentValidationState = new ValidationRecording();
+                            return;
+                        }
+
                         var previousValidState = this.currentValidationState.isValid();
                         if (previousValidState != event.isValid()) { //one form item may affect validity state of whole option set
                             this.validate(); // so let's re-validate it all
@@ -93,13 +101,18 @@ module api.form {
                         }
                     });
 
-                    (<FormOptionSetOptionView> formItemView).onSelectionChanged(() => {
+                    (<FormOptionSetOptionView> formItemView).onSelectionChanged((viewToSkipValidation: FormOptionSetOptionView) => {
                         if (!this.currentValidationState) {
                             return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                         }
 
+                        if (this.isNew()) {
+                            this.currentValidationState = new ValidationRecording();
+                            return;
+                        }
+
                         var previousValidState = this.currentValidationState.isValid();
-                        this.validate();
+                        this.validate(true, viewToSkipValidation);
                         if (this.currentValidationState.isValid()) {
                             this.currentValidationState.removeByPath(this.resolveValidationRecordingPath(), true);
                         } else {
@@ -120,6 +133,16 @@ module api.form {
             }).done();
 
             return deferred.promise;
+        }
+
+        private isNew(): boolean {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this.context, api.content.form.ContentFormContext)) {
+                var contentFormContext = <api.content.form.ContentFormContext> this.context;
+                if (contentFormContext.getFormState() != null && contentFormContext.getFormState().isNew()) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private makeMultiselectionNote(): string {
@@ -170,13 +193,15 @@ module api.form {
             });
         }
 
-        validate(silent: boolean = true): ValidationRecording {
+        validate(silent: boolean = true, viewToSkipValidation?: FormOptionSetOptionView): ValidationRecording {
 
             var allRecordings = new ValidationRecording();
 
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                var currRecording = formItemView.validate(silent);
-                allRecordings.flatten(currRecording);
+                if (viewToSkipValidation != formItemView) {
+                    var currRecording = formItemView.validate(silent);
+                    allRecordings.flatten(currRecording);
+                }
             });
 
             allRecordings.flatten(this.validateMultiselection());
