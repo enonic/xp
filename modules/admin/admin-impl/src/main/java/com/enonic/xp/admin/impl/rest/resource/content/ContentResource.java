@@ -118,6 +118,7 @@ import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
@@ -1263,6 +1264,21 @@ public final class ContentResource
             permissionsJson.add( new EffectivePermissionJson( access.name(), accessJson ) );
         }
         return permissionsJson;
+    }
+
+    @GET
+    @Path("listIds")
+    public List<ContentIdJson> listChildrenIds( @QueryParam("parentId") final String parentId,
+                                                @QueryParam("childOrder") @DefaultValue("") final String childOrder )
+    {
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            parentId( StringUtils.isNotEmpty( parentId ) ? ContentId.from( parentId ) : null ).
+            childOrder( StringUtils.isNotEmpty( childOrder ) ? ChildOrder.from( childOrder ) : null ).
+            build();
+
+        final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
+        return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
     }
 
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
