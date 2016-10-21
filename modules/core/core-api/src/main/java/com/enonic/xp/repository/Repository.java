@@ -11,15 +11,15 @@ public final class Repository
 {
     private final RepositoryId id;
 
-    private final RepositorySettings settings;
-
     private final Branches branches;
+
+    private final RepositorySettings settings;
 
     private Repository( Builder builder )
     {
+        this.id = builder.id;
         this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
-        this.id = builder.id;
     }
 
     public RepositoryId getId()
@@ -40,6 +40,11 @@ public final class Repository
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final Repository source )
+    {
+        return new Builder( source );
     }
 
     @Override
@@ -82,11 +87,25 @@ public final class Repository
         {
         }
 
+        public Builder( final Repository source )
+        {
+            id = source.id;
+            branches = source.branches;
+            settings = source.settings;
+        }
+
+        public Builder id( final RepositoryId id )
+        {
+            this.id = id;
+            return this;
+        }
+
         public Builder branches( final Branches branches )
         {
             this.branches = branches;
             return this;
         }
+
 
         public Builder branches( final Branch... branches )
         {
@@ -94,16 +113,9 @@ public final class Repository
             return this;
         }
 
-
         public Builder settings( final RepositorySettings settings )
         {
             this.settings = settings;
-            return this;
-        }
-
-        public Builder id( final RepositoryId id )
-        {
-            this.id = id;
             return this;
         }
 
