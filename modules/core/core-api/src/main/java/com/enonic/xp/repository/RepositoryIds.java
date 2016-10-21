@@ -85,15 +85,15 @@ public final class RepositoryIds
     {
         private List<RepositoryId> repositories = Lists.newArrayList();
 
-        public Builder add( final RepositoryId contentId )
+        public Builder add( final RepositoryId repositoryId )
         {
-            this.repositories.add( contentId );
+            this.repositories.add( repositoryId );
             return this;
         }
 
-        public Builder addAll( final RepositoryIds contentIds )
+        public Builder addAll( final RepositoryIds repositoryIds )
         {
-            this.repositories.addAll( contentIds.getSet() );
+            this.repositories.addAll( repositoryIds.getSet() );
             return this;
         }
 

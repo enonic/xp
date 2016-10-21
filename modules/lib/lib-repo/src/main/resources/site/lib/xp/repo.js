@@ -62,7 +62,7 @@ exports.create = function (params) {
 };
 
 /**
- * Retrieves a repository
+ * Retrieves the list of repositories
  *
  * @example-ref examples/repo/list.js
  * @return {object} The repositories (as JSON array).
