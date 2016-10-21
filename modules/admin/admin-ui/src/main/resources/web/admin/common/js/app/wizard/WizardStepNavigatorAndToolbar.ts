@@ -17,6 +17,7 @@ module api.app.wizard {
 
         private maxFittingWidth: number;
 
+        private helpTextToggleButton: api.dom.DivEl;
 
         constructor(className?: string) {
             super(className);
@@ -33,6 +34,16 @@ module api.app.wizard {
                 setTimeout(this.removeClass.bind(this, "no-dropdown-hover"));
             });
         }
+        
+        setupHelpTextToggleButton(): api.dom.DivEl {
+            this.helpTextToggleButton = new api.dom.DivEl("help-text-button");
+
+            this.appendChild(this.helpTextToggleButton);
+            this.checkAndMinimize();
+            
+            return this.helpTextToggleButton;
+        }
+
 
         setStepToolbar(stepToolbar: Toolbar) {
             if (this.stepToolbar) {
@@ -52,8 +63,9 @@ module api.app.wizard {
             this.appendChild(this.stepNavigator);
         }
 
-        isStepNavigatorFit(): boolean {
-            let width = this.getEl().getWidthWithoutPadding();
+        private isStepNavigatorFit(): boolean {
+            let helpToggleBtnWidth = this.helpTextToggleButton ? this.helpTextToggleButton.getEl().getWidth() : 0;
+            let width = this.helpTextToggleButton ? this.stepNavigator.getEl().getMaxWidth() - helpToggleBtnWidth : this.getEl().getWidthWithoutPadding();
             if (this.stepNavigator.isVisible()) {
                 this.maxFittingWidth = this.stepNavigator.getChildren().reduce((prevWidth, child) => {
                     return prevWidth + child.getEl().getWidthWithMargin();
@@ -73,7 +85,7 @@ module api.app.wizard {
                     this.foldButton.push(this.stepNavigator, 300);
                 } else {
                     this.foldButton.pop();
-                    this.appendChild(this.stepNavigator);
+                    this.stepNavigator.insertAfterEl(this.foldButton);
                 }
             }
         }

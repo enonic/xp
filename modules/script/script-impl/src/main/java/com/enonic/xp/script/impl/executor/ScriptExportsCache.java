@@ -11,7 +11,7 @@ final class ScriptExportsCache
 {
     private final Map<ResourceKey, ScriptExportEntry> cache;
 
-    public ScriptExportsCache()
+    ScriptExportsCache()
     {
         this.cache = Maps.newConcurrentMap();
     }
@@ -25,13 +25,24 @@ final class ScriptExportsCache
     public void put( final Resource resource, final Object value )
     {
         final ResourceKey key = resource.getKey();
-        this.cache.put( key, new ScriptExportEntry( key, value, resource.getTimestamp() ) );
+        this.cache.put( key, new ScriptExportEntry( resource, value ) );
     }
 
-    public boolean isModified( final Resource resource )
+    public void clear()
     {
-        final ResourceKey key = resource.getKey();
-        final ScriptExportEntry entry = this.cache.get( key );
-        return entry == null || !resource.exists() || resource.getTimestamp() > entry.timestamp;
+        this.cache.clear();
+    }
+
+    public boolean isExpired()
+    {
+        for ( final ScriptExportEntry entry : this.cache.values() )
+        {
+            if ( entry.isExpired() )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

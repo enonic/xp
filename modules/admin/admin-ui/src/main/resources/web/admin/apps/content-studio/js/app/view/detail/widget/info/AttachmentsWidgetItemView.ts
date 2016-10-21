@@ -84,7 +84,8 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
     }
 
     private createLinkEl(contentId: ContentId, attachmentName: AttachmentName): api.dom.AEl {
-        var url = `content/media/${contentId.toString()}/${attachmentName.toString()}`;
+        var name = encodeURIComponent(attachmentName.toString());
+        var url = `content/media/${contentId.toString()}/${name}`;
         var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri(url), '_blank');
         link.setHtml(attachmentName.toString());
         return link;

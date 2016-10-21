@@ -3,7 +3,6 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -30,6 +29,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
 
+import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -87,8 +87,7 @@ public final class ContentMediaResource
             final String fileName = attachment.getName();
             if ( isNotEmpty( fileName ) )
             {
-                response = response.header( "Content-Disposition", "attachment; filename=\"" + fileName + "\"; filename*=UTF-8''" +
-                    URLEncoder.encode( fileName, "UTF-8" ) );
+                response = response.header( "Content-Disposition", contentDispositionAttachment( fileName ) );
             }
             return response.build();
         }

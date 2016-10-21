@@ -68,6 +68,10 @@ module api.content.form.inputtype.principalselector {
             }
         }
 
+        reset() {
+            this.comboBox.resetBaseValues();
+        }
+
         private createComboBox(input: api.form.Input): api.ui.security.PrincipalComboBox {
 
             var value = this.getValueFromPropertyArray(this.getPropertyArray());

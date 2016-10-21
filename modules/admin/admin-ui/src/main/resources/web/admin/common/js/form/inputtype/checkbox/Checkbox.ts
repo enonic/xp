@@ -54,6 +54,10 @@ module api.content.form.inputtype.checkbox {
             return wemQ<void>(null);
         }
 
+        reset() {
+            this.checkbox.resetBaseValues();
+        }
+
         giveFocus(): boolean {
             return this.checkbox.giveFocus();
         }

@@ -100,6 +100,26 @@ public class ApplicationResourceTest
     }
 
     @Test
+    public void get_application_keys()
+        throws Exception
+    {
+        final Application application = createApplication();
+        final Applications applications = Applications.from( application );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        final SiteDescriptor siteDescriptor = createSiteDescriptor();
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        final AuthDescriptor authDescriptor = createAuthDescriptor();
+        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        String response = request().
+            path( "application/listKeys" ).
+            get().getAsString();
+        assertJson( "get_application_keys_success.json", response );
+    }
+
+    @Test
     public void get_application_by_key()
         throws Exception
     {

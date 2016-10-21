@@ -73,6 +73,14 @@ module api.liveedit {
             return this.pageModel;
         }
 
+        isRenderableContent(): boolean {
+            var hasController = this.pageModel.hasController(),
+                hasDefaultPageTemplate = this.pageModel.hasDefaultPageTemplate(),
+                hasApplications = this.siteModel.getApplicationKeys().length > 0;
+
+            return hasApplications || hasController || hasDefaultPageTemplate;
+        }
+
         static create(): LiveEditModelBuilder {
             return new LiveEditModelBuilder();
         }
@@ -177,10 +185,7 @@ module api.liveedit {
                               pageTemplate.getRegions().clone() :
                               Regions.create().build();
 
-                var setController = new SetController(this).
-                    setDescriptor(pageDescriptor).
-                    setConfig(config).
-                    setRegions(regions);
+                var setController = new SetController(this).setDescriptor(pageDescriptor).setConfig(config).setRegions(regions);
                 pageModel.initController(setController);
             });
 
@@ -196,10 +201,7 @@ module api.liveedit {
                           pageTemplate.getRegions().clone() :
                           Regions.create().build();
 
-            var setController = new SetController(this).
-                setDescriptor(null).
-                setConfig(config).
-                setRegions(regions);
+            var setController = new SetController(this).setDescriptor(null).setConfig(config).setRegions(regions);
             pageModel.initController(setController);
         }
 
@@ -224,10 +226,7 @@ module api.liveedit {
                                   pageTemplate.getRegions().clone();
 
 
-                    var setTemplate = new SetTemplate(this).
-                        setTemplate(pageTemplate, pageDescriptor).
-                        setRegions(regions).
-                        setConfig(config);
+                    var setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor).setRegions(regions).setConfig(config);
                     pageModel.initTemplate(setTemplate);
                 });
                 promises.push(pageDescriptorPromise);
@@ -255,10 +254,7 @@ module api.liveedit {
 
             var regions = Regions.create().build();
 
-            var setController = new SetController(this).
-                setDescriptor(null).
-                setConfig(config).
-                setRegions(regions);
+            var setController = new SetController(this).setDescriptor(null).setConfig(config).setRegions(regions);
             pageModel.initController(setController);
         }
 
@@ -272,10 +268,7 @@ module api.liveedit {
                           page.getRegions().clone() :
                           Regions.create().build();
 
-            var setController = new SetController(this).
-                setDescriptor(pageDescriptor).
-                setConfig(config).
-                setRegions(regions);
+            var setController = new SetController(this).setDescriptor(pageDescriptor).setConfig(config).setRegions(regions);
 
             pageModel.initController(setController);
         }
@@ -309,23 +302,21 @@ module api.liveedit {
 
         private static loadPageTemplate(key: PageTemplateKey): wemQ.Promise<PageTemplate> {
             var deferred = wemQ.defer<PageTemplate>();
-            new GetPageTemplateByKeyRequest(key).sendAndParse().
-                then((pageTemplate: PageTemplate) => {
-                    deferred.resolve(pageTemplate);
-                }).catch((reason) => {
-                    deferred.reject(new api.Exception("Page template '" + key + "' not found.", api.ExceptionType.WARNING));
-                }).done();
+            new GetPageTemplateByKeyRequest(key).sendAndParse().then((pageTemplate: PageTemplate) => {
+                deferred.resolve(pageTemplate);
+            }).catch((reason) => {
+                deferred.reject(new api.Exception("Page template '" + key + "' not found.", api.ExceptionType.WARNING));
+            }).done();
             return deferred.promise;
         }
 
         private static loadPageDescriptor(key: DescriptorKey): wemQ.Promise<PageDescriptor> {
             var deferred = wemQ.defer<PageDescriptor>();
-            new GetPageDescriptorByKeyRequest(key).sendAndParse().
-                then((pageDescriptor: PageDescriptor) => {
-                    deferred.resolve(pageDescriptor);
-                }).catch((reason) => {
-                    deferred.reject(new api.Exception("Page descriptor '" + key + "' not found.", api.ExceptionType.WARNING));
-                }).done();
+            new GetPageDescriptorByKeyRequest(key).sendAndParse().then((pageDescriptor: PageDescriptor) => {
+                deferred.resolve(pageDescriptor);
+            }).catch((reason) => {
+                deferred.reject(new api.Exception("Page descriptor '" + key + "' not found.", api.ExceptionType.WARNING));
+            }).done();
             return deferred.promise;
         }
 

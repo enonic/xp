@@ -45,6 +45,7 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
@@ -308,12 +309,19 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target )
     {
+        return push( ids, target, null );
+    }
+
+    @Override
+    public PushNodesResult push( final NodeIds ids, final Branch target, final PushNodesListener pushListener )
+    {
         final PushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             ids( ids ).
             target( target ).
+            pushListener( pushListener ).
             build().
             execute();
 
@@ -428,7 +436,7 @@ public class NodeServiceImpl
     @Override
     public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
-        return SetActiveVersionCommand.create().
+        final NodeVersionId result = SetActiveVersionCommand.create().
             nodeVersionId( nodeVersionId ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -436,6 +444,15 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        final Node node = this.getById( nodeId );
+
+        if ( node != null )
+        {
+            this.eventPublisher.publish( NodeEvents.updated( node ) );
+        }
+
+        return result;
     }
 
     @Override

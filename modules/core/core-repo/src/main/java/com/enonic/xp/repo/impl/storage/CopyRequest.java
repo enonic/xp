@@ -3,9 +3,11 @@ package com.enonic.xp.repo.impl.storage;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.elasticsearch.executor.ExecutorProgressListener;
 import com.enonic.xp.repository.RepositoryId;
 
 public class CopyRequest
+    implements ExecutorProgressListener
 {
     private final StorageSettings storageSettings;
 
@@ -15,12 +17,15 @@ public class CopyRequest
 
     private final RepositoryId targetRepo;
 
+    private final ExecutorProgressListener progressListener;
+
     private CopyRequest( final Builder builder )
     {
         storageSettings = builder.storageSettings;
         nodeIds = builder.nodeIds;
         targetBranch = builder.targetBranch;
         targetRepo = builder.targetRepo;
+        progressListener = builder.progressListener;
     }
 
     public StorageSettings getStorageSettings()
@@ -43,6 +48,20 @@ public class CopyRequest
         return targetRepo;
     }
 
+    public ExecutorProgressListener getProgressListener()
+    {
+        return progressListener;
+    }
+
+    @Override
+    public void progress( final int count )
+    {
+        if ( progressListener != null )
+        {
+            progressListener.progress( count );
+        }
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -58,6 +77,8 @@ public class CopyRequest
         private Branch targetBranch;
 
         private RepositoryId targetRepo;
+
+        private ExecutorProgressListener progressListener;
 
         private Builder()
         {
@@ -84,6 +105,12 @@ public class CopyRequest
         public Builder targetRepo( final RepositoryId val )
         {
             targetRepo = val;
+            return this;
+        }
+
+        public Builder progressListener( final ExecutorProgressListener progressListener )
+        {
+            this.progressListener = progressListener;
             return this;
         }
 

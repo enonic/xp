@@ -3,6 +3,8 @@ package com.enonic.xp.core.impl.app;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import org.osgi.framework.Bundle;
 
@@ -19,9 +21,12 @@ final class ApplicationFactory
 {
     private final RunMode runMode;
 
-    public ApplicationFactory( final RunMode runMode )
+    private final Function<String, Map<String, String>> configFactory;
+
+    public ApplicationFactory( final RunMode runMode, final Function<String, Map<String, String>> configFactory )
     {
         this.runMode = runMode;
+        this.configFactory = configFactory;
     }
 
     public Application create( final Bundle bundle )
@@ -34,6 +39,7 @@ final class ApplicationFactory
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.bundle( bundle );
         builder.urlResolver( createUrlResolver( bundle ) );
+        builder.config( this.configFactory.apply( bundle.getSymbolicName() ) );
         return builder.build();
     }
 

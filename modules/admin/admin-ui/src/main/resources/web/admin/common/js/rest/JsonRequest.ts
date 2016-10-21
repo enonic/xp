@@ -1,5 +1,7 @@
 module api.rest {
 
+    import UriHelper = api.util.UriHelper;
+
     export class JsonRequest<RAW_JSON_TYPE> {
 
         private path: Path;
@@ -75,8 +77,8 @@ module api.rest {
         }
 
         private prepareGETRequest(request: XMLHttpRequest) {
-            var paramString = api.util.UriHelper.encodeUrlParams(this.params);
-            request.open(this.method, api.util.UriHelper.getUri(this.path.toString()) + '?' + paramString, true);
+            var uriString = UriHelper.appendUrlParams(this.path.toString(), this.params);
+            request.open(this.method, UriHelper.getUri(uriString), true);
             request.timeout = this.timeoutMillis;
             request.setRequestHeader("Accept", "application/json");
             if (api.BrowserHelper.isIE()) {
@@ -87,7 +89,7 @@ module api.rest {
         }
 
         private preparePOSTRequest(request: XMLHttpRequest) {
-            request.open(this.method, api.util.UriHelper.getUri(this.path.toString()), true);
+            request.open(this.method, UriHelper.getUri(this.path.toString()), true);
             request.timeout = this.timeoutMillis;
             request.setRequestHeader("Accept", "application/json");
             request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");

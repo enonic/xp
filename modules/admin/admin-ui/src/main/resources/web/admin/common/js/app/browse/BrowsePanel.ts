@@ -79,7 +79,7 @@ module api.app.browse {
                     .then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);
-                }, 500, false);
+                }, 200, false);
 
             this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
 
@@ -224,6 +224,7 @@ module api.app.browse {
 
         private setupFilterPanel() {
             var splitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndToolbarPanel)
+                .setFirstPanelMinSize(215, api.ui.panel.SplitPanelUnit.PIXEL)
                 .setFirstPanelSize(215, api.ui.panel.SplitPanelUnit.PIXEL)
                 .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)
                 .setAnimationDelay(100)     // filter panel animation time

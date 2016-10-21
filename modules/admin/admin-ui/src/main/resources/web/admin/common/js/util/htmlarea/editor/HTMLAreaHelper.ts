@@ -16,7 +16,7 @@ module api.util.htmlarea.editor {
                     setSize(ImageModalDialog.maxImageWidth).
                     resolve();
 
-            return "src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
+            return " src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
         }
 
         public static prepareImgSrcsInValueForEdit(value:string):string {

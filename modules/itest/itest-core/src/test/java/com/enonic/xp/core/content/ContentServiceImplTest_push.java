@@ -139,6 +139,33 @@ public class ContentServiceImplTest_push
         assertEquals( 4, result.getPushedContents().getSize() );
     }
 
+    /**
+     * ./content1
+     * ../content1_1 -> Ref:content2_1_1
+     * ./content2
+     * ../content2_1
+     * ../../content2_1_1
+     * ./content3
+     **/
+    @Test
+    public void push_parent_of_dependencies()
+        throws Exception
+    {
+        createContentTree2();
+
+        final PushContentParams pushParams = PushContentParams.create().
+            contentIds( ContentIds.from( content1_1.getId() ) ).
+            includeChildren( true ).
+            target( WS_OTHER ).
+            build();
+
+        final PublishContentResult result = this.contentService.publish( pushParams );
+
+        assertEquals( 5, result.getPushedContents().getSize() );
+        assertEquals( 0, result.getFailedContents().getSize() );
+    }
+
+
     @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_empty()
@@ -226,7 +253,12 @@ public class ContentServiceImplTest_push
         assertFalse( result.getPushedContents().contains( content2_1.getId() ) );
     }
 
-
+    /**
+     * /content1
+     * /content1_1
+     * /content2
+     * /content2_1 -> ref:content1_1
+     */
     private void createContentTree()
     {
         this.content1 = this.contentService.create( CreateContentParams.create().
@@ -257,6 +289,64 @@ public class ContentServiceImplTest_push
             contentData( data ).
             displayName( "content2_1" ).
             parent( content2.getPath() ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        refresh();
+    }
+
+    /**
+     * ./content1
+     * ../content1_1 -> Ref:content2_1_1
+     * ./content2
+     * ../content2_1
+     * ../../content2_1_1
+     * ./content3
+     */
+    private void createContentTree2()
+    {
+        this.content1 = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "content1" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        this.content2 = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "content2" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        this.content2_1 = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "content2_1" ).
+            parent( content2.getPath() ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        final Content content2_1_1 = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "content2_1_1" ).
+            parent( content2_1.getPath() ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        final PropertyTree data = new PropertyTree();
+        data.addReference( "myRef", Reference.from( content2_1_1.getId().toString() ) );
+
+        this.content1_1 = this.contentService.create( CreateContentParams.create().
+            contentData( data ).
+            displayName( "content1_1" ).
+            parent( content1.getPath() ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "content3" ).
+            parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build() );
 

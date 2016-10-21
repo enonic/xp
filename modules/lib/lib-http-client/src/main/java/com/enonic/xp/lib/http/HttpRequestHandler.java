@@ -56,6 +56,10 @@ public final class HttpRequestHandler
 
     private String proxyPassword;
 
+    private String authUser;
+
+    private String authPassword;
+
     public ResponseMapper request()
         throws IOException
     {
@@ -70,6 +74,7 @@ public final class HttpRequestHandler
         client.setReadTimeout( this.readTimeout, TimeUnit.MILLISECONDS );
         client.setConnectTimeout( this.connectionTimeout, TimeUnit.MILLISECONDS );
         setupProxy( client );
+        setupAuthentication( client );
         return client.newCall( request ).execute();
     }
 
@@ -126,6 +131,7 @@ public final class HttpRequestHandler
         }
 
         addHeaders( request, this.headers );
+        addAuthHeaders( request );
         return request.build();
     }
 
@@ -211,29 +217,61 @@ public final class HttpRequestHandler
         }
         int proxyPort = this.proxyPort == null ? DEFAULT_PROXY_PORT : this.proxyPort;
         client.setProxy( new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) ) );
+    }
 
-        if ( proxyUser == null || proxyUser.trim().isEmpty() )
+    private void setupAuthentication( final OkHttpClient client )
+    {
+        final String authUser = this.authUser;
+        final String authPassword = this.authPassword;
+        final String proxyUser = this.proxyUser;
+        final String proxyPassword = this.proxyPassword;
+
+        if ( proxyUser == null && authUser == null )
         {
             return;
         }
-        Authenticator proxyAuthenticator = new Authenticator()
+
+        Authenticator authenticator = new Authenticator()
         {
             @Override
             public Request authenticate( final Proxy proxy, final Response response )
                 throws IOException
             {
-                return null;
+                if ( authUser == null || authUser.trim().isEmpty() )
+                {
+                    return null;
+                }
+                String credential = Credentials.basic( authUser, authPassword );
+                if ( credential.equals( response.request().header( "Authorization" ) ) )
+                {
+                    return null; // If we already failed with these credentials, don't retry
+                }
+                return response.request().newBuilder().header( "Authorization", credential ).build();
             }
 
             @Override
             public Request authenticateProxy( final Proxy proxy, final Response response )
                 throws IOException
             {
+                if ( proxyUser == null || proxyUser.trim().isEmpty() )
+                {
+                    return null;
+                }
                 String credential = Credentials.basic( proxyUser, proxyPassword );
                 return response.request().newBuilder().header( "Proxy-Authorization", credential ).build();
             }
         };
-        client.setAuthenticator( proxyAuthenticator );
+        client.setAuthenticator( authenticator );
+    }
+
+
+    private void addAuthHeaders( final Request.Builder request )
+    {
+        if ( authUser != null && authPassword != null )
+        {
+            String credential = Credentials.basic( authUser, authPassword );
+            request.header( "Authorization", credential ).build();
+        }
     }
 
     public void setContentType( final String contentType )
@@ -323,4 +361,13 @@ public final class HttpRequestHandler
         this.proxyPassword = proxyPassword;
     }
 
+    public void setAuthUser( final String authUser )
+    {
+        this.authUser = authUser;
+    }
+
+    public void setAuthPassword( final String authPassword )
+    {
+        this.authPassword = authPassword;
+    }
 }

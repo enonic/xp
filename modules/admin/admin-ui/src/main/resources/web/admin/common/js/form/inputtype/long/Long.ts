@@ -52,6 +52,12 @@ module api.content.form.inputtype.long {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.text.TextInput> occurrence;
+
+            input.resetBaseValues();
+        }
+
         availableSizeChanged() {
         }
 

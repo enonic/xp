@@ -23,10 +23,5 @@
 // =include noconflict.js
 // =include tinymce/tinymce.js
 // =include tinymce/themes/modern/theme.js
-// =include tinymce/plugins/autoresize/plugin.js
-// =include tinymce/plugins/table/plugin.js
-// =include tinymce/plugins/paste/plugin.js
-// =include tinymce/plugins/charmap/plugin.js
-// =include tinymce/plugins/code/plugin.js
-// =include tinymce/plugins/fullscreen/plugin.js
 // =include bower_components/webcomponentsjs/webcomponents-lite.min.js
+// =include tinymce/plugins/*/plugin.js

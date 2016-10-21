@@ -21,6 +21,8 @@ module api.form {
 
         private helpText: string;
 
+        private helpTextIsOn: boolean = false;
+
         constructor(formItemSetJson: api.form.json.FormItemSetJson) {
             super(formItemSetJson.name);
             this.label = formItemSetJson.label;
@@ -78,6 +80,14 @@ module api.form {
 
         getOccurrences(): Occurrences {
             return this.occurrences;
+        }
+
+        isHelpTextOn(): boolean {
+            return this.helpTextIsOn;
+        }
+
+        toggleHelpText(show?: boolean) {
+            this.helpTextIsOn = show;
         }
 
         public toFormItemSetJson(): api.form.json.FormItemTypeWrapperJson {

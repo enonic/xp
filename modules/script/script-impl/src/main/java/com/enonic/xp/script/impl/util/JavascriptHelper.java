@@ -7,4 +7,6 @@ public interface JavascriptHelper
     ScriptObjectMirror newJsArray();
 
     ScriptObjectMirror newJsObject();
+
+    ScriptObjectMirror parseJson( String text );
 }

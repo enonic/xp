@@ -26,7 +26,7 @@ final class ScriptRuntimeImpl
     {
         final ScriptExecutor executor = this.executorManager.getExecutor( script.getApplicationKey() );
 
-        final Object exports = executor.executeRequire( script );
+        final Object exports = executor.executeMain( script );
         final ScriptValue value = executor.newScriptValue( exports );
         return new ScriptExportsImpl( script, value, exports );
     }

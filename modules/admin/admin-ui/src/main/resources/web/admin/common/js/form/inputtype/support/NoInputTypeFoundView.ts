@@ -51,6 +51,12 @@ module api.form.inputtype.support {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.text.TextInput> occurrence;
+
+            input.resetBaseValues();
+        }
+
         valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.STRING) ||
                    api.util.StringHelper.isBlank(value.getString());

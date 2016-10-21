@@ -185,5 +185,14 @@ var __ = {
      */
     registerMock: function (name, value) {
 
+    },
+
+    /**
+     * Add a disposer that is called when the app is stopped.
+     *
+     * @param func Function to call.
+     */
+    disposer: function (func) {
+
     }
 };

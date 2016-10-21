@@ -115,7 +115,7 @@
 
       .minimize-edit {
         position: absolute;
-        left: 38px !important;
+        left: 34px !important;
         top: 0;
         &:before {
           transform: rotate(0deg);
@@ -127,14 +127,14 @@
       position: fixed;
       top: 85px;
       height: 40px;
-      width: 40px;
-      margin-left: -40px;
+      width: 30px;
+      margin-left: -30px;
       text-align: center;
       line-height: 40px;
       overflow: hidden;
       z-index: @z-index-mask - 1;
       cursor: pointer;
-      color: #777777;
+      color: @admin-font-gray2;
 
       &:before {
         display: inline-block;
@@ -146,6 +146,7 @@
         color: @admin-bg-dark-gray;
       }
     }
+
   }
 
   &._0-240, &._240-360, &._360-540 {
@@ -203,7 +204,7 @@
 
         span.content-status {
           margin-right: 14px;
-          color: #777777;
+          color: @admin-font-gray2;
 
           span {
             color: @admin-black;
@@ -226,7 +227,6 @@
       }
     }
   }
-
 }
 
 ._0-240, ._240-360, ._360-540, ._540-720, ._720-960, .mce-fullscreen {
@@ -238,5 +238,25 @@
 .mce-fullscreen {
   .wizard-step-navigator-and-toolbar, .live-form-panel {
     display: none;
+  }
+}
+
+.is-publishing {
+  .content-wizard-toolbar-publish-button {
+    cursor: default;
+    pointer-events: none;
+
+    .xp-admin-common-dropdown-handle {
+      background-color: @form-button-bg-disabled;
+    }
+
+    .action-button {
+      background-color: @form-button-bg;
+      opacity: 0.5;
+    }
+  }
+
+  .mobile-edit-publish-button {
+    display: none !important;
   }
 }

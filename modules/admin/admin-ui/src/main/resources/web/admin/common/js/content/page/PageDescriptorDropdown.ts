@@ -9,7 +9,7 @@ module api.content.page {
 
     export class PageDescriptorDropdown extends DescriptorBasedDropdown<PageDescriptor> {
 
-        private loadedDataListeners: {(event: LoadedDataEvent<PageDescriptor>):void}[];
+        private loadedDataListeners: {(event: LoadedDataEvent<PageDescriptor>): void}[];
 
         private liveEditModel: LiveEditModel;
 
@@ -49,21 +49,20 @@ module api.content.page {
             var onApplicationAddedHandler = () => {
                 this.updateRequestApplicationKeys();
                 this.load();
-            }
+            };
 
             var onApplicationRemovedHandler = (event: ApplicationRemovedEvent) => {
 
-                this.updateRequestApplicationKeys();
-                this.load();
-
                 let currentController = this.liveEditModel.getPageModel().getController();
-                if (currentController) {
-                    let removedApp = event.getApplicationKey();
-                    if (removedApp.equals(currentController.getKey().getApplicationKey())) {
-                        this.liveEditModel.getPageModel().reset();
-                    }
+                let removedApp = event.getApplicationKey();
+                if (currentController && removedApp.equals(currentController.getKey().getApplicationKey())) {
+                    // no need to load as current controller's app was removed
+                    this.liveEditModel.getPageModel().reset();
+                } else {
+                    this.updateRequestApplicationKeys();
+                    this.load();
                 }
-            }
+            };
 
             this.liveEditModel.getSiteModel().onApplicationAdded(onApplicationAddedHandler);
 

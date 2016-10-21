@@ -33,6 +33,7 @@ import ApplicationEventType = api.application.ApplicationEventType;
 import MarketApplicationsFetcher = api.application.MarketApplicationsFetcher;
 import MarketApplicationResponse = api.application.MarketApplicationResponse;
 import MarketApplicationBuilder = api.application.MarketApplicationBuilder;
+import ProgressBar = api.ui.ProgressBar;
 
 declare var CONFIG;
 
@@ -42,23 +43,50 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     private installApplications: Application[];
 
+    public static debug: boolean = false;
+
     constructor() {
 
-        var nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>().setName("Name").setId("displayName").setField(
-            "displayName").setCssClass("app-name-and-icon").setMinWidth(170).setFormatter(this.nameFormatter).build();
-        var versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>().setName("Version").setId("version").setField(
-            "latestVersion").setCssClass("version").setMinWidth(40).build();
-        var appStatusColumns = new GridColumnBuilder<TreeNode<MarketApplication>>().setName("AppStatus").setId("appStatus").setField(
-            "status").setCssClass("status").setMinWidth(50).setFormatter(this.appStatusFormatter).setCssClass("app-status").build();
+        var nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
+            .setName("Name")
+            .setId("displayName")
+            .setField("displayName")
+            .setCssClass("app-name-and-icon")
+            .setMinWidth(170)
+            .setFormatter(this.nameFormatter)
+            .build();
+        var versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
+            .setName("Version")
+            .setId("version")
+            .setField("latestVersion")
+            .setCssClass("version")
+            .setMinWidth(40)
+            .build();
+        var appStatusColumns = new GridColumnBuilder<TreeNode<MarketApplication>>()
+            .setName("AppStatus")
+            .setId("appStatus")
+            .setField("status")
+            .setCssClass("status")
+            .setMinWidth(50)
+            .setFormatter(this.appStatusFormatter)
+            .setCssClass("app-status").build();
 
-        super(new TreeGridBuilder<MarketApplication>().setColumns([
+        super(new TreeGridBuilder<MarketApplication>()
+            .setColumns([
                 nameColumn,
                 versionColumn,
                 appStatusColumns
-            ]).setPartialLoadEnabled(true).setLoadBufferSize(2).setCheckableRows(false).setShowToolbar(false).setRowHeight(
-            70).disableMultipleSelection(true).prependClasses("market-app-tree-grid").setSelectedCellCssClass(
-            "selected-sort-row").setQuietErrorHandling(
-            true).setAutoLoad(false)
+            ])
+            .setPartialLoadEnabled(true)
+            .setLoadBufferSize(2)
+            .setCheckableRows(false)
+            .setShowToolbar(false)
+            .setRowHeight(70)
+            .disableMultipleSelection(true)
+            .prependClasses("market-app-tree-grid")
+            .setSelectedCellCssClass("selected-sort-row")
+            .setQuietErrorHandling(true)
+            .setAutoLoad(false)
         );
 
         this.installApplications = [];
@@ -80,24 +108,77 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         });
     }
 
+    private findNodeByAppUrl(url: string): TreeNode<MarketApplication> {
+        let nodes: TreeNode<MarketApplication>[] = this.getGrid().getDataView().getItems();
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            if (node.getData().getLatestVersionDownloadUrl() == url) {
+                return node;
+            }
+        }
+        return null
+    }
+
     private subscribeOnInstallEvent() { // update status of market app
         api.application.ApplicationEvent.on((event: ApplicationEvent) => {
-            if (ApplicationEventType.INSTALLED == event.getEventType()) {
-                var nodeToUpdate = this.getRoot().getCurrentRoot().findNode(event.getApplicationKey().toString());
+
+            let nodeToUpdate;
+
+            if (MarketAppsTreeGrid.debug) {
+                console.debug("MarketAppsTreeGrid: app event", event.getEventType(), event.getProgress());
+            }
+
+            switch (event.getEventType()) {
+            case ApplicationEventType.PROGRESS:
+
+                //TODO: send appKey from backend instead of looking for it!
+                nodeToUpdate = this.findNodeByAppUrl(event.getApplicationUrl());
                 if (!!nodeToUpdate) {
-                    new api.application.GetApplicationRequest(event.getApplicationKey(),
-                        true).sendAndParse().then((application: api.application.Application)=> {
-                        if (!!application) {
-                            var marketApplication: MarketApplication = <MarketApplication>nodeToUpdate.getData();
-                            if (MarketApplicationsFetcher.installedAppCanBeUpdated(marketApplication, application)) {
-                                marketApplication.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
-                            } else {
-                                marketApplication.setStatus(MarketAppStatus.INSTALLED);
-                            }
-                            this.refresh();
-                        }
-                    });
+
+                    if (MarketAppsTreeGrid.debug) {
+                        console.debug("MarketAppsTreeGrid: progress", event.getApplicationUrl(), event.getProgress());
+                    }
+
+                    let app = <MarketApplication>nodeToUpdate.getData();
+                    app.setProgress(event.getProgress());
+
+                    let row = this.getGrid().getDataView().getRowById(nodeToUpdate.getId());
+                    if (row > -1) {
+                        let cell = this.getGrid().getColumnIndex("appStatus");
+                        this.getGrid().updateCell(row, cell);
+                    }
                 }
+                break;
+            case ApplicationEventType.INSTALLED:
+
+                nodeToUpdate = this.getRoot().getCurrentRoot().findNode(event.getApplicationKey().toString());
+                if (!!nodeToUpdate) {
+
+                    if (MarketAppsTreeGrid.debug) {
+                        console.debug("MarketAppsTreeGrid: installed", event.getApplicationUrl(), event.getProgress());
+                    }
+
+                    let app = <MarketApplication>nodeToUpdate.getData();
+                    app.setStatus(MarketAppStatus.INSTALLED);
+
+                    new api.application.GetApplicationRequest(event.getApplicationKey(), true).sendAndParse()
+                        .then((application: api.application.Application)=> {
+                            if (!!application) {
+                                var marketApplication: MarketApplication = <MarketApplication>nodeToUpdate.getData();
+
+                                if (MarketApplicationsFetcher.installedAppCanBeUpdated(marketApplication, application)) {
+                                    marketApplication.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
+                                } else {
+                                    marketApplication.setStatus(MarketAppStatus.INSTALLED);
+                                }
+                                let row = this.getGrid().getDataView().getRowById(nodeToUpdate.getId());
+                                if (row > -1) {
+                                    this.getGrid().updateRow(row);
+                                }
+                            }
+                        });
+                }
+                break;
             }
         });
     }
@@ -113,37 +194,33 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             if ((elem.hasClass(MarketAppStatusFormatter.statusInstallCssClass) ||
                  elem.hasClass(MarketAppStatusFormatter.statusUpdateCssClass))) {
 
-                var progressBar = new api.ui.ProgressBar(0);
-                var progressHandler = (event) => {
-                    if (event.getApplicationUrl() == url &&
-                        event.getEventType() == api.application.ApplicationEventType.PROGRESS) {
+                app.setStatus(MarketAppStatus.INSTALLING);
 
-                        progressBar.setValue(event.getProgress());
-                    }
-                };
+                let row = this.getGrid().getDataView().getRowById(node.getId());
+                if (row > -1) {
+                    this.getGrid().updateCell(row, this.getGrid().getColumnIndex("appStatus"))
+                }
 
-                api.application.ApplicationEvent.on(progressHandler);
-                elem.removeChildren().appendChild(progressBar);
+                if (MarketAppsTreeGrid.debug) {
+                    console.debug("MarketAppsTreeGrid: starting install", url, elem);
+                }
 
                 new api.application.InstallUrlApplicationRequest(url)
                     .sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
-                    api.application.ApplicationEvent.un(progressHandler);
+                    // api.application.ApplicationEvent.un(progressHandler);
                     if (!result.getFailure()) {
 
                         elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + " " +
                                          MarketAppStatusFormatter.statusUpdateCssClass);
                         elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
 
-                        elem.setHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
-                        app.setStatus(MarketAppStatus.INSTALLED);
                     } else {
                         elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
                     }
 
                 }).catch((reason: any) => {
-                    api.application.ApplicationEvent.un(progressHandler);
-                    elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
 
+                    elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
                     api.DefaultErrorHandler.handle(reason);
                 });
             }
@@ -151,12 +228,13 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     }
 
     private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
-        const data = node.getData();
+        const data = <MarketApplication>node.getData();
+
         if (data.getAppKey()) {
             var viewer: MarketAppViewer = <MarketAppViewer>node.getViewer("name");
             if (!viewer) {
                 viewer = new MarketAppViewer();
-                viewer.setObject(node.getData(), node.calcLevel() > 1);
+                viewer.setObject(data, node.calcLevel() > 1);
                 node.setViewer("name", viewer);
             }
             return viewer.toString();
@@ -171,14 +249,15 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     }
 
     private appStatusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
-        let data = node.getData();
+        let app = <MarketApplication>node.getData();
         let statusWrapper = new api.dom.DivEl();
 
-        if (!!data.getAppKey()) {
+        if (!!app.getAppKey()) {
 
-            let status = node.getData().getStatus();
+            let status = app.getStatus();
+            let progress = app.getProgress();
 
-            statusWrapper.setHtml(MarketAppStatusFormatter.formatStatus(status));
+            statusWrapper.setHtml(MarketAppStatusFormatter.formatStatus(status, progress), false);
             statusWrapper.addClass(MarketAppStatusFormatter.getStatusCssClass(status));
         }
 

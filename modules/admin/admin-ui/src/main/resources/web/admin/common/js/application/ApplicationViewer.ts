@@ -1,4 +1,5 @@
 module api.application {
+    import ApplicationUploadMock = api.application.ApplicationUploadMock;
 
     export class ApplicationViewer extends api.ui.NamesAndIconViewer<Application> {
 
@@ -6,13 +7,13 @@ module api.application {
             super("application-viewer");
         }
 
-        doLayout(object: Application) {
-            super.doLayout(object);
+        doLayout(object: Application | ApplicationUploadMock) {
+            super.doLayout(<Application>object);
             if (object && object.isLocal()) {
                 this.getNamesAndIconView().setIconToolTip("Local application");
             }
 
-            if (object && object.getIconUrl()) {
+            if (object && object instanceof Application && object.getIconUrl()) {
                 this.getNamesAndIconView().setIconUrl(object.getIconUrl());
             }
         }
@@ -22,8 +23,8 @@ module api.application {
             return object.getDisplayName();
         }
 
-        resolveSubName(object: Application, relativePath: boolean = false): string {
-            if (object.getDescription()) {
+        resolveSubName(object: Application | ApplicationUploadMock, relativePath: boolean = false): string {
+            if (object instanceof Application && object.getDescription()) {
                 return object.getDescription();
             }
             

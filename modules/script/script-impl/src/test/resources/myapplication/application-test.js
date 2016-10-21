@@ -13,3 +13,4 @@ assert.assertEquals('2', module.exports.val);
 
 assert.assertEquals('myapplication', app.name);
 assert.assertEquals('1.0.0', app.version);
+assert.assertEquals('{}', JSON.stringify(app.config));

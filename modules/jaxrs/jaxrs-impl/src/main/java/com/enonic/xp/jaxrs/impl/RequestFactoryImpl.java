@@ -1,5 +1,7 @@
 package com.enonic.xp.jaxrs.impl;
 
+import java.util.Arrays;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,8 +15,11 @@ import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
 
 import com.google.common.base.Strings;
+import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+
+import static java.util.stream.Collectors.joining;
 
 final class RequestFactoryImpl
     implements HttpRequestFactory
@@ -40,7 +45,10 @@ final class RequestFactoryImpl
 
     private static ResteasyUriInfo extractUriInfo( HttpServletRequest request )
     {
-        final String requestURI = request.getRequestURI();
+        final String rawRequestURI = request.getRequestURI();
+        final String requestURI = Arrays.stream( rawRequestURI.split( "/" ) ).
+            map( UrlEscapers.urlFragmentEscaper()::escape ).
+            collect( joining( "/" ) );
         final String absoluteUri = ServletRequestUrlHelper.getServerUrl() + ( Strings.isNullOrEmpty( requestURI ) ? "/" : requestURI );
         return new ResteasyUriInfo( absoluteUri, request.getQueryString(), request.getContextPath() );
     }

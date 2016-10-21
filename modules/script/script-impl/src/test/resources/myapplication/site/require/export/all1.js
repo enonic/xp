@@ -3,4 +3,4 @@ var all = {
     b: '2'
 };
 
-exports = all;
+module.exports = all;
