@@ -16,7 +16,7 @@ public abstract class Layout
     {
         Preconditions.checkNotNull( name, "a name is required for a Layout" );
         Preconditions.checkArgument( StringUtils.isNotBlank( name ), "a name is required for a Layout" );
-        Preconditions.checkArgument( !name.contains( "." ), "name cannot contain punctations: " + name );
+        Preconditions.checkArgument( !name.contains( "." ), "name cannot contain punctuations: " + name );
         this.name = name;
     }
 

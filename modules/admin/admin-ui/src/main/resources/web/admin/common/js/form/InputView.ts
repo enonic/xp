@@ -14,7 +14,7 @@ module api.form {
 
         input: Input;
 
-        parent: FormItemSetOccurrenceView;
+        parent: FormItemOccurrenceView;
 
         parentDataSet: PropertySet;
     }
