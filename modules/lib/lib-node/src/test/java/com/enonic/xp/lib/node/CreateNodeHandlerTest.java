@@ -20,7 +20,6 @@ public class CreateNodeHandlerTest
             thenReturn( node );
     }
 
-
     @Test
     public void testExample()
     {

@@ -27,6 +27,8 @@ public class EditableNode
 
     public boolean inheritPermissions;
 
+    public NodeType nodeType;
+
     public EditableNode( final Node source )
     {
         this.source = source;
@@ -37,6 +39,7 @@ public class EditableNode
         this.childOrder = source.getChildOrder();
         this.permissions = source.getPermissions();
         this.inheritPermissions = source.inheritsPermissions();
+        this.nodeType = source.getNodeType();
     }
 
     public Node build()
@@ -49,6 +52,7 @@ public class EditableNode
             childOrder( childOrder ).
             permissions( permissions ).
             inheritPermissions( inheritPermissions ).
+            nodeType( nodeType ).
             build();
     }
 }

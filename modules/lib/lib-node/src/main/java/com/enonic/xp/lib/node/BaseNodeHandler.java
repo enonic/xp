@@ -1,9 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.script.bean.BeanContext;
@@ -26,11 +22,6 @@ public abstract class BaseNodeHandler
     protected <T> T valueOrDefault( final T value, final T defValue )
     {
         return value == null ? defValue : value;
-    }
-
-    protected PropertyTree translateToPropertyTree( final JsonNode json )
-    {
-        return new JsonToPropertyTreeTranslator().translate( json );
     }
 
     @Override

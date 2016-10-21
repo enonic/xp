@@ -1,8 +1,8 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Map;
-
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.node.mapper.NodeMapper;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
@@ -24,36 +24,42 @@ public class ModifyNodeHandler
     {
         final Node node = getExistingNode();
 
-        final ModifyNodeHandlerParams params = ModifyNodeHandlerParamsFactory.create();
+        final ScriptValue value = this.editor.call( new NodeMapper( node ) );
+        final BinaryAttachments binaryAttachments = new BinaryAttachmentsParser().parse( value );
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
-            editor( params.getNodeEditor() ).
-            setBinaryAttachments( params.getAttachments() ).
+            editor( createEditor() ).
+            setBinaryAttachments( binaryAttachments ).
             build();
 
         final Node updatedNode = this.nodeService.update( updateNodeParams );
 
         return new NodeMapper( updatedNode );
-
     }
 
-    private NodeEditor newNodeEditor( final Node existingNode )
+    private NodeEditor createEditor()
     {
         return edit -> {
             final ScriptValue value = this.editor.call( new NodeMapper( edit.source ) );
             if ( value != null )
             {
-                updateNode( edit, value.getMap(), existingNode );
+                updateNode( edit, value );
             }
         };
     }
 
-    private void updateNode( final EditableNode target, final Map<?, ?> map, final Node existingNode )
+    private void updateNode( final EditableNode target, final ScriptValue scriptValue )
     {
+        final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator( false ).create( scriptValue );
+        final PropertyTree nodeAsPropertyTree = scriptValueTranslatorResult.getPropertyTree();
 
+        ModifyNodeExecutor.create().
+            editableNode( target ).
+            propertyTree( nodeAsPropertyTree ).
+            build().
+            execute();
     }
-
 
     private Node getExistingNode()
     {
@@ -80,6 +86,7 @@ public class ModifyNodeHandler
         this.key = new Key( key );
     }
 
+    @SuppressWarnings("unused")
     public void setEditor( final ScriptValue editor )
     {
         this.editor = editor;

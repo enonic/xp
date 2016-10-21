@@ -63,6 +63,6 @@ public class CreateNodeParamsFactoryTest
     {
         final PropertyTree properties = new PropertyTree();
         properties.setString( nodeName, myNode );
-        return new CreateNodeParamsFactory().create( new CreateNodeHandlerParams( properties, BinaryAttachments.empty() ) );
+        return new CreateNodeParamsFactory().create( new ScriptValueTranslatorResult( properties, BinaryAttachments.empty() ) );
     }
 }

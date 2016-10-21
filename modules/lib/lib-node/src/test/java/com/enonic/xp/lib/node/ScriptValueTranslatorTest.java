@@ -23,7 +23,7 @@ import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 
-public class CreateNodeHandlerParamsFactoryTest
+public class ScriptValueTranslatorTest
     extends ScriptTestSupport
 {
     private ObjectMapper mapper;
@@ -156,7 +156,7 @@ public class CreateNodeHandlerParamsFactoryTest
     public void binary()
         throws Exception
     {
-        final CreateNodeHandlerParams params = getCreateNodeHandlerParams( "binary" );
+        final ScriptValueTranslatorResult params = getCreateNodeHandlerParams( "binary" );
         final PropertyTree properties = params.getPropertyTree();
 
         assertNotNull( properties.getBinaryReference( "myBinary" ) );
@@ -198,12 +198,12 @@ public class CreateNodeHandlerParamsFactoryTest
         return getCreateNodeHandlerParams( name ).getPropertyTree();
     }
 
-    private CreateNodeHandlerParams getCreateNodeHandlerParams( final String name )
+    private ScriptValueTranslatorResult getCreateNodeHandlerParams( final String name )
     {
         final ScriptExports exports = runScript( "/com/enonic/xp/lib/node/script-values.js" );
         final ScriptValue value = exports.executeMethod( name );
 
-        return new CreateNodeHandlerParamsFactory().create( value );
+        return new ScriptValueTranslator().create( value );
     }
 
 }

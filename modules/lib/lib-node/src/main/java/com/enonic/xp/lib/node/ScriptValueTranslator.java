@@ -15,25 +15,31 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-class CreateNodeHandlerParamsFactory
+class ScriptValueTranslator
 {
-    private final PropertyTree propertyTree;
+    private final PropertyTree propertyTree = new PropertyTree();
 
-    private final BinaryAttachments.Builder binaryAttachmentsBuilder;
+    private final BinaryAttachments.Builder binaryAttachmentsBuilder = BinaryAttachments.create();
 
-    CreateNodeHandlerParamsFactory()
+    private final boolean includeBinaryAttachments;
+
+    public ScriptValueTranslator()
     {
-        this.propertyTree = new PropertyTree();
-        this.binaryAttachmentsBuilder = BinaryAttachments.create();
+        this( true );
     }
 
-    public CreateNodeHandlerParams create( final ScriptValue value )
+    public ScriptValueTranslator( final boolean includeBinaryAttachments )
+    {
+        this.includeBinaryAttachments = includeBinaryAttachments;
+    }
+
+    public ScriptValueTranslatorResult create( final ScriptValue value )
     {
         final Map<String, Object> map = value.getMap();
 
         handleMap( this.propertyTree.getRoot(), map );
 
-        return new CreateNodeHandlerParams( this.propertyTree, this.binaryAttachmentsBuilder.build() );
+        return new ScriptValueTranslatorResult( this.propertyTree, this.binaryAttachmentsBuilder.build() );
     }
 
     private void handleElement( final PropertySet parent, final String name, final Object value )
@@ -111,13 +117,19 @@ class CreateNodeHandlerParamsFactory
         {
             final BinaryAttachment binaryAttachment = (BinaryAttachment) value;
             parent.addBinaryReference( name, binaryAttachment.getReference() );
-            this.binaryAttachmentsBuilder.add( new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
+
+            if ( includeBinaryAttachments )
+            {
+                this.binaryAttachmentsBuilder.add(
+                    new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
+            }
         }
+
         else
+
         {
             parent.addString( name, value.toString() );
         }
-
     }
 
 }

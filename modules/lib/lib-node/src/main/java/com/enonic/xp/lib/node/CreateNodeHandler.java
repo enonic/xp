@@ -25,7 +25,7 @@ public class CreateNodeHandler
     {
         validateRepo();
 
-        final CreateNodeHandlerParams params = getParams( this.params );
+        final ScriptValueTranslatorResult params = getParams( this.params );
         final CreateNodeParams createNodeParams = new CreateNodeParamsFactory().create( params );
         final Node node = this.nodeService.create( createNodeParams );
         return new NodeMapper( node );
@@ -43,9 +43,9 @@ public class CreateNodeHandler
         }
     }
 
-    private CreateNodeHandlerParams getParams( final ScriptValue params )
+    private ScriptValueTranslatorResult getParams( final ScriptValue params )
     {
-        return new CreateNodeHandlerParamsFactory().create( params );
+        return new ScriptValueTranslator().create( params );
     }
 
     private JsonNode createJson( final Map<?, ?> value )

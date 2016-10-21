@@ -26,7 +26,7 @@ class CreateNodeParamsFactory
         return doCreate( properties, binaryAttachments );
     }
 
-    public CreateNodeParams create( final CreateNodeHandlerParams params )
+    public CreateNodeParams create( final ScriptValueTranslatorResult params )
     {
         return doCreate( params.getPropertyTree(), params.getBinaryAttachments() );
     }

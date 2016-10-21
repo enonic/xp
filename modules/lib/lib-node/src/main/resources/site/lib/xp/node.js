@@ -82,6 +82,13 @@ exports.create = function (params) {
     return __.toNativeObject(bean.execute());
 };
 
+exports.modify = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.node.ModifyNodeHandler');
+    params = params || {};
+    bean.editor = __.toScriptValue(params.editor);
+    bean.key = required(params, 'key');
+    return __.toNativeObject(bean.execute());
+};
 
 /**
  * This function fetches nodes. If key is defined, the fetched node will be returned as a JSON object or null if not found.
