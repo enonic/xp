@@ -62,6 +62,19 @@ exports.create = function (params) {
 };
 
 /**
+ * Retrieves the list of repositories
+ *
+ * @example-ref examples/repo/list.js
+ * @return {object} The repositories (as JSON array).
+ *
+ */
+exports.list = function () {
+    var bean = __.newBean('com.enonic.xp.lib.repo.ListRepositoriesHandler');
+    return __.toNativeObject(bean.execute());
+};
+
+
+/**
  * Retrieves a repository
  *
  * @example-ref examples/repo/get.js
