@@ -100,6 +100,9 @@ log.info('Repository created with id ' + result2.id);
 // First repository created.
 var expected1 = {
     "id": "test-repo",
+    "branches": [
+        "master"
+    ],
     settings: {}
 };
 // END
@@ -107,6 +110,9 @@ assert.assertJsonEquals(expected1, result1);
 
 var expected2 = {
     "id": "test-repo2",
+    "branches": [
+        "master"
+    ],
     settings: {
         definitions: {
             version: {

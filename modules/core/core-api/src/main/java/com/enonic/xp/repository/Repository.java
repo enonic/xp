@@ -16,7 +16,7 @@ public final class Repository
 
     private Repository( Builder builder )
     {
-        this.branches = builder.branches;
+        this.branches = builder.branches == null ? Branches.empty() : builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
         this.id = builder.id;
     }

@@ -15,7 +15,6 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.NodeRepositoryService;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.JsonHelper;
 
@@ -35,7 +34,7 @@ public class NodeRepositoryServiceImpl
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
 
     @Override
-    public Repository create( final CreateRepositoryParams params )
+    public void create( final CreateRepositoryParams params )
     {
         if ( !this.indexServiceInternal.isMaster() )
         {
@@ -46,11 +45,6 @@ public class NodeRepositoryServiceImpl
         applyMappings( params );
 
         checkClusterHealth();
-
-        return Repository.create().
-            id( params.getRepositoryId() ).
-            settings( params.getRepositorySettings() ).
-            build();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.enonic.xp.lib.repo.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.json.JsonToPropertyTreeTranslator;
@@ -26,8 +27,16 @@ public class RepositoryMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "id", repository.getId() );
+        serialize( gen, repository.getBranches() );
         serialize( gen, repository.getSettings() );
 
+    }
+
+    private void serialize( final MapGenerator gen, final Branches branches )
+    {
+        gen.array( "branches" );
+        branches.forEach( branch -> gen.value( branch.getValue() ) );
+        gen.end();
     }
 
     private void serialize( final MapGenerator gen, final RepositorySettings settings )

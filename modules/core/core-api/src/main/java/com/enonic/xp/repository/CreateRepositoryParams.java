@@ -2,12 +2,15 @@ package com.enonic.xp.repository;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public class CreateRepositoryParams
 {
     private final RepositoryId repositoryId;
+
+    private final Branches branches;
 
     private final RepositorySettings repositorySettings;
 
@@ -20,6 +23,7 @@ public class CreateRepositoryParams
     private CreateRepositoryParams( final Builder builder )
     {
         repositoryId = builder.repositoryId;
+        branches = builder.branches == null ? Branches.from( RepositoryConstants.MASTER_BRANCH ) : builder.branches;
         repositorySettings = builder.repositorySettings == null ? RepositorySettings.create().build() : builder.repositorySettings;
         rootPermissions = builder.rootPermissions;
         inheritPermissions = builder.inheritPermissions;
@@ -29,6 +33,11 @@ public class CreateRepositoryParams
     public RepositoryId getRepositoryId()
     {
         return repositoryId;
+    }
+
+    public Branches getBranches()
+    {
+        return branches;
     }
 
     public RepositorySettings getRepositorySettings()
@@ -60,6 +69,8 @@ public class CreateRepositoryParams
     {
         private RepositoryId repositoryId;
 
+        private Branches branches;
+
         private RepositorySettings repositorySettings;
 
         private AccessControlList rootPermissions = RepositoryConstants.DEFAULT_REPO_PERMISSIONS;
@@ -75,6 +86,12 @@ public class CreateRepositoryParams
         public Builder repositoryId( final RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public Builder branches( final Branches branches )
+        {
+            this.branches = branches;
             return this;
         }
 

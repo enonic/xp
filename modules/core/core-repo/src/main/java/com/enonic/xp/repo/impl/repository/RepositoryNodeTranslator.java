@@ -1,5 +1,9 @@
 package com.enonic.xp.repo.impl.repository;
 
+import com.google.common.collect.ImmutableSet;
+
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -19,6 +23,8 @@ import com.enonic.xp.security.SystemConstants;
 
 public class RepositoryNodeTranslator
 {
+    private static final String BRANCHES_KEY = "branches";
+
     private static final String INDEX_CONFIG_KEY = "indexConfigs";
 
     private static final String MAPPING_KEY = "mapping";
@@ -28,6 +34,7 @@ public class RepositoryNodeTranslator
     public static Node toNode( final Repository repository )
     {
         final PropertyTree repositoryData = new PropertyTree();
+        toNodeData( repository.getBranches(), repositoryData );
         final RepositorySettings repositorySettings = repository.getSettings();
         toNodeData( repositorySettings.getIndexDefinitions(), repositoryData );
 
@@ -39,6 +46,11 @@ public class RepositoryNodeTranslator
             parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
             permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
             build();
+    }
+
+    private static void toNodeData( final Branches branches, final PropertyTree data )
+    {
+        branches.forEach( branch -> data.addString( BRANCHES_KEY, branch.getValue() ) );
     }
 
     private static void toNodeData( final IndexDefinitions indexDefinitions, final PropertyTree data )
@@ -83,8 +95,17 @@ public class RepositoryNodeTranslator
 
         return Repository.create().
             id( RepositoryId.from( node.id().toString() ) ).
+            branches( toBranches( nodeData ) ).
             settings( repositorySettings ).
             build();
+    }
+
+    private static Branches toBranches( final PropertyTree nodeData )
+    {
+        final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
+        nodeData.getStrings( BRANCHES_KEY ).
+            forEach( branchValue -> branches.add( Branch.from( branchValue ) ) );
+        return Branches.from( branches.build() );
     }
 
     private static IndexDefinitions toIndexConfigs( final PropertyTree nodeData )
