@@ -20,6 +20,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
+import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
@@ -88,16 +89,21 @@ public final class ContentInitializer
             if ( !initialized )
             {
                 initializeRepository();
+                createDraftBranch();
                 initContentNode();
             }
         } );
+    }
+
+    private void createDraftBranch()
+    {
+        this.repositoryService.createBranch( CreateBranchParams.from( ContentConstants.BRANCH_DRAFT.getValue() ) );
     }
 
     private void initializeRepository()
     {
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( "cms-repo" ) ).
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
             rootPermissions( CONTENT_REPO_DEFAULT_ACL ).
             rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER ).
             build();

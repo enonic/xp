@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -25,6 +26,7 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
@@ -66,7 +68,7 @@ public class RepositoryServiceImpl
         return repositorySettingsMap.compute( params.getRepositoryId(), ( key, previousValue ) -> {
 
             final Repository repository = createRepository( params, key, previousValue );
-            createRootNodes( params );
+            createRootNode( params, RepositoryConstants.MASTER_BRANCH );
             storeRepositoryEntry( repository );
 
             return repository;
@@ -102,7 +104,7 @@ public class RepositoryServiceImpl
         }
         return Repository.create().
             id( params.getRepositoryId() ).
-            branches( params.getBranches() ).
+            branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
             build();
     }
@@ -117,24 +119,20 @@ public class RepositoryServiceImpl
             build() );
     }
 
-
-    private void createRootNodes( final CreateRepositoryParams params )
+    private void createRootNode( final CreateRepositoryParams params, final Branch branch )
     {
-        for ( Branch branch : params.getBranches() )
-        {
-            final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
-                repositoryId( params.getRepositoryId() ).
-                branch( branch ).
-                build();
+        final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
+            repositoryId( params.getRepositoryId() ).
+            branch( branch ).
+            build();
 
-            final Node rootNode = this.nodeStorageService.store( Node.createRoot().
-                permissions( params.getRootPermissions() ).
-                inheritPermissions( params.isInheritPermissions() ).
-                childOrder( params.getRootChildOrder() ).
-                build(), rootNodeContext );
+        final Node rootNode = this.nodeStorageService.store( Node.createRoot().
+            permissions( params.getRootPermissions() ).
+            inheritPermissions( params.isInheritPermissions() ).
+            childOrder( params.getRootChildOrder() ).
+            build(), rootNodeContext );
 
-            LOG.info( "Created root node in  with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
-        }
+        LOG.info( "Created root node in  with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
     }
 
     private Branch doCreateBranch( final CreateBranchParams createBranchParams, final Repository currentRepo )

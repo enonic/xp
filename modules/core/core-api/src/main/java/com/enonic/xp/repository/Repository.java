@@ -1,6 +1,7 @@
 package com.enonic.xp.repository;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -16,7 +17,7 @@ public final class Repository
 
     private Repository( Builder builder )
     {
-        this.branches = builder.branches == null ? Branches.empty() : builder.branches;
+        this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
         this.id = builder.id;
     }
@@ -105,6 +106,13 @@ public final class Repository
             this.id = id;
             return this;
         }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( branches, "branches cannot be null" );
+            Preconditions.checkArgument( branches.contains( RepositoryConstants.MASTER_BRANCH ), "branches must contain master branch." );
+        }
+
 
         public Repository build()
         {
