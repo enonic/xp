@@ -532,29 +532,31 @@ public final class ContentResource
             case 1:
                 if ( succeeded == 1 )
                 {
-                    return "'" + contentName + "' published";
+                    return "\"" + contentName + "\" is published";
                 }
-                else if ( failed == 1 )
+
+                if ( failed == 1 )
                 {
-                    return "'" + contentName + "' failed";
+                    return "\"" + contentName + "\" failed to be published";
                 }
-                else
+
+                if ( deleted == 1 )
                 {
-                    return "Pending item was deleted";
+                    return "Pending item is deleted";
                 }
 
             default:
                 if ( succeeded > 0 )
                 {
-                    return succeeded + " items were published";
+                    return succeeded + " items are published";
                 }
                 if ( deleted > 0 )
                 {
-                    return deleted + " pending items were deleted";
+                    return deleted + " pending items are deleted";
                 }
                 if ( failed > 0 )
                 {
-                    return failed + " items failed to publish";
+                    return failed + " items failed to be published";
                 }
         }
         return "";
