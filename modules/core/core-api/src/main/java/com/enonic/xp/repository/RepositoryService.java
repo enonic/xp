@@ -11,6 +11,8 @@ public interface RepositoryService
 
     Branch createBranch( final CreateBranchParams params );
 
+    Repositories list();
+
     Repository get( final RepositoryId repositoryId );
 
     boolean isInitialized( final RepositoryId id );

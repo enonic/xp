@@ -23,6 +23,7 @@ import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
+import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -153,6 +154,13 @@ public class RepositoryServiceImpl
 
         return createBranchParams.getBranch();
     }
+
+    @Override
+    public Repositories list()
+    {
+        return Repositories.from( repositorySettingsMap.values() );
+    }
+
 
     @Override
     public Repository get( final RepositoryId repositoryId )
