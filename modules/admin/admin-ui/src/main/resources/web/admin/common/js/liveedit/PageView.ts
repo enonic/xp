@@ -82,6 +82,10 @@ module api.liveedit {
 
         private editorToolbar: api.dom.DivEl;
 
+        private highlightingAllowed:boolean;
+
+        private nextClickDisabled:boolean;
+
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
                 console.log('PageView.registerPageModel', pageModel);
@@ -125,6 +129,8 @@ module api.liveedit {
             this.pageLockedListeners = [];
             this.ignorePropertyChanges = false;
             this.disableContextMenu = false;
+            this.highlightingAllowed = true;
+            this.nextClickDisabled = false;
 
             var inspectAction = new api.ui.Action("Inspect").onExecuted(() => {
                 new PageInspectedEvent().fire();
@@ -455,6 +461,7 @@ module api.liveedit {
         }
 
         setTextEditMode(flag: boolean) {
+            this.setHighlightingAllowed(!flag);
             this.toggleClass('text-edit-mode', flag);
 
             var textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
@@ -927,6 +934,22 @@ module api.liveedit {
 
         isDisabledContextMenu(): boolean {
             return this.disableContextMenu;
+        }
+
+        setHighlightingAllowed(value:boolean) {
+            this.highlightingAllowed = value;
+        }
+
+        setNextClickDisabled(value:boolean) {
+            this.nextClickDisabled = value;
+        }
+
+        isHighlightingAllowed():boolean {
+            return this.highlightingAllowed;
+        }
+
+        isNextClickDisabled():boolean {
+            return this.nextClickDisabled;
         }
     }
 }
