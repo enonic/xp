@@ -18,6 +18,9 @@ if (result) {
 // Repository retrieved.
 var expected = {
     "id": "test-repo",
+    "branches": [
+        "master"
+    ],
     settings: {}
 };
 // END
