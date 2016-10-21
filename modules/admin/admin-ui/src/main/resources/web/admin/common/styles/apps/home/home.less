@@ -7,7 +7,6 @@
 @import "../../variables/mixins";
 @import "../../variables/z-index";
 
-
 @font-face {
   font-family: 'icomoon';
   src: url('../../../../common/icons/fonts/icomoon.eot?d2dpl4');
@@ -56,9 +55,14 @@
 }
 
 .xp-about-dialog {
-  max-width: 440px;
-
+  max-width: 496px;
+  padding-left: 3em;
+  padding-right: 3em;
   background-color: rgba(0, 0, 0, 0.8);
+
+  .modal-dialog-content-wrapper {
+    margin-bottom: -4em;
+  }
 
   .cancel-button-top, .cancel-button-top:hover {
     background-color: rgba(0, 0, 0, 0);
@@ -77,15 +81,16 @@
 
   .xp-about-dialog-app-icon {
     float: left;
-    margin: 0 14px 50px -10px;
+    margin: 0 18px 50px -15px;
 
     img {
       height: 135px;
+      margin: 12px 10px 10px 10px;
     }
   }
 
   h1 {
-    margin: 10px 0 12px 0;
+    margin: 0 0 12px 0;
   }
 
   .xp-about-dialog-version-block {
@@ -171,7 +176,6 @@
     margin-top: 0px !important;
   }
 
-
   .dialog-content {
     overflow: auto;
     max-height: calc(~'100% - 85px');
@@ -220,6 +224,9 @@
       img {
         margin-right: 10px;
       }
+      ul {
+        margin-top: 10px;
+      }
     }
 
     .step-2 {
@@ -252,6 +259,7 @@
         display: flex;
         align-items: center;
         justify-content: space-around;
+        min-height: 103px;
 
         .demo-app {
           display: inline-block;
@@ -293,6 +301,17 @@
             }
           }
         }
+
+        .demo-apps-text {
+          color: @admin-font-gray1;
+        }
+
+        &:not(.failed) {
+          .demo-apps-text {
+            display: none;
+          }
+        }
+
 
       }
 
@@ -360,6 +379,11 @@
   }
 
 }
+
+.load-mask {
+  z-index: 2002;
+}
+
 .xp-tour-dialog + .body-mask,
 .xp-about-dialog + .body-mask {
   background-color: @admin-black;

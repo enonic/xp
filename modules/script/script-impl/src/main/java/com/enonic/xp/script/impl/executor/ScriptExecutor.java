@@ -12,7 +12,9 @@ public interface ScriptExecutor
 {
     Application getApplication();
 
-    Object executeRequire( ResourceKey script );
+    Object executeMain( ResourceKey key );
+
+    Object executeRequire( ResourceKey key );
 
     ScriptValue newScriptValue( Object value );
 
@@ -27,4 +29,8 @@ public interface ScriptExecutor
     JavascriptHelper getJavascriptHelper();
 
     void registerMock( String name, Object value );
+
+    void registerDisposer( final ResourceKey key, Runnable callback );
+
+    void runDisposers();
 }

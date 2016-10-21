@@ -23,8 +23,8 @@ module api.event {
 
         static unEvent(eventName: string, handler?: (event: api.event.Event) => void, contextWindow: Window = window) {
             if (handler) {
-                var customEventHandler: (customEvent: any) => void;
-                EventBus.handlersMap[eventName] = EventBus.handlersMap[eventName].filter((entry: HandlersMapEntry) => {
+                let customEventHandler: (customEvent: any) => void;
+                EventBus.handlersMap[eventName] = (EventBus.handlersMap[eventName] || []).filter((entry: HandlersMapEntry) => {
                     if (entry.apiEventHandler === handler) {
                         customEventHandler = entry.customEventHandler;
                     }

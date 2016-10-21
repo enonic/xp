@@ -45,6 +45,28 @@ exports.simplePostRequest = function (mockServer) {
 
 };
 
+exports.simpleHeadRequest = function (mockServer) {
+
+    var result = http.request({
+        url: 'http://' + mockServer + '/my/url',
+        method: 'head'
+    });
+
+    var expectedJson = {
+        "status": 200,
+        "message": "OK",
+        "body": "",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "11",
+            "content-type": "text/plain"
+        }
+    };
+
+    assert.assertJsonEquals('http.request result not equals', expectedJson, result);
+
+};
+
 exports.getRequestWithParams = function (mockServer) {
 
     var result = http.request({

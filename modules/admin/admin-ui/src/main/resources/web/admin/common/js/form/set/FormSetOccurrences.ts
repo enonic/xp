@@ -46,5 +46,9 @@ module api.form {
 
             return occurrenceView.update(propertyArray);
         }
+
+        resetOccurrenceView(occurrenceView: FormSetOccurrenceView) {
+            occurrenceView.reset();
+        }
     }
 }

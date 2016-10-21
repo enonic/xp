@@ -93,7 +93,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
 
         api.application.ApplicationEvent.on((event: ApplicationEvent) => {
             if (ApplicationEventType.INSTALLED == event.getEventType()) {
-                this.applicationTreeGrid.appendApplicationNode(event.getApplicationKey()).then(() => {
+                this.applicationTreeGrid.placeApplicationNode(event.getApplicationKey()).then(() => {
                     setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar
                         this.applicationTreeGrid.triggerSelectionChangedListeners();
                         var installedApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey()),

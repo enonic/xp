@@ -31,3 +31,8 @@ configure( javaProjects ) {
 configure( mavenProjects ) {
     apply from: "$rootDir/gradle/maven.gradle"
 }
+
+configure( rootProject ) {
+    apply from: "$rootDir/gradle/coverage.gradle"
+    apply from: "$rootDir/gradle/ci.gradle"
+}

@@ -6,6 +6,7 @@ module api.ui.uploader {
         private model: MODEL;
 
         private failedListeners: {(): void}[] = [];
+        private uploadStoppedListeners: {(): void}[] = [];
         private uploadListeners: {(model: MODEL): void}[] = [];
         private progressListeners: {(progress: number): void}[] = [];
 
@@ -159,6 +160,22 @@ module api.ui.uploader {
 
         notifyFailed() {
             this.failedListeners.forEach((listener) => {
+                listener();
+            })
+        }
+
+        onUploadStopped(listener: () => void) {
+            this.uploadStoppedListeners.push(listener);
+        }
+
+        unUploadStopped(listener: () => void) {
+            this.uploadStoppedListeners = this.uploadStoppedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        notifyUploadStopped() {
+            this.uploadStoppedListeners.forEach((listener) => {
                 listener();
             })
         }

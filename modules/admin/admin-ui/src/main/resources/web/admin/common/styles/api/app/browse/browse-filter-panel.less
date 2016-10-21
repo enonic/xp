@@ -1,6 +1,6 @@
 .filter-panel {
   .transition(all 0.1s ease-in-out);
-  padding: 8px 20px 20px;
+  padding: 8px 20px 20px 10px;
   border-style: none;
   position: absolute;
   top: 0 !important;
@@ -29,7 +29,7 @@
         }
 
         & + label {
-          padding-bottom: 1px;
+          padding-left: 26px;
           color: @admin-font-gray2 !important;
           .ellipsis();
         }
@@ -40,10 +40,10 @@
 
   input.text-search-field {
     .placeholderColor(@admin-button-blue1);
-    margin-left: 20px;
+    margin-left: 30px;
     margin-bottom: 7px;
     font-size: 14px;
-    width: 95%;
+    width: 85%;
     padding: 0 21px 8px 1px;
     line-height: 24px;
     border: 0;
@@ -59,7 +59,7 @@
   h2 {
     color: @admin-black !important;
     font-size: 14px !important;
-    padding: 0px 0px 0px 21px !important;
+    padding-left: 25px;
     text-transform: capitalize;
     white-space: nowrap;
   }
@@ -68,7 +68,7 @@
     line-height: 24px;
     font-size: 16px;
     margin-bottom: 20px;
-    padding-left: 21px;
+    padding-left: 30px;
     white-space: pre;
   }
 
@@ -119,6 +119,18 @@
 
     .dependency-item {
       margin: 15px 0px 17px 0px;
+
+      .names-and-icon-view {
+        .wrapper {
+          height: 24px;
+          width: 24px;
+          margin-right: 8px;
+          line-height: 28px;
+        }
+        .names-view {
+          margin-left: 28px;
+        }
+      }
     }
 
     .action-button.btn-close {

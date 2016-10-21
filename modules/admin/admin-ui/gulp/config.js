@@ -66,8 +66,12 @@ var CONFIG = {
                 noImplicitAny: false
             },
             webpack: {
+                param: '[name]',
                 dest: '/apps/[name]/js/_all.js'
-            }
+            },
+            assets: [
+                'launcher'
+            ]
         },
         resources: {
             entries: [

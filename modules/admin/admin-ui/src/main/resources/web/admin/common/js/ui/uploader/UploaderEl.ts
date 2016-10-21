@@ -348,6 +348,11 @@ module api.ui.uploader {
             if (this.uploader) {
                 this.uploader.cancelAll();
             }
+
+            this.uploadedItems.forEach((uploadItem: UploadItem<MODEL>) => uploadItem.notifyUploadStopped());
+
+            this.uploadedItems.length = 0;
+
             return this;
         }
 

@@ -47,6 +47,13 @@ module api.content.form.inputtype.geo {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.geo.GeoPoint> occurrence;
+
+            input.resetBaseValues();
+        }
+
+
         availableSizeChanged() {
         }
 

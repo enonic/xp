@@ -33,4 +33,5 @@ public interface ApplicationService
 
     void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
 
+    void invalidate( ApplicationKey key );
 }

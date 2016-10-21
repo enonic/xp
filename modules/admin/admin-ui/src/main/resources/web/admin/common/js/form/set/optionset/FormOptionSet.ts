@@ -12,12 +12,17 @@ module api.form {
 
         private multiselection: Occurrences;
 
+        private helpText: string;
+
+        private helpTextIsOn: boolean = false;
+
         constructor(formOptionSetJson: api.form.json.FormOptionSetJson) {
             super(formOptionSetJson.name);
             this.label = formOptionSetJson.label;
             this.expanded = formOptionSetJson.expanded;
             this.occurrences = Occurrences.fromJson(formOptionSetJson.occurrences);
             this.multiselection = Occurrences.fromJson(formOptionSetJson.multiselection);
+            this.helpText = formOptionSetJson.helpText;
 
             if (formOptionSetJson.options != null) {
                 formOptionSetJson.options.forEach((formOptionSetOptionJson: api.form.json.FormOptionSetOptionJson) => {
@@ -58,6 +63,18 @@ module api.form {
             return this.multiselection;
         }
 
+        getHelpText(): string {
+            return this.helpText;
+        }
+
+        isHelpTextOn(): boolean {
+            return this.helpTextIsOn;
+        }
+
+        toggleHelpText(show?: boolean) {
+            this.helpTextIsOn = show;
+        }
+
         public toFormOptionSetJson(): api.form.json.FormItemTypeWrapperJson {
 
             return <api.form.json.FormItemTypeWrapperJson>{
@@ -66,6 +83,7 @@ module api.form {
                     expanded: this.isExpanded(),
                     options: FormOptionSetOption.optionsToJson(this.getOptions()),
                     label: this.getLabel(),
+                    helpText: this.getHelpText(),
                     occurrences: this.getOccurrences().toJson(),
                     multiselection: this.getMultiselection().toJson()
                 }
@@ -101,6 +119,10 @@ module api.form {
             }
 
             if (!api.ObjectHelper.arrayEquals(this.options, other.options)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.stringEquals(this.helpText, other.helpText)) {
                 return false;
             }
 

@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -17,7 +16,6 @@ import com.enonic.xp.repo.impl.elasticsearch.NodeStoreDocumentFactory;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.search.SearchStorageName;
 import com.enonic.xp.repo.impl.search.SearchStorageType;
-import com.enonic.xp.repository.RepositoryId;
 
 @Component
 public class IndexDataServiceImpl
@@ -112,16 +110,17 @@ public class IndexDataServiceImpl
 
 
     @Override
-    public void push( final NodeIds nodeIds, final Branch targetBranch, final RepositoryId targetRepo, final InternalContext context )
+    public void push( final IndexPushNodeParams pushNodeParams, final InternalContext context )
     {
         this.storageDao.copy( CopyRequest.create().
             storageSettings( StorageSettings.create().
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
                 storageType( SearchStorageType.from( context.getBranch() ) ).
                 build() ).
-            nodeIds( nodeIds ).
-            targetBranch( targetBranch ).
-            targetRepo( targetRepo ).
+            nodeIds( pushNodeParams.getNodeIds() ).
+            targetBranch( pushNodeParams.getTargetBranch() ).
+            targetRepo( pushNodeParams.getTargetRepo() ).
+            progressListener( pushNodeParams ).
             build() );
     }
 

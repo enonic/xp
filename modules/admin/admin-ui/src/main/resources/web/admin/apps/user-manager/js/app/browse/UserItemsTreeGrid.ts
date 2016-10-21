@@ -1,10 +1,10 @@
 import "../../api.ts";
 import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from "./UserTreeGridItem";
 import {UserTreeGridActions} from "./UserTreeGridActions";
-import {UserTreeGridItemViewer} from "./UserTreeGridItemViewer";
 import {EditPrincipalEvent} from "./EditPrincipalEvent";
 import {PrincipalBrowseResetEvent} from "./filter/PrincipalBrowseResetEvent";
 import {PrincipalBrowseSearchEvent} from "./filter/PrincipalBrowseSearchEvent";
+import {UserItemsRowFormatter} from "./UserItemsRowFormatter";
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -31,26 +31,18 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
         this.treeGridActions = new UserTreeGridActions(this);
         super(new TreeGridBuilder<UserTreeGridItem>().setColumns([
-                this.getNameColumn(), this.getModifiedTimeColumn()
+            this.buildColumn("Name", "name", "displayName", UserItemsRowFormatter.nameFormatter, {minWidth: 250}),
+            this.buildColumn("ModifiedTime", "modifiedTime", "modifiedTime", DateTimeFormatter.format,
+                {cssClass: "modified", minWidth: 150, maxWidth: 170})
             ]).setShowContextMenu(new TreeGridContextMenu(this.treeGridActions)).setPartialLoadEnabled(true).setLoadBufferSize(
             20). // rows count
             prependClasses("user-tree-grid")
         );
 
-        this.subscribeEvents();
+        this.initEventHandlers();
     }
 
-    private getNameColumn(): GridColumn<TreeNode<UserTreeGridItem>> {
-        return new GridColumnBuilder<TreeNode<UserTreeGridItem>>().setName("Name").setId("name").setField("displayName").setFormatter(
-            this.nameFormatter).setMinWidth(250).build();
-    }
-
-    private getModifiedTimeColumn(): GridColumn<TreeNode<UserTreeGridItem>> {
-        return new GridColumnBuilder<TreeNode<UserTreeGridItem>>().setName("ModifiedTime").setId("modifiedTime").setField(
-            "modifiedTime").setCssClass("modified").setMinWidth(150).setMaxWidth(170).setFormatter(DateTimeFormatter.format).build();
-    }
-
-    private subscribeEvents() {
+    private initEventHandlers() {
         PrincipalBrowseSearchEvent.on((event) => {
             var items = event.getPrincipals().map((principal: Principal) => {
                 return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
@@ -93,35 +85,8 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         return !node.getDataId() || node.getDataId() == "";
     }
 
-    private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<UserTreeGridItem>) {
-        var viewer = <UserTreeGridItemViewer>node.getViewer("displayName");
-        if (!viewer) {
-            var viewer = new UserTreeGridItemViewer();
-            viewer.setObject(node.getData(), node.calcLevel() > 1);
-            node.setViewer("displayName", viewer);
-        }
-        return viewer.toString();
-    }
-
     getTreeGridActions(): UserTreeGridActions {
         return this.treeGridActions;
-    }
-
-    private resolveUserTreeGridItemType(principal: Principal) {
-        if (!principal) {
-            return UserTreeGridItemType.USER_STORE;
-        } else {
-            switch (principal.getType()) {
-            case PrincipalType.USER:
-                return UserTreeGridItemType.USERS;
-            case PrincipalType.GROUP:
-                return UserTreeGridItemType.GROUPS;
-            case PrincipalType.ROLE:
-                return UserTreeGridItemType.ROLES;
-            default:
-                return UserTreeGridItemType.PRINCIPAL;
-            }
-        }
     }
 
     updateUserNode(principal: api.security.Principal, userStore: api.security.UserStore) {

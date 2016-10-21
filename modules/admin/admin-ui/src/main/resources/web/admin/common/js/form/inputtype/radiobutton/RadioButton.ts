@@ -65,6 +65,10 @@ module api.form.inputtype.radiobutton {
             return wemQ<any>(null);
         }
 
+        reset() {
+            this.selector.resetBaseValues();
+        }
+
         giveFocus(): boolean {
             return this.selector.giveFocus();
         }

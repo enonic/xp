@@ -50,11 +50,11 @@ public final class ContentResource
         {
             reprocessContent( content, request.isSkipChildren(), updated, errors );
         }
-        catch ( Throwable t )
+        catch ( Exception e )
         {
             errors.add(
-                String.format( "Content '%s' - %s: %s", content.getPath().toString(), t.getClass().getCanonicalName(), t.getMessage() ) );
-            LOG.warn( "Error reprocessing content [" + content.getPath() + "]", t );
+                String.format( "Content '%s' - %s: %s", content.getPath().toString(), e.getClass().getCanonicalName(), e.getMessage() ) );
+            LOG.warn( "Error reprocessing content [" + content.getPath() + "]", e );
         }
 
         return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
@@ -87,11 +87,11 @@ public final class ContentResource
                 {
                     reprocessContent( child, false, updated, errors );
                 }
-                catch ( Throwable t )
+                catch ( Exception e )
                 {
-                    errors.add( String.format( "Content '%s' - %s: %s", child.getPath().toString(), t.getClass().getCanonicalName(),
-                                               t.getMessage() ) );
-                    LOG.warn( "Error reprocessing content [" + child.getPath() + "]", t );
+                    errors.add( String.format( "Content '%s' - %s: %s", child.getPath().toString(), e.getClass().getCanonicalName(),
+                                               e.getMessage() ) );
+                    LOG.warn( "Error reprocessing content [" + child.getPath() + "]", e );
                 }
             }
             resultCount = Math.toIntExact( results.getHits() );

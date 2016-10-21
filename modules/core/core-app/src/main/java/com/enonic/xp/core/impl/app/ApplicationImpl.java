@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -31,13 +32,17 @@ final class ApplicationImpl
 
     private final ClassLoader classLoader;
 
-    public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader )
+    private final Map<String, String> config;
+
+    public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader,
+                            final Map<String, String> config )
     {
         this.bundle = bundle;
         this.key = ApplicationKey.from( bundle );
         this.systemVersion = ApplicationHelper.parseVersionRange( getHeader( X_SYSTEM_VERSION, null ) );
         this.urlResolver = urlResolver;
         this.classLoader = classLoader;
+        this.config = config;
     }
 
     @Override
@@ -133,5 +138,11 @@ final class ApplicationImpl
     public URL resolveFile( final String path )
     {
         return this.urlResolver.findUrl( path );
+    }
+
+    @Override
+    public Map<String, String> getConfig()
+    {
+        return this.config;
     }
 }

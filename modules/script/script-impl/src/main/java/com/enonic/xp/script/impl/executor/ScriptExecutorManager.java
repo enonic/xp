@@ -62,7 +62,11 @@ public final class ScriptExecutorManager
 
     public void invalidate( final ApplicationKey key )
     {
-        this.executors.remove( key );
+        final ScriptExecutor executor = this.executors.remove( key );
+        if ( executor != null )
+        {
+            executor.runDisposers();
+        }
     }
 
     public void setApplicationService( final ApplicationService applicationService )

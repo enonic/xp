@@ -88,6 +88,50 @@ public class ImageHandlerTest
         Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
+    private void setupContentSvgz()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().
+            name( "enonic-logo.svgz" ).
+            mimeType( "image/svg+xml" ).
+            label( "source" ).
+            build();
+
+        final Content content = createContent( "123456", "path/to/image-name.svgz", attachment );
+
+        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
+        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
+
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
+            thenReturn( imageBytes );
+
+        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+    }
+
+    private void setupContentSvg()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().
+            name( "enonic-logo.svg" ).
+            mimeType( "image/svg+xml" ).
+            label( "source" ).
+            build();
+
+        final Content content = createContent( "123456", "path/to/image-name.svg", attachment );
+
+        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
+        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
+
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
+            thenReturn( imageBytes );
+
+        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+    }
+
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
         final PropertyTree data = new PropertyTree();
@@ -239,5 +283,41 @@ public class ImageHandlerTest
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
         assertTrue( res.getBody() instanceof ByteSource );
+    }
+
+    @Test
+    public void testSvgImage()
+        throws Exception
+    {
+        setupContentSvg();
+        Mockito.when( this.mediaInfoService.getImageOrientation( Mockito.any( ByteSource.class ) ) ).thenReturn(
+            ImageOrientation.LeftBottom );
+
+        this.request.setEndpointPath( "/_/image/123456/full/image-name.svg" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.parse( "image/svg+xml" ), res.getContentType() );
+        assertTrue( res.getBody() instanceof ByteSource );
+        assertNull( res.getHeaders().get( "Content-Encoding" ) );
+    }
+
+    @Test
+    public void testSvgzImage()
+        throws Exception
+    {
+        setupContentSvgz();
+        Mockito.when( this.mediaInfoService.getImageOrientation( Mockito.any( ByteSource.class ) ) ).thenReturn(
+            ImageOrientation.LeftBottom );
+
+        this.request.setEndpointPath( "/_/image/123456/full/image-name.svgz" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.parse( "image/svg+xml" ), res.getContentType() );
+        assertTrue( res.getBody() instanceof ByteSource );
+        assertEquals( "gzip", res.getHeaders().get( "Content-Encoding" ) );
     }
 }

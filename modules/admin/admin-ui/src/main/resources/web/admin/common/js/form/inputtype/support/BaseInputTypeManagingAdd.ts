@@ -106,6 +106,10 @@ module api.form.inputtype.support {
             return wemQ<void>(null);
         }
 
+        reset() {
+            throw Error("Must be implemented in inheritors");
+        }
+
         private registerPropertyArray(propertyArray: PropertyArray) {
             if (this.propertyArray) {
                 if (BaseInputTypeManagingAdd.debug) {

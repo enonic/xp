@@ -15,6 +15,8 @@ module api.form.inputtype {
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void>;
 
+        reset();
+
         newInitialValue(): Value;
 
         /*

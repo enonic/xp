@@ -89,6 +89,10 @@ module api.form {
             return this.formItemLayer.update(propertySet, unchangedOnly);
         }
 
+        public reset() {
+            this.formItemLayer.reset();
+        }
+
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             super.onEditContentRequest(listener);
             this.formItemViews.forEach((formItemView: FormItemView) => {

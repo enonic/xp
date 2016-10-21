@@ -26,6 +26,8 @@
 ///<reference path='InputView.ts' />
 ///<reference path='FormView.ts' />
 
+///<reference path='HelpTextContainer.ts' />
+
 ///<reference path='RemoveButtonClickedEvent.ts' />
 ///<reference path='OccurrenceRemovedEvent.ts' />
 ///<reference path='OccurrenceAddedEvent.ts' />

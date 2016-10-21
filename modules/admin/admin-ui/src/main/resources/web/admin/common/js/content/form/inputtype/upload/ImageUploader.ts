@@ -145,6 +145,10 @@ module api.content.form.inputtype.upload {
             return wemQ<void>(null);
         }
 
+        reset() {
+            this.imageUploader.resetBaseValues();
+        }
+
         private saveEditDataToProperty(crop: Rect, zoom: Rect, focus: Point) {
             var container = this.getPropertyContainer(this.getProperty());
 

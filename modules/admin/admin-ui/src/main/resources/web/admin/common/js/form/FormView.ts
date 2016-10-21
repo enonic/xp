@@ -132,6 +132,10 @@ module api.form {
             return this.formItemLayer.update(propertySet, unchangedOnly);
         }
 
+        public reset() {
+            return this.formItemLayer.reset();
+        }
+
         public highlightInputsOnValidityChange(highlight: boolean) {
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.setHighlightOnValidityChange(highlight);
@@ -293,6 +297,14 @@ module api.form {
             this.layoutFinishedListeners.forEach((listener) => {
                 listener();
             })
+        }
+
+        toggleHelpText(show?: boolean) {
+            this.formItemLayer.toggleHelpText(show);
+        }
+
+        hasHelpText(): boolean {
+            return this.formItemLayer.hasHelpText();
         }
     }
 }

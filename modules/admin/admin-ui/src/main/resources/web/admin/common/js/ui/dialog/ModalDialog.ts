@@ -292,12 +292,11 @@ module api.ui.dialog {
             ]);
 
             api.ui.KeyBindings.get().bindKeys(keyBindings);
-
+            
             ModalDialog.openDialogsCounter++;
         }
 
         close() {
-
             if (ModalDialog.openDialogsCounter == 1) {
                 api.ui.mask.BodyMask.get().hide();
             }

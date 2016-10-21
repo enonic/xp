@@ -46,6 +46,8 @@ module api.liveedit {
                             infoBlock.setTextForContent(content.getType().toString());
                             api.DefaultErrorHandler.handle(reason);
                         }).done();
+                    } else {
+                        infoBlock.setBaseHeader();
                     }
                     infoBlock.removeClass("empty");
                 }

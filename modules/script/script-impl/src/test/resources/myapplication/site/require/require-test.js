@@ -19,3 +19,7 @@ assert.assertEquals('2', all1.b);
 var all2 = require('export/all2');
 assert.assertEquals('1', all2.a);
 assert.assertEquals('2', all2.b);
+assert.assertEquals('3', all2.c);
+
+var json = require('./myjson.json');
+assert.assertEquals('{"a":1,"b":2}', JSON.stringify(json));

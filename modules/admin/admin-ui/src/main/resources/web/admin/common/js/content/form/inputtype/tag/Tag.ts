@@ -106,6 +106,10 @@ module api.content.form.inputtype.tag {
             }
         }
 
+        reset() {
+            this.tags.resetBaseValues();
+        }
+
         protected getNumberOfValids(): number {
             return this.getPropertyArray().getSize();
         }

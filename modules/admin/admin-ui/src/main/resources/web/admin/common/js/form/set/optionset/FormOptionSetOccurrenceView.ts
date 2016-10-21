@@ -44,6 +44,8 @@ module api.form {
 
             var deferred = wemQ.defer<void>();
 
+            this.removeChildren();
+
             this.removeButton = new api.dom.AEl("remove-button");
             this.appendChild(this.removeButton);
             this.removeButton.onClicked((event: MouseEvent) => {
@@ -55,6 +57,15 @@ module api.form {
 
             this.label = new FormOccurrenceDraggableLabel(this.formOptionSet.getLabel(), this.formOptionSet.getOccurrences());
             this.appendChild(this.label);
+
+            if (this.formOptionSet.getHelpText()) {
+                this.helpText = new HelpTextContainer(this.formOptionSet.getHelpText());
+
+                this.label.appendChild(this.helpText.getToggler());
+                this.appendChild(this.helpText.getHelpText());
+
+                this.toggleHelpText(this.formOptionSet.isHelpTextOn());
+            }
 
             this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);

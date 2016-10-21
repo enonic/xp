@@ -87,6 +87,8 @@ export interface LiveFormPanelConfig {
 
 export class LiveFormPanel extends api.ui.panel.Panel {
 
+    public static debug: boolean = false;
+
     private defaultModels: DefaultModels;
 
     private content: Content;
@@ -214,15 +216,22 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 this.liveEditPageProxy.skipNextReloadConfirmation(true);
             });
 
+            this.liveEditPageProxy.getPlaceholderIFrame().onShown(() => {
+                // If we are about to show blank placeholder in the editor then remove
+                // "rendering" class from the panel so that it's instantly visible
+                this.removeClass("rendering");
+            });
+
             this.frameContainer = new Panel("frame-container");
-            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(), this.liveEditPageProxy.getDragMask());
+            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(), this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
+
 
             // append mask here in order for the context window to be above
             this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow);
 
-
             this.contextWindow.onDisplayModeChanged(() => {
-                if (!this.contextWindow.isFloating()) {
+                const enabled = this.contentWizardPanel.getComponentsViewToggler().isEnabled();
+                if (!this.contextWindow.isFloating() && enabled) {
                     this.contentWizardPanel.getContextWindowToggler().setActive(true);
                     this.contextWindow.slideIn();
                 }
@@ -351,6 +360,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     loadPage(clearInspection: boolean = true) {
+        if (LiveFormPanel.debug) {
+            console.debug("LiveFormPanel.loadPage at " + new Date().toISOString());
+        }
         if (this.pageSkipReload == false && !this.pageLoading) {
 
             if (clearInspection) {
@@ -358,8 +370,15 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             }
 
             this.pageLoading = true;
+            if (this.liveEditModel.isRenderableContent()) {
+                this.contentWizardPanel.getLiveMask().show();
+            }
             this.liveEditPageProxy.load();
             this.liveEditPageProxy.onLoaded(() => {
+                if (this.isRendered()) {
+                    // If LiveEdit is not rendered yet, don't remove the spinner - WizardPanel will do that in onRendered()
+                    this.contentWizardPanel.getLiveMask().hide();
+                }
                 this.pageLoading = false;
                 if (this.lockPageAfterProxyLoad) {
                     this.pageView.setLocked(true);

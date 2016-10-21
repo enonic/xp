@@ -30,11 +30,12 @@ function checkRequired(params, name) {
  *
  * @example-ref examples/http-client/request.js
  * @example-ref examples/http-client/multipart.js
+ * @example-ref examples/http-client/basicauth.js
  * @example-ref examples/http-client/proxy.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.url URL to which the request is sent.
- * @param {string} [params.method=GET] The HTTP method to use for the request (e.g. "POST", "GET", "PUT").
+ * @param {string} [params.method=GET] The HTTP method to use for the request (e.g. "POST", "GET", "HEAD", "PUT", "DELETE").
  * @param {object} [params.params] Query or form parameters to be sent with the request.
  * @param {object} [params.headers] HTTP headers, an object where the keys are header names and the values the header values.
  * @param {number} [params.connectionTimeout=10000] The timeout on establishing the connection, in milliseconds.
@@ -43,6 +44,9 @@ function checkRequired(params, name) {
  * @param {string} [params.contentType] Content type of the request.
  * @param {object[]} [params.multipart] Multipart form data to send with the request, an array of part objects. Each part object contains
  * 'name', 'value', and optionally 'fileName' and 'contentType' properties. Where 'value' can be either a string or a Stream object.
+ * @param {object} [params.auth] Settings for basic authentication.
+ * @param {string} [params.auth.user] User name for basic authentication.
+ * @param {string} [params.auth.password] Password for basic authentication.
  * @param {object} [params.proxy] Proxy settings.
  * @param {string} [params.proxy.host] Proxy host name to use.
  * @param {number} [params.proxy.port] Proxy port to use.
@@ -72,7 +76,10 @@ exports.request = function (params) {
         bean.proxyUser = __.nullOrValue(params.proxy.user);
         bean.proxyPassword = __.nullOrValue(params.proxy.password);
     }
-
+    if (params.auth) {
+        bean.authUser = __.nullOrValue(params.auth.user);
+        bean.authPassword = __.nullOrValue(params.auth.password);
+    }
     return __.toNativeObject(bean.request());
 
 };

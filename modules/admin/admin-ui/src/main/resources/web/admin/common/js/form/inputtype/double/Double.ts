@@ -47,6 +47,12 @@ module api.content.form.inputtype.double {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.text.TextInput> occurrence;
+
+            input.resetBaseValues();
+        }
+
         availableSizeChanged() {
         }
 
