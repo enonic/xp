@@ -1,7 +1,6 @@
 @occurrence-label-margin-left: 10px;
 
-.form-item-set-occurrence-view,
-.form-option-set-occurrence-view {
+.form-item-set-occurrence-view, .form-option-set-occurrence-view {
 
   clear: left;
   margin: 0px;
@@ -15,16 +14,19 @@
     margin-bottom: 10px;
     margin-left: @occurrence-label-margin-left;
 
+    .required {
+      &:after {
+        content: '*';
+        color:@input-red-text;
+      }
+    }
+
     .help-text-toggler {
       margin-top: 2px;
     }
   }
 
-  .help-text {
-    margin: 0 10px;
-  }
-
-  .form-item-set-label + .help-text {
+  .form-occurrence-draggable-label + .help-text {
     margin-left: @occurrence-label-margin-left;
   }
 
@@ -60,8 +62,7 @@
     margin-bottom: 15px;
   }
 
-  .form-item-set-occurrences-container,
-  .form-option-set-occurrences-container {
+  .form-item-set-occurrences-container, .form-option-set-occurrences-container {
     padding: 10px 10px 10px;
   }
 

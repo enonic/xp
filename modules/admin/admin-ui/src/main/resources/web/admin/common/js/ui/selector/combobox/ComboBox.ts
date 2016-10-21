@@ -6,6 +6,7 @@ module api.ui.selector.combobox {
     import Viewer = api.ui.Viewer;
     import DelayedFunctionCall = api.util.DelayedFunctionCall;
     import Button = api.ui.button.Button;
+    import ElementHelper = api.dom.ElementHelper;
 
     export interface ComboBoxConfig<T> {
 
@@ -170,8 +171,35 @@ module api.ui.selector.combobox {
 
         private doUpdateDropdownTopPositionAndWidth() {
             var inputEl = this.input.getEl();
-            this.comboBoxDropdown.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
+
+            var parent = this.getScrollableParent(inputEl),
+                size = parent.getHeight() - (inputEl.getOffsetTop() - parent.getOffsetTop()) - inputEl.getHeight();
+
+            var dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl(),
+                placeholder = this.comboBoxDropdown.getEmptyDropdown().getEl();
+
+            var reverted = size < dropdown.getHeightWithBorder();
+
+            if (!reverted) {
+                this.comboBoxDropdown.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
+            } else {
+                dropdown.setTopPx(-dropdown.getHeightWithBorder());
+                placeholder.setTopPx(-placeholder.getHeightWithBorder());
+            }
+
+            dropdown.toggleClass("reverted", reverted);
+
             this.comboBoxDropdown.setWidth(Math.max(inputEl.getWidthWithBorder(), this.minWidth));
+        }
+
+        private getScrollableParent(el: ElementHelper): ElementHelper {
+            let parent = el.getParent();
+            if (!parent || parent.isScrollable()) {
+                return el;
+            } else {
+                return this.getScrollableParent(parent);
+            }
+
         }
 
         giveFocus(): boolean {
@@ -225,6 +253,8 @@ module api.ui.selector.combobox {
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[], saveSelection?: boolean) {
             this.comboBoxDropdown.setOptions(options, this.isInputEmpty() ? this.noOptionsText : null, this.getSelectedOptions(),
                 saveSelection);
+
+            this.doUpdateDropdownTopPositionAndWidth();
         }
 
         private isInputEmpty(): boolean {

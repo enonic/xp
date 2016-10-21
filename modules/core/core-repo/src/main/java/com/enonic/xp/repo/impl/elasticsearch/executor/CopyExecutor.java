@@ -87,6 +87,7 @@ public class CopyExecutor
         final Stopwatch timer = Stopwatch.createStarted();
         final BulkResponse response = bulkRequest.execute().actionGet();
         LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
+        reportProgress( response.getItems().length );
     }
 
 

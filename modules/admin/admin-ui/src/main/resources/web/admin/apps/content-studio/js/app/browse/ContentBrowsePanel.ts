@@ -126,11 +126,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 }
             });
 
-            let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
+            new ContentPublishMenuManager(this.browseActions);
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-            this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
+            this.toolbar.appendChild(ContentPublishMenuManager.getPublishMenuButton());
 
-            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuManager);
+            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
 
             return rendered;
         }).catch((error) => {
@@ -139,8 +139,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager,
-                                           contentPublishMenuManager: ContentPublishMenuManager) {
+    private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
 
         this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
                                                fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
@@ -154,13 +153,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
             if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
-                contentPublishMenuManager.getPublishMenuButton().maximize();
+                ContentPublishMenuManager.getPublishMenuButton().maximize();
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                     nonMobileDetailsPanelsManager.hideActivePanel();
                     ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
                 }
             } else {
-                contentPublishMenuManager.getPublishMenuButton().minimize();
+                ContentPublishMenuManager.getPublishMenuButton().minimize();
             }
         });
     }

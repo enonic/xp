@@ -4,6 +4,8 @@
  */
 
 var CONFIG = require("../config");
+var fs = require("fs");
+var path = require("path");
 var gulp = require("gulp");
 var gulpSequence = require("gulp-sequence");
 var _ = require("lodash");
@@ -92,6 +94,28 @@ gulp.task('webpack', function (cb) {
 });
 
 /*
+ Finalizing tasks, like copying build sources after build
+ 1. Copy launcher to assets to be able to `require` it,
+ when building custom elements.
+ */
+gulp.task('webpack-after', ['webpack'], function (cb) {
+    var root = path.normalize(path.join('/', CONFIG.root.dest));
+    var assets = path.normalize(path.join('/', CONFIG.assets.dest));
+    var srcTemplate = "." + path.join(root, CONFIG.tasks.js.webpack.dest);
+
+    CONFIG.tasks.js.assets.forEach(function (name) {
+        var src = srcTemplate.replace(CONFIG.tasks.js.webpack.param, name);
+        var dest = "." + path.join(assets, 'js', (name + '.js'));
+        var f = fs.createWriteStream(dest);
+        f.on('finish', function () {
+            logger.log('Copied: ' + src + '\t->\t' + dest);
+        });
+        fs.createReadStream(src).pipe(f);
+    });
+    cb();
+});
+
+/*
  Main JS task
  */
-gulp.task('js', gulpSequence('ts:common', ['ts:live', 'webpack']));
+gulp.task('js', gulpSequence('ts:common', ['ts:live', 'webpack-after']));

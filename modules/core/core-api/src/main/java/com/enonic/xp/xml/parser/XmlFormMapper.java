@@ -155,6 +155,7 @@ public final class XmlFormMapper
         final FormOptionSet.Builder builder = FormOptionSet.create();
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
+        builder.helpText( root.getChildValue( "help-text" ) );
         builder.expanded( root.getChildValueAs( "expanded", Boolean.class, false ) );
         builder.helpText( root.getChildValue( "help-text" ) );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );

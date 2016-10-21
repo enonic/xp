@@ -109,15 +109,7 @@ module api.form {
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormOptionSet)) {
 
                     var formOptionSet: FormOptionSet = <FormOptionSet>formItem;
-                    var propertyArray: PropertyArray = propertySet.getPropertyArray(formOptionSet.getName());
 
-                    if (!propertyArray || propertyArray.getSize() == 0) {
-                        if (!this.context) {
-                            this.context = FormContext.create().setShowEmptyFormItemSetOccurrences(false).build();
-                        } else {
-                            this.context.setShowEmptyFormItemSetOccurrences(false);
-                        }
-                    }
                     var formOptionSetView = new api.form.FormOptionSetView(<FormOptionSetViewConfig>{
                         context: this.context,
                         formOptionSet: formOptionSet,
@@ -141,7 +133,7 @@ module api.form {
                     this.parentEl.appendChild(formOptionSetOptionView);
                     this.formItemViews.push(formOptionSetOptionView);
 
-                    layoutPromises.push(formOptionSetOptionView.layout());
+                    layoutPromises.push(formOptionSetOptionView.layout(validate));
                 }
             });
 

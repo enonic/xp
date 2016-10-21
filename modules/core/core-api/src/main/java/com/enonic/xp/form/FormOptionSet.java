@@ -39,6 +39,7 @@ public class FormOptionSet
 
         this.name = builder.name;
         this.label = builder.label;
+        this.helpText = builder.helpText;
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
@@ -88,6 +89,11 @@ public class FormOptionSet
         return expanded;
     }
 
+    public String getHelpText()
+    {
+        return helpText;
+    }
+
     @Override
     public FormItem copy()
     {
@@ -123,13 +129,14 @@ public class FormOptionSet
             Objects.equals( helpText, that.helpText ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) &&
             Objects.equals( occurrences, that.occurrences ) &&
-            Objects.equals( multiselection, that.multiselection );
+            Objects.equals( multiselection, that.multiselection ) &&
+            Objects.equals( helpText, that.helpText );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), name, label, expanded, optionSetOptions, occurrences );
+        return Objects.hash( super.hashCode(), name, label, expanded, optionSetOptions, occurrences, helpText );
     }
 
     public static Builder create()
@@ -149,6 +156,8 @@ public class FormOptionSet
         private String label;
 
         private boolean expanded = false;
+
+        private String helpText;
 
         private List<FormOptionSetOption> setOptionsList;
 

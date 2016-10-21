@@ -38,8 +38,11 @@ module api.form {
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
             var propertyArray = propertySet.getPropertyArray(this.formItemSet.getName());
             if (!propertyArray) {
-                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formItemSet.getName()).setParent(
-                    this.parentDataSet).build();
+                propertyArray = PropertyArray.create().
+                    setType(ValueTypes.DATA).
+                    setName(this.formItemSet.getName()).
+                    setParent(this.parentDataSet).
+                    build();
                 propertySet.addPropertyArray(propertyArray);
             }
             return propertyArray;
@@ -165,7 +168,7 @@ module api.form {
 
             return collapseButton;
         }
-        
+
         private handleFormItemSetOccurrenceViewValidityChanged(event: RecordingValidityChangedEvent) {
 
             if (!this.previousValidationRecording) {

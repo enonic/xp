@@ -37,7 +37,7 @@ module api.content.form.inputtype.customselector {
         private comboBox: RichComboBox<CustomSelectorItem>;
 
         private draggingIndex: number;
-        
+
         constructor(context: api.content.form.inputtype.ContentInputTypeViewContext) {
             super('custom-selector');
 
@@ -51,9 +51,15 @@ module api.content.form.inputtype.customselector {
 
         private readConfig(context: ContentInputTypeViewContext): void {
             let serviceUrl = context.inputConfig['service'][0]['value'],
+                serviceParams = context.inputConfig['param'] || [],
                 contentPath = context.contentPath.toString();
 
-            this.requestPath = StringHelper.format(CustomSelector.portalUrl, contentPath, serviceUrl);
+            let params = serviceParams.reduce((prev, curr) => {
+                prev[curr['@value']] = curr['value'];
+                return prev;
+            }, {});
+
+            this.requestPath = StringHelper.format(CustomSelector.portalUrl, contentPath, UriHelper.appendUrlParams(serviceUrl, params));
         }
 
         getValueType(): ValueType {
@@ -71,7 +77,7 @@ module api.content.form.inputtype.customselector {
             super.layout(input, propertyArray);
 
             this.comboBox = this.createComboBox(input, propertyArray);
-            
+
             this.appendChild(this.comboBox);
 
             this.setupSortable();
@@ -115,7 +121,7 @@ module api.content.form.inputtype.customselector {
                     this.getPropertyArray().add(value);
                 }
                 this.refreshSortable();
-                
+
                 this.ignorePropertyChange = false;
                 this.validate(false);
 

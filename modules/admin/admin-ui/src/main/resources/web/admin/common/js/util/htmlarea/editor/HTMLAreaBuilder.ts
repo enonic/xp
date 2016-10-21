@@ -21,6 +21,7 @@ module api.util.htmlarea.editor {
         private fixedToolbarContainer: string;
         private convertUrls: boolean = false;
         private hasActiveDialog: boolean = false;
+        private customToolConfig:any;
 
         private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
 
@@ -123,13 +124,18 @@ module api.util.htmlarea.editor {
         }
 
         private includeTools(tools: any[]) {
-            this.tools += " ";
             tools.forEach((tool: any) => {
-                this.tools += tool.value + " ";
+                this.includeTool(tool.value);
             });
         }
 
+        private includeTool(tool:string) {
+            this.tools += " " + tool;
+        }
+
         setTools(tools: any): HTMLAreaBuilder {
+            this.customToolConfig = tools;
+
             if (tools["exclude"] && tools["exclude"] instanceof Array) {
                 this.excludeTools(tools["exclude"]);
             }
@@ -148,6 +154,10 @@ module api.util.htmlarea.editor {
 
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
             this.checkRequiredFieldsAreSet();
+
+            if (this.inline && !this.isToolExcluded("code")) {
+                this.includeTool("code");
+            }
 
             var deferred = wemQ.defer<HtmlAreaEditor>();
 
@@ -334,6 +344,13 @@ module api.util.htmlarea.editor {
             this.hasActiveDialog = true;
             this.notifyCreateDialog(event);
             event.fire();
+        }
+
+        private isToolExcluded(tool:string):boolean {
+            if (!this.customToolConfig || !this.customToolConfig["exclude"]) {
+                return false;
+            }
+            return this.customToolConfig["exclude"].indexOf(tool) > -1;
         }
     }
 }
