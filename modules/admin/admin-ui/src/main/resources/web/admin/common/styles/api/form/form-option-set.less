@@ -53,6 +53,10 @@
                     }
                   }
                 }
+
+                .help-text p {
+                  color: @admin-font-gray1;
+                }
               }
             }
         }
@@ -115,7 +119,7 @@
 
         &:not(.expandable) {
 
-          border-bottom-color: @admin-blue;
+          border-bottom: 1px solid @admin-blue;
 
           > .form-input {
             label {
@@ -127,6 +131,10 @@
 
       &:not(:last-child):not(.selected) {
         border-bottom: 1px solid @admin-bg-light-gray;
+
+        &.expandable {
+          margin-bottom: 10px;
+        }
       }
 
       .option-items-container {
