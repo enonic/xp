@@ -43,7 +43,6 @@ public class FormOptionSet
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
-        this.helpText = builder.helpText;
         this.optionSetOptions = builder.setOptionsList.stream().collect( Collectors.toList() );
     }
 
@@ -77,11 +76,6 @@ public class FormOptionSet
     public Occurrences getMultiselection()
     {
         return multiselection;
-    }
-
-    public String getHelpText()
-    {
-        return helpText;
     }
 
     public boolean isExpanded()
@@ -156,8 +150,6 @@ public class FormOptionSet
         private String label;
 
         private boolean expanded = false;
-
-        private String helpText;
 
         private List<FormOptionSetOption> setOptionsList;
 

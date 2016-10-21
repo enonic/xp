@@ -51,18 +51,6 @@ module api.form {
             return this.label;
         }
 
-        getHelpText(): string {
-            return this.helpText;
-        }
-
-        isHelpTextOn(): boolean {
-            return this.helpTextIsOn;
-        }
-
-        toggleHelpText(show?: boolean) {
-            this.helpTextIsOn = show;
-        }
-
         isExpanded(): boolean {
             return this.expanded;
         }
@@ -135,10 +123,6 @@ module api.form {
             }
 
             if (!api.ObjectHelper.arrayEquals(this.options, other.options)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.stringEquals(this.helpText, other.helpText)) {
                 return false;
             }
 

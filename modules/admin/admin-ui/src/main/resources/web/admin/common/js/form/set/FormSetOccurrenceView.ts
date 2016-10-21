@@ -21,8 +21,6 @@ module api.form {
 
         protected formItemSetOccurrencesContainer: api.dom.DivEl;
 
-        protected helpText: HelpTextContainer;
-
         constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className, formItemOccurrence);
         }
@@ -50,12 +48,6 @@ module api.form {
                 }
             });
             return result;
-        }
-
-        toggleHelpText(show?: boolean) {
-            if (!!this.helpText) {
-                this.helpText.toggleHelpText(show);
-            }
         }
 
         showContainer(show: boolean) {
