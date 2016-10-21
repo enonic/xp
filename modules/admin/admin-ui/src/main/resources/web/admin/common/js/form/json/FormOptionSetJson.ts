@@ -8,6 +8,8 @@ module api.form.json {
 
         label: string;
 
+        helpText: string;
+
         occurrences: OccurrencesJson;
 
         multiselection: OccurrencesJson;

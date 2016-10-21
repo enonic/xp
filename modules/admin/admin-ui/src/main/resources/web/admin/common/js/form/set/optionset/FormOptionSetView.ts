@@ -280,5 +280,18 @@ module api.form {
 
             this.draggingIndex = -1;
         }
+
+        toggleHelpText(show?: boolean) {
+            if (!!this.formOptionSet.getHelpText()) {
+                this.formOptionSet.toggleHelpText(show);
+                this.formItemOccurrences.getOccurrenceViews().forEach((formSetOccurrenceView: FormSetOccurrenceView) => {
+                    formSetOccurrenceView.toggleHelpText(show);
+                })
+            }
+        }
+
+        hasHelpText(): boolean {
+            return !!this.formOptionSet.getHelpText();
+        }
     }
 }

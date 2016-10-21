@@ -2,6 +2,7 @@
   "FormOptionSet": {
     "expanded": false,
     "label": "My option set",
+    "helpText": "Help text",
     "multiselection": {
       "maximum": 3,
       "minimum": 1

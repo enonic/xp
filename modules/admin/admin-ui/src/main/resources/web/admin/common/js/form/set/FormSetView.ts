@@ -119,6 +119,10 @@ module api.form {
             return focusGiven;
         }
 
+        reset() {
+            this.formItemOccurrences.reset();
+        }
+
         onFocus(listener: (event: FocusEvent) => void) {
             this.formItemOccurrences.onFocus(listener);
         }

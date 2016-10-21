@@ -56,6 +56,11 @@ public class FormOptionSetJson
         return this.options;
     }
 
+    public String getHelpText()
+    {
+        return formOptionSet.getHelpText();
+    }
+
     @JsonIgnore
     @Override
     public FormOptionSet getFormItem()

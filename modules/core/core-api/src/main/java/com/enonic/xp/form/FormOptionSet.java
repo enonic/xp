@@ -27,6 +27,8 @@ public class FormOptionSet
 
     private final Occurrences multiselection;
 
+    private final String helpText;
+
     private FormOptionSet( Builder builder )
     {
         super();
@@ -37,6 +39,7 @@ public class FormOptionSet
 
         this.name = builder.name;
         this.label = builder.label;
+        this.helpText = builder.helpText;
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
@@ -80,6 +83,11 @@ public class FormOptionSet
         return expanded;
     }
 
+    public String getHelpText()
+    {
+        return helpText;
+    }
+
     @Override
     public FormItem copy()
     {
@@ -114,13 +122,14 @@ public class FormOptionSet
             Objects.equals( label, that.label ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) &&
             Objects.equals( occurrences, that.occurrences ) &&
-            Objects.equals( multiselection, that.multiselection );
+            Objects.equals( multiselection, that.multiselection ) &&
+            Objects.equals( helpText, that.helpText );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), name, label, expanded, optionSetOptions, occurrences );
+        return Objects.hash( super.hashCode(), name, label, expanded, optionSetOptions, occurrences, helpText );
     }
 
     public static Builder create()
@@ -141,6 +150,8 @@ public class FormOptionSet
 
         private boolean expanded = false;
 
+        private String helpText;
+
         private List<FormOptionSetOption> setOptionsList;
 
         private Occurrences occurrences = Occurrences.create( 0, 1 );
@@ -160,6 +171,7 @@ public class FormOptionSet
             this.expanded = source.expanded;
             this.occurrences = source.occurrences;
             this.multiselection = source.multiselection;
+            this.helpText = source.helpText;
         }
 
         public Builder name( final String name )
@@ -189,6 +201,12 @@ public class FormOptionSet
         public Builder multiselection( final Occurrences value )
         {
             multiselection = value;
+            return this;
+        }
+
+        public Builder helpText( String value )
+        {
+            helpText = value;
             return this;
         }
 
