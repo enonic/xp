@@ -3,6 +3,7 @@ package com.enonic.xp.content;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
@@ -28,6 +29,7 @@ public class ContentConstants
 
     public static final Repository CONTENT_REPO = Repository.create().
         id( RepositoryId.from( "cms-repo" ) ).
+        branches( Branches.from( BRANCH_DRAFT, BRANCH_MASTER ) ).
         build();
 
     public static final Context CONTEXT_DRAFT = ContextBuilder.create().

@@ -83,6 +83,7 @@ public class RepositoryNodeTranslator
 
         return Repository.create().
             id( RepositoryId.from( node.id().toString() ) ).
+            branches( todo ).
             settings( repositorySettings ).
             build();
     }

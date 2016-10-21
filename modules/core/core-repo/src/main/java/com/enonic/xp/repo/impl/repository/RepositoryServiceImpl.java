@@ -25,7 +25,6 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
@@ -67,7 +66,7 @@ public class RepositoryServiceImpl
         return repositorySettingsMap.compute( params.getRepositoryId(), ( key, previousValue ) -> {
 
             final Repository repository = createRepository( params, key, previousValue );
-            createRootNode( params, RepositoryConstants.MASTER_BRANCH );
+            createRootNodes( params );
             storeRepositoryEntry( repository );
 
             return repository;
@@ -97,21 +96,15 @@ public class RepositoryServiceImpl
         {
             throw new RepositoryAlreadyExistException( key );
         }
-
-        final Repository repository;
-
         if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
         {
-            repository = this.nodeRepositoryService.create( params );
+            this.nodeRepositoryService.create( params );
         }
-        else
-        {
-            repository = Repository.create().
-                id( params.getRepositoryId() ).
-                settings( params.getRepositorySettings() ).
-                build();
-        }
-        return repository;
+        return Repository.create().
+            id( params.getRepositoryId() ).
+            branches( params.getBranches() ).
+            settings( params.getRepositorySettings() ).
+            build();
     }
 
     private void storeRepositoryEntry( final Repository repository )
@@ -124,20 +117,24 @@ public class RepositoryServiceImpl
             build() );
     }
 
-    private void createRootNode( final CreateRepositoryParams params, final Branch branch )
+
+    private void createRootNodes( final CreateRepositoryParams params )
     {
-        final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
-            repositoryId( params.getRepositoryId() ).
-            branch( branch ).
-            build();
+        for ( Branch branch : params.getBranches() )
+        {
+            final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
+                repositoryId( params.getRepositoryId() ).
+                branch( branch ).
+                build();
 
-        final Node rootNode = this.nodeStorageService.store( Node.createRoot().
-            permissions( params.getRootPermissions() ).
-            inheritPermissions( params.isInheritPermissions() ).
-            childOrder( params.getRootChildOrder() ).
-            build(), rootNodeContext );
+            final Node rootNode = this.nodeStorageService.store( Node.createRoot().
+                permissions( params.getRootPermissions() ).
+                inheritPermissions( params.isInheritPermissions() ).
+                childOrder( params.getRootChildOrder() ).
+                build(), rootNodeContext );
 
-        LOG.info( "Created root node in  with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
+            LOG.info( "Created root node in  with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
+        }
     }
 
     private Branch doCreateBranch( final CreateBranchParams createBranchParams, final Repository currentRepo )
