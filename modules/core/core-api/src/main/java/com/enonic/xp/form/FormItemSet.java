@@ -6,55 +6,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 
 @Beta
 public class FormItemSet
-    extends FormItem
+    extends GenericFormItem
     implements Iterable<FormItem>
 {
-    private final String name;
-
-    private final String label;
-
     private final FormItems formItems;
 
     private final boolean immutable;
 
-    private final Occurrences occurrences;
-
     private final String customText;
 
-    private final String helpText;
-
-    private FormItemSet( Builder builder )
+    private FormItemSet( final Builder builder )
     {
-        super();
+        super( builder );
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
-
-        this.name = builder.name;
-        this.label = builder.label;
         this.immutable = builder.immutable;
-        this.occurrences = builder.occurrences;
         this.customText = builder.customText;
-        this.helpText = builder.helpText;
         this.formItems = new FormItems( this );
         for ( final FormItem formItem : builder.formItems )
         {
             this.formItems.add( formItem );
         }
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
     }
 
     @Override
@@ -68,16 +43,6 @@ public class FormItemSet
         this.formItems.add( formItem );
     }
 
-    public String getLabel()
-    {
-        return label;
-    }
-
-    public boolean isRequired()
-    {
-        return occurrences.impliesRequired();
-    }
-
     public boolean isImmutable()
     {
         return immutable;
@@ -88,19 +53,9 @@ public class FormItemSet
         return occurrences.isMultiple();
     }
 
-    public Occurrences getOccurrences()
-    {
-        return occurrences;
-    }
-
     public String getCustomText()
     {
         return customText;
-    }
-
-    public String getHelpText()
-    {
-        return helpText;
     }
 
     public FormItems getFormItems()
@@ -128,11 +83,8 @@ public class FormItemSet
 
         final FormItemSet that = (FormItemSet) o;
         return super.equals( o ) &&
-            Objects.equals( this.label, that.label ) &&
             Objects.equals( this.immutable, that.immutable ) &&
             Objects.equals( this.customText, that.customText ) &&
-            Objects.equals( this.helpText, that.helpText ) &&
-            Objects.equals( this.occurrences, that.occurrences ) &&
             Objects.equals( this.formItems, that.formItems );
     }
 
@@ -226,18 +178,11 @@ public class FormItemSet
     }
 
     public static class Builder
+        extends GenericFormItem.Builder
     {
-        private String name;
-
-        private String label;
-
         private boolean immutable;
 
-        private Occurrences occurrences = Occurrences.create( 0, 1 );
-
         private String customText;
-
-        private String helpText;
 
         private List<FormItem> formItems = new ArrayList<FormItem>();
 
@@ -248,12 +193,10 @@ public class FormItemSet
 
         public Builder( final FormItemSet source )
         {
-            this.name = source.name;
-            this.label = source.label;
+            super( source );
+
             this.immutable = source.immutable;
-            this.occurrences = source.occurrences;
             this.customText = source.customText;
-            this.helpText = source.helpText;
 
             for ( final FormItem formItemSource : source.formItems )
             {
