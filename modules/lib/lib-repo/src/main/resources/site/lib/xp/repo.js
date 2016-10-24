@@ -97,11 +97,11 @@ exports.get = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Branch ID.
- * @return {boolean} True if the branch was successfully created, false otherwise.
+ * @return {object} The branch (as JSON).
  *
  */
 exports.createBranch = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.repo.CreateBranchHandler');
     bean.branchId = required(params, 'id');
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
