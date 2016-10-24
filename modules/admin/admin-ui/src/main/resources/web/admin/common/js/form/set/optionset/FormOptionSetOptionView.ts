@@ -31,7 +31,7 @@ module api.form {
 
         private formItemLayer: FormItemLayer;
 
-        private selectionChangedListeners: {(view: FormOptionSetOptionView): void}[] = [];
+        private selectionChangedListeners: {(): void}[] = [];
 
         private checkbox: api.ui.Checkbox;
 
@@ -143,7 +143,7 @@ module api.form {
             return result;
         }
 
-        private getName(): string {
+        getName(): string {
             return this.formOptionSetOption.getName();
         }
 
@@ -175,7 +175,7 @@ module api.form {
                     }
                 }
                 this.selectHandle(button.getFirstChild());
-                this.notifySelectionChanged(this);
+                this.notifySelectionChanged();
             });
             if (!!selectedProperty) {
                 this.subscribeOnRadioDeselect(selectedProperty);
@@ -206,7 +206,7 @@ module api.form {
                 if (button.isChecked()) {
                     this.getSelectedOptionsArray().add(new Value(this.getName(), new api.data.ValueTypeString()));
                     this.selectHandle(button.getFirstChild());
-                    this.notifySelectionChanged(this);
+                    this.notifySelectionChanged();
                 } else {
                     var property = this.getThisPropertyFromSelectedOptionsArray();
                     if (!!property) {
@@ -378,18 +378,18 @@ module api.form {
             });
         }
 
-        onSelectionChanged(listener: (view: FormOptionSetOptionView)=> void) {
+        onSelectionChanged(listener: ()=> void) {
             this.selectionChangedListeners.push(listener);
         }
 
         unSelectionChanged(listener: ()=> void) {
-            this.selectionChangedListeners.filter((currentListener: (view: FormOptionSetOptionView) => void) => {
+            this.selectionChangedListeners.filter((currentListener: () => void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifySelectionChanged(viewToSkipValidation?: FormOptionSetOptionView) {
-            this.selectionChangedListeners.forEach((listener: (view: FormOptionSetOptionView) => void) => listener(viewToSkipValidation));
+        private notifySelectionChanged() {
+            this.selectionChangedListeners.forEach((listener: () => void) => listener());
         }
 
         giveFocus(): boolean {

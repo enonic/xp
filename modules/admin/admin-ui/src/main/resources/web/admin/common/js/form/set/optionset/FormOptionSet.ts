@@ -63,6 +63,10 @@ module api.form {
             return this.multiselection;
         }
 
+        isRadioSelection(): boolean {
+            return this.multiselection.getMinimum() == 1 && this.multiselection.getMaximum() == 1
+        }
+
         getHelpText(): string {
             return this.helpText;
         }
