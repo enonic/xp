@@ -39,7 +39,7 @@ public final class NodeQueryResultMapper
         {
             gen.map();
             gen.value( "id", nodeHit.getNodeId() );
-            gen.value( "score", nodeHit.getScore() == Float.NaN ? 0.0 : nodeHit.getScore() );
+            gen.value( "score", Float.isNaN( nodeHit.getScore() ) ? 0.0 : nodeHit.getScore() );
             gen.end();
         }
         gen.end();
