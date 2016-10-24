@@ -16,11 +16,17 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
+import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -37,6 +43,8 @@ import com.enonic.xp.security.SystemConstants;
 public class RepositoryServiceImpl
     implements RepositoryService
 {
+    private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
+
     private final ConcurrentMap<RepositoryId, Repository> repositorySettingsMap = Maps.newConcurrentMap();
 
     private IndexServiceInternal indexServiceInternal;
@@ -45,7 +53,9 @@ public class RepositoryServiceImpl
 
     private NodeStorageService nodeStorageService;
 
-    private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
+    private NodeSearchService nodeSearchService;
+
+    private EventPublisher eventPublisher;
 
     @SuppressWarnings("unused")
     @Activate
@@ -71,8 +81,8 @@ public class RepositoryServiceImpl
             {
                 throw new RepositoryAlreadyExistException( key );
             }
-            final Repository repository = createRepositoryObject( params );
             createRootNode( params, RepositoryConstants.MASTER_BRANCH );
+            final Repository repository = createRepositoryObject( params );
             storeRepositoryEntry( repository );
 
             return repository;
@@ -90,11 +100,12 @@ public class RepositoryServiceImpl
             {
                 throw new RepositoryNotFoundException( "Cannot create branch in repository [" + repositoryId + "], not found" );
             }
-            final Repository repository = createRepositoryObject( createBranchParams, previousRepository );
             pushRootNode( previousRepository, createBranchParams.getBranch() );
-            updateRepositoryEntry( repository );
-
-            return null;
+            final Repository repository = createRepositoryObject( createBranchParams, previousRepository );
+            final NodeId nodeId = NodeId.from( previousRepository.getId().toString() );
+            NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( createBranchParams.getBranch() );
+            updateRepositoryEntry( nodeId, nodeEditor );
+            return repository;
         } );
 
         return createBranchParams.getBranch();
@@ -149,12 +160,25 @@ public class RepositoryServiceImpl
             build() );
     }
 
-    private void updateRepositoryEntry( final Repository repository )
+    private void updateRepositoryEntry( final NodeId nodeId, final NodeEditor nodeEditor )
     {
-        final Node node = RepositoryNodeTranslator.toNode( repository );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            id( nodeId ).
+            editor( nodeEditor ).
+            build();
 
-        //TODO Update repository entry
-        todo
+        final Node updatedNode = UpdateNodeCommand.create().
+            params( updateNodeParams ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+
+        if ( updatedNode != null )
+        {
+            this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+        }
     }
 
     private void createRootNode( final CreateRepositoryParams params, final Branch branch )
@@ -230,5 +254,17 @@ public class RepositoryServiceImpl
     public void setNodeStorageService( final NodeStorageService nodeStorageService )
     {
         this.nodeStorageService = nodeStorageService;
+    }
+
+    @Reference
+    public void setNodeSearchService( final NodeSearchService nodeSearchService )
+    {
+        this.nodeSearchService = nodeSearchService;
+    }
+
+    @Reference
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }
