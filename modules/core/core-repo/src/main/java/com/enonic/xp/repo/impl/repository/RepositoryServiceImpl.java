@@ -24,6 +24,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -56,6 +57,8 @@ public class RepositoryServiceImpl
     private NodeSearchService nodeSearchService;
 
     private EventPublisher eventPublisher;
+
+    private BinaryService binaryService;
 
     @SuppressWarnings("unused")
     @Activate
@@ -139,10 +142,6 @@ public class RepositoryServiceImpl
 
     private Repository createRepositoryObject( final CreateRepositoryParams params )
     {
-        if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
-        {
-            this.nodeRepositoryService.create( params );
-        }
         return Repository.create().
             id( params.getRepositoryId() ).
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
@@ -166,23 +165,37 @@ public class RepositoryServiceImpl
             id( nodeId ).
             editor( nodeEditor ).
             build();
+        
+        final Context context = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build();
 
-        final Node updatedNode = UpdateNodeCommand.create().
-            params( updateNodeParams ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        context.callWith( () -> {
+            final Node updatedNode = UpdateNodeCommand.create().
+                params( updateNodeParams ).
+                indexServiceInternal( this.indexServiceInternal ).
+                storageService( this.nodeStorageService ).
+                searchService( this.nodeSearchService ).
+                binaryService( this.binaryService ).
+                build().
+                execute();
 
-        if ( updatedNode != null )
-        {
-            this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
-        }
+            if ( updatedNode != null )
+            {
+                this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+            }
+            return null;
+        } );
     }
 
     private void createRootNode( final CreateRepositoryParams params, final Branch branch )
     {
+        if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
+        {
+            this.nodeRepositoryService.create( params );
+        }
+
         final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
             repositoryId( params.getRepositoryId() ).
             branch( branch ).
@@ -266,5 +279,11 @@ public class RepositoryServiceImpl
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
+    }
+
+    @Reference
+    public void setBinaryService( final BinaryService binaryService )
+    {
+        this.binaryService = binaryService;
     }
 }
