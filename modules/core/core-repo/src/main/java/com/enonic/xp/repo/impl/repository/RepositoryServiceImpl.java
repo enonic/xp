@@ -103,10 +103,17 @@ public class RepositoryServiceImpl
             {
                 throw new RepositoryNotFoundException( "Cannot create branch in repository [" + repositoryId + "], not found" );
             }
-            pushRootNode( previousRepository, createBranchParams.getBranch() );
+
+            final Branch newBranch = createBranchParams.getBranch();
+            if ( previousRepository.getBranches().contains( newBranch ) )
+            {
+                throw new BranchAlreadyExistException( newBranch );
+            }
+
+            pushRootNode( previousRepository, newBranch );
             final Repository repository = createRepositoryObject( createBranchParams, previousRepository );
             final NodeId nodeId = NodeId.from( previousRepository.getId().toString() );
-            NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( createBranchParams.getBranch() );
+            NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( newBranch );
             updateRepositoryEntry( nodeId, nodeEditor );
             return repository;
         } );
@@ -165,7 +172,7 @@ public class RepositoryServiceImpl
             id( nodeId ).
             editor( nodeEditor ).
             build();
-        
+
         final Context context = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
             branch( SystemConstants.BRANCH_SYSTEM ).
@@ -213,14 +220,15 @@ public class RepositoryServiceImpl
     private Branch pushRootNode( final Repository currentRepo, final Branch branch )
     {
         final Context context = ContextAccessor.current();
-        final Node rootNode = this.nodeStorageService.get( Node.ROOT_UUID, InternalContext.from( context ) );
+        final InternalContext internalContext = InternalContext.create( context ).branch( RepositoryConstants.MASTER_BRANCH ).build();
+        final Node rootNode = this.nodeStorageService.get( Node.ROOT_UUID, internalContext );
 
         if ( rootNode == null )
         {
             throw new NodeNotFoundException( "Cannot find root-node in repository [" + currentRepo + "]" );
         }
 
-        this.nodeStorageService.push( rootNode, branch, InternalContext.from( context ) );
+        this.nodeStorageService.push( rootNode, branch, internalContext );
 
         return branch;
     }

@@ -89,3 +89,19 @@ exports.get = function (params) {
     bean.repositoryId = required(params, 'id');
     return __.toNativeObject(bean.execute());
 };
+
+/**
+ * Creates a branch
+ *
+ * @example-ref examples/repo/createBranch.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.id Branch ID.
+ * @return {object} The branch (as JSON).
+ *
+ */
+exports.createBranch = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.repo.CreateBranchHandler');
+    bean.branchId = required(params, 'id');
+    return __.toNativeObject(bean.execute());
+};
