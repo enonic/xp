@@ -3,30 +3,30 @@ package com.enonic.xp.server.impl.status;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 
 import static org.junit.Assert.*;
 
 public class JvmPropertiesReporterTest
-    extends BaseReporterTest
+    extends Base2ReporterTest<JvmPropertiesReporter>
 {
-    private JvmPropertiesReporter reporter;
-
-    @Override
-    protected void initialize()
+    public JvmPropertiesReporterTest()
     {
-        this.reporter = new JvmPropertiesReporter();
+        super( "jvm.properties", MediaType.JSON_UTF_8 );
     }
 
-    @Test
-    public void testName()
+    @Override
+    protected JvmPropertiesReporter newReporter()
+        throws Exception
     {
-        assertEquals( "jvm.properties", this.reporter.getName() );
+        return new JvmPropertiesReporter();
     }
 
     @Test
     public void testReport()
+        throws Exception
     {
-        final JsonNode json = this.reporter.getReport();
+        final JsonNode json = jsonReport();
         assertNotNull( json );
     }
 }

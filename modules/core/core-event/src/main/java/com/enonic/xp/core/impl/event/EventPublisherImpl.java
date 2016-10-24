@@ -9,16 +9,22 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.codahale.metrics.Counter;
 import com.google.common.collect.Queues;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.util.Metrics;
 
 @Component(immediate = true)
 public final class EventPublisherImpl
     implements EventPublisher
 {
+    private final static Counter COUNT_METRIC = Metrics.counter( EventPublisher.class, "count" );
+
+    private final static Counter DISTRIBUTED_METRIC = Metrics.counter( EventPublisher.class, "distributed" );
+
     private final Queue<Event> queue;
 
     private final EventMulticaster multicaster;
@@ -37,6 +43,12 @@ public final class EventPublisherImpl
     {
         if ( event != null )
         {
+            COUNT_METRIC.inc();
+            if ( event.isDistributed() )
+            {
+                DISTRIBUTED_METRIC.inc();
+            }
+
             this.queue.add( event );
             dispatchEvents();
         }

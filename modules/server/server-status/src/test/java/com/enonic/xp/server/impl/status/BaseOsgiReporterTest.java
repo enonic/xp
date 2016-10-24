@@ -3,10 +3,19 @@ package com.enonic.xp.server.impl.status;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
-public abstract class BaseOsgiReporterTest
-    extends BaseReporterTest
+import com.google.common.net.MediaType;
+
+import com.enonic.xp.status.StatusReporter;
+
+public abstract class BaseOsgiReporterTest<T extends StatusReporter>
+    extends Base2ReporterTest<T>
 {
-    protected final Bundle newBundle( final long id, final String name )
+    public BaseOsgiReporterTest( final String name )
+    {
+        super( name, MediaType.JSON_UTF_8 );
+    }
+
+    final Bundle newBundle( final long id, final String name )
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getBundleId() ).thenReturn( id );

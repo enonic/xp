@@ -3,12 +3,16 @@ package com.enonic.xp.web.jetty.impl;
 import javax.servlet.Servlet;
 
 import org.apache.felix.http.base.internal.EventDispatcher;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.codahale.metrics.jetty9.InstrumentedHandler;
+
+import com.enonic.xp.util.Metrics;
 import com.enonic.xp.web.jetty.impl.configurator.GZipConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
@@ -76,7 +80,10 @@ final class JettyService
         new MultipartConfigurator().configure( this.config, holder );
         new HttpConfigurator().configure( this.config, this.server );
 
-        this.server.setHandler( this.context );
+        final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
+        instrumentedHandler.setHandler( this.context );
+
+        this.server.setHandler( instrumentedHandler );
         this.eventDispatcher.setActive( true );
         this.server.start();
     }

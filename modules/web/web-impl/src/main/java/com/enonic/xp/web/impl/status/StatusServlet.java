@@ -60,7 +60,7 @@ public final class StatusServlet
         }
 
         final String name = path.substring( PATH_PREFIX_SLASH.length() ).trim();
-        reportFromReporter( res, name );
+        reportFromReporter( req, res, name );
     }
 
     private void reportMainInfo( final HttpServletResponse res )
@@ -69,7 +69,7 @@ public final class StatusServlet
         serializeJson( res, 200, getRootInfo() );
     }
 
-    private void reportFromReporter( final HttpServletResponse res, final String name )
+    private void reportFromReporter( final HttpServletRequest req, final HttpServletResponse res, final String name )
         throws IOException
     {
         final StatusReporter reporter = this.reporters.get( name );
@@ -81,7 +81,7 @@ public final class StatusServlet
 
         try
         {
-            serialize( res, reporter );
+            serialize( req, res, reporter );
         }
         catch ( final IOException e )
         {
@@ -93,14 +93,15 @@ public final class StatusServlet
         }
     }
 
-    private void serialize( final HttpServletResponse res, final StatusReporter reporter )
+    private void serialize( final HttpServletRequest req, final HttpServletResponse res, final StatusReporter reporter )
         throws IOException
     {
         res.setStatus( 200 );
         res.setContentType( reporter.getMediaType().toString() );
 
         final OutputStream out = res.getOutputStream();
-        reporter.write( out );
+        final StatusContextImpl context = new StatusContextImpl( req, out );
+        reporter.report( context );
         out.close();
     }
 

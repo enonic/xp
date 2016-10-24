@@ -5,19 +5,21 @@ import java.util.Properties;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 
-import static org.junit.Assert.*;
-
 public class ServerReporterTest
-    extends BaseReporterTest
+    extends Base2ReporterTest<ServerReporter>
 {
-    private ServerReporter reporter;
+    public ServerReporterTest()
+    {
+        super( "server", MediaType.JSON_UTF_8 );
+    }
 
     @Override
-    protected void initialize()
+    protected ServerReporter newReporter()
     {
         VersionInfo.set( "0.0.0" );
 
@@ -29,20 +31,16 @@ public class ServerReporterTest
         props.put( "xp.name", "demo" );
         props.put( "xp.runMode", "prod" );
 
-        this.reporter = new ServerReporter();
-        this.reporter.serverInfo = new ServerInfo( props );
-    }
-
-    @Test
-    public void testName()
-    {
-        assertEquals( "server", this.reporter.getName() );
+        final ServerReporter reporter = new ServerReporter();
+        reporter.serverInfo = new ServerInfo( props );
+        return reporter;
     }
 
     @Test
     public void testReport()
+        throws Exception
     {
-        final JsonNode json = this.reporter.getReport();
+        final JsonNode json = jsonReport();
         final JsonNode expected = this.helper.loadTestJson( "result.json" );
 
         this.helper.assertJsonEquals( expected, json );
