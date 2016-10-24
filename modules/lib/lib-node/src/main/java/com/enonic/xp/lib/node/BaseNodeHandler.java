@@ -1,6 +1,10 @@
 package com.enonic.xp.lib.node;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -29,5 +33,17 @@ public abstract class BaseNodeHandler
     {
         this.nodeService = context.getService( NodeService.class ).get();
         this.repositoryService = context.getService( RepositoryService.class ).get();
+    }
+
+    void validateRepo()
+    {
+        final RepositoryId repoId = ContextAccessor.current().getRepositoryId();
+
+        final Repository repository = this.repositoryService.get( repoId );
+
+        if ( repository == null )
+        {
+            throw new RepositoryNotFoundException( "Repository with id [" + repoId + "] not found" );
+        }
     }
 }

@@ -57,6 +57,10 @@ public final class ExceptionRendererImpl
     @Override
     public PortalResponse render( final WebRequest webRequest, final WebException cause )
     {
+
+        final ExceptionInfo info = toErrorInfo( cause );
+        logIfNeeded( info );
+
         if ( webRequest instanceof PortalRequest )
         {
             PortalRequest portalRequest = (PortalRequest) webRequest;

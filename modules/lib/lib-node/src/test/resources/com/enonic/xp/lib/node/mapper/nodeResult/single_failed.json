@@ -1,0 +1,10 @@
+{
+  "success": [],
+  "failed": [
+    {
+      "id": "a",
+      "reason": "ACCESS_DENIED"
+    }
+  ],
+  "deleted": []
+}

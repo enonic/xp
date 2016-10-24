@@ -1,0 +1,26 @@
+{
+  "success": [
+    "a",
+    "b",
+    "c"
+  ],
+  "failed": [
+    {
+      "id": "d",
+      "reason": "ACCESS_DENIED"
+    },
+    {
+      "id": "e",
+      "reason": "PARENT_NOT_FOUND"
+    },
+    {
+      "id": "f",
+      "reason": "PARENT_NOT_FOUND"
+    }
+  ],
+  "deleted": [
+    "g",
+    "h",
+    "i"
+  ]
+}

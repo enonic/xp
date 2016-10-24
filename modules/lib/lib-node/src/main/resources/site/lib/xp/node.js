@@ -90,6 +90,35 @@ exports.modify = function (params) {
     return __.toNativeObject(bean.execute());
 };
 
+exports.diff = function (params) {
+
+    var bean = __.newBean('com.enonic.xp.lib.node.DiffNodeHandler');
+    params = params || {};
+    bean.editor = __.toScriptValue(params.editor);
+    bean.key = required(params, 'key');
+    return __.toNativeObject(bean.execute());
+
+};
+
+exports.push = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.node.PushNodeHandler');
+    params = params || {};
+    bean.keys = required(params, 'keys');
+    bean.targetBranch = required(params, 'target');
+
+    if (params.resolve) {
+        bean.resolve = params.resolve;
+
+        bean.includeChildren = required(params.resolve, 'includeChildren');
+
+        if (params.resolve.exclude) {
+            bean.exclude = params.resolve.exclude;
+        }
+    }
+
+    return __.toNativeObject(bean.execute());
+};
+
 /**
  * This function fetches nodes. If key is defined, the fetched node will be returned as a JSON object or null if not found.
  * If keys is defined, the fetched nodes will be return as a JSON array.
