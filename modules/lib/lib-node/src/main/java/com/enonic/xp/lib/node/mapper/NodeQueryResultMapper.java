@@ -2,23 +2,23 @@ package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeHit;
+import com.enonic.xp.node.NodeHits;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public final class NodeResultMapper
+public final class NodeQueryResultMapper
     implements MapSerializable
 {
-    private final NodeIds nodeIds;
+    private final NodeHits nodeHits;
 
     private final long total;
 
     private final Aggregations aggregations;
 
-    public NodeResultMapper( final FindNodesByQueryResult result )
+    public NodeQueryResultMapper( final FindNodesByQueryResult result )
     {
-        this.nodeIds = result.getNodeIds();
+        this.nodeHits = result.getNodeHits();
         this.total = result.getTotalHits();
         this.aggregations = result.getAggregations();
     }
@@ -27,18 +27,19 @@ public final class NodeResultMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "total", this.total );
-        gen.value( "count", this.nodeIds.getSize() );
-        serialize( gen, this.nodeIds );
+        gen.value( "count", this.nodeHits.getSize() );
+        serialize( gen, this.nodeHits );
         serialize( gen, aggregations );
     }
 
-    private void serialize( final MapGenerator gen, final NodeIds nodeIds )
+    private void serialize( final MapGenerator gen, final NodeHits nodeHits )
     {
         gen.array( "hits" );
-        for ( NodeId nodeId : nodeIds )
+        for ( NodeHit nodeHit : nodeHits )
         {
             gen.map();
-            gen.value( "id", nodeId.toString() );
+            gen.value( "id", nodeHit.getNodeId() );
+            gen.value( "score", nodeHit.getScore() == Float.NaN ? 0.0 : nodeHit.getScore() );
             gen.end();
         }
         gen.end();

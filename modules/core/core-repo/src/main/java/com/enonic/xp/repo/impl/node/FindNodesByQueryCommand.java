@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
@@ -41,7 +42,7 @@ public class FindNodesByQueryCommand
 
         for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
         {
-            resultBuilder.addNodeId( resultEntry.getId() );
+            resultBuilder.addNodeHit( new NodeHit( resultEntry.getId(), resultEntry.getScore() ) );
         }
 
         return resultBuilder.build();

@@ -51,10 +51,12 @@ var expected = {
     "count": 2,
     "hits": [
         {
-            "id": "b186d24f-ac38-42ca-a6db-1c1bda6c6c26"
+            "id": "b186d24f-ac38-42ca-a6db-1c1bda6c6c26",
+            "score": 1.2300000190734863
         },
         {
-            "id": "350ba4a6-589c-498b-8af0-f183850e1120"
+            "id": "350ba4a6-589c-498b-8af0-f183850e1120",
+            "score": 1.399999976158142
         }
     ],
     "aggregations": {

@@ -9,7 +9,7 @@ import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeQuery;
 
 public class QueryNodeHandlerTest
@@ -55,8 +55,8 @@ public class QueryNodeHandlerTest
         Mockito.when( this.nodeService.findByQuery( Mockito.isA( NodeQuery.class ) ) ).
             thenReturn( FindNodesByQueryResult.create().
                 totalHits( 12902 ).
-                addNodeId( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).
-                addNodeId( NodeId.from( "350ba4a6-589c-498b-8af0-f183850e1120" ) ).
+                addNodeHit( NodeHit.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26", 1.23f ) ).
+                addNodeHit( NodeHit.from( "350ba4a6-589c-498b-8af0-f183850e1120", 1.40f ) ).
                 aggregations( agg ).
                 build() );
 

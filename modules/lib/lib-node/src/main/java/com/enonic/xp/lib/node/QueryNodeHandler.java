@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.enonic.xp.lib.node.mapper.NodeResultMapper;
+import com.enonic.xp.lib.node.mapper.NodeQueryResultMapper;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.AggregationQuery;
@@ -56,9 +56,9 @@ public final class QueryNodeHandler
         return convert( result );
     }
 
-    private NodeResultMapper convert( final FindNodesByQueryResult findQueryResult )
+    private NodeQueryResultMapper convert( final FindNodesByQueryResult findQueryResult )
     {
-        return new NodeResultMapper( findQueryResult );
+        return new NodeQueryResultMapper( findQueryResult );
     }
 
     public void setStart( final Integer start )
