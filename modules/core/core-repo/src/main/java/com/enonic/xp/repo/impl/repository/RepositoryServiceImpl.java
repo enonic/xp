@@ -20,6 +20,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -93,6 +94,16 @@ public class RepositoryServiceImpl
     }
 
     @Override
+    public Repository deleteRepository( final RepositoryId repositoryId )
+    {
+        return repositorySettingsMap.compute( repositoryId, ( key, previousRepository ) -> {
+            nodeRepositoryService.delete( repositoryId );
+            deleteRepositoryEntry( repositoryId );
+            return null;
+        } );
+    }
+
+    @Override
     public Branch createBranch( final CreateBranchParams createBranchParams )
     {
         final RepositoryId repositoryId = ContextAccessor.current().
@@ -137,7 +148,6 @@ public class RepositoryServiceImpl
         return Repositories.from( repositorySettingsMap.values() );
     }
 
-
     @Override
     public Repository get( final RepositoryId repositoryId )
     {
@@ -146,6 +156,7 @@ public class RepositoryServiceImpl
             return node == null ? null : RepositoryNodeTranslator.toRepository( node );
         } );
     }
+
 
     private Repository createRepositoryObject( final CreateRepositoryParams params )
     {
@@ -161,6 +172,15 @@ public class RepositoryServiceImpl
         final Node node = RepositoryNodeTranslator.toNode( repository );
 
         nodeStorageService.store( node, InternalContext.create( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build() );
+    }
+
+    private void deleteRepositoryEntry( final RepositoryId repositoryId )
+    {
+        final NodeIds nodeIds = NodeIds.from( repositoryId.toString() );
+        nodeStorageService.delete( nodeIds, InternalContext.create( ContextAccessor.current() ).
             repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build() );

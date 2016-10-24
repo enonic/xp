@@ -36,15 +36,23 @@ public class NodeRepositoryServiceImpl
     @Override
     public void create( final CreateRepositoryParams params )
     {
-        if ( !this.indexServiceInternal.isMaster() )
-        {
-            throw new RepositoryException( "Only master-nodes can initialize repositories" );
-        }
-
         createIndexes( params );
         applyMappings( params );
 
         checkClusterHealth();
+    }
+
+    @Override
+    public void delete( final RepositoryId repositoryId )
+    {
+        delete( repositoryId, IndexType.SEARCH );
+        delete( repositoryId, IndexType.SEARCH );
+    }
+
+    private void delete( final RepositoryId repositoryId, final IndexType indexType )
+    {
+        final String indexName = resolveIndexName( repositoryId, indexType );
+        indexServiceInternal.deleteIndices( indexName );
     }
 
     @Override
