@@ -6,50 +6,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Preconditions;
-
 public class FormOptionSet
-    extends FormItem
+    extends GenericFormItem
     implements Iterable<FormOptionSetOption>
 {
-
-    private final String name;
-
-    private final String label;
-
     private final boolean expanded;
 
     private final List<FormOptionSetOption> optionSetOptions;
 
-    private final Occurrences occurrences;
-
     private final Occurrences multiselection;
-
-    private final String helpText;
 
     private FormOptionSet( Builder builder )
     {
-        super();
+        super( builder );
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormOptionSet" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
-
-        this.name = builder.name;
-        this.label = builder.label;
-        this.helpText = builder.helpText;
         this.expanded = builder.expanded;
-        this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
         this.optionSetOptions = builder.setOptionsList.stream().collect( Collectors.toList() );
-    }
-
-    @Override
-    public String getName()
-    {
-        return this.name;
     }
 
     @Override
@@ -63,16 +36,6 @@ public class FormOptionSet
         return this.optionSetOptions;
     }
 
-    public String getLabel()
-    {
-        return label;
-    }
-
-    public Occurrences getOccurrences()
-    {
-        return occurrences;
-    }
-
     public Occurrences getMultiselection()
     {
         return multiselection;
@@ -83,9 +46,14 @@ public class FormOptionSet
         return expanded;
     }
 
-    public String getHelpText()
+    public boolean isRequired()
     {
-        return helpText;
+        return occurrences.impliesRequired();
+    }
+
+    public int getNumberOfDefaultOptions()
+    {
+        return (int) this.optionSetOptions.stream().filter( option -> option.isDefaultOption() ).count();
     }
 
     @Override
@@ -118,12 +86,8 @@ public class FormOptionSet
         final FormOptionSet that = (FormOptionSet) o;
         return super.equals( o ) &&
             Objects.equals( expanded, that.expanded ) &&
-            Objects.equals( name, that.name ) &&
-            Objects.equals( label, that.label ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) &&
-            Objects.equals( occurrences, that.occurrences ) &&
-            Objects.equals( multiselection, that.multiselection ) &&
-            Objects.equals( helpText, that.helpText );
+            Objects.equals( multiselection, that.multiselection );
     }
 
     @Override
@@ -143,18 +107,12 @@ public class FormOptionSet
     }
 
     public static class Builder
+        extends GenericFormItem.Builder
     {
-        private String name;
-
-        private String label;
 
         private boolean expanded = false;
 
-        private String helpText;
-
         private List<FormOptionSetOption> setOptionsList;
-
-        private Occurrences occurrences = Occurrences.create( 0, 1 );
 
         private Occurrences multiselection = Occurrences.create( 0, 1 );
 
@@ -165,13 +123,11 @@ public class FormOptionSet
 
         private Builder( final FormOptionSet source )
         {
+            super( source );
+
             this.setOptionsList = source.optionSetOptions;
-            this.name = source.name;
-            this.label = source.label;
             this.expanded = source.expanded;
-            this.occurrences = source.occurrences;
             this.multiselection = source.multiselection;
-            this.helpText = source.helpText;
         }
 
         public Builder name( final String name )
@@ -194,7 +150,7 @@ public class FormOptionSet
 
         public Builder occurrences( final Occurrences value )
         {
-            occurrences = value;
+            this.occurrences = value;
             return this;
         }
 
@@ -206,7 +162,7 @@ public class FormOptionSet
 
         public Builder helpText( String value )
         {
-            helpText = value;
+            this.helpText = value;
             return this;
         }
 

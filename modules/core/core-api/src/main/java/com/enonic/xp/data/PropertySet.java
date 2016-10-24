@@ -535,7 +535,7 @@ public final class PropertySet
         return this.propertyArrayByName.values();
     }
 
-    PropertyArray getPropertyArray( final String name )
+    public PropertyArray getPropertyArray( final String name )
     {
         return this.propertyArrayByName.get( name );
     }

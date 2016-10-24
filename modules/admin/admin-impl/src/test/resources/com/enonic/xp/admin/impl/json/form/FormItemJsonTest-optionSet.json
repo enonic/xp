@@ -1,8 +1,8 @@
 {
   "FormOptionSet": {
     "expanded": false,
-    "label": "My option set",
     "helpText": "Help text",
+    "label": "My option set",
     "multiselection": {
       "maximum": 3,
       "minimum": 1

@@ -115,6 +115,7 @@
       {
         "FormOptionSet": {
           "expanded": false,
+          "helpText": null,
           "label": "My option set",
           "multiselection": {
             "maximum": 1,

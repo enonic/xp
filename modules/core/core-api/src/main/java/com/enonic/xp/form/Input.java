@@ -15,19 +15,13 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 
 @Beta
 public final class Input
-    extends FormItem
+    extends GenericFormItem
 {
-    private final String name;
-
     private final InputTypeName type;
-
-    private final String label;
 
     private final InputTypeDefault defaultValue;
 
     private final boolean immutable;
-
-    private final Occurrences occurrences;
 
     private final boolean indexed;
 
@@ -35,34 +29,25 @@ public final class Input
 
     private final String validationRegexp;
 
-    private final String helpText;
-
     private final InputTypeConfig inputTypeConfig;
 
     private final boolean maximizeUIInputWidth;
 
     private Input( Builder builder )
     {
-        super();
+        super( builder );
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a Input" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a Input" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
         Preconditions.checkNotNull( builder.inputType, "inputType cannot be null" );
 
-        Preconditions.checkNotNull( builder.label, "a label is required for a Input" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.label ), "a label is required for a Input" );
+        Preconditions.checkNotNull( label, "a label is required for a Input" );
+        Preconditions.checkArgument( StringUtils.isNotBlank( label ), "a label is required for a Input" );
 
-        this.name = builder.name;
         this.type = builder.inputType;
-        this.label = builder.label;
         this.defaultValue = builder.defaultValue;
         this.immutable = builder.immutable;
-        this.occurrences = builder.occurrences;
         this.indexed = builder.indexed;
         this.customText = builder.customText;
         this.validationRegexp = builder.validationRegexp;
-        this.helpText = builder.helpText;
         this.inputTypeConfig = builder.inputTypeConfig.build();
         this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
     }
@@ -165,14 +150,11 @@ public final class Input
         final Input that = (Input) o;
         return super.equals( o ) &&
             Objects.equals( this.type, that.type ) &&
-            Objects.equals( this.label, that.label ) &&
             Objects.equals( this.defaultValue, that.defaultValue ) &&
             Objects.equals( this.immutable, that.immutable ) &&
-            Objects.equals( this.occurrences, that.occurrences ) &&
             Objects.equals( this.indexed, that.indexed ) &&
             Objects.equals( this.maximizeUIInputWidth, that.maximizeUIInputWidth ) &&
             Objects.equals( this.customText, that.customText ) &&
-            Objects.equals( this.helpText, that.helpText ) &&
             Objects.equals( this.validationRegexp, that.validationRegexp ) &&
             Objects.equals( this.inputTypeConfig, that.inputTypeConfig );
     }
@@ -181,8 +163,7 @@ public final class Input
     public int hashCode()
     {
         return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.immutable, this.occurrences, this.indexed,
-                             this.customText,
-                             this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth );
+                             this.customText, this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth );
     }
 
     public static Builder create()
@@ -196,26 +177,20 @@ public final class Input
     }
 
     public static class Builder
+        extends GenericFormItem.Builder
     {
-        private String name;
 
         private InputTypeName inputType;
-
-        private String label;
 
         private InputTypeDefault defaultValue;
 
         private boolean immutable = false;
-
-        private Occurrences occurrences = Occurrences.create( 0, 1 );
 
         private boolean indexed = false;
 
         private String customText;
 
         private String validationRegexp;
-
-        private String helpText;
 
         private final InputTypeConfig.Builder inputTypeConfig = InputTypeConfig.create();
 
@@ -228,15 +203,13 @@ public final class Input
 
         public Builder( final Input source )
         {
-            this.name = source.name;
+            super( source );
+
             this.inputType = source.type;
-            this.label = source.label;
             this.defaultValue = source.defaultValue;
-            this.occurrences = source.occurrences;
             this.indexed = source.indexed;
             this.customText = source.customText;
             this.validationRegexp = source.validationRegexp;
-            this.helpText = source.helpText;
             this.maximizeUIInputWidth = source.maximizeUIInputWidth;
 
             if ( source.inputTypeConfig != null )
