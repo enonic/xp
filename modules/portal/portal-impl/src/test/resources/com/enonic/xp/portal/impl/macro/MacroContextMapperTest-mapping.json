@@ -30,5 +30,6 @@
       "header1": "value1"
     },
     "cookies": {}
-  }
+  },
+  "document": "<h1>document</h1>"
 }

@@ -49,6 +49,8 @@ module api.content.site.inputtype.siteconfigurator {
 
             super.layout(input, propertyArray);
 
+            var deferred = wemQ.defer<void>();
+
             this.siteConfigProvider = new SiteConfigProvider(propertyArray);
             // ignore changes made to property by siteConfigProvider
             this.siteConfigProvider.onBeforePropertyChanged(() => this.ignorePropertyChange = true);
@@ -58,9 +60,11 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.appendChild(this.comboBox);
 
-            this.setLayoutInProgress(false);
-
-            return wemQ<void>(null);
+            this.comboBox.render().then(() => {
+                this.setLayoutInProgress(false);
+                deferred.resolve(null);
+            });
+            return deferred.promise;
         }
 
 
@@ -73,6 +77,10 @@ module api.content.site.inputtype.siteconfigurator {
                 }
                 return null;
             });
+        }
+
+        reset() {
+            this.comboBox.resetBaseValues();
         }
 
 

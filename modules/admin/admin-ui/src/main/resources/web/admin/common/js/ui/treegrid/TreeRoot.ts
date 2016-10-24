@@ -8,6 +8,8 @@ module api.ui.treegrid {
 
         private filtered: boolean;
 
+        private newlySelected: boolean;
+
         private currentSelection: TreeNode<DATA>[];
 
         private stashedSelection: TreeNode<DATA>[];
@@ -24,6 +26,7 @@ module api.ui.treegrid {
 
             this.stashedSelection = [];
 
+            this.updateNewlySelected([]);
         }
 
         getDefaultRoot(): TreeNode<DATA> {
@@ -78,11 +81,35 @@ module api.ui.treegrid {
             this.filtered = filtered;
         }
 
+        isNewlySelected(): boolean {
+            return this.newlySelected;
+        }
+
+        // Should be called before selection changed
+        private updateNewlySelected(newSelection: TreeNode<DATA>[]) {
+            const isEmpty = (selection: TreeNode<DATA>[]) => (!selection || selection.length === 0);
+            const isUnary = (selection: TreeNode<DATA>[]) => (selection.length === 1);
+            const isNew = (selection: TreeNode<DATA>) => {
+                return this.getFullSelection().map(el => el.getDataId()).every(id => id !== selection.getDataId());
+            };
+
+            const curr = this.currentSelection;
+            const stash = this.stashedSelection;
+
+            if (isUnary(newSelection) && isNew(newSelection[0])) {
+                this.newlySelected = isEmpty(stash);
+            } else { // isMultiary or isEmpty
+                this.newlySelected = isEmpty(curr) && isEmpty(stash);
+            }
+        }
+
         getCurrentSelection(): TreeNode<DATA>[] {
             return this.currentSelection;
         }
 
         setCurrentSelection(selection: TreeNode<DATA>[]) {
+            this.updateNewlySelected(selection);
+
             this.currentSelection = selection;
 
             this.cleanStashedSelection();

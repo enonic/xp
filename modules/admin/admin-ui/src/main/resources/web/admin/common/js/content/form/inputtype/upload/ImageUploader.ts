@@ -134,7 +134,7 @@ module api.content.form.inputtype.upload {
                     then((content: api.content.Content) => {
 
                         this.imageUploader.setOriginalDimensions(content);
-                        this.imageUploader.setValue(content.getId(), false, true);
+                    this.imageUploader.setValue(content.getId(), false, false);
 
                         this.configEditorsProperties(content);
 
@@ -143,6 +143,10 @@ module api.content.form.inputtype.upload {
                     });
             }
             return wemQ<void>(null);
+        }
+
+        reset() {
+            this.imageUploader.resetBaseValues();
         }
 
         private saveEditDataToProperty(crop: Rect, zoom: Rect, focus: Point) {

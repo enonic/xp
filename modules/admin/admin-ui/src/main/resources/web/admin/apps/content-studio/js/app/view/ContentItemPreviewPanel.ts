@@ -18,7 +18,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         super("content-item-preview-panel");
         this.image = new api.dom.ImgEl();
         this.image.onLoaded((event: UIEvent) => {
-            this.mask.hide();
+            this.hideMask();
             var imgEl = this.image.getEl();
             var myEl = this.getEl();
             this.centerImage(imgEl.getWidth(), imgEl.getHeight(), myEl.getWidth(), myEl.getHeight());
@@ -46,7 +46,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
         this.onHidden((event) => {
             if (this.mask.isVisible()) {
-                this.mask.hide();
+                this.hideMask();
             }
         });
 
@@ -154,13 +154,17 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
     private setNoPreview() {
         this.getEl().removeClass("image-preview page-preview svg-preview").addClass('no-preview');
         this.frame.setSrc("about:blank");
-        this.mask.hide();
+        this.hideMask();
     }
 
     private showMask() {
         if (this.isVisible()) {
             this.mask.show();
         }
+    }
+
+    private hideMask() {
+        this.mask.hide();
     }
 
 }

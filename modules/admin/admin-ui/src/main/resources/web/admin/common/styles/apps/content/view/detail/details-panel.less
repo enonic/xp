@@ -18,16 +18,32 @@
     display: none;
   }
 
-  &.no-selection {
-    .no-selection-message {
-      display: block;
+  .details-panel-view {
+    &.no-selection {
+      .no-selection-message {
+        display: block;
+      }
     }
-  }
 
-  .no-selection-message {
-    display: none;
+    .no-selection-message {
+      display: none;
 
-    .watermark-text();
+      .watermark-text();
+    }
+
+    .content-summary-viewer {
+      padding-top: 5px;
+      padding-bottom: 2px;
+
+      .font-icon-default {
+        width: 26px;
+        height: 26px;
+      }
+
+      h6 {
+        font-size: 13px;
+      }
+    }
   }
 
   .details-container {
@@ -146,7 +162,7 @@
         background: none;
         width: calc(~'100% - 40px');
         max-height: @widget-selector-height;
-        display: inline-block;
+        display: inline-block !important;
         border: 0px;
         position: absolute;
 

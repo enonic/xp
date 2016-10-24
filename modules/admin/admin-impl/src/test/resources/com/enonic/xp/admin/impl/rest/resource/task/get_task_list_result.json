@@ -1,0 +1,24 @@
+{
+  "tasks": [
+    {
+      "description": "My task",
+      "id": "123",
+      "progress": {
+        "current": 2,
+        "info": "Processing items",
+        "total": 10
+      },
+      "state": "RUNNING"
+    },
+    {
+      "description": "Old task",
+      "id": "666",
+      "progress": {
+        "current": 42,
+        "info": "Process completed",
+        "total": 42
+      },
+      "state": "FINISHED"
+    }
+  ]
+}

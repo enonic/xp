@@ -36,6 +36,10 @@ module api.ui.time {
             this.popup.onHidden(e => this.removeClass("expanded"));
         }
 
+        public resetBase() {
+            this.input.resetBaseValues();
+        }
+
         protected handleShownEvent() {
         }
 

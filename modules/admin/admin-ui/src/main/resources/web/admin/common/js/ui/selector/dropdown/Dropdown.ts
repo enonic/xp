@@ -44,9 +44,9 @@ module api.ui.selector.dropdown {
 
         private selectedOptionView: SelectedOptionView<OPTION_DISPLAY_VALUE>;
 
-        private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
+        private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void}[] = [];
 
-        private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
+        private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>): void}[] = [];
 
         private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
 
@@ -305,8 +305,10 @@ module api.ui.selector.dropdown {
 
         private setupListeners() {
             api.util.AppHelper.focusInOut(this, () => {
-                this.hideDropdown();
-                this.active = false;
+                if (this.isVisible()) {
+                    this.hideDropdown();
+                    this.active = false;
+                }
             });
 
             this.dropdownHandle.onClicked((event: any) => {
@@ -350,7 +352,7 @@ module api.ui.selector.dropdown {
                 else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
                     return;
                 }
-                
+
                 if (!this.isDropdownShown()) {
                     if (event.which == 40) { // down
                         this.input.setReadOnly(true);
@@ -362,7 +364,7 @@ module api.ui.selector.dropdown {
 
                     return;
                 }
-                
+
                 if (event.which == 38) { // up
                     this.dropdownList.navigateToPreviousRow();
                 } else if (event.which == 40) { // down
@@ -378,7 +380,7 @@ module api.ui.selector.dropdown {
                     event.stopPropagation();
                     event.preventDefault();
                 }
-                
+
                 this.input.getHTMLElement().focus();
             });
         }
@@ -405,17 +407,19 @@ module api.ui.selector.dropdown {
         }
 
         unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
-            this.optionFilterInputValueChangedListeners.filter((currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                return listener != currentListener;
-            })
+            this.optionFilterInputValueChangedListeners.filter(
+                (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                    return listener != currentListener;
+                })
         }
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
             var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
                 this.dropdownList.getDropdownGrid().getElement());
-            this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                listener(event);
-            });
+            this.optionFilterInputValueChangedListeners.forEach(
+                (listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                    listener(event);
+                });
         }
 
         onExpanded(listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) {

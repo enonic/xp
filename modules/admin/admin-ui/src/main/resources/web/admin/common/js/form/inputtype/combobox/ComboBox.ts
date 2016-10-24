@@ -87,6 +87,10 @@ module api.form.inputtype.combobox {
             }
         }
 
+        reset() {
+            this.comboBox.resetBaseValues();
+        }
+
         createComboBox(input: api.form.Input, propertyArray: PropertyArray): api.ui.selector.combobox.ComboBox<string> {
             var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
                 filter: this.comboBoxFilter,

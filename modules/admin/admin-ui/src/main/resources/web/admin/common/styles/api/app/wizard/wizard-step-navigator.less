@@ -1,6 +1,7 @@
 .wizard-step-navigator {
+  width: calc(~'100% - 56px');
+  max-width: 635px;
   display: inline-block;
-  margin-bottom: -4px;
   background-color: @admin-bg-light-gray;
   color: @admin-font-gray1;
   overflow: hidden;
@@ -50,6 +51,14 @@
 
     &:last-of-type {
       margin-right: 10px;
+    }
+  }
+}
+
+.form-panel {
+  &._0-240, &._240-360, &._360-540 {
+    .wizard-step-navigator {
+      width: calc(~'100% - 45px');
     }
   }
 }

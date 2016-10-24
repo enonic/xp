@@ -30,6 +30,11 @@ module LiveEdit {
     import Cursor = api.liveedit.Cursor;
     import DragAndDrop = api.liveedit.DragAndDrop;
     import Exception = api.Exception;
+    import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
+    import SkipLiveEditReloadConfirmationEvent = api.liveedit.SkipLiveEditReloadConfirmationEvent;
+    import InitializeLiveEditEvent = api.liveedit.InitializeLiveEditEvent;
+    import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
+    import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 
     export class LiveEditPage {
 
@@ -37,56 +42,101 @@ module LiveEdit {
 
         private skipNextReloadConfirmation: boolean = false;
 
+        private initializeListener: (event: InitializeLiveEditEvent) => void;
+
+        private skipConfirmationListener: (event: SkipLiveEditReloadConfirmationEvent) => void;
+
+        private beforeUnloadListener: (event) => void;
+
+        private unloadListener: (event) => void;
+
+        private componentLoadedListener: (event: ComponentLoadedEvent) => void;
+
+        private componentResetListener: (event: ComponentResetEvent) => void;
+
+        private dragStartedListener: () => void;
+
+        private dragStoppedListener: () => void;
+
+        private static debug: boolean = false;
+
         constructor() {
-
-            api.liveedit.SkipLiveEditReloadConfirmationEvent.on((event: api.liveedit.SkipLiveEditReloadConfirmationEvent) => {
+            this.skipConfirmationListener = (event: SkipLiveEditReloadConfirmationEvent) => {
                 this.skipNextReloadConfirmation = event.isSkip();
-            });
+            };
 
-            api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditEvent) => {
+            SkipLiveEditReloadConfirmationEvent.on(this.skipConfirmationListener);
 
-                var liveEditModel = event.getLiveEditModel();
+            this.initializeListener = this.init.bind(this);
 
-                var body = api.dom.Body.get().loadExistingChildren();
-                try {
-                    this.pageView = new PageViewBuilder().
-                        setItemViewProducer(new ItemViewIdProducer()).
-                        setLiveEditModel(liveEditModel).
-                        setElement(body).
-                        build();
-                } catch (error) {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
-                        new api.liveedit.LiveEditPageInitializationErrorEvent('The Live edit page could not be initialized. ' +
-                                                                              error.getMessage()).fire();
-                    } else {
-                        new api.liveedit.LiveEditPageInitializationErrorEvent('The Live edit page could not be initialized. ' +
-                                                                              error).fire();
-                    }
-                    return;
-                }
-
-                DragAndDrop.init(this.pageView);
-
-                api.ui.Tooltip.allowMultipleInstances(false);
-
-                this.registerGlobalListeners();
-
-                new api.liveedit.LiveEditPageViewReadyEvent(this.pageView).fire();
-            });
+            InitializeLiveEditEvent.on(this.initializeListener);
         }
 
+        private init(event: InitializeLiveEditEvent) {
+            var startTime = Date.now();
+            if (LiveEditPage.debug) {
+                console.debug("LiveEditPage: starting live edit initialization");
+            }
+
+            var liveEditModel = event.getLiveEditModel();
+
+            var body = api.dom.Body.get().loadExistingChildren();
+            try {
+                this.pageView = new PageViewBuilder()
+                    .setItemViewProducer(new ItemViewIdProducer())
+                    .setLiveEditModel(liveEditModel)
+                    .setElement(body).build();
+            } catch (error) {
+                if (LiveEditPage.debug) {
+                    console.error("LiveEditPage: error initializing live edit in " + (Date.now() - startTime) + "ms");
+                }
+                if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
+                    new LiveEditPageInitializationErrorEvent('The Live edit page could not be initialized. ' +
+                                                             error.getMessage()).fire();
+                } else {
+                    new LiveEditPageInitializationErrorEvent('The Live edit page could not be initialized. ' +
+                                                             error).fire();
+                }
+                return;
+            }
+
+            DragAndDrop.init(this.pageView);
+
+            api.ui.Tooltip.allowMultipleInstances(false);
+
+            this.registerGlobalListeners();
+
+            if (LiveEditPage.debug) {
+                console.debug("LiveEditPage: done live edit initializing in " + (Date.now() - startTime) + "ms");
+            }
+            new LiveEditPageViewReadyEvent(this.pageView).fire();
+        }
+
+        public destroy(win: Window = window): void {
+            if (LiveEditPage.debug) {
+                console.debug("LiveEditPage.destroy", win);
+            }
+
+            SkipLiveEditReloadConfirmationEvent.un(this.skipConfirmationListener, win);
+
+            InitializeLiveEditEvent.un(this.initializeListener, win);
+
+            this.unregisterGlobalListeners();
+        }
 
         private registerGlobalListeners(): void {
 
-            api.dom.WindowDOM.get().onBeforeUnload((event) => {
+            this.beforeUnloadListener = (event) => {
                 if (!this.skipNextReloadConfirmation) {
                     var message = "This will close this wizard!";
                     (event || window.event)['returnValue'] = message;
                     return message;
                 }
-            });
+            };
 
-            api.dom.WindowDOM.get().onUnload((event) => {
+            api.dom.WindowDOM.get().onBeforeUnload(this.beforeUnloadListener);
+
+            this.unloadListener = (event) => {
 
                 if (!this.skipNextReloadConfirmation) {
                     new api.liveedit.PageUnloadedEvent(this.pageView).fire();
@@ -95,22 +145,28 @@ module LiveEdit {
                     this.skipNextReloadConfirmation = false;
                 }
                 this.pageView.remove();
-            });
+            };
 
-            api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
+            api.dom.WindowDOM.get().onUnload(this.unloadListener);
+
+            this.componentLoadedListener = (event: ComponentLoadedEvent) => {
 
                 if (api.liveedit.layout.LayoutItemType.get().equals(event.getNewComponentView().getType())) {
                     DragAndDrop.get().createSortableLayout(event.getNewComponentView());
                 } else {
                     DragAndDrop.get().refreshSortable();
                 }
-            });
+            };
 
-            ComponentResetEvent.on((event: ComponentResetEvent) => {
+            api.liveedit.ComponentLoadedEvent.on(this.componentLoadedListener);
+
+            this.componentResetListener = (event: ComponentResetEvent) => {
                 DragAndDrop.get().refreshSortable();
-            });
+            };
 
-            ComponentViewDragStartedEvent.on(() => {
+            ComponentResetEvent.on(this.componentResetListener);
+
+            this.dragStartedListener = () => {
                 Highlighter.get().hide();
                 SelectedHighlighter.get().hide();
                 Shader.get().hide();
@@ -118,16 +174,36 @@ module LiveEdit {
 
                 // dragging anything should exit the text edit mode
                 //this.exitTextEditModeIfNeeded();
-            });
+            };
 
-            ComponentViewDragStoppedEvent.on(() => {
+            ComponentViewDragStartedEvent.on(this.dragStartedListener);
+
+            this.dragStoppedListener = () => {
                 Cursor.get().reset();
 
-                if(this.pageView.isLocked()) {
+                if (this.pageView.isLocked()) {
                     Highlighter.get().hide();
                     Shader.get().shade(this.pageView);
                 }
-            });
+            };
+
+            ComponentViewDragStoppedEvent.on(this.dragStoppedListener);
+
+        }
+
+        private unregisterGlobalListeners(): void {
+
+            api.dom.WindowDOM.get().unBeforeUnload(this.beforeUnloadListener);
+
+            api.dom.WindowDOM.get().unUnload(this.unloadListener);
+
+            api.liveedit.ComponentLoadedEvent.un(this.componentLoadedListener);
+
+            ComponentResetEvent.un(this.componentResetListener);
+
+            ComponentViewDragStartedEvent.un(this.dragStartedListener);
+
+            ComponentViewDragStoppedEvent.un(this.dragStoppedListener);
 
         }
 

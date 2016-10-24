@@ -27,7 +27,6 @@ module api.content.form.inputtype.image {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
-    import ContentSelectorLoader = api.content.form.inputtype.contentselector.ContentSelectorLoader;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
@@ -206,7 +205,7 @@ module api.content.form.inputtype.image {
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
                                    [ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()];
 
-            var contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
+            var imageSelectorLoader = ImageSelectorLoader.create().setContent(this.config.content).
                 setInputName(inputName).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(contentTypes).
@@ -214,9 +213,7 @@ module api.content.form.inputtype.image {
                 build();
 
             var contentComboBox: ImageContentComboBox
-                    = ImageContentComboBox.create().
-                    setMaximumOccurrences(maximumOccurrences).
-                    setLoader(contentSelectorLoader).
+                    = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(imageSelectorLoader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     setValue(value).
                     build(),
@@ -322,6 +319,10 @@ module api.content.form.inputtype.image {
                     this.contentComboBox.setValue(this.getValueFromPropertyArray(propertyArray));
                 }
             });
+        }
+
+        reset() {
+            this.contentComboBox.resetBaseValues();
         }
 
         private createUploader(): api.content.image.ImageUploaderEl {

@@ -315,7 +315,7 @@ exports.createMedia = function (params) {
  * @param {string} params.target New path or name for the content. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the content.
  * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
- * @returns {boolean} True if the content was successfully moved or renamed, false otherwise.
+ * @returns {object} The content that was moved or renamed.
  */
 exports.move = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.MoveContentHandler');

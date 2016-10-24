@@ -75,6 +75,10 @@ module api.app.wizard {
 
         private toggleMinimizeListener: (event: api.ui.ActivatedEvent) => void;
 
+        private helpTextToggleButton: api.dom.DivEl;
+
+        private helpTextShown: boolean = false;
+
         private scrollPosition: number = 0;
 
         private wizardHeaderCreatedListeners: any[] = [];
@@ -197,7 +201,13 @@ module api.app.wizard {
                         this.doRenderOnDataLoaded(rendered).then((rendered) => {
 
                             this.doLayout(this.getPersistedItem())
-                                .then(() => deferred.resolve(rendered))
+                                .then(() => {
+                                    deferred.resolve(rendered);
+
+                                    if (this.hasHelpText()) {
+                                        this.setupHelpTextToggleButton();
+                                    }
+                                })
                                 .catch(reason => {
                                     deferred.reject(reason);
                                     api.DefaultErrorHandler.handle(reason);
@@ -286,7 +296,11 @@ module api.app.wizard {
             return this.stepToolbar;
         }
 
-        protected doRenderOnDataLoaded(rendered: boolean): wemQ.Promise<boolean> {
+        protected doRenderOnDataLoaded(rendered: boolean, delayMask?: boolean): wemQ.Promise<boolean> {
+            let formMaskFn = () => {
+                this.formMask = new api.ui.mask.LoadMask(this.formPanel);
+                this.formMask.show();
+            };
             if (WizardPanel.debug) {
                 console.debug("WizardPanel.doRenderOnDataLoaded");
             }
@@ -304,8 +318,11 @@ module api.app.wizard {
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel: formPanel.onAdded");
                 }
-                this.formMask = new api.ui.mask.LoadMask(this.formPanel);
-                this.formMask.show();
+                if (delayMask) {
+                    setTimeout(formMaskFn, 1);
+                } else {
+                    formMaskFn();
+                }
             });
 
             var firstShow;
@@ -406,7 +423,6 @@ module api.app.wizard {
                         console.debug("WizardPanel: livePanel.onAdded");
                     }
                     this.liveMask = new api.ui.mask.LoadMask(this.livePanel);
-                    this.liveMask.show();
                 });
 
                 this.livePanel.onRendered((event) => {
@@ -526,6 +542,8 @@ module api.app.wizard {
                 this.splitPanel.hideSplitter();
                 this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
 
+                this.helpTextToggleButton.hide();
+
                 this.stepNavigator.onNavigationItemActivated(this.toggleMinimizeListener);
             } else {
                 this.splitPanel.loadPanelSizesAndDistribute();
@@ -535,10 +553,35 @@ module api.app.wizard {
                 this.stepsPanel.setListenToScroll(true);
                 this.stepNavigator.setScrollEnabled(true);
 
+                this.helpTextToggleButton.show();
+
                 this.stepNavigator.selectNavigationItem(navigationIndex, false, true);
             }
         }
 
+        private toggleHelpTextShown() {
+            this.helpTextShown = !this.helpTextShown;
+            this.helpTextToggleButton.toggleClass("on", this.helpTextShown);
+
+            this.steps.forEach((step: WizardStep) => {
+                step.toggleHelpText(this.helpTextShown);
+            });
+        }
+
+        hasHelpText(): boolean {
+            return this.steps.some((step: WizardStep) => {
+                return step.hasHelpText();
+            });
+        }
+
+        private setupHelpTextToggleButton() {
+            this.helpTextToggleButton = this.stepNavigatorAndToolbarContainer.setupHelpTextToggleButton();
+
+            this.helpTextToggleButton.onClicked(() => {
+                this.toggleHelpTextShown();
+            });
+        }
+        
         isMinimized(): boolean {
             return this.minimized;
         }

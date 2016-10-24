@@ -11,8 +11,7 @@ var liveEditPage: LiveEdit.LiveEditPage;
 wemjq(document).ready(() => {
 
     if (liveEditPage) {
-        // WTF: there may be more than 1 ready events !!!
-        return;
+        liveEditPage.destroy();
     }
 
     liveEditPage = new LiveEdit.LiveEditPage();

@@ -58,6 +58,10 @@ module api.form {
             throw new Error("Must be implemented by inheritors");
         }
 
+        reset() {
+            throw new Error("Must be implemented by inheritors");
+        }
+
         getContext(): FormContext {
             return this.context;
         }
@@ -114,6 +118,14 @@ module api.form {
 
         unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             //Should be implemented in child classes
+        }
+
+        toggleHelpText(show?: boolean) {
+            // TO BE IMPLEMENTED BY INHERITORS
+        }
+
+        hasHelpText(): boolean {
+            return false;
         }
     }
 }

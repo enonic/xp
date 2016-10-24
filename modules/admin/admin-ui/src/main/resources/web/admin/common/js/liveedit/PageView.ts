@@ -50,13 +50,13 @@ module api.liveedit {
 
         private fragmentView: ComponentView<Component>;
 
-        private viewsById: {[s:number] : ItemView;};
+        private viewsById: {[s: number]: ItemView;};
 
         private ignorePropertyChanges: boolean;
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent): void}[];
 
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent): void}[];
 
         private pageLockedListeners: {(locked: boolean): void}[];
 
@@ -81,6 +81,10 @@ module api.liveedit {
         private closeTextEditModeButton: api.dom.Element;
 
         private editorToolbar: api.dom.DivEl;
+
+        private highlightingAllowed:boolean;
+
+        private nextClickDisabled:boolean;
 
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
@@ -125,6 +129,8 @@ module api.liveedit {
             this.pageLockedListeners = [];
             this.ignorePropertyChanges = false;
             this.disableContextMenu = false;
+            this.highlightingAllowed = true;
+            this.nextClickDisabled = false;
 
             var inspectAction = new api.ui.Action("Inspect").onExecuted(() => {
                 new PageInspectedEvent().fire();
@@ -182,15 +188,15 @@ module api.liveedit {
                 });
             };
 
-            super(new ItemViewBuilder().
-                setLiveEditModel(builder.liveEditModel).
-                setItemViewIdProducer(builder.itemViewProducer).
-                setPlaceholder(new PagePlaceholder(this)).
-                setViewer(new api.content.ContentSummaryViewer()).
-                setType(PageItemType.get()).
-                setElement(builder.element).
-                setContextMenuActions(this.unlockedScreenActions).
-                setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
+            super(new ItemViewBuilder()
+                .setLiveEditModel(builder.liveEditModel)
+                .setItemViewIdProducer(builder.itemViewProducer)
+                .setPlaceholder(new PagePlaceholder(this))
+                .setViewer(new api.content.ContentSummaryViewer())
+                .setType(PageItemType.get())
+                .setElement(builder.element)
+                .setContextMenuActions(this.unlockedScreenActions)
+                .setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
 
             this.addClassEx('page-view');
 
@@ -262,15 +268,16 @@ module api.liveedit {
         private setIgnorePropertyChanges(value: boolean) {
             this.ignorePropertyChanges = value;
         }
-/*
-        highlight() {
-            // Don't highlight page
-        }
 
-        unhighlight() {
-            // Don't highlight page on hover
-        }
-*/
+        /*
+         highlight() {
+         // Don't highlight page
+         }
+
+         unhighlight() {
+         // Don't highlight page on hover
+         }
+         */
         highlightSelected() {
             var isDragging = DragAndDrop.get().isDragging();
             if (!this.isTextEditMode() && !this.isLocked() && !isDragging) {
@@ -313,7 +320,8 @@ module api.liveedit {
             });
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, rightClicked: boolean = false) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
+               rightClicked: boolean = false) {
             super.select(clickPosition, menuPosition, false, rightClicked);
 
             new PageSelectedEvent(this).fire();
@@ -453,6 +461,7 @@ module api.liveedit {
         }
 
         setTextEditMode(flag: boolean) {
+            this.setHighlightingAllowed(!flag);
             this.toggleClass('text-edit-mode', flag);
 
             var textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
@@ -723,7 +732,7 @@ module api.liveedit {
             if (!path) {
                 return this.fragmentView;
             }
-            
+
             var firstLevelOfPath = path.getFirstLevel();
 
             for (var i = 0; i < this.regionViews.length; i++) {
@@ -824,11 +833,11 @@ module api.liveedit {
                     region = pageRegions.getRegionByName(regionName);
 
                     if (region) {
-                        regionView = new RegionView(new RegionViewBuilder().
-                            setLiveEditModel(this.liveEditModel).
-                            setParentView(this).
-                            setRegion(region).
-                            setElement(childElement));
+                        regionView =
+                            new RegionView(new RegionViewBuilder()
+                                .setLiveEditModel(this.liveEditModel)
+                                .setParentView(this).setRegion(region)
+                                .setElement(childElement));
 
                         this.registerRegionView(regionView);
                     }
@@ -925,6 +934,22 @@ module api.liveedit {
 
         isDisabledContextMenu(): boolean {
             return this.disableContextMenu;
+        }
+
+        setHighlightingAllowed(value:boolean) {
+            this.highlightingAllowed = value;
+        }
+
+        setNextClickDisabled(value:boolean) {
+            this.nextClickDisabled = value;
+        }
+
+        isHighlightingAllowed():boolean {
+            return this.highlightingAllowed;
+        }
+
+        isNextClickDisabled():boolean {
+            return this.nextClickDisabled;
         }
     }
 }

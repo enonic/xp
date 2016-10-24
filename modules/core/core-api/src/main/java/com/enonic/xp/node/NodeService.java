@@ -17,6 +17,8 @@ public interface NodeService
 
     PushNodesResult push( NodeIds ids, Branch target );
 
+    PushNodesResult push( NodeIds ids, Branch target, PushNodesListener pushListener );
+
     NodeIds deleteById( NodeId id );
 
     NodeIds deleteByPath( NodePath path );
@@ -29,7 +31,7 @@ public interface NodeService
 
     Nodes getByPaths( NodePaths paths );
 
-    Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor );
+    Node duplicate( NodeId nodeId, DuplicateNodeProcessor processor );
 
     Node move( NodeId nodeId, NodePath parentNodePath );
 
@@ -47,7 +49,7 @@ public interface NodeService
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
-    NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId );
+    NodeVersionId setActiveVersion( NodeId nodeId, NodeVersionId nodeVersionId );
 
     Node setChildOrder( SetNodeChildOrderParams params );
 
@@ -61,7 +63,7 @@ public interface NodeService
 
     RestoreResult restore( RestoreParams params );
 
-    DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param );
+    DeleteSnapshotsResult deleteSnapshot( DeleteSnapshotParams param );
 
     SnapshotResults listSnapshots();
 
@@ -71,21 +73,21 @@ public interface NodeService
 
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
 
-    String getBinaryKey( final NodeId nodeId, final BinaryReference reference );
+    String getBinaryKey( NodeId nodeId, BinaryReference reference );
 
     Node createRootNode( CreateRootNodeParams params );
 
-    SetNodeStateResult setNodeState( final SetNodeStateParams params );
+    SetNodeStateResult setNodeState( SetNodeStateParams params );
 
     Node getRoot();
 
-    ImportNodeResult importNode( final ImportNodeParams params );
+    ImportNodeResult importNode( ImportNodeParams params );
 
-    NodesHasChildrenResult hasChildren( final Nodes nodes );
+    NodesHasChildrenResult hasChildren( Nodes nodes );
 
-    boolean hasChildren( final Node node );
+    boolean hasChildren( Node node );
 
-    boolean nodeExists( final NodeId nodeId );
+    boolean nodeExists( NodeId nodeId );
 
-    boolean nodeExists( final NodePath nodePath );
+    boolean nodeExists( NodePath nodePath );
 }

@@ -14,6 +14,7 @@ import SelectionItem = api.app.browse.SelectionItem;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
+import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
@@ -129,11 +130,13 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.ignoreItemsChanged = value;
     }
 
-    show() {
+    show(hideLoadMask: boolean = false) {
         api.dom.Body.get().appendChild(this);
         super.show();
-        this.appendChildToContentPanel(this.loadMask);
-        this.loadMask.show();
+        if (!hideLoadMask) {
+            this.appendChildToContentPanel(this.loadMask);
+            this.loadMask.show();
+        }
     }
 
     close() {
@@ -155,8 +158,27 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         }
     }
 
+    private extendsWindowHeightSize(): boolean {
+        if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
+            var el = this.getEl(),
+                bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty('top')) || 0) +
+                                         el.getMarginTop() +
+                                         el.getHeightWithBorder() +
+                                         el.getMarginBottom();
+
+            if (window.innerHeight < bottomPosition) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.setItems(items);
+        
+        if (this.extendsWindowHeightSize()) {
+            this.centerMyself();
+        }
     }
 
     addDependantItems(items: ContentSummaryAndCompareStatus[]) {
@@ -168,7 +190,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     }
 
     protected updateButtonCount(actionString: string, count: number) {
-        this.actionButton.setLabel(count > 1 ? actionString + "(" + count + ")" : actionString);
+        this.actionButton.setLabel(count > 1 ? actionString + " (" + count + ")" : actionString);
     }
 
     protected loadDescendantIds(filterStatuses?: CompareStatus[]) {
@@ -244,11 +266,13 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     }
 
     protected showLoadingSpinner() {
+        this.actionButton.setEnabled(false);
         this.actionButton.addClass("spinner");
     }
 
     protected hideLoadingSpinner() {
         this.actionButton.removeClass("spinner");
+        this.actionButton.setEnabled(true);
     }
 
 }

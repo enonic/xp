@@ -1,0 +1,20 @@
+language: java
+sudo: false
+
+jdk:
+- oraclejdk8
+
+script: ./gradlew clean ci
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

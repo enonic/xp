@@ -146,7 +146,15 @@
       padding: 10px 15px;
     }
     .grid-row.active {
-      background-color: @admin-almost-white;
+      background-color: @admin-bg-light-gray;
+
+      h5, h6 {
+        color: @admin-black;
+      }
+
+      .@{_CLS_PREFIX}font-icon:before {
+        color: @admin-button-blue1;
+      }
     }
 
   }

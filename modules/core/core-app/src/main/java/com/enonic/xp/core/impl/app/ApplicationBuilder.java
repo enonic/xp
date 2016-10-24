@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.Map;
+
 import org.osgi.framework.Bundle;
 
 import com.google.common.base.Preconditions;
@@ -14,6 +16,8 @@ public final class ApplicationBuilder
     private ApplicationUrlResolver urlResolver;
 
     private ClassLoader classLoader;
+
+    private Map<String, String> config;
 
     public ApplicationBuilder bundle( final Bundle bundle )
     {
@@ -33,6 +37,12 @@ public final class ApplicationBuilder
         return this;
     }
 
+    public ApplicationBuilder config( final Map<String, String> config )
+    {
+        this.config = config;
+        return this;
+    }
+
     public Application build()
     {
         Preconditions.checkNotNull( this.bundle, "bundle is required" );
@@ -43,6 +53,6 @@ public final class ApplicationBuilder
             this.classLoader = new BundleClassLoader( this.bundle );
         }
 
-        return new ApplicationImpl( this.bundle, this.urlResolver, this.classLoader );
+        return new ApplicationImpl( this.bundle, this.urlResolver, this.classLoader, this.config );
     }
 }

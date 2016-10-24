@@ -103,8 +103,8 @@ module api.app.wizard {
         }
 
 
-        resetBaseValues(value: string) {
-            this.displayNameEl.resetBaseValues(value);
+        resetBaseValues() {
+            this.displayNameEl.resetBaseValues();
         }
 
         initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean, ignoreDirtyFlag: boolean = true) {

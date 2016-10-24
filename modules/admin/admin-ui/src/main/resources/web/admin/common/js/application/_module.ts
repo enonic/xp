@@ -6,6 +6,7 @@
 ///<reference path='ApplicationInstallResult.ts' />
 ///<reference path='GetApplicationRequest.ts' />
 ///<reference path='ListApplicationsRequest.ts' />
+///<reference path='ListApplicationKeysRequest.ts' />
 ///<reference path='ApplicationListResult.ts' />
 ///<reference path='ApplicationLoader.ts' />
 ///<reference path='SiteApplicationLoader.ts' />

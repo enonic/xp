@@ -34,7 +34,7 @@ module api.form {
 
         private collapseButton: api.dom.AEl;
 
-        private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: RecordingValidityChangedEvent): void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
 
@@ -59,11 +59,8 @@ module api.form {
         private getPropertyArray(propertySet: PropertySet): PropertyArray {
             var propertyArray = propertySet.getPropertyArray(this.formItemSet.getName());
             if (!propertyArray) {
-                propertyArray = PropertyArray.create().
-                    setType(ValueTypes.DATA).
-                    setName(this.formItemSet.getName()).
-                    setParent(this.parentDataSet).
-                    build();
+                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formItemSet.getName()).setParent(
+                    this.parentDataSet).build();
                 propertySet.addPropertyArray(propertyArray);
             }
             return propertyArray;
@@ -196,6 +193,10 @@ module api.form {
             this.parentDataSet = propertySet;
             var propertyArray = this.getPropertyArray(propertySet);
             return this.formItemSetOccurrences.update(propertyArray, unchangedOnly);
+        }
+
+        reset() {
+            this.formItemSetOccurrences.reset();
         }
 
         private handleFormItemSetOccurrenceViewValidityChanged(event: RecordingValidityChangedEvent) {
@@ -382,6 +383,7 @@ module api.form {
             this.draggingIndex = draggedElement.getSiblingIndex();
 
             ui.placeholder.html("Drop form item set here");
+            api.ui.DragHelper.get().setDropAllowed(true);
         }
 
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
@@ -393,8 +395,29 @@ module api.form {
 
                 this.formItemSetOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);
             }
+            api.ui.DragHelper.get().setDropAllowed(false);
+
+
+            this.occurrenceViewsContainer.getChildren().forEach(child => {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(child, FormItemSetOccurrenceView) && child.getId() == draggedElement.getId()) {
+                    (<FormItemSetOccurrenceView>child).layout();
+                }
+            });
 
             this.draggingIndex = -1;
+        }
+
+        toggleHelpText(show?: boolean) {
+            if (!!this.formItemSet.getHelpText()) {
+                this.formItemSet.toggleHelpText(show);
+                this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView) => {
+                    formItemSetOccurrenceView.toggleHelpText(show);
+                })
+            }
+        }
+
+        hasHelpText(): boolean {
+            return !!this.formItemSet.getHelpText();
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

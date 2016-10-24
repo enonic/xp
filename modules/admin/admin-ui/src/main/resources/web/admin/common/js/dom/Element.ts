@@ -381,11 +381,7 @@ module api.dom {
         }
 
         toggleClass(className: string, condition?: boolean): Element {
-            if (condition == false || condition == undefined && this.hasClass(className)) {
-                this.removeClass(className);
-            } else {
-                this.addClass(className);
-            }
+            this.el.toggleClass(className, condition);
             return this;
         }
 

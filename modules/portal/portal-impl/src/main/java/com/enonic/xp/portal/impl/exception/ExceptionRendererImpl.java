@@ -24,6 +24,7 @@ import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
+import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -53,6 +54,8 @@ public final class ExceptionRendererImpl
     private ContentService contentService;
 
     private AuthControllerService authControllerService;
+
+    private PostProcessor postProcessor;
 
     @Override
     public PortalResponse render( final WebRequest webRequest, final WebException cause )
@@ -93,7 +96,12 @@ public final class ExceptionRendererImpl
         {
             try
             {
-                return doRenderCustomError( req, cause, handlerMethod );
+                PortalResponse portalResponse = doRenderCustomError( req, cause, handlerMethod );
+                if ( portalResponse != null && portalResponse.isPostProcess() )
+                {
+                    portalResponse = this.postProcessor.processResponse( req, portalResponse );
+                }
+                return portalResponse;
             }
             catch ( Exception e )
             {
@@ -130,6 +138,10 @@ public final class ExceptionRendererImpl
                         renderApplicationCustomError( siteConfig.getApplicationKey(), portalError, handlerMethod );
                     if ( response != null )
                     {
+                        if ( response.isPostProcess() )
+                        {
+                            req.setApplicationKey( siteConfig.getApplicationKey() );
+                        }
                         return response;
                     }
                 }
@@ -278,4 +290,11 @@ public final class ExceptionRendererImpl
     {
         this.authControllerService = authControllerService;
     }
+
+    @Reference
+    public void setPostProcessor( final PostProcessor postProcessor )
+    {
+        this.postProcessor = postProcessor;
+    }
+
 }

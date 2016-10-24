@@ -150,5 +150,23 @@ module api.form {
                 return wemQ<void>(null);
             }).catch(api.DefaultErrorHandler.handle);
         }
+
+        reset() {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.reset();
+            });
+        }
+
+        toggleHelpText(show?: boolean) {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.toggleHelpText(show);
+            });
+        }
+
+        hasHelpText(): boolean {
+            return this.formItemViews.some((formItemView: FormItemView) => {
+                return formItemView.hasHelpText();
+            });
+        }
     }
 }
