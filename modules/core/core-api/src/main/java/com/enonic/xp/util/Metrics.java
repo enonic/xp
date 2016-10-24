@@ -79,6 +79,11 @@ public final class Metrics
         }
     }
 
+    public static void removeAll( final Class<?> clz )
+    {
+        registry().removeMatching( ( name, metric ) -> name.startsWith( clz.getName() + "." ) );
+    }
+
     public static MetricRegistry registry()
     {
         return INSTANCE.registry;

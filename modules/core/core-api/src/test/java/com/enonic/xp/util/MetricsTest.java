@@ -1,5 +1,6 @@
 package com.enonic.xp.util;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.codahale.metrics.Counter;
@@ -13,6 +14,12 @@ import static org.junit.Assert.*;
 
 public class MetricsTest
 {
+    @Before
+    public void setup()
+    {
+        Metrics.removeAll( MetricsTest.class );
+    }
+
     @Test
     public void registry()
     {
@@ -56,7 +63,7 @@ public class MetricsTest
     @Test
     public void time()
     {
-        final Timer timer = Metrics.timer( MetricsTest.class, "timer2" );
+        final Timer timer = Metrics.timer( MetricsTest.class, "timer" );
 
         final String result = Metrics.time( timer, () -> "test" );
         assertEquals( "test", result );

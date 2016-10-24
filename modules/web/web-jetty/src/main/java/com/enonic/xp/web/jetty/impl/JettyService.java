@@ -80,6 +80,7 @@ final class JettyService
         new MultipartConfigurator().configure( this.config, holder );
         new HttpConfigurator().configure( this.config, this.server );
 
+        Metrics.removeAll( Handler.class );
         final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
         instrumentedHandler.setHandler( this.context );
 
