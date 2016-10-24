@@ -542,7 +542,7 @@ public final class ContentResource
 
                 if ( deleted == 1 )
                 {
-                    return "Pending item is deleted";
+                    return "The item is deleted";
                 }
 
             default:
@@ -552,7 +552,7 @@ public final class ContentResource
                 }
                 if ( deleted > 0 )
                 {
-                    return deleted + " pending items are deleted";
+                    return deleted + " items are deleted";
                 }
                 if ( failed > 0 )
                 {
