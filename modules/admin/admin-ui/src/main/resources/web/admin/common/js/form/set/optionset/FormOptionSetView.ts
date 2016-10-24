@@ -227,7 +227,6 @@ module api.form {
 
         toggleHelpText(show?: boolean) {
             if (!!this.formOptionSet.getHelpText()) {
-                this.formOptionSet.toggleHelpText(show);
                 this.formItemOccurrences.toggleHelpText(show);
             }
         }
