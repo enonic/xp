@@ -99,7 +99,7 @@ module api.content.resource {
                            createContentFilter.isCreateContentAllowed(content, this.filterContentTypes[0]);
                 });
             }
-            
+
             // Optimize filter for multiple paths
             filtered = filtered.filter((content: ContentSummary) => {
                 return contentTypeAllowsChild[content.getType().toString()] &&

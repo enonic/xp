@@ -1,14 +1,16 @@
 describe("api.ClassHelperTest", function () {
 
-    
+
     describe("tests for api.ClassHelper.getFunctionName() function", function () {
 
         it("returns function name as string", function () {
-            expect(api.ClassHelper.getFunctionName(function namedFunction() {})).toBe('namedFunction');
+            expect(api.ClassHelper.getFunctionName(function namedFunction() {
+            })).toBe('namedFunction');
         });
 
         it("returns empty string for anonymous function", function () {
-            expect(api.ClassHelper.getFunctionName(function () {})).toBe('');
+            expect(api.ClassHelper.getFunctionName(function () {
+            })).toBe('');
         });
 
     });
@@ -39,7 +41,7 @@ describe("api.ClassHelperTest", function () {
             expect(api.ClassHelper.getModuleName(api.dom.ElementHelper)).toBe("api.dom");
         });
 
-        it("returns full module path for given exported function", function() {
+        it("returns full module path for given exported function", function () {
             expect(api.ClassHelper.getModuleName(api.i18n.setLocale)).toBe('api.i18n');
         });
 
@@ -61,8 +63,14 @@ describe("api.ClassHelperTest", function () {
         });
 
         it("correctly resolves classes with equal names", function () {
-            api['test_class1'] = { Class1: function Class1() {} };
-            api['test_class2'] = { Class1: function Class1() {} };
+            api['test_class1'] = {
+                Class1: function Class1() {
+                }
+            };
+            api['test_class2'] = {
+                Class1: function Class1() {
+                }
+            };
             expect(api.ClassHelper.getFullName(api['test_class1'].Class1)).toBe('api.test_class1.Class1');
             expect(api.ClassHelper.getFullName(api['test_class2'].Class1)).toBe('api.test_class2.Class1');
         });

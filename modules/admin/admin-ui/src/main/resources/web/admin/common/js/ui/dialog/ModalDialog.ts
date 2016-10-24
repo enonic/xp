@@ -292,7 +292,7 @@ module api.ui.dialog {
             ]);
 
             api.ui.KeyBindings.get().bindKeys(keyBindings);
-            
+
             ModalDialog.openDialogsCounter++;
         }
 

@@ -9,6 +9,6 @@ declare var Mousetrap:MousetrapStatic;
  */
 api.StyleHelper.setCurrentPrefix(api.StyleHelper.ADMIN_PREFIX);
 
-if(!api.BrowserHelper.isIE()) { // IE has slow performance if longStackSupport is true
+if (!api.BrowserHelper.isIE()) { // IE has slow performance if longStackSupport is true
     wemQ.longStackSupport = true;  //seems to give more readable stacktraces from errors thrown inside a Q Promise
 }

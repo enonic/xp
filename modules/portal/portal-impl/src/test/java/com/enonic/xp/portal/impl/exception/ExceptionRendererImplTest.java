@@ -185,8 +185,7 @@ public class ExceptionRendererImplTest
         final Site site = newSite();
         this.request.setSite( site );
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
-        final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) ->
-        {
+        final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) -> {
             throw new RuntimeException( "Something went wrong in the handler script" );
         };
 

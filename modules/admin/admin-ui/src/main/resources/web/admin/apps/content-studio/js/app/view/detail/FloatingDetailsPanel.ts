@@ -75,14 +75,14 @@ export class FloatingDetailsPanel extends SlidablePanel {
         return (newWidth >= this.minWidth) && (newWidth <= this.getParentElement().getEl().getWidth() - this.parentMinWidth);
     }
 
-    private startDrag(dragListener: {(e: MouseEvent):void}) {
+    private startDrag(dragListener: {(e: MouseEvent): void}) {
         this.mask.show();
         this.addClass("dragging");
         this.mask.onMouseMove(dragListener);
         this.ghostDragger.getEl().setLeftPx(this.splitter.getEl().getOffsetLeftRelativeToParent()).setTop(null);
     }
 
-    private stopDrag(dragListener: {(e: MouseEvent):void}) {
+    private stopDrag(dragListener: {(e: MouseEvent): void}) {
         this.getEl().setWidthPx(this.actualWidth);
         this.removeClass("dragging");
 

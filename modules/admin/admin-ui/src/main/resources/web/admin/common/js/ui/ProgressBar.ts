@@ -27,7 +27,7 @@ module api.ui {
         getValue(): number {
             return this.value;
         }
-        
+
         isComplete(): boolean {
             return this.value >= 1;
         }

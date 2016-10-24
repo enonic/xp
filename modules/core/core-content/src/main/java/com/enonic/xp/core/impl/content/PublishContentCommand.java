@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -20,6 +21,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -175,8 +177,6 @@ public class PublishContentCommand
             return;
         }
 
-        final Stopwatch timer = Stopwatch.createStarted();
-
         final Instant now = Instant.now();
 
         for ( final NodeId id : firstTimePublished )
@@ -188,8 +188,6 @@ public class PublishContentCommand
         }
 
         this.nodeService.refresh( RefreshMode.ALL );
-
-        LOG.debug( "Updating publishedTime for " + firstTimePublished.getSize() + " content in " + timer.stop().toString() );
     }
 
     private NodeIds findFirstTimePublished( final NodeIds nodesToPush )
@@ -233,11 +231,10 @@ public class PublishContentCommand
 
     private void deleteNodesInContext( final NodeIds nodeIds, final Context context )
     {
-        context.callWith( () ->
-                          {
-                              nodeIds.forEach( nodeService::deleteById );
-                              return null;
-                          } );
+        context.callWith( () -> {
+            nodeIds.forEach( nodeService::deleteById );
+            return null;
+        } );
     }
 
     @Override
