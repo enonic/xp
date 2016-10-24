@@ -5,15 +5,17 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true)
+@Component(immediate = true, service = StatusReporter.class)
 public final class OsgiBundleReporter
-    implements StatusReporter
+    extends JsonStatusReporter
 {
     private BundleContext context;
 
@@ -30,7 +32,7 @@ public final class OsgiBundleReporter
     }
 
     @Override
-    public ObjectNode getReport()
+    public JsonNode getReport()
     {
         final Bundle[] bundles = this.context.getBundles();
 

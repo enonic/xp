@@ -2,7 +2,7 @@ package com.enonic.xp.server.impl.status;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +26,7 @@ public class JvmGCReporterTest
     @Test
     public void testReport()
     {
-        final ObjectNode json = this.reporter.getReport();
+        final JsonNode json = this.reporter.getReport();
         assertNotNull( json );
     }
 }

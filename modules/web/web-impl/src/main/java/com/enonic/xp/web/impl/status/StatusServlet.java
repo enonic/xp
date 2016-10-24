@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.status;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -24,8 +25,8 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/status", "osgi.http.whiteboard.servlet.pattern=/status/*"})
+@Component(immediate = true, service = Servlet.class, property = {"osgi.http.whiteboard.servlet.pattern=/status",
+    "osgi.http.whiteboard.servlet.pattern=/status/*"})
 public final class StatusServlet
     extends HttpServlet
 {
@@ -80,7 +81,7 @@ public final class StatusServlet
 
         try
         {
-            serializeJson( res, 200, reporter.getReport() );
+            serialize( res, reporter );
         }
         catch ( final IOException e )
         {
@@ -90,6 +91,17 @@ public final class StatusServlet
         {
             serializeError( res, 500, e.getMessage() );
         }
+    }
+
+    private void serialize( final HttpServletResponse res, final StatusReporter reporter )
+        throws IOException
+    {
+        res.setStatus( 200 );
+        res.setContentType( reporter.getMediaType().toString() );
+
+        final OutputStream out = res.getOutputStream();
+        reporter.write( out );
+        out.close();
     }
 
     private void serializeJson( final HttpServletResponse res, final int status, final JsonNode json )
