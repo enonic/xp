@@ -7,25 +7,27 @@ import com.google.common.net.MediaType;
 
 import static org.junit.Assert.*;
 
-public class JvmOsReporterTest
-    extends BaseReporterTest<JvmOsReporter>
+public class MetricsReporterTest
+    extends BaseReporterTest<MetricsReporter>
 {
-    public JvmOsReporterTest()
+    public MetricsReporterTest()
     {
-        super( "jvm.os", MediaType.JSON_UTF_8 );
+        super( "metrics", MediaType.JSON_UTF_8 );
     }
 
     @Override
-    protected JvmOsReporter newReporter()
+    protected MetricsReporter newReporter()
         throws Exception
     {
-        return new JvmOsReporter();
+        return new MetricsReporter();
     }
 
     @Test
     public void testReport()
         throws Exception
     {
+        this.params.put( "filter", "" );
+
         final JsonNode json = jsonReport();
         assertNotNull( json );
     }

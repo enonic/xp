@@ -18,7 +18,7 @@ import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.Assert.*;
 
-public abstract class Base2ReporterTest<T extends StatusReporter>
+public abstract class BaseReporterTest<T extends StatusReporter>
 {
     final JsonTestHelper helper;
 
@@ -30,7 +30,7 @@ public abstract class Base2ReporterTest<T extends StatusReporter>
 
     Map<String, String> params;
 
-    Base2ReporterTest( final String name, final MediaType mediaType )
+    BaseReporterTest( final String name, final MediaType mediaType )
     {
         this.name = name;
         this.mediaType = mediaType;

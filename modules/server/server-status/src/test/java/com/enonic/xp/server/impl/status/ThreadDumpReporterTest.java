@@ -7,7 +7,7 @@ import com.google.common.net.MediaType;
 import static org.junit.Assert.*;
 
 public class ThreadDumpReporterTest
-    extends Base2ReporterTest<ThreadDumpReporter>
+    extends BaseReporterTest<ThreadDumpReporter>
 {
     public ThreadDumpReporterTest()
     {

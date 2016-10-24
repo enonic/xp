@@ -11,7 +11,7 @@ import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 
 public class ServerReporterTest
-    extends Base2ReporterTest<ServerReporter>
+    extends BaseReporterTest<ServerReporter>
 {
     public ServerReporterTest()
     {

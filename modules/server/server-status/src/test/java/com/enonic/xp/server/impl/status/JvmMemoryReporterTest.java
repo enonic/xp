@@ -8,7 +8,7 @@ import com.google.common.net.MediaType;
 import static org.junit.Assert.*;
 
 public class JvmMemoryReporterTest
-    extends Base2ReporterTest<JvmMemoryReporter>
+    extends BaseReporterTest<JvmMemoryReporter>
 {
     public JvmMemoryReporterTest()
     {

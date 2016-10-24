@@ -8,7 +8,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.status.StatusReporter;
 
 public abstract class BaseOsgiReporterTest<T extends StatusReporter>
-    extends Base2ReporterTest<T>
+    extends BaseReporterTest<T>
 {
     public BaseOsgiReporterTest( final String name )
     {
