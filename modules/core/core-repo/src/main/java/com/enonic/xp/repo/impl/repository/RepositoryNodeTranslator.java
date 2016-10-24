@@ -10,6 +10,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repository.IndexDefinition;
 import com.enonic.xp.repository.IndexDefinitions;
@@ -46,6 +47,11 @@ public class RepositoryNodeTranslator
             parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
             permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
             build();
+    }
+
+    public static NodeEditor toCreateBranchNodeEditor( final Branch branch )
+    {
+        return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
     }
 
     private static void toNodeData( final Branches branches, final PropertyTree data )
