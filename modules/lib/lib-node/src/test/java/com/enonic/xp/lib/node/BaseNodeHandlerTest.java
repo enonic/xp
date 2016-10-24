@@ -9,6 +9,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -38,6 +39,16 @@ public class BaseNodeHandlerTest
         this.repositoryService = Mockito.mock( RepositoryService.class );
         addService( NodeService.class, this.nodeService );
         addService( RepositoryService.class, this.repositoryService );
+    }
+
+    NodeBranchEntry createEntry( final String id )
+    {
+        return NodeBranchEntry.create().
+            nodeId( NodeId.from( id ) ).
+            nodeState( NodeState.DEFAULT ).
+            nodePath( NodePath.create( NodePath.ROOT + id ).
+                build() ).
+            build();
     }
 
     protected Node createNode()

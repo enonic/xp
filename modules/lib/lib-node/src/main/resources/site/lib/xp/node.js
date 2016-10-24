@@ -33,6 +33,14 @@ function nullOrValue(value) {
     return value;
 }
 
+function valueOrDefault(value, defaultValue) {
+    if (value === undefined) {
+        return defaultValue;
+    }
+
+    return value;
+}
+
 exports.geoPoint = function (lat, lon) {
     return new GeoPointType(lat, lon);
 };
@@ -109,12 +117,22 @@ exports.push = function (params) {
     if (params.resolve) {
         bean.resolve = params.resolve;
 
-        bean.includeChildren = required(params.resolve, 'includeChildren');
+        bean.includeChildren = valueOrDefault(params.resolve.includeChildren, true);
 
         if (params.resolve.exclude) {
             bean.exclude = params.resolve.exclude;
         }
     }
+
+    return __.toNativeObject(bean.execute());
+};
+
+exports.diff = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.node.DiffBranchesHandler');
+    params = params || {};
+    bean.key = required(params, 'key');
+    bean.targetBranch = required(params, 'target');
+    bean.includeChildren = valueOrDefault(params.includeChildren, true);
 
     return __.toNativeObject(bean.execute());
 };

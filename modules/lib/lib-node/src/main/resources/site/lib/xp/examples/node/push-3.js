@@ -2,10 +2,14 @@ var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
 // BEGIN
-// Push nodes from current branch
+// Rename content by id. Keeps same parent.
 var result = nodeLib.push({
     keys: ['a'],
-    target: 'otherBranch'
+    target: 'otherBranch',
+    resolve: {
+        includeChildren: true,
+        exclude: ['b', 'c']
+    }
 });
 // END
 
@@ -13,7 +17,8 @@ var result = nodeLib.push({
 // Node created.
 var expected = {
     "success": [
-        "a"
+        "a",
+        "d"
     ],
     "failed": [],
     "deleted": []

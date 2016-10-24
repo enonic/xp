@@ -9,16 +9,17 @@ import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
-public class PushNodeHandler
+@SuppressWarnings("unused")
+public final class PushNodeHandler
     extends BaseNodeHandler
 {
     private NodeIds keys;
 
     private Branch targetBranch;
 
-    private boolean resolve;
+    private boolean resolve = false;
 
-    private boolean includeChildren;
+    private boolean includeChildren = true;
 
     private NodeIds exclude;
 
