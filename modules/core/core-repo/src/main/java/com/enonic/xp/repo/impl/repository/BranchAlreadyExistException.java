@@ -4,10 +4,11 @@ package com.enonic.xp.repo.impl.repository;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.exception.BaseException;
 
 @Beta
 public class BranchAlreadyExistException
-    extends RuntimeException
+    extends BaseException
 {
     private final Branch branch;
 
@@ -20,5 +21,10 @@ public class BranchAlreadyExistException
     public Branch getBranch()
     {
         return branch;
+    }
+
+    public String getCode()
+    {
+        return "branchAlreadyExists";
     }
 }
