@@ -207,8 +207,6 @@ public class PublishContentCommand
 
         final FindNodesByQueryResult result = this.nodeService.findByQuery( query );
 
-        System.out.println( "Found " + result.getHits() + " virgins to publish" );
-
         return result.getNodeIds();
     }
 
