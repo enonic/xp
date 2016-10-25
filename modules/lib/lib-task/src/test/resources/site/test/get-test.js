@@ -3,7 +3,7 @@ var taskLib = require('/lib/xp/task.js');
 
 exports.getExistingTask = function () {
 
-    var result = taskLib.getTask("123");
+    var result = taskLib.get("123");
 
     var expectedJson = {
         "description": "Long running task",
@@ -20,7 +20,7 @@ exports.getExistingTask = function () {
 
 exports.getTaskNotFound = function () {
 
-    var result = taskLib.getTask("123");
+    var result = taskLib.get("123");
 
     assert.assertNull('Should be true', result);
 

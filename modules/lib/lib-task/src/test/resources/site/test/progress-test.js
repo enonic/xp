@@ -7,17 +7,17 @@ exports.reportProgress = function () {
         description: 'Background task',
         task: function () {
 
-            taskLib.reportProgress({info: 'Starting task'});
+            taskLib.progress({info: 'Starting task'});
 
             for (var i = 0; i < 10; i++) {
-                taskLib.reportProgress({
+                taskLib.progress({
                     info: 'Step ' + i,
                     current: i,
                     total: 10
                 });
             }
 
-            taskLib.reportProgress({info: 'Work completed'});
+            taskLib.progress({info: 'Work completed'});
         }
     });
 
@@ -26,7 +26,7 @@ exports.reportProgress = function () {
 
 exports.reportProgressOutsideTask = function () {
 
-    taskLib.reportProgress({info: 'Starting task'});
+    taskLib.progress({info: 'Starting task'});
 
     assert.assertTrue(false, 'Expected exception');
 };

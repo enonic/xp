@@ -35,7 +35,7 @@ public class GetTaskHandlerTest
             build();
         Mockito.when( this.taskService.getTaskInfo( TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" ) ) ).thenReturn( taskInfo );
 
-        runScript( "/site/lib/xp/examples/task/getTask.js" );
+        runScript( "/site/lib/xp/examples/task/get.js" );
     }
 
     @Test
@@ -50,7 +50,7 @@ public class GetTaskHandlerTest
             build();
         Mockito.when( this.taskService.getTaskInfo( TaskId.from( "123" ) ) ).thenReturn( taskInfo );
 
-        runFunction( "/site/test/getTask-test.js", "getExistingTask" );
+        runFunction( "/site/test/get-test.js", "getExistingTask" );
     }
 
     @Test
@@ -59,7 +59,7 @@ public class GetTaskHandlerTest
     {
         Mockito.when( this.taskService.getTaskInfo( TaskId.from( "123" ) ) ).thenReturn( null );
 
-        runFunction( "/site/test/getTask-test.js", "getTaskNotFound" );
+        runFunction( "/site/test/get-test.js", "getTaskNotFound" );
     }
 
 }

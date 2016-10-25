@@ -1,15 +1,11 @@
+var assert = require('/lib/xp/assert.js');
 var taskLib = require('/lib/xp/task.js');
-var assert = require('/lib/xp/assert');
 
-// BEGIN
-// Obtains list of active tasks
-var tasks = taskLib.getTasks();
-// END
+exports.getExistingTasks = function () {
 
-// BEGIN
-// Tasks returned
-var expected = {
-    "tasks": [
+    var result = taskLib.list();
+
+    var expectedJson = [
         {
             "description": "Long running task",
             "id": "7ca603c1-3b88-4009-8f30-46ddbcc4bb19",
@@ -40,8 +36,17 @@ var expected = {
                 "total": 100
             }
         }
-    ]
-};
-// END
+    ];
 
-assert.assertJsonEquals(expected, tasks);
+    assert.assertJsonEquals(expectedJson, result);
+};
+
+exports.listNone = function () {
+
+    var result = taskLib.list();
+
+    var expectedJson = [];
+
+    assert.assertJsonEquals(expectedJson, result);
+
+};

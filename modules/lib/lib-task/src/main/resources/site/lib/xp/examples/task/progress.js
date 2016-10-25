@@ -12,10 +12,10 @@ var taskId = taskLib.submit({
     description: 'Background task',
     task: function () {
 
-        taskLib.reportProgress({info: 'Initializing task'});
+        taskLib.progress({info: 'Initializing task'});
 
         for (var i = 0; i < 10; i++) {
-            taskLib.reportProgress({
+            taskLib.progress({
                 info: 'Processing item ' + (i + 1),
                 current: i,
                 total: 10
@@ -24,7 +24,7 @@ var taskId = taskLib.submit({
             processItem(i);
         }
 
-        taskLib.reportProgress({info: 'Task completed'});
+        taskLib.progress({info: 'Task completed'});
     }
 });
 // END
