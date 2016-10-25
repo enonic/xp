@@ -62,6 +62,27 @@ exports.create = function (params) {
 };
 
 /**
+ * Deletes a repository
+ *
+ * @example-ref examples/repo/delete.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.id Repository ID.
+ * @param {boolean} [params.settings.indexConfigs] TBD.
+ *
+ */
+exports.create = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
+    bean.repositoryId = required(params, 'id');
+
+    if (params.settings && params.settings.definitions) {
+        bean.indexDefinitions = __.toScriptValue(params.settings.definitions);
+    }
+
+    return __.toNativeObject(bean.execute());
+};
+
+/**
  * Retrieves the list of repositories
  *
  * @example-ref examples/repo/list.js
