@@ -186,9 +186,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getSaveAction().onExecuted(() => {
-            if (this.formState.isNew()) { // validation might have not been called for some cases for new item
-                this.contentWizardStepForm.validate();
-            }
+            this.contentWizardStepForm.validate();
             this.displayValidationErrors();
         });
 

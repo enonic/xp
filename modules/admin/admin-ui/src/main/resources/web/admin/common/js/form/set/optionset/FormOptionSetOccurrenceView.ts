@@ -70,11 +70,9 @@ module api.form {
             this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);
 
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
-                setFormItems(this.formOptionSet.getFormItems()).
-                setParentElement(this.formItemSetOccurrencesContainer).
-                setParent(this).
-                layout(this.propertySet, validate);
+            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(
+                this.formOptionSet.getFormItems()).setParentElement(this.formItemSetOccurrencesContainer).setParent(this).layout(
+                this.propertySet, validate);
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
@@ -96,14 +94,10 @@ module api.form {
                         }
 
                         var previousValidState = this.currentValidationState.isValid();
-                        if (previousValidState != event.isValid()) { //one form item may affect validity state of whole option set
-                            this.validate(); // so let's re-validate it all
-                        } else { // otherwise, just update validation state
-                            if (event.isValid()) {
-                                this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
-                            } else {
-                                this.currentValidationState.flatten(event.getRecording());
-                            }
+                        if (event.isValid()) {
+                            this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
+                        } else {
+                            this.currentValidationState.flatten(event.getRecording());
                         }
 
                         if (previousValidState != this.currentValidationState.isValid()) {
@@ -112,7 +106,7 @@ module api.form {
                         }
                     });
 
-                    (<FormOptionSetOptionView> formItemView).onSelectionChanged((viewToSkipValidation: FormOptionSetOptionView) => {
+                    (<FormOptionSetOptionView> formItemView).onSelectionChanged(() => {
                         if (!this.currentValidationState) {
                             return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                         }
@@ -122,15 +116,23 @@ module api.form {
                             return;
                         }
 
-                        var previousValidState = this.currentValidationState.isValid();
-                        this.validate(true, viewToSkipValidation);
-                        if (this.currentValidationState.isValid()) {
-                            this.currentValidationState.removeByPath(this.resolveValidationRecordingPath(), true);
+                        var previousValidationValid = this.currentValidationState.isValid(),
+                            multiselectionState = this.validateMultiselection();
+
+                        if (multiselectionState.isValid()) {
+                            if (this.formOptionSet.isRadioSelection()) { // for radio - we clean all validation, as even selected item should not be validated
+                                this.currentValidationState.removeByPath(
+                                    new ValidationRecordingPath(this.getDataPath(), null), true, true);
+
+                            } else {
+                                this.currentValidationState.removeByPath(
+                                    new ValidationRecordingPath(this.getDataPath(), formItemView.getFormItem().getName()), true, true);
+                            }
                         } else {
                             this.currentValidationState.flatten(this.currentValidationState);
                         }
 
-                        if (previousValidState != this.currentValidationState.isValid()) {
+                        if (this.currentValidationState.isValid() != previousValidationValid) {
                             this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                                 this.resolveValidationRecordingPath()).setIncludeChildren(true));
                         }
@@ -186,11 +188,9 @@ module api.form {
         private ensureSelectionArrayExists(propertyArraySet: PropertySet) {
             var selectionPropertyArray = propertyArraySet.getPropertyArray(this.formOptionSet.getName() + "_selection");
             if (!selectionPropertyArray) {
-                selectionPropertyArray = PropertyArray.create().
-                    setType(ValueTypes.STRING).
-                    setName(this.formOptionSet.getName() + "_selection").
-                    setParent(propertyArraySet).
-                    build();
+                selectionPropertyArray =
+                    PropertyArray.create().setType(ValueTypes.STRING).setName(this.formOptionSet.getName() + "_selection").setParent(
+                        propertyArraySet).build();
                 propertyArraySet.addPropertyArray(selectionPropertyArray);
                 this.addDefaultSelectionToSelectionArray(selectionPropertyArray);
             }
