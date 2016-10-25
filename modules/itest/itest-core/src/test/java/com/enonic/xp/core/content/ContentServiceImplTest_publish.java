@@ -22,7 +22,7 @@ import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
 
-public class ContentServiceImplTest_push
+public class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
 {
 

@@ -223,7 +223,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             });
 
             this.frameContainer = new Panel("frame-container");
-            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(), this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
+            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
+                this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
 
 
             // append mask here in order for the context window to be above

@@ -326,13 +326,13 @@ module api.form {
         unBlur(listener: (event: FocusEvent) => void) {
             this.inputTypeView.unBlur(listener);
         }
-        
+
         toggleHelpText(show?: boolean) {
             if (!!this.helpText) {
                 this.helpText.toggleHelpText(show);
             }
         }
-        
+
         hasHelpText(): boolean {
             return !!this.input.getHelpText();
         }

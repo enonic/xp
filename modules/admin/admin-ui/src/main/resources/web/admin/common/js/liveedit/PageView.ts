@@ -82,9 +82,9 @@ module api.liveedit {
 
         private editorToolbar: api.dom.DivEl;
 
-        private highlightingAllowed:boolean;
+        private highlightingAllowed: boolean;
 
-        private nextClickDisabled:boolean;
+        private nextClickDisabled: boolean;
 
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
@@ -936,19 +936,19 @@ module api.liveedit {
             return this.disableContextMenu;
         }
 
-        setHighlightingAllowed(value:boolean) {
+        setHighlightingAllowed(value: boolean) {
             this.highlightingAllowed = value;
         }
 
-        setNextClickDisabled(value:boolean) {
+        setNextClickDisabled(value: boolean) {
             this.nextClickDisabled = value;
         }
 
-        isHighlightingAllowed():boolean {
+        isHighlightingAllowed(): boolean {
             return this.highlightingAllowed;
         }
 
-        isNextClickDisabled():boolean {
+        isNextClickDisabled(): boolean {
             return this.nextClickDisabled;
         }
     }

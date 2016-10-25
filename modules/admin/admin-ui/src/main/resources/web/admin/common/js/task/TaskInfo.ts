@@ -42,12 +42,8 @@ module api.task {
             if (!json.id) {
                 return null;
             }
-            return TaskInfo.create().
-                setId(TaskId.fromString(json.id)).
-                setDescription(json.description).
-                setState(TaskState[json.state]).
-                setProgress(TaskProgress.create().fromJson(json.progress).build()).
-                build();
+            return TaskInfo.create().setId(TaskId.fromString(json.id)).setDescription(json.description).setState(
+                TaskState[json.state]).setProgress(TaskProgress.create().fromJson(json.progress).build()).build();
         }
 
         static create(): TaskInfoBuilder {

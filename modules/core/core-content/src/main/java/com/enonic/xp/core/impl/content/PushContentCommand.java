@@ -190,11 +190,10 @@ public class PushContentCommand
 
     private void deleteNodesInContext( final NodeIds nodeIds, final Context context )
     {
-        context.callWith( () ->
-                          {
-                              nodeIds.forEach( nodeService::deleteById );
-                              return null;
-                          } );
+        context.callWith( () -> {
+            nodeIds.forEach( nodeService::deleteById );
+            return null;
+        } );
     }
 
     @Override
