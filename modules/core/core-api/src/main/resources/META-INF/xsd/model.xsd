@@ -161,6 +161,7 @@
       <xs:element minOccurs="1" name="label" type="xs:string"/>
       <xs:element minOccurs="0" name="items" type="optionItems"/>
       <xs:element minOccurs="0" maxOccurs="1" name="default" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="help-text" type="xs:string"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:complexType>

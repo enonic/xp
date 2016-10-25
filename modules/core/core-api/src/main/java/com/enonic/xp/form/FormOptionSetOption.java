@@ -17,6 +17,8 @@ public class FormOptionSetOption
 
     private final boolean defaultOption;
 
+    private final String helpText;
+
     private final List<FormItem> items;
 
     public String getName()
@@ -32,6 +34,11 @@ public class FormOptionSetOption
     public boolean isDefaultOption()
     {
         return defaultOption;
+    }
+
+    public String getHelpText()
+    {
+        return helpText;
     }
 
     public List<FormItem> getFormItems()
@@ -50,6 +57,7 @@ public class FormOptionSetOption
         this.name = builder.name;
         this.label = builder.label;
         this.defaultOption = builder.defaultOption;
+        this.helpText = builder.helpText;
         this.items = builder.formItemsList.stream().collect( Collectors.toList() );
     }
 
@@ -65,6 +73,8 @@ public class FormOptionSetOption
         private String label;
 
         private boolean defaultOption;
+
+        private String helpText;
 
         private List<FormItem> formItemsList;
 
@@ -103,6 +113,12 @@ public class FormOptionSetOption
         public Builder label( final String label )
         {
             this.label = label;
+            return this;
+        }
+
+        public Builder helpText( final String helpText )
+        {
+            this.helpText = helpText;
             return this;
         }
 

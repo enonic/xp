@@ -35,6 +35,8 @@ module api.form {
 
         private checkbox: api.ui.Checkbox;
 
+        protected helpText: HelpTextContainer;
+
         private checkboxEnabledStatusHandler: () => void = (() => {
             this.setCheckBoxDisabled()
         }).bind(this);
@@ -58,21 +60,30 @@ module api.form {
 
         toggleHelpText(show?: boolean) {
             this.formItemLayer.toggleHelpText(show);
+            if (!!this.helpText) {
+                this.helpText.toggleHelpText(show);
+            }
         }
 
         public layout(validate: boolean = true): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
+
+            if (this.formOptionSetOption.getHelpText()) {
+                this.helpText = new HelpTextContainer(this.formOptionSetOption.getHelpText());
+
+                this.appendChild(this.helpText.getHelpText());
+
+                this.toggleHelpText(this.formOptionSetOption.isHelpTextOn());
+            }
 
             this.optionItemsContainer = new api.dom.DivEl("option-items-container");
             this.appendChild(this.optionItemsContainer);
 
             var optionItemsPropertySet = this.getSetFromArray(this.getOptionItemsPropertyArray(this.parentDataSet));
 
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
-                setFormItems(this.formOptionSetOption.getFormItems()).
-                setParentElement(this.optionItemsContainer).
-                setParent(this.getParent()).
-                layout(optionItemsPropertySet, validate && this.getThisPropertyFromSelectedOptionsArray() != null);
+            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(
+                this.formOptionSetOption.getFormItems()).setParentElement(this.optionItemsContainer).setParent(this.getParent()).layout(
+                optionItemsPropertySet, validate && this.getThisPropertyFromSelectedOptionsArray() != null);
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
@@ -83,15 +94,15 @@ module api.form {
                 if (this.isOptionSetExpandedByDefault() && this.getThisPropertyFromSelectedOptionsArray() == null) {
                     this.disableFormItems();
                 }
-                
-                if(this.getThisPropertyFromSelectedOptionsArray() != null) {
+
+                if (this.getThisPropertyFromSelectedOptionsArray() != null) {
                     this.addClass("selected");
                 }
 
-                if(this.formOptionSetOption.getFormItems().length > 0) {
+                if (this.formOptionSetOption.getFormItems().length > 0) {
                     this.addClass("expandable");
                 }
-                
+
                 this.prependChild(this.makeSelectionButton());
 
                 this.formItemViews = formItemViews;
@@ -123,11 +134,8 @@ module api.form {
         private getOptionItemsPropertyArray(propertySet: PropertySet): PropertyArray {
             var propertyArray = propertySet.getPropertyArray(this.getName());
             if (!propertyArray) {
-                propertyArray = PropertyArray.create().
-                    setType(ValueTypes.DATA).
-                    setName(this.getName()).
-                    setParent(this.parentDataSet).
-                    build();
+                propertyArray =
+                    PropertyArray.create().setType(ValueTypes.DATA).setName(this.getName()).setParent(this.parentDataSet).build();
                 propertySet.addPropertyArray(propertyArray);
             }
             return propertyArray;
@@ -199,10 +207,8 @@ module api.form {
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
             var checked = this.getThisPropertyFromSelectedOptionsArray() != null,
-                button = api.ui.Checkbox.create().setLabelPosition(api.ui.LabelPosition.RIGHT).
-                setLabelText(this.formOptionSetOption.getLabel()).
-                setChecked(checked).
-                build();
+                button = api.ui.Checkbox.create().setLabelPosition(api.ui.LabelPosition.RIGHT).setLabelText(
+                    this.formOptionSetOption.getLabel()).setChecked(checked).build();
 
             this.checkbox = button;
 
@@ -280,15 +286,15 @@ module api.form {
         }
 
         private enableFormItems() {
-            wemjq(this.getEl().getHTMLElement()).find(".option-items-container input, .option-items-container button").
-                each((index, elem) => {
+            wemjq(this.getEl().getHTMLElement()).find(".option-items-container input, .option-items-container button").each(
+                (index, elem) => {
                     elem.removeAttribute("disabled");
                 });
         }
 
         private disableFormItems() {
-            wemjq(this.getEl().getHTMLElement()).find(".option-items-container input, .option-items-container button").
-                each((index, elem) => {
+            wemjq(this.getEl().getHTMLElement()).find(".option-items-container input, .option-items-container button").each(
+                (index, elem) => {
                     elem.setAttribute("disabled", "true");
                 });
         }
@@ -366,7 +372,7 @@ module api.form {
             });
 
             this.toggleClass("invalid", !recording.isValid());
-            
+
             return recording;
         }
 

@@ -10,12 +10,17 @@ module api.form {
 
         private formItems: FormItem[] = [];
 
+        private helpText: string;
+
+        private helpTextIsOn: boolean = false;
+
         private formItemByName: {[name: string]: FormItem; } = {};
 
         constructor(optionJson: FormOptionSetOptionJson) {
             super(optionJson.name);
             this.label = optionJson.label;
             this.defaultOption = optionJson.defaultOption;
+            this.helpText = optionJson.helpText;
             if (optionJson.items != null) {
                 optionJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
                     var formItem = FormItemFactory.createFormItem(formItemJson);
@@ -51,11 +56,20 @@ module api.form {
             return this.defaultOption;
         }
 
+        getHelpText(): string {
+            return this.helpText;
+        }
+
+        isHelpTextOn(): boolean {
+            return this.helpTextIsOn;
+        }
+
         public toFormOptionSetOptionJson(): api.form.json.FormOptionSetOptionJson {
 
             return {
                 name: this.getName(),
                 label: this.getLabel(),
+                helpText: this.getHelpText(),
                 defaultOption: this.isDefaultOption(),
                 items: FormItem.formItemsToJson(this.getFormItems())
             };

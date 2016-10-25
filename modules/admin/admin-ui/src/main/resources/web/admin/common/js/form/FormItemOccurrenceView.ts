@@ -6,7 +6,7 @@ module api.form {
 
         protected formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>;
 
-        private removeButtonClickedListeners: {(event: RemoveButtonClickedEvent<FormItemOccurrenceView>):void}[] = [];
+        private removeButtonClickedListeners: {(event: RemoveButtonClickedEvent<FormItemOccurrenceView>): void}[] = [];
 
         protected helpText: HelpTextContainer;
 
@@ -14,7 +14,7 @@ module api.form {
             super(className);
             this.formItemOccurrence = formItemOccurrence;
         }
-        
+
         toggleHelpText(show?: boolean) {
             if (!!this.helpText) {
                 this.helpText.toggleHelpText(show);
