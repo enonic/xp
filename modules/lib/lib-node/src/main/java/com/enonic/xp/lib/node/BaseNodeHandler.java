@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.node;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -33,6 +34,18 @@ public abstract class BaseNodeHandler
     {
         this.nodeService = context.getService( NodeService.class ).get();
         this.repositoryService = context.getService( RepositoryService.class ).get();
+    }
+
+    protected Node doGetNode( final NodeKey nodeKey )
+    {
+        if ( !nodeKey.isId() )
+        {
+            return nodeService.getByPath( nodeKey.getAsPath() );
+        }
+        else
+        {
+            return nodeService.getById( nodeKey.getAsNodeId() );
+        }
     }
 
     void validateRepo()

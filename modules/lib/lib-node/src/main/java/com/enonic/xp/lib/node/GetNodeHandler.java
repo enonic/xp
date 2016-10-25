@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -13,9 +12,9 @@ import com.enonic.xp.node.NodePath;
 public final class GetNodeHandler
     extends BaseNodeHandler
 {
-    private String key;
+    private NodeKey key;
 
-    private String[] keys;
+    private NodeKeys keys;
 
     @Override
     protected Object doExecute()
@@ -26,22 +25,23 @@ public final class GetNodeHandler
         }
         else
         {
-            return Arrays.stream( keys ).
+            return this.keys.stream().
                 map( this::getByKey ).
                 filter( Objects::nonNull ).
                 collect( Collectors.toList() );
         }
     }
 
-    private NodeMapper getByKey( final String key )
+    private NodeMapper getByKey( final NodeKey key )
     {
-        if ( key.startsWith( "/" ) )
+        if ( key.isId() )
         {
-            return getByPath( NodePath.create( key ).build() );
+            return getById( key.getAsNodeId() );
+
         }
         else
         {
-            return getById( NodeId.from( key ) );
+            return getByPath( key.getAsPath() );
         }
     }
 
@@ -76,11 +76,11 @@ public final class GetNodeHandler
 
     public void setKey( final String key )
     {
-        this.key = key;
+        this.key = NodeKey.from( key );
     }
 
     public void setKeys( final String[] keys )
     {
-        this.keys = keys;
+        this.keys = NodeKeys.from( keys );
     }
 }

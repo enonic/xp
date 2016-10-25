@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import com.google.common.collect.ImmutableList;
@@ -9,18 +8,20 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public final class DeleteNodeHandler
     extends BaseNodeHandler
 {
-    private String key;
+    private NodeKey key;
 
-    private String[] keys;
+    private NodeKeys keys;
 
     @Override
     protected Collection<String> doExecute()
     {
         final ImmutableList.Builder<String> deletedNodeIds = ImmutableList.builder();
+
         if ( key != null )
         {
             deleteByKey( key ).
@@ -30,24 +31,26 @@ public final class DeleteNodeHandler
         }
         else
         {
-            Arrays.stream( keys ).
+            keys.stream().
                 map( this::deleteByKey ).
-                flatMap( nodeIds -> nodeIds.stream() ).
+                flatMap( AbstractImmutableEntitySet::stream ).
                 map( NodeId::toString ).
                 forEach( deletedNodeIds::add );
         }
+
         return deletedNodeIds.build();
     }
 
-    private NodeIds deleteByKey( final String key )
+    private NodeIds deleteByKey( final NodeKey key )
     {
-        if ( key.startsWith( "/" ) )
+        if ( key.isId() )
         {
-            return deleteByPath( NodePath.create( key ).build() );
+            return deleteById( key.getAsNodeId() );
+
         }
         else
         {
-            return deleteById( NodeId.from( key ) );
+            return deleteByPath( key.getAsPath() );
         }
     }
 
@@ -77,11 +80,11 @@ public final class DeleteNodeHandler
 
     public void setKey( final String key )
     {
-        this.key = key;
+        this.key = NodeKey.from( key );
     }
 
     public void setKeys( final String[] keys )
     {
-        this.keys = keys;
+        this.keys = NodeKeys.from( keys );
     }
 }

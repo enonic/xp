@@ -6,16 +6,14 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.script.ScriptValue;
 
 public class ModifyNodeHandler
     extends BaseNodeHandler
 {
-    private Key key;
+    private NodeKey key;
 
     private ScriptValue editor;
 
@@ -65,7 +63,7 @@ public class ModifyNodeHandler
     {
         final Node node;
 
-        if ( this.key.isId )
+        if ( this.key.isId() )
         {
             node = this.nodeService.getById( key.getAsNodeId() );
         }
@@ -76,43 +74,20 @@ public class ModifyNodeHandler
 
         if ( node == null )
         {
-            throw new NodeNotFoundException( "Cannot modify node with key: [" + this.key.value + "]" );
+            throw new NodeNotFoundException( "Cannot modify node with key: [" + this.key.getValue() + "]" );
         }
         return node;
     }
 
     public void setKey( final String key )
     {
-        this.key = new Key( key );
+        this.key = NodeKey.from( key );
     }
 
     @SuppressWarnings("unused")
     public void setEditor( final ScriptValue editor )
     {
         this.editor = editor;
-    }
-
-    private static class Key
-    {
-        private final boolean isId;
-
-        private final String value;
-
-        public Key( final String value )
-        {
-            this.value = value;
-            this.isId = !value.startsWith( "/" );
-        }
-
-        NodeId getAsNodeId()
-        {
-            return NodeId.from( this.value );
-        }
-
-        NodePath getAsPath()
-        {
-            return NodePath.create( this.value ).build();
-        }
     }
 
 

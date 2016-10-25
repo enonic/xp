@@ -12,9 +12,9 @@ import com.enonic.xp.node.RenameNodeParams;
 public final class MoveNodeHandler
     extends BaseNodeHandler
 {
-    private String source;
+    private NodeKey source;
 
-    private String target;
+    private Target target;
 
     @Override
     protected Object doExecute()
@@ -23,54 +23,37 @@ public final class MoveNodeHandler
     }
 
     private Node executeMove()
-
     {
-        //Retrieves the node id and path
-        final NodeId sourceId;
-        final NodePath sourcePath;
-        if ( this.source.startsWith( "/" ) )
+        final Node node = doGetNode( this.source );
+
+        if ( target.isNewParentFolder() )
         {
-            sourcePath = NodePath.create( this.source ).build();
-            final Node sourceNode = nodeService.getByPath( sourcePath );
-            sourceId = sourceNode.id();
+            return move( node.id(), target.getAsNodePath() );
+        }
+        else if ( target.isNewName() )
+        {
+            return rename( node.id(), target.getAsNodeName() );
         }
         else
         {
-            sourceId = NodeId.from( this.source );
-            final Node sourceNode = nodeService.getById( sourceId );
-            sourcePath = sourceNode.path();
+            return moveAndRename( node );
         }
+    }
 
-        //If the target ends with /
-        if ( target.endsWith( "/" ) )
+    private Node moveAndRename( final Node node )
+    {
+        final NodePath targetPath = target.getAsNodePath();
+        final NodePath targetParent = targetPath.getParentPath();
+        final boolean movedToNewParent = !targetParent.equals( node.parentPath() );
+
+        if ( movedToNewParent )
         {
-            //Moves the node to the target parent path
-            return move( sourceId, NodePath.create( target ).trailingDivider( false ).build() );
+            // First rename the node to a temporary unique name to avoid clashing with siblings with target name in source parent or with siblings with source name in target parent
+            rename( node.id(), uniqueName() );
+            move( node.id(), targetParent );
         }
-        else if ( !target.startsWith( "/" ) )
-        {
-            //Else if the target is not a path, renames the node to the target name
-            return rename( sourceId, target );
-        }
-        else
-        {
-            //Else
-            final NodePath targetPath = NodePath.create( target ).build();
-            final NodePath targetParent = targetPath.getParentPath();
 
-            //If there target parent is different fromt the current parent
-            if ( !targetParent.equals( sourcePath.getParentPath() ) )
-            {
-                // First rename the node to a temporary unique name to avoid clashing with siblings with target name in source parent or with siblings with source name in target parent
-                rename( sourceId, uniqueName() );
-
-                // Moves the node
-                move( sourceId, targetParent );
-            }
-
-            //Renames the node
-            return rename( sourceId, targetPath.getName() );
-        }
+        return rename( node.id(), NodeName.from( targetPath.getName() ) );
     }
 
     private NodeMapper convert( final Node node )
@@ -83,28 +66,58 @@ public final class MoveNodeHandler
         return nodeService.move( sourceId, newPath );
     }
 
-    private Node rename( final NodeId sourceId, final String newName )
+    private Node rename( final NodeId sourceId, final NodeName newName )
     {
-        final NodeName newNodeName = NodeName.from( newName );
         final RenameNodeParams renameParams = RenameNodeParams.create().
             nodeId( sourceId ).
-            nodeName( newNodeName ).
+            nodeName( newName ).
             build();
         return nodeService.rename( renameParams );
     }
 
-    private String uniqueName()
+    private NodeName uniqueName()
     {
-        return UUID.randomUUID().toString();
+        return NodeName.from( UUID.randomUUID().toString() );
     }
 
     public void setSource( final String source )
     {
-        this.source = source;
+        this.source = NodeKey.from( source );
     }
 
     public void setTarget( final String target )
     {
-        this.target = target;
+        this.target = new Target( target );
     }
+
+    private static class Target
+    {
+        private String value;
+
+        public Target( final String value )
+        {
+            this.value = value;
+        }
+
+        boolean isNewParentFolder()
+        {
+            return this.value.endsWith( "/" );
+        }
+
+        boolean isNewName()
+        {
+            return !value.startsWith( "/" );
+        }
+
+        NodeName getAsNodeName()
+        {
+            return NodeName.from( this.value );
+        }
+
+        NodePath getAsNodePath()
+        {
+            return NodePath.create( this.value ).trailingDivider( false ).build();
+        }
+    }
+
 }
