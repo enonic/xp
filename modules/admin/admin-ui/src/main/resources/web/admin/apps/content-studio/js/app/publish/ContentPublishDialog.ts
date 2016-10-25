@@ -1,6 +1,5 @@
 import "../../api.ts";
 import {DialogDependantList} from "../dialog/DependantItemsDialog";
-import {ContentPublishMenuManager} from "../browse/ContentPublishMenuManager";
 import {ProcessingStats, ProgressBarDialog} from "../dialog/ProgressBarDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -33,8 +32,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
     private stashedCount: {[checked: string]: number} = {};
 
-    private progressBar: api.ui.ProgressBar;
-
     constructor() {
         super("Publishing Wizard", "Resolving items...", "Other items that will be published");
 
@@ -56,18 +53,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
                 this.reloadPublishDependencies().done();
             }
         });
-    }
-
-    private createProgressBar() {
-        if (this.progressBar) {
-            this.progressBar.setValue(0);
-            return this.progressBar;
-        }
-
-        let progressBar = new api.ui.ProgressBar(0);
-        this.appendChildToContentPanel(progressBar);
-
-        return progressBar;
     }
 
     protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -103,24 +88,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.childrenLoaded = false;
 
         super.open();
-    }
-
-
-    show() {
-        super.show(this.isProgressBarEnabled());
-    }
-
-    onPublishComplete() {
-        if (this.isProgressBarEnabled()) {
-            this.disableProgressBar();
-        }
-
-        if (this.isVisible()) {
-            this.close();
-            return;
-        }
-
-        this.hide();
     }
     
     close() {
@@ -315,23 +282,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
             });
     }
 
-    private enableProgressBar() {
-        api.dom.Body.get().addClass(ProcessingStats.isProcessingClass);
-        ContentPublishMenuManager.getProgressBar().setValue(0);
-        this.addClass(ProcessingStats.isProcessingClass);
-        this.hideLoadingSpinner();
-        this.progressBar = this.createProgressBar();
-    }
-
-    private disableProgressBar() {
-        this.removeClass(ProcessingStats.isProcessingClass);
-        api.dom.Body.get().removeClass(ProcessingStats.isProcessingClass);
-    }
-
-    private isProgressBarEnabled() {
-        return this.hasClass(ProcessingStats.isProcessingClass);
-    }
-
     private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ProcessingStats.pollInterval) {
         setTimeout(() => {
             if (!this.isProgressBarEnabled() && elapsed >= ProcessingStats.progressBarDelay) {
@@ -367,15 +317,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
             }).done();
 
         }, interval);
-    }
-
-    private setProgressValue(value: number) {
-        if (this.isProgressBarEnabled()) {
-            this.progressBar.setValue(value);
-            if (!api.dom.Body.get().isShowingModalDialog()) {
-                ContentPublishMenuManager.getProgressBar().setValue(value);
-            }
-        }
     }
 
     protected countTotal(): number {
