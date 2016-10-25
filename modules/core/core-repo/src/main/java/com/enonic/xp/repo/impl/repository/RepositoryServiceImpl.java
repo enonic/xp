@@ -32,6 +32,7 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
@@ -94,13 +95,15 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public Repository deleteRepository( final RepositoryId repositoryId )
+    public RepositoryId deleteRepository( final DeleteRepositoryParams params )
     {
-        return repositorySettingsMap.compute( repositoryId, ( key, previousRepository ) -> {
+        final RepositoryId repositoryId = params.getRepositoryId();
+        repositorySettingsMap.compute( repositoryId, ( key, previousRepository ) -> {
             nodeRepositoryService.delete( repositoryId );
             deleteRepositoryEntry( repositoryId );
             return null;
         } );
+        return repositoryId;
     }
 
     @Override

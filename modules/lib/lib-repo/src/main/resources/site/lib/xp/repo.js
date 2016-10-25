@@ -68,18 +68,13 @@ exports.create = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
- * @param {boolean} [params.settings.indexConfigs] TBD.
+ * @param {boolean} True if deleted, false otherwise.
  *
  */
-exports.create = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
+exports.delete = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
     bean.repositoryId = required(params, 'id');
-
-    if (params.settings && params.settings.definitions) {
-        bean.indexDefinitions = __.toScriptValue(params.settings.definitions);
-    }
-
-    return __.toNativeObject(bean.execute());
+    return bean.execute();
 };
 
 /**
