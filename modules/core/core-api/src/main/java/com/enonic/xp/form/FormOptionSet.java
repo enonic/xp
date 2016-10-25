@@ -63,6 +63,11 @@ public class FormOptionSet
         return this.optionSetOptions;
     }
 
+    public int getNumberOfDefaultOptions()
+    {
+        return (int) this.optionSetOptions.stream().filter( option -> option.isDefaultOption() ).count();
+    }
+
     public String getLabel()
     {
         return label;
@@ -86,6 +91,11 @@ public class FormOptionSet
     public String getHelpText()
     {
         return helpText;
+    }
+
+    public boolean isRequired()
+    {
+        return occurrences.impliesRequired();
     }
 
     @Override
