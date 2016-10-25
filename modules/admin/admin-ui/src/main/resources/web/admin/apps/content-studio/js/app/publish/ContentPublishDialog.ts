@@ -1,6 +1,7 @@
 import "../../api.ts";
-import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
+import {DialogDependantList} from "../dialog/DependantItemsDialog";
 import {ContentPublishMenuManager} from "../browse/ContentPublishMenuManager";
+import {ProcessingStats, ProgressBarDialog} from "../dialog/ProgressBarDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareContentResults = api.content.resource.result.CompareContentResults;
@@ -20,7 +21,7 @@ import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
  * Dependant items number will change depending on includeChildren checkbox state as
  * resolved dependencies usually differ in that case.
  */
-export class ContentPublishDialog extends DependantItemsDialog {
+export class ContentPublishDialog extends ProgressBarDialog {
 
     private childrenCheckbox: api.ui.Checkbox;
 
@@ -33,10 +34,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
     private stashedCount: {[checked: string]: number} = {};
 
     private progressBar: api.ui.ProgressBar;
-
-    private static progressBarDelay: number = 2000; // If the content is still being published after this time, show the progress bar (in ms)
-    private static pollInterval: number = 500;  // Interval of task polling when publishing the content (in ms)
-    private static isPublishingClass: string = "is-publishing";
 
     constructor() {
         super("Publishing Wizard", "Resolving items...", "Other items that will be published");
@@ -197,7 +194,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
             this.dependantIds = result.getDependants();
-            this.setStashedCount(this.dependantIds.length)
+            this.setStashedCount(this.dependantIds.length);
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
@@ -298,7 +295,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         this.showLoadingSpinner();
 
-        this.setSubTitle(this.countTotal() + " items are being published...")
+        this.setSubTitle(this.countTotal() + " items are being published...");
 
         var selectedIds = this.getContentToPublishIds();
 
@@ -319,25 +316,25 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private enableProgressBar() {
-        api.dom.Body.get().addClass(ContentPublishDialog.isPublishingClass);
+        api.dom.Body.get().addClass(ProcessingStats.isProcessingClass);
         ContentPublishMenuManager.getProgressBar().setValue(0);
-        this.addClass(ContentPublishDialog.isPublishingClass);
+        this.addClass(ProcessingStats.isProcessingClass);
         this.hideLoadingSpinner();
         this.progressBar = this.createProgressBar();
     }
 
     private disableProgressBar() {
-        this.removeClass(ContentPublishDialog.isPublishingClass);
-        api.dom.Body.get().removeClass(ContentPublishDialog.isPublishingClass);
+        this.removeClass(ProcessingStats.isProcessingClass);
+        api.dom.Body.get().removeClass(ProcessingStats.isProcessingClass);
     }
 
     private isProgressBarEnabled() {
-        return this.hasClass(ContentPublishDialog.isPublishingClass);
+        return this.hasClass(ProcessingStats.isProcessingClass);
     }
 
-    private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ContentPublishDialog.pollInterval) {
+    private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ProcessingStats.pollInterval) {
         setTimeout(() => {
-            if (!this.isProgressBarEnabled() && elapsed >= ContentPublishDialog.progressBarDelay) {
+            if (!this.isProgressBarEnabled() && elapsed >= ProcessingStats.progressBarDelay) {
                 this.enableProgressBar();
             }
 
