@@ -126,6 +126,7 @@
     vertical-align: top;
     margin-top: 9px;
 
+
     &:after {
       display: block;
       content: "?";
@@ -133,19 +134,18 @@
       width: 22px;
       text-align: center;
       line-height: 22px;
-      font-size: 19px;
-      color: @admin-font-gray2;
+      font-size: 16px;
+      .border-radius(50%);
+      color: white;
+      background: @form-button-bg-hover;
     }
 
     &.on:after {
-      .border-radius(50%);
       background: @admin-button-blue1;
-      color: white;
-      font-size: 16px;
     }
 
     &:hover:not(.on):after {
-      color: @admin-font-gray3;
+      color: @admin-dark-gray;
     }
   }
 }

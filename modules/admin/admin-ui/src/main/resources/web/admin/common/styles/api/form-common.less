@@ -104,19 +104,18 @@
     z-index: 1;
     width: 17px;
     text-align: center;
-    font-size: 14px;
-    color: @admin-font-gray2;
+    font-size: 12px;
     margin-right: 11px;
+    color: white;
+    background: @form-button-bg-hover;
+    .border-radius(50%);
 
     &:hover:not(.on) {
-      color: @admin-font-gray3;
+      color: @admin-dark-gray;
     }
 
     &.on {
-      .border-radius(50%);
       background: @admin-button-blue1;
-      color: white;
-      font-size: 12px;
     }
   }
 
