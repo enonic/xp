@@ -118,11 +118,11 @@ module api.form {
                 return false;
             }
 
-            if (!api.ObjectHelper.arrayEquals(this.options, other.options)) {
+            if (!api.ObjectHelper.stringEquals(this.helpText, other.helpText)) {
                 return false;
             }
 
-            if (!api.ObjectHelper.stringEquals(this.helpText, other.helpText)) {
+            if (!api.ObjectHelper.arrayEquals(this.options, other.options)) {
                 return false;
             }
 

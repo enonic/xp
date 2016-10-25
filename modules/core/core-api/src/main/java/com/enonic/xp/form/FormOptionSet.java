@@ -120,6 +120,7 @@ public class FormOptionSet
             Objects.equals( expanded, that.expanded ) &&
             Objects.equals( name, that.name ) &&
             Objects.equals( label, that.label ) &&
+            Objects.equals( helpText, that.helpText ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) &&
             Objects.equals( occurrences, that.occurrences ) &&
             Objects.equals( multiselection, that.multiselection ) &&
@@ -150,13 +151,13 @@ public class FormOptionSet
 
         private boolean expanded = false;
 
-        private String helpText;
-
         private List<FormOptionSetOption> setOptionsList;
 
         private Occurrences occurrences = Occurrences.create( 0, 1 );
 
         private Occurrences multiselection = Occurrences.create( 0, 1 );
+
+        private String helpText;
 
         private Builder()
         {

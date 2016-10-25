@@ -21,10 +21,13 @@ module api.form {
 
         protected formItemSetOccurrencesContainer: api.dom.DivEl;
 
-        protected helpText: HelpTextContainer;
-
         constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className, formItemOccurrence);
+        }
+
+        toggleHelpText(show?: boolean): any {
+            this.formItemLayer.toggleHelpText(show);
+            return super.toggleHelpText(show);
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
@@ -45,12 +48,6 @@ module api.form {
                 }
             });
             return result;
-        }
-
-        toggleHelpText(show?: boolean) {
-            if (!!this.helpText) {
-                this.helpText.toggleHelpText(show);
-            }
         }
 
         showContainer(show: boolean) {

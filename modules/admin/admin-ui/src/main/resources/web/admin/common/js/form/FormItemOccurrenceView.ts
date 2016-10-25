@@ -8,9 +8,17 @@ module api.form {
 
         private removeButtonClickedListeners: {(event: RemoveButtonClickedEvent<FormItemOccurrenceView>):void}[] = [];
 
+        protected helpText: HelpTextContainer;
+
         constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className);
             this.formItemOccurrence = formItemOccurrence;
+        }
+        
+        toggleHelpText(show?: boolean) {
+            if (!!this.helpText) {
+                this.helpText.toggleHelpText(show);
+            }
         }
 
         getDataPath(): api.data.PropertyPath {

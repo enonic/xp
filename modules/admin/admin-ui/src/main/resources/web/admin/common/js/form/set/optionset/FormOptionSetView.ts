@@ -225,6 +225,16 @@ module api.form {
                 this.formOptionSet.getOccurrences().getMinimum(), this.formOptionSet.getOccurrences().getMaximum());
         }
 
+        toggleHelpText(show?: boolean) {
+            if (!!this.formOptionSet.getHelpText()) {
+                this.formItemOccurrences.toggleHelpText(show);
+            }
+        }
+
+        hasHelpText(): boolean {
+            return !!this.formOptionSet.getHelpText();
+        }
+
         validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {
 
             var validationRecordingPath = this.resolveValidationRecordingPath(),
@@ -281,17 +291,5 @@ module api.form {
             this.draggingIndex = -1;
         }
 
-        toggleHelpText(show?: boolean) {
-            if (!!this.formOptionSet.getHelpText()) {
-                this.formOptionSet.toggleHelpText(show);
-                this.formItemOccurrences.getOccurrenceViews().forEach((formSetOccurrenceView: FormSetOccurrenceView) => {
-                    formSetOccurrenceView.toggleHelpText(show);
-                })
-            }
-        }
-
-        hasHelpText(): boolean {
-            return !!this.formOptionSet.getHelpText();
-        }
     }
 }

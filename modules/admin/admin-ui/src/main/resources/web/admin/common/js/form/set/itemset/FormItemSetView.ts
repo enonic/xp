@@ -286,10 +286,7 @@ module api.form {
 
         toggleHelpText(show?: boolean) {
             if (!!this.formItemSet.getHelpText()) {
-                this.formItemSet.toggleHelpText(show);
-                this.formItemOccurrences.getOccurrenceViews().forEach((formSetOccurrenceView: FormSetOccurrenceView) => {
-                    formSetOccurrenceView.toggleHelpText(show);
-                })
+                this.formItemOccurrences.toggleHelpText(show);
             }
         }
 

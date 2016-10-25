@@ -32,6 +32,12 @@ module api.form {
             return dataSet;
         }
 
+        toggleHelpText(show?: boolean) {
+            this.getOccurrenceViews().forEach((view) => {
+                view.toggleHelpText(show);
+            })
+        }
+
         isCollapsed(): boolean {
             return this.occurrencesCollapsed;
         }
