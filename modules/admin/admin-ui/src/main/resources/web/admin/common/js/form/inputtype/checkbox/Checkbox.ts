@@ -11,10 +11,24 @@ module api.content.form.inputtype.checkbox {
 
         private checkbox: api.ui.Checkbox;
 
+        private labelPosition:LabelPosition = LabelPosition.TOP;
+
         public static debug: boolean = false;
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
+            this.readConfig(config.inputConfig)
+        }
+
+        private readConfig(inputConfig:{ [element:string]:{ [name:string]:string }[]; }):void {
+            this.readLabelPosition(inputConfig["labelPlacement"]);
+        }
+
+        private readLabelPosition(labelPositionObj) {
+            if (labelPositionObj) {
+                var labelPosition:LabelPosition = LabelPosition[labelPositionObj[0].value.toUpperCase()];
+                this.labelPosition = labelPosition ? labelPosition : LabelPosition.TOP;
+            }
         }
 
         getValueType(): ValueType {
@@ -28,7 +42,7 @@ module api.content.form.inputtype.checkbox {
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
             var checked = property.hasNonNullValue() ? property.getBoolean() : false;
             this.checkbox =
-                api.ui.Checkbox.create().setLabelText(input.getLabel()).setChecked(checked).setLabelPosition(LabelPosition.TOP).build();
+                api.ui.Checkbox.create().setLabelText(input.getLabel()).setChecked(checked).setLabelPosition(this.labelPosition).build();
             this.appendChild(this.checkbox);
 
             if (!ValueTypes.BOOLEAN.equals(property.getType())) {
