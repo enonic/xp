@@ -46,7 +46,7 @@ public class NodeRepositoryServiceImpl
     public void delete( final RepositoryId repositoryId )
     {
         delete( repositoryId, IndexType.SEARCH );
-        delete( repositoryId, IndexType.SEARCH );
+        delete( repositoryId, IndexType.VERSION );
     }
 
     private void delete( final RepositoryId repositoryId, final IndexType indexType )
