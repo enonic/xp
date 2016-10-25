@@ -9,6 +9,8 @@ public interface RepositoryService
 {
     Repository createRepository( final CreateRepositoryParams params );
 
+    RepositoryId deleteRepository( DeleteRepositoryParams params );
+
     Branch createBranch( final CreateBranchParams params );
 
     Repositories list();
