@@ -1,18 +1,14 @@
 import "../../api.ts";
-import {DialogDependantList} from "../dialog/DependantItemsDialog";
-import {ProcessingStats, ProgressBarDialog} from "../dialog/ProgressBarDialog";
+import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
+import {PublishDialogDependantList, isContentSummaryValid} from "./PublishDialogDependantList";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import CompareContentResults = api.content.resource.result.CompareContentResults;
-import DialogButton = api.ui.dialog.DialogButton;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
-import ContentIds = api.content.ContentIds;
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
-import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -282,43 +278,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
             });
     }
 
-    private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ProcessingStats.pollInterval) {
-        setTimeout(() => {
-            if (!this.isProgressBarEnabled() && elapsed >= ProcessingStats.progressBarDelay) {
-                this.enableProgressBar();
-            }
-
-            new api.task.GetTaskInfoRequest(taskId).sendAndParse().then((task: api.task.TaskInfo) => {
-                let state = task.getState();
-                if (!task) {
-                    return; // task probably expired, stop polling
-                }
-
-                let progress = task.getProgress();
-
-                if (state == api.task.TaskState.FINISHED) {
-                    this.setProgressValue(100);
-                    this.onPublishComplete();
-
-                    api.notify.showSuccess(progress.getInfo());
-                } else if (state == api.task.TaskState.FAILED) {
-                    this.onPublishComplete();
-
-                    api.notify.showError('Publishing failed: ' + progress.getInfo());
-                } else {
-                    this.setProgressValue(task.getProgressPercentage());
-                    this.pollPublishTask(taskId, elapsed + interval, interval);
-                }
-
-            }).catch((reason: any) => {
-                this.onPublishComplete();
-
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
-
-        }, interval);
-    }
-
     protected countTotal(): number {
         return this.countToPublish(this.getItemList().getItems()) + this.getStashedCount();
     }
@@ -389,82 +348,4 @@ export class ContentPublishDialogAction extends api.ui.Action {
         super("Publish");
         this.setIconClass("publish-action");
     }
-}
-
-export class PublishDialogDependantList extends DialogDependantList {
-
-    private itemClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
-
-    private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
-
-
-    clearItems() {
-        this.removeClass("contains-removable");
-        super.clearItems();
-    }
-
-    createItemView(item: api.content.ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
-        let view = super.createItemView(item, readOnly);
-
-        if (CompareStatus.NEWER == item.getCompareStatus()) {
-            view.addClass("removable");
-            this.toggleClass("contains-removable", true);
-        }
-
-        view.onClicked((event) => {
-            if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass("remove")) {
-                this.notifyItemRemoveClicked(item);
-            } else {
-                this.notifyItemClicked(item)
-            }
-        });
-
-        if (!isContentSummaryValid(item)) {
-            view.addClass("invalid");
-            view.getEl().setTitle("Edit invalid content");
-        }
-
-        return view;
-    }
-
-    onItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.itemClickListeners.push(listener);
-    }
-
-    unItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.itemClickListeners = this.itemClickListeners.filter((curr) => {
-            return curr !== listener;
-        })
-    }
-
-    private notifyItemClicked(item) {
-        this.itemClickListeners.forEach(listener => {
-            listener(item);
-        })
-    }
-
-    onItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.removeClickListeners.push(listener);
-    }
-
-    unItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.removeClickListeners = this.removeClickListeners.filter((curr) => {
-            return curr !== listener;
-        })
-    }
-
-    private notifyItemRemoveClicked(item) {
-        this.removeClickListeners.forEach(listener => {
-            listener(item);
-        })
-    }
-
-}
-
-function isContentSummaryValid(item: ContentSummaryAndCompareStatus): boolean {
-    let status = item.getCompareStatus(),
-        summary = item.getContentSummary();
-
-    return status == CompareStatus.PENDING_DELETE ||
-           (summary.isValid() && !api.util.StringHelper.isBlank(summary.getDisplayName()) && !summary.getName().isUnnamed());
 }
