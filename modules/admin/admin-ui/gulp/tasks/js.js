@@ -118,4 +118,4 @@ gulp.task('webpack-after', ['webpack'], function (cb) {
 /*
  Main JS task
  */
-gulp.task('js', gulpSequence('ts:common', ['ts:live', 'webpack-after']));
+gulp.task('js', gulpSequence('ts:common', 'ts:spec', ['ts:live', 'webpack-after']));
