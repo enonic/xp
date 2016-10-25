@@ -7,6 +7,7 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.MetricSet;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 
@@ -69,6 +70,11 @@ public final class Metrics
     public static <T extends Metric> T register( final Class<?> clz, final String name, final T metric )
     {
         return register( MetricRegistry.name( clz, name ), metric );
+    }
+
+    public static void registerAll( final MetricSet set )
+    {
+        registry().registerAll( set );
     }
 
     public static <T> T time( final Timer timer, final Supplier<T> supplier )

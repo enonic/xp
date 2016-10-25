@@ -1,5 +1,7 @@
 package com.enonic.xp.util;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,8 +9,10 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
+import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.google.common.collect.Maps;
 
 import static org.junit.Assert.*;
 
@@ -76,5 +80,15 @@ public class MetricsTest
 
         assertNotNull( gauge );
         assertSame( gauge, Metrics.registry().getGauges().get( MetricsTest.class.getName() + ".gauge" ) );
+    }
+
+    @Test
+    public void registerAll()
+    {
+        final Map<String, Metric> map = Maps.newHashMap();
+        map.put( MetricsTest.class.getName() + ".timer", new Timer() );
+
+        Metrics.registerAll( () -> map );
+        assertNotNull( Metrics.registry().getTimers().get( MetricsTest.class.getName() + ".timer" ) );
     }
 }
