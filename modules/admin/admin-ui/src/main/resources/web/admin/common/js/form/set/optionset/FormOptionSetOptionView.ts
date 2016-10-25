@@ -313,6 +313,12 @@ module api.form {
             return (<FormOptionSet>this.formOptionSetOption.getParent()).getMultiselection();
         }
 
+        reset() {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.reset();
+            });
+        }
+
         update(propertySet: api.data.PropertySet, unchangedOnly?: boolean): Q.Promise<void> {
             this.parentDataSet = propertySet;
             var propertyArray = this.getOptionItemsPropertyArray(propertySet);

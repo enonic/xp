@@ -13,10 +13,13 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypes;
 
 import static com.enonic.xp.form.FormItemType.FORM_ITEM_SET;
+import static com.enonic.xp.form.FormItemType.FORM_OPTION_SET;
 import static com.enonic.xp.form.FormItemType.INPUT;
 import static com.enonic.xp.form.FormItemType.LAYOUT;
 
@@ -63,6 +66,19 @@ public final class FormDefaultValuesProcessorImpl
             else if ( formItem.getType() == LAYOUT && formItem.toLayout() instanceof FieldSet )
             {
                 processFormItems( (FieldSet) formItem.toLayout(), data, parentPath );
+            }
+
+            else if ( formItem.getType() == FORM_OPTION_SET )
+            {
+                final FormOptionSet formOptionSet = formItem.toFormOptionSet();
+                for ( FormOptionSetOption option : formOptionSet.getOptions() )
+                {
+                    if ( option.isDefaultOption() )
+                    {
+                        processFormItems( option.getFormItems(), data,
+                                          PropertyPath.from( PropertyPath.from( parentPath, formOptionSet.getName() ), option.getName() ) );
+                    }
+                }
             }
         } );
     }
