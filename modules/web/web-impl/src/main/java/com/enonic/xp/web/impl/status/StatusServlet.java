@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusReporter;
@@ -44,7 +46,8 @@ public final class StatusServlet
     private JsonNode getRootInfo()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        this.reporters.keySet().forEach( json::add );
+        final Set<String> names = Sets.newTreeSet( this.reporters.keySet() );
+        names.forEach( json::add );
         return json;
     }
 

@@ -25,7 +25,7 @@ public final class ThreadDumpReporter
     @Override
     public String getName()
     {
-        return "threads";
+        return "dump.threads";
     }
 
     @Override

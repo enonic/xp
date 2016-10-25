@@ -11,7 +11,7 @@ public class ThreadDumpReporterTest
 {
     public ThreadDumpReporterTest()
     {
-        super( "threads", MediaType.PLAIN_TEXT_UTF_8 );
+        super( "dump.threads", MediaType.PLAIN_TEXT_UTF_8 );
     }
 
     @Override

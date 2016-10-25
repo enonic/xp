@@ -20,7 +20,7 @@ public final class DeadlockReporter
     @Override
     public String getName()
     {
-        return "deadlocks";
+        return "dump.deadlocks";
     }
 
     @Override

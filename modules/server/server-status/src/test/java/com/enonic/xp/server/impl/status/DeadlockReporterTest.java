@@ -11,7 +11,7 @@ public class DeadlockReporterTest
 {
     public DeadlockReporterTest()
     {
-        super( "deadlocks", MediaType.PLAIN_TEXT_UTF_8 );
+        super( "dump.deadlocks", MediaType.PLAIN_TEXT_UTF_8 );
     }
 
     @Override
