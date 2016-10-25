@@ -285,6 +285,8 @@ module api.liveedit.text {
         private onBlurHandler(e) {
             this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
 
+            this.collapseEditorMenuItems();
+
             setTimeout(() => {
                 if (!this.anyEditorHasFocus()) {
                     var pageView = this.getPageView();
@@ -360,6 +362,10 @@ module api.liveedit.text {
                 this.htmlAreaEditor.focus();
                 wemjq(this.htmlAreaEditor.getElement()).simulate("click");
             }
+        }
+
+        private collapseEditorMenuItems() {
+            wemjq(".mce-menubtn.mce-active").click();
         }
 
         private anyEditorHasFocus(): boolean {
