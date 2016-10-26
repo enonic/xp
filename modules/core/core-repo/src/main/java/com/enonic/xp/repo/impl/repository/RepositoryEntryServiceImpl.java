@@ -129,7 +129,7 @@ public class RepositoryEntryServiceImpl
         {
             eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
             refresh();
-            eventPublisher.publish( RepositoryClusterEvents.updated( repositoryId ) );
+            eventPublisher.publish( RepositoryClusterEvents.deleted( repositoryId ) );
         }
     }
 
@@ -153,25 +153,22 @@ public class RepositoryEntryServiceImpl
             editor( nodeEditor ).
             build();
 
-        final Node repositoryEntryNode = createContext().callWith( () -> {
-            final Node updatedNode = UpdateNodeCommand.create().
-                params( updateNodeParams ).
-                indexServiceInternal( this.indexServiceInternal ).
-                storageService( this.nodeStorageService ).
-                searchService( this.nodeSearchService ).
-                binaryService( this.binaryService ).
-                build().
-                execute();
+        final Node updatedNode = createContext().callWith( () -> UpdateNodeCommand.create().
+            params( updateNodeParams ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            binaryService( this.binaryService ).
+            build().
+            execute() );
 
-            if ( updatedNode != null )
-            {
-                eventPublisher.publish( NodeEvents.updated( updatedNode ) );
-                eventPublisher.publish( RepositoryClusterEvents.updated( repositoryId ) );
-            }
-            return updatedNode;
-        } );
+        if ( updatedNode != null )
+        {
+            eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+            eventPublisher.publish( RepositoryClusterEvents.updated( repositoryId ) );
+        }
 
-        return RepositoryNodeTranslator.toRepository( repositoryEntryNode );
+        return RepositoryNodeTranslator.toRepository( updatedNode );
     }
 
     private Context createContext()
