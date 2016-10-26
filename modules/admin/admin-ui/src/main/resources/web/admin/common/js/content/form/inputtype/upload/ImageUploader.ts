@@ -129,12 +129,11 @@ module api.content.form.inputtype.upload {
         updateProperty(property: api.data.Property, unchangedOnly?: boolean): Q.Promise<void> {
             if ((!unchangedOnly || !this.imageUploader.isDirty()) && this.getContext().content.getContentId()) {
 
-                return new api.content.resource.GetContentByIdRequest(this.getContext().content.getContentId()).
-                    sendAndParse().
-                    then((content: api.content.Content) => {
+                return new api.content.resource.GetContentByIdRequest(this.getContext().content.getContentId())
+                    .sendAndParse().then((content: api.content.Content) => {
 
                         this.imageUploader.setOriginalDimensions(content);
-                    this.imageUploader.setValue(content.getId(), false, false);
+                        this.imageUploader.setValue(content.getId(), false, false);
 
                         this.configEditorsProperties(content);
 
@@ -254,19 +253,13 @@ module api.content.form.inputtype.upload {
 
         private configEditorsProperties(content: Content) {
             var focalPoint = this.getFocalPoint(content);
-            if (focalPoint) {
-                this.imageUploader.setFocalPoint(focalPoint.x, focalPoint.y);
-            }
+            this.imageUploader.setFocalPoint(focalPoint);
 
             var cropPosition = this.getRectFromProperty(content, 'cropPosition');
-            if (cropPosition) {
-                this.imageUploader.setCrop(cropPosition);
-            }
+            this.imageUploader.setCrop(cropPosition);
 
             var zoomPosition = this.getRectFromProperty(content, 'zoomPosition');
-            if (zoomPosition) {
-                this.imageUploader.setZoom(zoomPosition);
-            }
+            this.imageUploader.setZoom(zoomPosition);
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
