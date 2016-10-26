@@ -29,18 +29,18 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
 
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
             if (!this.isIgnoreItemsChanged()) {
-                this.refreshUnpublishDependencies().done();
+                this.reloadUnpublishDependencies().done();
             }
         });
     }
 
     open() {
-        this.refreshUnpublishDependencies().done(() => this.centerMyself());
+        this.reloadUnpublishDependencies().done(() => this.centerMyself());
 
         super.open();
     }
 
-    private refreshUnpublishDependencies(): wemQ.Promise<void> {
+    private reloadUnpublishDependencies(): wemQ.Promise<void> {
 
         this.getDependantList().clearItems();
         this.showLoadingSpinner();
