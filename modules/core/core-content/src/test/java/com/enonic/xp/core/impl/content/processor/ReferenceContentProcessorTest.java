@@ -120,6 +120,33 @@ public class ReferenceContentProcessorTest
         assertEquals( result.getCreateContentParams().getData(), data );
     }
 
+    @Test
+    public void testProcessCreate_one_download_ref()
+
+    {
+        final PropertyTree data = new PropertyTree();
+        final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "inputName" ).build();
+        Form form = Form.create().addFormItem( input ).build();
+
+        final ContentType contentType = ContentType.create().
+            name( "test:myContentType" ).
+            superType( ContentTypeName.structured() ).
+            form( form ).
+            build();
+
+        Mockito.when( this.contentTypeService.getByName( Mockito.any() ) ).thenReturn( contentType );
+
+        data.addString( input.getName(), "<p><a href=\"media://download/aContent\">aaa</a></p>" );
+
+        final CreateContentParams params = createContentParams( data.copy() );
+        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, null );
+
+        final ProcessCreateResult result = this.referenceContentProcessor.processCreate( processCreateParams );
+
+        data.addReference( "_inputName_references", Reference.from( "aContent" ) );
+
+        assertEquals( result.getCreateContentParams().getData(), data );
+    }
 
     @Test
     public void testProcessUpdate_one_ref_add()

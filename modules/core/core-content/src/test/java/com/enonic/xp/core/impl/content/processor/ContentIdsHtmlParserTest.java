@@ -45,6 +45,15 @@ public class ContentIdsHtmlParserTest
     }
 
     @Test
+    public void test_with_download_links()
+        throws IOException
+    {
+        final ContentIds contentIds = parser.parse( this.loadHtml( "ParserTest_with_download_links.html" ) );
+        assertEquals( 2, contentIds.getSize() );
+        assertEquals( ContentIds.from( id1, id3 ), contentIds );
+    }
+
+    @Test
     public void test_invalid_character()
         throws IOException
     {
