@@ -13,15 +13,16 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
+import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
 import com.enonic.xp.repo.impl.node.FindNodesByParentCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
@@ -55,14 +56,18 @@ public class RepositoryEntryServiceImpl
     public void createRepositoryEntry( final Repository repository )
     {
         final Node node = RepositoryNodeTranslator.toNode( repository );
-        nodeStorageService.store( node, createInternalContext() );
-        refresh();
+        final Node createdNode = nodeStorageService.store( node, createInternalContext() );
+        if ( createdNode != null )
+        {
+            eventPublisher.publish( NodeEvents.created( createdNode ) );
+            refresh();
+            eventPublisher.publish( RepositoryClusterEvents.created( repository.getId() ) );
+        }
     }
 
     @Override
     public RepositoryIds findRepositoryEntryIds()
     {
-        //TODO Non RealTime / Refresh needed
         final ImmutableList.Builder<RepositoryId> repositoryIds = ImmutableList.builder();
 
         if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
@@ -111,9 +116,21 @@ public class RepositoryEntryServiceImpl
     @Override
     public void deleteRepositoryEntry( final RepositoryId repositoryId )
     {
-        final NodeIds nodeIds = NodeIds.from( repositoryId.toString() );
-        nodeStorageService.delete( nodeIds, createInternalContext() );
-        refresh();
+
+        final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeByIdCommand.create().
+            nodeId( NodeId.from( repositoryId.toString() ) ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute() );
+
+        if ( deletedNodes.isNotEmpty() )
+        {
+            eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
+            refresh();
+            eventPublisher.publish( RepositoryClusterEvents.updated( repositoryId ) );
+        }
     }
 
     private void refresh()
@@ -148,7 +165,8 @@ public class RepositoryEntryServiceImpl
 
             if ( updatedNode != null )
             {
-                this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+                eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+                eventPublisher.publish( RepositoryClusterEvents.updated( repositoryId ) );
             }
             return updatedNode;
         } );

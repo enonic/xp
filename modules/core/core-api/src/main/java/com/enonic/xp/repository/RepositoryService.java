@@ -18,4 +18,6 @@ public interface RepositoryService
     Repository get( final RepositoryId repositoryId );
 
     RepositoryId deleteRepository( DeleteRepositoryParams params );
+
+    void invalidate( RepositoryId repositoryId );
 }

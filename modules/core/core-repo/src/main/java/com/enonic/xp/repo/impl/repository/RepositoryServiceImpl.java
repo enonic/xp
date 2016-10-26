@@ -137,6 +137,12 @@ public class RepositoryServiceImpl
         return repositoryId;
     }
 
+    @Override
+    public void invalidate( final RepositoryId repositoryId )
+    {
+        repositoryMap.remove( repositoryId );
+    }
+
     private Repository createRepositoryObject( final CreateRepositoryParams params )
     {
         return Repository.create().

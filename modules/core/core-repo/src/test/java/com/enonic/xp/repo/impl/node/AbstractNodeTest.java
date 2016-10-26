@@ -201,6 +201,7 @@ public abstract class AbstractNodeTest
         repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
         repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryEntryService.setNodeStorageService( this.storageService );
+        repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setRepositoryEntryService( repositoryEntryService );
