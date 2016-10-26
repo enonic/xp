@@ -11,7 +11,7 @@ module api.content.form.inputtype.checkbox {
 
         private checkbox: api.ui.Checkbox;
 
-        private labelPosition:LabelPosition = LabelPosition.TOP;
+        private labelPosition: LabelPosition = LabelPosition.TOP;
 
         public static debug: boolean = false;
 
@@ -20,13 +20,13 @@ module api.content.form.inputtype.checkbox {
             this.readConfig(config.inputConfig)
         }
 
-        private readConfig(inputConfig:{ [element:string]:{ [name:string]:string }[]; }):void {
+        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             this.readLabelPosition(inputConfig["labelPlacement"]);
         }
 
         private readLabelPosition(labelPositionObj) {
             if (labelPositionObj) {
-                var labelPosition:LabelPosition = LabelPosition[labelPositionObj[0].value.toUpperCase()];
+                var labelPosition: LabelPosition = LabelPosition[<string>labelPositionObj[0].value.toUpperCase()];
                 this.labelPosition = labelPosition ? labelPosition : LabelPosition.TOP;
             }
         }
