@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.service.component.annotations.Activate;
@@ -8,27 +9,17 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeEditor;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.NodeEvents;
-import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -40,7 +31,6 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.SystemConstants;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
@@ -48,19 +38,15 @@ public class RepositoryServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
 
-    private final ConcurrentMap<RepositoryId, Repository> repositorySettingsMap = Maps.newConcurrentMap();
+    private final ConcurrentMap<RepositoryId, Repository> repositoryMap = Maps.newConcurrentMap();
+
+    private RepositoryEntryService repositoryEntryService;
 
     private IndexServiceInternal indexServiceInternal;
 
     private NodeRepositoryService nodeRepositoryService;
 
     private NodeStorageService nodeStorageService;
-
-    private NodeSearchService nodeSearchService;
-
-    private EventPublisher eventPublisher;
-
-    private BinaryService binaryService;
 
     @SuppressWarnings("unused")
     @Activate
@@ -73,37 +59,18 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public boolean isInitialized( final RepositoryId repositoryId )
-    {
-        return this.get( repositoryId ) != null;
-    }
-
-    @Override
     public Repository createRepository( final CreateRepositoryParams params )
     {
-        return repositorySettingsMap.compute( params.getRepositoryId(), ( key, previousRepository ) -> {
-            if ( previousRepository != null || repositoryNodeExists( key ) )
+        return repositoryMap.compute( params.getRepositoryId(), ( key, previousRepository ) -> {
+            if ( previousRepository != null || repositoryEntryService.getRepositoryEntry( key ) != null )
             {
                 throw new RepositoryAlreadyExistException( key );
             }
             createRootNode( params, RepositoryConstants.MASTER_BRANCH );
             final Repository repository = createRepositoryObject( params );
-            storeRepositoryEntry( repository );
-
+            repositoryEntryService.createRepositoryEntry( repository );
             return repository;
         } );
-    }
-
-    @Override
-    public RepositoryId deleteRepository( final DeleteRepositoryParams params )
-    {
-        final RepositoryId repositoryId = params.getRepositoryId();
-        repositorySettingsMap.compute( repositoryId, ( key, previousRepository ) -> {
-            nodeRepositoryService.delete( repositoryId );
-            deleteRepositoryEntry( repositoryId );
-            return null;
-        } );
-        return repositoryId;
     }
 
     @Override
@@ -112,7 +79,8 @@ public class RepositoryServiceImpl
         final RepositoryId repositoryId = ContextAccessor.current().
             getRepositoryId();
 
-        repositorySettingsMap.compute( repositoryId, ( key, previousRepository ) -> {
+        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
+            previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( key ) : previousRepository;
             if ( previousRepository == null )
             {
                 throw new RepositoryNotFoundException( "Cannot create branch in repository [" + repositoryId + "], not found" );
@@ -125,41 +93,55 @@ public class RepositoryServiceImpl
             }
 
             pushRootNode( previousRepository, newBranch );
-            final Repository repository = createRepositoryObject( createBranchParams, previousRepository );
-            final NodeId nodeId = NodeId.from( previousRepository.getId().toString() );
-            NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( newBranch );
-            updateRepositoryEntry( nodeId, nodeEditor );
-            return repository;
+            final Repository newRepository = repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranch );
+            return newRepository;
         } );
 
         return createBranchParams.getBranch();
     }
 
-    private Repository createRepositoryObject( final CreateBranchParams createBranchParams, final Repository previousRepository )
-    {
-        final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
-        branches.addAll( previousRepository.getBranches() );
-        branches.add( createBranchParams.getBranch() );
-        return Repository.create( previousRepository ).
-            branches( Branches.from( branches.build() ) ).
-            build();
-    }
-
     @Override
     public Repositories list()
     {
-        return Repositories.from( repositorySettingsMap.values() );
+        final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
+        repositoryEntryService.
+            findRepositoryEntryIds().
+            stream().
+            map( repositoryId -> repositoryEntryService.getRepositoryEntry( repositoryId ) ).
+            filter( Objects::nonNull ).
+            forEach( repositories::add );
+        return Repositories.from( repositories.build() );
+    }
+
+    @Override
+    public boolean isInitialized( final RepositoryId repositoryId )
+    {
+        return this.get( repositoryId ) != null;
     }
 
     @Override
     public Repository get( final RepositoryId repositoryId )
     {
-        return repositorySettingsMap.computeIfAbsent( repositoryId, key -> {
-            final Node node = getRepositoryNode( repositoryId );
-            return node == null ? null : RepositoryNodeTranslator.toRepository( node );
-        } );
+        return repositoryMap.computeIfAbsent( repositoryId, key -> repositoryEntryService.getRepositoryEntry( repositoryId ) );
     }
 
+    @Override
+    public RepositoryId deleteRepository( final DeleteRepositoryParams params )
+    {
+        final RepositoryId repositoryId = params.getRepositoryId();
+        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
+            repositoryEntryService.deleteRepositoryEntry( repositoryId );
+            nodeRepositoryService.delete( repositoryId );
+            return null;
+        } );
+        return repositoryId;
+    }
+
+    @Override
+    public void invalidate( final RepositoryId repositoryId )
+    {
+        repositoryMap.remove( repositoryId );
+    }
 
     private Repository createRepositoryObject( final CreateRepositoryParams params )
     {
@@ -168,55 +150,6 @@ public class RepositoryServiceImpl
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
             build();
-    }
-
-    private void storeRepositoryEntry( final Repository repository )
-    {
-        final Node node = RepositoryNodeTranslator.toNode( repository );
-
-        nodeStorageService.store( node, InternalContext.create( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build() );
-    }
-
-    private void deleteRepositoryEntry( final RepositoryId repositoryId )
-    {
-        final NodeIds nodeIds = NodeIds.from( repositoryId.toString() );
-        nodeStorageService.delete( nodeIds, InternalContext.create( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build() );
-    }
-
-    private void updateRepositoryEntry( final NodeId nodeId, final NodeEditor nodeEditor )
-    {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            id( nodeId ).
-            editor( nodeEditor ).
-            build();
-
-        final Context context = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build();
-
-        context.callWith( () -> {
-            final Node updatedNode = UpdateNodeCommand.create().
-                params( updateNodeParams ).
-                indexServiceInternal( this.indexServiceInternal ).
-                storageService( this.nodeStorageService ).
-                searchService( this.nodeSearchService ).
-                binaryService( this.binaryService ).
-                build().
-                execute();
-
-            if ( updatedNode != null )
-            {
-                this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
-            }
-            return null;
-        } );
     }
 
     private void createRootNode( final CreateRepositoryParams params, final Branch branch )
@@ -256,30 +189,10 @@ public class RepositoryServiceImpl
         return branch;
     }
 
-    private boolean repositoryNodeExists( final RepositoryId repositoryId )
+    @Reference
+    public void setRepositoryEntryService( final RepositoryEntryService repositoryEntryService )
     {
-        try
-        {
-            return getRepositoryNode( repositoryId ) != null;
-        }
-        catch ( Exception e )
-        {
-            return false;
-        }
-    }
-
-    private Node getRepositoryNode( final RepositoryId repositoryId )
-    {
-        if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
-        {
-            final NodeId nodeId = NodeId.from( repositoryId.toString() );
-            return ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-                branch( SystemConstants.BRANCH_SYSTEM ).
-                build().
-                callWith( () -> this.nodeStorageService.get( nodeId, InternalContext.from( ContextAccessor.current() ) ) );
-        }
-        return null;
+        this.repositoryEntryService = repositoryEntryService;
     }
 
     @Reference
@@ -298,23 +211,5 @@ public class RepositoryServiceImpl
     public void setNodeStorageService( final NodeStorageService nodeStorageService )
     {
         this.nodeStorageService = nodeStorageService;
-    }
-
-    @Reference
-    public void setNodeSearchService( final NodeSearchService nodeSearchService )
-    {
-        this.nodeSearchService = nodeSearchService;
-    }
-
-    @Reference
-    public void setEventPublisher( final EventPublisher eventPublisher )
-    {
-        this.eventPublisher = eventPublisher;
-    }
-
-    @Reference
-    public void setBinaryService( final BinaryService binaryService )
-    {
-        this.binaryService = binaryService;
     }
 }

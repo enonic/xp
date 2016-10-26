@@ -58,6 +58,7 @@ import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
@@ -190,13 +191,19 @@ public class AbstractContentServiceTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
         nodeRepositoryService.setIndexServiceInternal( this.indexService );
 
+        final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
+        repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
+        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
+        repositoryEntryService.setNodeStorageService( this.storageService );
+        repositoryEntryService.setNodeSearchService( this.searchService );
+        repositoryEntryService.setEventPublisher( eventPublisher );
+        repositoryEntryService.setBinaryService( this.binaryService );
+
         this.repositoryService = new RepositoryServiceImpl();
+        this.repositoryService.setRepositoryEntryService( repositoryEntryService );
         this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
-        this.repositoryService.setNodeSearchService( this.searchService );
-        this.repositoryService.setEventPublisher( eventPublisher );
-        this.repositoryService.setBinaryService( this.binaryService );
         this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();

@@ -9,13 +9,15 @@ public interface RepositoryService
 {
     Repository createRepository( final CreateRepositoryParams params );
 
-    RepositoryId deleteRepository( DeleteRepositoryParams params );
-
     Branch createBranch( final CreateBranchParams params );
 
     Repositories list();
 
+    boolean isInitialized( final RepositoryId id );
+
     Repository get( final RepositoryId repositoryId );
 
-    boolean isInitialized( final RepositoryId id );
+    RepositoryId deleteRepository( DeleteRepositoryParams params );
+
+    void invalidate( RepositoryId repositoryId );
 }
