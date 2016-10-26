@@ -124,6 +124,10 @@ module api.util.htmlarea.dialog {
                 this.centerMyself();
             })
 
+            this.dockedPanel.onRendered(() => {
+                this.centerMyself();
+            })
+
         }
 
         private createContentPanel(): Panel {
