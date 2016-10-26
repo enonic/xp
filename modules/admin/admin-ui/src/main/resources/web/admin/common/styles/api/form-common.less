@@ -1,6 +1,6 @@
 @form-width: 660px;
 @form-label-width: 120px;
-@form-field-spacing: 15px;
+@form-field-spacing: 20px;
 @form-field-set-spacing: 35px;
 
 .form-element-spacing(@size: @form-field-spacing) {
@@ -29,7 +29,7 @@
       padding-top: 10px;
     }
     &.display-validation-errors .input-view {
-      padding: 10px 10px 10px 10px;
+      padding: 10px;
       margin: 0px -10px 5px -10px;
     }
   }
@@ -37,14 +37,18 @@
   &.display-validation-errors {
 
     .input-view {
-      padding: 10px 10px 0px 10px;
 
       &.invalid {
-        padding: 10px 10px 10px 10px;
+        margin: 0 0 5px 0;
+        padding: 10px;
         .input-view-error();
 
         .upload-button {
           background-color: @admin-white;
+        }
+
+        .help-text-toggler {
+          margin-right: 1px;
         }
 
         .help-text p {
