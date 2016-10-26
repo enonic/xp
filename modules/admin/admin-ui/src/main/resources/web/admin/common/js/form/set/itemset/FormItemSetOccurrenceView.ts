@@ -56,6 +56,10 @@ module api.form {
             if (this.formItemSet.getHelpText()) {
                 this.helpText = new HelpTextContainer(this.formItemSet.getHelpText());
 
+                this.helpText.onHelpTextToggled((show) => {
+                    this.formItemLayer.toggleHelpText(show);
+                });
+
                 this.label.appendChild(this.helpText.getToggler());
                 this.appendChild(this.helpText.getHelpText());
 

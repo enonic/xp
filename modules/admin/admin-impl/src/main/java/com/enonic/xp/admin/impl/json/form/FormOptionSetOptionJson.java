@@ -36,6 +36,11 @@ public class FormOptionSetOptionJson
         return formOptionSetOption.getLabel();
     }
 
+    public String getHelpText()
+    {
+        return formOptionSetOption.getHelpText();
+    }
+
     public boolean isDefaultOption()
     {
         return formOptionSetOption.isDefaultOption();

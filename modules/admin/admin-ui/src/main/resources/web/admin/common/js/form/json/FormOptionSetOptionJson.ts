@@ -8,6 +8,8 @@ module api.form.json {
 
         defaultOption: boolean;
 
+        helpText: string;
+
         items: FormItemTypeWrapperJson[];
     }
 }
