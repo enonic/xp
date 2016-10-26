@@ -18,7 +18,7 @@ public class ContentIdsHtmlParser
     implements Parser<ContentIds>
 {
 
-    private final static String[] LINK_FORMATS = {"content://", "media://download/"};
+    private final static String[] LINK_FORMATS = {"content://", "media://download/", "image://"};
 
     private final static String BASE_START = "<a\\s+(?:[^>]*?\\s+)?href=([\"\'])(" + StringUtils.join( LINK_FORMATS, "|" ) + ")";
 
