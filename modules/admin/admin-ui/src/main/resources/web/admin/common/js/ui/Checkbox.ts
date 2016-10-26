@@ -142,7 +142,8 @@ module api.ui {
     export enum LabelPosition {
         TOP,
         RIGHT,
-        LEFT
+        LEFT,
+        BOTTOM
     }
 
     export class CheckboxBuilder {
