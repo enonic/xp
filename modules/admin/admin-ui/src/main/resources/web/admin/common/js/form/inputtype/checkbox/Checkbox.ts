@@ -5,13 +5,13 @@ module api.content.form.inputtype.checkbox {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import BaseInputTypeSingleOccurrence = api.form.inputtype.support.BaseInputTypeSingleOccurrence;
-    import LabelPosition = api.ui.LabelPosition;
+    import InputAlignment = api.ui.InputAlignment;
 
     export class Checkbox extends BaseInputTypeSingleOccurrence<boolean> {
 
         private checkbox: api.ui.Checkbox;
 
-        private labelPosition: LabelPosition = LabelPosition.TOP;
+        private inputAlignment: InputAlignment = InputAlignment.LEFT;
 
         public static debug: boolean = false;
 
@@ -21,13 +21,13 @@ module api.content.form.inputtype.checkbox {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            this.readLabelPosition(inputConfig["labelPlacement"]);
+            this.setInputAlignment(inputConfig["alignment"]);
         }
 
-        private readLabelPosition(labelPositionObj) {
-            if (labelPositionObj) {
-                var labelPosition: LabelPosition = LabelPosition[<string>labelPositionObj[0].value.toUpperCase()];
-                this.labelPosition = labelPosition ? labelPosition : LabelPosition.TOP;
+        private setInputAlignment(inputAlignmentObj) {
+            if (inputAlignmentObj) {
+                var inputAlignment: InputAlignment = InputAlignment[<string>inputAlignmentObj[0].value.toUpperCase()];
+                this.inputAlignment = isNaN(inputAlignment) ? InputAlignment.LEFT : inputAlignment;
             }
         }
 
@@ -42,7 +42,7 @@ module api.content.form.inputtype.checkbox {
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
             var checked = property.hasNonNullValue() ? property.getBoolean() : false;
             this.checkbox =
-                api.ui.Checkbox.create().setLabelText(input.getLabel()).setChecked(checked).setLabelPosition(this.labelPosition).build();
+                api.ui.Checkbox.create().setLabelText(input.getLabel()).setChecked(checked).setInputAlignment(this.inputAlignment).build();
             this.appendChild(this.checkbox);
 
             if (!ValueTypes.BOOLEAN.equals(property.getType())) {
