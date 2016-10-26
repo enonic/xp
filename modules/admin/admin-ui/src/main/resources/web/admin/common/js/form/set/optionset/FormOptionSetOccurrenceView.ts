@@ -190,10 +190,10 @@ module api.form {
         }
 
         private ensureSelectionArrayExists(propertyArraySet: PropertySet) {
-            var selectionPropertyArray = propertyArraySet.getPropertyArray(this.formOptionSet.getName() + "_selection");
+            var selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
             if (!selectionPropertyArray) {
                 selectionPropertyArray =
-                    PropertyArray.create().setType(ValueTypes.STRING).setName(this.formOptionSet.getName() + "_selection").setParent(
+                    PropertyArray.create().setType(ValueTypes.STRING).setName("_selected").setParent(
                         propertyArraySet).build();
                 propertyArraySet.addPropertyArray(selectionPropertyArray);
                 this.addDefaultSelectionToSelectionArray(selectionPropertyArray);
@@ -233,7 +233,7 @@ module api.form {
         private validateMultiselection(): ValidationRecording {
             var multiselectionRecording = new ValidationRecording(),
                 validationRecordingPath = this.resolveValidationRecordingPath(),
-                selectionPropertyArray = this.propertySet.getPropertyArray(this.formOptionSet.getName() + "_selection");
+                selectionPropertyArray = this.propertySet.getPropertyArray("_selected");
 
             if (selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMinimum()) {
                 multiselectionRecording.breaksMinimumOccurrences(validationRecordingPath);

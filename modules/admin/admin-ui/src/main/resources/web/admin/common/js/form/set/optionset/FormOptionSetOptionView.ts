@@ -79,7 +79,7 @@ module api.form {
             this.optionItemsContainer = new api.dom.DivEl("option-items-container");
             this.appendChild(this.optionItemsContainer);
 
-            var optionItemsPropertySet = this.getSetFromArray(this.getOptionItemsPropertyArray(this.parentDataSet));
+            var optionItemsPropertySet = this.getOptionItemsPropertyArray(this.parentDataSet).getSet(0);
 
             var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(
                 this.formOptionSetOption.getFormItems()).setParentElement(this.optionItemsContainer).setParent(this.getParent()).layout(
@@ -123,26 +123,19 @@ module api.form {
             return deferred.promise;
         }
 
-        private getSetFromArray(propertyArray: PropertyArray): PropertySet {
-            var dataSet = propertyArray.getSet(0);
-            if (!dataSet) {
-                dataSet = propertyArray.addSet();
-            }
-            return dataSet;
-        }
-
         private getOptionItemsPropertyArray(propertySet: PropertySet): PropertyArray {
             var propertyArray = propertySet.getPropertyArray(this.getName());
             if (!propertyArray) {
                 propertyArray =
                     PropertyArray.create().setType(ValueTypes.DATA).setName(this.getName()).setParent(this.parentDataSet).build();
+                propertyArray.addSet();
                 propertySet.addPropertyArray(propertyArray);
             }
             return propertyArray;
         }
 
         private getSelectedOptionsArray(): PropertyArray {
-            return this.parentDataSet.getPropertyArray(this.formOptionSetOption.getParent().getName() + "_selection");
+            return this.parentDataSet.getPropertyArray("_selected");
         }
 
         private getThisPropertyFromSelectedOptionsArray(): Property {
@@ -319,10 +312,16 @@ module api.form {
             return (<FormOptionSet>this.formOptionSetOption.getParent()).getMultiselection();
         }
 
+        reset() {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.reset();
+            });
+        }
+
         update(propertySet: api.data.PropertySet, unchangedOnly?: boolean): Q.Promise<void> {
             this.parentDataSet = propertySet;
             var propertyArray = this.getOptionItemsPropertyArray(propertySet);
-            return this.formItemLayer.update(this.getSetFromArray(propertyArray), unchangedOnly).then(() => {
+            return this.formItemLayer.update(propertyArray.getSet(0), unchangedOnly).then(() => {
                 if (!this.isRadioSelection()) {
                     this.subscribeCheckboxOnPropertyEvents();
                 }
