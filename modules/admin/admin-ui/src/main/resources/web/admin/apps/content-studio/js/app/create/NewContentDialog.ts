@@ -92,7 +92,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     private initFileInputEvents() {
         this.fileInput.onUploadStarted(this.closeAndFireEventFromMediaUpload.bind(this));
 
-        this.fileInput.onInput((event: Event) => {
+        this.fileInput.onValueChanged((event) => {
             if (api.util.StringHelper.isEmpty(this.fileInput.getValue())) {
                 this.mostPopularContentTypes.showIfNotEmpty();
             } else {
