@@ -3,7 +3,7 @@ var assert = require('/lib/xp/assert');
 
 // BEGIN
 // Obtains details for an active task
-var taskInfo = taskLib.getTask('7ca603c1-3b88-4009-8f30-46ddbcc4bb19');
+var taskInfo = taskLib.get('7ca603c1-3b88-4009-8f30-46ddbcc4bb19');
 
 if (taskInfo) {
     log.info('Current task state = %s', taskInfo.state);
