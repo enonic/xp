@@ -15,7 +15,7 @@
     padding: 0px 5px 0px 23px;
     cursor: pointer;
 
-    &.left:before, &.right:before, &.top:after {
+    &.left:before, &.right:before, &.top:after, &.bottom:after {
       content: '';
       display: block;
       background: url("../../../images/admin-unchecked.gif") -1px -2px no-repeat;
@@ -25,28 +25,37 @@
 
     &.top {
       padding-left: 0px;
-      margin-bottom: 19px;
+      margin-top: 19px;
 
       &:after {
         position: absolute;
-        top: 21px;
+        top: 0px;
       }
     }
 
-    &.right:before {
+    &.left:before {
       position: absolute;
-      left: 4px;
+      left: 0px;
       margin-top: 2px;
     }
 
-    &.left {
+    &.right {
       padding-left: 0px;
       display: inline-block;
+      max-width: none;
 
       &:before {
         float: right;
-        margin-left: 7px;
-        margin-top: 2px;
+        margin-left: 10px;
+        margin-top: 3px;
+      }
+    }
+
+    &.bottom {
+      padding-left: 0px;
+
+      &:after {
+        margin-top: 7px;
       }
     }
   }

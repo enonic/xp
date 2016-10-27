@@ -110,19 +110,19 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
 
     show() {
-        super.show(this.isProgressBarEnabled() );
+        super.show(this.isProgressBarEnabled());
     }
-    
+
     onPublishComplete() {
         if (this.isProgressBarEnabled()) {
             this.disableProgressBar();
         }
-        
+
         if (this.isVisible()) {
             this.close();
             return;
         }
-        
+
         this.hide();
     }
     
@@ -174,7 +174,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
-        if (this.isProgressBarEnabled() ) {
+        if (this.isProgressBarEnabled()) {
             return wemQ<void>(null);
         }
         this.actionButton.setEnabled(false);
@@ -233,7 +233,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
-        if (this.isProgressBarEnabled() ) {
+        if (this.isProgressBarEnabled()) {
             return;
         }
         var itemsToRemove = this.getDependantList().getItems().filter(
@@ -249,7 +249,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
-        if (this.isProgressBarEnabled() ) {
+        if (this.isProgressBarEnabled()) {
             return;
         }
         super.setDependantItems(items);
@@ -260,7 +260,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     setContentToPublish(contents: ContentSummaryAndCompareStatus[]) {
-        if (this.isProgressBarEnabled() ) {
+        if (this.isProgressBarEnabled()) {
             return this;
         }
         this.setIgnoreItemsChanged(true);
@@ -310,7 +310,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
             .then((taskId: api.task.TaskId) => {
                 this.pollPublishTask(taskId);
             }).catch((reason) => {
-                this.hideLoadingSpinner();
+            this.hideLoadingSpinner();
                 this.close();
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);
@@ -334,7 +334,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     private isProgressBarEnabled() {
         return this.hasClass(ContentPublishDialog.isPublishingClass);
     }
-    
+
     private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ContentPublishDialog.pollInterval) {
         setTimeout(() => {
             if (!this.isProgressBarEnabled() && elapsed >= ContentPublishDialog.progressBarDelay) {

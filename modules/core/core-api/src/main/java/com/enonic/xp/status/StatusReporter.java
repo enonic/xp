@@ -1,10 +1,15 @@
 package com.enonic.xp.status;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+
+import com.google.common.net.MediaType;
 
 public interface StatusReporter
 {
     String getName();
 
-    ObjectNode getReport();
+    MediaType getMediaType();
+
+    void report( StatusContext context )
+        throws IOException;
 }

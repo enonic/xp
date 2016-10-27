@@ -1641,7 +1641,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             publishControls.setCompareStatus(this.currentContentCompareStatus);
         }
     }
-    
+
     getLiveMask(): api.ui.mask.LoadMask {
         return this.liveMask;
     }

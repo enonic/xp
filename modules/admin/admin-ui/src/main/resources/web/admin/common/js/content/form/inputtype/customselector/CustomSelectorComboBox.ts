@@ -37,7 +37,7 @@ module api.content.form.inputtype.customselector {
         constructor(option: Option<CustomSelectorItem>) {
             super(
                 new api.ui.selector.combobox.RichSelectedOptionViewBuilder<CustomSelectorItem>(option)
-                .setDraggable(true)
+                    .setDraggable(true)
             );
         }
 

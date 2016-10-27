@@ -144,11 +144,11 @@ module api.content.image {
         }
 
         private resolveImageUrl(value: string): string {
-            return new api.content.util.ContentImageUrlResolver().
-                setContentId(new api.content.ContentId(value)).
-                setTimestamp(new Date()).
-                setSource(true).
-                resolve();
+            return new api.content.util.ContentImageUrlResolver()
+                .setContentId(new api.content.ContentId(value))
+                .setTimestamp(new Date())
+                .setSource(true)
+                .resolve();
         }
 
         private subscribeImageEditorOnEvents(imageEditor: ImageEditor, contentId: api.content.ContentId) {
@@ -212,8 +212,7 @@ module api.content.image {
         private positionImageEditor(imageEditor: ImageEditor) {
             var resultOffset = this.getResultContainer().getEl().getOffset();
 
-            imageEditor.getEl().setTopPx(resultOffset.top).
-                setLeftPx(resultOffset.left);
+            imageEditor.getEl().setTopPx(resultOffset.top).setLeftPx(resultOffset.left);
         }
 
         protected getExistingItem(value: string): api.dom.Element {
@@ -249,21 +248,33 @@ module api.content.image {
             imageEditor.toggleClass(ImageUploaderEl.SELECTED_CLASS);
         }
 
-        setFocalPoint(x: number, y: number) {
+        setFocalPoint(focal: Point) {
             this.imageEditors.forEach((editor: ImageEditor) => {
-                editor.setFocusPosition(x, y);
+                if (!!focal) {
+                    editor.setFocusPosition(focal.x, focal.y);
+                } else {
+                    editor.resetFocusPosition();
+                }
             })
         }
 
         setCrop(crop: Rect) {
             this.imageEditors.forEach((editor: ImageEditor) => {
-                editor.setCropPosition(crop.x, crop.y, crop.x2, crop.y2);
+                if (!!crop) {
+                    editor.setCropPosition(crop.x, crop.y, crop.x2, crop.y2);
+                } else {
+                    editor.resetCropPosition();
+                }
             })
         }
 
         setZoom(zoom: Rect) {
             this.imageEditors.forEach((editor: ImageEditor) => {
-                editor.setZoomPosition(zoom.x, zoom.y, zoom.x2, zoom.y2);
+                if (!!zoom) {
+                    editor.setZoomPosition(zoom.x, zoom.y, zoom.x2, zoom.y2);
+                } else {
+                    editor.resetZoomPosition();
+                }
             })
         }
 

@@ -3,14 +3,15 @@ package com.enonic.xp.elasticsearch.impl.status.index;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
 
-@Component(immediate = true)
+@Component(immediate = true, service = StatusReporter.class)
 public class IndexReporter
-    implements StatusReporter
+    extends JsonStatusReporter
 {
     private IndexReportProvider indexReportProvider;
 
@@ -21,7 +22,7 @@ public class IndexReporter
     }
 
     @Override
-    public ObjectNode getReport()
+    public JsonNode getReport()
     {
         return indexReportProvider.getInfo().
             toJson();

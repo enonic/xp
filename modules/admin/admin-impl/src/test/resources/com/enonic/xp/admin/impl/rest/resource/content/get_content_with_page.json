@@ -89,6 +89,7 @@
     },
     "path": "/my_a_content",
     "permissions": [],
+    "publishedTime" : null,
     "thumbnail": null,
     "type": "myapplication:my_type"
 }

@@ -13,7 +13,7 @@ module api.ui {
             super("div", "checkbox", undefined, String(builder.checked || false));
 
             this.initCheckbox();
-            this.initLabel(builder.text, builder.labelPosition);
+            this.initLabel(builder.text, builder.inputAlignment);
 
             this.appendChild(this.checkbox);
             this.appendChild(this.label);
@@ -38,13 +38,14 @@ module api.ui {
 
         }
 
-        private initLabel(text: string, labelPosition: LabelPosition) {
+        private initLabel(text: string, inputAlignment: InputAlignment) {
             this.label = new api.dom.LabelEl(text, this.checkbox);
-            this.label.addClass(this.getLabelPositionAsString(labelPosition));
+            this.label.addClass(this.getInputAlignmentAsString(inputAlignment));
         }
 
-        private getLabelPositionAsString(labelPosition: LabelPosition = LabelPosition.RIGHT): string {
-            return LabelPosition[labelPosition].toLowerCase();
+        private getInputAlignmentAsString(inputAlignment: InputAlignment = InputAlignment.LEFT): string {
+            
+            return InputAlignment[inputAlignment].toLowerCase();
         }
 
         setChecked(newValue: boolean, silent?: boolean): Checkbox {
@@ -146,10 +147,11 @@ module api.ui {
         }
     }
 
-    export enum LabelPosition {
+    export enum InputAlignment {
         TOP,
         RIGHT,
-        LEFT
+        LEFT,
+        BOTTOM
     }
 
     export class CheckboxBuilder {
@@ -157,7 +159,7 @@ module api.ui {
 
         checked: boolean;
 
-        labelPosition: LabelPosition;
+        inputAlignment: InputAlignment;
 
         constructor() {
         }
@@ -172,8 +174,8 @@ module api.ui {
             return this;
         }
 
-        setLabelPosition(value: LabelPosition): CheckboxBuilder {
-            this.labelPosition = value;
+        setInputAlignment(value: InputAlignment): CheckboxBuilder {
+            this.inputAlignment = value;
             return this;
         }
 

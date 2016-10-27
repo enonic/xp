@@ -79,5 +79,7 @@ module api.ui.responsive {
         }
     }
 
-    ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get());
+    if (document.body) {
+        ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get());
+    }
 }

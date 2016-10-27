@@ -9,15 +9,16 @@ import org.osgi.framework.ServiceReference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import static org.junit.Assert.*;
-
 public class OsgiServiceReporterTest
-    extends BaseOsgiReporterTest
+    extends BaseOsgiReporterTest<OsgiServiceReporter>
 {
-    private OsgiServiceReporter reporter;
+    public OsgiServiceReporterTest()
+    {
+        super( "osgi.service" );
+    }
 
     @Override
-    protected void initialize()
+    protected OsgiServiceReporter newReporter()
         throws Exception
     {
         final Bundle bundle = newBundle( 0, "foo.bar" );
@@ -27,8 +28,9 @@ public class OsgiServiceReporterTest
         final BundleContext context = Mockito.mock( BundleContext.class );
         Mockito.when( context.getAllServiceReferences( null, null ) ).thenReturn( new ServiceReference[]{ref1, ref2} );
 
-        this.reporter = new OsgiServiceReporter();
-        this.reporter.activate( context );
+        final OsgiServiceReporter reporter = new OsgiServiceReporter();
+        reporter.activate( context );
+        return reporter;
     }
 
     private ServiceReference newServiceReference( final Bundle bundle, final long id, final String... ifaces )
@@ -41,15 +43,10 @@ public class OsgiServiceReporterTest
     }
 
     @Test
-    public void testName()
-    {
-        assertEquals( "osgi.service", this.reporter.getName() );
-    }
-
-    @Test
     public void testReport()
+        throws Exception
     {
-        final JsonNode json = this.reporter.getReport();
+        final JsonNode json = jsonReport();
         final JsonNode expected = this.helper.loadTestJson( "result.json" );
 
         this.helper.assertJsonEquals( expected, json );

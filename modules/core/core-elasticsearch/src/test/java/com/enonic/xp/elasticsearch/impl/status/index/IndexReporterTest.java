@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
@@ -40,45 +39,48 @@ public class IndexReporterTest
     {
 
         clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
-        Mockito.doAnswer( invocation -> {
-            final ShardRouting shardRouting = Mockito.mock( ShardRouting.class );
-            Mockito.when( shardRouting.index() ).thenReturn( "myindex" );
-            Mockito.when( shardRouting.id() ).thenReturn( 0 );
-            Mockito.when( shardRouting.primary() ).thenReturn( true );
-            Mockito.when( shardRouting.index() ).thenReturn( "myindex" );
-            Mockito.when( shardRouting.state() ).thenReturn( ShardRoutingState.STARTED );
-            Mockito.when( shardRouting.currentNodeId() ).thenReturn( "nodeId" );
+        Mockito.doAnswer( invocation ->
+                          {
+                              final ShardRouting shardRouting = Mockito.mock( ShardRouting.class );
+                              Mockito.when( shardRouting.index() ).thenReturn( "myindex" );
+                              Mockito.when( shardRouting.id() ).thenReturn( 0 );
+                              Mockito.when( shardRouting.primary() ).thenReturn( true );
+                              Mockito.when( shardRouting.index() ).thenReturn( "myindex" );
+                              Mockito.when( shardRouting.state() ).thenReturn( ShardRoutingState.STARTED );
+                              Mockito.when( shardRouting.currentNodeId() ).thenReturn( "nodeId" );
 
-            final RoutingTable routingTable = Mockito.mock( RoutingTable.class );
-            Mockito.when( routingTable.shardsWithState( ShardRoutingState.STARTED ) ).thenReturn( Arrays.asList( shardRouting ) );
+                              final RoutingTable routingTable = Mockito.mock( RoutingTable.class );
+                              Mockito.when( routingTable.shardsWithState( ShardRoutingState.STARTED ) ).thenReturn(
+                                  Arrays.asList( shardRouting ) );
 
-            final ClusterState clusterState = Mockito.mock( ClusterState.class );
-            Mockito.when( clusterState.getRoutingTable() ).thenReturn( routingTable );
+                              final ClusterState clusterState = Mockito.mock( ClusterState.class );
+                              Mockito.when( clusterState.getRoutingTable() ).thenReturn( routingTable );
 
-            // Mock discoveryNode
-            DiscoveryNode discoveryNode = Mockito.mock( DiscoveryNode.class );
+                              // Mock discoveryNode
+                              DiscoveryNode discoveryNode = Mockito.mock( DiscoveryNode.class );
 
-            final TransportAddress transportAddress = Mockito.mock( TransportAddress.class );
-            Mockito.when( transportAddress.toString() ).thenReturn( "hostAddress" );
+                              final TransportAddress transportAddress = Mockito.mock( TransportAddress.class );
+                              Mockito.when( transportAddress.toString() ).thenReturn( "hostAddress" );
 
-            Mockito.when( discoveryNode.address() ).thenReturn( transportAddress );
-            Mockito.when( discoveryNode.getId() ).thenReturn( "hostId" );
+                              Mockito.when( discoveryNode.address() ).thenReturn( transportAddress );
+                              Mockito.when( discoveryNode.getId() ).thenReturn( "hostId" );
 
-            // Mock discoveryNodes
-            DiscoveryNodes discoveryNodes = Mockito.mock( DiscoveryNodes.class );
-            Mockito.when( discoveryNodes.get( Mockito.any() ) ).thenReturn( discoveryNode );
+                              // Mock discoveryNodes
+                              DiscoveryNodes discoveryNodes = Mockito.mock( DiscoveryNodes.class );
+                              Mockito.when( discoveryNodes.get( Mockito.any() ) ).thenReturn( discoveryNode );
 
-            // Mock clusterState.getNodes()
-            Mockito.when( clusterState.getNodes() ).thenReturn( discoveryNodes );
+                              // Mock clusterState.getNodes()
+                              Mockito.when( clusterState.getNodes() ).thenReturn( discoveryNodes );
 
-            // Mock getState()
-            final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
-            Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
+                              // Mock getState()
+                              final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
+                              Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
 
-            ActionListener<ClusterStateResponse> listener = (ActionListener<ClusterStateResponse>) invocation.getArguments()[1];
-            listener.onResponse( clusterStateResponse );
-            return null;
-        } ).when( clusterAdminClient ).
+                              ActionListener<ClusterStateResponse> listener =
+                                  (ActionListener<ClusterStateResponse>) invocation.getArguments()[1];
+                              listener.onResponse( clusterStateResponse );
+                              return null;
+                          } ).when( clusterAdminClient ).
             state( Mockito.any(), Mockito.any() );
 
         final AdminClient adminClient = Mockito.mock( AdminClient.class );
@@ -96,7 +98,7 @@ public class IndexReporterTest
         throws Exception
     {
         Assert.assertEquals( "index", indexReporter.getName() );
-        final ObjectNode report = indexReporter.getReport();
+        final JsonNode report = indexReporter.getReport();
         Assert.assertEquals( parseJson( readFromFile( "index_report.json" ) ), report );
     }
 
@@ -108,7 +110,7 @@ public class IndexReporterTest
             when( clusterAdminClient ).
             state( Mockito.any(), Mockito.any() );
         Assert.assertEquals( "index", indexReporter.getName() );
-        final ObjectNode report = indexReporter.getReport();
+        final JsonNode report = indexReporter.getReport();
         Assert.assertEquals( parseJson( readFromFile( "index_report_failed.json" ) ), report );
     }
 

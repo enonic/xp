@@ -14,7 +14,7 @@ import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
-public class GetTasksHandlerTest
+public class ListTasksHandlerTest
     extends ScriptTestSupport
 {
     private TaskService taskService;
@@ -33,25 +33,25 @@ public class GetTasksHandlerTest
     {
         Mockito.when( this.taskService.getAllTasks() ).thenReturn( taskList() );
 
-        runScript( "/site/lib/xp/examples/task/getTasks.js" );
+        runScript( "/site/lib/xp/examples/task/list.js" );
     }
 
     @Test
-    public void testGetTasksExisting()
+    public void testListExisting()
         throws Exception
     {
         Mockito.when( this.taskService.getAllTasks() ).thenReturn( taskList() );
 
-        runFunction( "/site/test/getTasks-test.js", "getExistingTasks" );
+        runFunction( "/site/test/list-test.js", "getExistingTasks" );
     }
 
     @Test
-    public void testGetTasksNone()
+    public void testListNone()
         throws Exception
     {
         Mockito.when( this.taskService.getAllTasks() ).thenReturn( new ArrayList<>() );
 
-        runFunction( "/site/test/getTasks-test.js", "getTasksNone" );
+        runFunction( "/site/test/list-test.js", "listNone" );
     }
 
     private List<TaskInfo> taskList()

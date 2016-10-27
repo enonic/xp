@@ -21,7 +21,7 @@ module api.util.htmlarea.editor {
         private fixedToolbarContainer: string;
         private convertUrls: boolean = false;
         private hasActiveDialog: boolean = false;
-        private customToolConfig:any;
+        private customToolConfig: any;
 
         private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
 
@@ -129,7 +129,7 @@ module api.util.htmlarea.editor {
             });
         }
 
-        private includeTool(tool:string) {
+        private includeTool(tool: string) {
             this.tools += " " + tool;
         }
 
@@ -346,7 +346,7 @@ module api.util.htmlarea.editor {
             event.fire();
         }
 
-        private isToolExcluded(tool:string):boolean {
+        private isToolExcluded(tool: string): boolean {
             if (!this.customToolConfig || !this.customToolConfig["exclude"]) {
                 return false;
             }

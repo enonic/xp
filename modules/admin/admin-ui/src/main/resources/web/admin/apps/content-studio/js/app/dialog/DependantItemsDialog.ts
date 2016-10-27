@@ -175,7 +175,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.setItems(items);
-        
+
         if (this.extendsWindowHeightSize()) {
             this.centerMyself();
         }

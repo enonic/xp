@@ -54,28 +54,28 @@ exports.submit = function (params) {
 /**
  * Returns the list of active tasks with their current state and progress details.
  *
- * @example-ref examples/task/getTasks.js
+ * @example-ref examples/task/list.js
  *
  * @returns {TaskInfo[]} List with task information for every task.
  */
-exports.getTasks = function () {
+exports.list = function () {
 
-    var bean = __.newBean('com.enonic.xp.lib.task.GetTasksHandler');
+    var bean = __.newBean('com.enonic.xp.lib.task.ListTasksHandler');
 
-    return __.toNativeObject(bean.getTasks());
+    return __.toNativeObject(bean.list());
 
 };
 
 /**
  * Returns the current state and progress details for the specified task.
  *
- * @example-ref examples/task/getTask.js
+ * @example-ref examples/task/get.js
  *
  * @param {string} taskId Id of the task.
  *
  * @returns {TaskInfo} Detail information for the task. Or null if the task could not be found.
  */
-exports.getTask = function (taskId) {
+exports.get = function (taskId) {
 
     var bean = __.newBean('com.enonic.xp.lib.task.GetTaskHandler');
     if (taskId === undefined) {
@@ -109,14 +109,14 @@ exports.sleep = function (timeMillis) {
  * Reports progress information from an executing task.
  * This function may only be called within the context of a task function, otherwise it will fail and throw an exception.
  *
- * @example-ref examples/task/reportProgress.js
+ * @example-ref examples/task/progress.js
  *
  * @param {object} params JSON with progress details.
  * @param {number} [params.current] Integer value representing the number of items that have been processed in the task.
  * @param {number} [params.total] Integer value representing the total number of items to process in the task.
  * @param {string} [params.info] Text describing the current progress for the task.
  */
-exports.reportProgress = function (params) {
+exports.progress = function (params) {
 
     var bean = __.newBean('com.enonic.xp.lib.task.TaskProgressHandler');
 

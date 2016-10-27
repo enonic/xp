@@ -54,12 +54,12 @@ module api.content.resource {
                 break;
             case 1:
                 if (total === 1) {
-                    api.notify.showFeedback(`"${result.contentName}" was unpublished`);
+                    api.notify.showFeedback(`"${result.contentName}" is unpublished`);
                 }
                 break;
             default: // > 1
                 if (total > 0) {
-                    api.notify.showFeedback(`${total} items were unpublished`);
+                    api.notify.showFeedback(`${total} items are unpublished`);
                 }
             }
         }

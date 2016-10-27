@@ -12,15 +12,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import static org.junit.Assert.*;
-
 public class OsgiComponentReporterTest
-    extends BaseOsgiReporterTest
+    extends BaseOsgiReporterTest<OsgiComponentReporter>
 {
-    private OsgiComponentReporter reporter;
+    public OsgiComponentReporterTest()
+    {
+        super( "osgi.component" );
+    }
 
     @Override
-    protected void initialize()
+    protected OsgiComponentReporter newReporter()
         throws Exception
     {
         final ComponentDescriptionDTO comp1 = newComponent( "comp1" );
@@ -35,8 +36,9 @@ public class OsgiComponentReporterTest
         Mockito.when( runtime.getComponentConfigurationDTOs( comp1 ) ).thenReturn( Lists.newArrayList( config1 ) );
         Mockito.when( runtime.getComponentConfigurationDTOs( comp2 ) ).thenReturn( Lists.newArrayList( config2 ) );
 
-        this.reporter = new OsgiComponentReporter();
-        this.reporter.setRuntime( runtime );
+        final OsgiComponentReporter reporter = new OsgiComponentReporter();
+        reporter.setRuntime( runtime );
+        return reporter;
     }
 
     private ComponentDescriptionDTO newComponent( final String name )
@@ -59,15 +61,10 @@ public class OsgiComponentReporterTest
     }
 
     @Test
-    public void testName()
-    {
-        assertEquals( "osgi.component", this.reporter.getName() );
-    }
-
-    @Test
     public void testReport()
+        throws Exception
     {
-        final JsonNode json = this.reporter.getReport();
+        final JsonNode json = jsonReport();
         final JsonNode expected = this.helper.loadTestJson( "result.json" );
 
         this.helper.assertJsonEquals( expected, json );
