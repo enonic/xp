@@ -25,20 +25,20 @@ public class SystemRepoInitializer
 
     public void initialize()
     {
-        runAsAdmin( () -> {
-            final boolean initialized = this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() );
-            if ( !initialized )
-            {
-                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                    repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-                    rootChildOrder( ChildOrder.from( "_name ASC" ) ).
-                    rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
-                    inheritPermissions( true ).
-                    build();
+        runAsAdmin( () ->
+                    {
+                        final boolean initialized = this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() );
+                        if ( !initialized )
+                        {
+                            final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+                                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+                                rootChildOrder( ChildOrder.from( "_name ASC" ) ).
+                                rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
+                                build();
 
-                this.repositoryService.createRepository( createRepositoryParams );
-            }
-        } );
+                            this.repositoryService.createRepository( createRepositoryParams );
+                        }
+                    } );
     }
 
     private void runAsAdmin( Runnable runnable )

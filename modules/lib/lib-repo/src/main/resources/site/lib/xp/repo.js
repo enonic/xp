@@ -36,28 +36,38 @@ exports.refresh = function (params) {
     bean.refresh();
 };
 
+
+/**
+ @typedef IndexDefinition
+ @type {object}
+ @property {object} [settings] - Index definition settings.
+ @property {object} [mapping] - Index definition settings.
+ */
 /**
  * Creates a repository
- *
+ *œ
  * @example-ref examples/repo/create.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
  * @param {object} [params.settings] Repository settings.
+ * @param {array} [params.settings.rootPermissions] Array of root permissions.
+ * By default, all permissions to 'system.admin' and read permission to 'system.authenticated'
+ * @param {string} [params.settings.rootChildOrder] Root child order.
  * @param {object} [params.settings.definitions] Index definitions.
- * @param {object} [params.settings.definitions.(search|version|branch)] Index definition.
- * @param {object} [params.settings.definitions.(search|version|branch).(settings|mappings)] Index definition settings/mappings.
- * @param {boolean} [params.settings.indexConfigs] TBD.
+ * @param {IndexDefinition} [params.settings.definitions.search] Search index definition.
+ * @param {IndexDefinition} [params.settings.definitions.version] Version index definition.
+ * @param {IndexDefinition} [params.settings.definitions.branch] Branch indexes definition.
+ *
+ * @returns {object} Repository created as JSON.
  *
  */
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
     bean.repositoryId = required(params, 'id');
-
-    if (params.settings && params.settings.definitions) {
-        bean.indexDefinitions = __.toScriptValue(params.settings.definitions);
-    }
-
+    bean.rootPermissions = params.rootPermissions ? __.toScriptValue(params.permissions) : null;
+    bean.rootChildOrder = __.nullOrValue(params.rootChildOrder);
+    bean.indexDefinitions = params.settings && params.settings.definitions ? __.toScriptValue(params.settings.definitions) : null;
     return __.toNativeObject(bean.execute());
 };
 
