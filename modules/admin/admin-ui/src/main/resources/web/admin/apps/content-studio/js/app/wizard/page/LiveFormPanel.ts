@@ -371,7 +371,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             }
 
             this.pageLoading = true;
-            if (this.liveEditModel.isRenderableContent()) {
+            if (this.isShown() && this.liveEditModel.isRenderableContent()) {
                 this.contentWizardPanel.getLiveMask().show();
             }
             this.liveEditPageProxy.load();
@@ -631,5 +631,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         else {
             throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));
         }
+    }
+
+    isShown(): boolean {
+        return this.getHTMLElement().style.display !== "none";
     }
 }
