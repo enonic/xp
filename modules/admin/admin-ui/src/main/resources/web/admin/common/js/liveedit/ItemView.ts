@@ -279,7 +279,7 @@ module api.liveedit {
         }
 
         highlight() {
-            if (this.isViewInsideSelectedContainer()) {
+            if (!this.getPageView().isHighlightingAllowed() || this.isViewInsideSelectedContainer()) {
                 return;
             }
             Highlighter.get().highlightItemView(this);
@@ -298,6 +298,10 @@ module api.liveedit {
         }
 
         highlightSelected() {
+            if (!this.getPageView().isHighlightingAllowed()) {
+                return;
+            }
+            
             SelectedHighlighter.get().highlightItemView(this);
         }
 
@@ -489,15 +493,23 @@ module api.liveedit {
         }
 
         handleClick(event: MouseEvent) {
-            let rightClicked = event.which === 3;
             event.stopPropagation();
+
+            var pageView = this.getPageView();
+
+            if (pageView.isNextClickDisabled()) {
+                pageView.setNextClickDisabled(false);
+                return;
+            }
+
+            let rightClicked = event.which === 3;
 
             if (rightClicked) { // right click
                 event.preventDefault();
             }
 
             if (!this.isSelected() || rightClicked) {
-                var selectedView = this.getPageView().getSelectedView(),
+                var selectedView = pageView.getSelectedView(),
                     isViewInsideSelectedContainer = this.isViewInsideSelectedContainer();
                 let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
 
@@ -510,8 +522,15 @@ module api.liveedit {
                 // Also allow selecting the same component again (i.e. to show context menu)
                 if (!selectedView || selectedView == this || !isViewInsideSelectedContainer) {
                     let menuPosition = rightClicked ? null : ItemViewContextMenuPosition.NONE;
-                    //
-                    this.select(clickPosition, menuPosition, false, rightClicked);
+
+                    if (pageView.isTextEditMode()) { // if in text edit mode don't select on first click
+                        pageView.setTextEditMode(false);
+                        this.unhighlight();
+                    }
+                    else {
+                        this.select(clickPosition, menuPosition, false, rightClicked);
+                    }
+
                 }
                 else if (isViewInsideSelectedContainer && rightClicked) {
                     SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);

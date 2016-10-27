@@ -8,14 +8,17 @@ import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.resource.ResourceService;
 
 @org.osgi.service.component.annotations.Component
 public final class ComponentServiceImpl
     implements ComponentService
 {
-    protected PartDescriptorService partDescriptorService;
+    private PartDescriptorService partDescriptorService;
 
-    protected LayoutDescriptorService layoutDescriptorService;
+    private LayoutDescriptorService layoutDescriptorService;
+
+    private ResourceService resourceService;
 
     @Override
     public Component getByName( final ApplicationKey applicationKey, final ComponentName name )
@@ -23,6 +26,7 @@ public final class ComponentServiceImpl
         return new GetComponentByNameCommand().
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            resourceService( this.resourceService ).
             applicationKey( applicationKey ).
             name( name ).
             execute();
@@ -38,5 +42,11 @@ public final class ComponentServiceImpl
     public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 }

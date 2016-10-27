@@ -34,12 +34,13 @@ module api.app.wizard {
                 setTimeout(this.removeClass.bind(this, "no-dropdown-hover"));
             });
         }
-        
+
         setupHelpTextToggleButton(): api.dom.DivEl {
             this.helpTextToggleButton = new api.dom.DivEl("help-text-button");
 
             this.appendChild(this.helpTextToggleButton);
-            
+            this.checkAndMinimize();
+
             return this.helpTextToggleButton;
         }
 
@@ -62,9 +63,11 @@ module api.app.wizard {
             this.appendChild(this.stepNavigator);
         }
 
-        isStepNavigatorFit(): boolean {
+        private isStepNavigatorFit(): boolean {
             let helpToggleBtnWidth = this.helpTextToggleButton ? this.helpTextToggleButton.getEl().getWidth() : 0;
-            let width = this.getEl().getWidthWithoutPadding() - helpToggleBtnWidth;
+            let width = this.helpTextToggleButton
+                ? this.stepNavigator.getEl().getMaxWidth() - helpToggleBtnWidth
+                : this.getEl().getWidthWithoutPadding();
             if (this.stepNavigator.isVisible()) {
                 this.maxFittingWidth = this.stepNavigator.getChildren().reduce((prevWidth, child) => {
                     return prevWidth + child.getEl().getWidthWithMargin();

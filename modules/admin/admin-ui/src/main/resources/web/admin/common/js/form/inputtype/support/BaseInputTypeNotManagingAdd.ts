@@ -184,6 +184,10 @@ module api.form.inputtype.support {
             return this.inputOccurrences.update(propertyArray, unchangedOnly);
         }
 
+        reset() {
+            this.inputOccurrences.reset();
+        }
+
         hasValidUserInput(): boolean {
             return this.inputOccurrences.hasValidUserInput();
         }
@@ -282,6 +286,10 @@ module api.form.inputtype.support {
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: Property, unchangedOnly?: boolean) {
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+        }
+
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 

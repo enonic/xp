@@ -28,9 +28,6 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML =
         "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
 
-    private static final String COMPONENT_PLACEHOLDER_HTML =
-        "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\" data-portal-placeholder=\"true\"></div>";
-
     private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
         "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
 
@@ -79,13 +76,12 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
             final RenderMode renderMode = getRenderingMode( portalRequest );
             final MediaType contentType = portalResponse.getContentType();
-            if ( renderMode == RenderMode.EDIT && contentType != null &&
-                contentType.withoutParameters().equals( MediaType.create( "text", "html" ) ) )
+            if ( renderMode == RenderMode.EDIT && contentType != null && contentType.withoutParameters().type().equals( "text" ) )
             {
                 final Object bodyObj = portalResponse.getBody();
                 if ( ( bodyObj == null ) || bodyObj instanceof String && StringUtils.isBlank( (String) bodyObj ) )
                 {
-                    return renderEmptyComponentPlaceHolder( component );
+                    return renderEmptyComponent( component, portalRequest );
                 }
             }
 
@@ -132,16 +128,6 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     private PortalResponse renderEmptyComponentPreviewMode( final DescriptorBasedComponent component )
     {
         final String html = MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, component.getType().toString() );
-
-        return PortalResponse.create().
-            contentType( MediaType.create( "text", "html" ) ).
-            body( html ).
-            build();
-    }
-
-    private PortalResponse renderEmptyComponentPlaceHolder( final DescriptorBasedComponent component )
-    {
-        final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_HTML, component.getType().toString() );
 
         return PortalResponse.create().
             contentType( MediaType.create( "text", "html" ) ).

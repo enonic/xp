@@ -263,7 +263,6 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentService( this ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
@@ -328,6 +327,7 @@ public class ContentServiceImpl
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
+            pushListener( params.getPushContentListener() ).
             build().
             execute();
     }
@@ -346,6 +346,7 @@ public class ContentServiceImpl
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
+            pushListener( params.getPushContentListener() ).
             build().
             execute();
     }

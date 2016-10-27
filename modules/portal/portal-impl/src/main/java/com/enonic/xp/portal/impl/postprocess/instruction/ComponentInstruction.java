@@ -86,8 +86,16 @@ public final class ComponentInstruction
         {
             final String name = substringAfter( componentSelector, APPLICATION_COMPONENT_PREFIX );
             final ComponentName componentName = new ComponentName( name );
-            final ApplicationKey currentApplication = portalRequest.getPageTemplate().getController().getApplicationKey();
-            component = componentService.getByName( currentApplication, componentName );
+            final ApplicationKey currentApplication;
+            if ( portalRequest.getPageTemplate() != null && portalRequest.getPageTemplate().getController() != null )
+            {
+                currentApplication = portalRequest.getPageTemplate().getController().getApplicationKey();
+            }
+            else
+            {
+                currentApplication = portalRequest.getApplicationKey();
+            }
+            component = currentApplication == null ? null : componentService.getByName( currentApplication, componentName );
         }
         return renderComponent( portalRequest, component );
     }

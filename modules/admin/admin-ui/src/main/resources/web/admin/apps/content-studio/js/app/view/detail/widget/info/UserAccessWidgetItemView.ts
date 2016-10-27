@@ -30,7 +30,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     private static OPTIONS: any[] = [
         {value: Access.FULL, name: 'has full access to'},
         {value: Access.PUBLISH, name: 'can publish'},
-        {value: Access.WRITE, name: 'can write'},
+        {value: Access.WRITE, name: 'can report'},
         {value: Access.READ, name: 'can read'},
         {value: Access.CUSTOM, name: 'has custom access to'}
     ];

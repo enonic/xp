@@ -111,6 +111,10 @@ module api.content.form.inputtype.upload {
             return wemQ<void>(null);
         }
 
+        reset() {
+            this.mediaUploaderEl.resetBaseValues();
+        }
+
         private manageSVGImageIfPresent(content: api.content.Content) {
             if (content.getType().isVectorMedia()) {
                 this.addClass("with-svg-image");

@@ -2,6 +2,7 @@ package com.enonic.xp.server.impl.status;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -9,11 +10,12 @@ import com.enonic.xp.server.BuildInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
+import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true)
+@Component(immediate = true, service = StatusReporter.class)
 public final class ServerReporter
-    implements StatusReporter
+    extends JsonStatusReporter
 {
     protected ServerInfo serverInfo;
 
@@ -29,7 +31,7 @@ public final class ServerReporter
     }
 
     @Override
-    public ObjectNode getReport()
+    public JsonNode getReport()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "version", VersionInfo.get().getVersion() );

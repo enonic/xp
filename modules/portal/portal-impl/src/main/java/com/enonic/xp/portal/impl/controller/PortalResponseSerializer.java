@@ -21,9 +21,9 @@ public final class PortalResponseSerializer
 
     private final HttpStatus defaultStatus;
 
-    private HttpStatus forceStatus;
+    private boolean defaultPostProcess;
 
-    private Boolean forcePostProcess;
+    private HttpStatus forceStatus;
 
     private Boolean forceApplyFilters;
 
@@ -38,11 +38,12 @@ public final class PortalResponseSerializer
     {
         this.value = value;
         this.defaultStatus = defaultStatus == null ? HttpStatus.OK : defaultStatus;
+        this.defaultPostProcess = true;
     }
 
-    public PortalResponseSerializer postProcess( final boolean value )
+    public PortalResponseSerializer defaultPostProcess( final boolean defaultValue )
     {
-        this.forcePostProcess = value;
+        this.defaultPostProcess = defaultValue;
         return this;
     }
 
@@ -85,10 +86,6 @@ public final class PortalResponseSerializer
         populatePostProcess( builder, value.getMember( "postProcess" ) );
         populateWebSocket( builder, value.getMember( "webSocket" ) );
 
-        if ( this.forcePostProcess != null )
-        {
-            builder.postProcess( this.forcePostProcess );
-        }
         if ( this.forceStatus != null )
         {
             builder.status( this.forceStatus );
@@ -104,7 +101,7 @@ public final class PortalResponseSerializer
     private void populatePostProcess( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Boolean postProcess = ( value != null ) ? value.getValue( Boolean.class ) : null;
-        builder.postProcess( postProcess != null ? postProcess : true );
+        builder.postProcess( postProcess != null ? postProcess : defaultPostProcess );
     }
 
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )

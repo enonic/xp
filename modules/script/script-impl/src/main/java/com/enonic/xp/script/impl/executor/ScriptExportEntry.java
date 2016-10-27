@@ -1,19 +1,24 @@
 package com.enonic.xp.script.impl.executor;
 
-import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.Resource;
 
 final class ScriptExportEntry
 {
-    protected final ResourceKey key;
+    private final Resource resource;
 
-    protected final Object value;
+    final Object value;
 
-    protected final long timestamp;
+    private final long timestamp;
 
-    public ScriptExportEntry( final ResourceKey key, final Object value, final long timestamp )
+    ScriptExportEntry( final Resource resource, final Object value )
     {
-        this.key = key;
+        this.resource = resource;
         this.value = value;
-        this.timestamp = timestamp;
+        this.timestamp = this.resource.getTimestamp();
+    }
+
+    boolean isExpired()
+    {
+        return this.resource.getTimestamp() > this.timestamp;
     }
 }

@@ -28,6 +28,10 @@ module api.ui {
             return this.value;
         }
 
+        isComplete(): boolean {
+            return this.value >= 1;
+        }
+
         /**
          * Normalizes any value to be in 0-1 interval
          * @param value value to normalize

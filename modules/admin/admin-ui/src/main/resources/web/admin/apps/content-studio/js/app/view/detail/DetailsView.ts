@@ -210,7 +210,7 @@ export class DetailsView extends api.dom.DivEl {
             setTimeout(() => {
                 this.setDetailsContainerHeight();
             }, 400);
-            
+
             this.activeWidget.slideIn();
         })
     }

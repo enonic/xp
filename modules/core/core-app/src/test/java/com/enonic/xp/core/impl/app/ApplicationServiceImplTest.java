@@ -14,6 +14,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.Applications;
@@ -582,4 +583,28 @@ public class ApplicationServiceImplTest
         }
     }
 
+    @Test
+    public void testInvalidate()
+    {
+        activateWithNoStoredApplications();
+
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+
+        final ApplicationInvalidator invalidator1 = Mockito.mock( ApplicationInvalidator.class );
+        final ApplicationInvalidator invalidator2 = Mockito.mock( ApplicationInvalidator.class );
+
+        this.service.addInvalidator( invalidator1 );
+        this.service.addInvalidator( invalidator2 );
+        this.service.invalidate( key );
+
+        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key );
+        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
+
+        this.service.removeInvalidator( invalidator1 );
+        this.service.removeInvalidator( invalidator2 );
+        this.service.invalidate( key );
+
+        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key );
+        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
+    }
 }

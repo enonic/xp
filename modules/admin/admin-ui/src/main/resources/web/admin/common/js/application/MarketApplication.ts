@@ -13,6 +13,7 @@ module api.application {
         private latestVersion: string;
         private versions: Object;
         private status: MarketAppStatus = MarketAppStatus.NOT_INSTALLED;
+        private progress: number = 0;
 
         constructor(builder: MarketApplicationBuilder) {
             this.displayName = builder.displayName;
@@ -77,6 +78,14 @@ module api.application {
             return this.status;
         }
 
+        public setProgress(progress: number) {
+            this.progress = progress;
+        }
+
+        public getProgress(): number {
+            return this.progress;
+        }
+
         public getAppKey(): ApplicationKey {
             return this.appKey;
         }
@@ -85,6 +94,7 @@ module api.application {
     export enum MarketAppStatus {
         NOT_INSTALLED,
         INSTALLED,
+        INSTALLING,
         OLDER_VERSION_INSTALLED,
         UNKNOWN
     }
@@ -93,9 +103,10 @@ module api.application {
 
         public static statusInstallCssClass = "install";
         public static statusInstalledCssClass = "installed";
+        public static statusInstallingCssClass = "installing";
         public static statusUpdateCssClass = "update";
 
-        public static formatStatus(appStatus: MarketAppStatus): string {
+        public static formatStatus(appStatus: MarketAppStatus, progress?: number): string {
 
             var status;
 
@@ -105,6 +116,9 @@ module api.application {
                 break;
             case MarketAppStatus.INSTALLED:
                 status = "Installed";
+                break;
+            case MarketAppStatus.INSTALLING:
+                status = new api.ui.ProgressBar(progress).toString();
                 break;
             case MarketAppStatus.OLDER_VERSION_INSTALLED:
                 status = "Update";
@@ -133,6 +147,9 @@ module api.application {
                 break;
             case MarketAppStatus.INSTALLED:
                 cssClass = MarketAppStatusFormatter.statusInstalledCssClass;
+                break;
+            case MarketAppStatus.INSTALLING:
+                cssClass = MarketAppStatusFormatter.statusInstallingCssClass;
                 break;
             case MarketAppStatus.OLDER_VERSION_INSTALLED:
                 cssClass = MarketAppStatusFormatter.statusUpdateCssClass;

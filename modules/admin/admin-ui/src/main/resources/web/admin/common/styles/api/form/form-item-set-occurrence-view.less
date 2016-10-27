@@ -1,3 +1,5 @@
+@occurrence-label-margin-left: 10px;
+
 .form-item-set-occurrence-view {
 
   clear: left;
@@ -10,14 +12,15 @@
     font-size: 14px;
     color: #777777;
     margin-bottom: 10px;
-    margin-left: 10px;
+    margin-left: @occurrence-label-margin-left;
 
-    .required {
-      &:after {
-        content: '*';
-        color:@input-red-text;
-      }
+    .help-text-toggler {
+      margin-top: 2px;
     }
+  }
+
+  .form-item-set-label + .help-text {
+    margin-left: @occurrence-label-margin-left;
   }
 
   .drag-handle {

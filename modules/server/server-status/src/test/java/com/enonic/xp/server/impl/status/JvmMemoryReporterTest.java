@@ -2,31 +2,31 @@ package com.enonic.xp.server.impl.status;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 
 import static org.junit.Assert.*;
 
 public class JvmMemoryReporterTest
-    extends BaseReporterTest
+    extends BaseReporterTest<JvmMemoryReporter>
 {
-    private JvmMemoryReporter reporter;
-
-    @Override
-    protected void initialize()
+    public JvmMemoryReporterTest()
     {
-        this.reporter = new JvmMemoryReporter();
+        super( "jvm.memory", MediaType.JSON_UTF_8 );
     }
 
-    @Test
-    public void testName()
+    @Override
+    protected JvmMemoryReporter newReporter()
+        throws Exception
     {
-        assertEquals( "jvm.memory", this.reporter.getName() );
+        return new JvmMemoryReporter();
     }
 
     @Test
     public void testReport()
+        throws Exception
     {
-        final ObjectNode json = this.reporter.getReport();
+        final JsonNode json = jsonReport();
         assertNotNull( json );
     }
 }

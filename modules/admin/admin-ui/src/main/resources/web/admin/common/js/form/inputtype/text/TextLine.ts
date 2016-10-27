@@ -58,6 +58,12 @@ module api.form.inputtype.text {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.text.TextInput> occurrence;
+
+            input.resetBaseValues();
+        }
+
         availableSizeChanged() {
         }
 

@@ -297,7 +297,6 @@ module api.ui.dialog {
         }
 
         close() {
-
             if (ModalDialog.openDialogsCounter == 1) {
                 api.ui.mask.BodyMask.get().hide();
             }

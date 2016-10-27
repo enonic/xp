@@ -27,6 +27,8 @@
 ///<reference path='InputView.ts' />
 ///<reference path='FormView.ts' />
 
+///<reference path='HelpTextContainer.ts' />
+
 ///<reference path='FormItemSetLabel.ts' />
 ///<reference path='FormItemSetOccurrence.ts' />
 ///<reference path='FormItemSetOccurrences.ts' />

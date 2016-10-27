@@ -3,13 +3,14 @@ package com.enonic.xp.elasticsearch.impl.status.cluster;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true)
+@Component(immediate = true, service = StatusReporter.class)
 public final class ClusterReporter
-    implements StatusReporter
+    extends JsonStatusReporter
 {
     private ClusterStateProvider clusterStateProvider;
 
@@ -22,7 +23,7 @@ public final class ClusterReporter
     }
 
     @Override
-    public ObjectNode getReport()
+    public JsonNode getReport()
     {
         final ClusterReport clusterReport = ClusterReport.create().
             clusterState( clusterStateProvider.getInfo() ).

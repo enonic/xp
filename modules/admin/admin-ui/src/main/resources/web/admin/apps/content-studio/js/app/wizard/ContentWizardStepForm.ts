@@ -26,6 +26,10 @@ export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
         return this.formView.update(data.getRoot(), unchangedOnly);
     }
 
+    reset() {
+        return this.formView.reset();
+    }
+
     layout(formContext: FormContext, data: PropertyTree, form: Form): wemQ.Promise<void> {
 
         this.formContext = formContext;

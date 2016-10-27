@@ -49,6 +49,11 @@ final class ResourceResolver
 
     public ResourceKey resolveJs( final String path )
     {
+        if ( path.endsWith( ".json" ) )
+        {
+            return resolve( path );
+        }
+
         if ( !path.endsWith( SCRIPT_SUFFIX ) )
         {
             final ResourceKey resolved = resolveJs( path + SCRIPT_SUFFIX );

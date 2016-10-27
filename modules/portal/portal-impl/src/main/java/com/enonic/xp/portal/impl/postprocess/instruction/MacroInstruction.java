@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.macro.Macro;
@@ -34,6 +35,8 @@ public final class MacroInstruction
     private static final String MACRO_BODY = "_body";
 
     private static final String MACRO_NAME = "_name";
+
+    public static final String MACRO_DOCUMENT = "_document";
 
     private MacroProcessorScriptFactory macroScriptFactory;
 
@@ -165,7 +168,7 @@ public final class MacroInstruction
         final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );
         for ( String name : macroInstruction.attributeNames() )
         {
-            if ( name.equalsIgnoreCase( MACRO_BODY ) || name.equalsIgnoreCase( MACRO_NAME ) )
+            if ( name.equalsIgnoreCase( MACRO_BODY ) || name.equalsIgnoreCase( MACRO_NAME ) || name.equalsIgnoreCase( MACRO_DOCUMENT ) )
             {
                 continue;
             }
@@ -183,6 +186,9 @@ public final class MacroInstruction
         }
         context.body( macroInstruction.attribute( MACRO_BODY ) );
         context.request( request );
+        final String documentRef = macroInstruction.attribute( MACRO_DOCUMENT );
+        final String document = (String) ContextAccessor.current().getLocalScope().getAttribute( documentRef );
+        context.document( document );
         return context.build();
     }
 

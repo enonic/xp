@@ -1,5 +1,6 @@
 import "../../api.ts";
 import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
+import {ContentPublishMenuManager} from "../browse/ContentPublishMenuManager";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareContentResults = api.content.resource.result.CompareContentResults;
@@ -28,7 +29,14 @@ export class ContentPublishDialog extends DependantItemsDialog {
     private childrenLoaded: boolean = false;
 
     // stashes previous checkbox state items, until selected items changed
-    private stash: {[checked:string]:ContentSummaryAndCompareStatus[]} = {};
+    private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
+    private stashedCount: {[checked: string]: number} = {};
+
+    private progressBar: api.ui.ProgressBar;
+
+    private static progressBarDelay: number = 2000; // If the content is still being published after this time, show the progress bar (in ms)
+    private static pollInterval: number = 500;  // Interval of task polling when publishing the content (in ms)
+    private static isPublishingClass: string = "is-publishing";
 
     constructor() {
         super("Publishing Wizard", "Resolving items...", "Other items that will be published");
@@ -51,6 +59,18 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 this.reloadPublishDependencies().done();
             }
         });
+    }
+
+    private createProgressBar() {
+        if (this.progressBar) {
+            this.progressBar.setValue(0);
+            return this.progressBar;
+        }
+
+        let progressBar = new api.ui.ProgressBar(0);
+        this.appendChildToContentPanel(progressBar);
+
+        return progressBar;
     }
 
     protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -88,10 +108,30 @@ export class ContentPublishDialog extends DependantItemsDialog {
         super.open();
     }
 
-    close() {
-        super.close()
-        this.childrenCheckbox.setChecked(false);
+
+    show() {
+        super.show(this.isProgressBarEnabled());
     }
+
+    onPublishComplete() {
+        if (this.isProgressBarEnabled()) {
+            this.disableProgressBar();
+        }
+
+        if (this.isVisible()) {
+            this.close();
+            return;
+        }
+
+        this.hide();
+    }
+    
+    close() {
+        super.close();
+        this.childrenCheckbox.setChecked(false);
+        this.hideLoadingSpinner();
+    }
+
 
     private getStashedItems(): ContentSummaryAndCompareStatus[] {
         return this.stash[String(this.childrenCheckbox.isChecked())];
@@ -101,12 +141,19 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.stash[String(this.childrenCheckbox.isChecked())] = items.slice();
     }
 
+    private setStashedCount(count: number) {
+        this.stashedCount[String(this.childrenCheckbox.isChecked())] = count;
+    }
+
+    private getStashedCount(): number {
+        return this.stashedCount[String(this.childrenCheckbox.isChecked())];
+    }
+
     private clearStashedItems() {
         this.stash = {};
     }
 
     private refreshPublishDependencies(): wemQ.Promise<void> {
-
         var stashedItems = this.getStashedItems();
         // null - means items have not been loaded yet or we had to clear it because of selection change
         if (!stashedItems) {
@@ -127,6 +174,9 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
+        if (this.isProgressBarEnabled()) {
+            return wemQ<void>(null);
+        }
         this.actionButton.setEnabled(false);
         this.loadMask.show();
         this.disableCheckbox();
@@ -147,6 +197,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
             this.dependantIds = result.getDependants();
+            this.setStashedCount(this.dependantIds.length)
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
@@ -159,6 +210,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 this.enableCheckbox();
 
                 this.setStashedItems(dependants.slice());
+                this.updateSubTitleAndButtonCount();
 
                 if (this.childrenCheckbox.isChecked()) {
                     this.childrenLoaded = true;
@@ -173,7 +225,17 @@ export class ContentPublishDialog extends DependantItemsDialog {
         });
     }
 
+    private updateSubTitleAndButtonCount() {
+        let count = this.countTotal();
+
+        this.updateSubTitle(count);
+        this.updateButtonCount("Publish", count);
+    }
+
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
+        if (this.isProgressBarEnabled()) {
+            return;
+        }
         var itemsToRemove = this.getDependantList().getItems().filter(
             (oldDependantItem: ContentSummaryAndCompareStatus) => !dependants.some(
                 (newDependantItem) => oldDependantItem.equals(newDependantItem)));
@@ -187,19 +249,20 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
+        if (this.isProgressBarEnabled()) {
+            return;
+        }
         super.setDependantItems(items);
 
-        let count = this.countTotal();
-
-        this.updateSubTitle(count);
-        this.updateButtonCount("Publish", count);
-
-        if (this.extendsWindowHeightSize()) {
-            this.centerMyself();
+        if (this.getStashedItems()) {
+            this.updateSubTitleAndButtonCount();
         }
     }
 
     setContentToPublish(contents: ContentSummaryAndCompareStatus[]) {
+        if (this.isProgressBarEnabled()) {
+            return this;
+        }
         this.setIgnoreItemsChanged(true);
         this.setListItems(contents);
         this.setIgnoreItemsChanged(false);
@@ -231,48 +294,95 @@ export class ContentPublishDialog extends DependantItemsDialog {
         })
     }
 
-    private extendsWindowHeightSize(): boolean {
-        if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
-            var el = this.getEl(),
-                bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty('top')) || 0) +
-                                         el.getMarginTop() +
-                                         el.getHeightWithBorder() +
-                                         el.getMarginBottom();
-
-            if (window.innerHeight < bottomPosition) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private doPublish() {
 
         this.showLoadingSpinner();
-        this.actionButton.setEnabled(false);
+
+        this.setSubTitle(this.countTotal() + " items are being published...")
 
         var selectedIds = this.getContentToPublishIds();
 
-        new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked())
-            .setIds(selectedIds).
-            setExcludedIds(this.excludedIds).send().then(
-            (jsonResponse: api.rest.JsonResponse<api.content.json.PublishContentJson>) => {
-                this.close();
-                PublishContentRequest.feedback(jsonResponse);
+        new PublishContentRequest()
+            .setIncludeChildren(this.childrenCheckbox.isChecked())
+            .setIds(selectedIds)
+            .setExcludedIds(this.excludedIds)
+            .sendAndParse()
+            .then((taskId: api.task.TaskId) => {
+                this.pollPublishTask(taskId);
             }).catch((reason) => {
+            this.hideLoadingSpinner();
                 this.close();
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);
                 }
-            }).finally(() => {
-                this.hideLoadingSpinner();
-                this.actionButton.setEnabled(true);
             });
     }
 
+    private enableProgressBar() {
+        api.dom.Body.get().addClass(ContentPublishDialog.isPublishingClass);
+        ContentPublishMenuManager.getProgressBar().setValue(0);
+        this.addClass(ContentPublishDialog.isPublishingClass);
+        this.hideLoadingSpinner();
+        this.progressBar = this.createProgressBar();
+    }
+
+    private disableProgressBar() {
+        this.removeClass(ContentPublishDialog.isPublishingClass);
+        api.dom.Body.get().removeClass(ContentPublishDialog.isPublishingClass);
+    }
+
+    private isProgressBarEnabled() {
+        return this.hasClass(ContentPublishDialog.isPublishingClass);
+    }
+
+    private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ContentPublishDialog.pollInterval) {
+        setTimeout(() => {
+            if (!this.isProgressBarEnabled() && elapsed >= ContentPublishDialog.progressBarDelay) {
+                this.enableProgressBar();
+            }
+
+            new api.task.GetTaskInfoRequest(taskId).sendAndParse().then((task: api.task.TaskInfo) => {
+                let state = task.getState();
+                if (!task) {
+                    return; // task probably expired, stop polling
+                }
+
+                let progress = task.getProgress();
+
+                if (state == api.task.TaskState.FINISHED) {
+                    this.setProgressValue(100);
+                    this.onPublishComplete();
+
+                    api.notify.showSuccess(progress.getInfo());
+                } else if (state == api.task.TaskState.FAILED) {
+                    this.onPublishComplete();
+
+                    api.notify.showError('Publishing failed: ' + progress.getInfo());
+                } else {
+                    this.setProgressValue(task.getProgressPercentage());
+                    this.pollPublishTask(taskId, elapsed + interval, interval);
+                }
+
+            }).catch((reason: any) => {
+                this.onPublishComplete();
+
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+
+        }, interval);
+    }
+
+    private setProgressValue(value: number) {
+        if (this.isProgressBarEnabled()) {
+            this.progressBar.setValue(value);
+            if (!api.dom.Body.get().isShowingModalDialog()) {
+                ContentPublishMenuManager.getProgressBar().setValue(value);
+            }
+        }
+    }
+
     protected countTotal(): number {
-        return this.countToPublish(this.getItemList().getItems())
-               + this.dependantIds.length;
+        return this.countToPublish(this.getItemList().getItems()) + this.getStashedCount();
     }
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
@@ -294,7 +404,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     protected updateButtonCount(actionString: string, count: number) {
-
         super.updateButtonCount(actionString, count);
 
         let canPublish = count > 0 && this.areItemsAndDependantsValid();
