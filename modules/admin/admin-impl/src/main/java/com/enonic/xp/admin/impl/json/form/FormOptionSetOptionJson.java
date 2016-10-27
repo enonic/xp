@@ -1,11 +1,12 @@
 package com.enonic.xp.admin.impl.json.form;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.FormOptionSetOption;
 
 public class FormOptionSetOptionJson
@@ -21,9 +22,14 @@ public class FormOptionSetOptionJson
         this.items = wrapFormItems( formOptionSetOption.getFormItems() );
     }
 
-    private static List<FormItemJson> wrapFormItems( final List<FormItem> items )
+    private static List<FormItemJson> wrapFormItems( final FormItems items )
     {
-        return items.stream().map( e -> FormItemJsonFactory.create( e ) ).collect( Collectors.toList() );
+        final List<FormItemJson> formItemJsonList = new ArrayList<>();
+        for ( FormItem formItem : items )
+        {
+            formItemJsonList.add( FormItemJsonFactory.create( formItem ) );
+        }
+        return formItemJsonList;
     }
 
     public String getName()

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -21,13 +22,15 @@ public class FormOptionSet
 
     private final boolean expanded;
 
-    private final List<FormOptionSetOption> optionSetOptions;
+    private final FormItems optionSetOptions;
 
     private final Occurrences occurrences;
 
     private final Occurrences multiselection;
 
     private final String helpText;
+
+    private int numberOfDefaultOptions;
 
     private FormOptionSet( Builder builder )
     {
@@ -43,7 +46,12 @@ public class FormOptionSet
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
-        this.optionSetOptions = builder.setOptionsList.stream().collect( Collectors.toList() );
+        this.numberOfDefaultOptions = (int) builder.setOptionsList.stream().filter( option -> option.isDefaultOption() ).count();
+        this.optionSetOptions = new FormItems( this );
+        for ( final FormItem formItem : builder.setOptionsList )
+        {
+            this.optionSetOptions.add( formItem );
+        }
     }
 
     @Override
@@ -60,7 +68,18 @@ public class FormOptionSet
 
     public List<FormOptionSetOption> getOptions()
     {
-        return this.optionSetOptions;
+        return StreamSupport.stream( this.optionSetOptions.spliterator(), false ).map( formItem -> (FormOptionSetOption) formItem ).collect(
+            Collectors.toList() );
+    }
+
+    public FormItems getFormItems()
+    {
+        return optionSetOptions;
+    }
+
+    public int getNumberOfDefaultOptions()
+    {
+        return this.numberOfDefaultOptions;
     }
 
     public String getLabel()
@@ -88,6 +107,11 @@ public class FormOptionSet
         return helpText;
     }
 
+    public boolean isRequired()
+    {
+        return occurrences.impliesRequired();
+    }
+
     @Override
     public FormItem copy()
     {
@@ -97,7 +121,7 @@ public class FormOptionSet
     @Override
     public Iterator<FormOptionSetOption> iterator()
     {
-        return optionSetOptions.iterator();
+        return getOptions().iterator();
     }
 
     @Override
@@ -151,7 +175,7 @@ public class FormOptionSet
 
         private boolean expanded = false;
 
-        private List<FormOptionSetOption> setOptionsList;
+        private List<FormOptionSetOption> setOptionsList = new ArrayList<>();
 
         private Occurrences occurrences = Occurrences.create( 0, 1 );
 
@@ -161,18 +185,21 @@ public class FormOptionSet
 
         private Builder()
         {
-            this.setOptionsList = new ArrayList<>();
         }
 
         private Builder( final FormOptionSet source )
         {
-            this.setOptionsList = source.optionSetOptions;
             this.name = source.name;
             this.label = source.label;
             this.expanded = source.expanded;
             this.occurrences = source.occurrences;
             this.multiselection = source.multiselection;
             this.helpText = source.helpText;
+
+            for ( final FormOptionSetOption formItemSource : source.getOptions() )
+            {
+                setOptionsList.add( formItemSource.copy() );
+            }
         }
 
         public Builder name( final String name )
@@ -196,6 +223,32 @@ public class FormOptionSet
         public Builder occurrences( final Occurrences value )
         {
             occurrences = value;
+            return this;
+        }
+
+        public Builder required( boolean value )
+        {
+            if ( value && !occurrences.impliesRequired() )
+            {
+                occurrences = Occurrences.create( 1, occurrences.getMaximum() );
+            }
+            else if ( !value && occurrences.impliesRequired() )
+            {
+                occurrences = Occurrences.create( 0, occurrences.getMaximum() );
+            }
+            return this;
+        }
+
+        public Builder multiple( boolean value )
+        {
+            if ( value )
+            {
+                occurrences = Occurrences.create( occurrences.getMinimum(), 0 );
+            }
+            else
+            {
+                occurrences = Occurrences.create( occurrences.getMinimum(), 1 );
+            }
             return this;
         }
 

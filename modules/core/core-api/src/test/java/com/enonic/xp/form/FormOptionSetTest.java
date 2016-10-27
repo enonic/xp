@@ -44,9 +44,9 @@ public class FormOptionSetTest
         FormOptionSetOption option1 = options.get( 0 );
         assertFalse( option1.isDefaultOption() );
 
-        List<FormItem> option1Items = option1.getFormItems();
+        FormItems option1Items = option1.getFormItems();
         assertEquals( 1, option1Items.size() );
-        Input option1Input = (Input) option1Items.get( 0 );
+        Input option1Input = (Input) option1Items.getItemByName( "myTextLine1" );
         assertEquals( "myTextLine1", option1Input.getName() );
         assertEquals( "My text line 1", option1Input.getLabel() );
         assertEquals( "My text line 1 help text", option1Input.getHelpText() );
@@ -54,9 +54,9 @@ public class FormOptionSetTest
         FormOptionSetOption option2 = options.get( 1 );
         assertTrue( option2.isDefaultOption() );
 
-        List<FormItem> option2Items = option2.getFormItems();
+        FormItems option2Items = option2.getFormItems();
         assertEquals( 1, option2Items.size() );
-        Input option2Input = (Input) option2Items.get( 0 );
+        Input option2Input = (Input) option2Items.getItemByName( "myTextLine2" );
         assertEquals( "myTextLine2", option2Input.getName() );
         assertEquals( "My text line 2", option2Input.getLabel() );
         assertEquals( "My text line 2 help text", option2Input.getHelpText() );

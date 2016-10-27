@@ -135,12 +135,14 @@ public class ContentTypeResourceTest
             name( "myOptionSet" ).
             label( "My option set" ).
             helpText( "Option set help text" ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).
-                addFormItem(
-                    Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).
-                addFormItem(
-                    Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 
         InlineMixin myInline = InlineMixin.create().
