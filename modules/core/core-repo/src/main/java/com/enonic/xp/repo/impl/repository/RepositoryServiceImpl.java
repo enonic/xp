@@ -61,7 +61,8 @@ public class RepositoryServiceImpl
     @Override
     public Repository createRepository( final CreateRepositoryParams params )
     {
-        return repositoryMap.compute( params.getRepositoryId(), ( key, previousRepository ) -> {
+        return repositoryMap.compute( params.getRepositoryId(), ( key, previousRepository ) ->
+        {
             if ( previousRepository != null || repositoryEntryService.getRepositoryEntry( key ) != null )
             {
                 throw new RepositoryAlreadyExistException( key );
@@ -79,7 +80,8 @@ public class RepositoryServiceImpl
         final RepositoryId repositoryId = ContextAccessor.current().
             getRepositoryId();
 
-        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
+        repositoryMap.compute( repositoryId, ( key, previousRepository ) ->
+        {
             previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( key ) : previousRepository;
             if ( previousRepository == null )
             {
@@ -129,7 +131,8 @@ public class RepositoryServiceImpl
     public RepositoryId deleteRepository( final DeleteRepositoryParams params )
     {
         final RepositoryId repositoryId = params.getRepositoryId();
-        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
+        repositoryMap.compute( repositoryId, ( key, previousRepository ) ->
+        {
             repositoryEntryService.deleteRepositoryEntry( repositoryId );
             nodeRepositoryService.delete( repositoryId );
             return null;
@@ -166,7 +169,7 @@ public class RepositoryServiceImpl
 
         final Node rootNode = this.nodeStorageService.store( Node.createRoot().
             permissions( params.getRootPermissions() ).
-            inheritPermissions( params.isInheritPermissions() ).
+            inheritPermissions( false ).
             childOrder( params.getRootChildOrder() ).
             build(), rootNodeContext );
 
