@@ -17,29 +17,37 @@ import com.enonic.xp.node.NodeId;
 public class ContentIdsHtmlParser
     implements Parser<ContentIds>
 {
+    private final static String HREF_TAG_START = "<a href=\"";
 
-    private final static String[] LINK_FORMATS = {"content://", "media://download/", "image://"};
+    private final static String IMG_TAG_START = "<img src=\"";
 
-    private final static String BASE_START = "<a\\s+(?:[^>]*?\\s+)?href=([\"\'])(" + StringUtils.join( LINK_FORMATS, "|" ) + ")";
+    private final static String[] LINK_FORMATS =
+        {HREF_TAG_START + "content://", HREF_TAG_START + "media://download/", IMG_TAG_START + "image://"};
 
-    private final static Pattern BASE_PATTERN = Pattern.compile( BASE_START + NodeId.VALID_NODE_ID_PATTERN + "\\1" );
+    private final static String NODE_ID_GROUP = "(?<nodeId>" + NodeId.VALID_NODE_ID_PATTERN + ")";
+
+    private final static String PARAMETERS = "(\\?[^\"]+)?";
+
+    private final static Pattern PATTERN =
+        Pattern.compile( "(" + StringUtils.join( LINK_FORMATS, "|" ) + ")" + NODE_ID_GROUP + PARAMETERS + "\"" );
 
     @Override
     public ContentIds parse( final String source )
     {
+        System.out.println( PATTERN );
 
         if ( StringUtils.isEmpty( source ) )
         {
             return ContentIds.empty();
         }
 
-        final Matcher matcher = BASE_PATTERN.matcher( source );
+        final Matcher matcher = PATTERN.matcher( source );
 
         final Set<ContentId> ids = Sets.newHashSet();
 
         while ( matcher.find() )
         {
-            final String baseUri = matcher.group( 3 );
+            final String baseUri = matcher.group( "nodeId" );
             ids.add( ContentId.from( baseUri ) );
         }
 

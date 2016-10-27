@@ -1,11 +1,13 @@
 package com.enonic.xp.core.impl.content.processor;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.Content;
@@ -143,12 +145,56 @@ public class ReferenceContentProcessorTest
         final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "inputName" ).build();
         Form form = Form.create().addFormItem( input ).build();
 
-        final ProcessCreateResult result = processCreate_one_ref( data, form, input.getName(), "aContent", "image://" );
+        final String value = "<img src=\"image://a3cc4a32-a278-4fc6-bc9b-4e8b337003dd\" \n" +
+            "alt=\"Renault4_R01.jpg\" style=\"text-align: right; width: 100%;\"/>";
 
-        data.addReference( "_inputName_references", Reference.from( "aContent" ) );
+        final ProcessCreateResult result = processCreate_one_ref( data, form, input.getName(), "aContent", value );
+
+        data.addReference( "_inputName_references", Reference.from( "a3cc4a32-a278-4fc6-bc9b-4e8b337003dd" ) );
 
         assertEquals( result.getCreateContentParams().getData(), data );
     }
+
+    @Test
+    public void testProcessCreate_one_image_ref_with_image_parameters()
+
+    {
+        final PropertyTree data = new PropertyTree();
+        final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "inputName" ).build();
+        Form form = Form.create().addFormItem( input ).build();
+
+        final String value = "<img src=\"image://a3cc4a32-a278-4fc6-bc9b-4e8b337003dd?scale=21:9&amp;size=640\" \n" +
+            "alt=\"Renault4_R01.jpg\" style=\"text-align: right; width: 100%;\"/>";
+
+        final ProcessCreateResult result = processCreate_one_ref( data, form, input.getName(), "aContent", value );
+
+        data.addReference( "_inputName_references", Reference.from( "a3cc4a32-a278-4fc6-bc9b-4e8b337003dd" ) );
+
+        assertEquals( result.getCreateContentParams().getData(), data );
+    }
+
+    @Test
+    public void all_links()
+        throws Exception
+    {
+
+        final PropertyTree data = new PropertyTree();
+        final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "inputName" ).build();
+        Form form = Form.create().addFormItem( input ).build();
+
+        final String withAll =
+            "<p>Here is link to content:&nbsp;<a href=\"content://c30febe4-d1e0-46b9-915e-60e361021829\" target=\"_blank\" title=\"fisk\">Content link sir</a></p>\\n<p>Another link to download here&nbsp;<a href=\"media://download/3d8dc241-1a52-48f6-9a27-cde26226bd63\">Fisk </a></p>\\n<p>Link to image also &lt;b&gt;</p>\\n<figure class=\"justify\"><img src=\"image://0d7dcd8b-bde8-4091-a222-51e85f17f20f\" alt=\"An_Afghan_elder_and_his_cat_sit_outside_his_store.jpg\" style=\"text-align: justify; width: 100%;\" /><figcaption style=\"text-align: left;\">ewesfsef</figcaption></figure>";
+
+        final ProcessCreateResult result = processCreate_one_ref( data, form, input.getName(), "aContent", withAll );
+
+        final Iterable<Reference> references = result.getCreateContentParams().getData().getReferences( "_inputName_references" );
+        final ArrayList<Reference> referenceList = Lists.newArrayList( references );
+        assertEquals( 3, referenceList.size() );
+        assertTrue( referenceList.contains( Reference.from( "c30febe4-d1e0-46b9-915e-60e361021829" ) ) );
+        assertTrue( referenceList.contains( Reference.from( "3d8dc241-1a52-48f6-9a27-cde26226bd63" ) ) );
+        assertTrue( referenceList.contains( Reference.from( "0d7dcd8b-bde8-4091-a222-51e85f17f20f" ) ) );
+    }
+
 
     @Test
     public void testProcessUpdate_one_ref_add()
@@ -196,7 +242,6 @@ public class ReferenceContentProcessorTest
     private ProcessCreateResult processCreate_one_ref( final PropertyTree data, final Form form, final String refInputName,
                                                        final String contentId, final String format )
     {
-
         final ContentType contentType = ContentType.create().
             name( "test:myContentType" ).
             superType( ContentTypeName.structured() ).

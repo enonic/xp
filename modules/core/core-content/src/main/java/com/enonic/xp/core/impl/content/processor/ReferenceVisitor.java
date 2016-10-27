@@ -52,7 +52,7 @@ final class ReferenceVisitor
                     forEach( id ->
                              {
                                  final Reference ref = com.enonic.xp.util.Reference.from( id.toString() );
-                                 parentSet.addReference( REFERENCE_PREFIX + input.getName().toString() + REFERENCE_SUFFIX, ref );
+                                 parentSet.addReference( REFERENCE_PREFIX + input.getName() + REFERENCE_SUFFIX, ref );
                              } );
             }
         }
