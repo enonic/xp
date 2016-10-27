@@ -14,23 +14,23 @@ log.info('Repository created with id ' + result1.id);
 // Creates a repository with specific settings
 var result2 = repoLib.create({
     id: 'test-repo2',
+    rootPermissions: [
+        {
+            "principal": "role:admin",
+            "allow": [
+                "READ",
+                "CREATE",
+                "MODIFY",
+                "DELETE",
+                "PUBLISH",
+                "READ_PERMISSIONS",
+                "WRITE_PERMISSIONS"
+            ],
+            "deny": []
+        }
+    ],
+    rootChildOrder: "_timestamp DESC",
     settings: {
-        rootPermissions: [
-            {
-                "principal": "role:admin",
-                "allow": [
-                    "READ",
-                    "CREATE",
-                    "MODIFY",
-                    "DELETE",
-                    "PUBLISH",
-                    "READ_PERMISSIONS",
-                    "WRITE_PERMISSIONS"
-                ],
-                "deny": []
-            }
-        ],
-        childOrder: "_timestamp DESC",
         definitions: {
             version: {
                 settings: {

@@ -50,10 +50,10 @@ exports.refresh = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
- * @param {object} [params.settings] Repository settings.
- * @param {array} [params.settings.rootPermissions] Array of root permissions.
+ * @param {array} [params.rootPermissions] Array of root permissions.
  * By default, all permissions to 'system.admin' and read permission to 'system.authenticated'
- * @param {string} [params.settings.rootChildOrder] Root child order.
+ * @param {string} [params.rootChildOrder] Root child order.
+ * @param {object} [params.settings] Repository settings.
  * @param {object} [params.settings.definitions] Index definitions.
  * @param {IndexDefinition} [params.settings.definitions.search] Search index definition.
  * @param {IndexDefinition} [params.settings.definitions.version] Version index definition.
@@ -65,7 +65,7 @@ exports.refresh = function (params) {
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
     bean.repositoryId = required(params, 'id');
-    bean.rootPermissions = params.rootPermissions ? __.toScriptValue(params.permissions) : null;
+    bean.rootPermissions = params.rootPermissions ? __.toScriptValue(params.rootPermissions) : null;
     bean.rootChildOrder = __.nullOrValue(params.rootChildOrder);
     bean.indexDefinitions = params.settings && params.settings.definitions ? __.toScriptValue(params.settings.definitions) : null;
     return __.toNativeObject(bean.execute());
