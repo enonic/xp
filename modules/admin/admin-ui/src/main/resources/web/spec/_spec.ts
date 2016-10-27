@@ -2,3 +2,4 @@
 ///<reference path='../admin/common/js/_all.d.ts' />
 ///<reference path='common/_spec.ts' />
 ///<reference path='common/schema/optionset/_spec.ts' />
+///<reference path='common/form/set/optionset/_spec.ts' />
