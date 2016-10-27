@@ -6,10 +6,10 @@ module api.form.json {
 
         label: string;
 
-        defaultOption: boolean;
+        defaultOption?: boolean;
 
-        helpText: string;
+        helpText?: string;
 
-        items: FormItemTypeWrapperJson[];
+        items?: FormItemTypeWrapperJson[];
     }
 }
