@@ -15,7 +15,7 @@
     padding: 0px 5px 0px 23px;
     cursor: pointer;
 
-    &.left:before, &.right:before, &.top:after, &.bottom:before {
+    &.left:before, &.right:before, &.top:after, &.bottom:after {
       content: '';
       display: block;
       background: url("../../../images/admin-unchecked.gif") -1px -2px no-repeat;
@@ -23,13 +23,13 @@
       height: 13px;
     }
 
-    &.bottom {
+    &.top {
       padding-left: 0px;
-      margin-bottom: 19px;
+      margin-top: 19px;
 
       &:after {
         position: absolute;
-        bottom: 0px;
+        top: 0px;
       }
     }
 
@@ -51,7 +51,7 @@
       }
     }
 
-    &.top {
+    &.bottom {
       padding-left: 0px;
 
       &:after {
