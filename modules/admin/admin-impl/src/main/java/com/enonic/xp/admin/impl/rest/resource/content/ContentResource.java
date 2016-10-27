@@ -52,7 +52,6 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
-import com.enonic.xp.admin.impl.json.content.UnpublishContentResultJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -560,6 +559,55 @@ public final class ContentResource
                 }
         }
         return "";
+    }
+
+    @POST
+    @Path("unpublish")
+    public TaskResultJson unpublish( final UnpublishContentJson params )
+    {
+        final RunnableTask runnableTask = ( id, progressReporter ) -> unpublishTask( params, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Unpublish content" );
+        return new TaskResultJson( taskId );
+    }
+
+    private void unpublishTask( final UnpublishContentJson params, final ProgressReporter progressReporter )
+    {
+        final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final Context ctx = ContextAccessor.current();
+        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
+        progressReporter.info( "Unpublishing content" );
+
+        final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
+            unpublishBranch( ContentConstants.BRANCH_MASTER ).
+            contentIds( contentIds ).
+            includeChildren( params.isIncludeChildren() ).
+            pushListener( new PushContentProgressListener( progressReporter ) ).
+            build() );
+
+        final ContentIds unpublishedContents = result.getUnpublishedContents();
+
+        String contentName = "";
+        if ( unpublishedContents.getSize() == 1 )
+        {
+            contentName = result.getContentName();
+        }
+
+        progressReporter.info( getUnpublishMessage( unpublishedContents.getSize(), contentName ) );
+    }
+
+    private String getUnpublishMessage( final int unpublished, final String contentName )
+    {
+        switch ( unpublished )
+        {
+            case 0:
+                return "Nothing to unpublish.";
+
+            case 1:
+                return "\"" + contentName + "\" is unpublished";
+
+            default:
+                return unpublished + " items are unpublished";
+        }
     }
 
     @POST
@@ -1155,19 +1203,6 @@ public final class ContentResource
             this.contentService.setActiveContentVersion( params.getContentId(), params.getVersionId() );
 
         return new ContentIdJson( setActiveContentVersionResult.getContentId() );
-    }
-
-    @POST
-    @Path("unpublish")
-    public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
-    {
-        final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
-            contentIds( ContentIds.from( params.getIds() ) ).
-            includeChildren( params.isIncludeChildren() ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
-            build() );
-
-        return new UnpublishContentResultJson( result.getUnpublishedContents().getSize(), result.getContentName() );
     }
 
     @GET
