@@ -80,7 +80,7 @@ public class ReferenceContentProcessorTest
         final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "inputName" ).build();
         Form form = Form.create().addFormItem( input ).build();
 
-        final ProcessCreateResult result = processCreate_one_ref( data, form, input.getName(), "aContent" );
+        final ProcessCreateResult result = processCreate_one_ref( data, form, input.getName(), "aContent", "content://" );
 
         data.addReference( "_inputName_references", Reference.from( "aContent" ) );
 
@@ -120,6 +120,35 @@ public class ReferenceContentProcessorTest
         assertEquals( result.getCreateContentParams().getData(), data );
     }
 
+    @Test
+    public void testProcessCreate_one_download_ref()
+
+    {
+        final PropertyTree data = new PropertyTree();
+        final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "inputName" ).build();
+        Form form = Form.create().addFormItem( input ).build();
+
+        final ProcessCreateResult result = processCreate_one_ref( data, form, input.getName(), "aContent", "media://download/" );
+
+        data.addReference( "_inputName_references", Reference.from( "aContent" ) );
+
+        assertEquals( result.getCreateContentParams().getData(), data );
+    }
+
+    @Test
+    public void testProcessCreate_one_image_ref()
+
+    {
+        final PropertyTree data = new PropertyTree();
+        final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "inputName" ).build();
+        Form form = Form.create().addFormItem( input ).build();
+
+        final ProcessCreateResult result = processCreate_one_ref( data, form, input.getName(), "aContent", "image://" );
+
+        data.addReference( "_inputName_references", Reference.from( "aContent" ) );
+
+        assertEquals( result.getCreateContentParams().getData(), data );
+    }
 
     @Test
     public void testProcessUpdate_one_ref_add()
@@ -129,7 +158,7 @@ public class ReferenceContentProcessorTest
         final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "inputName" ).build();
         Form form = Form.create().addFormItem( input ).build();
 
-        final ProcessCreateResult createResult = processCreate_one_ref( data, form, input.getName(), "aContent" );
+        final ProcessCreateResult createResult = processCreate_one_ref( data, form, input.getName(), "aContent", "content://" );
 
         final PropertyTree resultData = createResult.getCreateContentParams().getData();
         final Value resValue = resultData.getValue( input.getPath().toString() );
@@ -165,7 +194,7 @@ public class ReferenceContentProcessorTest
     }
 
     private ProcessCreateResult processCreate_one_ref( final PropertyTree data, final Form form, final String refInputName,
-                                                       final String contentId )
+                                                       final String contentId, final String format )
     {
 
         final ContentType contentType = ContentType.create().
@@ -176,7 +205,7 @@ public class ReferenceContentProcessorTest
 
         Mockito.when( this.contentTypeService.getByName( Mockito.any() ) ).thenReturn( contentType );
 
-        data.addString( refInputName, "<p><a href=\"content://" + contentId + "\">aaa</a></p>" );
+        data.addString( refInputName, "<p><a href=\"" + format + contentId + "\">aaa</a></p>" );
 
         final CreateContentParams params = createContentParams( data.copy() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, null );
