@@ -248,9 +248,9 @@ module FormOptionSetSpec {
                 defaultOption: false,
                 items: [{
                     Input: {
+                        label: 'Option one input',
                         name: 'input1',
                         inputType: 'TextLine',
-                        config: {},
                         customText: 'Input one custom text',
                         helpText: 'Input one help text',
                         occurrences: {
@@ -274,6 +274,7 @@ module FormOptionSetSpec {
                         },
                         items: [{
                             Input: {
+                                label: 'Option two input one',
                                 name: 'input2-1',
                                 inputType: 'TextLine',
                                 customText: 'Input two custom text',
@@ -285,6 +286,7 @@ module FormOptionSetSpec {
                             }
                         }, {
                             Input: {
+                                label: 'Option two input two',
                                 name: 'input2-2',
                                 inputType: 'Checkbox',
                                 customText: 'Checkbox two custom text',
