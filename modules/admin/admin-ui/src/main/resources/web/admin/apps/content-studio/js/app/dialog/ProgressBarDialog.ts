@@ -1,13 +1,14 @@
 import "../../api.ts";
 import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
-import {ContentPublishMenuManager} from "../browse/ContentPublishMenuManager";
+import {MenuButtonProgressBarManager} from "../browse/MenuButtonProgressBarManager";
+import TaskState = api.task.TaskState;
 
 export class ProcessingStats {
-    // If the content is still being published after this time, show the progress bar (in ms)
-    static progressBarDelay: number = 100; // 2000
+    // If the content is still being processed after this time, show the progress bar (in ms)
+    static progressBarDelay: number = 2000;
 
-    // Interval of task polling when publishing the content (in ms)
-    static pollInterval: number = 500;     // 500
+    // Interval of task polling when processing the content (in ms)
+    static pollInterval: number = 500;
 
     // Body class
     static isProcessingClass: string = "is-processing";
@@ -17,8 +18,11 @@ export class ProgressBarDialog extends DependantItemsDialog {
 
     private progressBar: api.ui.ProgressBar;
 
-    constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
+    private processHandler: () => void;
+
+    constructor(dialogName: string, dialogSubName: string, dependantsName: string, processHandler: () => void) {
         super(dialogName, dialogSubName, dependantsName);
+        this.processHandler = processHandler;
     }
 
     protected createProgressBar() {
@@ -35,10 +39,11 @@ export class ProgressBarDialog extends DependantItemsDialog {
 
     protected enableProgressBar() {
         api.dom.Body.get().addClass(ProcessingStats.isProcessingClass);
-        ContentPublishMenuManager.getProgressBar().setValue(0);
+        MenuButtonProgressBarManager.getProgressBar().setValue(0);
         this.addClass(ProcessingStats.isProcessingClass);
         this.hideLoadingSpinner();
         this.progressBar = this.createProgressBar();
+        MenuButtonProgressBarManager.updateProgressHandler(this.processHandler);
     }
 
     protected disableProgressBar() {
@@ -54,7 +59,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
         if (this.isProgressBarEnabled()) {
             this.progressBar.setValue(value);
             if (!api.dom.Body.get().isShowingModalDialog()) {
-                ContentPublishMenuManager.getProgressBar().setValue(value);
+                MenuButtonProgressBarManager.getProgressBar().setValue(value);
             }
         }
     }
@@ -63,7 +68,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
         super.show(this.isProgressBarEnabled());
     }
 
-    onPublishComplete() {
+    onProcessingComplete() {
         if (this.isProgressBarEnabled()) {
             this.disableProgressBar();
         }
@@ -76,8 +81,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
         this.hide();
     }
 
-
-    protected pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0) {
+    protected pollTask(taskId: api.task.TaskId, elapsed: number = 0) {
         const interval = ProcessingStats.pollInterval;
         setTimeout(() => {
             if (!this.isProgressBarEnabled() && elapsed >= ProcessingStats.progressBarDelay) {
@@ -92,22 +96,22 @@ export class ProgressBarDialog extends DependantItemsDialog {
 
                 let progress = task.getProgress();
 
-                if (state == api.task.TaskState.FINISHED) {
+                switch (state) {
+                case TaskState.FINISHED:
                     this.setProgressValue(100);
-                    this.onPublishComplete();
-
+                    this.onProcessingComplete();
                     api.notify.showSuccess(progress.getInfo());
-                } else if (state == api.task.TaskState.FAILED) {
-                    this.onPublishComplete();
-
-                    api.notify.showError('Publishing failed: ' + progress.getInfo());
-                } else {
+                    break;
+                case TaskState.FAILED:
+                    this.onProcessingComplete();
+                    api.notify.showError('Processing failed: ' + progress.getInfo());
+                    break;
+                default:
                     this.setProgressValue(task.getProgressPercentage());
-                    this.pollPublishTask(taskId, elapsed + interval);
+                    this.pollTask(taskId, elapsed + interval);
                 }
-
             }).catch((reason: any) => {
-                this.onPublishComplete();
+                this.onProcessingComplete();
 
                 api.DefaultErrorHandler.handle(reason);
             }).done();

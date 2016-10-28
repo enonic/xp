@@ -346,6 +346,7 @@ public class ContentServiceImpl
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
+            //
             pushListener( params.getPushContentListener() ).
             build().
             execute();
@@ -376,6 +377,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
+            //
             build().
             execute();
     }
