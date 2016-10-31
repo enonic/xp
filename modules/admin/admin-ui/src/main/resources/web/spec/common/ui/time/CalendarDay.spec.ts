@@ -1,11 +1,11 @@
-describe("api.ui.time.CalendarDayTest", function () {
+import CalendarDayBuilder = api.ui.time.CalendarDayBuilder;
+import DaysOfWeek = api.ui.time.DaysOfWeek;
 
-    var CalendarDayBuilder = api.ui.time.CalendarDayBuilder;
-    var DaysOfWeek = api.ui.time.DaysOfWeek;
+describe("api.ui.time.CalendarDayTest", () => {
 
-    describe("when getDayOfWeek", function () {
+    describe("when getDayOfWeek", () => {
 
-        it("given date 2014-01-01 then WEDNESDAY should be returned", function () {
+        it("given date 2014-01-01 then WEDNESDAY should be returned", () => {
 
             var calendarDay = new CalendarDayBuilder().
                 setDate(new Date(Date.UTC(2014, 0, 1))).
@@ -15,7 +15,7 @@ describe("api.ui.time.CalendarDayTest", function () {
             expect(calendarDay.getDayOfWeek()).toBe(DaysOfWeek.WEDNESDAY);
         });
 
-        it("given date 2014-12-31 then WEDNESDAY should be returned", function () {
+        it("given date 2014-12-31 then WEDNESDAY should be returned", () => {
 
             var calendarDay = new CalendarDayBuilder().
                 setDate(new Date(Date.UTC(2014, 11, 31))).
