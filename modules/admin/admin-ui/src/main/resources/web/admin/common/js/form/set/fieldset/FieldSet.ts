@@ -1,6 +1,6 @@
 module api.form {
 
-    export class FieldSet extends Layout implements FormItemContainer {
+    export class FieldSet extends FormItem implements FormItemContainer {
 
         private label: string;
 

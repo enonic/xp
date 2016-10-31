@@ -114,6 +114,15 @@ module api.ui {
             return String(this.radio.getHTMLElement()['checked']);
         }
 
+        setLabel(text: string): RadioButton {
+            this.label.setValue(text);
+            return this;
+        }
+
+        getLabel(): string {
+            return this.label.getValue();
+        }
+
         getName(): string {
             return this.radio.getName();
         }

@@ -12,6 +12,8 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
@@ -82,6 +84,11 @@ public final class XmlFormMapper
             return buildFormItemSetItem( root );
         }
 
+        if ( "option-set".equals( tagName ) )
+        {
+            return buildFormOptionSetItem( root );
+        }
+
         throw new XmlException( "Unknown item type [{0}]", tagName );
     }
 
@@ -141,6 +148,48 @@ public final class XmlFormMapper
         builder.immutable( root.getChildValueAs( "immutable", Boolean.class, false ) );
         builder.addFormItems( buildItems( root.getChild( "items" ) ) );
         return builder.build();
+    }
+
+    private FormOptionSet buildFormOptionSetItem( final DomElement root )
+    {
+        final FormOptionSet.Builder builder = FormOptionSet.create();
+        builder.name( root.getAttribute( "name" ) );
+        builder.label( root.getChildValue( "label" ) );
+        builder.helpText( root.getChildValue( "help-text" ) );
+        builder.expanded( root.getChildValueAs( "expanded", Boolean.class, false ) );
+        builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
+        builder.multiselection( buildOccurrence( root.getChild( "options" ) ) );
+        builder.addOptionSetOptions( buildOptionSetOptions( root.getChild( "options" ) ) );
+        return builder.build();
+    }
+
+    private List<FormOptionSetOption> buildOptionSetOptions( final DomElement root )
+    {
+        if ( root == null )
+        {
+            return Collections.emptyList();
+        }
+
+        return root.getChildren().stream().map( this::buildOptionSetOption ).collect( Collectors.toList() );
+    }
+
+    private FormOptionSetOption buildOptionSetOption( final DomElement root )
+    {
+        final String tagName = root.getTagName();
+        if ( "option".equals( tagName ) )
+        {
+            final FormOptionSetOption.Builder builder = FormOptionSetOption.create();
+
+            builder.name( root.getAttribute( "name" ) );
+            builder.label( root.getChildValue( "label" ) );
+            builder.helpText( root.getChildValue( "help-text" ) );
+            builder.defaultOption( root.getChildValueAs( "default", Boolean.class, false ) );
+            builder.addFormItems( buildItems( root.getChild( "items" ) ) );
+
+            return builder.build();
+        }
+
+        throw new XmlException( "Unknown item type [{0}]", tagName );
     }
 
     private Occurrences buildOccurrence( final DomElement root )

@@ -17,7 +17,7 @@ module api.form.inputtype.text {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var regexpConfig = inputConfig['regexp'] && inputConfig['regexp'][0];
+            var regexpConfig = inputConfig && inputConfig['regexp'] && inputConfig['regexp'][0];
             var regexp = regexpConfig && regexpConfig['value'];
             this.regexpStr = regexp || null;
         }
