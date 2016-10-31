@@ -4,6 +4,7 @@
 
 ///<reference path='util/_spec.ts' />
 ///<reference path='ui/_spec.ts' />
+///<reference path='security/_spec.ts' />
 
 
 
