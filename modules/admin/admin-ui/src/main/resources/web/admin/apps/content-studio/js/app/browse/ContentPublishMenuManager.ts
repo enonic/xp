@@ -13,7 +13,7 @@ export class ContentPublishMenuManager {
     constructor(actions: ContentTreeGridActions) {
         this.initPublishMenuButton(actions);
     }
-    
+
     private initPublishMenuButton(actions: ContentTreeGridActions) {
         let mainAction = actions.PUBLISH_CONTENT;
         let menuAction = [actions.PUBLISH_TREE_CONTENT, actions.UNPUBLISH_CONTENT];
@@ -32,10 +32,10 @@ export class ContentPublishMenuManager {
 
             ContentPublishMenuManager.progressBar = progressBar;
         }
-        
+
         return ContentPublishMenuManager.progressBar;
     }
-    
+
     static getPublishMenuButton(): MenuButton {
         if (!ContentPublishMenuManager.publishMenuButton) {
             throw "Publish button is not available";

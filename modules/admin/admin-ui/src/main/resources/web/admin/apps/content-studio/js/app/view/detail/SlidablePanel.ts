@@ -9,7 +9,7 @@ export class SlidablePanel extends DetailsPanel {
     private slideInFunction: () => void;
     private slideOutFunction: () => void;
 
-    private slidedInListeners: {() : void}[];
+    private slidedInListeners: {(): void}[];
     private slidedIn: boolean;
 
     constructor(builder: SlidablePanelBuilder, detailsView: DetailsView) {

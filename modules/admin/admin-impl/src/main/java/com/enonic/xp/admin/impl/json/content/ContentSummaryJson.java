@@ -87,6 +87,11 @@ public class ContentSummaryJson
         return content.isRoot();
     }
 
+    public Instant getPublishedTime()
+    {
+        return content.getPublishedTime();
+    }
+
     @Override
     public Instant getCreatedTime()
     {

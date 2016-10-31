@@ -12,12 +12,13 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.util.Exceptions;
 
-@Component(immediate = true)
+@Component(immediate = true, service = StatusReporter.class)
 public final class OsgiServiceReporter
-    implements StatusReporter
+    extends JsonStatusReporter
 {
     private BundleContext context;
 
@@ -34,7 +35,7 @@ public final class OsgiServiceReporter
     }
 
     @Override
-    public ObjectNode getReport()
+    public JsonNode getReport()
     {
         final ServiceReference[] list = getServices();
 

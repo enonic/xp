@@ -43,7 +43,7 @@ public final class ImageHelper
         }
         catch ( final IOException e )
         {
-            throw Exceptions.newRutime( "Failed to create image placeholder" ).withCause( e );
+            throw Exceptions.newRuntime( "Failed to create image placeholder" ).withCause( e );
         }
     }
 
@@ -55,7 +55,7 @@ public final class ImageHelper
         }
         catch ( IOException e )
         {
-            throw Exceptions.newRutime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+            throw Exceptions.newRuntime( "Failed to read BufferedImage from InputStream" ).withCause( e );
         }
     }
 
@@ -68,7 +68,7 @@ public final class ImageHelper
         }
         catch ( final IOException e )
         {
-            throw Exceptions.newRutime( "Failed to write BufferedImage to InputStream" ).withCause( e );
+            throw Exceptions.newRuntime( "Failed to report BufferedImage to InputStream" ).withCause( e );
         }
         return ByteSource.wrap( output.toByteArray() );
     }

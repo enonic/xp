@@ -295,10 +295,6 @@ module api.form.inputtype.text {
             wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
         }
 
-        private hideDropdownMenu() {
-            wemjq(".mce-menu").hide();
-        }
-
         private getEditor(editorId: string): HtmlAreaEditor {
             return tinymce.get(editorId);
         }

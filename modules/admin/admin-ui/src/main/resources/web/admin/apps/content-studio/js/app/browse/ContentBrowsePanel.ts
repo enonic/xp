@@ -87,7 +87,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (event.getType() === 'updated') {
                 let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
                 this.getBrowseItemPanel().updateItemViewers(browseItems);
-                this.browseActions.updateActionsEnabledState(this.treeNodesToBrowseItems(this.contentTreeGrid.getRoot().getFullSelection()));
+                this.browseActions.updateActionsEnabledState(
+                    this.treeNodesToBrowseItems(this.contentTreeGrid.getRoot().getFullSelection()));
             }
         });
 
@@ -170,12 +171,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         var dockedDetailsPanel = new DockedDetailsPanel(detailsPanelView);
 
         var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndGridSplitPanel(),
-            dockedDetailsPanel).
-            setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
-            setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-            setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-            setAnimationDelay(600).
-            setSecondPanelShouldSlideRight(true).build();
+            dockedDetailsPanel).setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).setSecondPanelSize(280,
+            api.ui.panel.SplitPanelUnit.PIXEL).setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).setAnimationDelay(
+            600).setSecondPanelShouldSlideRight(true).build();
 
         contentPanelsAndDetailPanel.addClass("split-panel-with-details");
         contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
@@ -303,11 +301,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (i === index) {
                 var data = node.getData();
                 if (!!data && !!data.getContentSummary()) {
-                    let item = new ContentBrowseItem(data).
-                        setId(data.getId()).
-                        setDisplayName(data.getContentSummary().getDisplayName()).
-                        setPath(data.getContentSummary().getPath().toString()).
-                        setIconUrl(new api.content.util.ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+                    let item = new ContentBrowseItem(data).setId(data.getId()).setDisplayName(
+                        data.getContentSummary().getDisplayName()).setPath(data.getContentSummary().getPath().toString()).setIconUrl(
+                        new api.content.util.ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
                     browseItems.push(<ContentBrowseItem> item);
                 }
             }

@@ -28,7 +28,7 @@ public abstract class Exceptions
         }
     }
 
-    public static Builder<RuntimeException> newRutime( final String message, final Object... args )
+    public static Builder<RuntimeException> newRuntime( final String message, final Object... args )
     {
         return new Builder<>( new RuntimeException( format( message, args ) ) );
     }

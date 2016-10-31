@@ -37,7 +37,7 @@ final class GetContentByIdCommand
         }
         catch ( Exception e )
         {
-            throw Exceptions.newRutime( "Error getting node" ).withCause( e );
+            throw Exceptions.newRuntime( "Error getting node" ).withCause( e );
         }
     }
 

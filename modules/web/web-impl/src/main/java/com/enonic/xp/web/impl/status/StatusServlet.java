@@ -1,8 +1,10 @@
 package com.enonic.xp.web.impl.status;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -20,12 +22,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/status", "osgi.http.whiteboard.servlet.pattern=/status/*"})
+@Component(immediate = true, service = Servlet.class, property = {"osgi.http.whiteboard.servlet.pattern=/status",
+    "osgi.http.whiteboard.servlet.pattern=/status/*"})
 public final class StatusServlet
     extends HttpServlet
 {
@@ -43,7 +46,8 @@ public final class StatusServlet
     private JsonNode getRootInfo()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        this.reporters.keySet().forEach( json::add );
+        final Set<String> names = Sets.newTreeSet( this.reporters.keySet() );
+        names.forEach( json::add );
         return json;
     }
 
@@ -59,7 +63,7 @@ public final class StatusServlet
         }
 
         final String name = path.substring( PATH_PREFIX_SLASH.length() ).trim();
-        reportFromReporter( res, name );
+        reportFromReporter( req, res, name );
     }
 
     private void reportMainInfo( final HttpServletResponse res )
@@ -68,7 +72,7 @@ public final class StatusServlet
         serializeJson( res, 200, getRootInfo() );
     }
 
-    private void reportFromReporter( final HttpServletResponse res, final String name )
+    private void reportFromReporter( final HttpServletRequest req, final HttpServletResponse res, final String name )
         throws IOException
     {
         final StatusReporter reporter = this.reporters.get( name );
@@ -80,7 +84,7 @@ public final class StatusServlet
 
         try
         {
-            serializeJson( res, 200, reporter.getReport() );
+            serialize( req, res, reporter );
         }
         catch ( final IOException e )
         {
@@ -90,6 +94,18 @@ public final class StatusServlet
         {
             serializeError( res, 500, e.getMessage() );
         }
+    }
+
+    private void serialize( final HttpServletRequest req, final HttpServletResponse res, final StatusReporter reporter )
+        throws IOException
+    {
+        res.setStatus( 200 );
+        res.setContentType( reporter.getMediaType().toString() );
+
+        final OutputStream out = res.getOutputStream();
+        final StatusContextImpl context = new StatusContextImpl( req, out );
+        reporter.report( context );
+        out.close();
     }
 
     private void serializeJson( final HttpServletResponse res, final int status, final JsonNode json )

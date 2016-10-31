@@ -5,16 +5,30 @@ module api.content.form.inputtype.checkbox {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import BaseInputTypeSingleOccurrence = api.form.inputtype.support.BaseInputTypeSingleOccurrence;
-    import LabelPosition = api.ui.LabelPosition;
+    import InputAlignment = api.ui.InputAlignment;
 
     export class Checkbox extends BaseInputTypeSingleOccurrence<boolean> {
 
         private checkbox: api.ui.Checkbox;
 
+        private inputAlignment: InputAlignment = InputAlignment.LEFT;
+
         public static debug: boolean = false;
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
+            this.readConfig(config.inputConfig)
+        }
+
+        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+            this.setInputAlignment(inputConfig["alignment"]);
+        }
+
+        private setInputAlignment(inputAlignmentObj) {
+            if (inputAlignmentObj) {
+                var inputAlignment: InputAlignment = InputAlignment[<string>inputAlignmentObj[0].value.toUpperCase()];
+                this.inputAlignment = isNaN(inputAlignment) ? InputAlignment.LEFT : inputAlignment;
+            }
         }
 
         getValueType(): ValueType {
@@ -28,7 +42,7 @@ module api.content.form.inputtype.checkbox {
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
             var checked = property.hasNonNullValue() ? property.getBoolean() : false;
             this.checkbox =
-                api.ui.Checkbox.create().setLabelText(input.getLabel()).setChecked(checked).setLabelPosition(LabelPosition.TOP).build();
+                api.ui.Checkbox.create().setLabelText(input.getLabel()).setChecked(checked).setInputAlignment(this.inputAlignment).build();
             this.appendChild(this.checkbox);
 
             if (!ValueTypes.BOOLEAN.equals(property.getType())) {

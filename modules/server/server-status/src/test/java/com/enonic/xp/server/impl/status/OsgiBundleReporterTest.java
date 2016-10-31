@@ -10,12 +10,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import static org.junit.Assert.*;
 
 public class OsgiBundleReporterTest
-    extends BaseOsgiReporterTest
+    extends BaseOsgiReporterTest<OsgiBundleReporter>
 {
-    private OsgiBundleReporter reporter;
+    public OsgiBundleReporterTest()
+    {
+        super( "osgi.bundle" );
+    }
 
     @Override
-    protected void initialize()
+    protected OsgiBundleReporter newReporter()
         throws Exception
     {
         final Bundle bundle1 = newBundle( 0, "foo.bar1" );
@@ -24,20 +27,16 @@ public class OsgiBundleReporterTest
         final BundleContext context = Mockito.mock( BundleContext.class );
         Mockito.when( context.getBundles() ).thenReturn( new Bundle[]{bundle1, bundle2} );
 
-        this.reporter = new OsgiBundleReporter();
-        this.reporter.activate( context );
-    }
-
-    @Test
-    public void testName()
-    {
-        assertEquals( "osgi.bundle", this.reporter.getName() );
+        final OsgiBundleReporter reporter = new OsgiBundleReporter();
+        reporter.activate( context );
+        return reporter;
     }
 
     @Test
     public void testReport()
+        throws Exception
     {
-        final JsonNode json = this.reporter.getReport();
+        final JsonNode json = jsonReport();
         final JsonNode expected = this.helper.loadTestJson( "result.json" );
 
         this.helper.assertJsonEquals( expected, json );
