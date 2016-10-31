@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -21,7 +21,7 @@ public class FormOptionSet
 
     private final boolean expanded;
 
-    private final List<FormOptionSetOption> optionSetOptions;
+    private final FormItems optionSetOptions;
 
     private final Occurrences occurrences;
 
@@ -43,7 +43,11 @@ public class FormOptionSet
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
-        this.optionSetOptions = builder.setOptionsList.stream().collect( Collectors.toList() );
+        this.optionSetOptions = new FormItems( this );
+        for ( final FormItem formItem : builder.setOptionsList )
+        {
+            this.optionSetOptions.add( formItem );
+        }
     }
 
     @Override
@@ -58,9 +62,9 @@ public class FormOptionSet
         return FormItemType.FORM_OPTION_SET;
     }
 
-    public List<FormOptionSetOption> getOptions()
+    public FormItems getFormItems()
     {
-        return this.optionSetOptions;
+        return optionSetOptions;
     }
 
     public String getLabel()
@@ -88,6 +92,11 @@ public class FormOptionSet
         return helpText;
     }
 
+    public boolean isRequired()
+    {
+        return occurrences.impliesRequired();
+    }
+
     @Override
     public FormItem copy()
     {
@@ -97,7 +106,7 @@ public class FormOptionSet
     @Override
     public Iterator<FormOptionSetOption> iterator()
     {
-        return optionSetOptions.iterator();
+        return StreamSupport.stream( this.optionSetOptions.spliterator(), false ).map( FormItem::toFormOptionSetOption ).iterator();
     }
 
     @Override
@@ -116,15 +125,10 @@ public class FormOptionSet
             return false;
         }
         final FormOptionSet that = (FormOptionSet) o;
-        return super.equals( o ) &&
-            Objects.equals( expanded, that.expanded ) &&
-            Objects.equals( name, that.name ) &&
-            Objects.equals( label, that.label ) &&
-            Objects.equals( helpText, that.helpText ) &&
-            Objects.equals( optionSetOptions, that.optionSetOptions ) &&
-            Objects.equals( occurrences, that.occurrences ) &&
-            Objects.equals( multiselection, that.multiselection ) &&
-            Objects.equals( helpText, that.helpText );
+        return super.equals( o ) && Objects.equals( expanded, that.expanded ) && Objects.equals( name, that.name ) &&
+            Objects.equals( label, that.label ) && Objects.equals( helpText, that.helpText ) &&
+            Objects.equals( optionSetOptions, that.optionSetOptions ) && Objects.equals( occurrences, that.occurrences ) &&
+            Objects.equals( multiselection, that.multiselection ) && Objects.equals( helpText, that.helpText );
     }
 
     @Override
@@ -151,7 +155,7 @@ public class FormOptionSet
 
         private boolean expanded = false;
 
-        private List<FormOptionSetOption> setOptionsList;
+        private List<FormOptionSetOption> setOptionsList = new ArrayList<>();
 
         private Occurrences occurrences = Occurrences.create( 0, 1 );
 
@@ -161,18 +165,21 @@ public class FormOptionSet
 
         private Builder()
         {
-            this.setOptionsList = new ArrayList<>();
         }
 
         private Builder( final FormOptionSet source )
         {
-            this.setOptionsList = source.optionSetOptions;
             this.name = source.name;
             this.label = source.label;
             this.expanded = source.expanded;
             this.occurrences = source.occurrences;
             this.multiselection = source.multiselection;
             this.helpText = source.helpText;
+
+            for ( final FormOptionSetOption formItemSource : source )
+            {
+                setOptionsList.add( formItemSource.copy() );
+            }
         }
 
         public Builder name( final String name )
@@ -196,6 +203,32 @@ public class FormOptionSet
         public Builder occurrences( final Occurrences value )
         {
             occurrences = value;
+            return this;
+        }
+
+        public Builder required( boolean value )
+        {
+            if ( value && !occurrences.impliesRequired() )
+            {
+                occurrences = Occurrences.create( 1, occurrences.getMaximum() );
+            }
+            else if ( !value && occurrences.impliesRequired() )
+            {
+                occurrences = Occurrences.create( 0, occurrences.getMaximum() );
+            }
+            return this;
+        }
+
+        public Builder multiple( boolean value )
+        {
+            if ( value )
+            {
+                occurrences = Occurrences.create( occurrences.getMinimum(), 0 );
+            }
+            else
+            {
+                occurrences = Occurrences.create( occurrences.getMinimum(), 1 );
+            }
             return this;
         }
 

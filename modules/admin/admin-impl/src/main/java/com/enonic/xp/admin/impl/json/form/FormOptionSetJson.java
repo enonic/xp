@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.json.form;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -23,7 +24,9 @@ public class FormOptionSetJson
         this.formOptionSet = formOptionSet;
         this.occurrences = new OccurrencesJson( formOptionSet.getOccurrences() );
         this.multiselection = new OccurrencesJson( formOptionSet.getMultiselection() );
-        this.options = formOptionSet.getOptions().stream().map( FormOptionSetOptionJson::new ).collect( Collectors.toList() );
+        this.options = StreamSupport.stream( formOptionSet.spliterator(), false ).
+            map( FormOptionSetOptionJson::new ).
+            collect( Collectors.toList() );
     }
 
     public String getName()
@@ -64,12 +67,6 @@ public class FormOptionSetJson
     @JsonIgnore
     @Override
     public FormOptionSet getFormItem()
-    {
-        return getFormOptionSet();
-    }
-
-    @JsonIgnore
-    public FormOptionSet getFormOptionSet()
     {
         return formOptionSet;
     }

@@ -129,6 +129,7 @@
           "options": [
             {
               "defaultOption": false,
+              "helpText": "Option help text",
               "items": [
                 {
                   "Input": {
@@ -154,6 +155,7 @@
             },
             {
               "defaultOption": false,
+              "helpText": "Option help text",
               "items": [
                 {
                   "Input": {

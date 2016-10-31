@@ -115,15 +115,18 @@ public class FormItemJsonTest
             label( "My option set" ).
             helpText( "Option set help text" ).
             multiselection( Occurrences.create( 1, 3 ) ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).
-                addFormItem(
-                    Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).
-                addFormItem(
-                    Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption3" ).label( "option label3" ).
-                addFormItem(
-                    Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption3" ).label( "option label3" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
             build() );
 
         JsonNode json = jsonTestHelper.objectToJson( formOptionSetJson );

@@ -157,7 +157,6 @@ public final class XmlFormMapper
         builder.label( root.getChildValue( "label" ) );
         builder.helpText( root.getChildValue( "help-text" ) );
         builder.expanded( root.getChildValueAs( "expanded", Boolean.class, false ) );
-        builder.helpText( root.getChildValue( "help-text" ) );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
         builder.multiselection( buildOccurrence( root.getChild( "options" ) ) );
         builder.addOptionSetOptions( buildOptionSetOptions( root.getChild( "options" ) ) );
@@ -184,7 +183,7 @@ public final class XmlFormMapper
             builder.name( root.getAttribute( "name" ) );
             builder.label( root.getChildValue( "label" ) );
             builder.helpText( root.getChildValue( "help-text" ) );
-            builder.isDefaultOption( root.getChildValueAs( "default", Boolean.class, false ) );
+            builder.defaultOption( root.getChildValueAs( "default", Boolean.class, false ) );
             builder.addFormItems( buildItems( root.getChild( "items" ) ) );
 
             return builder.build();
