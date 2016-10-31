@@ -34,8 +34,6 @@ public class ContentIdsHtmlParser
     @Override
     public ContentIds parse( final String source )
     {
-        System.out.println( PATTERN );
-
         if ( StringUtils.isEmpty( source ) )
         {
             return ContentIds.empty();
