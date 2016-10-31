@@ -40,7 +40,14 @@ final class ContentTypeRegistry
             return this.builtInTypes.getAll().getContentType( name );
         }
 
-        return new ContentTypeLoader( this.resourceService ).get( name );
+        try
+        {
+            return new ContentTypeLoader( this.resourceService ).get( name );
+        }
+        catch ( final Exception e )
+        {
+            return null;
+        }
     }
 
     public ContentTypes getByApplication( final ApplicationKey key )
