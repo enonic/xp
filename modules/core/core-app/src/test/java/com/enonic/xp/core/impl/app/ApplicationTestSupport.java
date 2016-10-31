@@ -15,10 +15,11 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
+import com.enonic.xp.resource.ResourceService;
 
 public abstract class ApplicationTestSupport
 {
-    protected ResourceServiceImpl resourceService;
+    protected ResourceService resourceService;
 
     protected ApplicationService applicationService;
 
@@ -41,8 +42,9 @@ public abstract class ApplicationTestSupport
         Mockito.when( this.applicationService.getInstalledApplicationKeys() ).then(
             invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );
 
-        this.resourceService = new ResourceServiceImpl();
-        this.resourceService.setApplicationService( this.applicationService );
+        ResourceServiceImpl rService = new ResourceServiceImpl();
+        rService.setApplicationService( this.applicationService );
+        this.resourceService = rService;
 
         initialize();
     }

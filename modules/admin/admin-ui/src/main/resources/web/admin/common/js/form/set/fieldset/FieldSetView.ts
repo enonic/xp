@@ -8,12 +8,12 @@ module api.form {
 
         fieldSet: FieldSet;
 
-        parent: FormItemSetOccurrenceView;
+        parent: FormItemOccurrenceView;
 
         dataSet?: PropertySet;
     }
 
-    export class FieldSetView extends LayoutView {
+    export class FieldSetView extends FormItemView {
 
         private fieldSet: FieldSet;
 
@@ -24,9 +24,9 @@ module api.form {
         private formItemLayer: FormItemLayer;
 
         constructor(config: FieldSetViewConfig) {
-            super(<LayoutViewConfig>{
+            super(<FormItemViewConfig>{
                 context: config.context,
-                layout: config.fieldSet,
+                formItem: config.fieldSet,
                 parent: config.parent,
                 className: "field-set-view"
             });
