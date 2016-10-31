@@ -63,9 +63,10 @@ final class FormDefaultValuesJsonProcessor
             }
             else if ( formItem.getType() == FORM_OPTION_SET )
             {
-                final Iterator<FormOptionSetOption> formOptionSetOptionIt = formItem.toFormOptionSet().getOptions().iterator();
+                final Iterator<FormOptionSetOption> formOptionSetOptionIt = formItem.toFormOptionSet().iterator();
                 final Iterator<FormOptionSetOptionJson> formOptionSetOptionJsonIt =
                     ( (FormOptionSetJson) formItemJson ).getOptions().iterator();
+
                 while ( formOptionSetOptionIt.hasNext() && formOptionSetOptionJsonIt.hasNext() )
                 {
                     final FormOptionSetOption formOptionSetOption = formOptionSetOptionIt.next();

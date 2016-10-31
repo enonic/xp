@@ -1,6 +1,8 @@
 package com.enonic.xp.form;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +27,7 @@ public class FormOptionSetTest
                     Input.create().name( "myTextLine1" ).helpText( "My text line 1 help text" ).label( "My text line 1" ).inputType(
                         InputTypeName.TEXT_LINE ).build() ).build() ).
             addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).
-                isDefaultOption( true ).addFormItem(
+                defaultOption( true ).addFormItem(
                 Input.create().name( "myTextLine2" ).helpText( "My text line 2 help text" ).label( "My text line 2" ).inputType(
                     InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
@@ -38,7 +40,7 @@ public class FormOptionSetTest
         assertEquals( "My option set", this.set.getLabel() );
         assertEquals( "My option set help text", this.set.getHelpText() );
 
-        List<FormOptionSetOption> options = this.set.getOptions();
+        List<FormOptionSetOption> options = StreamSupport.stream( this.set.spliterator(), false ).collect( Collectors.toList() );
         assertEquals( 2, options.size() );
 
         FormOptionSetOption option1 = options.get( 0 );
@@ -71,7 +73,7 @@ public class FormOptionSetTest
         assertEquals( this.set.getLabel(), copy.getLabel() );
         assertEquals( this.set.getHelpText(), copy.getHelpText() );
         assertEquals( this.set.getOccurrences(), copy.getOccurrences() );
-        assertEquals( this.set.getOptions(), copy.getOptions() );
+        assertEquals( this.set.getFormItems(), copy.getFormItems() );
         assertTrue( this.set.equals( copy ) );
     }
 

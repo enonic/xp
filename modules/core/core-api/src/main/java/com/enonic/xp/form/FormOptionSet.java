@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,8 +29,6 @@ public class FormOptionSet
 
     private final String helpText;
 
-    private int numberOfDefaultOptions;
-
     private FormOptionSet( Builder builder )
     {
         super();
@@ -46,7 +43,6 @@ public class FormOptionSet
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
-        this.numberOfDefaultOptions = (int) builder.setOptionsList.stream().filter( option -> option.isDefaultOption() ).count();
         this.optionSetOptions = new FormItems( this );
         for ( final FormItem formItem : builder.setOptionsList )
         {
@@ -66,20 +62,9 @@ public class FormOptionSet
         return FormItemType.FORM_OPTION_SET;
     }
 
-    public List<FormOptionSetOption> getOptions()
-    {
-        return StreamSupport.stream( this.optionSetOptions.spliterator(), false ).map( formItem -> (FormOptionSetOption) formItem ).collect(
-            Collectors.toList() );
-    }
-
     public FormItems getFormItems()
     {
         return optionSetOptions;
-    }
-
-    public int getNumberOfDefaultOptions()
-    {
-        return this.numberOfDefaultOptions;
     }
 
     public String getLabel()
@@ -121,7 +106,7 @@ public class FormOptionSet
     @Override
     public Iterator<FormOptionSetOption> iterator()
     {
-        return getOptions().iterator();
+        return StreamSupport.stream( this.optionSetOptions.spliterator(), false ).map( FormItem::toFormOptionSetOption ).iterator();
     }
 
     @Override
@@ -140,15 +125,10 @@ public class FormOptionSet
             return false;
         }
         final FormOptionSet that = (FormOptionSet) o;
-        return super.equals( o ) &&
-            Objects.equals( expanded, that.expanded ) &&
-            Objects.equals( name, that.name ) &&
-            Objects.equals( label, that.label ) &&
-            Objects.equals( helpText, that.helpText ) &&
-            Objects.equals( optionSetOptions, that.optionSetOptions ) &&
-            Objects.equals( occurrences, that.occurrences ) &&
-            Objects.equals( multiselection, that.multiselection ) &&
-            Objects.equals( helpText, that.helpText );
+        return super.equals( o ) && Objects.equals( expanded, that.expanded ) && Objects.equals( name, that.name ) &&
+            Objects.equals( label, that.label ) && Objects.equals( helpText, that.helpText ) &&
+            Objects.equals( optionSetOptions, that.optionSetOptions ) && Objects.equals( occurrences, that.occurrences ) &&
+            Objects.equals( multiselection, that.multiselection ) && Objects.equals( helpText, that.helpText );
     }
 
     @Override
@@ -196,7 +176,7 @@ public class FormOptionSet
             this.multiselection = source.multiselection;
             this.helpText = source.helpText;
 
-            for ( final FormOptionSetOption formItemSource : source.getOptions() )
+            for ( final FormOptionSetOption formItemSource : source )
             {
                 setOptionsList.add( formItemSource.copy() );
             }

@@ -98,7 +98,7 @@ public class FormDefaultValuesProcessorImplTest
     public void testOptionSetItemsAreDefaulted()
     {
         FormOptionSet.Builder myOptionSet = FormOptionSet.create().required( false ).name( "myOptionSet" );
-        FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).isDefaultOption( true );
+        FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).defaultOption( true );
 
         option1.
             addFormItem( Input.create().
@@ -133,7 +133,7 @@ public class FormDefaultValuesProcessorImplTest
     {
         FormOptionSet.Builder myOptionSet = FormOptionSet.create().required( false ).name( "myOptionSet" );
 
-        FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).isDefaultOption( true );
+        FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).defaultOption( true );
         FormOptionSetOption.Builder option2 = FormOptionSetOption.create().name( "option2" );
 
         option1.

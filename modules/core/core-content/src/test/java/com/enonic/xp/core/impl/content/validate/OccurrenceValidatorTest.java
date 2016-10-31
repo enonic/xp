@@ -417,7 +417,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         option1.addFormItem( Input.create().name( "description" ).label( "Description" ).minimumOccurrences( 1 ).inputType(
             InputTypeName.TEXT_LINE ).build() );
@@ -446,7 +446,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         option1.addFormItem( Input.create().name( "description" ).label( "Description" ).minimumOccurrences( 1 ).inputType(
             InputTypeName.TEXT_LINE ).build() );
@@ -475,7 +475,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         option1.addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
@@ -499,7 +499,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         option1.addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
@@ -523,7 +523,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         option1.addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
@@ -548,7 +548,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         option1.addFormItem(
             Input.create().name( "myRequiredInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() );
@@ -594,7 +594,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         option1.addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
@@ -620,7 +620,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         option1.addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() );
         option1.addFormItem( Input.create().name( "hairColour" ).label( "Hair color" ).inputType( InputTypeName.TEXT_LINE ).build() );
@@ -634,7 +634,7 @@ public class OccurrenceValidatorTest
 
         FormOptionSetOption.Builder crimesOption1 = FormOptionSetOption.create().
             name( "option1" ).
-            isDefaultOption( true );
+            defaultOption( true );
 
         crimesOption1.addFormItem(
             Input.create().name( "description" ).label( "Description" ).inputType( InputTypeName.TEXT_LINE ).build() );
@@ -762,7 +762,7 @@ public class OccurrenceValidatorTest
 
         for ( int i = 1; i <= numberOfDefaultOptions; i++, optionsCounter++ )
         {
-            FormOptionSetOption.Builder option = FormOptionSetOption.create().name( "option" + optionsCounter ).isDefaultOption( true );
+            FormOptionSetOption.Builder option = FormOptionSetOption.create().name( "option" + optionsCounter ).defaultOption( true );
             myOptionSet.addOptionSetOption( option.build() );
         }
 

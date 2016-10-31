@@ -18,6 +18,8 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 
+import static java.lang.Math.toIntExact;
+
 public final class OccurrenceValidator
 {
     private final Form form;
@@ -104,7 +106,7 @@ public final class OccurrenceValidator
                 validateDefaultOptionSetSelection( formOptionSet );
             }
 
-            for ( final FormOptionSetOption option : formOptionSet.getOptions() )
+            for ( final FormOptionSetOption option : formOptionSet )
             {
                 if ( ( hasSelectionArray && optionIsSelected( option, selectedItems ) ) ||
                     ( !hasSelectionArray && option.isDefaultOption() ) )
@@ -124,11 +126,13 @@ public final class OccurrenceValidator
 
     private void validateDefaultOptionSetSelection( final FormOptionSet formOptionSet )
     {
-        int numberOfDefaultOptions = formOptionSet.getNumberOfDefaultOptions();
+        final long numberOfDefaultOptions = StreamSupport.stream( formOptionSet.spliterator(), false ).
+            filter( FormOptionSetOption::isDefaultOption ).
+            count();
         if ( numberOfDefaultOptions > formOptionSet.getMultiselection().getMaximum() ||
             numberOfDefaultOptions < formOptionSet.getMultiselection().getMinimum() )
         {
-            validationErrors.add( new OptionSetSelectionValidationError( formOptionSet, numberOfDefaultOptions ) );
+            validationErrors.add( new OptionSetSelectionValidationError( formOptionSet, toIntExact( numberOfDefaultOptions ) ) );
         }
     }
 

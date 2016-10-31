@@ -138,8 +138,6 @@ public class FormOptionSetOption
 
         private List<FormItem> formItemsList = new ArrayList<>();
 
-        ;
-
         private Builder()
         {
         }
@@ -178,7 +176,7 @@ public class FormOptionSetOption
             return this;
         }
 
-        public Builder isDefaultOption( boolean value )
+        public Builder defaultOption( boolean value )
         {
             this.defaultOption = value;
             return this;
