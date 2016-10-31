@@ -3,6 +3,9 @@ package com.enonic.xp.core.impl.schema.content;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -17,6 +20,8 @@ import com.enonic.xp.schema.content.ContentTypes;
 
 final class ContentTypeRegistry
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ContentTypeRegistry.class );
+
     private final BuiltinContentTypes builtInTypes;
 
     protected ApplicationService applicationService;
@@ -40,7 +45,15 @@ final class ContentTypeRegistry
             return this.builtInTypes.getAll().getContentType( name );
         }
 
-        return new ContentTypeLoader( this.resourceService ).get( name );
+        try
+        {
+            return new ContentTypeLoader( this.resourceService ).get( name );
+        }
+        catch ( final Exception e )
+        {
+            LOG.error( "Error loading content type: '" + name + "'", e );
+            return null;
+        }
     }
 
     public ContentTypes getByApplication( final ApplicationKey key )

@@ -12,21 +12,22 @@ module api.ui {
         constructor(builder: CheckboxBuilder) {
             super("div", "checkbox", undefined, String(builder.checked || false));
 
-            this.initCheckbox();
-            this.initLabel(builder.text, builder.inputAlignment);
+            this.initCheckbox(builder.inputAlignment);
+            this.initLabel(builder.text);
 
             this.appendChild(this.checkbox);
             this.appendChild(this.label);
         }
-
+        
         isDisabled(): boolean {
             return this.checkbox.getEl().isDisabled();
         }
 
-        private initCheckbox() {
+        private initCheckbox(inputAlignment: InputAlignment) {            // we need an id for the label to interact nicely
             // we need an id for the label to interact nicely
             this.checkbox = <api.dom.InputEl> new api.dom.Element(new api.dom.NewElementBuilder().setTagName('input').setGenerateId(true));
             this.checkbox.getEl().setAttribute('type', 'checkbox');
+            this.addClass(this.getInputAlignmentAsString(inputAlignment));
 
             wemjq(this.checkbox.getHTMLElement()).change((e) => {
                 if (Checkbox.debug) {
@@ -38,9 +39,8 @@ module api.ui {
 
         }
 
-        private initLabel(text: string, inputAlignment: InputAlignment) {
+        private initLabel(text: string) {
             this.label = new api.dom.LabelEl(text, this.checkbox);
-            this.label.addClass(this.getInputAlignmentAsString(inputAlignment));
         }
 
         private getInputAlignmentAsString(inputAlignment: InputAlignment = InputAlignment.LEFT): string {
