@@ -16,10 +16,13 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
+import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -61,8 +64,7 @@ public class RepositoryServiceImpl
     @Override
     public Repository createRepository( final CreateRepositoryParams params )
     {
-        return repositoryMap.compute( params.getRepositoryId(), ( key, previousRepository ) ->
-        {
+        return repositoryMap.compute( params.getRepositoryId(), ( key, previousRepository ) -> {
             if ( previousRepository != null || repositoryEntryService.getRepositoryEntry( key ) != null )
             {
                 throw new RepositoryAlreadyExistException( key );
@@ -80,8 +82,7 @@ public class RepositoryServiceImpl
         final RepositoryId repositoryId = ContextAccessor.current().
             getRepositoryId();
 
-        repositoryMap.compute( repositoryId, ( key, previousRepository ) ->
-        {
+        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
             previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( key ) : previousRepository;
             if ( previousRepository == null )
             {
@@ -131,8 +132,7 @@ public class RepositoryServiceImpl
     public RepositoryId deleteRepository( final DeleteRepositoryParams params )
     {
         final RepositoryId repositoryId = params.getRepositoryId();
-        repositoryMap.compute( repositoryId, ( key, previousRepository ) ->
-        {
+        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
             repositoryEntryService.deleteRepositoryEntry( repositoryId );
             nodeRepositoryService.delete( repositoryId );
             return null;
@@ -162,16 +162,26 @@ public class RepositoryServiceImpl
             this.nodeRepositoryService.create( params );
         }
 
-        final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
+        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( params.getRepositoryId() ).
             branch( branch ).
             build();
+        final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
 
         final Node rootNode = this.nodeStorageService.store( Node.createRoot().
             permissions( params.getRootPermissions() ).
             inheritPermissions( false ).
             childOrder( params.getRootChildOrder() ).
-            build(), rootNodeContext );
+            build(), rootNodeInternalContext );
+
+        rootNodeContext.callWith( () -> {
+            RefreshCommand.create().
+                indexServiceInternal( this.indexServiceInternal ).
+                refreshMode( RefreshMode.SEARCH ).
+                build().
+                execute();
+            return null;
+        } );
 
         LOG.info( "Created root node in  with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
     }
