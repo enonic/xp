@@ -200,8 +200,10 @@ module api.form {
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
             var checked = this.getThisPropertyFromSelectedOptionsArray() != null,
-                button = api.ui.Checkbox.create().setInputAlignment(api.ui.InputAlignment.RIGHT).setLabelText(
-                    this.formOptionSetOption.getLabel()).setChecked(checked).build();
+                button = api.ui.Checkbox.create()
+                    .setLabelText(this.formOptionSetOption.getLabel())
+                    .setChecked(checked)
+                    .build();
 
             this.checkbox = button;
 
