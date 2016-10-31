@@ -14,6 +14,8 @@ import org.mockito.stubbing.Answer;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -117,6 +119,7 @@ public class ModifyNodeHandlerTest
         Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "cms-repo" ) ).
+                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
         runScript( "/site/lib/xp/examples/node/modify.js" );

@@ -5,6 +5,8 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.repository.Repository;
@@ -28,6 +30,7 @@ public class CreateNodeHandlerTest
         Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "cms-repo" ) ).
+                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
         runScript( "/site/lib/xp/examples/node/create.js" );
