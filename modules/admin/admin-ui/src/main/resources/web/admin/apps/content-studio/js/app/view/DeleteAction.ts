@@ -34,16 +34,16 @@ export class DeleteAction extends api.ui.Action {
 
         if (result.getDeleted() > 0) {
             if (result.getDeleted() == 1) {
-                api.notify.showSuccess(result.getDeleted() + ' item was deleted');
+                api.notify.showSuccess('The item is deleted');
             } else {
-                api.notify.showSuccess(result.getDeleted() + ' items were deleted');
+                api.notify.showSuccess(result.getDeleted() + ' items are deleted');
             }
         }
         if (result.getPendings() > 0) {
             if (result.getPendings() == 1) {
-                api.notify.showSuccess(result.getPendings() + ' item was marked for deletion');
+                api.notify.showSuccess('The item is marked for deletion');
             } else {
-                api.notify.showSuccess(result.getPendings() + ' items were marked for deletion');
+                api.notify.showSuccess(result.getPendings() + ' items are marked for deletion');
             }
         }
 

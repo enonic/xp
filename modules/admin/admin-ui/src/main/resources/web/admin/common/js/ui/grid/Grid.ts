@@ -143,6 +143,10 @@ module api.ui.grid {
             return <GridColumn<T>[]>this.slickGrid.getColumns();
         }
 
+        getColumnIndex(id: string): number {
+            return this.slickGrid.getColumnIndex(id);
+        }
+
         setFilter(f: (item: any, args: any) => boolean) {
             this.dataView.setFilter(f);
         }
@@ -454,6 +458,14 @@ module api.ui.grid {
          */
         getViewport(viewportTop?, viewportLeft?): Slick.Viewport {
             return this.slickGrid.getViewport(viewportTop, viewportLeft);
+        }
+
+        updateCell(row: number, cell: number) {
+            return this.slickGrid.updateCell(row, cell);
+        }
+
+        updateRow(row: number) {
+            return this.slickGrid.updateRow(row);
         }
 
         subscribeOnSelectedRowsChanged(callback: (e, args) => void) {

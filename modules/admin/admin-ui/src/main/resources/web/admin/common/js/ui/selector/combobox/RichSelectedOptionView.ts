@@ -112,7 +112,7 @@ module api.ui.selector.combobox {
         constructor(option: api.ui.selector.Option<T>) {
             this.option = option;
         }
-        
+
         setEditable(value: boolean): RichSelectedOptionViewBuilder<T> {
             this.editable = value;
 
@@ -130,13 +130,13 @@ module api.ui.selector.combobox {
 
             return this;
         }
-        
+
         setSize(size: api.app.NamesAndIconViewSize): RichSelectedOptionViewBuilder<T> {
             this.size = size;
 
             return this;
         }
-        
+
         build(): RichSelectedOptionView<T> {
             return new RichSelectedOptionView(this);
         }

@@ -99,6 +99,12 @@ module api.form.inputtype.text {
             }
         }
 
+        resetInputOccurrenceElement(occurrence: api.dom.Element) {
+            var input = <api.ui.text.TextArea> occurrence;
+
+            input.resetBaseValues();
+        }
+
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
             var focusedEditorCls = "html-area-focused";
             var baseUrl = CONFIG.assetsUri;
@@ -289,10 +295,6 @@ module api.form.inputtype.text {
             wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
         }
 
-        private hideDropdownMenu() {
-            wemjq(".mce-menu").hide();
-        }
-
         private getEditor(editorId: string): HtmlAreaEditor {
             return tinymce.get(editorId);
         }
@@ -398,7 +400,9 @@ module api.form.inputtype.text {
         private reInitEditor(id: string) {
             var savedEditor: HtmlAreaOccurrenceInfo = api.util.ArrayHelper.findElementByFieldValue(this.editors, "id", id);
 
-            this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);
+            if (!!savedEditor) {
+                this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);
+            }
         }
 
     }

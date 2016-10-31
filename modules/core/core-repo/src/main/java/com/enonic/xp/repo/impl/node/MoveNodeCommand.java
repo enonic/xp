@@ -130,7 +130,7 @@ public class MoveNodeCommand
 
     private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath )
     {
-        if ( newParentPath.equals( existingNode.path() ) || newParentPath.getParentPaths().contains( existingNode.path() ))
+        if ( newParentPath.equals( existingNode.path() ) || newParentPath.getParentPaths().contains( existingNode.path() ) )
         {
             throw new MoveNodeException( "Not allowed to move content to itself (" + newParentPath + ")" );
         }

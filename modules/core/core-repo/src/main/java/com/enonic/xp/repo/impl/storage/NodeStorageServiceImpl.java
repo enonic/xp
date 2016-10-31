@@ -21,6 +21,8 @@ import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodesListener;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
@@ -127,7 +129,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void publish( final PushNodeEntries entries, final InternalContext context )
+    public void push( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context )
     {
         for ( final PushNodeEntry entry : entries )
         {
@@ -142,9 +144,18 @@ public class NodeStorageServiceImpl
                 build(), InternalContext.create( context ).
                 branch( entries.getTargetBranch() ).
                 build() );
+            if ( pushListener != null )
+            {
+                pushListener.nodesPushed( 1 );
+            }
         }
 
-        this.indexDataService.push( entries.getNodeIds(), entries.getTargetBranch(), entries.getTargetRepo(), context );
+        this.indexDataService.push( IndexPushNodeParams.create().
+            nodeIds( entries.getNodeIds() ).
+            targetBranch( entries.getTargetBranch() ).
+            targetRepo( entries.getTargetRepo() ).
+            pushListener( pushListener ).
+            build(), context );
     }
 
     @Override
@@ -158,7 +169,8 @@ public class NodeStorageServiceImpl
 
         this.indexDataService.push( NodeIds.from( node.id() ), target, context.getRepositoryId(), context );
     }
-
+    
+    
     @Override
     public Node get( final NodeId nodeId, final InternalContext context )
     {

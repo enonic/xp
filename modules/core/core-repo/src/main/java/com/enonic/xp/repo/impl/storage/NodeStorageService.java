@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
@@ -31,7 +32,7 @@ public interface NodeStorageService
 
     void push( final Node node, final Branch target, final InternalContext context );
 
-    void publish( final PushNodeEntries entries, final InternalContext context );
+    void push( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context );
 
     Node get( final NodeId nodeId, final InternalContext context );
 

@@ -9,16 +9,18 @@ import org.osgi.service.component.runtime.ServiceComponentRuntime;
 import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
 import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true)
+@Component(immediate = true, service = StatusReporter.class)
 public final class OsgiComponentReporter
-    implements StatusReporter
+    extends JsonStatusReporter
 {
     private ServiceComponentRuntime runtime;
 
@@ -35,7 +37,7 @@ public final class OsgiComponentReporter
     }
 
     @Override
-    public ObjectNode getReport()
+    public JsonNode getReport()
     {
         final List<ComponentDescriptionDTO> list = Lists.newArrayList( this.runtime.getComponentDescriptionDTOs() );
         list.sort( this::compareDescription );

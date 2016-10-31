@@ -73,16 +73,12 @@ module api.liveedit {
             return this.pageModel;
         }
 
-        isRenderableSiteOrTemplate(): boolean {
-            var isSite = this.content.isSite(),
-                isTemplate = this.content.isPageTemplate(),
-                hasController = this.pageModel.hasController(),
+        isRenderableContent(): boolean {
+            var hasController = this.pageModel.hasController(),
                 hasDefaultPageTemplate = this.pageModel.hasDefaultPageTemplate(),
                 hasApplications = this.siteModel.getApplicationKeys().length > 0;
 
-            var isRenderable = hasApplications || hasController || hasDefaultPageTemplate;
-
-            return (isRenderable && (isTemplate || isSite)) || hasDefaultPageTemplate;
+            return hasApplications || hasController || hasDefaultPageTemplate;
         }
 
         static create(): LiveEditModelBuilder {

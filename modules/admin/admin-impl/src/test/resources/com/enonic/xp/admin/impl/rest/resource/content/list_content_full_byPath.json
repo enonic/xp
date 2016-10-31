@@ -41,6 +41,7 @@
             "page": null,
             "path": "/my_a_content",
             "permissions": [],
+            "publishedTime" : null,
             "thumbnail": null,
             "type": "myapplication:my_type"
         },
@@ -85,6 +86,7 @@
             "page": null,
             "path": "/my_b_content",
             "permissions": [],
+            "publishedTime" : null,
             "thumbnail": null,
             "type": "myapplication:my_type"
         }

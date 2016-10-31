@@ -23,6 +23,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -36,11 +37,14 @@ public class PushNodesCommand
 
     private final NodeIds ids;
 
+    private final PushNodesListener pushListener;
+
     private PushNodesCommand( final Builder builder )
     {
         super( builder );
         this.target = builder.target;
         this.ids = builder.ids;
+        this.pushListener = builder.pushListener;
     }
 
     public static Builder create()
@@ -93,18 +97,21 @@ public class PushNodesCommand
             if ( !hasPublishPermission )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ACCESS_DENIED );
+                nodePushed( 1 );
                 continue;
             }
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
                 builder.addSuccess( nodeBranchEntry );
+                nodePushed( 1 );
                 continue;
             }
 
             if ( !targetParentExists( nodeBranchEntry.getNodePath(), builder, context ) )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
+                nodePushed( 1 );
                 continue;
             }
 
@@ -121,9 +128,17 @@ public class PushNodesCommand
             }
         }
 
-        this.nodeStorageService.publish( publishBuilder.build(), InternalContext.from( context ) );
+        this.nodeStorageService.push( publishBuilder.build(), pushListener, InternalContext.from( context ) );
 
         return builder;
+    }
+
+    private void nodePushed( final int count )
+    {
+        if ( pushListener != null )
+        {
+            pushListener.nodesPushed( count );
+        }
     }
 
     private NodeComparisons getNodeComparisons( final NodeBranchEntries nodeBranchEntries )
@@ -230,6 +245,8 @@ public class PushNodesCommand
 
         private NodeIds ids;
 
+        private PushNodesListener pushListener;
+
         Builder()
         {
             super();
@@ -244,6 +261,12 @@ public class PushNodesCommand
         public Builder ids( final NodeIds nodeIds )
         {
             this.ids = nodeIds;
+            return this;
+        }
+
+        public Builder pushListener( final PushNodesListener pushListener )
+        {
+            this.pushListener = pushListener;
             return this;
         }
 

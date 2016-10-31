@@ -19,6 +19,8 @@ public class PushContentParams
 
     private final boolean includeDependencies;
 
+    private final PushContentListener pushContentListener;
+
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
@@ -26,6 +28,7 @@ public class PushContentParams
         target = builder.target;
         includeDependencies = builder.includeDependencies;
         includeChildren = builder.includeChildren;
+        pushContentListener = builder.pushContentListener;
     }
 
     public static Builder create()
@@ -58,6 +61,11 @@ public class PushContentParams
         return includeDependencies;
     }
 
+    public PushContentListener getPushContentListener()
+    {
+        return pushContentListener;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -70,17 +78,15 @@ public class PushContentParams
             return false;
         }
         final PushContentParams that = (PushContentParams) o;
-        return includeChildren == that.includeChildren &&
-            includeDependencies == that.includeDependencies &&
-            Objects.equals( contentIds, that.contentIds ) &&
-            Objects.equals( excludedContentIds, that.excludedContentIds ) &&
-            Objects.equals( target, that.target );
+        return includeChildren == that.includeChildren && includeDependencies == that.includeDependencies &&
+            Objects.equals( contentIds, that.contentIds ) && Objects.equals( excludedContentIds, that.excludedContentIds ) &&
+            Objects.equals( target, that.target ) && Objects.equals( pushContentListener, that.pushContentListener );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentIds, excludedContentIds, target, includeChildren, includeDependencies );
+        return Objects.hash( contentIds, excludedContentIds, target, includeChildren, includeDependencies, pushContentListener );
     }
 
     public static final class Builder
@@ -94,6 +100,8 @@ public class PushContentParams
         private boolean includeChildren = true;
 
         private boolean includeDependencies = true;
+
+        private PushContentListener pushContentListener;
 
         private Builder()
         {
@@ -126,6 +134,12 @@ public class PushContentParams
         public Builder includeDependencies( final boolean includeDependencies )
         {
             this.includeDependencies = includeDependencies;
+            return this;
+        }
+
+        public Builder pushListener( final PushContentListener pushContentListener )
+        {
+            this.pushContentListener = pushContentListener;
             return this;
         }
 

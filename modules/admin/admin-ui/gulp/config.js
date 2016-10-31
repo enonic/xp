@@ -53,6 +53,7 @@ var CONFIG = {
                 // still processed with gulp
                 common: {src: '/common/js/_module.ts', dest: '/common/js/_all.js'},
                 live: {src: '/live-edit/js/_module.ts', dest: '/live-edit/js/_all.js'},
+                spec: {src: '../spec/_spec.ts', dest: '../spec/_all.js'},
                 // webpack
                 home: {src: '/js/home/main.js', name: 'home', assets: true},
                 launcher: {src: '/js/launcher/main.js', name: 'launcher', assets: true},
@@ -66,8 +67,12 @@ var CONFIG = {
                 noImplicitAny: false
             },
             webpack: {
+                param: '[name]',
                 dest: '/apps/[name]/js/_all.js'
-            }
+            },
+            assets: [
+                'launcher'
+            ]
         },
         resources: {
             entries: [

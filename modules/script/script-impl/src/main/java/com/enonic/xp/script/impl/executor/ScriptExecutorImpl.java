@@ -7,6 +7,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -16,7 +17,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.impl.function.ApplicationInfo;
+import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.function.ScriptFunctions;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.ErrorHelper;
@@ -49,6 +50,8 @@ final class ScriptExecutorImpl
     private Application application;
 
     private Map<String, Object> mocks;
+
+    private Map<ResourceKey, Runnable> disposers;
 
     private RunMode runMode;
 
@@ -94,17 +97,46 @@ final class ScriptExecutorImpl
     public void initialize()
     {
         this.mocks = Maps.newHashMap();
+        this.disposers = Maps.newHashMap();
         this.exportsCache = new ScriptExportsCache();
-
-        final Bindings global = new SimpleBindings();
-        global.putAll( this.scriptSettings.getGlobalVariables() );
-        global.put( "app", new ApplicationInfo( this.application ) );
-        this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
 
         final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
         this.javascriptHelper = javascriptHelperFactory.create();
-
         this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
+
+        final Bindings global = new SimpleBindings();
+        global.putAll( this.scriptSettings.getGlobalVariables() );
+        global.put( "app", buildAppInfo() );
+        this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
+    }
+
+    private ScriptObjectMirror buildAppInfo()
+    {
+        final ApplicationInfoBuilder builder = new ApplicationInfoBuilder();
+        builder.application( this.application );
+        builder.javascriptHelper( this.javascriptHelper );
+        return builder.build();
+    }
+
+    @Override
+    public Object executeMain( final ResourceKey key )
+    {
+        expireCacheIfNeeded();
+        return executeRequire( key );
+    }
+
+    private void expireCacheIfNeeded()
+    {
+        if ( this.runMode != RunMode.DEV )
+        {
+            return;
+        }
+
+        if ( this.exportsCache.isExpired() )
+        {
+            this.exportsCache.clear();
+            runDisposers();
+        }
     }
 
     @Override
@@ -123,12 +155,7 @@ final class ScriptExecutorImpl
             return cached;
         }
 
-        final SimpleBindings bindings = new SimpleBindings();
-        bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
-
-        final ScriptObjectMirror func = doExecute( bindings, resource );
-        final Object result = executeRequire( key, func );
-
+        final Object result = requireJsOrJson( resource );
         this.exportsCache.put( resource, result );
         return result;
     }
@@ -143,17 +170,17 @@ final class ScriptExecutorImpl
         return resource.getKey().toString();
     }
 
-    private Object executeRequire( final ResourceKey script, final ScriptObjectMirror func )
+    private Object executeRequire( final ResourceKey key, final ScriptObjectMirror func )
     {
         try
         {
             final ScriptObjectMirror exports = this.javascriptHelper.newJsObject();
 
             final ScriptObjectMirror module = this.javascriptHelper.newJsObject();
-            module.put( "id", script.toString() );
+            module.put( "id", key.toString() );
             module.put( "exports", exports );
 
-            final ScriptFunctions functions = new ScriptFunctions( script, this );
+            final ScriptFunctions functions = new ScriptFunctions( key, this );
             func.call( exports, functions.getLog(), functions.getRequire(), functions.getResolve(), functions, exports, module );
             return module.get( "exports" );
         }
@@ -195,18 +222,43 @@ final class ScriptExecutorImpl
             return loadResource( key );
         }
 
-        if ( this.runMode != RunMode.DEV )
-        {
-            return null;
-        }
-
-        final Resource resource = loadResource( key );
-        if ( this.exportsCache.isModified( resource ) )
-        {
-            return resource;
-        }
-
         return null;
+    }
+
+    private Object requireJs( final Resource resource )
+    {
+        final SimpleBindings bindings = new SimpleBindings();
+        bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
+
+        final ScriptObjectMirror func = doExecute( bindings, resource );
+        final Object result = executeRequire( resource.getKey(), func );
+
+        this.exportsCache.put( resource, result );
+        return result;
+    }
+
+    private Object requireJsOrJson( final Resource resource )
+    {
+        final String ext = Strings.nullToEmpty( resource.getKey().getExtension() );
+        if ( ext.equals( "json" ) )
+        {
+            return requireJson( resource );
+        }
+
+        return requireJs( resource );
+    }
+
+    private Object requireJson( final Resource resource )
+    {
+        try
+        {
+            final String text = resource.readString();
+            return this.javascriptHelper.parseJson( text );
+        }
+        catch ( final Exception e )
+        {
+            throw ErrorHelper.handleError( e );
+        }
     }
 
     @Override
@@ -249,5 +301,17 @@ final class ScriptExecutorImpl
     public JavascriptHelper getJavascriptHelper()
     {
         return this.javascriptHelper;
+    }
+
+    @Override
+    public void registerDisposer( final ResourceKey key, final Runnable callback )
+    {
+        this.disposers.put( key, callback );
+    }
+
+    @Override
+    public void runDisposers()
+    {
+        this.disposers.values().forEach( Runnable::run );
     }
 }

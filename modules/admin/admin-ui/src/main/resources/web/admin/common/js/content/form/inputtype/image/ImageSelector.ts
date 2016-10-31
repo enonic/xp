@@ -321,6 +321,10 @@ module api.content.form.inputtype.image {
             });
         }
 
+        reset() {
+            this.contentComboBox.resetBaseValues();
+        }
+
         private createUploader(): api.content.image.ImageUploaderEl {
             var multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
 

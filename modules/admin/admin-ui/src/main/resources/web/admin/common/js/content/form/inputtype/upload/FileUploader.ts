@@ -44,6 +44,10 @@ module api.content.form.inputtype.upload {
 
         }
 
+        reset() {
+            this.uploaderEl.resetBaseValues();
+        }
+
         protected setFileNameProperty(fileName: string) {
 
             var value = new Value(fileName, ValueTypes.STRING);

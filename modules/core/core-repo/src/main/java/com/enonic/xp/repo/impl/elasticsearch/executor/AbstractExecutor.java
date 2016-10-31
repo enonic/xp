@@ -28,6 +28,8 @@ abstract class AbstractExecutor
 
     final Client client;
 
+    final ExecutorProgressListener progressReporter;
+
     final String searchPreference = "_local";
 
     private final String searchTimeout = "30s";
@@ -35,6 +37,7 @@ abstract class AbstractExecutor
     AbstractExecutor( final Builder builder )
     {
         client = builder.client;
+        progressReporter = builder.progressReporter;
     }
 
     static int safeLongToInt( long l )
@@ -118,9 +121,31 @@ abstract class AbstractExecutor
         client.clearScroll( clearScrollRequest ).actionGet();
     }
 
+    protected void reportProgress( final int count )
+    {
+        if ( progressReporter != null )
+        {
+            progressReporter.progress( count );
+        }
+    }
+
     public static class Builder<B extends Builder>
     {
         private final Client client;
+
+        private ExecutorProgressListener progressReporter;
+
+        public B progressReporter( final ExecutorProgressListener progressReporter )
+        {
+            this.progressReporter = progressReporter;
+            return typecastThis();
+        }
+
+        @SuppressWarnings("unchecked")
+        private B typecastThis()
+        {
+            return (B) this;
+        }
 
         Builder( final Client client )
         {

@@ -222,7 +222,7 @@ public final class ImageContentProcessor
         }
         catch ( IOException e )
         {
-            throw Exceptions.newRutime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+            throw Exceptions.newRuntime( "Failed to read BufferedImage from InputStream" ).withCause( e );
         }
     }
 
@@ -371,7 +371,7 @@ public final class ImageContentProcessor
                     }
                     catch ( IOException e )
                     {
-                        throw Exceptions.newRutime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+                        throw Exceptions.newRuntime( "Failed to read BufferedImage from InputStream" ).withCause( e );
                     }
                 }
             }

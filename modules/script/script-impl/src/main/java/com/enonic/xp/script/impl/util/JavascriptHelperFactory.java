@@ -20,6 +20,7 @@ public final class JavascriptHelperFactory
         final Bindings bindings = this.engine.getBindings( ScriptContext.ENGINE_SCOPE );
         final ScriptObjectMirror arrayProto = (ScriptObjectMirror) bindings.get( "Array" );
         final ScriptObjectMirror objectProto = (ScriptObjectMirror) bindings.get( "Object" );
+        final ScriptObjectMirror jsonProto = (ScriptObjectMirror) bindings.get( "JSON" );
 
         return new JavascriptHelper()
         {
@@ -33,6 +34,12 @@ public final class JavascriptHelperFactory
             public ScriptObjectMirror newJsObject()
             {
                 return (ScriptObjectMirror) objectProto.newObject();
+            }
+
+            @Override
+            public ScriptObjectMirror parseJson( final String text )
+            {
+                return (ScriptObjectMirror) jsonProto.callMember( "parse", text );
             }
         };
     }

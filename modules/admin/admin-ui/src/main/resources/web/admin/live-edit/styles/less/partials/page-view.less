@@ -15,6 +15,20 @@
 
       .page-placeholder-info {
 
+        &:not(.empty) {
+          &:after {
+            display: block;
+            position: absolute;
+            content: "\e468";
+            color: @placeholder-icon;
+            font-family: 'icomoon';
+            font-size: 105px;
+            left: 50%;
+            margin-left: -50px;
+            margin-top: 20px;
+          }
+        }
+
         &.empty {
           margin-left: 45px;
         }
@@ -49,19 +63,7 @@
   }
 
   .@{_CLS_PREFIX}page-descriptor-dropdown {
-
-    margin-top: 20px;
-
-    &:after {
-      position: absolute;
-      content: "\e468";
-      color: @placeholder-icon;
-      font-family: 'icomoon';
-      font-size: 105px;
-      left: 50%;
-      margin-left: -50px;
-      margin-top: 50px;
-    }
+    margin-top: 53px;
   }
 
   .mce-widget.mce-tooltip.mce-tooltip-n {

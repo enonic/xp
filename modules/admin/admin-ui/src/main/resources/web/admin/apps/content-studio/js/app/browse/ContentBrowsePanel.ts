@@ -87,7 +87,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (event.getType() === 'updated') {
                 let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
                 this.getBrowseItemPanel().updateItemViewers(browseItems);
-                this.browseActions.updateActionsEnabledState(this.treeNodesToBrowseItems(this.contentTreeGrid.getRoot().getFullSelection()));
+                this.browseActions.updateActionsEnabledState(
+                    this.treeNodesToBrowseItems(this.contentTreeGrid.getRoot().getFullSelection()));
             }
         });
 
@@ -120,18 +121,17 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             this.setActiveDetailsPanel(nonMobileDetailsPanelsManager);
 
-            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
-
             this.onShown(() => {
                 if (!!nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget()) {
                     nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget().slideIn();
                 }
             });
 
+            new ContentPublishMenuManager(this.browseActions);
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
+            this.toolbar.appendChild(ContentPublishMenuManager.getPublishMenuButton());
 
-            let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
-            this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
+            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
 
             return rendered;
         }).catch((error) => {
@@ -153,10 +153,14 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue()) &&
-                item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
-                nonMobileDetailsPanelsManager.hideActivePanel();
-                ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
+            if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
+                ContentPublishMenuManager.getPublishMenuButton().maximize();
+                if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                    nonMobileDetailsPanelsManager.hideActivePanel();
+                    ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
+                }
+            } else {
+                ContentPublishMenuManager.getPublishMenuButton().minimize();
             }
         });
     }
@@ -167,12 +171,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         var dockedDetailsPanel = new DockedDetailsPanel(detailsPanelView);
 
         var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndGridSplitPanel(),
-            dockedDetailsPanel).
-            setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
-            setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-            setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-            setAnimationDelay(600).
-            setSecondPanelShouldSlideRight(true).build();
+            dockedDetailsPanel).setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).setSecondPanelSize(280,
+            api.ui.panel.SplitPanelUnit.PIXEL).setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).setAnimationDelay(
+            600).setSecondPanelShouldSlideRight(true).build();
 
         contentPanelsAndDetailPanel.addClass("split-panel-with-details");
         contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
@@ -195,32 +196,56 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.browseActions, detailsView);
 
-        let updatePreviewItem = () => {
-            if (this.isSingleItemSelectedInMobileMode()) {
-                var browseItem = this.getFirstSelectedBrowseItem();
+        const updateMobilePanel = () => {
+            const defer = wemQ.defer();
+
+            const prevItem = this.mobileContentItemStatisticsPanel.getPreviewPanel().getItem();
+            const browseItem = this.getFirstSelectedBrowseItem();
+            const item = browseItem.toViewItem();
+
+            const itemChanged = !prevItem || !prevItem.getModel() || prevItem.getModel().getId() !== browseItem.getId();
+
+            if (itemChanged) {
                 new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
                     (renderable: boolean) => {
-                        var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItem.toViewItem();
                         item.setRenderable(renderable);
                         this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                        this.mobileContentItemStatisticsPanel.setItem(item);
+                        defer.resolve(true);
                     });
+            } else {
+                defer.resolve(true);
             }
+
+            return defer.promise;
         };
 
-        this.contentTreeGrid.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
-                                                 fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-            if (this.isSingleItemSelectedInMobileMode()) {
-                this.updateMobilePanel(fullSelection);
+        const showMobilePanel = () => this.mobileContentItemStatisticsPanel.slideIn();
+
+        const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
+
+        this.contentTreeGrid.onSelectionChanged(() => {
+            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
+            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
+
+            const needUpdate = isNonZeroSelectionInMobileMode && isNewlySelected;
+
+            if (needUpdate) {
+                updateAndShowMobilePanel();
             }
         });
 
+        // Handles specific case, not handled by function above
+        // Handles click for selection [many] -> [single],
+        // where: [single] is a subset of [many]
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
-            if (this.isSingleItemSelectedInMobileMode()) {
-                if (event.isRepeatedSelection()) {
-                    this.updateMobilePanel();
-                } else {
-                    updatePreviewItem();
-                }
+            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
+            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
+
+            const needUpdate = isNonZeroSelectionInMobileMode && !isNewlySelected;
+
+            if (needUpdate) {
+                updateAndShowMobilePanel();
             }
         });
 
@@ -242,11 +267,17 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return item;
     }
 
-    private isSingleItemSelectedInMobileMode(): boolean {
-        if (ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
-            return this.getFirstSelectedBrowseItem() != null;
-        }
-        return false;
+    private isNonZeroSelection(): boolean {
+        return this.getFirstSelectedBrowseItem() != null;
+    }
+
+    private isMobileMode(): boolean {
+        // return ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel();
+        return this.mobileContentItemStatisticsPanel.isVisible();
+    }
+
+    private isNonZeroSelectionInMobileMode(): boolean {
+        return this.isMobileMode() && this.isNonZeroSelection();
     }
 
     private setActiveDetailsPanel(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
@@ -270,11 +301,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (i === index) {
                 var data = node.getData();
                 if (!!data && !!data.getContentSummary()) {
-                    let item = new ContentBrowseItem(data).
-                        setId(data.getId()).
-                        setDisplayName(data.getContentSummary().getDisplayName()).
-                        setPath(data.getContentSummary().getPath().toString()).
-                        setIconUrl(new api.content.util.ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+                    let item = new ContentBrowseItem(data).setId(data.getId()).setDisplayName(
+                        data.getContentSummary().getDisplayName()).setPath(data.getContentSummary().getPath().toString()).setIconUrl(
+                        new api.content.util.ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
                     browseItems.push(<ContentBrowseItem> item);
                 }
             }

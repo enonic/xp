@@ -201,6 +201,11 @@ module api.ui {
             this.propertyChangedListeners.push(listener);
         }
 
+        unPropertyChanged(listener: () => void) {
+            this.propertyChangedListeners = this.propertyChangedListeners.filter((currentListener: () => void) => {
+                return listener != currentListener;
+            });
+        }
 
         onBeforeExecute(listener: (action: Action) => void) {
             this.beforeExecuteListeners.push(listener);

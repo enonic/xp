@@ -223,14 +223,16 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             });
 
             this.frameContainer = new Panel("frame-container");
-            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(), this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
+            this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
+                this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
 
 
             // append mask here in order for the context window to be above
             this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow);
 
             this.contextWindow.onDisplayModeChanged(() => {
-                if (!this.contextWindow.isFloating()) {
+                const enabled = this.contentWizardPanel.getComponentsViewToggler().isEnabled();
+                if (!this.contextWindow.isFloating() && enabled) {
                     this.contentWizardPanel.getContextWindowToggler().setActive(true);
                     this.contextWindow.slideIn();
                 }
@@ -369,7 +371,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             }
 
             this.pageLoading = true;
-            if (this.liveEditModel.isRenderableSiteOrTemplate()) {
+            if (this.isShown() && this.liveEditModel.isRenderableContent()) {
                 this.contentWizardPanel.getLiveMask().show();
             }
             this.liveEditPageProxy.load();
@@ -629,5 +631,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         else {
             throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));
         }
+    }
+
+    isShown(): boolean {
+        return this.getHTMLElement().style.display !== "none";
     }
 }

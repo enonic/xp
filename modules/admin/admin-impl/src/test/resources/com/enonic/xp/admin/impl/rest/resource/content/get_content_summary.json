@@ -18,6 +18,7 @@
     "name": "my_a_content",
     "owner": "user:myStore:me",
     "path": "/my_a_content",
+    "publishedTime" : null,
     "thumbnail": null,
     "type": "myapplication:my_type"
 }

@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -22,6 +23,8 @@ public class MockApplication
     private ApplicationUrlResolver urlResolver;
 
     private boolean started;
+
+    private Map<String, String> config;
 
     @Override
     public ApplicationKey getKey()
@@ -138,5 +141,16 @@ public class MockApplication
     public void setStarted( final boolean started )
     {
         this.started = started;
+    }
+
+    @Override
+    public Map<String, String> getConfig()
+    {
+        return this.config;
+    }
+
+    public void setConfig( final Map<String, String> config )
+    {
+        this.config = config;
     }
 }

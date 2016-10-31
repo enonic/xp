@@ -177,11 +177,25 @@ module api.form {
             return wemQ.all(promises).spread<void>(() => wemQ<void>(null));
         }
 
+        reset() {
+            this.propertyArray.forEach((property: api.data.Property, i: number) => {
+                var occurrenceView = this.occurrenceViews[i];
+                var occurrence = this.occurrences[i];
+                if (occurrenceView && occurrence) {
+                    this.resetOccurrenceView(occurrenceView);
+                }
+            });
+        }
+
         createNewOccurrenceView(occurrence: FormItemOccurrence<V>): V {
             throw new Error("Must be implemented by inheritor");
         }
 
         updateOccurrenceView(occurrenceView: V, propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            throw new Error("Must be implemented by inheritor");
+        }
+
+        resetOccurrenceView(occurrenceView: V) {
             throw new Error("Must be implemented by inheritor");
         }
 

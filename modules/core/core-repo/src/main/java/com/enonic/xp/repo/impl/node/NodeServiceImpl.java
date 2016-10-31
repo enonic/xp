@@ -43,6 +43,7 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
@@ -308,12 +309,19 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target )
     {
+        return push( ids, target, null );
+    }
+
+    @Override
+    public PushNodesResult push( final NodeIds ids, final Branch target, final PushNodesListener pushListener )
+    {
         final PushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
             ids( ids ).
             target( target ).
+            pushListener( pushListener ).
             build().
             execute();
 

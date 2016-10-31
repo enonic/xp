@@ -58,6 +58,8 @@ module api.content.form.inputtype.customselector {
                     this.results = [];
                 }
 
+                this.validateResponse(result);
+
                 this.start += result.count;
                 this.loaded = this.start >= result.total;
 
@@ -69,6 +71,22 @@ module api.content.form.inputtype.customselector {
 
                 return this.results;
             });
+        }
+
+        private validateResponse(result) {
+            let errors = [];
+            if (result.total == undefined) {
+                errors.push("'total'");
+            }
+            if (result.count == undefined) {
+                errors.push("'count'");
+            }
+            if (result.hits == undefined) {
+                errors.push("'hits'");
+            }
+            if (errors.length > 0) {
+                throw new Error('Fields ' + errors.join(', ') + ' must be present in service response');
+            }
         }
 
         setIds(ids: string[]): CustomSelectorRequest {

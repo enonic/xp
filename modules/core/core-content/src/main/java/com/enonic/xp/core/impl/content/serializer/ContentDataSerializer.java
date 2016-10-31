@@ -41,6 +41,7 @@ import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISHED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
 
@@ -125,6 +126,7 @@ public final class ContentDataSerializer
         extractExtradata( contentAsSet, builder );
         extractPage( contentAsSet, builder );
         extractAttachments( contentAsSet, builder );
+        extractPublishedTime( contentAsSet, builder );
 
         return builder;
     }
@@ -140,6 +142,7 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
+        contentAsData.ifNotNull().addInstant( PUBLISHED_TIME, content.getPublishedTime() );
     }
 
     private void addExtraData( final PropertySet contentAsData, final ExtraDatas extraDatas )
@@ -165,6 +168,11 @@ public final class ContentDataSerializer
         builder.createdTime( contentAsSet.getInstant( CREATED_TIME ) );
         builder.modifier( contentAsSet.getString( MODIFIER ) != null ? PrincipalKey.from( contentAsSet.getString( MODIFIER ) ) : null );
         builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) != null ? contentAsSet.getInstant( MODIFIED_TIME ) : null );
+    }
+
+    private void extractPublishedTime( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        builder.publishedTime( contentAsSet.getInstant( PUBLISHED_TIME ) );
     }
 
     private void extractAttachments( final PropertySet contentAsSet, final Content.Builder builder )

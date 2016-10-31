@@ -128,7 +128,7 @@ module api.util {
          * @param prefix
          * @returns {string}
          */
-        static encodeUrlParams(params: Object, prefix?: string): string {
+        static encodeUrlParams(params: {[name: string]: any}, prefix?: string): string {
             if (!params) {
                 return StringHelper.EMPTY_STRING;
             }
@@ -145,6 +145,17 @@ module api.util {
                 }
             }
             return urlArray.join("&");
+        }
+
+        static appendUrlParams(url: string, params: {[name: string]: any}): string {
+            if (!params || Object.keys(params).length == 0) {
+                return url;
+            }
+
+            let urlParams = UriHelper.decodeUrlParams(url),
+                hasParams = Object.keys(urlParams).length > 0;
+
+            return url + (hasParams ? '&' : '?') + UriHelper.encodeUrlParams(params);
         }
     }
 }

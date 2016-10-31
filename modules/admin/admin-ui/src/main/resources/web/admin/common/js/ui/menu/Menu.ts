@@ -22,6 +22,10 @@ module api.ui.menu {
             return this.hideOnItemClick;
         }
 
+        getMenuItems() {
+            return this.menuItems;
+        }
+
         addAction(action: api.ui.Action): Menu {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);

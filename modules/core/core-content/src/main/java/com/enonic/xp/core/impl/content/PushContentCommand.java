@@ -13,17 +13,20 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 
 public class PushContentCommand
     extends AbstractContentCommand
+    implements PushNodesListener
 {
     private final ContentIds contentIds;
 
@@ -37,6 +40,8 @@ public class PushContentCommand
 
     private final boolean includeChildren;
 
+    private final PushContentListener pushContentListener;
+
     private PushContentCommand( final Builder builder )
     {
         super( builder );
@@ -46,6 +51,7 @@ public class PushContentCommand
         this.resolveSyncWork = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
+        this.pushContentListener = builder.pushContentListener;
     }
 
     public static Builder create()
@@ -57,19 +63,22 @@ public class PushContentCommand
     {
         this.nodeService.refresh( RefreshMode.ALL );
 
+        final CompareContentResults results;
         if ( resolveSyncWork )
         {
-            pushAndDelete( getSyncWork() );
+            results = getSyncWork();
         }
         else
         {
-            pushAndDelete( CompareContentsCommand.create().
+            results = CompareContentsCommand.create().
                 contentIds( this.contentIds ).
                 nodeService( this.nodeService ).
                 target( this.target ).
                 build().
-                execute() );
+                execute();
         }
+        nodesPushed( results.size() );
+        pushAndDelete( results );
 
         this.nodeService.refresh( RefreshMode.ALL );
 
@@ -142,7 +151,7 @@ public class PushContentCommand
             return;
         }
 
-        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
+        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
 
         final Contents contents = getContents( pushNodesResult.getSuccessful().getKeys() );
         final Contents failedContents = getContents(
@@ -167,13 +176,16 @@ public class PushContentCommand
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
-        this.resultBuilder.setDeleted( getContents( nodeIdsToDelete.getSet() ) );
+        final Contents deletedContents = getContents( nodeIdsToDelete.getSet() );
+        this.resultBuilder.setDeleted( deletedContents );
 
         final Context currentContext = ContextAccessor.current();
         deleteNodesInContext( nodeIdsToDelete, currentContext );
         deleteNodesInContext( nodeIdsToDelete, ContextBuilder.from( currentContext ).
             branch( target ).
             build() );
+
+        nodesPushed( deletedContents.getSize() );
     }
 
     private void deleteNodesInContext( final NodeIds nodeIds, final Context context )
@@ -184,6 +196,14 @@ public class PushContentCommand
         } );
     }
 
+    @Override
+    public void nodesPushed( final int count )
+    {
+        if ( pushContentListener != null )
+        {
+            pushContentListener.contentPushed( count );
+        }
+    }
 
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
@@ -197,6 +217,8 @@ public class PushContentCommand
         private boolean includeDependencies = true;
 
         private boolean includeChildren = true;
+
+        private PushContentListener pushContentListener;
 
         public Builder contentIds( final ContentIds contentIds )
         {
@@ -225,6 +247,12 @@ public class PushContentCommand
         public Builder includeChildren( final boolean includeChildren )
         {
             this.includeChildren = includeChildren;
+            return this;
+        }
+
+        public Builder pushListener( final PushContentListener pushContentListener )
+        {
+            this.pushContentListener = pushContentListener;
             return this;
         }
 

@@ -57,7 +57,7 @@ public class FileExportWriter
         }
         catch ( IOException e )
         {
-            throw new ExportNodeException( "failed to write source to path " + itemPath.toString() + ": " + e.toString(), e );
+            throw new ExportNodeException( "failed to report source to path " + itemPath.toString() + ": " + e.toString(), e );
         }
     }
 }

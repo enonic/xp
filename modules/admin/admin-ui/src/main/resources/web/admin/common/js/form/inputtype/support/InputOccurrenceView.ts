@@ -98,6 +98,10 @@ module api.form.inputtype.support {
             return wemQ<void>(null);
         }
 
+        reset() {
+            this.inputTypeView.resetInputOccurrenceElement(this.inputElement);
+        }
+
         private registerProperty(property: Property) {
             if (this.property) {
                 if (InputOccurrenceView.debug) {

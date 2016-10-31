@@ -47,6 +47,8 @@ public class Content
 
     private final Instant modifiedTime;
 
+    private final Instant publishedTime;
+
     private final PrincipalKey creator;
 
     private final PrincipalKey owner;
@@ -98,6 +100,7 @@ public class Content
         this.extraDatas = builder.extraDatas;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
+        this.publishedTime = builder.publishedTime;
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.owner = builder.owner;
@@ -207,6 +210,11 @@ public class Content
     public Instant getModifiedTime()
     {
         return modifiedTime;
+    }
+
+    public Instant getPublishedTime()
+    {
+        return publishedTime;
     }
 
     public PrincipalKey getCreator()
@@ -344,7 +352,8 @@ public class Content
             Objects.equals( extraDatas, other.extraDatas ) &&
             Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) &&
-            Objects.equals( contentState, other.contentState );
+            Objects.equals( contentState, other.contentState ) &&
+            Objects.equals( publishedTime, other.publishedTime );
     }
 
     @Override
@@ -352,7 +361,7 @@ public class Content
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
-                             language, contentState );
+                             language, contentState, publishedTime );
     }
 
     public static class Builder<BUILDER extends Builder, C extends Content>
@@ -383,6 +392,8 @@ public class Content
 
         protected Instant modifiedTime;
 
+        protected Instant publishedTime;
+
         protected PrincipalKey creator;
 
         protected PrincipalKey modifier;
@@ -411,7 +422,6 @@ public class Content
 
         protected Builder( final Content source )
         {
-
             this.id = source.id;
             this.valid = source.valid;
             this.parentPath = source.parentPath;
@@ -434,6 +444,7 @@ public class Content
             this.inheritPermissions = source.inheritPermissions;
             this.language = source.language;
             this.contentState = source.contentState;
+            this.publishedTime = source.publishedTime;
         }
 
         public Builder<BUILDER, C> parentPath( final ContentPath path )
@@ -551,6 +562,13 @@ public class Content
         public Builder<BUILDER, C> modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
+            return this;
+        }
+
+
+        public Builder<BUILDER, C> publishedTime( final Instant publishedTime )
+        {
+            this.publishedTime = publishedTime;
             return this;
         }
 
