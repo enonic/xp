@@ -49,8 +49,10 @@ import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
+import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -202,6 +204,8 @@ public abstract class AbstractNodeTest
         repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryEntryService.setNodeStorageService( this.storageService );
         repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
+        repositoryEntryService.setNodeSearchService( this.searchService );
+        repositoryEntryService.setBinaryService( this.binaryService );
 
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setRepositoryEntryService( repositoryEntryService );
@@ -212,11 +216,28 @@ public abstract class AbstractNodeTest
 
     void createRepository( final Repository repository )
     {
-        this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( repository.getId() ).
-            build() );
+        ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.create().
+                principals( RoleKeys.ADMIN ).
+                user( User.ANONYMOUS ).
+                build() ).
+            build().
+            callWith( () -> {
+                this.repositoryService.createRepository( CreateRepositoryParams.create().
+                    repositoryId( repository.getId() ).
+                    build() );
 
-        refresh();
+                repository.getBranches().
+                    stream().
+                    filter( branch -> !RepositoryConstants.MASTER_BRANCH.equals( branch ) ).
+                    forEach( branch -> {
+                        final CreateBranchParams createBranchParams = CreateBranchParams.from( branch.toString() );
+                        this.repositoryService.createBranch( createBranchParams );
+                    } );
+
+                refresh();
+                return null;
+            } );
     }
 
     protected Node createDefaultRootNode()

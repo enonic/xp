@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -61,6 +63,7 @@ public class MoveNodeHandlerTest
         Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "cms-repo" ) ).
+                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
         runScript( "/site/lib/xp/examples/node/move-1.js" );
@@ -74,6 +77,7 @@ public class MoveNodeHandlerTest
         Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "cms-repo" ) ).
+                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
         runScript( "/site/lib/xp/examples/node/move-2.js" );
@@ -87,6 +91,7 @@ public class MoveNodeHandlerTest
         Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "cms-repo" ) ).
+                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
         runScript( "/site/lib/xp/examples/node/move-3.js" );

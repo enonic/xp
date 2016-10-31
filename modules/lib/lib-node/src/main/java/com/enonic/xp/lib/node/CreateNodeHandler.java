@@ -19,8 +19,6 @@ public class CreateNodeHandler
     @Override
     protected Object doExecute()
     {
-        validateRepo();
-
         final ScriptValueTranslatorResult params = getParams( this.params );
         final CreateNodeParams createNodeParams = new CreateNodeParamsFactory().create( params );
         final Node node = this.nodeService.create( createNodeParams );

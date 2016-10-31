@@ -128,6 +128,7 @@ public final class Repository
 
         public Repository build()
         {
+            validate();
             return new Repository( this );
         }
     }
