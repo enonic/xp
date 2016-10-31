@@ -1,10 +1,12 @@
-describe("api.util.DateHelperTest", function () {
+import DateHelper = api.util.DateHelper;
 
-    describe("when parseUTCDateTime", function () {
+describe("api.util.DateHelperTest", () => {
 
-        it("given a string '2000-05-23T16:45:15' then returned Date is correct", function () {
+    describe("when parseUTCDateTime", () => {
 
-            var date = api.util.DateHelper.parseUTCDateTime("2000-05-23T16:45:15");
+        it("given a string '2000-05-23T16:45:15' then returned Date is correct", () => {
+
+            var date = DateHelper.makeDateFromUTCString("2000-05-23T16:45:15");
             expect(date.getUTCFullYear()).toBe(2000);
             expect(date.getUTCMonth()).toBe(4);
             expect(date.getUTCDate()).toBe(23);
@@ -13,9 +15,9 @@ describe("api.util.DateHelperTest", function () {
             expect(date.getUTCSeconds()).toBe(15);
         });
 
-        it("given a string '2000-05-23T00:01:00' then returned Date is correct", function () {
+        it("given a string '2000-05-23T00:01:00' then returned Date is correct", () => {
 
-            var date = api.util.DateHelper.parseUTCDateTime("2000-05-23T00:01:00");
+            var date = DateHelper.makeDateFromUTCString("2000-05-23T00:01:00");
             expect(date.getUTCFullYear()).toBe(2000);
             expect(date.getUTCMonth()).toBe(4);
             expect(date.getUTCDate()).toBe(23);
@@ -24,9 +26,9 @@ describe("api.util.DateHelperTest", function () {
             expect(date.getUTCSeconds()).toBe(0);
         });
 
-        it("given a string '2000-05-23T23:59:59' then returned Date is correct", function () {
+        it("given a string '2000-05-23T23:59:59' then returned Date is correct", () => {
 
-            var date = api.util.DateHelper.parseUTCDateTime("2000-05-23T23:59:59");
+            var date = DateHelper.makeDateFromUTCString("2000-05-23T23:59:59");
             expect(date.getUTCFullYear()).toBe(2000);
             expect(date.getUTCMonth()).toBe(4);
             expect(date.getUTCDate()).toBe(23);
