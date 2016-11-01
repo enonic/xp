@@ -20,6 +20,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
             "Unpublish item",
             "<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline",
             "Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline",
+            "is-unpublishing",
             () => {
                 new ContentUnpublishPromptEvent([]).fire();
             }

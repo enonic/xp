@@ -34,6 +34,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             "Publishing Wizard",
             "Resolving items...",
             "Other items that will be published",
+            "is-publishing",
             () => {
                 new ContentPublishPromptEvent([]).fire();
             }

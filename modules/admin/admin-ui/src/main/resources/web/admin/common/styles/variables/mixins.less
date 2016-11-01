@@ -752,36 +752,34 @@
 }
 
 .is-processing-mixin() {
-  &.is-processing {
-    .dependants {
-      display: none !important;
+  .dependants {
+    display: none !important;
+  }
+
+  .progress-bar {
+    display: block;
+    margin-bottom: 20px;
+    height: 25px;
+
+    .progress-indicator {
+      background-color: @admin-green;
     }
+  }
 
-    .progress-bar {
-      display: block;
-      margin-bottom: 20px;
-      height: 25px;
+  .button-container {
+    float: none;
+    text-align: center;
 
-      .progress-indicator {
-        background-color: @admin-green;
+    .cancel-button-bottom {
+      span {
+        display: none;
       }
-    }
-
-    .button-container {
-      float: none;
-      text-align: center;
-
-      .cancel-button-bottom {
-        span {
-          display: none;
-        }
-        &:after {
-          content: 'OK';
-          color: @admin-white;
-          width: 100px;
-          line-height: 24px;
-          font-size: 16px;
-        }
+      &:after {
+        content: 'OK';
+        color: @admin-white;
+        width: 100px;
+        line-height: 24px;
+        font-size: 16px;
       }
     }
   }
