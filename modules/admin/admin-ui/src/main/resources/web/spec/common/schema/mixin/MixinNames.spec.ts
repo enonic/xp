@@ -1,6 +1,6 @@
 import MixinNames = api.schema.mixin.MixinNames;
 
-describe("api.schema.mixin.MixinNamesTest", () => {
+describe("api.schema.mixin.MixinNames", () => {
 
     describe("constructor", () => {
 

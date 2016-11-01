@@ -1,6 +1,6 @@
 import ObjectHelper = api.ObjectHelper;
 
-describe("api.ObjectHelperTest", () => {
+describe("api.ObjectHelper", () => {
 
     describe("objectEquals", () => {
 

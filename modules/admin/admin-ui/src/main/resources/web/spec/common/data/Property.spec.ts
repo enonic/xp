@@ -1,4 +1,4 @@
-describe("api.data.PropertyTest", () => {
+describe("api.data.Property", () => {
 
     describe("when getName", () => {
 

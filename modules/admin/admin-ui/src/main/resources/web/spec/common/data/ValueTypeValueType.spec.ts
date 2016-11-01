@@ -1,4 +1,4 @@
-describe("api.data.type.ValueTypeBooleanTest", () => {
+describe("api.data.type.ValueTypeBoolean", () => {
 
     describe("when isValid", () => {
 

@@ -1,4 +1,4 @@
-describe("api.data.type.LocalDateTimeValueTypeTest", () => {
+describe("api.data.type.LocalDateTimeValueType", () => {
 
     describe("when isValid", () => {
 

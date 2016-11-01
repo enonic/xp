@@ -1,6 +1,6 @@
 import LocalTime = api.util.LocalTime;
 
-describe("api.data.type.LocalTimeValueTypeTest", () => {
+describe("api.data.type.LocalTimeValueType", () => {
 
     describe("when isValid", () => {
 

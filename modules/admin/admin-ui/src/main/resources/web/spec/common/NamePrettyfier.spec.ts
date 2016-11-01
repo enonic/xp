@@ -1,6 +1,6 @@
 import NamePrettyfier = api.NamePrettyfier;
 
-describe("api.NamePrettyfierTest", () => {
+describe("api.NamePrettyfier", () => {
 
     describe("tests for api.NamePrettyfier.prettify() function", () => {
 

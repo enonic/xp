@@ -1,7 +1,7 @@
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import Permission = api.security.acl.Permission;
 
-describe("api.security.acl.AccessControlEntryTest", () => {
+describe("api.security.acl.AccessControlEntry", () => {
 
     var now;
 

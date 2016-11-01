@@ -1,6 +1,6 @@
 import UriHelper = api.util.UriHelper;
 
-describe("api.util.UriHelperTest", () => {
+describe("api.util.UriHelper", () => {
 
     window['CONFIG'] = {
         baseUri: 'http://localhost:8080/wem'

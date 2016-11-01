@@ -1,6 +1,6 @@
 import DateHelper = api.util.DateHelper;
 
-describe("api.util.DateHelperTest", () => {
+describe("api.util.DateHelper", () => {
 
     describe("when parseUTCDateTime", () => {
 

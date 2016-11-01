@@ -1,4 +1,4 @@
-describe("api.data.type.LongValueTypeTest", () => {
+describe("api.data.type.LongValueType", () => {
 
     describe("when isValid", () => {
 

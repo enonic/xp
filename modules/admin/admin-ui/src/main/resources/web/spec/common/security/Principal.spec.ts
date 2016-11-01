@@ -1,6 +1,6 @@
 import Principal = api.security.Principal;
 
-describe("api.security.PrincipalTest", () => {
+describe("api.security.Principal", () => {
 
     var now, later;
 

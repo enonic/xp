@@ -1,5 +1,6 @@
 import PropertyArray = api.data.PropertyArray;
-describe("api.data.PropertyArrayTest", () => {
+
+describe("api.data.PropertyArray", () => {
 
     describe("when move", () => {
 

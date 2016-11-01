@@ -1,6 +1,6 @@
 import PrincipalKey = api.security.PrincipalKey;
 
-describe("api.security.PrincipalKeyTest", () => {
+describe("api.security.PrincipalKey", () => {
 
     describe("equals", () => {
 

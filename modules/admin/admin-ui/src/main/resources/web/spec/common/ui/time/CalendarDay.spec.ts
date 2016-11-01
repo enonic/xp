@@ -1,7 +1,7 @@
 import CalendarDayBuilder = api.ui.time.CalendarDayBuilder;
 import DaysOfWeek = api.ui.time.DaysOfWeek;
 
-describe("api.ui.time.CalendarDayTest", () => {
+describe("api.ui.time.CalendarDay", () => {
 
     describe("when getDayOfWeek", () => {
 

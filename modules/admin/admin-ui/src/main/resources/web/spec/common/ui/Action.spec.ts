@@ -1,6 +1,6 @@
 import Action = api.ui.Action;
 
-describe("api.ui.ActionTest", () => {
+describe("api.ui.Action", () => {
 
     var action;
 

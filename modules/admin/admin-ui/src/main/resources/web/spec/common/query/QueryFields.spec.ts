@@ -1,7 +1,7 @@
 import QueryFields = api.query.QueryFields;
 import QueryField = api.query.QueryField;
 
-describe("api.query.QueryFieldsTest", () => {
+describe("api.query.QueryFields", () => {
 
     describe("toString", () => {
 

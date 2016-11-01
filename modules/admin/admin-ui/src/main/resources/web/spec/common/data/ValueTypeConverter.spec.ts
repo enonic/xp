@@ -1,6 +1,6 @@
 import ValueTypeConverter = api.data.ValueTypeConverter;
 
-describe("api.data.ValueTypeConverterTest", () => {
+describe("api.data.ValueTypeConverter", () => {
 
     describe("to string conversion test", () => {
 

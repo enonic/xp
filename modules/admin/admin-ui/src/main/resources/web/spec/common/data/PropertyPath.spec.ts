@@ -1,6 +1,6 @@
 import PropertyPathElement = api.data.PropertyPathElement;
 
-describe("api.data.PropertyPathTest", () => {
+describe("api.data.PropertyPath", () => {
 
     it("doesn't accept null in first constructor argument", () => {
         expect(() => {
@@ -147,7 +147,7 @@ describe("api.data.PropertyPathTest", () => {
 
 });
 
-describe("api.data.PropertyPathElementTest", () => {
+describe("api.data.PropertyPathElement", () => {
 
     it('.toString() method returns element name followed by index inside brackets', () => {
         expect(new PropertyPathElement('element', 1).toString()).toBe('element[1]');

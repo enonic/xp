@@ -1,4 +1,4 @@
-describe("api.i18nTest", () => {
+describe("api.i18n", () => {
 
     it("test no translation", () => {
         var message = api.i18n.message('no translation for this', []);

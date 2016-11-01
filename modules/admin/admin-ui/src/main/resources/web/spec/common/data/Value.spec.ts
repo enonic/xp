@@ -1,4 +1,4 @@
-describe("api.data.ValueTest", () => {
+describe("api.data.Value", () => {
 
     describe("when new", () => {
 

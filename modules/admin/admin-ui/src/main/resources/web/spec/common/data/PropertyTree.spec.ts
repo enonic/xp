@@ -1,7 +1,7 @@
 import PropertySet = api.data.PropertySet;
 import PropertyEventType = api.data.PropertyEventType;
 
-describe("api.data.PropertyTreeTest", () => {
+describe("api.data.PropertyTree", () => {
 
     describe("when getRoot", () => {
 
@@ -31,15 +31,16 @@ describe("api.data.PropertyTreeTest", () => {
 
     describe("when onPropertyChanged", () => {
 
-        it("adding Property to a sub set then PropertyEvent of type ADDED is received", () => {
+        it("adding Property to a sub set then PropertyEvent of type ADDED is received", (done) => {
 
             var rootSet = new PropertyTree();
             var subSet = rootSet.addPropertySet("mySet");
 
-            rootSet.onPropertyAdded(function (event) {
+            rootSet.onPropertyAdded((event) => {
                 expect(event.getType()).toBe(PropertyEventType.ADDED);
                 expect(event.getPath().toString()).toBe(".mySet.myProp");
                 expect(event.getProperty().getString()).toBe("myVal");
+                done();
             });
             subSet.addString("myProp", "myVal");
         });
@@ -47,33 +48,35 @@ describe("api.data.PropertyTreeTest", () => {
 
     describe("when onPropertyValueChanged", () => {
 
-        it("changing Property in a sub set then PropertyEvent of type CHANGED is received", () => {
+        it("changing Property in a sub set then PropertyEvent of type CHANGED is received", (done) => {
 
             var rootSet = new PropertyTree();
             var subSet = rootSet.addPropertySet("mySet");
             subSet.addString("myProp", "myVal");
 
-            rootSet.onPropertyValueChanged(function (event) {
+            rootSet.onPropertyValueChanged((event) => {
                 expect(event.getType()).toBe(PropertyEventType.VALUE_CHANGED);
                 expect(event.getPath().toString()).toBe(".mySet.myProp");
                 expect(event.getNewValue().getString()).toBe("changed");
+                done();
             });
-            subSet.addString("myProp", "changed");
+            subSet.setProperty("myProp", 0, new Value("changed", ValueTypes.STRING));
         });
     });
 
     describe("when onPropertyRemoved", () => {
 
-        it("removing Property in a sub set then PropertyEvent of type REMOVED is received", () => {
+        it("removing Property in a sub set then PropertyEvent of type REMOVED is received", (done) => {
 
             var rootSet = new PropertyTree();
             var subSet = rootSet.addPropertySet("mySet");
             subSet.addString("myProp", "myVal");
 
-            rootSet.onPropertyRemoved(function (event) {
+            rootSet.onPropertyRemoved((event) => {
                 expect(event.getType()).toBe(PropertyEventType.REMOVED);
                 expect(event.getPath().toString()).toBe(".mySet.myProp");
                 expect(event.getProperty().getString()).toBe("myVal");
+                done();
             });
             subSet.removeProperty("myProp", 0)
         });

@@ -1,6 +1,6 @@
 import CalendarBuilder = api.ui.time.CalendarBuilder;
 
-describe("api.ui.time.CalendarTest", () => {
+describe("api.ui.time.Calendar", () => {
 
     it("test calendar", () => {
 

@@ -1,7 +1,7 @@
 import Timezone = api.util.Timezone;
 import DateTime = api.util.DateTime;
 
-describe("DateTimeTest", () => {
+describe("DateTime", () => {
 
     var dateTime, timeZone;
 

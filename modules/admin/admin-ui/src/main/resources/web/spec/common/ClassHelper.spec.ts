@@ -1,6 +1,6 @@
 import ClassHelper = api.ClassHelper;
 
-describe("api.ClassHelperTest", function () {
+describe("api.ClassHelper", function () {
 
 
     describe("tests for api.ClassHelper.getFunctionName() function", function () {

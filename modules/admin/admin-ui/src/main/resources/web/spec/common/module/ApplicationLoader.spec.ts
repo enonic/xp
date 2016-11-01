@@ -3,7 +3,7 @@ import ListApplicationsRequest = api.application.ListApplicationsRequest;
 import ApplicationBuilder = api.application.ApplicationBuilder;
 import Application = api.application.Application;
 
-describe("api.application.ApplicationLoaderTest", () => {
+describe("api.application.ApplicationLoader", () => {
 
     var applicationLoader;
 

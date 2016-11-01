@@ -3,7 +3,7 @@ import PropertyTree = api.data.PropertyTree;
 import ValueTypes = api.data.ValueTypes;
 import Value = api.data.Value;
 
-describe("api.data.PropertySetTest", () => {
+describe("api.data.PropertySet", () => {
 
     describe("when addStrings", () => {
 
@@ -75,7 +75,6 @@ describe("api.data.PropertySetTest", () => {
     describe("when removeProperty", () => {
 
         it("given a PropertySet with 3 properties when removing one then getTotalSize returns 2", () => {
-            debugger;
             var tree = new PropertyTree();
             var mySet = tree.addPropertySet("mySet");
             mySet.addStrings("myProp", ["1", "2"]);
@@ -92,7 +91,6 @@ describe("api.data.PropertySetTest", () => {
 
         describe("given a PropertySet with a property named 'myProp'", () => {
 
-            debugger;
             var tree = new PropertyTree();
             var mySet = tree.addPropertySet("mySet");
             var property = mySet.addProperty("myProp", new Value("myVal", ValueTypes.STRING));

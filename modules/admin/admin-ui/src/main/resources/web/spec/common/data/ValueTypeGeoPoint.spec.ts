@@ -1,4 +1,4 @@
-describe("api.data.type.GeoPointValueTypeTestTest", () => {
+describe("api.data.type.GeoPointValueTypeTest", () => {
 
     describe("when isValid", () => {
 
