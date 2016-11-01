@@ -17,6 +17,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.RefreshMode;
@@ -34,6 +35,8 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
@@ -64,6 +67,7 @@ public class RepositoryServiceImpl
     @Override
     public Repository createRepository( final CreateRepositoryParams params )
     {
+        requireAdminRole();
         return repositoryMap.compute( params.getRepositoryId(), ( key, previousRepository ) -> {
             if ( previousRepository != null || repositoryEntryService.getRepositoryEntry( key ) != null )
             {
@@ -79,6 +83,7 @@ public class RepositoryServiceImpl
     @Override
     public Branch createBranch( final CreateBranchParams createBranchParams )
     {
+        requireAdminRole();
         final RepositoryId repositoryId = ContextAccessor.current().
             getRepositoryId();
 
@@ -106,6 +111,7 @@ public class RepositoryServiceImpl
     @Override
     public Repositories list()
     {
+        requireAdminRole();
         final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
         repositoryEntryService.
             findRepositoryEntryIds().
@@ -119,18 +125,21 @@ public class RepositoryServiceImpl
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
+        requireAdminRole();
         return this.get( repositoryId ) != null;
     }
 
     @Override
     public Repository get( final RepositoryId repositoryId )
     {
+        requireAdminRole();
         return repositoryMap.computeIfAbsent( repositoryId, key -> repositoryEntryService.getRepositoryEntry( repositoryId ) );
     }
 
     @Override
     public RepositoryId deleteRepository( final DeleteRepositoryParams params )
     {
+        requireAdminRole();
         final RepositoryId repositoryId = params.getRepositoryId();
         repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
             repositoryEntryService.deleteRepositoryEntry( repositoryId );
@@ -144,6 +153,16 @@ public class RepositoryServiceImpl
     public void invalidate( final RepositoryId repositoryId )
     {
         repositoryMap.remove( repositoryId );
+    }
+
+    private void requireAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN );
+        if ( !hasAdminRole )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
     }
 
     private Repository createRepositoryObject( final CreateRepositoryParams params )
