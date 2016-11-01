@@ -7,6 +7,7 @@
 ///<reference path='security/_spec.ts' />
 ///<reference path='schema/mixin/_spec.ts' />
 ///<reference path='query/_spec.ts' />
+///<reference path='module/_spec.ts' />
 
 
 

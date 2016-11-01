@@ -28,6 +28,7 @@ module api.application {
             return me.sendRequest()
                 .then((applications: Application[]) => {
                     if (me.filterObject) {
+                        debugger;
                         applications = applications.filter(me.filterResults, me);
                     }
                     me.notifyLoadedData(applications);
@@ -37,6 +38,7 @@ module api.application {
         }
 
         private filterResults(application: Application): boolean {
+            debugger;
             if (!this.filterObject) {
                 return true;
             }
