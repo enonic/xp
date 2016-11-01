@@ -277,6 +277,24 @@ exports.publish = function (params) {
 };
 
 /**
+ * This function unpublishes content that had been published to the master branch.
+ *
+ * @example-ref examples/content/unpublish.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string[]} params.keys List of all content keys(path or id) that should be unpublished.
+ * @param {boolean} [params.includeChildren=true] Whether all children should be included when unpublishing content.
+ *
+ * @returns {string[]} List with ids of the content that were unpublished.
+ */
+exports.unpublish = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.UnpublishContentHandler');
+    bean.keys = required(params, 'keys');
+    bean.includeChildren = nullOrValue(params.includeChildren);
+    return __.toNativeObject(bean.execute());
+};
+
+/**
  * Creates a media content.
  *
  * @example-ref examples/content/createMedia.js

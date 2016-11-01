@@ -1,10 +1,12 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 
-public class UnpublishContentParams
+public final class UnpublishContentParams
 {
     private final ContentIds contentIds;
 
@@ -34,11 +36,32 @@ public class UnpublishContentParams
         return includeChildren;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final UnpublishContentParams that = (UnpublishContentParams) o;
+        return includeChildren == that.includeChildren && Objects.equals( contentIds, that.contentIds ) &&
+            Objects.equals( unpublishBranch, that.unpublishBranch );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( contentIds, includeChildren, unpublishBranch );
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {
@@ -73,7 +96,7 @@ public class UnpublishContentParams
         private void validate()
         {
             Preconditions.checkNotNull( contentIds, "contentId must be set" );
-            Preconditions.checkNotNull( unpublishBranch, "unpublish-branch must be set" );
+            Preconditions.checkNotNull( unpublishBranch, "unpublishBranch must be set" );
         }
 
         public UnpublishContentParams build()
