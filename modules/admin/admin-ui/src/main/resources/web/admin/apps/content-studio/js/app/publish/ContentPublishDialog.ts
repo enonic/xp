@@ -1,6 +1,7 @@
 import "../../api.ts";
 import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
 import {PublishDialogDependantList, isContentSummaryValid} from "./PublishDialogDependantList";
+import {ContentPublishPromptEvent} from "../browse/ContentPublishPromptEvent";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -29,7 +30,15 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private stashedCount: {[checked: string]: number} = {};
 
     constructor() {
-        super("Publishing Wizard", "Resolving items...", "Other items that will be published");
+        super(
+            "Publishing Wizard",
+            "Resolving items...",
+            "Other items that will be published",
+            "is-publishing",
+            () => {
+                new ContentPublishPromptEvent([]).fire();
+            }
+        );
 
         this.setAutoUpdateTitle(false);
         this.getEl().addClass("publish-dialog");
@@ -268,7 +277,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             .setExcludedIds(this.excludedIds)
             .sendAndParse()
             .then((taskId: api.task.TaskId) => {
-                this.pollPublishTask(taskId);
+                this.pollTask(taskId);
             }).catch((reason) => {
             this.hideLoadingSpinner();
                 this.close();

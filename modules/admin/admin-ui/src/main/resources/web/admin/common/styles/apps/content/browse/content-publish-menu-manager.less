@@ -10,7 +10,7 @@
   }
 }
 
-body.is-processing {
+body.is-publishing, body.is-unpublishing {
   .content-publish-menu {
     button {
       display: none !important;
@@ -18,7 +18,7 @@ body.is-processing {
     .progress-bar {
       display: block;
       height: 40px;
-      min-width: 167px; //Width of the Publish menu button
+      min-width: 167px; // Width of the Publish menu button
       background-color: @form-button-bg-disabled;
 
       .progress-indicator {
@@ -31,12 +31,14 @@ body.is-processing {
 
       &:after {
         position: absolute;
-        top: 25%;
-        left: 30%;
-        content: 'Publishing...';
+        top: 0;
+        left: 0;
+        right: 0;
+        line-height: 40px;
         color: @admin-white;
         font-size: 14px;
         font-family: "Open Sans", sans-serif;
+        text-align: center;
       }
     }
   }
@@ -51,5 +53,20 @@ body.is-processing {
       }
     }
   }
+}
 
+body.is-publishing {
+  .content-publish-menu {
+    .progress-bar:after {
+      content: 'Publishing...';
+    }
+  }
+}
+
+body.is-unpublishing {
+  .content-publish-menu {
+    .progress-bar:after {
+      content: 'Unpublishing...';
+    }
+  }
 }
