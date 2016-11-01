@@ -1,16 +1,16 @@
-describe("api.i18nTest", function () {
+describe("api.i18nTest", () => {
 
-    it("test no translation", function () {
+    it("test no translation", () => {
         var message = api.i18n.message('no translation for this', []);
         expect(message).toBe('no translation for this');
     });
 
-    it("test no translation with arguments", function () {
+    it("test no translation with arguments", () => {
         var message = api.i18n.message('no $1 for $2', ['translation', 'this']);
         expect(message).toBe('no translation for this');
     });
 
-    it("test translation", function () {
+    it("test translation", () => {
 
         api.i18n.setLocale('no');
         api.i18n.addBundle('no', {
@@ -21,7 +21,7 @@ describe("api.i18nTest", function () {
         expect(message).toBe('oversetting for dette');
     });
 
-    it("test translation with arguments", function () {
+    it("test translation with arguments", () => {
 
         api.i18n.setLocale('no');
         api.i18n.addBundle('no', {
@@ -32,7 +32,7 @@ describe("api.i18nTest", function () {
         expect(message).toBe('oversetting for dette');
     });
 
-    it("test merge bundles", function () {
+    it("test merge bundles", () => {
 
         api.i18n.setLocale('no');
 
@@ -44,10 +44,10 @@ describe("api.i18nTest", function () {
             'and translate this': 'og oversett dette'
         });
 
-        var message1 = api.i18n.message('translate this');
+        var message1 = api.i18n.message('translate this', []);
         expect(message1).toBe('oversett dette');
 
-        var message2 = api.i18n.message('and translate this');
+        var message2 = api.i18n.message('and translate this', []);
         expect(message2).toBe('og oversett dette');
     });
 
