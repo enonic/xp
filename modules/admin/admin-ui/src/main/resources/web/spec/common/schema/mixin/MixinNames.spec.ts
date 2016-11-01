@@ -1,12 +1,12 @@
-describe("api.schema.mixin.MixinNamesTest", function () {
+import MixinNames = api.schema.mixin.MixinNames;
 
-    var MixinNames = api.schema.mixin.MixinNames;
+describe("api.schema.mixin.MixinNamesTest", () => {
 
-    describe("constructor", function () {
+    describe("constructor", () => {
 
-        it("given duplicates then Error is thrown", function () {
+        it("given duplicates then Error is thrown", () => {
 
-            expect(function () {
+            expect(() => {
 
                 MixinNames.create().fromStrings(["myapplication:duplicate", "myapplication:duplicate"]).build();
 
