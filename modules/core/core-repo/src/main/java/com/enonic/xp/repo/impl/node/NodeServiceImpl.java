@@ -676,13 +676,25 @@ public class NodeServiceImpl
     @Override
     public boolean nodeExists( final NodeId nodeId )
     {
-        return NodeHelper.runAsAdmin( () -> this.doGetById( nodeId ) ) != null;
+        return NodeHelper.runAsAdmin( () -> doCheckNodeExists( nodeId, null ) );
     }
 
     @Override
     public boolean nodeExists( final NodePath nodePath )
     {
-        return NodeHelper.runAsAdmin( () -> this.doGetByPath( nodePath ) ) != null;
+        return NodeHelper.runAsAdmin( () -> doCheckNodeExists( null, nodePath ) );
+    }
+
+    private Boolean doCheckNodeExists( final NodeId nodeId, final NodePath nodePath )
+    {
+        return CheckNodeExistsCommand.create().
+            nodeId( nodeId ).
+            nodePath( nodePath ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
     }
 
     @Override

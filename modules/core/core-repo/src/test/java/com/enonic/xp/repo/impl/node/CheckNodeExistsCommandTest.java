@@ -23,7 +23,7 @@ public class CheckNodeExistsCommandTest
     }
 
     @Test
-    public void exists()
+    public void exists_path()
         throws Exception
     {
         final Node node = CreateNodeCommand.create().
@@ -48,8 +48,35 @@ public class CheckNodeExistsCommandTest
 
     }
 
+
     @Test
-    public void not_exists()
+    public void exists_id()
+        throws Exception
+    {
+        final Node node = CreateNodeCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            params( CreateNodeParams.create().
+                name( "myNode" ).
+                setNodeId( NodeId.from( "myNode" ) ).
+                parent( NodePath.ROOT ).
+                build() ).
+            build().
+            execute();
+
+        assertTrue( CheckNodeExistsCommand.create().
+            nodeId( NodeId.from( "myNode" ) ).
+            indexServiceInternal( this.indexServiceInternal ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            build().
+            execute() );
+
+    }
+
+    @Test
+    public void not_exists_path()
         throws Exception
     {
         assertFalse( CheckNodeExistsCommand.create().
@@ -61,4 +88,18 @@ public class CheckNodeExistsCommandTest
             execute() );
 
     }
+
+    @Test
+    public void not_exists_id()
+        throws Exception
+    {
+        assertFalse( CheckNodeExistsCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            nodeId( NodeId.from( "fiskekake" ) ).
+            build().
+            execute() );
+    }
+
 }
