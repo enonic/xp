@@ -1,12 +1,9 @@
-describe("api.data.PropertyArrayTest", function () {
+import PropertyArray = api.data.PropertyArray;
+describe("api.data.PropertyArrayTest", () => {
 
-    var PropertyTree = api.data.PropertyTree;
-    var PropertyArray = api.data.PropertyArray;
-    var ValueTypes = api.data.ValueTypes;
+    describe("when move", () => {
 
-    describe("when move", function () {
-
-        it("given 2 string values when move(0, 1) then properties has correct index", function () {
+        it("given 2 string values when move(0, 1) then properties has correct index", () => {
             var tree = new PropertyTree();
             var array = PropertyArray.create().
                 setType(ValueTypes.STRING).

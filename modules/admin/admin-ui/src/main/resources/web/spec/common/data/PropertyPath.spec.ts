@@ -1,55 +1,54 @@
-describe("api.data.PropertyPathTest", function () {
+import PropertyPathElement = api.data.PropertyPathElement;
 
-    var PropertyPath = api.data.PropertyPath;
-    var PropertyPathElement = api.data.PropertyPathElement;
+describe("api.data.PropertyPathTest", () => {
 
-    it("doesn't accept null in first constructor argument", function () {
-        expect(function () {
+    it("doesn't accept null in first constructor argument", () => {
+        expect(() => {
             new PropertyPath([null]);
         }).toThrow();
     });
 
-    it("doesn't accept PropertyPathElement's with empty name in first constructor argument", function () {
-        expect(function () {
+    it("doesn't accept PropertyPathElement's with empty name in first constructor argument", () => {
+        expect(() => {
             new PropertyPath([new PropertyPathElement('', 0)]);
         }).toThrow();
     });
 
-    it("is absolute if second constructor argument isn't set", function () {
+    it("is absolute if second constructor argument isn't set", () => {
         expect(new PropertyPath([]).isAbsolute()).toBeTruthy();
     });
 
-    describe("tests PropertyPath.toString() method", function () {
+    describe("tests PropertyPath.toString() method", () => {
 
-        it("returns '.' when path has no elements and is absolute", function () {
+        it("returns '.' when path has no elements and is absolute", () => {
             expect(new PropertyPath([]).toString()).toBe('.');
         });
 
-        it("returns '' when path has no elements and isn't absolute", function () {
+        it("returns '' when path has no elements and isn't absolute", () => {
             expect(new PropertyPath([], false).toString()).toBe('');
         });
 
-        it("joins elements and prefixes with '.' when path has elements and is absolute", function () {
+        it("joins elements and prefixes with '.' when path has elements and is absolute", () => {
             expect(new PropertyPath([new PropertyPathElement('first', 0),
                 new PropertyPathElement('second', 0)]).toString()).toBe('.first.second');
         });
 
-        it("doesn't append '.' when path has elements and isn't absolute", function () {
+        it("doesn't append '.' when path has elements and isn't absolute", () => {
             expect(new PropertyPath([new PropertyPathElement('element', 0)], false).toString()).toBe('element');
         });
 
     });
 
-    describe("test for PropertyPath.fromString() function", function () {
+    describe("test for PropertyPath.fromString() function", () => {
 
-        it("applicationKey", function () {
+        it("applicationKey", () => {
             var path = PropertyPath.fromString('applicationKey');
 
             expect(path.elementCount()).toBe(1);
             expect(path.toString()).toBe('applicationKey');
         });
 
-        it("checks if path is absolute and splits elements", function () {
+        it("checks if path is absolute and splits elements", () => {
             var path = PropertyPath.fromString('.first.second');
 
             expect(path.isAbsolute()).toBeTruthy();
@@ -60,14 +59,14 @@ describe("api.data.PropertyPathTest", function () {
             expect(path.isAbsolute()).toBeFalsy();
         });
 
-        it("removes empty elements", function () {
+        it("removes empty elements", () => {
             var path = PropertyPath.fromString('..first...second..');
 
             expect(path.elementCount()).toBe(2);
             expect(path.toString()).toBe('.first.second');
         });
 
-        it("sets index to 0 if not specified", function () {
+        it("sets index to 0 if not specified", () => {
             var path = PropertyPath.fromString('first.second');
             expect(path.getElement(0).getIndex()).toBe(0);
             expect(path.getElement(1).getIndex()).toBe(0);
@@ -75,7 +74,7 @@ describe("api.data.PropertyPathTest", function () {
 
     });
 
-    it(".fromParent() function", function () {
+    it(".fromParent() function", () => {
         var parent = PropertyPath.fromString('.first'),
             path = PropertyPath.fromParent(parent, PropertyPathElement.fromString('second'));
 
@@ -84,7 +83,7 @@ describe("api.data.PropertyPathTest", function () {
         expect(path.toString()).toBe('.first.second');
     });
 
-    it(".fromPathElement() function", function () {
+    it(".fromPathElement() function", () => {
         var path = PropertyPath.fromPathElement(PropertyPathElement.fromString('element'));
 
         expect(path.isAbsolute()).toBeTruthy();
@@ -92,7 +91,7 @@ describe("api.data.PropertyPathTest", function () {
         expect(path.toString()).toBe('.element');
     });
 
-    it(".removeFirstPathElement() method", function () {
+    it(".removeFirstPathElement() method", () => {
         var original = PropertyPath.fromString('.first.second'),
             newPath = original.removeFirstPathElement();
 
@@ -100,15 +99,15 @@ describe("api.data.PropertyPathTest", function () {
         expect(newPath.toString()).toBe('.second');
     });
 
-    describe('tests for PropertyPath.getParentPath() method', function () {
+    describe('tests for PropertyPath.getParentPath() method', () => {
 
-        it("returns null for root path", function () {
+        it("returns null for root path", () => {
             var path = PropertyPath.fromString('.');
 
             expect(path.getParentPath()).toBeNull();
         });
 
-        it("returns path without last element", function () {
+        it("returns path without last element", () => {
             var path = PropertyPath.fromString('.first.second');
 
             expect(path.getParentPath().elementCount()).toBe(path.elementCount() - 1);
@@ -117,9 +116,9 @@ describe("api.data.PropertyPathTest", function () {
 
     });
 
-    describe("tests for PropertyPath.removeFirstPathElement() method", function () {
+    describe("tests for PropertyPath.removeFirstPathElement() method", () => {
 
-        it("returns new path without first element", function () {
+        it("returns new path without first element", () => {
             var path = PropertyPath.fromString('.first.second'),
                 newPath = path.removeFirstPathElement();
 
@@ -128,15 +127,15 @@ describe("api.data.PropertyPathTest", function () {
             expect(newPath.toString()).toBe('.second');
         });
 
-        it("throws an exception if path contains one or no elements", function () {
+        it("throws an exception if path contains one or no elements", () => {
             var path = PropertyPath.fromString('.first');
 
-            expect(function () {
+            expect(() => {
                 path.removeFirstPathElement();
             }).toThrow();
         });
 
-        it("returns relative path if parent is relative", function () {
+        it("returns relative path if parent is relative", () => {
             var path = PropertyPath.fromString('first.second'),
                 newPath = path.removeFirstPathElement();
 
@@ -148,27 +147,25 @@ describe("api.data.PropertyPathTest", function () {
 
 });
 
-describe("api.data.PropertyPathElementTest", function () {
+describe("api.data.PropertyPathElementTest", () => {
 
-    var PropertyPathElement = api.data.PropertyPathElement;
-
-    it('.toString() method returns element name followed by index inside brackets', function () {
+    it('.toString() method returns element name followed by index inside brackets', () => {
         expect(new PropertyPathElement('element', 1).toString()).toBe('element[1]');
     });
 
-    it('.toString() method returns element name followed without index inside brackets when index is zero', function () {
+    it('.toString() method returns element name followed without index inside brackets when index is zero', () => {
         expect(new PropertyPathElement('element', 0).toString()).toBe('element');
     });
 
-    describe("tests for PropertyPathElement.fromString() function", function () {
+    describe("tests for PropertyPathElement.fromString() function", () => {
 
-        it("splits string to name and index", function () {
+        it("splits string to name and index", () => {
             var element = PropertyPathElement.fromString('element[1]');
             expect(element.getName()).toBe('element');
             expect(element.getIndex()).toBe(1);
         });
 
-        it("sets index to 0 if not specified", function () {
+        it("sets index to 0 if not specified", () => {
             expect(PropertyPathElement.fromString('element').getIndex()).toBe(0);
         });
 

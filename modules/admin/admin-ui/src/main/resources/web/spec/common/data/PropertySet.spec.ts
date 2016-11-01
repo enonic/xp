@@ -1,15 +1,13 @@
-describe("api.data.PropertySetTest", function () {
+import PropertyPath = api.data.PropertyPath;
+import PropertyTree = api.data.PropertyTree;
+import ValueTypes = api.data.ValueTypes;
+import Value = api.data.Value;
 
-    var Property = api.data.Property;
-    var PropertySet = api.data.PropertySet;
-    var PropertyTree = api.data.PropertyTree;
-    var ValueTypes = api.data.ValueTypes;
-    var Value = api.data.Value;
-    var PropertyPath = api.data.PropertyPath;
+describe("api.data.PropertySetTest", () => {
 
-    describe("when addStrings", function () {
+    describe("when addStrings", () => {
 
-        it("given 2 string values then 2 properties are returned ", function () {
+        it("given 2 string values then 2 properties are returned ", () => {
             var tree = new PropertyTree();
             var propertySet = tree.addPropertySet("mySet");
             var properties = tree.addStrings("myProp", ["1", "2"]);
@@ -19,52 +17,52 @@ describe("api.data.PropertySetTest", function () {
         });
     });
 
-    describe("when setProperty", function () {
+    describe("when setProperty", () => {
 
-        it("given ('myProp', 0) then not null is returned", function () {
+        it("given ('myProp', 0) then not null is returned", () => {
             var tree = new PropertyTree();
             expect(tree.getRoot().setProperty("myProp", 0, new Value("myalue", ValueTypes.STRING))).not.toBeNull();
         });
 
         // TODO: Disabled: since toThrowError does not seem to work with PhantomJS
-        xit("given ('myProp', 1) then Error is thrown", function () {
+        xit("given ('myProp', 1) then Error is thrown", () => {
             var tree = new PropertyTree();
             var value = new Value("myalue", ValueTypes.STRING);
             var propertySet = tree.getRoot();
-            expect(function () {
+            expect(() => {
                 propertySet.setProperty("myProp", 1, value);
             }).toThrowError("Index out of bounds: index: 1, size: 0");
         });
     });
 
-    describe("when setPropertyByPath", function () {
+    describe("when setPropertyByPath", () => {
 
-        it("given (PropertyPath.fromString('myProp[0]')) then not null is returned", function () {
+        it("given (PropertyPath.fromString('myProp[0]')) then not null is returned", () => {
             var tree = new PropertyTree();
             expect(tree.getRoot().setPropertyByPath(PropertyPath.fromString("myProp[0]"),
                 new Value("myalue", ValueTypes.STRING))).not.toBeNull();
         });
 
-        it("given ('myProp[0]') then not null is returned", function () {
+        it("given ('myProp[0]') then not null is returned", () => {
             var tree = new PropertyTree();
             var property = tree.getRoot().setPropertyByPath("myProp[0]", new Value("myalue", ValueTypes.STRING));
             expect(property).not.toBeNull();
         });
 
         // TODO: Disabled: since toThrowError does not seem to work with PhantomJS
-        xit("given ('myProp[1]') then Error is thrown", function () {
+        xit("given ('myProp[1]') then Error is thrown", () => {
             var tree = new PropertyTree();
             var value = new Value("myalue", ValueTypes.STRING);
             var propertySet = tree.getRoot();
-            expect(function () {
+            expect(() => {
                 propertySet.setPropertyByPath("myProp[1]", value);
             }).toThrowError("Index out of bounds: index: 1, size: 0");
         });
     });
 
-    describe("when getSize", function () {
+    describe("when getSize", () => {
 
-        it("given a PropertySet with 3 properties when getSize returns 3", function () {
+        it("given a PropertySet with 3 properties when getSize returns 3", () => {
             var tree = new PropertyTree();
             var mySet = tree.addPropertySet("mySet");
             mySet.addStrings("myProp", ["1", "2"]);
@@ -74,9 +72,10 @@ describe("api.data.PropertySetTest", function () {
         });
     });
 
-    describe("when removeProperty", function () {
+    describe("when removeProperty", () => {
 
-        it("given a PropertySet with 3 properties when removing one then getTotalSize returns 2", function () {
+        it("given a PropertySet with 3 properties when removing one then getTotalSize returns 2", () => {
+            debugger;
             var tree = new PropertyTree();
             var mySet = tree.addPropertySet("mySet");
             mySet.addStrings("myProp", ["1", "2"]);
@@ -89,39 +88,40 @@ describe("api.data.PropertySetTest", function () {
         });
     });
 
-    describe("when getProperty", function () {
+    describe("when getProperty", () => {
 
-        describe("given a PropertySet with a property named 'myProp'", function () {
+        describe("given a PropertySet with a property named 'myProp'", () => {
 
+            debugger;
             var tree = new PropertyTree();
             var mySet = tree.addPropertySet("mySet");
             var property = mySet.addProperty("myProp", new Value("myVal", ValueTypes.STRING));
 
-            it("given name 'myProp' then not null is returned", function () {
+            it("given name 'myProp' then not null is returned", () => {
                 expect(mySet.getProperty("myProp")).toBe(property);
             });
 
-            it("given name 'nonExisting' then null is returned", function () {
+            it("given name 'nonExisting' then null is returned", () => {
                 expect(mySet.getProperty("nonExisting")).toBeNull();
             });
 
-            it("given PropertyPath('myProp') then not null is returned", function () {
+            it("given PropertyPath('myProp') then not null is returned", () => {
                 expect(mySet.getProperty(PropertyPath.fromString("myProp"))).toBe(property);
             });
 
-            it("given (name='myProp' and index=0) then not null is returned", function () {
+            it("given (name='myProp' and index=0) then not null is returned", () => {
                 expect(mySet.getProperty("myProp", 0)).toBe(property);
             });
 
-            it("given no arguments then the Property for the PropertySet is returned", function () {
+            it("given no arguments then the Property for the PropertySet is returned", () => {
                 expect(mySet.getProperty()).toBe(tree.getProperty("mySet"));
             });
         });
     });
 
-    describe("when forEach", function () {
+    describe("when forEach", () => {
 
-        it("given two property arrays with two elements in each then iteration will iterate through all of them", function () {
+        it("given two property arrays with two elements in each then iteration will iterate through all of them", () => {
 
             var properties = [];
             var tree = new PropertyTree();
