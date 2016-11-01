@@ -9,19 +9,19 @@ export class ProcessingStats {
 
     // Interval of task polling when processing the content (in ms)
     static pollInterval: number = 500;
-
-    // Body class
-    static isProcessingClass: string = "is-processing";
 }
 
 export class ProgressBarDialog extends DependantItemsDialog {
 
     private progressBar: api.ui.ProgressBar;
 
+    private isProcessingClass: string;
+
     private processHandler: () => void;
 
-    constructor(dialogName: string, dialogSubName: string, dependantsName: string, processHandler: () => void) {
+    constructor(dialogName: string, dialogSubName: string, dependantsName: string, isProcessingClass: string, processHandler: () => void) {
         super(dialogName, dialogSubName, dependantsName);
+        this.isProcessingClass = isProcessingClass;
         this.processHandler = processHandler;
     }
 
@@ -38,21 +38,22 @@ export class ProgressBarDialog extends DependantItemsDialog {
     }
 
     protected enableProgressBar() {
-        api.dom.Body.get().addClass(ProcessingStats.isProcessingClass);
+        this.addClass(this.isProcessingClass);
+        api.dom.Body.get().addClass(this.isProcessingClass);
+
         MenuButtonProgressBarManager.getProgressBar().setValue(0);
-        this.addClass(ProcessingStats.isProcessingClass);
         this.hideLoadingSpinner();
         this.progressBar = this.createProgressBar();
         MenuButtonProgressBarManager.updateProgressHandler(this.processHandler);
     }
 
     protected disableProgressBar() {
-        this.removeClass(ProcessingStats.isProcessingClass);
-        api.dom.Body.get().removeClass(ProcessingStats.isProcessingClass);
+        this.removeClass(this.isProcessingClass);
+        api.dom.Body.get().removeClass(this.isProcessingClass);
     }
 
     protected isProgressBarEnabled() {
-        return this.hasClass(ProcessingStats.isProcessingClass);
+        return this.hasClass(this.isProcessingClass);
     }
 
     protected setProgressValue(value: number) {
