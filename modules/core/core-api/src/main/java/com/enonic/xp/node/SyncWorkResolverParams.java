@@ -13,7 +13,9 @@ public class SyncWorkResolverParams
 
     private NodeIds excludedNodeIds;
 
-    private boolean includeChildren;
+    private final boolean includeChildren;
+
+    private final boolean includeDependencies;
 
     private SyncWorkResolverParams( Builder builder )
     {
@@ -21,6 +23,7 @@ public class SyncWorkResolverParams
         nodeId = builder.nodeId;
         excludedNodeIds = builder.excludedNodeIds;
         includeChildren = builder.includeChildren;
+        this.includeDependencies = builder.includeDependencies;
     }
 
     public Branch getBranch()
@@ -43,6 +46,11 @@ public class SyncWorkResolverParams
         return includeChildren;
     }
 
+    public boolean isIncludeDependencies()
+    {
+        return includeDependencies;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -58,6 +66,8 @@ public class SyncWorkResolverParams
         private NodeIds excludedNodeIds;
 
         private boolean includeChildren;
+
+        private boolean includeDependencies = true;
 
         private Builder()
         {
@@ -87,9 +97,16 @@ public class SyncWorkResolverParams
             return this;
         }
 
+
+        public Builder includeDependencies( final boolean includeDependencies )
+        {
+            this.includeDependencies = includeDependencies;
+            return this;
+        }
+
         public SyncWorkResolverParams build()
         {
-             return new SyncWorkResolverParams( this );
+            return new SyncWorkResolverParams( this );
         }
     }
 }

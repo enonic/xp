@@ -234,23 +234,32 @@ public class ContentServiceImplTest_publish
     }
 
 
+    /**
+     * ./content1
+     * ../content1_1 -> Ref:content2_1_1
+     * ./content2
+     * ../content2_1
+     * ../../content2_1_1
+     * ./content3
+     */
     @Test
-    public void push_exclude_without_dependencies()
+    public void push_without_dependencies()
         throws Exception
     {
-        createContentTree();
+        createContentTree2();
 
         final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
+            contentIds( ContentIds.from( content1.getId() ) ).
             includeDependencies( false ).
+            includeChildren( true ).
             target( WS_OTHER ).
             build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
 
         assertEquals( 2, result.getPushedContents().getSize() );
-        assertFalse( result.getPushedContents().contains( content1_1.getId() ) );
-        assertFalse( result.getPushedContents().contains( content2_1.getId() ) );
+        assertTrue( result.getPushedContents().contains( content1.getId() ) );
+        assertTrue( result.getPushedContents().contains( content1_1.getId() ) );
     }
 
     /**

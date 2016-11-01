@@ -40,7 +40,9 @@ public class PublishContentCommand
 
     private final Branch target;
 
-    private final boolean resolveSyncWork;
+    private final boolean includeDependencies;
+
+    private final boolean resolveSyncWork = true;
 
     private final PublishContentResult.Builder resultBuilder;
 
@@ -54,7 +56,7 @@ public class PublishContentCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
-        this.resolveSyncWork = builder.includeDependencies;
+        this.includeDependencies = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PublishContentResult.create();
         this.pushContentListener = builder.pushContentListener;
@@ -70,6 +72,7 @@ public class PublishContentCommand
         this.nodeService.refresh( RefreshMode.ALL );
 
         final CompareContentResults results;
+
         if ( resolveSyncWork )
         {
             results = getSyncWork();
@@ -131,6 +134,7 @@ public class PublishContentCommand
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
             includeChildren( this.includeChildren ).
+            includeDependencies( this.includeDependencies ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
             eventPublisher( this.eventPublisher ).
