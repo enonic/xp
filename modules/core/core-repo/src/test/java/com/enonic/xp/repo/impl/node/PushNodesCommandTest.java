@@ -25,6 +25,7 @@ public class PushNodesCommandTest
     {
         super.setUp();
         this.createDefaultRootNode();
+        CTX_OTHER.callWith( () -> this.createDefaultRootNode() );
     }
 
     @Test
@@ -95,6 +96,26 @@ public class PushNodesCommandTest
         assertEquals( 1, result.getSuccessful().getSize() );
         assertEquals( 1, result.getFailed().size() );
         assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailed().iterator().next().getReason() );
+    }
+
+    @Test
+    public void push_fail_if_node_already_exists()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+
+        CTX_OTHER.callWith( () -> createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() ) );
+
+        final PushNodesResult result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+
+        assertEquals( 1, result.getFailed().size() );
+        assertEquals( PushNodesResult.Reason.ALREADY_EXIST, result.getFailed().iterator().next().getReason() );
     }
 
     @Test
