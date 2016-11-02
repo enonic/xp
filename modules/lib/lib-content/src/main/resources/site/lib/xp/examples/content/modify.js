@@ -8,6 +8,7 @@ function editor(c) {
     c.language = 'en';
     c.data.myCheckbox = false;
     c.data["myTime"] = "11:00";
+    c.publish.from = "2016-11-03T10:01:34Z";
     return c;
 }
 
@@ -59,7 +60,9 @@ var expected = {
             "mimeType": "application/pdf"
         }
     },
-    "publish": {}
+    "publish": {
+        "from": "2016-11-03T10:01:34Z"
+    }
 };
 // END
 
