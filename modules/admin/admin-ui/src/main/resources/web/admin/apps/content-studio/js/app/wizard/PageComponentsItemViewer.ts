@@ -33,7 +33,7 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
             let fragmentComponent = fragmentView.getFragmentRootComponent();
             if (fragmentComponent) {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent, TextComponent)) {
-                    return this.extractTextFromTextComponent(<TextComponent>fragmentComponent);
+                    return this.extractTextFromTextComponent(<TextComponent>fragmentComponent) || fragmentComponent.getName().toString();
                 }
                 return fragmentComponent.getName().toString();
             }
