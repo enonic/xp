@@ -159,47 +159,61 @@ module api.ui.selector.combobox {
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
-            this.appendChild(this.comboBoxDropdown.getDropdownGrid().getElement());
+            this.appendChild(<api.dom.Element>this.comboBoxDropdown.getDropdownGrid().getElement());
 
             this.setupListeners();
-
-            this.onRendered((event: api.dom.ElementRenderedEvent) => {
-
-                this.doUpdateDropdownTopPositionAndWidth();
-            });
         }
 
         private doUpdateDropdownTopPositionAndWidth() {
+
+            if (this.dropdownOverflowsBottom()) {
+                this.placeDropdownAbove()
+            } else {
+                this.placeDropdownBelow();
+            }
+
+            this.comboBoxDropdown.setWidth(Math.max(this.input.getEl().getWidthWithBorder(), this.minWidth));
+        }
+
+        private dropdownOverflowsBottom(): boolean {
             var inputEl = this.input.getEl();
 
             var parent = this.getScrollableParent(inputEl),
                 size = parent.getHeight() - (inputEl.getOffsetTop() - parent.getOffsetTop()) - inputEl.getHeight();
 
+            var dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
+
+            return size < dropdown.getHeightWithBorder();
+        }
+
+        private placeDropdownBelow() {
+            var dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
+            dropdown.removeClass("reverted");
+
+            var inputEl = this.input.getEl();
+            this.comboBoxDropdown.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
+        }
+
+        private placeDropdownAbove() {
             var dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl(),
                 placeholder = this.comboBoxDropdown.getEmptyDropdown().getEl();
 
-            var reverted = size < dropdown.getHeightWithBorder();
-
-            if (!reverted) {
-                this.comboBoxDropdown.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
-            } else {
-                dropdown.setTopPx(-dropdown.getHeightWithBorder());
-                placeholder.setTopPx(-placeholder.getHeightWithBorder());
-            }
-
-            dropdown.toggleClass("reverted", reverted);
-
-            this.comboBoxDropdown.setWidth(Math.max(inputEl.getWidthWithBorder(), this.minWidth));
+            dropdown.setTopPx(-dropdown.getHeightWithBorder()).addClass("reverted");
+            placeholder.setTopPx(-placeholder.getHeightWithBorder());
         }
 
         private getScrollableParent(el: ElementHelper): ElementHelper {
             let parent = el.getParent();
-            if (!parent || parent.isScrollable()) {
+
+            if (!parent) {
                 return el;
-            } else {
-                return this.getScrollableParent(parent);
             }
 
+            if (parent.isScrollable()) {
+                return parent;
+            }
+
+            return this.getScrollableParent(parent);
         }
 
         giveFocus(): boolean {
@@ -891,7 +905,7 @@ module api.ui.selector.combobox {
         }
 
         private notifyExpanded(expanded: boolean) {
-            var event = new api.ui.selector.DropdownExpandedEvent(this.comboBoxDropdown.getDropdownGrid().getElement(), expanded);
+            var event = new api.ui.selector.DropdownExpandedEvent(<api.dom.Element>this.comboBoxDropdown.getDropdownGrid().getElement(), expanded);
             this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
                 listener(event);
             });
