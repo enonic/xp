@@ -1632,6 +1632,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         if (this.isContentFormValid) {
             if (!this.hasUnsavedChanges()) {
+                // WARN: intended to restore status to persisted value if data is changed to original values,
+                // but if invoked after save this will revert status to persisted one as well 
                 this.currentContentCompareStatus = this.persistedContentCompareStatus;
 
             } else if (publishControls.isOnline()) {
