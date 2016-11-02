@@ -18,6 +18,7 @@ import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -186,7 +187,14 @@ public class PublishContentCommand
         for ( final NodeId id : firstTimePublished )
         {
             this.nodeService.update( UpdateNodeParams.create().
-                editor( toBeEdited -> toBeEdited.data.setInstant( ContentPropertyNames.PUBLISHED_TIME, now ) ).
+                editor( toBeEdited -> {
+                    PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
+                    if ( publishInfo == null )
+                    {
+                        publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
+                    }
+                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, now );
+                } ).
                 id( id ).
                 build() );
         }

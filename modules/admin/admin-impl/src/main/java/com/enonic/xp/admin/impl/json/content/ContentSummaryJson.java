@@ -28,6 +28,8 @@ public class ContentSummaryJson
 
     private final ChildOrderJson childOrderJson;
 
+    private final ContentPublishInfoJson publish;
+
     private final String contentState;
 
     public ContentSummaryJson( final Content content, final ContentIconUrlResolver iconUrlResolver )
@@ -40,6 +42,7 @@ public class ContentSummaryJson
         this.isPage = content.hasPage();
         this.childOrderJson = content.getChildOrder() != null ? new ChildOrderJson( content.getChildOrder() ) : null;
         this.contentState = content.getContentState().toString();
+        this.publish = content.getPublishInfo() != null ? new ContentPublishInfoJson( content.getPublishInfo() ) : null;
     }
 
     public String getIconUrl()
@@ -87,9 +90,9 @@ public class ContentSummaryJson
         return content.isRoot();
     }
 
-    public Instant getPublishedTime()
+    public ContentPublishInfoJson getPublish()
     {
-        return content.getPublishedTime();
+        return publish;
     }
 
     @Override

@@ -26,7 +26,8 @@ var expected = {
     },
     "x": {},
     "page": {},
-    "attachments": {}
+    "attachments": {},
+    "publish": {}
 };
 // END
 

@@ -58,7 +58,8 @@ var expected = {
             "size": 12345,
             "mimeType": "application/pdf"
         }
-    }
+    },
+    "publish": {}
 };
 // END
 
