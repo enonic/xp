@@ -83,7 +83,7 @@ public class UnpublishContentCommand
             result.getNodeIds().forEach( ( id ) -> recursiveUnpublish( id, true, contentsBuilder ) );
         }
         final NodeIds nodes = this.nodeService.deleteById( nodeId );
-        if ( nodes != null )
+        if ( nodes != null && nodes.isNotEmpty() )
         {
             contentsBuilder.add( ContentId.from( nodes.first().toString() ) );
         }
