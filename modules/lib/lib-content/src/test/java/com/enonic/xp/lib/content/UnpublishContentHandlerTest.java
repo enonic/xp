@@ -82,6 +82,7 @@ public class UnpublishContentHandlerTest
         UnpublishContentParams unpublishParams = UnpublishContentParams.create().
             contentIds( ids ).
             unpublishBranch( Branch.from( "master" ) ).
+            includeChildren( true ).
             build();
 
         Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
@@ -102,26 +103,11 @@ public class UnpublishContentHandlerTest
         UnpublishContentParams unpublishParams = UnpublishContentParams.create().
             contentIds( ids ).
             unpublishBranch( Branch.from( "master" ) ).
+            includeChildren( true ).
             build();
 
         Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
 
         runFunction( "/site/test/UnpublishContentHandlerTest.js", "unpublishByPath" );
-    }
-
-    @Test
-    public void unpublishWithoutChildren()
-    {
-        ContentIds ids = ContentIds.from( PUB_ID_3 );
-
-        UnpublishContentParams unpublishParams = UnpublishContentParams.create().
-            contentIds( ids ).
-            unpublishBranch( Branch.from( "master" ) ).
-            includeChildren( false ).
-            build();
-
-        Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
-
-        runFunction( "/site/test/UnpublishContentHandlerTest.js", "unpublishWithoutChildren" );
     }
 }

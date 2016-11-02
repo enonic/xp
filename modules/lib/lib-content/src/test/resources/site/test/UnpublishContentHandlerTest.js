@@ -22,12 +22,3 @@ exports.unpublishByPath = function () {
 
     assert.assertJsonEquals(expectedJson, result);
 };
-
-exports.unpublishWithoutChildren = function () {
-    var result = content.unpublish({
-        keys: ['e1f57280-d672-4cd8-b674-98e26e5b69ae'],
-        includeChildren: false
-    });
-
-    assert.assertJsonEquals(expectedJson, result);
-};

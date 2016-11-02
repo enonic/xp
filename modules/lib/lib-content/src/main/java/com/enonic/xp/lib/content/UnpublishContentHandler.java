@@ -24,8 +24,6 @@ public final class UnpublishContentHandler
 {
     private String[] keys;
 
-    private Boolean includeChildren = true;
-
     private ContentService contentService;
 
     public List<String> execute()
@@ -41,10 +39,7 @@ public final class UnpublishContentHandler
         final UnpublishContentParams.Builder builder = UnpublishContentParams.create();
         builder.contentIds( ContentIds.from( contentIds ) );
         builder.unpublishBranch( targetBranch );
-        if ( this.includeChildren != null )
-        {
-            builder.includeChildren( this.includeChildren );
-        }
+        builder.includeChildren( true );
         final UnpublishContentsResult result = this.contentService.unpublishContent( builder.build() );
         return result.getUnpublishedContents().stream().map( ContentId::toString ).collect( Collectors.toList() );
     }
@@ -86,11 +81,6 @@ public final class UnpublishContentHandler
     public void setKeys( final String[] keys )
     {
         this.keys = keys;
-    }
-
-    public void setIncludeChildren( final Boolean includeChildren )
-    {
-        this.includeChildren = includeChildren;
     }
 
     @Override

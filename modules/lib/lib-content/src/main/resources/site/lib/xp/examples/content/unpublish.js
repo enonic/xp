@@ -4,8 +4,7 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Unpublish content by path or key
 var result = contentLib.unpublish({
-    keys: ['/mysite/somepage', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
-    includeChildren: true
+    keys: ['/mysite/somepage', '79e21db0-5b43-45ce-b58c-6e1c420b22bd']
 });
 
 log.info('Unpublished content ids: ' + result.join(','));
