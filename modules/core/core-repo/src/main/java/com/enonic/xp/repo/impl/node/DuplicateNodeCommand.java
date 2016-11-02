@@ -200,7 +200,8 @@ public final class DuplicateNodeCommand
 
     private String resolveNewNodeName( final Node existingNode )
     {
-        String newNodeName = DuplicateValueResolver.name( existingNode.name() );
+        // Process as file name as it is so for images
+        String newNodeName = DuplicateValueResolver.fileName( existingNode.name().toString() );
 
         boolean resolvedUnique = false;
 
