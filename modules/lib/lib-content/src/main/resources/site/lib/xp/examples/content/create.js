@@ -94,7 +94,9 @@ var expected = {
     },
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {
+        "from": "2016-11-03T10:00:24Z"
+    }
 };
 // END
 
@@ -114,5 +116,7 @@ assert.assertJsonEquals({
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {
+        "from": "2016-11-03T10:00:24Z"
+    }
 }, result2);
