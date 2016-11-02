@@ -35,9 +35,7 @@ var expectedJson = {
     },
     "page": {},
     "attachments": {},
-    "publish": {
-        "from": "2016-11-03T10:00:24Z"
-    }
+    "publish": {}
 };
 
 exports.createContent = function () {
@@ -67,9 +65,6 @@ exports.createContent = function () {
             }
         },
         "attachments": {},
-        "publish": {
-            "from": "2016-11-03T10:00:24Z"
-        }
     });
 
     assert.assertJsonEquals(expectedJson, result);
@@ -107,9 +102,7 @@ var expectedJsonAutoGenerateName = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {
-        "from": "2016-11-03T10:00:24Z"
-    }
+    "publish": {}
 };
 
 exports.createContentAutoGenerateName = function () {
@@ -137,9 +130,7 @@ var expectedJsonAutoGenerateName2 = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {
-        "from": "2016-11-03T10:00:24Z"
-    }
+    "publish": {}
 };
 
 exports.createContentAutoGenerateNameWithExistingName = function () {

@@ -9,7 +9,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
@@ -181,9 +180,6 @@ public class CreateContentHandlerTest
         builder.creator( PrincipalKey.ofAnonymous() );
         builder.createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) );
         builder.language( params.getLanguage() );
-        builder.publishInfo( ContentPublishInfo.create().
-            from( Instant.parse( "2016-11-03T10:00:24Z" ) ).
-            build() );
 
         if ( params.getExtraDatas() != null )
         {
