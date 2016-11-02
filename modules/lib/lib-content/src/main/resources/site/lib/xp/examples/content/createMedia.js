@@ -29,7 +29,8 @@ var expected = {
     "data": {},
     "x": {},
     "page": {},
-    "attachments": {}
+    "attachments": {},
+    "publish": {}
 };
 // END
 
