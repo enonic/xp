@@ -16,8 +16,7 @@ module api.form {
 
         formItem: FormItem;
 
-        parent: FormItemSetOccurrenceView;
-
+        parent: FormItemOccurrenceView;
     }
 
     export class FormItemView extends api.dom.DivEl {
@@ -26,7 +25,7 @@ module api.form {
 
         private formItem: FormItem;
 
-        private parent: FormItemSetOccurrenceView;
+        private parent: FormItemOccurrenceView;
 
         private editContentRequestListeners: {(content: api.content.ContentSummary): void}[] = [];
 
@@ -70,7 +69,7 @@ module api.form {
             return this.formItem;
         }
 
-        getParent(): FormItemSetOccurrenceView {
+        getParent(): FormItemOccurrenceView {
             return this.parent;
         }
 

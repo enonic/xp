@@ -9,7 +9,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.support.JsonTestHelper;
@@ -101,5 +104,32 @@ public class FormItemJsonTest
 
         JsonNode json = jsonTestHelper.objectToJson( fieldSetJson );
         this.jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "fieldSet.json" ), json );
+    }
+
+    @Test
+    public void serialization_of_FormOptionSet()
+        throws IOException
+    {
+        final FormOptionSetJson formOptionSetJson = new FormOptionSetJson( FormOptionSet.create().
+            name( "myOptionSet" ).
+            label( "My option set" ).
+            helpText( "Option set help text" ).
+            multiselection( Occurrences.create( 1, 3 ) ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption3" ).label( "option label3" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            build() );
+
+        JsonNode json = jsonTestHelper.objectToJson( formOptionSetJson );
+        this.jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "optionSet.json" ), json );
     }
 }

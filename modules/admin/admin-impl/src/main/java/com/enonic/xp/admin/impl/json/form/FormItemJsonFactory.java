@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Layout;
@@ -28,6 +29,10 @@ public class FormItemJsonFactory
         else if ( formItem instanceof InlineMixin )
         {
             return new InlineMixinJson( (InlineMixin) formItem );
+        }
+        else if ( formItem instanceof FormOptionSet )
+        {
+            return new FormOptionSetJson( (FormOptionSet) formItem );
         }
         throw new IllegalArgumentException( "Unsupported FormItem: " + formItem.getClass().getSimpleName() );
     }

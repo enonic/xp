@@ -8,8 +8,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 
 final class IdentityUrlBuilder
-    extends PortalUrlBuilder<IdentityUrlParams>
+    extends RootContentUrlBuilder<IdentityUrlParams>
 {
+
+    public IdentityUrlBuilder()
+    {
+        super( "idprovider" );
+    }
 
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )

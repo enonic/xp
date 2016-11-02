@@ -10,6 +10,4 @@
 ///<reference path='module/_spec.ts' />
 ///<reference path='i18n/_spec.ts' />
 ///<reference path='data/_spec.ts' />
-
-
-
+///<reference path='form/_spec.ts' />

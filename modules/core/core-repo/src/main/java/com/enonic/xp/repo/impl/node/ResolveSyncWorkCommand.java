@@ -38,7 +38,7 @@ public class ResolveSyncWorkCommand
 
     private final boolean includeChildren;
 
-    private final boolean checkDependencies;
+    private final boolean includeDependencies;
 
     private final Node publishRootNode;
 
@@ -58,7 +58,7 @@ public class ResolveSyncWorkCommand
         this.result = ResolveSyncWorkResult.create();
         this.processedIds = Sets.newHashSet();
         this.excludedIds = builder.excludedIds;
-        this.checkDependencies = builder.checkDependencies;
+        this.includeDependencies = builder.includeDependencies;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -96,7 +96,7 @@ public class ResolveSyncWorkCommand
         final NodeIds initialDiff = getInitialDiff();
         diffAndDependantsBuilder.addAll( initialDiff );
 
-        if ( checkDependencies )
+        if ( includeDependencies )
         {
             final NodeIds nodeDependencies = getNodeDependencies( initialDiff );
             diffAndDependantsBuilder.addAll( nodeDependencies );
@@ -164,7 +164,7 @@ public class ResolveSyncWorkCommand
 
         final NodeIds parentIds = getParentIdsFromPaths( parentPaths );
 
-        final NodeIds parentsDependencies = getNodeDependencies( parentIds );
+        final NodeIds parentsDependencies = includeDependencies ? getNodeDependencies( parentIds ) : NodeIds.empty();
 
         final NodeComparisons newComparisonsToConsider = CompareNodesCommand.create().
             nodeIds( NodeIds.create().
@@ -321,7 +321,7 @@ public class ResolveSyncWorkCommand
 
         private boolean includeChildren = true;
 
-        private boolean checkDependencies = true;
+        private boolean includeDependencies = true;
 
         private Builder()
         {
@@ -351,6 +351,12 @@ public class ResolveSyncWorkCommand
         public Builder includeChildren( final boolean includeChildren )
         {
             this.includeChildren = includeChildren;
+            return this;
+        }
+
+        public Builder includeDependencies( final boolean includeDependencies )
+        {
+            this.includeDependencies = includeDependencies;
             return this;
         }
 
