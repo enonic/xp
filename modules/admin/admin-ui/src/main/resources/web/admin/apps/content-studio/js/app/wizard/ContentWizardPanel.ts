@@ -693,6 +693,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var updateHandler = (contentId: ContentId, compareStatus?: CompareStatus) => {
 
             if (this.isCurrentContentId(contentId)) {
+                if (compareStatus != undefined) {
+                    this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
+                    this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
+                }
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     let isAlreadyUpdated = content.equals(this.getPersistedItem());
 
@@ -700,11 +704,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         this.setPersistedItem(content);
                         this.updateWizard(content, true);
 
-                        if (compareStatus != undefined) {
-                            this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
-                            this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
-
-                        }
                         if (this.isEditorEnabled()) {
                             // also update live form panel for renderable content without asking
                             this.updateLiveForm();
