@@ -591,6 +591,9 @@ export class PageComponentsView extends api.dom.DivEl {
             setTimeout(() => {
                 this.pageView.setDisabledContextMenu(false);
                 this.contextMenu.getMenu().clearActionListeners();
+                if (this.getHTMLElement().offsetHeight === 0) { // if PCV not visible, for example fragment created, hide highlighter
+                    Highlighter.get().hide();
+                }
             }, 500);
         });
 
