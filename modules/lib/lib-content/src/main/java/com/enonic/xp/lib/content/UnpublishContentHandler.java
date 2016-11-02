@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -28,7 +29,7 @@ public final class UnpublishContentHandler
 
     public List<String> execute()
     {
-        final Branch targetBranch = Branch.from( "master" );
+        final Branch targetBranch = ContentConstants.BRANCH_MASTER;
 
         final Context context = ContextBuilder.
             from( ContextAccessor.current() ).

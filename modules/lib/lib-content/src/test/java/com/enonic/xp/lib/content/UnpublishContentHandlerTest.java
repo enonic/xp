@@ -6,8 +6,8 @@ import java.util.Locale;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -65,7 +65,7 @@ public class UnpublishContentHandlerTest
         ContentIds ids = ContentIds.from( PUB_ID_1, FAIL_ID );
         UnpublishContentParams unpublishParams = UnpublishContentParams.create().
             contentIds( ids ).
-            unpublishBranch( Branch.from( "master" ) ).
+            unpublishBranch( ContentConstants.BRANCH_MASTER ).
             includeChildren( true ).
             build();
 
@@ -81,7 +81,7 @@ public class UnpublishContentHandlerTest
 
         UnpublishContentParams unpublishParams = UnpublishContentParams.create().
             contentIds( ids ).
-            unpublishBranch( Branch.from( "master" ) ).
+            unpublishBranch( ContentConstants.BRANCH_MASTER ).
             includeChildren( true ).
             build();
 
@@ -102,7 +102,7 @@ public class UnpublishContentHandlerTest
         ContentIds ids = ContentIds.from( PUB_ID_2, PUB_ID_3 );
         UnpublishContentParams unpublishParams = UnpublishContentParams.create().
             contentIds( ids ).
-            unpublishBranch( Branch.from( "master" ) ).
+            unpublishBranch( ContentConstants.BRANCH_MASTER ).
             includeChildren( true ).
             build();
 
