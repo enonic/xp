@@ -8,60 +8,133 @@ module FormOptionSetViewSpec {
     import PropertySet = api.data.PropertySet;
     import FormContext = api.form.FormContext;
     import ValidationRecording = api.form.ValidationRecording;
+    import FormItem = api.form.FormItem;
+    import FormOptionSetOccurrenceView = api.form.FormOptionSetOccurrenceView;
+    import FormItemPath = api.form.FormItemPath;
 
     describe("api.form.FormOptionSetView", function () {
 
         let optionSet: FormOptionSet;
+        let optionSetViewConfig: FormOptionSetViewConfig;
         let optionSetView: FormOptionSetView;
 
         beforeEach(function () {
             optionSet = FormOptionSetSpec.createOptionSet(FormOptionSetSpec.getOptionSetJsonWithOptions());
-            optionSetView = createOptionSetView(optionSet, getPropertySet());
-
-            spyOn(optionSetView, 'renderValidationErrors').and.callThrough();
-            spyOn(optionSetView, 'notifyValidityChanged').and.callThrough();
-        });
-
-        afterEach(function () {
-            optionSet = null;
-            optionSetView = null;
+            optionSetViewConfig = getFormOptionSetViewConfig(optionSet, getPropertySet());
+            optionSetView = new FormOptionSetView(optionSetViewConfig);
         });
 
         describe("constructor", function () {
 
-            it('should have help text', function (done) {
-                optionSetView.layout().then(function () {
-                    expect(optionSetView.hasHelpText()).toBeTruthy();
-                    done();
-                });
+            it('should be defined', function () {
+                expect(optionSetView).toBeDefined();
+            });
+
+            it('should have help text', function () {
+                expect(optionSetView.hasHelpText()).toBeTruthy();
+            });
+
+            it('should have form option set', function () {
+                expect(optionSetView['formOptionSet']).toEqual(optionSetViewConfig.formOptionSet);
+            });
+
+            it('should have parent data set', function () {
+                expect(optionSetView['parentDataSet']).toEqual(optionSetViewConfig.parentDataSet);
+            });
+
+            it('should have even class when first level', function () {
+                expect(optionSetView.hasClass('even')).toBeTruthy();
+            });
+
+            it('should have odd class when fourth level', function () {
+                spyOn(optionSet, 'getPath').and.returnValue(FormItemPath.fromString('path.to.some.view'));
+                let optionSetView2 = new FormOptionSetView(optionSetViewConfig);
+
+                expect(optionSetView2.hasClass('odd')).toBeTruthy();
             });
 
         });
 
         describe('layout()', function () {
+            var formOptionSetOccurrencesConstructor, formOptionSetOccurrences;
 
-            it('should render validation errors on layout() but not notify validity changed listeners', function (done) {
+            beforeEach(function (done) {
+                formOptionSetOccurrencesConstructor = api.form.FormOptionSetOccurrences;
 
-                optionSetView.layout().then(function () {
-                    expect(optionSetView['renderValidationErrors']).toHaveBeenCalledTimes(1);
-                    expect(optionSetView['notifyValidityChanged']).toHaveBeenCalledTimes(0);
-
-                    done();
+                spyOn(api.form, 'FormOptionSetOccurrences').and.callFake(function (config) {
+                    formOptionSetOccurrences = new formOptionSetOccurrencesConstructor(config);
+                    spyOn(formOptionSetOccurrences, "layout").and.returnValue(wemQ<void>(null));
+                    return formOptionSetOccurrences;
                 });
+
+                spyOn(optionSetView, "validate");
+                done();
             });
 
-            it('should not render validation errors nor notify validity changed on layout(false)', function (done) {
+            describe('default behaviour', function () {
+                var addButtonSpy, collapseButtonSpy;
 
-                optionSetView.layout(false).then(function () {
-                    expect(optionSetView['renderValidationErrors']).toHaveBeenCalledTimes(0);
-                    expect(optionSetView['notifyValidityChanged']).toHaveBeenCalledTimes(0);
+                beforeEach(function (done) {
 
-                    done();
+                    addButtonSpy = spyOn(optionSetView, "makeAddButton").and.callThrough();
+                    collapseButtonSpy = spyOn(optionSetView, "makeCollapseButton").and.callThrough();
+
+                    optionSetView.layout().then(function () {
+                        done();
+                    });
+                });
+
+                it('should create a container for occurrence views and append it to DOM', function () {
+                    expect(optionSetView.getEl().getElementsByClassName("occurrence-views-container").length).toEqual(1);
+                });
+
+                it('should create form option set occurrences', function () {
+                    expect(api.form.FormOptionSetOccurrences).toHaveBeenCalled();
+                });
+
+                it('should perform layout of the option set occurrences with validation', function () {
+                    expect(formOptionSetOccurrences.layout).toHaveBeenCalledWith(true);
+                });
+
+                it('should create add button for occurrences', function () {
+                    expect(addButtonSpy).toHaveBeenCalled();
+                });
+
+                it('should create collapse button for occurrences', function () {
+                    expect(collapseButtonSpy).toHaveBeenCalled();
+                });
+
+                it('should run validation', function () {
+                    expect(optionSetView.validate).toHaveBeenCalled();
+                });
+
+            });
+
+            describe('when layout is called without validation', function () {
+
+                beforeEach(function (done) {
+                    optionSetView.layout(false).then(function () {
+                        done();
+                    });
+                });
+
+                it('should perform layout of the option set occurrences without validation', function () {
+                    expect(formOptionSetOccurrences.layout).toHaveBeenCalledWith(false);
+                });
+
+                it('should NOT run validation', function () {
+
+                    expect(optionSetView.validate).not.toHaveBeenCalled();
                 });
             });
         });
 
         describe("validate()", function () {
+
+            beforeEach(function () {
+                spyOn(optionSetView, 'renderValidationErrors').and.callThrough();
+                spyOn(optionSetView, 'notifyValidityChanged').and.callThrough();
+            });
 
             it('should render validation errors on validate() but not notify validity changed listeners', function (done) {
 
@@ -124,7 +197,7 @@ module FormOptionSetViewSpec {
 
             it('should become valid after setting valid data', function (done) {
 
-                optionSetView = createOptionSetView(optionSet, getPropertySet(false));
+                optionSetView = new FormOptionSetView(getFormOptionSetViewConfig(optionSet, getPropertySet(false)));
                 optionSetView.layout(false).then(function () {
 
                     let recording = optionSetView.validate();
@@ -141,10 +214,6 @@ module FormOptionSetViewSpec {
             })
         })
     });
-
-    export function createOptionSetView(optionSet: FormOptionSet, dataSet: PropertySet): FormOptionSetView {
-        return new FormOptionSetView(getFormOptionSetViewConfig(optionSet, dataSet));
-    }
 
     export function getFormOptionSetViewConfig(optionSet: FormOptionSet, dataSet: PropertySet): FormOptionSetViewConfig {
         return {
