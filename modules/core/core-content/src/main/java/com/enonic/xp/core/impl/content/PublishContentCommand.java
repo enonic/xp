@@ -18,6 +18,7 @@ import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -40,7 +41,9 @@ public class PublishContentCommand
 
     private final Branch target;
 
-    private final boolean resolveSyncWork;
+    private final boolean includeDependencies;
+
+    private final boolean resolveSyncWork = true;
 
     private final PublishContentResult.Builder resultBuilder;
 
@@ -54,7 +57,7 @@ public class PublishContentCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
-        this.resolveSyncWork = builder.includeDependencies;
+        this.includeDependencies = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PublishContentResult.create();
         this.pushContentListener = builder.pushContentListener;
@@ -70,6 +73,7 @@ public class PublishContentCommand
         this.nodeService.refresh( RefreshMode.ALL );
 
         final CompareContentResults results;
+
         if ( resolveSyncWork )
         {
             results = getSyncWork();
@@ -131,6 +135,7 @@ public class PublishContentCommand
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
             includeChildren( this.includeChildren ).
+            includeDependencies( this.includeDependencies ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
             eventPublisher( this.eventPublisher ).
@@ -182,7 +187,14 @@ public class PublishContentCommand
         for ( final NodeId id : firstTimePublished )
         {
             this.nodeService.update( UpdateNodeParams.create().
-                editor( toBeEdited -> toBeEdited.data.setInstant( ContentPropertyNames.PUBLISHED_TIME, now ) ).
+                editor( toBeEdited -> {
+                    PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
+                    if ( publishInfo == null )
+                    {
+                        publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
+                    }
+                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, now );
+                } ).
                 id( id ).
                 build() );
         }

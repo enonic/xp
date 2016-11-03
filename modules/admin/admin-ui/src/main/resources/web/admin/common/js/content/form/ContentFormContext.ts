@@ -2,6 +2,7 @@ module api.content.form {
 
     import PropertyPath = api.data.PropertyPath;
     import PropertyArray = api.data.PropertyArray;
+    import FormState = api.app.wizard.FormState;
 
     export class ContentFormContext extends api.form.FormContext {
 
@@ -13,6 +14,8 @@ module api.content.form {
 
         private contentTypeName: api.schema.content.ContentTypeName;
 
+        private formState: FormState;
+
         constructor(builder: ContentFormContextBuilder) {
             super(builder);
             this.site = builder.site;
@@ -23,10 +26,15 @@ module api.content.form {
             } else if (builder.persistedContent) {
                 this.contentTypeName = builder.persistedContent.getType();
             }
+            this.formState = builder.formState;
         }
 
         getSite(): api.content.site.Site {
             return this.site;
+        }
+
+        getFormState(): FormState {
+            return this.formState;
         }
 
         getContentId(): api.content.ContentId {
@@ -84,6 +92,8 @@ module api.content.form {
 
         contentTypeName: api.schema.content.ContentTypeName;
 
+        formState: FormState;
+
         public setSite(value: api.content.site.Site): ContentFormContextBuilder {
             this.site = value;
             return this;
@@ -101,6 +111,11 @@ module api.content.form {
 
         public setContentTypeName(value: api.schema.content.ContentTypeName): ContentFormContextBuilder {
             this.contentTypeName = value;
+            return this;
+        }
+
+        public setFormState(value: FormState): ContentFormContextBuilder {
+            this.formState = value;
             return this;
         }
 

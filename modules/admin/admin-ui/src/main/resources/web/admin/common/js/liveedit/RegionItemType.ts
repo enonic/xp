@@ -18,7 +18,7 @@ module api.liveedit {
                 iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-region',
                 highlighterStyle: {
                     stroke: 'rgba(20, 20, 20, 1)', // not used
-                    strokeDasharray: '5 5',
+                    strokeDasharray: '4 4',
                     fill: 'rgba(255, 255, 255, 0)' // not used
                 },
                 contextMenuConfig: ['parent', 'clearRegion']
