@@ -304,6 +304,10 @@ export class LiveEditPageProxy {
         new api.liveedit.SkipLiveEditReloadConfirmationEvent(skip).fire(this.liveEditWindow);
     }
 
+    public propagateContentDeletedEvent(event: api.content.event.ContentDeletedEvent) {
+        event.fire(this.liveEditWindow);
+    }
+
     private handleIFrameLoadedEvent() {
         var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
 

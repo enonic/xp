@@ -76,6 +76,8 @@ import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
 import Panel = api.ui.panel.Panel;
 import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 
+import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
+
 export interface LiveFormPanelConfig {
 
     contentType: ContentTypeName;
@@ -354,10 +356,23 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.contextWindow.slideOut();
             this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
         });
+
+        var contentDeletedListener = (event) => {
+            this.propagateContentDeletedEvent(event);
+        }
+
+        ContentDeletedEvent.on(contentDeletedListener);
+        this.onRemoved((event) => {
+            ContentDeletedEvent.un(contentDeletedListener);
+        });
     }
 
     skipNextReloadConfirmation(skip: boolean) {
         this.liveEditPageProxy.skipNextReloadConfirmation(skip);
+    }
+
+    propagateContentDeletedEvent(event: api.content.event.ContentDeletedEvent) {
+        this.liveEditPageProxy.propagateContentDeletedEvent(event);
     }
 
     loadPage(clearInspection: boolean = true) {
