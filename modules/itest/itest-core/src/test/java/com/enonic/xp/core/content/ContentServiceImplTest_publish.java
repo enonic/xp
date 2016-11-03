@@ -297,25 +297,38 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void publish_move_delete_move()
+    public void publish_move_delete_moved_also_published()
         throws Exception
     {
-        // Create and publish s1/f1/c1
         final Content s1 = createContent( ContentPath.ROOT, "s1" );
         final Content f1 = createContent( s1.getPath(), "f1" );
         final Content c1 = createContent( f1.getPath(), "c1" );
-        doPublish( s1.getId() );
+        doPublish( true, s1.getId() );
 
         // Move to f2, delete f1
         final Content f2 = createContent( s1.getPath(), "f2" );
         doMove( c1.getId(), f2.getPath() );
-        doDelete( f1.getPath() );
-        assertStatus( c1.getId(), CompareStatus.MOVED );
+        doDelete( f1.getPath(), false );
 
-        // Move to f3, delete f2
-        final Content f3 = createContent( s1.getPath(), "f3" );
-        doMove( c1.getId(), f3.getPath() );
-        assertStatus( c1.getId(), CompareStatus.MOVED );
+        // include children = false should be overridden since its a pending delete
+        final PublishContentResult result = doPublish( false, f1.getId() );
+        assertTrue( result.getPushedContents().contains( c1.getId() ) );
+        assertStatus( c1.getId(), CompareStatus.EQUAL );
+    }
+
+    private Content getInMaster( final ContentId contentId )
+    {
+        return CTX_OTHER.callWith( () -> this.contentService.getById( contentId ) );
+    }
+
+    private Content getByPath( final ContentPath path )
+    {
+        return this.contentService.getByPath( path );
+    }
+
+    private Content doGet( final ContentId contentId )
+    {
+        return this.contentService.getById( contentId );
     }
 
     private void assertStatus( final ContentId id, CompareStatus status )
@@ -329,17 +342,20 @@ public class ContentServiceImplTest_publish
         this.contentService.move( new MoveContentParams( contentId, newParent ) );
     }
 
-    private void doDelete( final ContentPath f1Path )
+    private void doDelete( final ContentPath f1Path, boolean instantly )
     {
-        this.contentService.delete( DeleteContentParams.create().
+        final DeleteContentParams deleteContentParams = DeleteContentParams.create().
             contentPath( f1Path ).
-            build() );
+            deleteOnline( instantly ).
+            build();
+
+        this.contentService.deleteWithoutFetch( deleteContentParams );
     }
 
-    private void doPublish( final ContentId... contentIds )
+    private PublishContentResult doPublish( final boolean includeChildren, final ContentId... contentIds )
     {
-        this.contentService.publish( PushContentParams.create().
-            includeChildren( true ).
+        return this.contentService.publish( PushContentParams.create().
+            includeChildren( includeChildren ).
             contentIds( ContentIds.from( contentIds ) ).
             target( WS_OTHER ).
             build() );
