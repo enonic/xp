@@ -61,26 +61,8 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
         this.confirmDeleteAction.setIconClass("confirm-delete-action");
         this.confirmDeleteAction.setEnabled(false);
         this.confirmDeleteAction.onExecuted(() => {
-
-            if (!!this.deleteConfig.yesCallback) {
-                !!this.deleteConfig.deleteRequest.getParams()["deleteOnline"]
-                    ? this.deleteConfig.yesCallback([])
-                    : this.deleteConfig.yesCallback();
-            }
-
-            this.disableActions();
-            this.deleteConfig.deleteRequest.sendAndParseWithPolling().then((message: string) => {
-                this.close();
-                api.notify.showSuccess(message);
-            }).catch((reason: any) => {
-                if (reason && reason.message) {
-                    api.notify.showError(reason.message);
-                } else {
-                    api.notify.showError('Content could not be deleted.');
-                }
-            }).finally(() => {
-                this.enableActions();
-            }).done();
+            this.close();
+            this.deleteConfig.yesCallback();
         });
 
         this.confirmDeleteButton = this.addAction(this.confirmDeleteAction, true, true);
