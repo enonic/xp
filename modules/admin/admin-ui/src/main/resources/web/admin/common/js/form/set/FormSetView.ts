@@ -21,6 +21,10 @@ module api.form {
 
         protected formItemOccurrences: FormSetOccurrences<V>;
 
+        protected classPrefix = "";
+
+        protected helpText: string;
+
         /**
          * The index of child Data being dragged.
          */
@@ -102,6 +106,38 @@ module api.form {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }
+        }
+
+        protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+
+            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            api.util.assert(draggedElement.hasClass(this.classPrefix + "-occurrence-view"));
+            this.draggingIndex = draggedElement.getSiblingIndex();
+
+            ui.placeholder.html("Drop form item set here");
+        }
+
+        protected handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
+
+            if (this.draggingIndex >= 0) {
+                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                api.util.assert(draggedElement.hasClass(this.classPrefix + "-occurrence-view"));
+                var draggedToIndex = draggedElement.getSiblingIndex();
+
+                this.formItemOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);
+            }
+
+            this.draggingIndex = -1;
+        }
+
+        toggleHelpText(show?: boolean) {
+            if (!!this.helpText) {
+                this.formItemOccurrences.toggleHelpText(show);
+            }
+        }
+
+        hasHelpText(): boolean {
+            return !!this.helpText;
         }
 
         giveFocus(): boolean {
