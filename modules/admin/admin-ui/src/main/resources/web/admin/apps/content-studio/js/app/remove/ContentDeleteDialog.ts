@@ -35,7 +35,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         this.getItemList().onItemsRemoved(this.onListItemsRemoved.bind(this));
 
         let deleteAction = new ContentDeleteDialogAction();
-        deleteAction.onExecuted(this.doDelete.bind(this, false));
+        deleteAction.onExecuted(this.doDelete.bind(this));
         this.actionButton = this.addAction(deleteAction, true, true);
 
         this.addCancelButtonToBottom();
@@ -109,19 +109,11 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         return this;
     }
 
-    private doDelete(ignoreConfirmation: boolean = false) {
-        if (this.isAnySiteToBeDeleted() && !ignoreConfirmation) {
+    private doDelete() {
+        if (this.isAnySiteToBeDeleted()) {
             const totalItemsToDelete = this.totalItemsToDelete;
             const deleteRequest = this.createDeleteRequest();
-            const content = this.getItemList().getItems().slice(0);
-            const descendants = this.getDependantList().getItems().slice(0);
-            const yesCallback = () => {
-                this.setContentToDelete(content);
-                this.setDependantItems(descendants);
-                this.countItemsToDeleteAndUpdateButtonCounter();
-                this.open();
-                this.doDelete(true);
-            };
+            const yesCallback = this.yesCallback;
 
             this.close();
 
