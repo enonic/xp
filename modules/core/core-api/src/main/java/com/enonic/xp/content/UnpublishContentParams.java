@@ -115,12 +115,6 @@ public final class UnpublishContentParams
             return this;
         }
 
-        public Builder pushListener( final PushContentListener pushContentListener )
-        {
-            this.pushContentListener = pushContentListener;
-            return this;
-        }
-
         public UnpublishContentParams build()
         {
             this.validate();
