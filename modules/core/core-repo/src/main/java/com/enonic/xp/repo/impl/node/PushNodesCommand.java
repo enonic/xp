@@ -215,10 +215,12 @@ public class PushNodesCommand
     {
         final Context targetContext = createTargetContext( currentContext );
 
-        return targetContext.callWith( () -> CheckNodeExistsCommand.create( this ).
+        final boolean targetExists = targetContext.callWith( () -> CheckNodeExistsCommand.create( this ).
             nodePath( nodePath ).
             build().
             execute() );
+
+        return targetExists;
     }
 
     private boolean targetParentExists( final NodePath nodePath, final PushNodesResult.Builder builder, final Context currentContext )
