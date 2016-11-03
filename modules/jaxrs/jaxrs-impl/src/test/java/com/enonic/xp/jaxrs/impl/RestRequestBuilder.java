@@ -132,6 +132,7 @@ public final class RestRequestBuilder
         final MockRestResponse to = new MockRestResponse();
         to.setStatus( from.getStatus() );
         to.setData( from.getOutput() );
+        to.setHeaders( from.getOutputHeaders() );
         return to;
     }
 }

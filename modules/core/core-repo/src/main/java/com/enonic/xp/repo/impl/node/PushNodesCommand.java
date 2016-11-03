@@ -108,6 +108,13 @@ public class PushNodesCommand
                 continue;
             }
 
+            if ( comparison.getCompareStatus() == CompareStatus.NEW && targetAlreadyExists( nodeBranchEntry.getNodePath(), context ) )
+            {
+                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ALREADY_EXIST );
+                nodePushed( 1 );
+                continue;
+            }
+
             if ( !targetParentExists( nodeBranchEntry.getNodePath(), builder, context ) )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
@@ -202,6 +209,16 @@ public class PushNodesCommand
                 updateTargetChildrenMetaData( child, resultBuilder );
             }
         }
+    }
+
+    private boolean targetAlreadyExists( final NodePath nodePath, final Context currentContext )
+    {
+        final Context targetContext = createTargetContext( currentContext );
+
+        return targetContext.callWith( () -> CheckNodeExistsCommand.create( this ).
+            nodePath( nodePath ).
+            build().
+            execute() );
     }
 
     private boolean targetParentExists( final NodePath nodePath, final PushNodesResult.Builder builder, final Context currentContext )

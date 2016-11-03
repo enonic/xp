@@ -16,6 +16,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -41,7 +42,8 @@ import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
-import static com.enonic.xp.content.ContentPropertyNames.PUBLISHED_TIME;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FROM;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
 
@@ -68,6 +70,8 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
+        addPublishInfo( contentAsData, params.getContentPublishInfo() );
+
         final ExtraDatas extraData = params.getExtraDatas();
 
         if ( extraData != null && !extraData.isEmpty() )
@@ -91,7 +95,6 @@ public final class ContentDataSerializer
         final Content content = params.getEditedContent();
 
         addMetadata( params, contentAsData, content );
-
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasExtraData() )
@@ -126,7 +129,7 @@ public final class ContentDataSerializer
         extractExtradata( contentAsSet, builder );
         extractPage( contentAsSet, builder );
         extractAttachments( contentAsSet, builder );
-        extractPublishedTime( contentAsSet, builder );
+        extractPublishInfo( contentAsSet, builder );
 
         return builder;
     }
@@ -142,7 +145,16 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
-        contentAsData.ifNotNull().addInstant( PUBLISHED_TIME, content.getPublishedTime() );
+        addPublishInfo( contentAsData, content.getPublishInfo() );
+    }
+
+    private void addPublishInfo( final PropertySet contentAsData, final ContentPublishInfo data )
+    {
+        if ( data != null )
+        {
+            final PropertySet publishInfo = contentAsData.addSet( PUBLISH_INFO );
+            publishInfo.ifNotNull().addInstant( PUBLISH_FROM, data.getFrom() );
+        }
     }
 
     private void addExtraData( final PropertySet contentAsData, final ExtraDatas extraDatas )
@@ -170,9 +182,16 @@ public final class ContentDataSerializer
         builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) != null ? contentAsSet.getInstant( MODIFIED_TIME ) : null );
     }
 
-    private void extractPublishedTime( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        builder.publishedTime( contentAsSet.getInstant( PUBLISHED_TIME ) );
+        final PropertySet publishInfo = contentAsSet.getSet( PUBLISH_INFO );
+
+        if ( publishInfo != null )
+        {
+            builder.publishInfo( ContentPublishInfo.create().
+                from( publishInfo.getInstant( PUBLISH_FROM ) ).
+                build() );
+        }
     }
 
     private void extractAttachments( final PropertySet contentAsSet, final Content.Builder builder )

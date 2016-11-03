@@ -13,6 +13,7 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertySet;
@@ -47,7 +48,9 @@ public final class TestDataFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.language( Locale.ENGLISH );
         builder.data( newPropertyTree() );
-
+        builder.publishInfo( ContentPublishInfo.create().
+            from( Instant.parse( "2016-11-03T10:00:00Z" ) ).
+            build() );
         builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
         builder.attachments( newAttachments() );

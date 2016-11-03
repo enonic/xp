@@ -542,7 +542,9 @@ module api.app.wizard {
                 this.splitPanel.hideSplitter();
                 this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
 
-                this.helpTextToggleButton.hide();
+                if (!!this.helpTextToggleButton) {
+                    this.helpTextToggleButton.hide();
+                }
 
                 this.stepNavigator.onNavigationItemActivated(this.toggleMinimizeListener);
             } else {
@@ -553,7 +555,9 @@ module api.app.wizard {
                 this.stepsPanel.setListenToScroll(true);
                 this.stepNavigator.setScrollEnabled(true);
 
-                this.helpTextToggleButton.show();
+                if (!!this.helpTextToggleButton) {
+                    this.helpTextToggleButton.show();
+                }
 
                 this.stepNavigator.selectNavigationItem(navigationIndex, false, true);
             }
