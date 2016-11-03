@@ -31,6 +31,8 @@ module api.form {
             });
             this.parentDataSet = config.parentDataSet;
             this.formItemSet = config.formItemSet;
+            this.classPrefix = "form-item-set";
+            this.helpText = this.formItemSet.getHelpText();
 
             this.addClass(this.formItemSet.getPath().getElements().length % 2 ? "even" : "odd");
         }
@@ -61,7 +63,7 @@ module api.form {
                 distance: 20,
                 tolerance: 'pointer',
                 handle: '.drag-control',
-                placeholder: 'form-item-set-drop-target-placeholder',
+                placeholder: this.classPrefix + '-drop-target-placeholder',
                 helper: (event, ui) => api.ui.DragHelper.get().getHTMLElement(),
                 start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
                 update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
@@ -261,38 +263,5 @@ module api.form {
 
             return wholeRecording;
         }
-
-        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
-
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-            api.util.assert(draggedElement.hasClass("form-item-set-occurrence-view"));
-            this.draggingIndex = draggedElement.getSiblingIndex();
-
-            ui.placeholder.html("Drop form item set here");
-        }
-
-        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
-
-            if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                api.util.assert(draggedElement.hasClass("form-item-set-occurrence-view"));
-                var draggedToIndex = draggedElement.getSiblingIndex();
-
-                this.formItemOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);
-            }
-
-            this.draggingIndex = -1;
-        }
-
-        toggleHelpText(show?: boolean) {
-            if (!!this.formItemSet.getHelpText()) {
-                this.formItemOccurrences.toggleHelpText(show);
-            }
-        }
-
-        hasHelpText(): boolean {
-            return !!this.formItemSet.getHelpText();
-        }
-
     }
 }

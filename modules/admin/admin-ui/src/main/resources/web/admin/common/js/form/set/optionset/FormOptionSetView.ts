@@ -31,6 +31,8 @@ module api.form {
             });
             this.parentDataSet = config.parentDataSet;
             this.formOptionSet = config.formOptionSet;
+            this.classPrefix = "form-option-set";
+            this.helpText = this.formOptionSet.getHelpText();
 
             this.addClass(this.formOptionSet.getPath().getElements().length % 2 ? "even" : "odd");
         }
@@ -48,7 +50,7 @@ module api.form {
                 distance: 20,
                 tolerance: 'pointer',
                 handle: '.drag-control',
-                placeholder: 'form-option-set-drop-target-placeholder',
+                placeholder: this.classPrefix + '-drop-target-placeholder',
                 helper: (event, ui) => api.ui.DragHelper.get().getHTMLElement(),
                 start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
                 update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
@@ -225,16 +227,6 @@ module api.form {
                 this.formOptionSet.getOccurrences().getMinimum(), this.formOptionSet.getOccurrences().getMaximum());
         }
 
-        toggleHelpText(show?: boolean) {
-            if (!!this.formOptionSet.getHelpText()) {
-                this.formItemOccurrences.toggleHelpText(show);
-            }
-        }
-
-        hasHelpText(): boolean {
-            return !!this.formOptionSet.getHelpText();
-        }
-
         validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {
 
             var validationRecordingPath = this.resolveValidationRecordingPath(),
@@ -268,28 +260,5 @@ module api.form {
 
             return wholeRecording;
         }
-
-        protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
-
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-            api.util.assert(draggedElement.hasClass("form-option-set-occurrence-view"));
-            this.draggingIndex = draggedElement.getSiblingIndex();
-
-            ui.placeholder.html("Drop form option set here");
-        }
-
-        protected handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
-
-            if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                api.util.assert(draggedElement.hasClass("form-option-set-occurrence-view"));
-                var draggedToIndex = draggedElement.getSiblingIndex();
-
-                this.formItemOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);
-            }
-
-            this.draggingIndex = -1;
-        }
-
     }
 }
