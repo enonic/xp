@@ -16,9 +16,9 @@ export class DeleteAction extends api.ui.Action {
                     itemViewPanel.close();
                     new api.content.resource.DeleteContentRequest()
                         .addContentPath(contentToDelete.getPath())
-                        .sendAndParse()
-                        .then((result: api.content.resource.result.DeleteContentResult) => {
-                            DeleteAction.showDeleteResult(result);
+                        .sendAndParseWithPolling()
+                        .then((message: string) => {
+                            api.notify.showSuccess(message);
                         }).catch((reason: any) => {
                             if (reason && reason.message) {
                                 api.notify.showError(reason.message);
@@ -29,27 +29,4 @@ export class DeleteAction extends api.ui.Action {
                 }).open();
         });
     }
-
-    public static showDeleteResult(result: api.content.resource.result.DeleteContentResult) {
-
-        if (result.getDeleted() > 0) {
-            if (result.getDeleted() == 1) {
-                api.notify.showSuccess('The item is deleted');
-            } else {
-                api.notify.showSuccess(result.getDeleted() + ' items are deleted');
-            }
-        }
-        if (result.getPendings() > 0) {
-            if (result.getPendings() == 1) {
-                api.notify.showSuccess('The item is marked for deletion');
-            } else {
-                api.notify.showSuccess(result.getPendings() + ' items are marked for deletion');
-            }
-        }
-
-        if (result.getFailureReason()) {
-            api.notify.showWarning(`Content could not be deleted. ${result.getFailureReason()}`);
-        }
-    }
-
 }

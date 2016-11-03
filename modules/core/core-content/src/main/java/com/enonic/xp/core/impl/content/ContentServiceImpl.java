@@ -276,7 +276,6 @@ public class ContentServiceImpl
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
-            //
             pushListener( params.getPushContentListener() ).
             build().
             execute();

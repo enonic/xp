@@ -1,8 +1,8 @@
 import "../../api.ts";
-import {DeleteAction} from "../view/DeleteAction";
-import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
 import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
 import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
+import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
+import {ContentDeletePromptEvent} from "../browse/ContentDeletePromptEvent";
 
 import ContentSummary = api.content.ContentSummary;
 import CompareStatus = api.content.CompareStatus;
@@ -10,7 +10,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import DialogButton = api.ui.dialog.DialogButton;
 import ListBox = api.ui.selector.list.ListBox;
 
-export class ContentDeleteDialog extends DependantItemsDialog {
+export class ContentDeleteDialog extends ProgressBarDialog {
 
     private instantDeleteCheckbox: api.ui.Checkbox;
 
@@ -23,14 +23,19 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     constructor() {
         super("Delete item",
             "Delete selected items and their children",
-            "Other items that will be deleted");
+            "Other items that will be deleted",
+            "is-deleting",
+            () => {
+                new ContentDeletePromptEvent([]).fire();
+            }
+        );
 
         this.addClass("delete-dialog");
 
         this.getItemList().onItemsRemoved(this.onListItemsRemoved.bind(this));
 
         let deleteAction = new ContentDeleteDialogAction();
-        this.addDeleteActionHandler(deleteAction);
+        deleteAction.onExecuted(this.doDelete.bind(this));
         this.actionButton = this.addAction(deleteAction, true, true);
 
         this.addCancelButtonToBottom();
@@ -104,46 +109,34 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         return this;
     }
 
+    private doDelete() {
+        if (this.isAnySiteToBeDeleted()) {
+            const totalItemsToDelete = this.totalItemsToDelete;
+            const deleteRequest = this.createDeleteRequest();
+            const yesCallback = this.yesCallback;
 
-    private addDeleteActionHandler(deleteAction: api.ui.Action) {
-        deleteAction.onExecuted(() => {
-            if (this.isAnySiteToBeDeleted()) {
-                let totalItemsToDelete = this.totalItemsToDelete,
-                    deleteRequest = this.createDeleteRequest(),
-                    yesCallback = this.yesCallback;
+            this.close();
 
-                this.close();
-                
-                new ConfirmContentDeleteDialog({
-                    totalItemsToDelete: totalItemsToDelete,
-                    deleteRequest: deleteRequest,
-                    yesCallback: yesCallback
-                }).open();
-
-                return;
-            }
-
-            if (!!this.yesCallback) {
+            new ConfirmContentDeleteDialog({totalItemsToDelete, deleteRequest, yesCallback}).open();
+        } else {
+            if (this.yesCallback) {
                 this.instantDeleteCheckbox.isChecked() ? this.yesCallback([]) : this.yesCallback();
             }
 
-            this.actionButton.setEnabled(false);
             this.showLoadingSpinner();
 
-            this.createDeleteRequest().sendAndParse().then((result: api.content.resource.result.DeleteContentResult) => {
+            this.createDeleteRequest()
+                .sendAndParse()
+                .then((taskId: api.task.TaskId) => {
+                    this.pollTask(taskId);
+                }).catch((reason) => {
+                this.hideLoadingSpinner();
                 this.close();
-                DeleteAction.showDeleteResult(result);
-            }).catch((reason: any) => {
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);
-                } else {
-                    api.notify.showError('Content could not be deleted.');
                 }
-            }).finally(() => {
-                this.actionButton.setEnabled(true);
-                this.hideLoadingSpinner();
-            }).done();
-        });
+            });
+        }
     }
 
     private countItemsToDeleteAndUpdateButtonCounter() {
@@ -189,13 +182,6 @@ export class ContentDeleteDialog extends DependantItemsDialog {
 
     private isStatusOffline(status: CompareStatus): boolean {
         return status === CompareStatus.NEW;
-    }
-
-    private isStatusOnline(status: CompareStatus): boolean {
-        return status === CompareStatus.EQUAL ||
-               status === CompareStatus.MOVED ||
-               status === CompareStatus.NEWER ||
-               status === CompareStatus.PENDING_DELETE;
     }
 
     private isStatusPendingDelete(status: CompareStatus): boolean {

@@ -19,6 +19,7 @@
 ///<reference path='OrderExprJson.ts' />
 ///<reference path='OrderExprWrapperJson.ts' />
 ///<reference path='SetOrderUpdateJson.ts' />
+///<reference path='SetOrderUpdateJson.ts' />
 ///<reference path='SetChildOrderAndReorderJson.ts' />
 ///<reference path='ResolvePublishContentResultJson.ts' />
 ///<reference path='WidgetDescriptorJson.ts' />
@@ -31,8 +32,6 @@
 ///<reference path='ContentDependencyGroupJson.ts' />
 ///<reference path='ContentDependencyJson.ts' />
 ///<reference path='ContentsExistJson.ts' />
-///<reference path='DeleteContentResultJson.ts' />
-///<reference path='MoveContentResultJson.ts' />
-///<reference path='UnpublishContentJson.ts' />
+///<reference path='MoveContentResultJson.ts' />///<reference path='UnpublishContentJson.ts' />
 ///<reference path='PublishContentJson.ts' />
 ///<reference path='ContentPublishTimeRangeJson.ts' />

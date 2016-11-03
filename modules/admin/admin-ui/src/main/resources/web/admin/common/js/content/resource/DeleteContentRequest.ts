@@ -1,9 +1,7 @@
 module api.content.resource {
 
-    import DeleteContentResultJson = api.content.json.DeleteContentResultJson;
-    import DeleteContentResult = api.content.resource.result.DeleteContentResult;
-
-    export class DeleteContentRequest extends ContentResourceRequest<DeleteContentResultJson, DeleteContentResult> {
+    import TaskState = api.task.TaskState;
+    export class DeleteContentRequest extends ContentResourceRequest<api.task.TaskIdJson, api.task.TaskId> {
 
         private contentPaths: ContentPath[] = [];
 
@@ -46,12 +44,47 @@ module api.content.resource {
             return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
 
-        sendAndParse(): wemQ.Promise<DeleteContentResult> {
+        sendAndParse(): wemQ.Promise<api.task.TaskId> {
+            return this.send().then((response: api.rest.JsonResponse<api.task.TaskIdJson>) => {
+                return api.task.TaskId.fromJson(response.getResult());
+            });
+        }
 
-            return this.send().then((response: api.rest.JsonResponse<DeleteContentResultJson>) => {
+        sendAndParseWithPolling(): wemQ.Promise<string> {
+            return this.send().then((response: api.rest.JsonResponse<api.task.TaskIdJson>) => {
+                const deferred = Q.defer<string>();
+                const taskId: api.task.TaskId = api.task.TaskId.fromJson(response.getResult());
+                const poll = (interval: number = 500) => {
+                    setTimeout(() => {
+                        new api.task.GetTaskInfoRequest(taskId).sendAndParse().then((task: api.task.TaskInfo) => {
+                            let state = task.getState();
+                            if (!task) {
+                                deferred.reject("Task expired");
+                                return; // task probably expired, stop polling
+                            }
 
-                return DeleteContentResult.fromJson(response.getResult());
+                            let progress = task.getProgress();
 
+                            switch (state) {
+                            case TaskState.FINISHED:
+                                deferred.resolve(progress.getInfo());
+                                break;
+                            case TaskState.FAILED:
+                                deferred.reject(progress.getInfo());
+                                break;
+                            default:
+                                poll();
+                            }
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                            deferred.reject(reason);
+                        }).done();
+
+                    }, interval);
+                };
+                poll(0);
+
+                return deferred.promise;
             });
         }
     }

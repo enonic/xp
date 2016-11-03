@@ -5,7 +5,7 @@ import TaskState = api.task.TaskState;
 
 export class ProcessingStats {
     // If the content is still being processed after this time, show the progress bar (in ms)
-    static progressBarDelay: number = 2000;
+    static progressBarDelay: number = 200;
 
     // Interval of task polling when processing the content (in ms)
     static pollInterval: number = 500;

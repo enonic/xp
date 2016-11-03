@@ -16,11 +16,25 @@
   }
 
   .dialog-buttons {
-
     button.delete-action {
       .dialog-button(@form-button-font, @input-red-text);
     }
+  }
 
+  .progress-bar {
+    display: none;
+  }
+
+  &.is-deleting {
+    .is-processing-mixin();
+
+    .item-list, .dependants, .dialog-buttons button.delete-action {
+      display: none;
+    }
+
+    .instant-delete-check {
+      display: none !important;
+    }
   }
 
 }
