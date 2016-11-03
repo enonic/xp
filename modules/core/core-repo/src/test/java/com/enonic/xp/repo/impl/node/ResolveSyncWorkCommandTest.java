@@ -1036,11 +1036,12 @@ public class ResolveSyncWorkCommandTest
 
         refresh();
 
-        result = resolveSyncWorkResult( "s1" );
-
+        // Since this is pending delete, it should force-include the children even it the commands give "false"
+        result = resolveSyncWorkResult( NodeId.from( "s1" ), false );
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
-            child( "a1", "a2", "a2_1", "a2_1_1" ) );
+            child( "a1", "a2", "a2_1", "a2_1_1" ).
+            referred( "b2_1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
         assertNodes( result, ExpectedNodes.create().
