@@ -69,7 +69,7 @@ public final class DeleteContentParams
     {
         private ContentPath contentPath;
 
-        private boolean deleteOnline;
+        private boolean deleteOnline = false;
 
         private Builder()
         {
