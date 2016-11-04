@@ -1331,13 +1331,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     return;
                 }
                 optionSet.getOptions().forEach((option: api.form.FormOptionSetOption) => {
-                    var isSelected = false;
-                    selectionArray.forEach((selectedOptionName: api.data.Property) => {
-                        if (selectedOptionName.getString() == option.getName()) {
-                            isSelected = true;
-                        }
-                    })
-                    if (!isSelected) {
+                    if (!selectionArray.getProperties().some((selectedOptionName: api.data.Property) => {
+                            return (selectedOptionName.getString() == option.getName());
+                        })
+                    ) {
                         optionSetProperty.removeProperty(option.getName(), 0);
                     }
                 })
