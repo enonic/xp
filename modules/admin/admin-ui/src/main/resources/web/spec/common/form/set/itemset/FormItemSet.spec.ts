@@ -55,9 +55,12 @@ module FormItemSetSpec {
 
             it("should create correct number of items", function () {
                 expect(addSetItemSpy.calls.count()).toEqual(4); // inner set also has 2 items
-                expect(itemSet.getFormItems().length).toEqual(2);
             });
 
+            it("should create a form item for each item", function () {
+                expect(itemSet.getFormItems().length).toEqual(2);
+            });
+            
             it("each item should have correct label", function () {
                 expect((<any>itemSet.getFormItems()[0]).getLabel()).toEqual("Itemset input");
                 expect((<any>itemSet.getFormItems()[1]).getLabel()).toEqual("Level 2 item set");
@@ -68,9 +71,6 @@ module FormItemSetSpec {
                 expect(itemSet.getFormItems()[1].getName()).toEqual("itemSet lvl 2");
             });
 
-            it("should create a form item for each item", function () {
-                expect(itemSet.getFormItems().length).toEqual(2);
-            });
         });
 
         describe("public classes", function () {
