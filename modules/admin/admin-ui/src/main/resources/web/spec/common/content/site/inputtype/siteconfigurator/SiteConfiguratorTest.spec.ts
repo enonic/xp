@@ -5,6 +5,7 @@ import SiteConfigurator = api.content.site.inputtype.siteconfigurator.SiteConfig
 import Application = api.application.Application;
 import SiteConfigProvider = api.content.site.inputtype.siteconfigurator.SiteConfigProvider;
 import SiteConfiguratorComboBox = api.content.site.inputtype.siteconfigurator.SiteConfiguratorComboBox;
+import SiteConfiguratorSelectedOptionsView = api.content.site.inputtype.siteconfigurator.SiteConfiguratorSelectedOptionsView;
 import ObjectHelper = api.ObjectHelper;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 import ValueTypes = api.data.ValueTypes;
@@ -15,8 +16,10 @@ import ApplicationJson = api.application.json.ApplicationJson;
 import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
 import PropertyPath = api.data.PropertyPath;
 import ContentPath = api.content.ContentPath;
+import BaseInputTypeManagingAdd = api.form.inputtype.support.BaseInputTypeManagingAdd;
+import FormView = api.form.FormView;
 
-describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", function () {
+describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
     var input: Input, site: Site, formContext: ContentFormContext, configurator: SiteConfigurator;
 
@@ -27,99 +30,228 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", functio
         configurator = createSiteConfigurator(input, site, formContext);
     });
 
-    describe("test layout process", function () {
+    describe("constructor", () => {
 
-        var selectedOption;
+        it("should correctly initialize form context", function () {
+            expect(configurator["formContext"]).toEqual(formContext);
+        });
+
+        describe("should correctly initialize input type context:", function () {
+
+            it("input", function () {
+                expect(configurator["context"].input).toEqual(input);
+            });
+
+            it("site", function () {
+                expect(configurator["context"].site).toEqual(site);
+            });
+
+            it("formContext", function () {
+                expect(configurator["context"].formContext).toEqual(formContext);
+            });
+        });
+    });
+
+
+    describe("what happens after layout", () => {
+
+        var createComboBoxSpy, parentSpy, appendChildSpy, providerSpy;
+
+        var combobox, provider;
 
         beforeEach((done) => {
-            configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(() => {
-                selectedOption = configurator["comboBox"]["siteConfiguratorSelectedOptionsView"].createSelectedOption(
+            provider = new SiteConfigProvider(site.getContentData().getPropertyArray("siteConfig"));
+
+            createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
+            appendChildSpy = spyOn(configurator, "appendChild").and.callThrough();
+            parentSpy = spyOn(BaseInputTypeManagingAdd.prototype, "layout").and.callThrough();
+
+            providerSpy = spyOn(api.content.site.inputtype.siteconfigurator, "SiteConfigProvider")
+                .and.returnValue(provider);
+
+            configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(()=> {
+                combobox = createComboBoxSpy.calls.mostRecent().returnValue;
+                done();
+            });
+        });
+
+        it('layout of the parent class is called', () => {
+            expect(parentSpy).toHaveBeenCalledWith(input, site.getContentData().getPropertyArray("siteConfig"));
+        });
+
+        it('siteConfigProvider is initialized', () => {
+            expect(providerSpy).toHaveBeenCalled();
+        });
+
+        it('combobox is added', () => {
+            expect(appendChildSpy).toHaveBeenCalledWith(combobox);
+        });
+
+        describe("test public methods", () => {
+
+            it("reset()", () => {
+                let resetSpy = spyOn(combobox, "resetBaseValues");
+                configurator.reset();
+                expect(resetSpy).toHaveBeenCalled();
+            });
+
+            it("update()", (done) => {
+
+                var propertyArray = site.getContentData().getPropertyArray("siteConfig");
+
+                combobox.onValueChanged((a) => {
+                    expect(a.getNewValue()).toBe("com.enonic.app.test;");
+                    done();
+                });
+
+                spyOn(combobox.getComboBox(), 'doWhenLoaded').and.stub();
+
+                var newSet = propertyArray.addSet();
+                newSet.addString("v", "test");
+            });
+
+            it("displayValidationErrors()",() => {
+                let selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
                     <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
                 );
-                done();
-            });
-        });
 
-        it("combobox created correctly", function (done) {
+                let formView = new FormView(null,null,null);
+                spyOn(combobox, 'getSelectedOptionViews').and.returnValue([selectedOption.getOptionView()]);
+                spyOn(selectedOption.getOptionView(), "getFormView").and.returnValue(formView);
+                let displayValidationErrorsSpy = spyOn(formView, "displayValidationErrors");
 
-            var combobox = new SiteConfiguratorComboBox(input.getOccurrences().getMaximum() ||
-                                                        0, new SiteConfigProvider(site.getContentData().getPropertyArray(
-                "siteConfig")), this.formContext,
-                "com.enonic.app.test");
 
-            expect(ObjectHelper.stringEquals(combobox.getName(), configurator["comboBox"].getName())).toBeTruthy();
-            done();
-
-        });
-
-        it("option selected listener is called", function () {
-
-            var comboboxSpy = spyOn(configurator, "saveToSet");
-
-            var event = new SelectedOptionEvent(selectedOption, -1);
-
-            configurator["comboBox"].getComboBox()["selectedOptionsView"]["notifyOptionSelected"](event);
-
-            expect(comboboxSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), selectedOption.getIndex());
-        });
-
-        it("option moved listener is called", function (done) {
-
-            var comboboxSpy = spyOn(configurator, "saveToSet");
-
-            configurator["comboBox"].getComboBox()["selectedOptionsView"]["notifyOptionMoved"](selectedOption);
-
-            expect(comboboxSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), 0);
-            done();
-
-        });
-
-        it("option deselected listener is called", function (done) {
-
-            var comboboxSpy = spyOn(configurator["propertyArray"], "remove");
-
-            configurator["comboBox"].getComboBox()["selectedOptionsView"]["notifyOptionDeselected"](selectedOption);
-
-            expect(comboboxSpy).toHaveBeenCalledWith(selectedOption.getIndex());
-            done();
-
-        });
-
-    });
-
-    it("getValueType method returns right value type", function () {
-        expect(configurator.getValueType() == ValueTypes.DATA).toBeTruthy();
-    });
-
-    it("newInitialValue method returns right value", function () {
-        expect(configurator.newInitialValue()).toBeNull();
-    });
-
-    it("resetBaseValues method resets combobox origin and old values", function (done) {
-        configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(() => {
-            configurator["comboBox"].setValue("testValue");
-            configurator.reset();
-
-            expect(configurator["comboBox"]["originalValue"]).toBe(configurator["comboBox"].getValue());
-            expect(configurator["comboBox"]["oldValue"]).toBe(configurator["comboBox"].getValue());
-            done();
-        });
-    });
-
-    it("configurator data changing updates combobox data ", function (done) {
-
-        configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(() => {
-
-            var propertyArray = site.getContentData().getPropertyArray("siteConfig");
-
-            configurator["comboBox"].onValueChanged((a) => {
-                expect(a.getOldValue()).toBe("");
-                expect(a.getNewValue()).toBe("com.enonic.app.features;");
-                done();
+                configurator.displayValidationErrors(null);
+                expect(displayValidationErrorsSpy).toHaveBeenCalled();
             });
 
-            var newSet = propertyArray.addSet();
-            newSet.addString("v", "test");
+            it("getValueType()", () => {
+                expect(configurator.getValueType() == ValueTypes.DATA).toBeTruthy();
+            });
+
+            it("newInitialValue()", () => {
+                expect(configurator.newInitialValue()).toBeNull();
+            });
+
+            describe("giveFocus()", () => {
+                let focusSpy;
+
+                beforeEach(() => {
+                   focusSpy = spyOn(combobox, "giveFocus");
+                });
+
+                it("combobox is focused",() => {
+                    spyOn(combobox, "maximumOccurrencesReached").and.returnValue(false);
+                    configurator.giveFocus();
+
+                    expect(focusSpy).toHaveBeenCalled();
+                });
+
+                it("validation check is failed",() => {
+                    spyOn(combobox, "maximumOccurrencesReached").and.returnValue(true);
+
+                    let result = configurator.giveFocus();
+
+                    expect(result).toBe(false);
+                    expect(focusSpy).not.toHaveBeenCalled();
+                });
+            });
+
+
+            describe("validate()", () => {
+                let recording, selectedOption;
+
+                beforeEach(() => {
+                    selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
+                        <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
+                    );
+
+                    recording = new api.form.ValidationRecording();
+
+                    let formView = new FormView(null,null,null);
+
+                    spyOn(formView, "validate").and.returnValue(recording);
+                    spyOn(selectedOption.getOptionView(), "getFormView").and.returnValue(formView);
+
+                    spyOn(combobox, 'getSelectedOptionViews').and.returnValue([selectedOption.getOptionView()]);
+                });
+
+
+                it("minimum occurrences breached",() => {
+                    spyOn(recording, "isMinimumOccurrencesValid").and.returnValue(false);
+
+                    var result = configurator.validate();
+                    expect(result.isMinimumOccurrencesBreached()).toBe(true);
+                    expect(result.isValid()).toBe(false);
+                });
+
+                it("maximum occurrences breached",() => {
+                    spyOn(recording, "isMaximumOccurrencesValid").and.returnValue(false);
+
+                    var result = configurator.validate();
+                    expect(result.isMaximumOccurrencesBreached()).toBe(true);
+                    expect(result.isValid()).toBe(false);
+                });
+
+                it("valid",() => {
+                    spyOn(recording, "isMaximumOccurrencesValid").and.returnValue(true);
+                    spyOn(recording, "isMinimumOccurrencesValid").and.returnValue(true);
+
+                    var result = configurator.validate();
+                    expect(result.isValid()).toBe(true);
+                });
+
+            });
+
+
+
+        });
+
+        describe("test event listeners", () => {
+
+            var selectedOption;
+
+            beforeEach((done) => {
+                configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(() => {
+                    selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
+                        <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
+                    );
+                    done();
+                });
+            });
+
+            it("option selected listener is called", () => {
+
+                var handlerSpy = spyOn(configurator, "saveToSet");
+
+                var event = new SelectedOptionEvent(selectedOption, -1);
+
+                combobox.getSelectedOptionsView().notifyOptionSelected(event);
+
+                expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), selectedOption.getIndex());
+            });
+
+            it("option moved listener is called", (done) => {
+
+                var handlerSpy = spyOn(configurator, "saveToSet");
+
+                combobox.getSelectedOptionsView().notifyOptionMoved(selectedOption);
+
+                expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), 0);
+                done();
+            });
+
+            it("option deselected listener is called", (done) => {
+
+                var handlerSpy = spyOn(configurator["propertyArray"], "remove");
+
+                combobox.getSelectedOptionsView().notifyOptionDeselected(selectedOption);
+
+                expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getIndex());
+                done();
+
+            });
+
         });
     });
 
