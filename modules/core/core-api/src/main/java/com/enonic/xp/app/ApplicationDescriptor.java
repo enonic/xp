@@ -3,7 +3,6 @@ package com.enonic.xp.app;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.icon.Icon;
@@ -41,34 +40,9 @@ public final class ApplicationDescriptor
     }
 
     @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ApplicationDescriptor that = (ApplicationDescriptor) o;
-        return Objects.equals( key, that.key ) && Objects.equals( description, that.description ) && Objects.equals( icon, that.icon );
-    }
-
-    @Override
     public int hashCode()
     {
         return Objects.hash( key, description, icon );
-    }
-
-    @Override
-    public String toString()
-    {
-        return MoreObjects.toStringHelper( this ).
-            add( "key", key ).
-            add( "description", description ).
-            add( "icon", icon ).
-            toString();
     }
 
     public static Builder create()
