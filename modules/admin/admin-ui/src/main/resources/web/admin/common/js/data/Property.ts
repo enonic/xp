@@ -111,6 +111,16 @@ module api.data {
             this.propertyValueChangedListeners = [];
         }
 
+        reset() {
+            if (!this.hasNullValue()) {
+                if (this.getType().equals(ValueTypes.DATA)) {
+                    this.getPropertySet().reset();
+                } else {
+                    this.setValue(this.getType().newNullValue());
+                }
+            }
+        }
+
         getParent(): PropertySet {
             return this.parent;
         }

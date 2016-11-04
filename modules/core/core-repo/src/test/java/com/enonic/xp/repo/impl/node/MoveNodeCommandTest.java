@@ -289,7 +289,7 @@ public class MoveNodeCommandTest
             parent( NodePath.ROOT ).
             setNodeId( NodeId.from( "mynode" ) ).
             permissions( AccessControlList.of(
-                AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.DELETE ).build() ) ).
+                AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.MODIFY ).build() ) ).
             build() );
 
         final Node deleteGrantedNode = createNode( CreateNodeParams.create().

@@ -1,12 +1,11 @@
 package com.enonic.xp.core.content;
 
-import java.time.Instant;
-
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UpdateContentParams;
@@ -32,20 +31,21 @@ public class ContentServiceImplTest_publish_update_publishedTime
         throws Exception
     {
         final Content content = doCreateContent();
-        assertNull( content.getPublishedTime() );
+        assertNull( content.getPublishInfo() );
 
         doPublishContent( content );
 
         final Content storedContent = this.contentService.getById( content.getId() );
-        assertNotNull( storedContent.getPublishedTime() );
+        assertNotNull( storedContent.getPublishInfo() );
+        assertNotNull( storedContent.getPublishInfo().getFrom() );
 
         final Content publishedContent = ContextBuilder.from( ContextAccessor.current() ).
             branch( WS_OTHER ).
             build().
             callWith( () -> this.contentService.getById( content.getId() ) );
-        assertNotNull( publishedContent.getPublishedTime() );
+        assertNotNull( publishedContent.getPublishInfo() );
 
-        assertEquals( storedContent.getPublishedTime(), publishedContent.getPublishedTime() );
+        assertEquals( storedContent.getPublishInfo(), publishedContent.getPublishInfo() );
     }
 
     @Test
@@ -56,7 +56,9 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         doPublishContent( content );
 
-        final Instant originalPublishTime = this.contentService.getById( content.getId() ).getPublishedTime();
+        final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
+        assertNotNull( publishInfo );
+        assertNotNull( publishInfo.getFrom() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).
@@ -68,35 +70,33 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         doPublishContent( content );
 
-        final Instant unUpdatedPublishTime = this.contentService.getById( content.getId() ).getPublishedTime();
+        final ContentPublishInfo unUpdatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
-        assertEquals( originalPublishTime, unUpdatedPublishTime );
+        assertEquals( publishInfo.getFrom(), unUpdatedPublishInfo.getFrom() );
     }
-
 
     @Test
     public void set_publish_time_again_if_reset()
         throws Exception
     {
         final Content content = doCreateContent();
-
         doPublishContent( content );
 
-        final Instant originalPublishTime = this.contentService.getById( content.getId() ).getPublishedTime();
+        final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).
             editor( edit -> {
-                edit.publishedTime = null;
+                edit.publishInfo = null;
             } );
 
         this.contentService.update( updateContentParams );
 
         doPublishContent( content );
 
-        final Instant updatedPublishTime = this.contentService.getById( content.getId() ).getPublishedTime();
+        final ContentPublishInfo updatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
-        assertTrue( updatedPublishTime.isAfter( originalPublishTime ) );
+        assertTrue( updatedPublishInfo.getFrom().isAfter( publishInfo.getFrom() ) );
     }
 
     private void doPublishContent( final Content content )

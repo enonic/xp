@@ -26,6 +26,8 @@ public class ResolveContentsToBePublishedCommand
 
     private final boolean includeChildren;
 
+    private final boolean includeDependencies;
+
     private ResolveContentsToBePublishedCommand( final Builder builder )
     {
         super( builder );
@@ -34,6 +36,7 @@ public class ResolveContentsToBePublishedCommand
         this.target = builder.target;
         this.resultBuilder = CompareContentResults.create();
         this.includeChildren = builder.includeChildren;
+        this.includeDependencies = builder.includeDependencies;
     }
 
     public static Builder create()
@@ -52,22 +55,22 @@ public class ResolveContentsToBePublishedCommand
     {
         for ( final ContentId contentId : this.contentIds )
         {
-            final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId, excludedContentIds, includeChildren );
+            final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId );
 
             this.resultBuilder.addAll( CompareResultTranslator.translate( syncWorkResult.getNodeComparisons() ) );
         }
     }
 
-    private ResolveSyncWorkResult getWorkResult( final ContentId contentId, final ContentIds excludedContentIds, boolean includeChildren )
+    private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
     {
-
         final NodeIds nodeIds = excludedContentIds != null ? NodeIds.from( excludedContentIds.
             stream().
             map( id -> NodeId.from( id.toString() ) ).
             collect( Collectors.toList() ) ) : NodeIds.empty();
 
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
-            includeChildren( includeChildren ).
+            includeChildren( this.includeChildren ).
+            includeDependencies( this.includeDependencies ).
             nodeId( NodeId.from( contentId.toString() ) ).
             excludedNodeIds( nodeIds ).
             branch( this.target ).
@@ -84,6 +87,8 @@ public class ResolveContentsToBePublishedCommand
         private Branch target;
 
         private boolean includeChildren = true;
+
+        private boolean includeDependencies = true;
 
         public Builder contentIds( final ContentIds contentIds )
         {
@@ -106,6 +111,12 @@ public class ResolveContentsToBePublishedCommand
         public Builder includeChildren( final boolean includeChildren )
         {
             this.includeChildren = includeChildren;
+            return this;
+        }
+
+        public Builder includeDependencies( final boolean includeDependencies )
+        {
+            this.includeDependencies = includeDependencies;
             return this;
         }
 

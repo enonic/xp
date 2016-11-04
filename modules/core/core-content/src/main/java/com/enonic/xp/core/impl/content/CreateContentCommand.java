@@ -254,6 +254,11 @@ final class CreateContentCommand
         builder.childOrder( this.params.getChildOrder() != null ? this.params.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER );
     }
 
+    private void setContentPublishInfo( final CreateContentTranslatorParams.Builder builder )
+    {
+        builder.contentPublishInfo( this.params.getContentPublishInfo() );
+    }
+
     private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
     {
         CreateContentParams processedParams = createContentParams;

@@ -18,6 +18,8 @@ import com.google.common.io.Resources;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
@@ -129,6 +131,20 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
+        final FormOptionSet formOptionSet = FormOptionSet.create().
+            name( "myOptionSet" ).
+            label( "My option set" ).
+            helpText( "Option set help text" ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption(
+                FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).helpText( "Option help text" ).
+                    addFormItem( Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType(
+                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            build();
+
         InlineMixin myInline = InlineMixin.create().
             mixin( "myapplication:mymixin" ).
             build();
@@ -143,6 +159,7 @@ public class ContentTypeResourceTest
             addFormItem( myFieldSet ).
             addFormItem( myFormItemSet ).
             addFormItem( myInline ).
+            addFormItem( formOptionSet ).
             build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
@@ -214,17 +231,17 @@ public class ContentTypeResourceTest
 
     @Test
     public void testContentTypeIconSvg()
-            throws Exception
+        throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "archive.svg" ) );
         Icon schemaIcon = Icon.from( data, "image/svg+xml", Instant.now() );
 
         final ContentType contentType = ContentType.create().
-                name( "myapplication:icon_svg_test" ).
-                displayName( "My content type" ).
-                superType( ContentTypeName.from( "myapplication:unstructured" ) ).
-                icon( schemaIcon ).
-                build();
+            name( "myapplication:icon_svg_test" ).
+            displayName( "My content type" ).
+            superType( ContentTypeName.from( "myapplication:unstructured" ) ).
+            icon( schemaIcon ).
+            build();
         setupContentType( contentType );
 
         // exercise
@@ -232,7 +249,7 @@ public class ContentTypeResourceTest
 
         assertNotNull( response.getEntity() );
         assertEquals( schemaIcon.getMimeType(), response.getMediaType().toString() );
-        org.junit.Assert.assertArrayEquals( data, ( byte[] )response.getEntity() );
+        org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     @Test

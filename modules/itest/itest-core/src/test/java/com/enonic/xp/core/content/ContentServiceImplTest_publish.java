@@ -4,12 +4,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.content.CompareContentParams;
+import com.enonic.xp.content.CompareContentResult;
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.data.PropertyTree;
@@ -234,24 +238,129 @@ public class ContentServiceImplTest_publish
     }
 
 
+    /**
+     * ./content1
+     * ../content1_1 -> Ref:content2_1_1
+     * ./content2
+     * ../content2_1
+     * ../../content2_1_1
+     * ./content3
+     */
     @Test
-    public void push_exclude_without_dependencies()
+    public void push_without_dependencies()
         throws Exception
     {
-        createContentTree();
+        createContentTree2();
 
         final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
+            contentIds( ContentIds.from( content1.getId() ) ).
             includeDependencies( false ).
+            includeChildren( true ).
             target( WS_OTHER ).
             build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
 
         assertEquals( 2, result.getPushedContents().getSize() );
-        assertFalse( result.getPushedContents().contains( content1_1.getId() ) );
-        assertFalse( result.getPushedContents().contains( content2_1.getId() ) );
+        assertTrue( result.getPushedContents().contains( content1.getId() ) );
+        assertTrue( result.getPushedContents().contains( content1_1.getId() ) );
     }
+
+    /**
+     * /content1
+     * /content1_1
+     * /content2
+     * /content2_1 -> ref:content1_1
+     */
+    @Test
+    public void publish_move_delete_old_parent()
+        throws Exception
+    {
+        createContentTree();
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content1.getId() ) ).
+            target( WS_OTHER ).
+            includeChildren( true ).
+            build() );
+
+        this.contentService.move( new MoveContentParams( content2_1.getId(), content1.getPath() ) );
+
+        this.contentService.delete( DeleteContentParams.create().
+            contentPath( content2.getPath() ).
+            build() );
+
+        final Content movedContent =
+            this.contentService.getByPath( ContentPath.from( content1.getPath(), content2_1.getName().toString() ) );
+
+        assertNotNull( movedContent );
+    }
+
+    @Test
+    public void publish_move_delete_moved_also_published()
+        throws Exception
+    {
+        final Content s1 = createContent( ContentPath.ROOT, "s1" );
+        final Content f1 = createContent( s1.getPath(), "f1" );
+        final Content c1 = createContent( f1.getPath(), "c1" );
+        doPublish( true, s1.getId() );
+
+        // Move to f2, delete f1
+        final Content f2 = createContent( s1.getPath(), "f2" );
+        doMove( c1.getId(), f2.getPath() );
+        doDelete( f1.getPath(), false );
+
+        // include children = false should be overridden since its a pending delete
+        final PublishContentResult result = doPublish( false, f1.getId() );
+        assertTrue( result.getPushedContents().contains( c1.getId() ) );
+        assertStatus( c1.getId(), CompareStatus.EQUAL );
+    }
+
+    private Content getInMaster( final ContentId contentId )
+    {
+        return CTX_OTHER.callWith( () -> this.contentService.getById( contentId ) );
+    }
+
+    private Content getByPath( final ContentPath path )
+    {
+        return this.contentService.getByPath( path );
+    }
+
+    private Content doGet( final ContentId contentId )
+    {
+        return this.contentService.getById( contentId );
+    }
+
+    private void assertStatus( final ContentId id, CompareStatus status )
+    {
+        final CompareContentResult compare = this.contentService.compare( new CompareContentParams( id, WS_OTHER ) );
+        assertEquals( status, compare.getCompareStatus() );
+    }
+
+    private void doMove( final ContentId contentId, final ContentPath newParent )
+    {
+        this.contentService.move( new MoveContentParams( contentId, newParent ) );
+    }
+
+    private void doDelete( final ContentPath f1Path, boolean instantly )
+    {
+        final DeleteContentParams deleteContentParams = DeleteContentParams.create().
+            contentPath( f1Path ).
+            deleteOnline( instantly ).
+            build();
+
+        this.contentService.deleteWithoutFetch( deleteContentParams );
+    }
+
+    private PublishContentResult doPublish( final boolean includeChildren, final ContentId... contentIds )
+    {
+        return this.contentService.publish( PushContentParams.create().
+            includeChildren( includeChildren ).
+            contentIds( ContentIds.from( contentIds ) ).
+            target( WS_OTHER ).
+            build() );
+    }
+
 
     /**
      * /content1

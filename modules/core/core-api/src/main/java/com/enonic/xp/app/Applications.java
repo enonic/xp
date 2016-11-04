@@ -68,6 +68,4 @@ public final class Applications
             return value.getKey();
         }
     }
-
-
 }

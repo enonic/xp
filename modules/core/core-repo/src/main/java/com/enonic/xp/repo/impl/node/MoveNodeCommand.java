@@ -85,7 +85,7 @@ public class MoveNodeCommand
 
     private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )
     {
-        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.MODIFY, existingSourceNode );
 
         final Node newParentNode = GetNodeByPathCommand.create( this ).
             nodePath( newParentPath ).

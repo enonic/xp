@@ -680,7 +680,8 @@ module api.dom {
         }
 
         isScrollable(): boolean {
-            return this.el.style.overflow == "auto" || this.el.style.overflowY == "auto" || this.hasClass("slimScrollDiv");
+            return this.getComputedProperty("overflow") == "auto" || this.getComputedProperty("overflow-y") == "auto" ||
+                   this.hasClass("slimScrollDiv");
         }
 
         getComputedProperty(name: string, pseudoElement: string = null): string {

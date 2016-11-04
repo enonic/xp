@@ -38,7 +38,7 @@ public class ResolveSyncWorkCommand
 
     private final boolean includeChildren;
 
-    private final boolean checkDependencies;
+    private final boolean includeDependencies;
 
     private final Node publishRootNode;
 
@@ -58,7 +58,7 @@ public class ResolveSyncWorkCommand
         this.result = ResolveSyncWorkResult.create();
         this.processedIds = Sets.newHashSet();
         this.excludedIds = builder.excludedIds;
-        this.checkDependencies = builder.checkDependencies;
+        this.includeDependencies = builder.includeDependencies;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -96,7 +96,7 @@ public class ResolveSyncWorkCommand
         final NodeIds initialDiff = getInitialDiff();
         diffAndDependantsBuilder.addAll( initialDiff );
 
-        if ( checkDependencies )
+        if ( includeDependencies )
         {
             final NodeIds nodeDependencies = getNodeDependencies( initialDiff );
             diffAndDependantsBuilder.addAll( nodeDependencies );
@@ -113,7 +113,7 @@ public class ResolveSyncWorkCommand
 
     private NodeIds getInitialDiff()
     {
-        if ( !includeChildren )
+        if ( !includeChildren && !forceCheckChildren() )
         {
             return NodeIds.from( this.publishRootNode.id() );
         }
@@ -127,6 +127,18 @@ public class ResolveSyncWorkCommand
         return NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
             collect( Collectors.toSet() ) );
+    }
+
+    private boolean forceCheckChildren()
+    {
+        final NodeComparison rootNodeStatus = CompareNodeCommand.create().
+            nodeId( this.publishRootNode.id() ).
+            target( this.target ).
+            storageService( this.storageService ).
+            build().
+            execute();
+
+        return rootNodeStatus.getCompareStatus().equals( CompareStatus.PENDING_DELETE );
     }
 
     private NodeVersionDiffResult findNodesWithVersionDifference( final NodePath nodePath )
@@ -164,7 +176,7 @@ public class ResolveSyncWorkCommand
 
         final NodeIds parentIds = getParentIdsFromPaths( parentPaths );
 
-        final NodeIds parentsDependencies = getNodeDependencies( parentIds );
+        final NodeIds parentsDependencies = includeDependencies ? getNodeDependencies( parentIds ) : NodeIds.empty();
 
         final NodeComparisons newComparisonsToConsider = CompareNodesCommand.create().
             nodeIds( NodeIds.create().
@@ -321,7 +333,7 @@ public class ResolveSyncWorkCommand
 
         private boolean includeChildren = true;
 
-        private boolean checkDependencies = true;
+        private boolean includeDependencies = true;
 
         private Builder()
         {
@@ -351,6 +363,12 @@ public class ResolveSyncWorkCommand
         public Builder includeChildren( final boolean includeChildren )
         {
             this.includeChildren = includeChildren;
+            return this;
+        }
+
+        public Builder includeDependencies( final boolean includeDependencies )
+        {
+            this.includeDependencies = includeDependencies;
             return this;
         }
 

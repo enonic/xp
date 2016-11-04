@@ -56,7 +56,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                         console.debug("PrincipalWizardPanel.doLoadData: loaded data", loader);
                     }
                     if (loader.principal) {
-                        this.isNew = false;
+                        this.formState.setIsNew(false);
                         this.setPersistedItem(loader.principal);
                     }
                     return loader.principal;

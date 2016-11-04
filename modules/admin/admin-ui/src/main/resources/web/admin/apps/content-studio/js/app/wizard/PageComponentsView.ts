@@ -73,7 +73,7 @@ export class PageComponentsView extends api.dom.DivEl {
         this.header = new api.dom.H2El('header');
         this.header.setHtml('Components');
 
-        this.appendChildren(closeButton, this.header);
+        this.appendChildren(<api.dom.Element>closeButton, this.header);
 
         this.setModal(false).setFloating(true).setDraggable(true);
 
@@ -129,7 +129,7 @@ export class PageComponentsView extends api.dom.DivEl {
         this.mask.remove();
         this.mask = null;
 
-        if (this.pageView) {
+        if (this.pageView && !api.BrowserHelper.isIE()) { // Live Edit iframe changed, so old pageView object is not reachable in IE
             this.pageView.unPageLocked(this.pageLockedHandler.bind(this));
         }
     }
@@ -591,6 +591,9 @@ export class PageComponentsView extends api.dom.DivEl {
             setTimeout(() => {
                 this.pageView.setDisabledContextMenu(false);
                 this.contextMenu.getMenu().clearActionListeners();
+                if (this.getHTMLElement().offsetHeight === 0) { // if PCV not visible, for example fragment created, hide highlighter
+                    Highlighter.get().hide();
+                }
             }, 500);
         });
 

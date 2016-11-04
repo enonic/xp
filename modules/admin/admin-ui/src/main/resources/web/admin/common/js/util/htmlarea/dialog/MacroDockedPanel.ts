@@ -5,13 +5,7 @@ module api.util.htmlarea.dialog {
     import FormView = api.form.FormView;
     import DockedPanel = api.ui.panel.DockedPanel;
     import Panel = api.ui.panel.Panel;
-    import ContentFormContext = api.content.form.ContentFormContext;
-    import Form = api.form.Form;
 
-    import Input = api.form.Input;
-    import FormItemSet = api.form.FormItemSet;
-    import FieldSet = api.form.FieldSet;
-    import FormItem = api.form.FormItem;
     import PropertySet = api.data.PropertySet;
 
     export class MacroDockedPanel extends DockedPanel {
