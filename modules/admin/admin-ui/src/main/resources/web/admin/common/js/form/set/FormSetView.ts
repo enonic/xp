@@ -25,6 +25,8 @@ module api.form {
 
         protected helpText: string;
 
+        protected formSet: FormSet;
+
         /**
          * The index of child Data being dragged.
          */
@@ -115,7 +117,7 @@ module api.form {
         }
 
         private makeAddButton(): api.ui.button.Button {
-            var addButton = new api.ui.button.Button("Add " + this.getLabel());
+            var addButton = new api.ui.button.Button("Add " + this.formSet.getLabel());
             addButton.addClass("small");
             addButton.onClicked((event: MouseEvent) => {
                 this.formItemOccurrences.createAndAddOccurrence(this.formItemOccurrences.countOccurrences(), false);
@@ -143,10 +145,6 @@ module api.form {
             });
 
             return collapseButton;
-        }
-
-        protected getLabel(): string {
-            throw new Error("Must be implemented by inheritor");
         }
 
         protected handleFormSetOccurrenceViewValidityChanged(event: RecordingValidityChangedEvent) {
@@ -200,14 +198,6 @@ module api.form {
                 this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
                     validationRecordingPath).setIncludeChildren(true));
             }
-        }
-
-        protected resolveValidationRecordingPath(): ValidationRecordingPath {
-            throw new Error("Must be implemented by inheritor");
-        }
-
-        protected getOccurrences(): api.form.Occurrences {
-            throw new Error("Must be implemented by inheritor");
         }
 
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
@@ -352,6 +342,15 @@ module api.form {
 
         hasHelpText(): boolean {
             return !!this.helpText;
+        }
+
+        protected getOccurrences(): api.form.Occurrences {
+            return this.formSet.getOccurrences();
+        }
+
+        protected resolveValidationRecordingPath(): ValidationRecordingPath {
+            return new ValidationRecordingPath(this.parentDataSet.getPropertyPath(), this.formSet.getName(),
+                this.getOccurrences().getMinimum(), this.getOccurrences().getMaximum());
         }
 
         giveFocus(): boolean {

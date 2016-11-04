@@ -20,8 +20,6 @@ module api.form {
 
     export class FormItemSetView extends FormSetView<FormItemSetOccurrenceView> {
 
-        private formItemSet: FormItemSet;
-
         constructor(config: FormItemSetViewConfig) {
             super(<FormItemViewConfig> {
                 className: "form-item-set-view",
@@ -30,44 +28,31 @@ module api.form {
                 parent: config.parent
             });
             this.parentDataSet = config.parentDataSet;
-            this.formItemSet = config.formItemSet;
+            this.formSet = config.formItemSet;
             this.classPrefix = "form-item-set";
-            this.helpText = this.formItemSet.getHelpText();
+            this.helpText = this.formSet.getHelpText();
 
-            this.addClass(this.formItemSet.getPath().getElements().length % 2 ? "even" : "odd");
-        }
-
-        protected getLabel(): string {
-            return this.formItemSet.getLabel();
+            this.addClass(this.formSet.getPath().getElements().length % 2 ? "even" : "odd");
         }
 
         protected initOccurrences(): FormSetOccurrences<FormItemSetOccurrenceView> {
             return this.formItemOccurrences = new FormItemSetOccurrences(<FormItemSetOccurrencesConfig>{
                 context: this.getContext(),
                 occurrenceViewContainer: this.occurrenceViewsContainer,
-                formItemSet: this.formItemSet,
+                formItemSet: <FormItemSet> this.formSet,
                 parent: this.getParent(),
                 propertyArray: this.getPropertyArray(this.parentDataSet)
             });
         }
 
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
-            var propertyArray = propertySet.getPropertyArray(this.formItemSet.getName());
+            var propertyArray = propertySet.getPropertyArray(this.formSet.getName());
             if (!propertyArray) {
-                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formItemSet.getName()).setParent(
+                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formSet.getName()).setParent(
                     this.parentDataSet).build();
                 propertySet.addPropertyArray(propertyArray);
             }
             return propertyArray;
-        }
-
-        protected getOccurrences(): api.form.Occurrences {
-            return this.formItemSet.getOccurrences();
-        }
-
-        protected resolveValidationRecordingPath(): ValidationRecordingPath {
-            return new ValidationRecordingPath(this.parentDataSet.getPropertyPath(), this.formItemSet.getName(),
-                this.formItemSet.getOccurrences().getMinimum(), this.formItemSet.getOccurrences().getMaximum());
         }
     }
 }
