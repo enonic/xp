@@ -109,7 +109,7 @@ public class PushNodesCommand
                 continue;
             }
 
-            if ( comparison.getCompareStatus() == CompareStatus.NEW &&
+            if ( ( CompareStatus.NEW == comparison.getCompareStatus() || CompareStatus.MOVED == comparison.getCompareStatus() ) &&
                 targetAlreadyExists( nodeBranchEntry.getNodePath(), comparisons, context ) )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ALREADY_EXIST );
