@@ -1,6 +1,5 @@
 module api.form.inputtype.text {
 
-    import DivEl = api.dom.DivEl;
     declare var CONFIG;
 
     import support = api.form.inputtype.support;
