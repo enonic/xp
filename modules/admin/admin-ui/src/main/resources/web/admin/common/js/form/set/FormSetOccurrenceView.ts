@@ -25,6 +25,10 @@ module api.form {
             super(className, formItemOccurrence);
         }
 
+        validate(silent: boolean = true): ValidationRecording {
+            throw new Error("Must be implemented by inheritor");
+        }
+
         toggleHelpText(show?: boolean): any {
             this.formItemLayer.toggleHelpText(show);
             return super.toggleHelpText(show);
