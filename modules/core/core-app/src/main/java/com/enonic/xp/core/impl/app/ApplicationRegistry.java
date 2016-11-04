@@ -151,7 +151,7 @@ final class ApplicationRegistry
     {
         try
         {
-            return this.configurationAdmin.getConfiguration( pid );
+            return null; // this.configurationAdmin.getConfiguration( pid );
         }
         catch ( final Exception e )
         {
