@@ -15,7 +15,7 @@ module api.form {
 
         protected collapseButton: api.dom.AEl;
 
-        protected validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
+        protected validityChangedListeners: {(event: RecordingValidityChangedEvent): void}[] = [];
 
         protected previousValidationRecording: ValidationRecording;
 
@@ -219,6 +219,10 @@ module api.form {
         }
 
         validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {
+
+            if (!this.formItemOccurrences) {
+                throw new Error("Can't validate before layout is done");
+            }
 
             var validationRecordingPath = this.resolveValidationRecordingPath(),
                 wholeRecording = new ValidationRecording(),

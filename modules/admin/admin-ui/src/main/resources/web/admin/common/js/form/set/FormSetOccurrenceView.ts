@@ -39,6 +39,7 @@ module api.form {
             if (!set) {
                 set = propertyArray.addSet();
             }
+            this.ensureSelectionArrayExists(set);
             this.propertySet = set;
             return this.formItemLayer.update(this.propertySet, unchangedOnly);
         }
@@ -52,6 +53,10 @@ module api.form {
                 }
             });
             return result;
+        }
+
+        protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
+            // override if needed to add default selection to property set
         }
 
         showContainer(show: boolean) {
