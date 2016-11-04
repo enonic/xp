@@ -1,28 +1,17 @@
 module api.form {
 
-    export class FormOptionSet extends FormItem implements FormItemContainer {
-
-        private label: string;
+    export class FormOptionSet extends FormSet implements FormItemContainer {
 
         private options: FormOptionSetOption[] = [];
 
         private expanded: boolean;
 
-        private occurrences: Occurrences;
-
         private multiselection: Occurrences;
 
-        private helpText: string;
-
-        private helpTextIsOn: boolean = false;
-
         constructor(formOptionSetJson: api.form.json.FormOptionSetJson) {
-            super(formOptionSetJson.name);
-            this.label = formOptionSetJson.label;
+            super(formOptionSetJson);
             this.expanded = formOptionSetJson.expanded;
-            this.occurrences = Occurrences.fromJson(formOptionSetJson.occurrences);
             this.multiselection = Occurrences.fromJson(formOptionSetJson.multiselection);
-            this.helpText = formOptionSetJson.helpText;
 
             if (formOptionSetJson.options != null) {
                 formOptionSetJson.options.forEach((formOptionSetOptionJson: api.form.json.FormOptionSetOptionJson) => {
@@ -47,16 +36,8 @@ module api.form {
             return this.options;
         }
 
-        getLabel(): string {
-            return this.label;
-        }
-
         isExpanded(): boolean {
             return this.expanded;
-        }
-
-        getOccurrences(): Occurrences {
-            return this.occurrences;
         }
 
         getMultiselection(): Occurrences {
@@ -65,18 +46,6 @@ module api.form {
 
         isRadioSelection(): boolean {
             return this.multiselection.getMinimum() == 1 && this.multiselection.getMaximum() == 1
-        }
-
-        getHelpText(): string {
-            return this.helpText;
-        }
-
-        isHelpTextOn(): boolean {
-            return this.helpTextIsOn;
-        }
-
-        toggleHelpText(show?: boolean) {
-            this.helpTextIsOn = show;
         }
 
         public toFormOptionSetJson(): api.form.json.FormItemTypeWrapperJson {
@@ -106,23 +75,11 @@ module api.form {
 
             var other = <FormOptionSet>o;
 
-            if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
-                return false;
-            }
-
             if (!api.ObjectHelper.booleanEquals(this.expanded, other.expanded)) {
                 return false;
             }
 
-            if (!api.ObjectHelper.equals(this.occurrences, other.occurrences)) {
-                return false;
-            }
-
             if (!api.ObjectHelper.equals(this.multiselection, other.multiselection)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.stringEquals(this.helpText, other.helpText)) {
                 return false;
             }
 

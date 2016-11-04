@@ -20,8 +20,6 @@ module api.form {
 
     export class FormOptionSetView extends FormSetView<FormOptionSetOccurrenceView> {
 
-        private formOptionSet: FormOptionSet;
-
         constructor(config: FormOptionSetViewConfig) {
             super(<FormItemViewConfig> {
                 className: "form-option-set-view",
@@ -30,42 +28,29 @@ module api.form {
                 parent: config.parent
             });
             this.parentDataSet = config.parentDataSet;
-            this.formOptionSet = config.formOptionSet;
+            this.formSet = config.formOptionSet;
             this.classPrefix = "form-option-set";
-            this.helpText = this.formOptionSet.getHelpText();
+            this.helpText = this.formSet.getHelpText();
 
-            this.addClass(this.formOptionSet.getPath().getElements().length % 2 ? "even" : "odd");
+            this.addClass(this.formSet.getPath().getElements().length % 2 ? "even" : "odd");
         }
 
         protected initOccurrences(): FormSetOccurrences<FormOptionSetOccurrenceView> {
             return this.formItemOccurrences = new FormOptionSetOccurrences(<FormOptionSetOccurrencesConfig>{
                 context: this.getContext(),
                 occurrenceViewContainer: this.occurrenceViewsContainer,
-                formOptionSet: this.formOptionSet,
+                formOptionSet: <FormOptionSet> this.formSet,
                 parent: this.getParent(),
                 propertyArray: this.getPropertyArray(this.parentDataSet)
             });
         }
 
         protected getPropertyArray(parentPropertySet: PropertySet): PropertyArray {
-            var existingPropertyArray = parentPropertySet.getPropertyArray(this.formOptionSet.getName());
+            var existingPropertyArray = parentPropertySet.getPropertyArray(this.formSet.getName());
             if (!existingPropertyArray) {
-                parentPropertySet.addPropertySet(this.formOptionSet.getName());
+                parentPropertySet.addPropertySet(this.formSet.getName());
             }
-            return parentPropertySet.getPropertyArray(this.formOptionSet.getName());
-        }
-
-        protected getLabel(): string {
-            return this.formOptionSet.getLabel();
-        }
-
-        protected getOccurrences(): api.form.Occurrences {
-            return this.formOptionSet.getOccurrences();
-        }
-
-        protected resolveValidationRecordingPath(): ValidationRecordingPath {
-            return new ValidationRecordingPath(this.parentDataSet.getPropertyPath(), this.formOptionSet.getName(),
-                this.formOptionSet.getOccurrences().getMinimum(), this.formOptionSet.getOccurrences().getMaximum());
+            return parentPropertySet.getPropertyArray(this.formSet.getName());
         }
     }
 }

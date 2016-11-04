@@ -9,7 +9,7 @@ module api.form {
     export interface FormOptionSetOccurrenceViewConfig {
         context: FormContext;
 
-        formOptionSetOccurrence: FormOptionSetOccurrence;
+        formSetOccurrence: FormSetOccurrence<FormOptionSetOccurrenceView>;
 
         formOptionSet: FormOptionSet;
 
@@ -25,8 +25,8 @@ module api.form {
         private context: FormContext;
 
         constructor(config: FormOptionSetOccurrenceViewConfig) {
-            super("form-option-set-occurrence-view", config.formOptionSetOccurrence);
-            this.formItemOccurrence = config.formOptionSetOccurrence;
+            super("form-option-set-occurrence-view", config.formSetOccurrence);
+            this.formItemOccurrence = config.formSetOccurrence;
             this.formOptionSet = config.formOptionSet;
             this.propertySet = config.dataSet;
             this.ensureSelectionArrayExists(this.propertySet);
