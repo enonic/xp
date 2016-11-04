@@ -8,7 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 
-@Component
+@Component(immediate = true)
 public final class ApplicationConfigInvalidator
     implements ConfigurationListener
 {
