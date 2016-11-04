@@ -318,34 +318,6 @@ public class PushNodesCommandTest
     }
 
     @Test
-    public void rename_to_name_already_there_but_deleted_in_same_push()
-        throws Exception
-    {
-        final Node a = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "a" ).
-            setNodeId( NodeId.from( "a" ) ).
-            build() );
-
-        final Node b = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "b" ).
-            setNodeId( NodeId.from( "b" ) ).
-            build() );
-
-        pushNodes( NodeIds.from( a.id() ), WS_OTHER );
-
-        setPendingDelete( a.id() );
-        renameNode( b.id(), "a" );
-
-        final PushNodesResult result = pushNodes( NodeIds.from( b.id(), a.id() ), WS_OTHER );
-
-        assertEquals( 0, result.getFailed().size() );
-        assertEquals( 2, result.getSuccessful().getSize() );
-    }
-
-
-    @Test
     public void push_after_rename()
         throws Exception
     {
