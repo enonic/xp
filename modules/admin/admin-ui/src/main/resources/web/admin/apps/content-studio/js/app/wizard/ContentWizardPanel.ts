@@ -693,6 +693,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var updateHandler = (contentId: ContentId, compareStatus?: CompareStatus) => {
 
             if (this.isCurrentContentId(contentId)) {
+                if (compareStatus != undefined) {
+                    this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
+                    this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
+                }
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     let isAlreadyUpdated = content.equals(this.getPersistedItem());
 
@@ -700,11 +704,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         this.setPersistedItem(content);
                         this.updateWizard(content, true);
 
-                        if (compareStatus != undefined) {
-                            this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
-                            this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
-
-                        }
                         if (this.isEditorEnabled()) {
                             // also update live form panel for renderable content without asking
                             this.updateLiveForm();
@@ -1633,6 +1632,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         if (this.isContentFormValid) {
             if (!this.hasUnsavedChanges()) {
+                // WARN: intended to restore status to persisted value if data is changed to original values,
+                // but if invoked after save this will revert status to persisted one as well 
                 this.currentContentCompareStatus = this.persistedContentCompareStatus;
 
             } else if (publishControls.isOnline()) {
