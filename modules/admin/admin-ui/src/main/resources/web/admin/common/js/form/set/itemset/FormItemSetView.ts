@@ -38,11 +38,8 @@ module api.form {
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
             var propertyArray = propertySet.getPropertyArray(this.formItemSet.getName());
             if (!propertyArray) {
-                propertyArray = PropertyArray.create().
-                    setType(ValueTypes.DATA).
-                    setName(this.formItemSet.getName()).
-                    setParent(this.parentDataSet).
-                    build();
+                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formItemSet.getName()).setParent(
+                    this.parentDataSet).build();
                 propertySet.addPropertyArray(propertyArray);
             }
             return propertyArray;
@@ -64,7 +61,8 @@ module api.form {
                 placeholder: 'form-item-set-drop-target-placeholder',
                 helper: (event, ui) => api.ui.DragHelper.get().getHTMLElement(),
                 start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
-                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui),
+                stop: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStop(event, ui)
             });
 
             this.appendChild(this.occurrenceViewsContainer);
@@ -269,6 +267,7 @@ module api.form {
             this.draggingIndex = draggedElement.getSiblingIndex();
 
             ui.placeholder.html("Drop form item set here");
+            api.ui.DragHelper.get().setDropAllowed(true);
         }
 
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
@@ -282,6 +281,19 @@ module api.form {
             }
 
             this.draggingIndex = -1;
+        }
+
+        private handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams) {
+            api.ui.DragHelper.get().setDropAllowed(false);
+
+            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+
+            this.occurrenceViewsContainer.getChildren().forEach(child => {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(child, FormItemSetOccurrenceView) &&
+                    child.getId() == draggedElement.getId()) {
+                    (<FormItemSetOccurrenceView>child).layout();
+                }
+            });
         }
 
         toggleHelpText(show?: boolean) {
