@@ -189,7 +189,7 @@ module api.form {
             return null;
         }
 
-        private ensureSelectionArrayExists(propertyArraySet: PropertySet) {
+        protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
             var selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
             if (!selectionPropertyArray) {
                 selectionPropertyArray =
