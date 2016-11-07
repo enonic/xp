@@ -16,7 +16,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.Assert.*;
 
-public class ContentServiceImplTest_publish_update_publishedTime
+public class ContentServiceImplTest_push_update_publishedTime
     extends AbstractContentServiceTest
 {
     @Override
@@ -34,7 +34,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
         assertNull( content.getPublishInfo() );
         assertVersions( content.getId(), 1 );
 
-        doPublishContent( content );
+        doPushContent( content );
         assertVersions( content.getId(), 2 );
 
         final Content storedContent = this.contentService.getById( content.getId() );
@@ -56,7 +56,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
     {
         final Content content = doCreateContent();
 
-        doPublishContent( content );
+        doPushContent( content );
         assertVersions( content.getId(), 2 );
 
         final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
@@ -71,7 +71,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         this.contentService.update( updateContentParams );
 
-        doPublishContent( content );
+        doPushContent( content );
         assertVersions( content.getId(), 3 );
 
         final ContentPublishInfo unUpdatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
@@ -84,7 +84,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
         throws Exception
     {
         final Content content = doCreateContent();
-        doPublishContent( content );
+        doPushContent( content );
 
         final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
@@ -96,16 +96,16 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         this.contentService.update( updateContentParams );
 
-        doPublishContent( content );
+        doPushContent( content );
 
         final ContentPublishInfo updatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
         assertTrue( updatedPublishInfo.getFrom().isAfter( publishInfo.getFrom() ) );
     }
 
-    private void doPublishContent( final Content content )
+    private void doPushContent( final Content content )
     {
-        this.contentService.publish( PushContentParams.create().
+        this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             includeDependencies( false ).
