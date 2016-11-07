@@ -76,6 +76,7 @@
     overflow: hidden;
     display: block;
     cursor: pointer;
+    transform: rotate(180deg);
 
     .icon-trending_neutral();
   }
@@ -230,5 +231,12 @@
       }
 
     }
+  }
+}
+
+body.mobile-statistics-panel {
+  .appbar, .split-panel {
+    right: 55px;
+    .transition(all 0.3s linear);
   }
 }
