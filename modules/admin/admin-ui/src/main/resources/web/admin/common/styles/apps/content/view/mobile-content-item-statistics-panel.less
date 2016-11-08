@@ -234,9 +234,15 @@
   }
 }
 
-body.mobile-statistics-panel {
+// Transition when opeining content preview on a mobile
+body {
   .appbar, .split-panel {
-    right: 55px;
-    .transition(all 0.3s linear);
+    right: 0px;
+    .transition(right 0.3s linear);
+  }
+  &.mobile-statistics-panel {
+    .appbar, .split-panel {
+      right: 55px;
+    }
   }
 }
