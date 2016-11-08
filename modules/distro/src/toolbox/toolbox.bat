@@ -32,7 +32,7 @@ echo location of your Java installation.
 goto fail
 
 :init
-set DEFAULT_JAVA_OPTS=-Xms1024M -Xmx2048M
+set "DEFAULT_JAVA_OPTS="
 set DEFAULT_JAVA_DEBUG_OPTS=-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
 
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=%DEFAULT_JAVA_OPTS%
