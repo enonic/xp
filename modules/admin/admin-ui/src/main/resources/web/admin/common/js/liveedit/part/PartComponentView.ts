@@ -2,7 +2,6 @@ module api.liveedit.part {
 
     import ComponentView = api.liveedit.ComponentView;
     import ContentView = api.liveedit.ContentView;
-    import RegionView = api.liveedit.RegionView;
     import PartComponent = api.content.page.region.PartComponent;
 
     export class PartComponentViewBuilder extends ComponentViewBuilder<PartComponent> {

@@ -28,10 +28,13 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentVersionsParams;
+import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -486,6 +489,31 @@ public class AbstractContentServiceTest
             assertEquals( "Expected content with path [" + content.getPath() + "] in this position, found [" +
                               this.contentService.getById( next ).getPath() +
                               "]", content.getId(), next );
+        }
+    }
+
+    protected void assertVersions( final ContentId contentId, final int expected )
+    {
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( contentId ).
+            build() );
+
+        assertEquals( expected, versions.getHits() );
+
+        final Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+
+        Instant lastModified = null;
+
+        while ( iterator.hasNext() )
+        {
+            final ContentVersion next = iterator.next();
+
+            if ( lastModified != null )
+            {
+                assertTrue( next.getModified().isBefore( lastModified ) );
+            }
+
+            lastModified = next.getModified();
         }
     }
 

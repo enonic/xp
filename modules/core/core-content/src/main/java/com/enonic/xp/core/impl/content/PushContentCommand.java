@@ -151,6 +151,11 @@ public class PushContentCommand
             return;
         }
 
+        SetFirstTimePublishedCommand.create( this ).
+            nodeIds( nodesToPush ).
+            build().
+            execute();
+
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
 
         final Contents contents = getContents( pushNodesResult.getSuccessful().getKeys() );
@@ -161,9 +166,9 @@ public class PushContentCommand
         this.resultBuilder.setPushed( contents );
     }
 
-    private Contents getContents( final Set<NodeId> successfull )
+    private Contents getContents( final Set<NodeId> nodeIds )
     {
-        final ContentIds successful = ContentNodeHelper.toContentIds( NodeIds.from( successfull ) );
+        final ContentIds successful = ContentNodeHelper.toContentIds( NodeIds.from( nodeIds ) );
 
         return GetContentByIdsCommand.create( new GetContentByIdsParams( successful ) ).
             contentTypeService( this.contentTypeService ).

@@ -6,6 +6,7 @@ module api.liveedit.fragment {
     import FragmentComponent = api.content.page.region.FragmentComponent;
     import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
     import Content = api.content.Content;
+    import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
 
     export class FragmentComponentViewBuilder extends ComponentViewBuilder<FragmentComponent> {
@@ -26,12 +27,15 @@ module api.liveedit.fragment {
 
         private fragmentContentLoadedListeners: {(event: api.liveedit.FragmentComponentLoadedEvent): void}[];
 
+        private fragmentLoadErrorListeners: {(event: api.liveedit.FragmentLoadErrorEvent): void}[];
+
         constructor(builder: FragmentComponentViewBuilder) {
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentComponent = builder.component;
             this.fragmentContainsLayout = false;
             this.fragmentContent = null;
             this.fragmentContentLoadedListeners = [];
+            this.fragmentLoadErrorListeners = [];
 
             super(builder.setPlaceholder(new FragmentPlaceholder(this)).setViewer(
                 new FragmentComponentViewer()).setInspectActionRequired(true));
@@ -44,6 +48,37 @@ module api.liveedit.fragment {
             this.loadFragmentContent();
 
             this.parseContentViews(this);
+
+            this.handleContentRemovedEvent();
+        }
+
+        private handleContentRemovedEvent() {
+            var contentDeletedListener = (event) => {
+                var deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
+                    return !deletedItem.isPending() && deletedItem.getContentId().equals(this.fragmentComponent.getFragment());
+                })
+                if (deleted) {
+                    this.notifyFragmentLoadError();
+                    new api.liveedit.ShowWarningLiveEditEvent("Fragment " + this.fragmentComponent.getFragment() +
+                                                              " is no longer available").fire();
+                    this.convertToBrokenFragmentView();
+                }
+            }
+
+            ContentDeletedEvent.on(contentDeletedListener);
+
+            this.onRemoved((event) => {
+                ContentDeletedEvent.un(contentDeletedListener);
+            });
+        }
+
+        private convertToBrokenFragmentView() {
+            this.getEl().setAttribute("data-portal-placeholder", "true");
+            this.getEl().setAttribute("data-portal-placeholder-error", "true");
+            this.removeChild(this.getFirstChild());
+            var errorSpan = new api.dom.SpanEl("data-portal-placeholder-error");
+            errorSpan.setHtml("Fragment content could not be found");
+            this.prependChild(errorSpan);
         }
 
         isEmpty(): boolean {
@@ -74,6 +109,8 @@ module api.liveedit.fragment {
                     }).catch((reason: any) => {
                         this.fragmentContent = null;
                         this.notifyFragmentContentLoaded();
+                        this.notifyFragmentLoadError();
+                        new api.liveedit.ShowWarningLiveEditEvent("Fragment " + contentId + " could not be found").fire();
                     }).done();
                 }
             } else {
@@ -137,5 +174,21 @@ module api.liveedit.fragment {
             });
         }
 
+        onFragmentLoadError(listener: (event: api.liveedit.FragmentLoadErrorEvent) => void) {
+            this.fragmentLoadErrorListeners.push(listener);
+        }
+
+        unFragmentLoadError(listener: (event: api.liveedit.FragmentLoadErrorEvent) => void) {
+            this.fragmentLoadErrorListeners = this.fragmentLoadErrorListeners.filter((curr) => {
+                return curr != listener;
+            })
+        }
+
+        notifyFragmentLoadError() {
+            var event = new api.liveedit.FragmentLoadErrorEvent(this);
+            this.fragmentLoadErrorListeners.forEach((listener) => {
+                listener(event);
+            });
+        }
     }
 }
