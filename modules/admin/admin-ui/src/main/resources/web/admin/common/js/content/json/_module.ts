@@ -33,5 +33,3 @@
 ///<reference path='ContentsExistJson.ts' />
 ///<reference path='DeleteContentResultJson.ts' />
 ///<reference path='MoveContentResultJson.ts' />
-///<reference path='UnpublishContentJson.ts' />
-///<reference path='PublishContentJson.ts' />

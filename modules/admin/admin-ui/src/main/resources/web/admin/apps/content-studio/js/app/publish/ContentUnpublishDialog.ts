@@ -1,5 +1,6 @@
 import "../../api.ts";
-import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
+import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
+import {ContentUnpublishPromptEvent} from "../browse/ContentUnpublishPromptEvent";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -10,13 +11,20 @@ import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
 
 
-export class ContentUnpublishDialog extends DependantItemsDialog {
+export class ContentUnpublishDialog extends ProgressBarDialog {
 
 
     constructor() {
-        super("Unpublish item",
+
+        super(
+            "Unpublish item",
             "<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline",
-            "Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline");
+            "Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline",
+            "is-unpublishing",
+            () => {
+                new ContentUnpublishPromptEvent([]).fire();
+            }
+        );
 
         this.getEl().addClass("unpublish-dialog");
 
@@ -29,18 +37,21 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
 
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
             if (!this.isIgnoreItemsChanged()) {
-                this.refreshUnpublishDependencies().done();
+                this.reloadUnpublishDependencies().done();
             }
         });
     }
 
     open() {
-        this.refreshUnpublishDependencies().done(() => this.centerMyself());
+        this.reloadUnpublishDependencies().done(() => this.centerMyself());
 
         super.open();
     }
 
-    private refreshUnpublishDependencies(): wemQ.Promise<void> {
+    private reloadUnpublishDependencies(): wemQ.Promise<void> {
+        if (this.isProgressBarEnabled()) {
+            return wemQ<void>(null);
+        }
 
         this.getDependantList().clearItems();
         this.showLoadingSpinner();
@@ -95,27 +106,27 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
         })
     }
 
-
     private doUnpublish() {
 
         this.showLoadingSpinner();
-        this.actionButton.setEnabled(false);
+
+        this.setSubTitle(this.countTotal() + " items are being unpublished...");
 
         var selectedIds = this.getContentToUnpublishIds();
 
-        new UnpublishContentRequest().setIds(selectedIds).setIncludeChildren(true).send().then(
-            (jsonResponse: api.rest.JsonResponse<api.content.json.UnpublishContentJson>) => {
-                this.close();
-                UnpublishContentRequest.feedback(jsonResponse);
+        new UnpublishContentRequest()
+            .setIncludeChildren(true)
+            .setIds(selectedIds)
+            .sendAndParse()
+            .then((taskId: api.task.TaskId) => {
+                this.pollTask(taskId);
             }).catch((reason) => {
-                this.close();
-                if (reason && reason.message) {
-                    api.notify.showError(reason.message);
-                }
-            }).finally(() => {
-                this.hideLoadingSpinner();
-                this.actionButton.setEnabled(true);
-            });
+            this.hideLoadingSpinner();
+            this.close();
+            if (reason && reason.message) {
+                api.notify.showError(reason.message);
+            }
+        });
     }
 }
 

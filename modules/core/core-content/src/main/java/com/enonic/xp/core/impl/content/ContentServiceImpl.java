@@ -346,6 +346,7 @@ public class ContentServiceImpl
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
+            //
             pushListener( params.getPushContentListener() ).
             build().
             execute();
@@ -363,6 +364,20 @@ public class ContentServiceImpl
             excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
+            build().
+            execute();
+    }
+
+    @Override
+    public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
+    {
+        return UnpublishContentCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            //
             build().
             execute();
     }
@@ -748,19 +763,6 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
-            build().
-            execute();
-    }
-
-    @Override
-    public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
-    {
-        return UnpublishContentCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }

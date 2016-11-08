@@ -37,6 +37,8 @@ public interface ContentService
 
     PublishContentResult publish( PushContentParams params );
 
+    UnpublishContentsResult unpublishContent( final UnpublishContentParams params );
+
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
     Content duplicate( DuplicateContentParams params );
@@ -94,7 +96,5 @@ public interface ContentService
     boolean contentExists( ContentPath contentPath );
 
     Content reprocess( ContentId contentId );
-
-    UnpublishContentsResult unpublishContent( final UnpublishContentParams params );
 
 }
