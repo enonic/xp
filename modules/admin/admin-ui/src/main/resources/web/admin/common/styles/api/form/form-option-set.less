@@ -31,6 +31,13 @@
               &.checkbox:hover label {
                 color: @admin-dark-gray !important;
               }
+
+              input[type="radio"] {
+                border-color: darkgray;
+                &:checked {
+                  background-color: @admin-font-gray2;
+                }
+              }
             }
 
             .option-items-container {
@@ -75,9 +82,14 @@
         padding: 5px 31px;
       }
 
+      &:not(.selected) {
+        > .form-input:hover label {
+          color: @admin-dark-gray !important;
+        }
+      }
 
       &.selected {
-        border: 6px solid @admin-blue;
+        border: 6px solid @admin-option-set-header-bg;
         border-bottom: none;
         border-top: none;
         box-sizing: border-box;
@@ -87,7 +99,7 @@
         }
 
         &.expandable {
-          border-bottom: 6px solid @admin-blue;
+          border-bottom: 6px solid @admin-option-set-header-bg;
         }
 
         &:not(.expandable) {
@@ -99,7 +111,7 @@
           }
 
           .option-items-container {
-            border-bottom: 1px solid @admin-blue;
+            border-bottom: 1px solid @admin-option-set-header-bg;
           }
 
           > .form-input {
@@ -130,7 +142,11 @@
 
           display: inline-block;
           width: 100%;
-          background-color: @admin-blue;
+          background-color: @admin-option-set-header-bg;
+
+          &.radio-button > * {
+            cursor: default;
+          }
 
           input[type="radio"] {
             margin-left: 4px;
@@ -143,12 +159,12 @@
             }
           }
 
-          label {
-            color: @admin-white;
+          &.checkbox:hover label {
+            color: @admin-white !important;
           }
 
-          &.checkbox:hover label {
-            color: @admin-bg-almost-white !important;
+          label {
+            color: @admin-white;
           }
         }
 
@@ -201,16 +217,13 @@
           border: 1px solid darkgray;
           border-radius: 50%;
           outline: none;
-          background-color: white;
+          background-color: @admin-white;
 
           &:checked {
+            border-color: @admin-option-set-header-bg;
             box-shadow: 0 0 0 3px @admin-white inset;
-            background-color: @admin-dark-gray;
+            background-color: @admin-option-set-input-checked;
             -moz-appearance: none;
-          }
-
-          &:not(:checked):hover {
-            box-shadow:0 0 1px 0px @admin-dark-gray inset;
           }
         }
 
@@ -229,10 +242,6 @@
             margin-top: 10px;
             left: 10px;
           }
-        }
-
-        &.checkbox:hover label {
-          color: @admin-dark-gray !important;
         }
 
         input[type="checkbox"]:disabled + label {
