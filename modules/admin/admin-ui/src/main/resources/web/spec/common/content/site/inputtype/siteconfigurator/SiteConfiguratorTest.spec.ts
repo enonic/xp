@@ -33,21 +33,21 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
     describe("constructor", () => {
 
         it("should correctly initialize form context", function () {
-            expect(configurator["formContext"]).toEqual(formContext);
+            expect(formContext).toEqual(configurator["formContext"]);
         });
 
         describe("should correctly initialize input type context:", function () {
 
             it("input", function () {
-                expect(configurator["context"].input).toEqual(input);
+                expect(input).toEqual(configurator["context"].input);
             });
 
             it("site", function () {
-                expect(configurator["context"].site).toEqual(site);
+                expect(site).toEqual(configurator["context"].site);
             });
 
             it("formContext", function () {
-                expect(configurator["context"].formContext).toEqual(formContext);
+                expect(formContext).toEqual(configurator["context"].formContext);
             });
         });
     });
