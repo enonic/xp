@@ -34,8 +34,11 @@ public class HtmlStripperTest
     @Test
     public void process()
     {
-        assertEquals( ValueFactory.newString( "ValueWithoutTags" ), this.htmlStripper.process( ValueFactory.newString( "ValueWithoutTags" ) ) );
+        assertEquals( ValueFactory.newString( "ValueWithoutTags" ),
+                      this.htmlStripper.process( ValueFactory.newString( "ValueWithoutTags" ) ) );
         assertEquals( ValueFactory.newString( " Value " ), this.htmlStripper.process( ValueFactory.newString( "<a>Value</a>" ) ) );
+        assertEquals( ValueFactory.newString( " Blåbærsyltetøy " ),
+                      this.htmlStripper.process( ValueFactory.newString( "<a>Bl&aring;b&aelig;rsyltet&oslash;y</b>" ) ) );
         assertEquals( ValueFactory.newString( " TextBefore TextBetween TextAfter " ), this.htmlStripper.process( ValueFactory.newString(
             "<!-- Comment -->TextBefore<tag param=\"paramValue\">TextBetween</tag>TextAfter<EmptyNode/><SecondEmptyNode/>" ) ) );
     }

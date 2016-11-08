@@ -3,6 +3,8 @@ package com.enonic.xp.index;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
@@ -25,15 +27,16 @@ final class HtmlStripper
 
         final Matcher matcher = XML_TAG_PATTERN.matcher( value.toString() );
         final String strippedHtml = matcher.replaceAll( " " );
+        final String unescapedHtml = StringEscapeUtils.unescapeHtml( strippedHtml );
 
         final ValueType valueType = value.getType();
         if ( valueType == ValueTypes.XML )
         {
-            return ValueFactory.newXml( strippedHtml );
+            return ValueFactory.newXml( unescapedHtml );
         }
         else
         {
-            return ValueFactory.newString( strippedHtml );
+            return ValueFactory.newString( unescapedHtml );
         }
     }
 
