@@ -130,9 +130,7 @@ describe("api.data.PropertyPath", () => {
         it("throws an exception if path contains one or no elements", () => {
             var path = PropertyPath.fromString('.first');
 
-            expect(() => {
-                path.removeFirstPathElement();
-            }).toThrow();
+            expect(path.removeFirstPathElement).toThrow();
         });
 
         it("returns relative path if parent is relative", () => {

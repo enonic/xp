@@ -24,8 +24,7 @@ describe("api.data.PropertySet", () => {
             expect(tree.getRoot().setProperty("myProp", 0, new Value("myalue", ValueTypes.STRING))).not.toBeNull();
         });
 
-        // TODO: Disabled: since toThrowError does not seem to work with PhantomJS
-        xit("given ('myProp', 1) then Error is thrown", () => {
+       it("given ('myProp', 1) then Error is thrown", () => {
             var tree = new PropertyTree();
             var value = new Value("myalue", ValueTypes.STRING);
             var propertySet = tree.getRoot();
@@ -49,8 +48,7 @@ describe("api.data.PropertySet", () => {
             expect(property).not.toBeNull();
         });
 
-        // TODO: Disabled: since toThrowError does not seem to work with PhantomJS
-        xit("given ('myProp[1]') then Error is thrown", () => {
+        it("given ('myProp[1]') then Error is thrown", () => {
             var tree = new PropertyTree();
             var value = new Value("myalue", ValueTypes.STRING);
             var propertySet = tree.getRoot();
