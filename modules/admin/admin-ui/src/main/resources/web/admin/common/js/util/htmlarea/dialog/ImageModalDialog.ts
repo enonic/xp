@@ -9,9 +9,10 @@ module api.util.htmlarea.dialog {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-    import Content = api.content.Content;
     import Action = api.ui.Action;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import ContentSummary = api.content.ContentSummary;
+    import Content = api.content.Content;
 
     export class ImageModalDialog extends ModalDialog {
 
@@ -101,6 +102,8 @@ module api.util.htmlarea.dialog {
                 this.createImgElForNewImage(imageContent);
                 this.previewImage();
                 formItem.addClass("selected-item-preview");
+                this.fetchImageCaption(imageContent).then(value => this.setCaptionFieldValue(value)).catch(
+                    (reason: any) => api.DefaultErrorHandler.handle(reason)).done();
             });
 
             imageSelectorComboBox.onOptionDeselected(() => {
@@ -108,6 +111,7 @@ module api.util.htmlarea.dialog {
                 this.displayValidationErrors(false);
                 this.removePreview();
                 this.imageToolbar.remove();
+                this.setCaptionFieldValue("");
                 this.showCaptionLabel();
                 this.imageUploaderEl.show();
                 this.imagePreviewScrollHandler.toggleScrollButtons();
@@ -373,6 +377,32 @@ module api.util.htmlarea.dialog {
 
         private getCaptionFieldValue() {
             return (<api.dom.InputEl>this.imageCaptionField.getInput()).getValue().trim();
+        }
+
+        private setCaptionFieldValue(value: string) {
+            (<api.dom.InputEl>this.imageCaptionField.getInput()).setValue(value);
+        }
+
+        private fetchImageCaption(imageContent: ContentSummary): wemQ.Promise<string> {
+            return new api.content.resource.GetContentByIdRequest(imageContent.getContentId()).sendAndParse().then(
+                (imageContent: api.content.Content) => {
+                    return this.getDescriptionFromImageContent(imageContent) || imageContent.getProperty("caption").getString() || "";
+                });
+        }
+
+        private getDescriptionFromImageContent(imageContent: Content): string {
+            let imageInfoMixin = new api.schema.mixin.MixinName("media:imageInfo");
+            let imageInfoData = imageContent.getExtraData(imageInfoMixin);
+            let descriptionProperty = imageInfoData.getData().getProperty("description");
+
+            if (descriptionProperty) {
+                let description = descriptionProperty.getString();
+                if (description) {
+                    return description;
+                }
+            }
+
+            return null;
         }
 
         private isImageWiderThanEditor() {
