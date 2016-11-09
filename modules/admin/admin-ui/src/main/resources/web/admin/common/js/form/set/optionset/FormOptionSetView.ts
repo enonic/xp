@@ -33,6 +33,9 @@ module api.form {
             this.formOptionSet = config.formOptionSet;
 
             this.addClass(this.formOptionSet.getPath().getElements().length % 2 ? "even" : "odd");
+            if (this.formOptionSet.getOccurrences().getMaximum() == 1) {
+                this.addClass("max-1-occurrence");
+            }
         }
 
         public layout(validate: boolean = true): wemQ.Promise<void> {
