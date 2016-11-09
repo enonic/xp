@@ -33,6 +33,9 @@ module api.form {
             this.formItemSet = config.formItemSet;
 
             this.addClass(this.formItemSet.getPath().getElements().length % 2 ? "even" : "odd");
+            if (this.formItemSet.getOccurrences().getMaximum() == 1) {
+                this.addClass("max-1-occurrence");
+            }
         }
 
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
