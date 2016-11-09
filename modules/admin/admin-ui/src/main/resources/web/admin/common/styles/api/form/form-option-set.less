@@ -183,6 +183,10 @@
         display: none;
         opacity: 0.5;
 
+        .help-text-toggler {
+          margin-right: 3px;
+        }
+
         > .input-view {
           margin: 0px;
 
@@ -221,10 +225,30 @@
           background-color: @admin-white;
 
           &:checked {
-            border-color: @admin-option-set-header-bg;
-            box-shadow: 0 0 0 3px @admin-white inset;
-            background-color: @admin-option-set-input-checked;
-            -moz-appearance: none;
+              opacity: 0;
+
+            + label:before {
+              content: "";
+              display: block;
+              position: absolute;
+              top: 2px;
+              left: -15px;
+              height: 14px;
+              width: 14px;
+              background: white;
+              border: 1px solid lightgray;
+              box-shadow: inset 0px 0px 0px 2px white;
+              -webkit-box-shadow: inset 0px 0px 0px 2px white;
+              -moz-box-shadow: inset 0px 0px 0px 2px white;
+              -o-box-shadow: inset 0px 0px 0px 2px white;
+              -webkit-border-radius: 8px;
+              -moz-border-radius: 8px;
+              -o-border-radius: 8px;
+            }
+
+            + label:before {
+              background: @admin-option-set-input-checked;
+            }
           }
         }
 
@@ -235,6 +259,7 @@
 
         input[type="radio"] + label {
           padding: 0px 5px 0px 7px;
+          position: relative;
         }
 
         input[type="checkbox"] + label {
