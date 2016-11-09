@@ -47,6 +47,7 @@ import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialog
 import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEvent;
 import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
 import PageView = api.liveedit.PageView;
+import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentReloadRequiredEvent;
 
 export class LiveEditPageProxy {
 
@@ -111,6 +112,8 @@ export class LiveEditPageProxy {
     private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
 
     private fragmentCreatedListeners: {(event: ComponentFragmentCreatedEvent): void;}[] = [];
+
+    private fragmentLoadedListeners: {(event: FragmentComponentReloadRequiredEvent): void;}[] = [];
 
     private showWarningListeners: {(event: ShowWarningLiveEditEvent): void;}[] = [];
 
@@ -304,7 +307,7 @@ export class LiveEditPageProxy {
         new api.liveedit.SkipLiveEditReloadConfirmationEvent(skip).fire(this.liveEditWindow);
     }
 
-    public propagateContentDeletedEvent(event: api.content.event.ContentDeletedEvent) {
+    public propagateEvent(event: api.event.Event) {
         event.fire(this.liveEditWindow);
     }
 
@@ -434,6 +437,8 @@ export class LiveEditPageProxy {
 
         ComponentFragmentCreatedEvent.un(null, contextWindow);
 
+        FragmentComponentReloadRequiredEvent.un(null, contextWindow);
+
         ShowWarningLiveEditEvent.un(null, contextWindow);
 
         ComponentLoadedEvent.un(null, contextWindow);
@@ -488,6 +493,8 @@ export class LiveEditPageProxy {
         PageInspectedEvent.on(this.notifyPageInspected.bind(this), contextWindow);
 
         ComponentFragmentCreatedEvent.on(this.notifyFragmentCreated.bind(this), contextWindow);
+
+        FragmentComponentReloadRequiredEvent.on(this.notifyFragmentReloadRequired.bind(this), contextWindow);
 
         ShowWarningLiveEditEvent.on(this.notifyShowWarning.bind(this), contextWindow);
 
@@ -798,6 +805,18 @@ export class LiveEditPageProxy {
 
     private notifyFragmentCreated(event: ComponentFragmentCreatedEvent) {
         this.fragmentCreatedListeners.forEach((listener) => listener(event));
+    }
+
+    onFragmentReloadRequired(listener: {(event: FragmentComponentReloadRequiredEvent): void;}) {
+        this.fragmentLoadedListeners.push(listener);
+    }
+
+    unFragmentReloadRequired(listener: {(event: FragmentComponentReloadRequiredEvent): void;}) {
+        this.fragmentLoadedListeners = this.fragmentLoadedListeners.filter((curr) => (curr != listener));
+    }
+
+    private notifyFragmentReloadRequired(event: FragmentComponentReloadRequiredEvent) {
+        this.fragmentLoadedListeners.forEach((listener) => listener(event));
     }
 
     onShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
