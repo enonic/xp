@@ -255,16 +255,15 @@ export class LiveEditPageProxy {
             this.showLoadMaskHandler();
         }
 
-        var contentId = this.liveEditModel.getContent().getContentId().toString();
-        var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
-
         if (api.BrowserHelper.isIE()) {
             this.copyObjectsBeforeFrameReloadForIE();
         }
 
-        this.liveEditIFrame.setSrc(pageUrl);
-
         if (this.liveEditModel.isRenderableContent()) {
+            var contentId = this.liveEditModel.getContent().getContentId().toString();
+            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+
+            this.liveEditIFrame.setSrc(pageUrl);
             if (LiveEditPageProxy.debug) {
                 console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
             }
