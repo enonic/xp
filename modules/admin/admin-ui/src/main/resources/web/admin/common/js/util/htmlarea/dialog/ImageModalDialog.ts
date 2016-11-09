@@ -18,6 +18,7 @@ module api.util.htmlarea.dialog {
 
         private imagePreviewContainer: api.dom.DivEl;
         private imageCaptionField: FormItem;
+        private imageAltTextField: FormItem;
         private imageUploaderEl: api.content.image.ImageUploaderEl;
         private imageElement: HTMLImageElement;
         private content: api.content.ContentSummary;
@@ -52,7 +53,8 @@ module api.util.htmlarea.dialog {
 
             return [
                 imageSelector,
-                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption())
+                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption()),
+                this.imageAltTextField = this.createFormItem("altText", "Alternative text", null, this.getAltText())
             ];
         }
 
@@ -102,6 +104,7 @@ module api.util.htmlarea.dialog {
                 this.createImgElForNewImage(imageContent);
                 this.previewImage();
                 formItem.addClass("selected-item-preview");
+                this.setAltTextFieldValue(imageContent.getDisplayName());
                 this.fetchImageCaption(imageContent).then(value => this.setCaptionFieldValue(value)).catch(
                     (reason: any) => api.DefaultErrorHandler.handle(reason)).done();
             });
@@ -112,7 +115,9 @@ module api.util.htmlarea.dialog {
                 this.removePreview();
                 this.imageToolbar.remove();
                 this.setCaptionFieldValue("");
-                this.showCaptionLabel();
+                this.setAltTextFieldValue("");
+                this.showFormItemLabel(this.imageCaptionField);
+                this.showFormItemLabel(this.imageAltTextField);
                 this.imageUploaderEl.show();
                 this.imagePreviewScrollHandler.toggleScrollButtons();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
@@ -191,7 +196,8 @@ module api.util.htmlarea.dialog {
             });
 
             this.hideUploadMasks();
-            this.hideCaptionLabel();
+            this.hideFormItemLabel(this.imageCaptionField, "Caption");
+            this.hideFormItemLabel(this.imageAltTextField, "Alternative text");
             this.imageUploaderEl.hide();
             this.imagePreviewContainer.insertChild(this.image, 0);
         }
@@ -221,16 +227,16 @@ module api.util.htmlarea.dialog {
                 ImageModalDialog.maxImageWidth).resolve();
         }
 
-        private hideCaptionLabel() {
-            this.imageCaptionField.getLabel().hide();
-            this.imageCaptionField.getInput().getEl().setAttribute("placeholder", "Caption");
-            this.imageCaptionField.getInput().getParentElement().getEl().setMarginLeft("0px");
+        private hideFormItemLabel(formItem: FormItem, placeholder: string) {
+            formItem.getLabel().hide();
+            formItem.getInput().getEl().setAttribute("placeholder", placeholder);
+            formItem.getInput().getParentElement().getEl().setMarginLeft("0px");
         }
 
-        private showCaptionLabel() {
-            this.imageCaptionField.getLabel().show();
-            this.imageCaptionField.getInput().getEl().removeAttribute("placeholder");
-            this.imageCaptionField.getInput().getParentElement().getEl().setMarginLeft("");
+        private showFormItemLabel(formItem: FormItem) {
+            formItem.getLabel().show();
+            formItem.getInput().getEl().removeAttribute("placeholder");
+            formItem.getInput().getParentElement().getEl().setMarginLeft("");
         }
 
         private removePreview() {
@@ -268,6 +274,15 @@ module api.util.htmlarea.dialog {
         private getCaption(): string {
             if (this.imageElement) {
                 return wemjq(this.imageElement.parentElement).children("figcaption").text();
+            }
+            else {
+                return api.util.StringHelper.EMPTY_STRING;
+            }
+        }
+
+        private getAltText(): string {
+            if (this.imageElement) {
+                return this.imageElement.alt;
             }
             else {
                 return api.util.StringHelper.EMPTY_STRING;
@@ -383,6 +398,14 @@ module api.util.htmlarea.dialog {
             (<api.dom.InputEl>this.imageCaptionField.getInput()).setValue(value);
         }
 
+        private getAltTextFieldValue() {
+            return (<api.dom.InputEl>this.imageAltTextField.getInput()).getValue().trim();
+        }
+
+        private setAltTextFieldValue(value: string) {
+            (<api.dom.InputEl>this.imageAltTextField.getInput()).setValue(value);
+        }
+
         private fetchImageCaption(imageContent: ContentSummary): wemQ.Promise<string> {
             return new api.content.resource.GetContentByIdRequest(imageContent.getContentId()).sendAndParse().then(
                 (imageContent: api.content.Content) => {
@@ -422,6 +445,7 @@ module api.util.htmlarea.dialog {
             figCaption.setText(this.getCaptionFieldValue());
             figCaption.setAttribute("style", "text-align: left");
             this.image.setId("__mcenew");
+            (<HTMLImageElement>this.image.getHTMLElement()).alt = this.getAltTextFieldValue();
 
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
 
