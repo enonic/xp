@@ -122,6 +122,34 @@ public class PushNodesCommandTest
     }
 
     @Test
+    public void push_rename_pushnew_test()
+        throws Exception
+    {
+        PushNodesResult result;
+
+        //Creates and pushes a first content
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+        result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        assertEquals( 1, result.getSuccessful().getSize() );
+
+        //Renames and pushes the first content
+        renameNode( node );
+        result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        assertEquals( 1, result.getSuccessful().getSize() );
+
+        //Creates a same a second content with the same path
+        final Node secondNode = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+        result = pushNodes( NodeIds.from( secondNode.id() ), WS_OTHER );
+        assertEquals( 1, result.getSuccessful().getSize() );
+    }
+
+    @Test
     public void push_child_fail_if_parent_does_not_exists()
         throws Exception
     {

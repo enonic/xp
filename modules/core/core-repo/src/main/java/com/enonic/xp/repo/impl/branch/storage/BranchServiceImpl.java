@@ -64,6 +64,13 @@ public class BranchServiceImpl
         return doStore( nodeBranchEntry, context );
     }
 
+    @Override
+    public String store( final NodeBranchEntry nodeBranchEntry, final NodePath previousPath, final InternalContext context )
+    {
+        this.pathCache.evict( createPath( previousPath, context ) );
+        return doStore( nodeBranchEntry, context );
+    }
+
     private String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( nodeBranchEntry, context );
@@ -72,16 +79,6 @@ public class BranchServiceImpl
         doCache( context, nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
 
         return id;
-    }
-
-    @Override
-    public String move( final MoveBranchParams moveBranchParams, final InternalContext context )
-    {
-        final NodeBranchEntry nodeBranchEntry = moveBranchParams.getNodeBranchEntry();
-
-        this.pathCache.evict( createPath( moveBranchParams.getPreviousPath(), context ) );
-
-        return doStore( nodeBranchEntry, context );
     }
 
     @Override
