@@ -91,7 +91,7 @@ final class ControllerMappingsResolver
 
         return descriptors.stream().
             filter( ( d ) -> matchesUrlPattern( d, request ) ).
-            filter( this::matchesContent ).
+            filter( ( d ) -> matchesContent( d, request ) ).
             sorted( ( d1, d2 ) ->
                     {
                         if ( d2.compareTo( d1 ) == 0 )
@@ -275,8 +275,14 @@ final class ControllerMappingsResolver
         return descriptor.invertPattern() ? !patternMatches : patternMatches;
     }
 
-    private boolean matchesContent( final ControllerMappingDescriptor descriptor )
+    private boolean matchesContent( final ControllerMappingDescriptor descriptor, final PortalRequest request )
     {
+        final String endpointPath = request.getEndpointPath();
+        if ( endpointPath != null && !endpointPath.isEmpty() )
+        {
+            return false;
+        }
+
         if ( descriptor.getContentConstraint() == null )
         {
             return true;

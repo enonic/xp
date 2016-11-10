@@ -32,7 +32,11 @@ module api.form {
             this.classPrefix = "form-item-set";
             this.helpText = this.formSet.getHelpText();
 
-            this.addClass(this.formSet.getPath().getElements().length % 2 ? "even" : "odd");
+            this.addClass(this.formSet.getPath(.getElements().length % 2 ? "even" : "odd");
+            if (this.formSet.getOccurrences().getMaximum() == 1) {
+                this.addClass("max-1-occurrence");
+            }
+            
         }
 
         protected initOccurrences(): FormSetOccurrences<FormItemSetOccurrenceView> {

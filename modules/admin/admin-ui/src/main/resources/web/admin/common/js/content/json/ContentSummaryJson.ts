@@ -2,33 +2,35 @@ module api.content.json {
 
     export interface ContentSummaryJson extends ContentIdBaseItemJson, api.item.ItemJson {
 
-        name:string;
+        name: string;
 
-        displayName:string;
+        displayName: string;
 
-        path:string;
+        path: string;
 
-        isRoot:boolean;
+        isRoot: boolean;
 
-        hasChildren:boolean;
+        hasChildren: boolean;
 
-        type:string;
+        type: string;
 
-        iconUrl:string;
+        iconUrl: string;
 
         thumbnail: api.thumb.ThumbnailJson;
 
-        modifier:string;
+        modifier: string;
 
-        owner:string;
+        owner: string;
 
-        isPage:boolean;
+        isPage: boolean;
 
-        isValid:boolean;
+        isValid: boolean;
 
-        requireValid:boolean;
+        requireValid: boolean;
 
-        childOrder:ChildOrderJson;
+        childOrder: ChildOrderJson;
+        
+        publish: ContentPublishTimeRangeJson;
 
         language: string;
 
