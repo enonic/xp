@@ -122,6 +122,35 @@ public class PushNodesCommandTest
     }
 
     @Test
+    public void push_rename_push_test()
+        throws Exception
+    {
+        PushNodesResult result;
+
+        //Creates and pushes a content
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+        result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        assertEquals( 1, result.getSuccessful().getSize() );
+        assertNotNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+
+        //Renames the content
+        renameNode( node );
+        assertNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPath( NodePath.create( "/" + node.id() + "edited" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+
+        //Pushed the renames content
+        result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        assertEquals( 1, result.getSuccessful().getSize() );
+        assertNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/" + node.id() + "edited" ).build() ) );
+    }
+
+    @Test
     public void push_child_fail_if_parent_does_not_exists()
         throws Exception
     {
