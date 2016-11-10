@@ -5,6 +5,12 @@ module api.data {
     import GeoPoint = api.util.GeoPoint;
     import LocalTime = api.util.LocalTime;
 
+    export interface PropertyTreeDiff {
+        added: Property[];
+        removed: Property[];
+        modified: {oldValue: Property; newValue: Property}[]
+    }
+
     /**
      * The PropertyTree is the root container of properties.
      *
@@ -135,6 +141,14 @@ module api.data {
             }
 
             return true;
+        }
+
+        public removeEmptyValues() {
+            this.root.removeEmptyValues();
+        }
+
+        public diff(other: PropertyTree): PropertyTreeDiff {
+            return this.root.diff(other.root);
         }
 
         /**
