@@ -15,6 +15,7 @@ module FormOptionSetViewSpec {
     import FormOptionSetOccurrences = api.form.FormOptionSetOccurrences;
     import Button = api.ui.button.Button;
     import AEl = api.dom.AEl;
+    import CallInfo = jasmine.CallInfo;
 
     describe("api.form.FormOptionSetView", function () {
 
@@ -39,7 +40,7 @@ module FormOptionSetViewSpec {
             });
 
             it('should have form option set', function () {
-                expect(optionSetView['formOptionSet']).toEqual(optionSetViewConfig.formOptionSet);
+                expect(optionSetView['formSet']).toEqual(optionSetViewConfig.formOptionSet);
             });
 
             it('should have parent data set', function () {
@@ -60,17 +61,10 @@ module FormOptionSetViewSpec {
         });
 
         describe('layout()', function () {
-            var formOptionSetOccurrencesConstructor,
-                formOptionSetOccurrences: FormOptionSetOccurrences;
+            let initOccurrencesSpy;
 
             beforeEach(function () {
-                formOptionSetOccurrencesConstructor = api.form.FormOptionSetOccurrences;
-
-                spyOn(api.form, 'FormOptionSetOccurrences').and.callFake(function (config) {
-                    formOptionSetOccurrences = new formOptionSetOccurrencesConstructor(config);
-                    return formOptionSetOccurrences;
-                });
-
+                initOccurrencesSpy = spyOn(api.form.FormOptionSetView.prototype, 'initOccurrences').and.callThrough();
                 spyOn(optionSetView, "validate").and.stub();
             });
 
@@ -92,11 +86,11 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should create form option set occurrences', function () {
-                    expect(api.form.FormOptionSetOccurrences).toHaveBeenCalled();
+                    expect(initOccurrencesSpy.calls.mostRecent().returnValue).toBeDefined();
                 });
 
                 it('should perform layout of the option set occurrences with validation', function () {
-                    expect(formOptionSetOccurrences.layout).toHaveBeenCalledWith(true);
+                    expect(api.form.FormSetOccurrences.prototype.layout).toHaveBeenCalledWith(true);
                 });
 
                 it('should create add button for occurrences', function () {
@@ -124,7 +118,7 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should perform layout of the option set occurrences without validation', function () {
-                    expect(formOptionSetOccurrences.layout).toHaveBeenCalledWith(false);
+                    expect(api.form.FormSetOccurrences.prototype.layout).toHaveBeenCalledWith(false);
                 });
 
                 it('should NOT run validation', function () {
@@ -148,28 +142,28 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should listen to occurrence added', function () {
-                    formOptionSetOccurrences['notifyOccurrenceAdded'](null, null);
+                    initOccurrencesSpy.calls.mostRecent().returnValue['notifyOccurrenceAdded'](null, null);
                     expect(optionSetView.refresh).toHaveBeenCalled();
                 });
 
                 it('should listen to occurrence rendered', function () {
-                    formOptionSetOccurrences['notifyOccurrenceRendered'](null, null, false);
+                    initOccurrencesSpy.calls.mostRecent().returnValue['notifyOccurrenceRendered'](null, null, false);
                     expect(optionSetView.validate).toHaveBeenCalled();
                 });
 
                 it('should listen to occurrence removed', function () {
-                    formOptionSetOccurrences['notifyOccurrenceRemoved'](null, null);
+                    initOccurrencesSpy.calls.mostRecent().returnValue['notifyOccurrenceRemoved'](null, null);
                     expect(optionSetView.refresh).toHaveBeenCalled();
                 });
 
                 it('should listen to validity changed event', function () {
-                    let views = formOptionSetOccurrences.getOccurrenceViews();
+                    let views = initOccurrencesSpy.calls.mostRecent().returnValue.getOccurrenceViews();
                     views[0]['notifyValidityChanged'](null);
                     expect(handleValiditySpy).toHaveBeenCalled();
                 });
 
                 it('should listen to edit content request', function () {
-                    let views = formOptionSetOccurrences.getOccurrenceViews();
+                    let views = initOccurrencesSpy.calls.mostRecent().returnValue.getOccurrenceViews();
                     views[0].getFormItemViews()[0]['notifyEditContentRequested'](null);
                     expect(optionSetView.notifyEditContentRequested).toHaveBeenCalled();
                 });
@@ -221,15 +215,22 @@ module FormOptionSetViewSpec {
         });
 
         describe("validate()", function () {
+            let occurrenceValidateSpy;
+
+            beforeEach(function () {
+                occurrenceValidateSpy = spyOn(api.form.FormOptionSetOccurrenceView.prototype, 'validate').and.callThrough();
+            });
 
             it('should throw an exception if not laid out yet', function () {
                 expect(optionSetView.validate).toThrowError("Can't validate before layout is done");
             });
 
             describe('after layout was done', function () {
-                let renderValidationErrorsSpy, notifyValidityChangedSpy;
+                let renderValidationErrorsSpy, notifyValidityChangedSpy, initOccurrencesSpy;
 
                 beforeEach(function (done) {
+                    initOccurrencesSpy = spyOn(api.form.FormOptionSetView.prototype, 'initOccurrences').and.callThrough();
+
                     optionSetView.layout(false).then(function () {
                         done();
                     });
@@ -249,6 +250,10 @@ module FormOptionSetViewSpec {
                         expect(recording).toBeDefined();
                     });
 
+                    it('should call validate on every FormSetOccurrenceView', function () {
+                        expect(occurrenceValidateSpy).toHaveBeenCalledWith(true);
+                    });
+
                     it('should have called renderValidationErrors', function () {
                         expect(renderValidationErrorsSpy).toHaveBeenCalled();
                     });
@@ -265,16 +270,32 @@ module FormOptionSetViewSpec {
                         recording = optionSetView.validate(false);
                     });
 
+                    it('should call validate(false) on every FormSetOccurrenceView', function () {
+                        expect(occurrenceValidateSpy).toHaveBeenCalledWith(false);
+                    });
+
                     it('should have called notifyValidityChanged', function () {
                         expect(notifyValidityChangedSpy).toHaveBeenCalled();
                     });
                 });
 
                 describe('validate with exclusions', function () {
-                    let recording;
+                    let recording, excludedOccurrenceView;
 
-                    beforeEach(function () {
-                        recording = optionSetView.validate(false);
+                    beforeEach(function (done) {
+                        let occurrences = initOccurrencesSpy.calls.mostRecent().returnValue;
+
+                        occurrences.createAndAddOccurrence(1, false).then((addedView) => {
+                            excludedOccurrenceView = addedView;
+                            recording = optionSetView.validate(false, excludedOccurrenceView);
+                            done();
+                        });
+                    });
+
+                    it('should call validate on every FormSetOccurrenceView except excluded', function () {
+                        expect(occurrenceValidateSpy.calls.all().every((info: CallInfo) => {
+                            return info.object !== excludedOccurrenceView;
+                        })).toBeTruthy(true);
                     });
                 });
             });
