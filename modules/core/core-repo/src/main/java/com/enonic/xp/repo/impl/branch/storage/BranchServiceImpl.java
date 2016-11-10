@@ -61,13 +61,16 @@ public class BranchServiceImpl
     @Override
     public String store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
-        return doStore( nodeBranchEntry, context );
+        return store( nodeBranchEntry, null, context );
     }
 
     @Override
     public String store( final NodeBranchEntry nodeBranchEntry, final NodePath previousPath, final InternalContext context )
     {
-        this.pathCache.evict( createPath( previousPath, context ) );
+        if ( previousPath != null )
+        {
+            this.pathCache.evict( createPath( previousPath, context ) );
+        }
         return doStore( nodeBranchEntry, context );
     }
 
