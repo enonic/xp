@@ -163,11 +163,7 @@ export class LiveEditPageProxy {
 
     private createLiveEditIFrame(): api.dom.IFrameEl {
         var liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
-        liveEditIFrame.hide();
-        liveEditIFrame.onLoaded(() => {
-            liveEditIFrame.getHTMLElement().style.display = "";
-            this.handleIFrameLoadedEvent()
-        });
+        liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
 
         return liveEditIFrame;
     }
@@ -175,7 +171,6 @@ export class LiveEditPageProxy {
     private createPlaceholderIFrame(): api.dom.IFrameEl {
         var placeholderIFrame = new api.dom.IFrameEl("live-edit-frame-blank");
         placeholderIFrame.setSrc(CONFIG.assetsUri + "/live-edit/js/_blank.html");
-        placeholderIFrame.hide();
 
         return placeholderIFrame;
     }
@@ -255,15 +250,16 @@ export class LiveEditPageProxy {
             this.showLoadMaskHandler();
         }
 
+        var contentId = this.liveEditModel.getContent().getContentId().toString();
+        var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+
         if (api.BrowserHelper.isIE()) {
             this.copyObjectsBeforeFrameReloadForIE();
         }
 
-        if (this.liveEditModel.isRenderableContent()) {
-            var contentId = this.liveEditModel.getContent().getContentId().toString();
-            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+        this.liveEditIFrame.setSrc(pageUrl);
 
-            this.liveEditIFrame.setSrc(pageUrl);
+        if (this.liveEditModel.isRenderableContent()) {
             if (LiveEditPageProxy.debug) {
                 console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
             }
@@ -290,13 +286,13 @@ export class LiveEditPageProxy {
     }
 
     private hideEditorAndShowPlaceholder() {
-        this.liveEditIFrame.hide();
-        this.placeholderIFrame.show();
+        this.liveEditIFrame.removeClass('shown');
+        this.placeholderIFrame.addClass('shown');
     }
 
     private hidePlaceholderAndShowEditor() {
-        this.placeholderIFrame.hide();
-        this.liveEditIFrame.show();
+        this.placeholderIFrame.removeClass('shown');
+        this.liveEditIFrame.addClass('shown')
     }
 
     public skipNextReloadConfirmation(skip: boolean) {
