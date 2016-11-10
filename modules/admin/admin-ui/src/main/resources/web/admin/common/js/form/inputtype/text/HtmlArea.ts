@@ -1,5 +1,6 @@
 module api.form.inputtype.text {
 
+    import DivEl = api.dom.DivEl;
     declare var CONFIG;
 
     import support = api.form.inputtype.support;
@@ -100,9 +101,11 @@ module api.form.inputtype.text {
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            var input = <api.ui.text.TextArea> occurrence;
-
-            input.resetBaseValues();
+            occurrence.getChildren().forEach((child) => {
+                if (ObjectHelper.iFrameSafeInstanceOf(child, api.ui.text.TextArea)) {
+                    (<api.ui.text.TextArea>child).resetBaseValues();
+                }
+            })
         }
 
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
@@ -188,8 +191,8 @@ module api.form.inputtype.text {
                 removeButtonEL.addEventListener("mouseleave", () => {
                     isMouseOverRemoveOccurenceButton = false;
                 });
-                
-                    this.onShown((event) => {
+
+                this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
                         if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
                             editor.execCommand('mceAutoResize', false, null, {skip_focus: true});

@@ -24,6 +24,7 @@ module api.ui.text {
             });
 
             this.onShown((event: api.dom.ElementShownEvent) => this.updateSize());
+            this.onFocus((event: FocusEvent) => this.updateSize());
             this.onValueChanged((event: api.ValueChangedEvent) => this.updateSize());
             api.dom.WindowDOM.get().onResized((event: UIEvent) => this.updateSize(), this);
         }

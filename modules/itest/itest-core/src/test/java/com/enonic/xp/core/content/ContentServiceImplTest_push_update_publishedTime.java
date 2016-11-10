@@ -7,7 +7,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -17,7 +16,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.Assert.*;
 
-public class ContentServiceImplTest_publish_update_publishedTime
+public class ContentServiceImplTest_push_update_publishedTime
     extends AbstractContentServiceTest
 {
     @Override
@@ -35,7 +34,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
         assertNull( content.getPublishInfo() );
         assertVersions( content.getId(), 1 );
 
-        doPublishContent( content );
+        doPushContent( content );
         assertVersions( content.getId(), 2 );
 
         final Content storedContent = this.contentService.getById( content.getId() );
@@ -57,7 +56,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
     {
         final Content content = doCreateContent();
 
-        doPublishContent( content );
+        doPushContent( content );
         assertVersions( content.getId(), 2 );
 
         final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
@@ -66,11 +65,13 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).
-            editor( edit -> edit.displayName = "new display name" );
+            editor( edit -> {
+                edit.displayName = "new display name";
+            } );
 
         this.contentService.update( updateContentParams );
 
-        doPublishContent( content );
+        doPushContent( content );
         assertVersions( content.getId(), 3 );
 
         final ContentPublishInfo unUpdatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
@@ -83,50 +84,28 @@ public class ContentServiceImplTest_publish_update_publishedTime
         throws Exception
     {
         final Content content = doCreateContent();
-        doPublishContent( content );
+        doPushContent( content );
 
         final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).
-            editor( edit -> edit.publishInfo = null );
+            editor( edit -> {
+                edit.publishInfo = null;
+            } );
 
         this.contentService.update( updateContentParams );
 
-        doPublishContent( content );
+        doPushContent( content );
 
         final ContentPublishInfo updatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
         assertTrue( updatedPublishInfo.getFrom().isAfter( publishInfo.getFrom() ) );
     }
 
-    @Test
-    public void publish_from_is_removed_on_duplicate()
-        throws Exception
+    private void doPushContent( final Content content )
     {
-
-        final Content rootContent = createContent( ContentPath.ROOT );
-        this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( rootContent.getId() ) ).
-            target( WS_OTHER ).
-            build() );
-
-        final Content duplicateContent = doDuplicateContent( rootContent );
-
-        assertTrue( duplicateContent.getPublishInfo().getFrom() == null );
-    }
-
-    private Content doDuplicateContent( final Content rootContent )
-    {
-        final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
-        final Content duplicatedContent = contentService.duplicate( params );
-
-        return this.contentService.getById( duplicatedContent.getId() );
-    }
-
-    private void doPublishContent( final Content content )
-    {
-        this.contentService.publish( PushContentParams.create().
+        this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             includeDependencies( false ).

@@ -26,9 +26,9 @@ module api.content.event {
             return this.contentDeletedItems.length == 0;
         }
 
-        fire() {
+        fire(contextWindow: Window = window) {
             if (!this.isEmpty()) {
-                super.fire();
+                super.fire(contextWindow);
             }
         }
 
