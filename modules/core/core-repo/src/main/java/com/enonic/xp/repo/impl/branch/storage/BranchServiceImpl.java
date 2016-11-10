@@ -181,6 +181,12 @@ public class BranchServiceImpl
         pathCache.evict( new BranchPath( context.getBranch(), nodePath ) );
     }
 
+    @Override
+    public void evictAllPaths()
+    {
+        pathCache.evictAll();
+    }
+
     private BranchPath createPath( final NodePath nodePath, final InternalContext context )
     {
         return new BranchPath( context.getBranch(), nodePath );

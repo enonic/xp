@@ -30,4 +30,5 @@ public interface BranchService
 
     void evictPath( final NodePath nodePath, final InternalContext context );
 
+    void evictAllPaths();
 }

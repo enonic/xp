@@ -251,6 +251,12 @@ public class StorageServiceImpl
     }
 
     @Override
+    public void invalidate()
+    {
+        this.branchService.evictAllPaths();
+    }
+
+    @Override
     public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
         this.branchService.cachePath( nodeId, nodePath, context );
