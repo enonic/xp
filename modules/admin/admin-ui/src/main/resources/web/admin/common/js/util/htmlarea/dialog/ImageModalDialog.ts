@@ -51,10 +51,16 @@ module api.util.htmlarea.dialog {
             this.addUploaderAndPreviewControls(imageSelector);
             this.setFirstFocusField(imageSelector.getInput());
 
+            this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption());
+            this.imageAltTextField = this.createFormItem("altText", "Alternative text", null, this.getAltText());
+
+            this.imageCaptionField.addClass("caption").hide();
+            this.imageAltTextField.addClass("alttext").hide();
+
             return [
                 imageSelector,
-                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption()),
-                this.imageAltTextField = this.createFormItem("altText", "Alternative text", null, this.getAltText())
+                this.imageCaptionField,
+                this.imageAltTextField
             ];
         }
 
@@ -114,10 +120,8 @@ module api.util.htmlarea.dialog {
                 this.displayValidationErrors(false);
                 this.removePreview();
                 this.imageToolbar.remove();
-                this.setCaptionFieldValue("");
-                this.setAltTextFieldValue("");
-                this.showFormItemLabel(this.imageCaptionField);
-                this.showFormItemLabel(this.imageAltTextField);
+                this.imageCaptionField.hide();
+                this.imageAltTextField.hide();
                 this.imageUploaderEl.show();
                 this.imagePreviewScrollHandler.toggleScrollButtons();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
@@ -196,8 +200,8 @@ module api.util.htmlarea.dialog {
             });
 
             this.hideUploadMasks();
-            this.hideFormItemLabel(this.imageCaptionField, "Caption");
-            this.hideFormItemLabel(this.imageAltTextField, "Alternative text");
+            this.imageCaptionField.show();
+            this.imageAltTextField.show();
             this.imageUploaderEl.hide();
             this.imagePreviewContainer.insertChild(this.image, 0);
         }
@@ -225,18 +229,6 @@ module api.util.htmlarea.dialog {
             return new api.content.util.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(
                 true).setSize(
                 ImageModalDialog.maxImageWidth).resolve();
-        }
-
-        private hideFormItemLabel(formItem: FormItem, placeholder: string) {
-            formItem.getLabel().hide();
-            formItem.getInput().getEl().setAttribute("placeholder", placeholder);
-            formItem.getInput().getParentElement().getEl().setMarginLeft("0px");
-        }
-
-        private showFormItemLabel(formItem: FormItem) {
-            formItem.getLabel().show();
-            formItem.getInput().getEl().removeAttribute("placeholder");
-            formItem.getInput().getParentElement().getEl().setMarginLeft("");
         }
 
         private removePreview() {
