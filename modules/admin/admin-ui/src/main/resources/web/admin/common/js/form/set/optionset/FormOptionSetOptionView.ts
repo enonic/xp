@@ -246,9 +246,10 @@ module api.form {
         }
 
         private selectHandle(input: api.dom.Element) {
+            let thisElSelector = "div[id='" + this.getEl().getId() + "']";
             this.expand();
             this.enableFormItems();
-            api.dom.FormEl.moveFocusToNextFocusable(input, "input, select");
+            api.dom.FormEl.moveFocusToNextFocusable(input, thisElSelector + " input, " + thisElSelector + " select");
             this.addClass("selected");
         }
 

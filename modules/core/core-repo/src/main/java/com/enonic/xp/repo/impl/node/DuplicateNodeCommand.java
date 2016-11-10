@@ -15,6 +15,7 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
@@ -47,6 +48,11 @@ public final class DuplicateNodeCommand
     public Node execute()
     {
         final Node existingNode = doGetById( nodeId );
+
+        if ( existingNode == null )
+        {
+            throw new NodeNotFoundException( "cannot duplicate node with id [" + nodeId + "]" );
+        }
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
@@ -200,7 +206,8 @@ public final class DuplicateNodeCommand
 
     private String resolveNewNodeName( final Node existingNode )
     {
-        String newNodeName = DuplicateValueResolver.name( existingNode.name() );
+        // Process as file name as it is so for images
+        String newNodeName = DuplicateValueResolver.fileName( existingNode.name().toString() );
 
         boolean resolvedUnique = false;
 
