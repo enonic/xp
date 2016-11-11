@@ -26,6 +26,16 @@
 
     &.max-1-occurrence {
       padding-bottom: 5px;
+
+      .form-option-set-occurrence-view {
+        > .form-occurrence-draggable-label {
+          margin-left: @occurrence-label-margin-left;
+        }
+
+        > .form-item-set-occurrences-container, > .form-option-set-occurrences-container {
+          padding: 0 10px;
+        }
+      }
     }
   }
 
@@ -34,6 +44,14 @@
       background-color: @admin-bg-light-gray;
       padding: 10px;
       .clearfix();
+
+      .form-occurrence-draggable-label {
+        margin-left: @occurrence-label-margin-left;
+      }
+
+      .form-item-set-occurrences-container, .form-option-set-occurrences-container {
+        padding: 0 10px;
+      }
     }
   }
 
@@ -128,18 +146,6 @@
   &.max-1-occurrence {
     margin-bottom: 0px;
 
-    &:not(.invalid) {
-      .occurrence-views-container {
-        .form-option-set-occurrence-view > .form-occurrence-draggable-label {
-            margin-left: 0px;
-          }
-
-        .form-option-set-occurrences-container {
-          padding: 0;
-        }
-      }
-    }
-
     .occurrence-views-container {
       .form-option-set-occurrence-view {
         margin-bottom: 0px;
@@ -171,7 +177,6 @@
       .form-occurrence-draggable-label {
         font-size: 14px;
         color: #777777;
-        margin-left: @occurrence-label-margin-left;
 
         .required {
           &:after {
@@ -218,7 +223,6 @@
       }
 
       .form-item-set-occurrences-container, .form-option-set-occurrences-container {
-        padding: 0 10px;
         margin-top: 10px;
       }
 
