@@ -18,10 +18,12 @@ import PropertyPath = api.data.PropertyPath;
 import ContentPath = api.content.ContentPath;
 import BaseInputTypeManagingAdd = api.form.inputtype.support.BaseInputTypeManagingAdd;
 import FormView = api.form.FormView;
+import PropertySet = api.data.PropertySet;
+import Spy = jasmine.Spy;
 
 describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
-    var input: Input, site: Site, formContext: ContentFormContext, configurator: SiteConfigurator;
+    let input: Input, site: Site, formContext: ContentFormContext, configurator: SiteConfigurator;
 
     beforeEach(() => {
         input = createInput();
@@ -55,9 +57,9 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
     describe("what happens after layout", () => {
 
-        var createComboBoxSpy, parentSpy, appendChildSpy, providerSpy;
+        let createComboBoxSpy, parentSpy, appendChildSpy, providerSpy;
 
-        var combobox, provider;
+        let combobox, provider;
 
         beforeEach((done) => {
             provider = new SiteConfigProvider(site.getContentData().getPropertyArray("siteConfig"));
@@ -86,172 +88,217 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         it('combobox is added', () => {
             expect(appendChildSpy).toHaveBeenCalledWith(combobox);
         });
+    });
 
-        describe("test public methods", () => {
+    describe("test public methods", () => {
 
-            it("reset()", () => {
-                let resetSpy = spyOn(combobox, "resetBaseValues");
+        let combobox, createComboBoxSpy;
+
+        beforeEach((done) => {
+            createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
+
+            configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(()=> {
+                combobox = createComboBoxSpy.calls.mostRecent().returnValue;
+                done();
+            });
+        });
+
+        describe("reset()", () => {
+            let resetSpy: Spy;
+
+            beforeEach(() => {
+                resetSpy = spyOn(combobox, "resetBaseValues");
                 configurator.reset();
+            });
+
+            it("combobox resetBaseValues method is called", () => {
                 expect(resetSpy).toHaveBeenCalled();
             });
+        });
 
-            it("update()", (done) => {
+        describe("update()", () => {
 
-                var propertyArray = site.getContentData().getPropertyArray("siteConfig");
+            let newSet: PropertySet;
 
-                combobox.onValueChanged((a) => {
-                    expect(a.getNewValue()).toBe("com.enonic.app.test;");
-                    done();
-                });
-
+            beforeEach(()=> {
+                let propertyArray = site.getContentData().getPropertyArray("siteConfig");
                 spyOn(combobox.getComboBox(), 'doWhenLoaded').and.stub();
 
-                var newSet = propertyArray.addSet();
-                newSet.addString("v", "test");
+                newSet = propertyArray.addSet();
             });
 
-            it("displayValidationErrors()",() => {
+            it("combobox value changed listener driggered by data update", (done) => {
+                combobox.onValueChanged((e) => {
+                    expect(e.getNewValue()).toBe("com.enonic.app.test;");
+                    done();
+                });
+                newSet.addString("v", "test");
+            })
+        });
+
+        describe("displayValidationErrors()",() => {
+
+            let displayValidationErrorsSpy: Spy;
+
+            beforeEach(() => {
                 let selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
                     <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
                 );
 
                 let formView = new FormView(null,null,null);
+
                 spyOn(combobox, 'getSelectedOptionViews').and.returnValue([selectedOption.getOptionView()]);
                 spyOn(selectedOption.getOptionView(), "getFormView").and.returnValue(formView);
-                let displayValidationErrorsSpy = spyOn(formView, "displayValidationErrors");
 
+                displayValidationErrorsSpy = spyOn(formView, "displayValidationErrors");
 
                 configurator.displayValidationErrors(null);
+            });
+
+            it("formView displayValidationErrors method is called",() => {
                 expect(displayValidationErrorsSpy).toHaveBeenCalled();
             });
 
-            it("getValueType()", () => {
+        });
+        describe("getValueType()",() => {
+
+            it("value type should be 'PropertySet'", () => {
                 expect(configurator.getValueType() == ValueTypes.DATA).toBeTruthy();
             });
 
-            it("newInitialValue()", () => {
+        });
+        describe("newInitialValue()",() => {
+
+            it("initial value should be null", () => {
                 expect(configurator.newInitialValue()).toBeNull();
             });
 
-            describe("giveFocus()", () => {
-                let focusSpy;
+        });
 
-                beforeEach(() => {
-                   focusSpy = spyOn(combobox, "giveFocus");
-                });
+        describe("giveFocus()", () => {
+            let focusSpy;
 
-                it("combobox is focused",() => {
-                    spyOn(combobox, "maximumOccurrencesReached").and.returnValue(false);
-                    configurator.giveFocus();
-
-                    expect(focusSpy).toHaveBeenCalled();
-                });
-
-                it("validation check is failed",() => {
-                    spyOn(combobox, "maximumOccurrencesReached").and.returnValue(true);
-
-                    let result = configurator.giveFocus();
-
-                    expect(result).toBe(false);
-                    expect(focusSpy).not.toHaveBeenCalled();
-                });
+            beforeEach(() => {
+                focusSpy = spyOn(combobox, "giveFocus");
+                spyOn(combobox, "maximumOccurrencesReached");
             });
 
-
-            describe("validate()", () => {
-                let recording, selectedOption;
-
+            describe("if maximum occurrences reached ", () => {
                 beforeEach(() => {
-                    selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
-                        <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
-                    );
-
-                    recording = new api.form.ValidationRecording();
-
-                    let formView = new FormView(null,null,null);
-
-                    spyOn(formView, "validate").and.returnValue(recording);
-                    spyOn(selectedOption.getOptionView(), "getFormView").and.returnValue(formView);
-
-                    spyOn(combobox, 'getSelectedOptionViews').and.returnValue([selectedOption.getOptionView()]);
+                    combobox.maximumOccurrencesReached.and.returnValue(true);
+                    configurator.giveFocus();
                 });
 
+                it("should not focus the combobox",() => {
+                    expect(focusSpy).not.toHaveBeenCalled();
+                });
+
+            });
+
+            describe("if maximum occurrences is not reached ", () => {
+                beforeEach(() => {
+                    combobox.maximumOccurrencesReached.and.returnValue(false);
+                    configurator.giveFocus();
+                });
+
+                it("should focus the combobox",() => {
+                    expect(focusSpy).toHaveBeenCalled();
+                });
+            });
+        });
+
+        describe("validate()", () => {
+            let recording, selectedOption, result;
+
+            beforeEach(() => {
+                selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
+                    <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
+                );
+
+                recording = new api.form.ValidationRecording();
+
+                let formView = new FormView(null,null,null);
+
+                spyOn(formView, "validate").and.returnValue(recording);
+                spyOn(selectedOption.getOptionView(), "getFormView").and.returnValue(formView);
+
+                spyOn(combobox, 'getSelectedOptionViews').and.returnValue([selectedOption.getOptionView()]);
+            });
+
+            describe("validation is not passed", () => {
+
+                beforeEach(() => {
+                    spyOn(recording, "isMinimumOccurrencesValid").and.returnValue(false);
+                    spyOn(recording, "isMaximumOccurrencesValid").and.returnValue(false);
+
+                    result = configurator.validate();
+                });
 
                 it("minimum occurrences breached",() => {
-                    spyOn(recording, "isMinimumOccurrencesValid").and.returnValue(false);
-
-                    var result = configurator.validate();
                     expect(result.isMinimumOccurrencesBreached()).toBe(true);
-                    expect(result.isValid()).toBe(false);
                 });
 
                 it("maximum occurrences breached",() => {
-                    spyOn(recording, "isMaximumOccurrencesValid").and.returnValue(false);
-
-                    var result = configurator.validate();
                     expect(result.isMaximumOccurrencesBreached()).toBe(true);
-                    expect(result.isValid()).toBe(false);
                 });
 
-                it("valid",() => {
+                it("result is not valid",() => {
+                    expect(result.isValid()).toBeFalsy();
+                });
+            });
+
+            describe("validation is passed", () => {
+
+                beforeEach(() => {
                     spyOn(recording, "isMaximumOccurrencesValid").and.returnValue(true);
                     spyOn(recording, "isMinimumOccurrencesValid").and.returnValue(true);
 
-                    var result = configurator.validate();
-                    expect(result.isValid()).toBe(true);
+                    result = configurator.validate();
                 });
 
+                it("result is valid",() => {
+                    expect(result.isValid()).toBeTruthy();
+                });
             });
-
-
-
         });
 
-        describe("test event listeners", () => {
+    });
 
-            var selectedOption;
+    describe("test event listeners", () => {
 
-            beforeEach((done) => {
-                configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(() => {
-                    selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
-                        <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
-                    );
-                    done();
-                });
-            });
+        let combobox, selectedOption, handlerSpy:Spy, event:SelectedOptionEvent<any>;
 
-            it("option selected listener is called", () => {
+        beforeEach((done) => {
+            let createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
 
-                var handlerSpy = spyOn(configurator, "saveToSet");
+            configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(() => {
+                combobox = createComboBoxSpy.calls.mostRecent().returnValue;
 
-                var event = new SelectedOptionEvent(selectedOption, -1);
+                selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
+                    <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
+                );
 
-                combobox.getSelectedOptionsView().notifyOptionSelected(event);
+                handlerSpy = spyOn(configurator, "saveToSet");
+                event = new SelectedOptionEvent(selectedOption, -1);
 
-                expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), selectedOption.getIndex());
-            });
-
-            it("option moved listener is called", (done) => {
-
-                var handlerSpy = spyOn(configurator, "saveToSet");
-
-                combobox.getSelectedOptionsView().notifyOptionMoved(selectedOption);
-
-                expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), 0);
                 done();
             });
+        });
 
-            it("option deselected listener is called", (done) => {
+        it("option selected listener is called", () => {
+            combobox.getSelectedOptionsView().notifyOptionSelected(event);
+            expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), selectedOption.getIndex());
+        });
 
-                var handlerSpy = spyOn(configurator["propertyArray"], "remove");
+        it("option moved listener is called", () => {
+            combobox.getSelectedOptionsView().notifyOptionMoved(selectedOption);
+            expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), 0);
+        });
 
-                combobox.getSelectedOptionsView().notifyOptionDeselected(selectedOption);
-
-                expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getIndex());
-                done();
-
-            });
-
+        it("option deselected listener is called", () => {
+            handlerSpy = spyOn(configurator["propertyArray"], "remove");
+            combobox.getSelectedOptionsView().notifyOptionDeselected(selectedOption);
+            expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getIndex());
         });
     });
 
@@ -357,7 +404,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
     }
 
     function createSiteConfigurator(input: Input, site: Site, formContext: ContentFormContext): SiteConfigurator {
-        var config: ContentInputTypeViewContext = <ContentInputTypeViewContext> {
+        let config: ContentInputTypeViewContext = <ContentInputTypeViewContext> {
             formContext: formContext,
             input: input,
             inputConfig: {},
