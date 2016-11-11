@@ -325,9 +325,9 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( pushNodesResult.getSuccessful().isNotEmpty() )
+        if ( !pushNodesResult.getSuccessful().isEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessful() ) );
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessful().values() ) );
         }
 
         return pushNodesResult;

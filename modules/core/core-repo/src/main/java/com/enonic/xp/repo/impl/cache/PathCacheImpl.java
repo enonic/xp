@@ -38,6 +38,6 @@ public class PathCacheImpl
     @Override
     public String get( final CachePath path )
     {
-        return this.pathCache.getIfPresent( path );
+            return this.pathCache.getIfPresent( path );
     }
 }

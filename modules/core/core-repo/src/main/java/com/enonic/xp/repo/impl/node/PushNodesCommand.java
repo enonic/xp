@@ -88,6 +88,11 @@ public class PushNodesCommand
             final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
 
             final NodeBranchEntry nodeBranchEntry = nodeBranchEntries.get( comparison.getNodeId() );
+            final PushNodeEntry pushNodeEntry = PushNodeEntry.create().
+                nodeBranchEntry( nodeBranchEntry ).
+                nodeVersionId( nodeBranchEntry.getVersionId() ).
+                previousPath( comparison.getTargetPath() ).
+                build();
 
             final boolean hasPublishPermission = NodesHasPermissionResolver.create( this ).
                 nodeIds( NodeIds.from( nodeBranchEntry.getNodeId() ) ).
@@ -104,7 +109,7 @@ public class PushNodesCommand
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
-                builder.addSuccess( nodeBranchEntry );
+                builder.addSuccess( pushNodeEntry );
                 nodePushed( 1 );
                 continue;
             }
@@ -124,13 +129,8 @@ public class PushNodesCommand
                 continue;
             }
 
-            publishBuilder.add( PushNodeEntry.create().
-                nodeBranchEntry( nodeBranchEntry ).
-                nodeVersionId( nodeBranchEntry.getVersionId() ).
-                previousPath( comparison.getTargetPath() ).
-                build() );
-
-            builder.addSuccess( nodeBranchEntry );
+            publishBuilder.add( pushNodeEntry );
+            builder.addSuccess( pushNodeEntry );
 
             if ( comparison.getCompareStatus() == CompareStatus.MOVED )
             {
@@ -207,8 +207,13 @@ public class PushNodesCommand
                     node( childNode ).
                     build(), InternalContext.from( targetContext ) );
 
-                resultBuilder.addSuccess( child );
+                final PushNodeEntry childPushNodeEntry = PushNodeEntry.create().
+                    nodeBranchEntry( child ).
+                    nodeVersionId( child.getVersionId() ).
+                    previousPath( targetNodeEntry.getNodePath() ).
+                    build();
 
+                resultBuilder.addSuccess( childPushNodeEntry );
                 updateTargetChildrenMetaData( child, resultBuilder );
             }
         }

@@ -1,27 +1,30 @@
 package com.enonic.xp.node;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Beta
 public class PushNodesResult
 {
-    private final NodeBranchEntries successful;
+    private final ImmutableMap<NodeId, PushNodeEntry> successful;
 
     private final ImmutableSet<Failed> failed;
 
     private PushNodesResult( Builder builder )
     {
-        successful = NodeBranchEntries.from( builder.successful );
+        successful = ImmutableMap.copyOf( builder.successful );
         failed = ImmutableSet.copyOf( builder.failed );
     }
 
-    public NodeBranchEntries getSuccessful()
+    public ImmutableMap<NodeId, PushNodeEntry> getSuccessful()
     {
         return successful;
     }
@@ -38,7 +41,7 @@ public class PushNodesResult
 
     public static final class Builder
     {
-        private final List<NodeBranchEntry> successful = Lists.newLinkedList();
+        private final LinkedHashMap<NodeId, PushNodeEntry> successful = Maps.newLinkedHashMap();
 
         private final List<Failed> failed = Lists.newLinkedList();
 
@@ -48,10 +51,10 @@ public class PushNodesResult
         {
         }
 
-        public Builder addSuccess( final NodeBranchEntry success )
+        public Builder addSuccess( final PushNodeEntry success )
         {
-            this.successful.add( success );
-            this.addedParentPaths.add( success.getNodePath() );
+            this.successful.put( success.getNodeBranchEntry().getNodeId(), success );
+            this.addedParentPaths.add( success.getNodeBranchEntry().getNodePath() );
             return this;
         }
 

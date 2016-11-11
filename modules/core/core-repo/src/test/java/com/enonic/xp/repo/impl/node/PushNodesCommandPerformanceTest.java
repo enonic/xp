@@ -62,7 +62,7 @@ public class PushNodesCommandPerformanceTest
         started.stop();
 
         final long elapsed = started.elapsed( TimeUnit.SECONDS );
-        final int number = result.getSuccessful().getSize();
+        final int number = result.getSuccessful().size();
 
         System.out.println(
             "Pushed : " + number + " in " + started.toString() + ", " + ( elapsed == 0 ? "n/a" : ( number / elapsed ) + "/s" ) );

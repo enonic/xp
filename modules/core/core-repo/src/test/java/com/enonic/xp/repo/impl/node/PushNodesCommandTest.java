@@ -96,7 +96,7 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( node.id(), child.id() ), WS_OTHER );
 
-        assertEquals( 1, result.getSuccessful().getSize() );
+        assertEquals( 1, result.getSuccessful().size() );
         assertEquals( 1, result.getFailed().size() );
         assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailed().iterator().next().getReason() );
     }
@@ -133,7 +133,7 @@ public class PushNodesCommandTest
             name( "my-node" ).
             build() );
         result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
-        assertEquals( 1, result.getSuccessful().getSize() );
+        assertEquals( 1, result.getSuccessful().size() );
         assertNotNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
         assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
 
@@ -145,7 +145,7 @@ public class PushNodesCommandTest
 
         //Pushed the renames content
         result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
-        assertEquals( 1, result.getSuccessful().getSize() );
+        assertEquals( 1, result.getSuccessful().size() );
         assertNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
         assertNotNull( getNodeByPathInOther( NodePath.create( "/" + node.id() + "edited" ).build() ) );
     }
@@ -315,7 +315,7 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
-        assertEquals( 2, result.getSuccessful().getSize() );
+        assertEquals( 2, result.getSuccessful().size() );
     }
 
 
@@ -343,7 +343,7 @@ public class PushNodesCommandTest
         final PushNodesResult result = pushNodes( NodeIds.from( b.id(), a.id() ), WS_OTHER );
 
         assertEquals( 0, result.getFailed().size() );
-        assertEquals( 2, result.getSuccessful().getSize() );
+        assertEquals( 2, result.getSuccessful().size() );
     }
 
     @Test
@@ -407,7 +407,7 @@ public class PushNodesCommandTest
             pushNodes( NodeIds.from( child1_1_1.id(), child1_1.id(), node.id(), child2_1.id(), node2.id(), child1.id(), child2.id() ),
                        WS_OTHER );
 
-        assertEquals( 7, result.getSuccessful().getSize() );
+        assertEquals( 7, result.getSuccessful().size() );
     }
 
 
