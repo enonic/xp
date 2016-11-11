@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node.event;
 
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -11,6 +13,7 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
@@ -200,6 +203,36 @@ public class NodeEventListenerTest
 
         Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                 Mockito.isA( InternalContext.class ) );
+    }
+
+    @Test
+    public void node_pushed_event()
+        throws Exception
+    {
+        final NodeId nodeId = NodeId.from( "node1" );
+        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+        final NodePath previousNodePath = NodePath.create( NodePath.ROOT, "previousName" ).build();
+
+        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
+            nodeId( nodeId ).
+            nodePath( nodePath ).
+            nodeState( NodeState.DEFAULT ).
+            build();
+        final PushNodeEntry pushNodeEntry = PushNodeEntry.create().
+            nodeBranchEntry( nodeBranchEntry ).
+            nodeVersionId( nodeBranchEntry.getVersionId() ).
+            previousPath( previousNodePath ).
+            build();
+
+        final Event localEvent = NodeEvents.pushed( Collections.singleton( pushNodeEntry ) );
+
+        nodeEventListener.onEvent( Event.create( localEvent ).
+            localOrigin( false ).
+            build() );
+
+        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodePushed( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                               Mockito.eq( previousNodePath ),
+                                                                               Mockito.isA( InternalContext.class ) );
     }
 
 

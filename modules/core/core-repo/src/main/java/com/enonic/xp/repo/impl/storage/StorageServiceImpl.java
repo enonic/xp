@@ -275,6 +275,19 @@ public class StorageServiceImpl
         this.branchService.cachePath( params.getNodeId(), params.getNewPath(), context );
     }
 
+    @Override
+    public void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath previousPath, final InternalContext context )
+    {
+        if ( !nodePath.equals( previousPath ) )
+        {
+            if ( previousPath != null )
+            {
+                this.branchService.evictPath( previousPath, context );
+            }
+            this.branchService.cachePath( nodeId, nodePath, context );
+        }
+    }
+
     private Node doGetNode( final NodeBranchEntry nodeBranchEntry )
     {
         if ( nodeBranchEntry == null )
