@@ -81,7 +81,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     update(content: api.content.Content, unchangedOnly: boolean = true) {
         this.updateUnchangedOnly = unchangedOnly;
 
-        this.model.setOwner(content.getOwner()).setLanguage(content.getLanguage());
+        this.model.setOwner(content.getOwner(), true).setLanguage(content.getLanguage(), true);
     }
 
     reset() {

@@ -1,5 +1,6 @@
+@occurrence-label-margin-left: 10px;
+
 .form-item-set-view, .form-option-set-view {
-  margin: 10px 0;
 
   &.valid {
 
@@ -14,12 +15,26 @@
     &.odd > .validation-viewer {
       color:white;
     }
+
+    .occurrence-views-container .form-option-set-occurrence-view {
+      padding-top: 10px;
+
+      > .help-text {
+        padding-left: 10px;
+      }
+    }
+
+    &.max-1-occurrence {
+      padding-bottom: 5px;
+    }
   }
 
-  .occurrence-views-container {
-    background-color: @admin-bg-light-gray;
-    padding: 10px 10px 0px;
-    .clearfix();
+  &:not(.max-1-occurrence) {
+    .occurrence-views-container {
+      background-color: @admin-bg-light-gray;
+      padding: 10px;
+      .clearfix();
+    }
   }
 
   .form-item-set-drop-target-placeholder, .form-option-set-drop-target-placeholder {
@@ -108,6 +123,117 @@
     & > .validation-viewer {
       background-color: #67656a;
     }
+  }
+
+  &.max-1-occurrence {
+    margin-bottom: 0px;
+
+    &:not(.invalid) {
+      .occurrence-views-container {
+        .form-option-set-occurrence-view > .form-occurrence-draggable-label {
+            margin-left: 0px;
+          }
+
+        .form-option-set-occurrences-container {
+          padding: 0;
+        }
+      }
+    }
+
+    .occurrence-views-container {
+      .form-option-set-occurrence-view {
+        margin-bottom: 0px;
+        padding: 0px;
+      }
+
+      &:empty + .bottom-button-row {
+        display: block;
+        padding-left: 0px;
+        background-color: @admin-white;
+      }
+    }
+
+    > .bottom-button-row {
+      display: none;
+    }
+
+  }
+
+  .occurrence-views-container {
+    .form-item-set-occurrence-view, .form-option-set-occurrence-view {
+
+      clear: left;
+      margin: 0px;
+      padding: 10px 0px;
+      background-color: white;
+      margin-bottom: 10px;
+
+      .form-occurrence-draggable-label {
+        font-size: 14px;
+        color: #777777;
+        margin-left: @occurrence-label-margin-left;
+
+        .required {
+          &:after {
+            content: '*';
+            color: @input-red-text;
+          }
+        }
+
+        .help-text-toggler {
+          margin-top: 3px;
+        }
+      }
+
+      .drag-handle {
+        display: none;
+      }
+
+      .drag-control {
+        cursor: move;
+
+        & > .drag-handle {
+          display: inline;
+          margin-right: 15px;
+          line-height: 14px;
+          font-size: 14px;
+        }
+      }
+
+      & > .remove-button {
+        &:extend(.icon);
+        .icon-close();
+        .focusable();
+
+        margin: 5px 10px 0 8px;
+        border: 1px solid transparent;
+        line-height: 12px;
+        float: right;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .form-item-set-occurrences-container > *:not(:last-child) {
+        margin-bottom: 15px;
+      }
+
+      .form-item-set-occurrences-container, .form-option-set-occurrences-container {
+        padding: 0 10px;
+        margin-top: 10px;
+      }
+
+    }
+  }
+}
+
+.display-validation-errors .form-item-set-view.invalid {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 0 !important;
+
+  .input-view.invalid {
+    margin: 0px -10px 5px -10px;
   }
 }
 

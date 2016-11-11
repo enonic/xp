@@ -113,7 +113,7 @@ public class ResolveSyncWorkCommand
 
     private NodeIds getInitialDiff()
     {
-        if ( !includeChildren )
+        if ( !includeChildren && !forceCheckChildren() )
         {
             return NodeIds.from( this.publishRootNode.id() );
         }
@@ -127,6 +127,18 @@ public class ResolveSyncWorkCommand
         return NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
             collect( Collectors.toSet() ) );
+    }
+
+    private boolean forceCheckChildren()
+    {
+        final NodeComparison rootNodeStatus = CompareNodeCommand.create().
+            nodeId( this.publishRootNode.id() ).
+            target( this.target ).
+            storageService( this.storageService ).
+            build().
+            execute();
+
+        return rootNodeStatus.getCompareStatus().equals( CompareStatus.PENDING_DELETE );
     }
 
     private NodeVersionDiffResult findNodesWithVersionDifference( final NodePath nodePath )

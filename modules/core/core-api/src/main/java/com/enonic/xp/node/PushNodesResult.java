@@ -74,6 +74,7 @@ public class PushNodesResult
 
     public enum Reason
     {
+        ALREADY_EXIST,
         PARENT_NOT_FOUND,
         ACCESS_DENIED
     }

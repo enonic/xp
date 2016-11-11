@@ -45,7 +45,7 @@ export class PageComponentsView extends api.dom.DivEl {
     private selectionChangedHandler: (treeNode: TreeNode<ItemView>) =>
         void = api.util.AppHelper.debounce(this.selectItem, 500, this.clicked);
 
-    private beforeInsertActionListeners: {(event):void}[] = [];
+    private beforeInsertActionListeners: {(event): void}[] = [];
 
     private mouseDownListener: (event: MouseEvent) => void;
     private mouseUpListener: (event?: MouseEvent) => void;
@@ -53,6 +53,8 @@ export class PageComponentsView extends api.dom.DivEl {
     private clickListener: (event, data) => void;
     private mouseDown: boolean = false;
     public static debug: boolean = false;
+
+    private invalidItemIds: string[] = [];
 
     constructor(liveEditPage: LiveEditPageProxy) {
         super('page-components-view');
@@ -194,9 +196,11 @@ export class PageComponentsView extends api.dom.DivEl {
                         }
                         if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), FragmentComponentView)) {
                             this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getComponentView());
+                            this.bindFragmentLoadErrorHandler(<FragmentComponentView>event.getComponentView());
                         }
 
                         this.constrainToParent();
+                        this.highlightInvalidItems();
                     });
                 }
             }
@@ -208,7 +212,7 @@ export class PageComponentsView extends api.dom.DivEl {
             this.tree.updateNode(event.getParentRegionView()).then(() => {
                 this.tree.refresh();
             });
-
+            this.highlightInvalidItems();
         });
 
         this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
@@ -236,6 +240,7 @@ export class PageComponentsView extends api.dom.DivEl {
                 }
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), FragmentComponentView)) {
                     this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getNewComponentView());
+                    this.bindFragmentLoadErrorHandler(<FragmentComponentView>event.getNewComponentView());
                 }
             });
         });
@@ -256,6 +261,8 @@ export class PageComponentsView extends api.dom.DivEl {
                     this.tree.selectNode(newDataId);
                 }
             });
+
+            this.removeFromInvalidItems(oldDataId);
         });
 
         this.clickListener = (event, data) => {
@@ -345,7 +352,26 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
 
-        this.tree.onLoaded(() => this.bindTextComponentViewsUpdateOnTextModify());
+        this.tree.onLoaded(() => {
+            this.bindTextComponentViewsUpdateOnTextModify();
+            this.subscribeOnFragmentLoadError();
+        });
+    }
+
+    private highlightInvalidItems() {
+        this.tree.setInvalid(this.invalidItemIds);
+    }
+
+    private removeFromInvalidItems(itemId: string) {
+        this.invalidItemIds = this.invalidItemIds.filter((curr) => {
+            return curr != itemId;
+        });
+        this.highlightInvalidItems();
+    }
+
+    private addToInvalidItems(itemId: string) {
+        this.invalidItemIds.push(itemId);
+        this.highlightInvalidItems();
     }
 
     private isMenuIcon(element: HTMLElement): boolean {
@@ -365,6 +391,17 @@ export class PageComponentsView extends api.dom.DivEl {
         });
     }
 
+    private subscribeOnFragmentLoadError() {
+        this.tree.getGrid().getDataView().getItems().map((dataItem) => {
+            return dataItem.getData();
+        }).filter((itemView: ItemView) => {
+            return api.ObjectHelper.iFrameSafeInstanceOf(itemView, FragmentComponentView);
+        }).forEach((fragmentComponentView: FragmentComponentView) => {
+            this.bindFragmentLoadErrorHandler(fragmentComponentView);
+        });
+    }
+
+
     private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
         var handler = () => this.tree.updateNode(textComponentView);
 
@@ -375,6 +412,13 @@ export class PageComponentsView extends api.dom.DivEl {
     private bindTreeFragmentNodeUpdateOnComponentLoaded(fragmentComponentView: FragmentComponentView) {
         fragmentComponentView.onFragmentContentLoaded((e)=> {
             this.tree.updateNode(e.getFragmentComponentView())
+        });
+    }
+
+    private bindFragmentLoadErrorHandler(fragmentComponentView: FragmentComponentView) {
+        fragmentComponentView.onFragmentLoadError((e) => {
+            this.addToInvalidItems(e.getFragmentComponentView().getItemId().toString());
+            
         });
     }
 
@@ -591,6 +635,9 @@ export class PageComponentsView extends api.dom.DivEl {
             setTimeout(() => {
                 this.pageView.setDisabledContextMenu(false);
                 this.contextMenu.getMenu().clearActionListeners();
+                if (this.getHTMLElement().offsetHeight === 0) { // if PCV not visible, for example fragment created, hide highlighter
+                    Highlighter.get().hide();
+                }
             }, 500);
         });
 

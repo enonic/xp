@@ -5,7 +5,7 @@ var Server = require('karma').Server;
 var os = require('os');
 var path = require("path");
 
-gulp.task('spec', ['ts:spec'], function(done) {
+gulp.task('spec', ['ts'], function(done) {
     // Run Karma after a little timeout to make sure the spec files are built
     setTimeout(function(){
         new Server(CONFIG.spec, function() {

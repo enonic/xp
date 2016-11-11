@@ -216,7 +216,7 @@ module api.liveedit {
             Shader.get().onClicked(this.shaderClickedListener);
 
             this.mouseOverViewListener = () => {
-                var isRegistered = !!this.getParentItemView();
+                var isRegistered = !!this.getParentItemView() || api.ObjectHelper.iFrameSafeInstanceOf(this, PageView);
                 if (ItemView.debug) {
                     console.log('ItemView[' + this.toString() + '].mouseOverViewListener registered: ' + isRegistered);
                 }
@@ -235,7 +235,7 @@ module api.liveedit {
             this.onMouseOverView(this.mouseOverViewListener);
 
             this.mouseLeaveViewListener = () => {
-                var isRegistered = !!this.getParentItemView();
+                var isRegistered = !!this.getParentItemView() || api.ObjectHelper.iFrameSafeInstanceOf(this, PageView);
                 if (ItemView.debug) {
                     console.log('ItemView[' + this.toString() + '].mouseLeaveViewListener registered: ' + isRegistered);
                 }

@@ -18,6 +18,7 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
@@ -104,6 +105,14 @@ public class PushNodesCommand
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
                 builder.addSuccess( nodeBranchEntry );
+                nodePushed( 1 );
+                continue;
+            }
+
+            if ( ( CompareStatus.NEW == comparison.getCompareStatus() || CompareStatus.MOVED == comparison.getCompareStatus() ) &&
+                targetAlreadyExists( nodeBranchEntry.getNodePath(), comparisons, context ) )
+            {
+                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ALREADY_EXIST );
                 nodePushed( 1 );
                 continue;
             }
@@ -202,6 +211,32 @@ public class PushNodesCommand
                 updateTargetChildrenMetaData( child, resultBuilder );
             }
         }
+    }
+
+    private boolean targetAlreadyExists( final NodePath nodePath, final NodeComparisons comparisons, final Context currentContext )
+    {
+        //Checks if a node exist 
+        final Context targetContext = createTargetContext( currentContext );
+        final NodeId nodeId = targetContext.callWith( () -> GetNodeIdByPathCommand.create( this ).
+            nodePath( nodePath ).
+            build().
+            execute() );
+
+        //If the node does not exist, returns false
+        if ( nodeId == null )
+        {
+            return false;
+        }
+
+        //Else, if the existing node is being deleted or moved during the current push, returns false
+        final NodeComparison nodeComparison = comparisons.get( nodeId );
+        if ( nodeComparison != null && ( CompareStatus.MOVED == nodeComparison.getCompareStatus() ||
+            CompareStatus.PENDING_DELETE == nodeComparison.getCompareStatus() ) )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean targetParentExists( final NodePath nodePath, final PushNodesResult.Builder builder, final Context currentContext )

@@ -90,7 +90,8 @@ var expectedJson = {
             }
         }
     },
-    "attachments": {}
+    "attachments": {},
+    "publish": {}
 };
 
 function editor(c) {

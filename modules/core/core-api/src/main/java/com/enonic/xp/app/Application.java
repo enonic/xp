@@ -2,13 +2,14 @@ package com.enonic.xp.app;
 
 import java.net.URL;
 import java.time.Instant;
-import java.util.Map;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
 import com.google.common.annotations.Beta;
+
+import com.enonic.xp.config.Configuration;
 
 @Beta
 public interface Application
@@ -43,5 +44,5 @@ public interface Application
 
     URL resolveFile( String path );
 
-    Map<String, String> getConfig();
+    Configuration getConfig();
 }

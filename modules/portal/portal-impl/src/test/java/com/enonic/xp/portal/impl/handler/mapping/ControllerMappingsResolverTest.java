@@ -198,6 +198,26 @@ public class ControllerMappingsResolverTest
         assertNull( mapping );
     }
 
+    @Test
+    public void testResolveUrlWithEndPoint()
+        throws Exception
+    {
+        final Content content = newFragmentContent();
+        final Site site = newSite();
+
+        this.request.setContentPath( content.getPath() );
+        this.request.setEndpointPath( "/_/image/1234:5678/width-695/superhero_5.jpg" );
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
+        final SiteDescriptor siteDescriptor4 = newDescriptorForFragments();
+        Mockito.when( this.siteService.getDescriptor( getAppKey() ) ).thenReturn( siteDescriptor4 );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
+        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+
+        assertNull( mapping );
+    }
+
     private SiteDescriptor newSiteDescriptor()
     {
         final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
@@ -258,6 +278,20 @@ public class ControllerMappingsResolverTest
             build();
     }
 
+    private SiteDescriptor newDescriptorForFragments()
+    {
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( getAppKey(), "/site/controllers/controller1.js" ) ).
+            pattern( "/.*" ).
+            contentConstraint( "type:'portal:fragment'" ).
+            order( 10 ).
+            build();
+        final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
+        return SiteDescriptor.create().
+            mappingDescriptors( mappings ).
+            build();
+    }
+
     private Content newContent()
     {
         final Content.Builder builder = Content.create();
@@ -266,6 +300,22 @@ public class ControllerMappingsResolverTest
         builder.displayName( "My Landing Page" );
         builder.parentPath( ContentPath.from( "/mysite" ) );
         builder.type( ContentTypeName.from( getAppKey(), "landing-page" ) );
+        builder.modifier( PrincipalKey.from( "user:system:admin" ) );
+        builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
+        builder.creator( PrincipalKey.from( "user:system:admin" ) );
+        builder.createdTime( Instant.ofEpochSecond( 0 ) );
+        builder.data( new PropertyTree() );
+        return builder.build();
+    }
+
+    private Content newFragmentContent()
+    {
+        final Content.Builder builder = Content.create();
+        builder.id( ContentId.from( "897546" ) );
+        builder.name( "my-fragment" );
+        builder.displayName( "My fragment" );
+        builder.parentPath( ContentPath.from( "/mysite/fragment" ) );
+        builder.type( ContentTypeName.fragment() );
         builder.modifier( PrincipalKey.from( "user:system:admin" ) );
         builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
         builder.creator( PrincipalKey.from( "user:system:admin" ) );

@@ -1,4 +1,6 @@
 import "../../api.ts";
+import {PageComponentsItemViewer} from "./PageComponentsItemViewer";
+import {PageComponentsGridDragHandler} from "./PageComponentsGridDragHandler";
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -17,8 +19,6 @@ import LayoutItemType = api.liveedit.layout.LayoutItemType;
 import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 import Content = api.content.Content;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {PageComponentsItemViewer} from "./PageComponentsItemViewer";
-import {PageComponentsGridDragHandler} from "./PageComponentsGridDragHandler";
 
 export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
 
@@ -72,6 +72,20 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
             }
         }
         return viewer.toString();
+    }
+
+    setInvalid(dataIds: string[]) {
+        var root = this.getRoot().getCurrentRoot(),
+            stylesHash: Slick.CellCssStylesHash = {};
+
+        dataIds.forEach((dataId) => {
+            var node = root.findNode(dataId);
+            if (node) {
+                var row = this.getGrid().getDataView().getRowById(node.getId());
+                stylesHash[row] = {displayName: "invalid", menu: "invalid"};
+            }
+        });
+        this.getGrid().setCellCssStyles("invalid-highlight", stylesHash);
     }
 
     getDataId(data: ItemView): string {
