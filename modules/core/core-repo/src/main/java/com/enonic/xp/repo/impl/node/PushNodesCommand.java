@@ -13,6 +13,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.InternalPushNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -53,14 +54,14 @@ public class PushNodesCommand
         return new Builder();
     }
 
-    public PushNodesResult execute()
+    public InternalPushNodesResult execute()
     {
         final Context context = ContextAccessor.current();
 
         final NodeBranchEntries nodeBranchEntries = getNodeBranchEntries();
         final NodeComparisons comparisons = getNodeComparisons( nodeBranchEntries );
 
-        final PushNodesResult.Builder builder = pushNodes( context, nodeBranchEntries, comparisons );
+        final InternalPushNodesResult.Builder builder = pushNodes( context, nodeBranchEntries, comparisons );
 
         RefreshCommand.create().
             refreshMode( RefreshMode.ALL ).
@@ -71,14 +72,14 @@ public class PushNodesCommand
         return builder.build();
     }
 
-    private PushNodesResult.Builder pushNodes( final Context context, final NodeBranchEntries nodeBranchEntries,
-                                               final NodeComparisons comparisons )
+    private InternalPushNodesResult.Builder pushNodes( final Context context, final NodeBranchEntries nodeBranchEntries,
+                                                       final NodeComparisons comparisons )
     {
         final PushNodeEntries.Builder publishBuilder = PushNodeEntries.create().
             targetBranch( this.target ).
             targetRepo( context.getRepositoryId() );
 
-        final PushNodesResult.Builder builder = PushNodesResult.create();
+        final InternalPushNodesResult.Builder builder = InternalPushNodesResult.create();
 
         final ArrayList<NodeBranchEntry> list = new ArrayList<>( nodeBranchEntries.getSet() );
         Collections.sort( list, ( e1, e2 ) -> e1.getNodePath().compareTo( e2.getNodePath() ) );
@@ -88,11 +89,6 @@ public class PushNodesCommand
             final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
 
             final NodeBranchEntry nodeBranchEntry = nodeBranchEntries.get( comparison.getNodeId() );
-            final PushNodeEntry pushNodeEntry = PushNodeEntry.create().
-                nodeBranchEntry( nodeBranchEntry ).
-                nodeVersionId( nodeBranchEntry.getVersionId() ).
-                previousPath( comparison.getTargetPath() ).
-                build();
 
             final boolean hasPublishPermission = NodesHasPermissionResolver.create( this ).
                 nodeIds( NodeIds.from( nodeBranchEntry.getNodeId() ) ).
@@ -109,7 +105,7 @@ public class PushNodesCommand
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
-                builder.addSuccess( pushNodeEntry );
+                builder.addSuccess( nodeBranchEntry );
                 nodePushed( 1 );
                 continue;
             }
@@ -129,8 +125,13 @@ public class PushNodesCommand
                 continue;
             }
 
-            publishBuilder.add( pushNodeEntry );
-            builder.addSuccess( pushNodeEntry );
+            publishBuilder.add( PushNodeEntry.create().
+                nodeBranchEntry( nodeBranchEntry ).
+                nodeVersionId( nodeBranchEntry.getVersionId() ).
+                previousPath( comparison.getTargetPath() ).
+                build() );
+
+            builder.addSuccess( nodeBranchEntry );
 
             if ( comparison.getCompareStatus() == CompareStatus.MOVED )
             {
@@ -138,7 +139,9 @@ public class PushNodesCommand
             }
         }
 
-        this.storageService.push( publishBuilder.build(), pushListener, InternalContext.from( context ) );
+        final PushNodeEntries pushNodeEntries = publishBuilder.build();
+        builder.setPushNodeEntries( pushNodeEntries );
+        this.storageService.push( pushNodeEntries, pushListener, InternalContext.from( context ) );
 
         return builder;
     }
@@ -207,13 +210,8 @@ public class PushNodesCommand
                     node( childNode ).
                     build(), InternalContext.from( targetContext ) );
 
-                final PushNodeEntry childPushNodeEntry = PushNodeEntry.create().
-                    nodeBranchEntry( child ).
-                    nodeVersionId( child.getVersionId() ).
-                    previousPath( targetNodeEntry.getNodePath() ).
-                    build();
+                resultBuilder.addSuccess( child );
 
-                resultBuilder.addSuccess( childPushNodeEntry );
                 updateTargetChildrenMetaData( child, resultBuilder );
             }
         }

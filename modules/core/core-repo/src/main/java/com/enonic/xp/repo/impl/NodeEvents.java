@@ -1,18 +1,19 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 
 public class NodeEvents
@@ -41,7 +42,7 @@ public class NodeEvents
         return event( NODE_CREATED_EVENT, createdNode );
     }
 
-    public static Event pushed( final Collection<PushNodeEntry> pushNodeEntries )
+    public static Event pushed( final PushNodeEntries pushNodeEntries )
     {
         if ( pushNodeEntries != null )
         {
@@ -142,7 +143,7 @@ public class NodeEvents
             value( "nodes", nodesToList( nodes ) );
     }
 
-    private static Event.Builder event( String type, Collection<PushNodeEntry> nodes )
+    private static Event.Builder event( String type, PushNodeEntries nodes )
     {
         return Event.create( type ).
             distributed( true ).
@@ -169,11 +170,11 @@ public class NodeEvents
         return ImmutableList.copyOf( list );
     }
 
-    private static ImmutableList nodesToList( final Collection<PushNodeEntry> nodes )
+    private static ImmutableList nodesToList( final PushNodeEntries pushNodeEntries )
     {
         List<ImmutableMap> list = new ArrayList<>();
-        nodes.stream().
-            map( NodeEvents::nodeToMap ).
+        pushNodeEntries.stream().
+            map( node -> NodeEvents.nodeToMap( node, pushNodeEntries.getTargetBranch() ) ).
             forEach( list::add );
 
         return ImmutableList.copyOf( list );
@@ -197,12 +198,12 @@ public class NodeEvents
             build();
     }
 
-    private static ImmutableMap nodeToMap( final PushNodeEntry node )
+    private static ImmutableMap nodeToMap( final PushNodeEntry node, final Branch targetBranch )
     {
         final ImmutableMap.Builder<Object, Object> nodeAsMap = ImmutableMap.builder().
             put( "id", node.getNodeBranchEntry().getNodeId().toString() ).
             put( "path", node.getNodeBranchEntry().getNodePath().toString() ).
-            put( "branch", ContextAccessor.current().getBranch().getName() );
+            put( "branch", targetBranch );
         if ( node.getPreviousPath() != null )
         {
             nodeAsMap.put( "previousPath", node.getPreviousPath() );

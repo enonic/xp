@@ -158,7 +158,7 @@ public class PushContentCommand
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
 
-        final Contents contents = getContents( pushNodesResult.getSuccessful().keySet() );
+        final Contents contents = getContents( pushNodesResult.getSuccessful().getKeys() );
         final Contents failedContents = getContents(
             pushNodesResult.getFailed().stream().map( failed -> failed.getNodeBranchEntry().getNodeId() ).collect( Collectors.toSet() ) );
 

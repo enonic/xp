@@ -1,10 +1,8 @@
 package com.enonic.xp.repo.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -13,6 +11,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 
 import static org.junit.Assert.*;
@@ -58,10 +57,14 @@ public class NodeEventsTest
             nodeVersionId( pushed3.getNodeVersionId() ).
             build();
 
-        final List<PushNodeEntry> pushNodeEntries = Arrays.asList( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).build(),
-                                                                   PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build(),
-                                                                   PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry3 ).previousPath(
-                                                                       NodePath.create( "/mynode1/pushed3/pushed3" ).build() ).build() );
+        final PushNodeEntries pushNodeEntries = PushNodeEntries.create().
+            targetRepo( ContentConstants.CONTENT_REPO.getId() ).
+            targetBranch( ContentConstants.BRANCH_MASTER ).
+            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).build() ).
+            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build() ).
+            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry3 ).previousPath(
+                NodePath.create( "/mynode1/pushed3/pushed3" ).build() ).build() ).
+            build();
 
         Event event = NodeEvents.pushed( pushNodeEntries );
 
@@ -69,9 +72,9 @@ public class NodeEventsTest
         assertTrue( event.isDistributed() );
         assertTrue( event.hasValue( "nodes" ) );
         assertEquals( NodeEvents.NODE_PUSHED_EVENT, event.getType() );
-        assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=draft}" +
-                          ", {id=id2, path=/mynode1/pushed2/pushed2, branch=draft}" +
-                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=draft, previousPath=/mynode1/pushed3/pushed3}]",
+        assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=master}" +
+                          ", {id=id2, path=/mynode1/pushed2/pushed2, branch=master}" +
+                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, previousPath=/mynode1/pushed3/pushed3}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 

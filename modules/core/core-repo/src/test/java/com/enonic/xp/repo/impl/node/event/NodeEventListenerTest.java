@@ -1,11 +1,10 @@
 package com.enonic.xp.repo.impl.node.event;
 
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -13,6 +12,7 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
@@ -224,7 +224,13 @@ public class NodeEventListenerTest
             previousPath( previousNodePath ).
             build();
 
-        final Event localEvent = NodeEvents.pushed( Collections.singleton( pushNodeEntry ) );
+        final PushNodeEntries pushNodeEntries = PushNodeEntries.create().
+            targetRepo( ContentConstants.CONTENT_REPO.getId() ).
+            targetBranch( ContentConstants.BRANCH_MASTER ).
+            add( pushNodeEntry ).
+            build();
+
+        final Event localEvent = NodeEvents.pushed( pushNodeEntries );
 
         nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).
