@@ -216,8 +216,6 @@ public class IndexServiceInternalImpl
 
     private ClusterHealthStatus doGetClusterHealth( final String timeout, final String... indexNames )
     {
-        LOG.info( "Executing ClusterHealtRequest" );
-
         ClusterHealthRequest request = indexNames != null ? new ClusterHealthRequest( indexNames ) : new ClusterHealthRequest();
 
         request.waitForYellowStatus().timeout( timeout );
@@ -226,7 +224,7 @@ public class IndexServiceInternalImpl
         final ClusterHealthResponse response = this.client.admin().cluster().health( request ).actionGet();
         timer.stop();
 
-        LOG.info(
+        LOG.debug(
             "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
             response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
             response.getActiveShards(), response.getIndices().keySet() );
