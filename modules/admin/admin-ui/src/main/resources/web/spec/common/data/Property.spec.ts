@@ -261,7 +261,7 @@ describe("api.data.Property", () => {
 
             it("reset property set to initial value", () => {
                 let propertySet = new PropertySet(),
-                    propertySetSpy = spyOn(property, "reset");
+                    propertySetSpy = spyOn(propertySet, "reset");
                 ;
 
                 property.setValue(new Value(propertySet, ValueTypes.DATA));
@@ -370,12 +370,12 @@ describe("api.data.Property", () => {
         describe("getDouble()", () => {
             it("String to Double is valid", () => {
                 property.setValue(new Value("3.6", ValueTypes.STRING));
-                expect(property.getLong()).toBe(3.6);
+                expect(property.getDouble()).toBe(3.6);
             });
 
             it("Double to Double is valid", () => {
                 property.setValue(new Value(3.6, ValueTypes.DOUBLE));
-                expect(property.getLong()).toBe(3.6);
+                expect(property.getDouble()).toBe(3.6);
             });
         });
 
@@ -421,9 +421,9 @@ describe("api.data.Property", () => {
             it("LocalTime to LocalTime is valid", () => {
                 let localTime = new ValueTypeLocalTime().newValue("19:20:00");
                 property.setValue(localTime);
-                expect(property.getLocalDateTime().getHours()).toBe(19);
-                expect(property.getLocalDateTime().getMinutes()).toBe(20);
-                expect(property.getLocalDateTime().getSeconds()).toBe(0);
+                expect(property.getLocalTime().getHours()).toBe(19);
+                expect(property.getLocalTime().getMinutes()).toBe(20);
+                expect(property.getLocalTime().getSeconds()).toBe(0);
             });
         });
 
