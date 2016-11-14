@@ -168,6 +168,7 @@ module api.content.site.inputtype.siteconfigurator {
             formView.addClass("site-form");
 
             formView.onLayoutFinished(() => {
+                formView.displayValidationErrors(true);
                 formView.validate(false, true);
                 this.toggleClass("invalid", !formView.isValid());
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
