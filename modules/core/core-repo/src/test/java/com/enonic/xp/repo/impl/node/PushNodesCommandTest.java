@@ -122,31 +122,32 @@ public class PushNodesCommandTest
     }
 
     @Test
-    public void push_rename_pushnew_test()
+    public void push_rename_push_test()
         throws Exception
     {
         PushNodesResult result;
 
-        //Creates and pushes a first content
+        //Creates and pushes a content
         final Node node = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() );
         result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
         assertEquals( 1, result.getSuccessful().getSize() );
+        assertNotNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
 
-        //Renames and pushes the first content
-        renameNode( node );
+        //Renames the content
+        renameNode( node, "my-node-renamed" );
+        assertNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPath( NodePath.create( "/my-node-renamed" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+
+        //Pushed the renames content
         result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
         assertEquals( 1, result.getSuccessful().getSize() );
-
-        //Creates a same a second content with the same path
-        final Node secondNode = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() );
-        result = pushNodes( NodeIds.from( secondNode.id() ), WS_OTHER );
-        assertEquals( 1, result.getSuccessful().getSize() );
+        assertNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node-renamed" ).build() ) );
     }
 
     @Test
@@ -308,9 +309,9 @@ public class PushNodesCommandTest
 
         pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
-        renameNode( parent );
-        renameNode( child1 );
-        renameNode( child1_1 );
+        renameNode( parent, "parent-renamed" );
+        renameNode( child1, "child1-renamed" );
+        renameNode( child1_1, "child1_1-renamed" );
 
         final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
@@ -394,13 +395,13 @@ public class PushNodesCommandTest
         pushNodes( NodeIds.from( node.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
                    WS_OTHER );
 
-        renameNode( node );
-        renameNode( child1 );
-        renameNode( child1_1 );
-        renameNode( child1_1_1 );
-        renameNode( node2 );
-        renameNode( child2 );
-        renameNode( child2_1 );
+        renameNode( node, "node1-renamed" );
+        renameNode( child1, "child1-renamed" );
+        renameNode( child1_1, "child1_1-renamed" );
+        renameNode( child1_1_1, "child1_1_1-renamed" );
+        renameNode( node2, "node2-renamed" );
+        renameNode( child2, "child2-renamed" );
+        renameNode( child2_1, "child2_1-renamed" );
 
         final PushNodesResult result =
             pushNodes( NodeIds.from( child1_1_1.id(), child1_1.id(), node.id(), child2_1.id(), node2.id(), child1.id(), child2.id() ),
@@ -409,10 +410,8 @@ public class PushNodesCommandTest
         assertEquals( 7, result.getSuccessful().getSize() );
     }
 
-
-    private void renameNode( final Node node )
+    private void renameNode( final Node node, final String newName )
     {
-        final String newName = node.id().toString() + "edited";
         doRenameNode( node.id(), newName );
     }
 
