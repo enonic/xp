@@ -20,9 +20,9 @@ public class NodePushedHandler
         for ( final Map<Object, Object> map : valueMapList )
         {
             final InternalContext nodeContext = createNodeContext( map, context );
-            final NodePath previousPath =
-                map.containsKey( PREVIOUS_PATH ) ? NodePath.create( map.get( PREVIOUS_PATH ).toString() ).build() : null;
-            storageService.handleNodePushed( getId( map ), getPath( map ), previousPath, nodeContext );
+            final NodePath currentTargetPath =
+                map.containsKey( CURRENT_TARGET_PATH ) ? NodePath.create( map.get( CURRENT_TARGET_PATH ).toString() ).build() : null;
+            storageService.handleNodePushed( getId( map ), getPath( map ), currentTargetPath, nodeContext );
         }
     }
 }

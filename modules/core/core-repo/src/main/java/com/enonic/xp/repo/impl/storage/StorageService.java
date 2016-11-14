@@ -61,5 +61,5 @@ public interface StorageService
 
     void handleNodeMoved( final NodeMovedParams params, final InternalContext context );
 
-    void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath previousPath, InternalContext nodeContext );
+    void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath currentTargetPath, InternalContext nodeContext );
 }

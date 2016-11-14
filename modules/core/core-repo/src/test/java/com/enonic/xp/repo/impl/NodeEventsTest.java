@@ -62,7 +62,7 @@ public class NodeEventsTest
             targetBranch( ContentConstants.BRANCH_MASTER ).
             add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).build() ).
             add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build() ).
-            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry3 ).previousPath(
+            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry3 ).currentTargetPath(
                 NodePath.create( "/mynode1/pushed3/pushed3" ).build() ).build() ).
             build();
 
@@ -74,7 +74,7 @@ public class NodeEventsTest
         assertEquals( NodeEvents.NODE_PUSHED_EVENT, event.getType() );
         assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=master}" +
                           ", {id=id2, path=/mynode1/pushed2/pushed2, branch=master}" +
-                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, previousPath=/mynode1/pushed3/pushed3}]",
+                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, currentTargetPath=/mynode1/pushed3/pushed3}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 

@@ -22,7 +22,7 @@ abstract class AbstractNodeEventHandler
 
     final static String NEW_PATH = "newPath";
 
-    final static String PREVIOUS_PATH = "previousPath";
+    final static String CURRENT_TARGET_PATH = "currentTargetPath";
 
     @SuppressWarnings("unchecked")
     List<Map<Object, Object>> getValueMapList( final Event event )

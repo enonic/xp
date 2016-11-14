@@ -269,13 +269,14 @@ public class StorageServiceImpl
     }
 
     @Override
-    public void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath previousPath, final InternalContext context )
+    public void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath currentTargetPath,
+                                  final InternalContext context )
     {
-        if ( !nodePath.equals( previousPath ) )
+        if ( !nodePath.equals( currentTargetPath ) )
         {
-            if ( previousPath != null )
+            if ( currentTargetPath != null )
             {
-                this.branchService.evictPath( previousPath, context );
+                this.branchService.evictPath( currentTargetPath, context );
             }
             this.branchService.cachePath( nodeId, nodePath, context );
         }

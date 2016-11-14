@@ -220,8 +220,7 @@ public class NodeEventListenerTest
             build();
         final PushNodeEntry pushNodeEntry = PushNodeEntry.create().
             nodeBranchEntry( nodeBranchEntry ).
-            nodeVersionId( nodeBranchEntry.getVersionId() ).
-            previousPath( previousNodePath ).
+            currentTargetPath( previousNodePath ).
             build();
 
         final PushNodeEntries pushNodeEntries = PushNodeEntries.create().

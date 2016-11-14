@@ -204,9 +204,9 @@ public class NodeEvents
             put( "id", node.getNodeBranchEntry().getNodeId().toString() ).
             put( "path", node.getNodeBranchEntry().getNodePath().toString() ).
             put( "branch", targetBranch );
-        if ( node.getPreviousPath() != null )
+        if ( node.getCurrentTargetPath() != null )
         {
-            nodeAsMap.put( "previousPath", node.getPreviousPath() );
+            nodeAsMap.put( "currentTargetPath", node.getCurrentTargetPath() );
         }
         return nodeAsMap.build();
     }
