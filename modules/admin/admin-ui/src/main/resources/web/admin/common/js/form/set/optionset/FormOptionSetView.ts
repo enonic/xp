@@ -92,11 +92,13 @@ module api.form {
         }
 
         protected getPropertyArray(parentPropertySet: PropertySet): PropertyArray {
-            var existingPropertyArray = parentPropertySet.getPropertyArray(this.formOptionSet.getName());
-            if (!existingPropertyArray) {
-                parentPropertySet.addPropertySet(this.formOptionSet.getName());
+            var propertyArray = parentPropertySet.getPropertyArray(this.formOptionSet.getName());
+            if (!propertyArray) {
+                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formOptionSet.getName()).setParent(
+                    this.parentDataSet).build();
+                parentPropertySet.addPropertyArray(propertyArray);
             }
-            return parentPropertySet.getPropertyArray(this.formOptionSet.getName());
+            return propertyArray;
         }
 
         private subscribeFormOptionSetOccurrencesOnEvents() {
