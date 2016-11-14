@@ -4,12 +4,12 @@ public class PushNodeEntry
 {
     private NodeBranchEntry nodeBranchEntry;
 
-    private NodeVersionId nodeVersionId;
+    private NodePath currentTargetPath;
 
     private PushNodeEntry( final Builder builder )
     {
-        nodeVersionId = builder.nodeVersionId;
         nodeBranchEntry = builder.nodeBranchEntry;
+        currentTargetPath = builder.currentTargetPath;
     }
 
     public static Builder create()
@@ -22,31 +22,30 @@ public class PushNodeEntry
         return nodeBranchEntry;
     }
 
-    public NodeVersionId getNodeVersionId()
+    public NodePath getCurrentTargetPath()
     {
-        return nodeVersionId;
+        return currentTargetPath;
     }
 
     public static final class Builder
     {
-
-        private NodeVersionId nodeVersionId;
-
         private NodeBranchEntry nodeBranchEntry;
+
+        private NodePath currentTargetPath;
 
         private Builder()
         {
         }
 
-        public Builder nodeVersionId( final NodeVersionId val )
-        {
-            nodeVersionId = val;
-            return this;
-        }
-
         public Builder nodeBranchEntry( final NodeBranchEntry val )
         {
             nodeBranchEntry = val;
+            return this;
+        }
+
+        public Builder currentTargetPath( final NodePath val )
+        {
+            currentTargetPath = val;
             return this;
         }
 

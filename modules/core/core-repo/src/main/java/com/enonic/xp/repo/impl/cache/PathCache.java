@@ -8,5 +8,7 @@ public interface PathCache
 
     void evict( final CachePath path );
 
+    void evictAll();
+
     String get( final CachePath path );
 }

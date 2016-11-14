@@ -126,7 +126,7 @@ public class PushNodesCommand
 
             publishBuilder.add( PushNodeEntry.create().
                 nodeBranchEntry( nodeBranchEntry ).
-                nodeVersionId( nodeBranchEntry.getVersionId() ).
+                currentTargetPath( comparison.getTargetPath() ).
                 build() );
 
             builder.addSuccess( nodeBranchEntry );
