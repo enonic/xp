@@ -524,7 +524,9 @@ public class NodeServiceImpl
     @Override
     public RestoreResult restore( final RestoreParams params )
     {
-        return this.snapshotService.restore( params );
+        final RestoreResult restoreResult = this.snapshotService.restore( params );
+        this.storageService.invalidate();
+        return restoreResult;
     }
 
     @Override

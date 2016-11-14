@@ -23,7 +23,6 @@ import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
-import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
@@ -150,7 +149,7 @@ public class StorageServiceImpl
                 nodeState( nodeBranchEntry.getNodeState() ).
                 timestamp( nodeBranchEntry.getTimestamp() ).
                 nodePath( nodeBranchEntry.getNodePath() ).
-                build(), InternalContext.create( context ).
+                build(), entry.getPreviousPath(), InternalContext.create( context ).
                 branch( entries.getTargetBranch() ).
                 build() );
             if ( pushListener != null )
@@ -252,6 +251,12 @@ public class StorageServiceImpl
     }
 
     @Override
+    public void invalidate()
+    {
+        this.branchService.evictAllPaths();
+    }
+
+    @Override
     public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
         this.branchService.cachePath( nodeId, nodePath, context );
@@ -338,16 +343,13 @@ public class StorageServiceImpl
     {
         final NodeVersion nodeVersion = NodeVersion.from( node );
 
-        this.branchService.move( MoveBranchParams.create().
-            branchNodeVersion( NodeBranchEntry.create().
-                nodeVersionId( nodeVersionId ).
-                nodeId( nodeVersion.getId() ).
-                nodeState( node.getNodeState() ).
-                timestamp( node.getTimestamp() ).
-                nodePath( node.path() ).
-                build() ).
-            previousPath( previousPath ).
-            build(), context );
+        this.branchService.store( NodeBranchEntry.create().
+            nodeVersionId( nodeVersionId ).
+            nodeId( nodeVersion.getId() ).
+            nodeState( node.getNodeState() ).
+            timestamp( node.getTimestamp() ).
+            nodePath( node.path() ).
+            build(), previousPath, context );
 
         this.indexDataService.store( node, context );
 

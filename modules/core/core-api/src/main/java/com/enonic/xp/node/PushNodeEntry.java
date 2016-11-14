@@ -6,10 +6,13 @@ public class PushNodeEntry
 
     private NodeVersionId nodeVersionId;
 
+    private NodePath previousPath;
+
     private PushNodeEntry( final Builder builder )
     {
         nodeVersionId = builder.nodeVersionId;
         nodeBranchEntry = builder.nodeBranchEntry;
+        previousPath = builder.previousPath;
     }
 
     public static Builder create()
@@ -27,12 +30,19 @@ public class PushNodeEntry
         return nodeVersionId;
     }
 
+    public NodePath getPreviousPath()
+    {
+        return previousPath;
+    }
+
     public static final class Builder
     {
 
         private NodeVersionId nodeVersionId;
 
         private NodeBranchEntry nodeBranchEntry;
+
+        private NodePath previousPath;
 
         private Builder()
         {
@@ -47,6 +57,12 @@ public class PushNodeEntry
         public Builder nodeBranchEntry( final NodeBranchEntry val )
         {
             nodeBranchEntry = val;
+            return this;
+        }
+
+        public Builder previousPath( final NodePath val )
+        {
+            previousPath = val;
             return this;
         }
 
