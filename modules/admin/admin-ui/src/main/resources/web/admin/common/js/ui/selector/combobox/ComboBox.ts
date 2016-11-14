@@ -167,7 +167,7 @@ module api.ui.selector.combobox {
         private doUpdateDropdownTopPositionAndWidth() {
 
             if (this.dropdownOverflowsBottom()) {
-                this.placeDropdownAbove()
+                this.placeDropdownAbove();
             } else {
                 this.placeDropdownBelow();
             }
@@ -235,10 +235,11 @@ module api.ui.selector.combobox {
 
         showDropdown() {
 
-            this.doUpdateDropdownTopPositionAndWidth();
-            this.notifyExpanded(true);
-
             this.comboBoxDropdown.showDropdown(this.getSelectedOptions(), this.isInputEmpty() ? this.noOptionsText : null);
+
+            this.doUpdateDropdownTopPositionAndWidth();
+
+            this.notifyExpanded(true);
 
             this.dropdownHandle.down();
 

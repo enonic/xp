@@ -10,12 +10,14 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -316,6 +318,60 @@ public class ContentServiceImplTest_publish
         assertStatus( c1.getId(), CompareStatus.EQUAL );
     }
 
+    /*
+
+     create /a
+     create /a/a1
+     create /a/a2
+     create /b
+
+     publish /a, /a/a1, /a/a2
+
+     rename /a name to "a_old"
+     rename /b to "a"
+     move a1 and a2 to the new /a
+
+     publish the new /a ("b") and check "Include child items"
+     */
+
+    @Test
+    public void publish_rename_move_publish()
+        throws Exception
+    {
+        final Content a = createContent( ContentPath.ROOT, "a" );
+        final Content b = createContent( ContentPath.ROOT, "b" );
+        final Content a1 = createContent( a.getPath(), "a1" );
+        final Content a2 = createContent( a.getPath(), "a2" );
+        doPublish( true, a.getId() );
+
+        System.out.println( "After initial push:" );
+        printContentTree( getByPath( ContentPath.ROOT ).getId() );
+        printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
+
+        doRename( a.getId(), "a_old" );
+        doRename( b.getId(), "a" );
+
+        doMove( a1.getId(), "/a" );
+        doMove( a2.getId(), "/a" );
+
+        doPublish( true, b.getId() );
+
+        System.out.println( "" );
+        System.out.println( "After second push:" );
+        printContentTree( getByPath( ContentPath.ROOT ).getId() );
+        printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
+
+        assertStatus( b.getId(), CompareStatus.EQUAL );
+    }
+
+    private Content doRename( final ContentId contentId, final String newName )
+    {
+        return this.contentService.rename( RenameContentParams.create().
+            contentId( contentId ).
+            newName( ContentName.from( newName ) ).
+            build() );
+    }
+
     private Content getInMaster( final ContentId contentId )
     {
         return CTX_OTHER.callWith( () -> this.contentService.getById( contentId ) );
@@ -342,6 +398,11 @@ public class ContentServiceImplTest_publish
         this.contentService.move( new MoveContentParams( contentId, newParent ) );
     }
 
+    private void doMove( final ContentId contentId, final String newParent )
+    {
+        this.contentService.move( new MoveContentParams( contentId, ContentPath.from( newParent ) ) );
+    }
+
     private void doDelete( final ContentPath f1Path, boolean instantly )
     {
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().
@@ -360,7 +421,6 @@ public class ContentServiceImplTest_publish
             target( WS_OTHER ).
             build() );
     }
-
 
     /**
      * /content1
