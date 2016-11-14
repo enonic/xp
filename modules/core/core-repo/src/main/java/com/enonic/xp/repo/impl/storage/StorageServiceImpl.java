@@ -142,14 +142,7 @@ public class StorageServiceImpl
         for ( final PushNodeEntry entry : entries )
         {
             final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
-
-            this.branchService.store( NodeBranchEntry.create().
-                nodeVersionId( entry.getNodeVersionId() ).
-                nodeId( nodeBranchEntry.getNodeId() ).
-                nodeState( nodeBranchEntry.getNodeState() ).
-                timestamp( nodeBranchEntry.getTimestamp() ).
-                nodePath( nodeBranchEntry.getNodePath() ).
-                build(), entry.getPreviousPath(), InternalContext.create( context ).
+            this.branchService.store( nodeBranchEntry, entry.getCurrentTargetPath(), InternalContext.create( context ).
                 branch( entries.getTargetBranch() ).
                 build() );
             if ( pushListener != null )
