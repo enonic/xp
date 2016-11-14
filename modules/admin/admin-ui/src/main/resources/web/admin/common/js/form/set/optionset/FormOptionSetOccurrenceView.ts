@@ -24,6 +24,8 @@ module api.form {
 
         private context: FormContext;
 
+        private selectionValidationMessage: api.dom.DivEl;
+
         constructor(config: FormOptionSetOccurrenceViewConfig) {
             super("form-option-set-occurrence-view", config.formOptionSetOccurrence);
             this.formItemOccurrence = config.formOptionSetOccurrence;
@@ -70,6 +72,9 @@ module api.form {
 
                 this.toggleHelpText(this.formOptionSet.isHelpTextOn());
             }
+
+            this.selectionValidationMessage = new api.dom.DivEl("selection-message");
+            this.appendChild(this.selectionValidationMessage);
 
             this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);
@@ -136,6 +141,8 @@ module api.form {
                             this.currentValidationState.flatten(this.currentValidationState);
                         }
 
+                        this.renderSelectionValidationMessage(multiselectionState);
+
                         if (this.currentValidationState.isValid() != previousValidationValid) {
                             this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                                 this.resolveValidationRecordingPath()).setIncludeChildren(true));
@@ -150,6 +157,34 @@ module api.form {
             }).done();
 
             return deferred.promise;
+        }
+
+        private renderSelectionValidationMessage(selectionValidationRecording: ValidationRecording) {
+            if (selectionValidationRecording.isValid()) {
+                this.selectionValidationMessage.addClass("empty");
+            } else {
+                var selection: Occurrences = this.formOptionSet.getMultiselection(),
+                    message;
+                if (!selectionValidationRecording.isMinimumOccurrencesValid()) {
+                    if (selection.getMinimum() == 1) {
+                        message = "At least 1 option must be selected";
+                    } else if (selection.getMinimum() > 1) {
+                        message = "At least " + selection.getMinimum() + " options must be selected";
+                    }
+                }
+                if (!selectionValidationRecording.isMaximumOccurrencesValid()) {
+                    if (selection.getMaximum() == 1) {
+                        message = "Maximum 1 option can be selected";
+                    } else if (selection.getMaximum() > 1) {
+                        message = "Maximum " + selection.getMaximum() + " options can be selected";
+                    }
+                }
+
+                if (!!message) {
+                    this.selectionValidationMessage.setHtml(message);
+                    this.selectionValidationMessage.removeClass("empty");
+                }
+            }
         }
 
         private isNew(): boolean {
@@ -219,7 +254,10 @@ module api.form {
                 }
             });
 
-            allRecordings.flatten(this.validateMultiselection());
+            var multiselectionState = this.validateMultiselection();
+            allRecordings.flatten(multiselectionState);
+
+            this.renderSelectionValidationMessage(multiselectionState);
 
             if (!silent) {
                 if (allRecordings.validityChanged(this.currentValidationState)) {
