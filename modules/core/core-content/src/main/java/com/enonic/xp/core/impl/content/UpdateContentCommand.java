@@ -211,7 +211,7 @@ final class UpdateContentCommand
         {
             InputValidator.
                 create().
-                contentType( contentType ).
+                form( contentType.getForm() ).
                 inputTypeResolver( InputTypes.BUILTIN ).
                 build().
                 validate( editedContent.getData() );
