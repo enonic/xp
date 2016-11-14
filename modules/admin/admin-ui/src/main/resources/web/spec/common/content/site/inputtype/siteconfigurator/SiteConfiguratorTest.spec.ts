@@ -20,6 +20,7 @@ import BaseInputTypeManagingAdd = api.form.inputtype.support.BaseInputTypeManagi
 import FormView = api.form.FormView;
 import PropertySet = api.data.PropertySet;
 import Spy = jasmine.Spy;
+import FormValidityChangedEvent = api.form.FormValidityChangedEvent;
 
 describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
@@ -266,7 +267,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
     describe("test event listeners", () => {
 
-        let combobox, selectedOption, handlerSpy:Spy, event:SelectedOptionEvent<any>;
+        let combobox, selectedOption, handlerSpy:Spy, event:SelectedOptionEvent<any>, validationSpy;
 
         beforeEach((done) => {
             let createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
@@ -278,27 +279,137 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
                 );
 
-                handlerSpy = spyOn(configurator, "saveToSet");
+                handlerSpy = spyOn(configurator, "saveToSet").and.callThrough();
+                validationSpy = spyOn(configurator, "validate");
                 event = new SelectedOptionEvent(selectedOption, -1);
 
                 done();
             });
         });
 
-        it("option selected listener is called", () => {
-            combobox.getSelectedOptionsView().notifyOptionSelected(event);
-            expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), selectedOption.getIndex());
+        describe("when config has changed", () => {
+            var fakePropertyArrayObj, fakePropertySetObj, fakePropertyObj;
+
+            beforeEach(() => {
+                fakePropertySetObj = jasmine.createSpyObj('fakePropertySet', ['setStringByPath', 'setPropertySetByPath']);
+                fakePropertyObj = jasmine.createSpyObj('fakeProperty', ['getPropertySet']);
+
+                fakePropertyArrayObj = jasmine.createSpyObj('fakePropertyArray', ['get', 'addSet']);
+                fakePropertyArrayObj.get.and.returnValue(fakePropertyObj);
+
+                spyOn(configurator, "getPropertyArray").and.returnValue(fakePropertyArrayObj);
+            });
+
+            describe("if property set doesn't exist", () => {
+                beforeEach(() => {
+                    fakePropertyArrayObj.addSet.and.returnValue(fakePropertySetObj);
+                    fakePropertyObj.getPropertySet.and.returnValue(null);
+
+                    combobox.getSelectedOptionsView().notifyOptionSelected(event);
+                });
+
+                it("should create a new property set", () => {
+                    expect(fakePropertyArrayObj.addSet).toHaveBeenCalled();
+                });
+
+
+                it("should update properties of the new property set", () => {
+                    expect(fakePropertySetObj.setStringByPath).toHaveBeenCalled();
+                    expect(fakePropertySetObj.setPropertySetByPath).toHaveBeenCalled();
+                });
+            });
+
+            describe("if property set exists", () => {
+                beforeEach(() => {
+                    fakePropertyObj.getPropertySet.and.returnValue(fakePropertySetObj);
+
+                    combobox.getSelectedOptionsView().notifyOptionSelected(event);
+                });
+
+                it("should NOT create a new property set", () => {
+                    expect(fakePropertyArrayObj.addSet).not.toHaveBeenCalled();
+                });
+
+                it("should update properties of the existing property set", () => {
+                    expect(fakePropertySetObj.setStringByPath).toHaveBeenCalled();
+                    expect(fakePropertySetObj.setPropertySetByPath).toHaveBeenCalled();
+                });
+            });
         });
 
-        it("option moved listener is called", () => {
-            combobox.getSelectedOptionsView().notifyOptionMoved(selectedOption);
-            expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), 0);
+        describe("when the form is displayed", () => {
+
+            let formView;
+
+            beforeEach(() => {
+                formView = new FormView(null,null,null);
+
+                combobox.getSelectedOptionsView().notifySiteConfigFormDisplayed(selectedOption.getOption().displayValue.getApplicationKey(), formView);
+            });
+
+            it("should run validation", () => {
+                expect(validationSpy).toHaveBeenCalled();
+            });
+
+            it("should run validation every time form validity changes", () => {
+                validationSpy.calls.reset();
+
+                formView.notifyValidityChanged(new FormValidityChangedEvent());
+                formView.notifyValidityChanged(new FormValidityChangedEvent());
+                formView.notifyValidityChanged(new FormValidityChangedEvent());
+
+                expect(validationSpy.calls.count()).toEqual(3);
+            });
         });
 
-        it("option deselected listener is called", () => {
-            handlerSpy = spyOn(configurator["propertyArray"], "remove");
-            combobox.getSelectedOptionsView().notifyOptionDeselected(selectedOption);
-            expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getIndex());
+        describe("when an option is selected", () => {
+
+            beforeEach(() => {
+                combobox.getSelectedOptionsView().notifyOptionSelected(event);
+            });
+
+            it("should save config in the property set", () => {
+                expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), selectedOption.getIndex());
+            });
+
+            it("should run validation", () => {
+                expect(validationSpy).toHaveBeenCalled();
+            });
+
+        });
+
+        describe("when an option is moved", () => {
+            beforeEach(() => {
+                combobox.getSelectedOptionsView().notifyOptionMoved(selectedOption);
+            });
+
+            it("should save config in the property set", () => {
+                expect(handlerSpy).toHaveBeenCalledWith(selectedOption.getOptionView().getSiteConfig(), selectedOption.getIndex());
+            });
+
+            it("should run validation", () => {
+                expect(validationSpy).toHaveBeenCalled();
+            });
+
+        });
+
+        describe("when an option is deselected", () => {
+            var fakePropertyArrayObj;
+            
+            beforeEach(() => {
+                fakePropertyArrayObj = jasmine.createSpyObj('eventHandler', ['remove']);
+                spyOn(configurator, "getPropertyArray").and.returnValue(fakePropertyArrayObj);
+
+                combobox.getSelectedOptionsView().notifyOptionDeselected(selectedOption);
+            });
+
+            it("should remove option from the property set", () => {
+                expect(fakePropertyArrayObj.remove).toHaveBeenCalledWith(selectedOption.getIndex());
+            });
+
+            it("should run validation", () => {
+                expect(validationSpy).toHaveBeenCalled();
+            });
         });
     });
 
