@@ -47,6 +47,10 @@ module api.content.site.inputtype.siteconfigurator {
             return views;
         }
 
+        getSelectedOptionsView(): SiteConfiguratorSelectedOptionsView {
+            return this.siteConfiguratorSelectedOptionsView;
+        }
+
         onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
             this.siteConfiguratorSelectedOptionsView.onSiteConfigFormDisplayed(listener);
         }
