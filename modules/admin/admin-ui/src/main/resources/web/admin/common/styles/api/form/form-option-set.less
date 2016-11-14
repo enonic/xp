@@ -1,20 +1,27 @@
 .form-view {
 
   &:not(.display-validation-errors) .form-option-set-occurrence-view .form-option-set-option-view {
-      &.selected.invalid {
-        .option-items-container .input-view.highlight-validity-change.invalid {
-          background-color: @admin-white;
+    &.selected.invalid {
+      .option-items-container .input-view.highlight-validity-change.invalid {
+        background-color: @admin-white;
 
-          .upload-button &:hover {
-              box-shadow: 0 0 5px @admin-input-red;
-              border: 1px solid @admin-input-red;
-          }
+        .upload-button &:hover {
+          box-shadow: 0 0 5px @admin-input-red;
+          border: 1px solid @admin-input-red;
         }
       }
+    }
   }
 
   &.display-validation-errors {
     .form-option-set-occurrence-view {
+
+      .selection-message:not(.empty) {
+        display: block;
+        color: @input-red-text;
+        font-size: 14px;
+        padding: 10px 10px 0 10px;
+      }
 
       .form-option-set-option-view.invalid {
         > .help-text {
@@ -24,62 +31,65 @@
 
       .form-option-set-option-view {
         &.selected.invalid {
-            border-left: 6px solid @input-light-red;
-            border-right: 6px solid @input-light-red;
-            border-bottom: 6px solid @input-light-red;
+          border-left: 6px solid @input-light-red;
+          border-right: 6px solid @input-light-red;
+          border-bottom: 6px solid @input-light-red;
 
-            > .form-input {
-              background-color: @input-light-red;
+          > .form-input {
+            background-color: @input-light-red;
 
-              label {
-                color: @admin-dark-gray;
-              }
-
-              &.checkbox:hover label {
-                color: @admin-black !important;
-              }
-
-              input[type="radio"] {
-                border-color: darkgray;
-                &:checked {
-                  background-color: @admin-font-gray2;
-                }
-              }
+            label {
+              color: @admin-dark-gray;
             }
 
-            .option-items-container {
-              .input-view.invalid {
-                background-color: @admin-white;
+            &.checkbox:hover label {
+              color: @admin-black !important;
+            }
 
-                .input-type-view {
-                  border: 1px solid @admin-input-red;
+            input[type="radio"] {
+              border-color: darkgray;
+              &:checked {
+                background-color: @admin-font-gray2;
+              }
+            }
+          }
 
-                  &.@{_COMMON_PREFIX}text-input:focus {
+          .option-items-container {
+            .input-view.invalid {
+              background-color: @admin-white;
+
+              .input-type-view {
+                border: 1px solid @admin-input-red;
+
+                &.@{_COMMON_PREFIX}text-input:focus {
+                  box-shadow: 0 0 5px @admin-input-red;
+                }
+
+                .upload-button {
+                  border-left: 1px solid @admin-input-red;
+
+                  &:hover {
                     box-shadow: 0 0 5px @admin-input-red;
+                    border: 1px solid @admin-input-red;
                   }
-
-                  .upload-button {
-                    border-left: 1px solid @admin-input-red;
-
-                    &:hover {
-                      box-shadow: 0 0 5px @admin-input-red;
-                      border: 1px solid @admin-input-red;
-                    }
-                  }
-                }
-
-                .help-text p {
-                  color: @admin-font-gray1;
                 }
               }
+
+              .help-text p {
+                color: @admin-font-gray1;
+              }
             }
+          }
         }
       }
     }
   }
 
-
   .form-option-set-occurrence-view {
+
+    .selection-message {
+      display: none;
+    }
 
     .form-occurrence-draggable-label {
       margin-left: 0px;
@@ -243,7 +253,7 @@
           background-color: @admin-white;
 
           &:checked {
-              opacity: 0;
+            opacity: 0;
 
             + label:before {
               content: "";
