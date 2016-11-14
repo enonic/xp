@@ -4,17 +4,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
 import static org.junit.Assert.*;
@@ -58,17 +66,7 @@ public class ValidateContentDataCommandTest
 
         final Content content = Content.create().path( "/mycontent" ).type( contentType.getName() ).build();
 
-        // exercise
-
-        final DataValidationErrors result = ValidateContentDataCommand.create().
-            contentData( content.getData() ).
-            contentType( contentType.getName() ).
-            contentTypeService( this.contentTypeService ).
-            mixinService( this.mixinService ).
-            siteService( this.siteService ).
-            build().
-            execute();
-
+        final DataValidationErrors result = executeValidation( content.getData(), contentType.getName() );
         // test
         assertTrue( result.hasErrors() );
         assertEquals( 1, result.size() );
@@ -95,19 +93,97 @@ public class ValidateContentDataCommandTest
         content.getData().setString( "mySet.myInput", "thing" );
 
         // exercise
-        final DataValidationErrors result = ValidateContentDataCommand.create().
-            contentData( content.getData() ).
-            contentType( contentType.getName() ).
-            contentTypeService( this.contentTypeService ).
-            mixinService( this.mixinService ).
-            siteService( this.siteService ).
-            build().
-            execute();
-
-        // test
+        final DataValidationErrors result = executeValidation( content.getData(), contentType.getName() );
 
         assertFalse( result.hasErrors() );
         assertEquals( 0, result.size() );
     }
 
+    @Test
+    public void testSiteConfigTextRegexpFailure()
+    {
+        final ContentType contentType = ContentType.create().
+            superType( ContentTypeName.structured() ).
+            name( ContentTypeName.site() ).
+            build();
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        PropertyTree rootDataSet = new PropertyTree();
+
+        PropertyTree siteConfigDataSet = new PropertyTree();
+        siteConfigDataSet.setString( "textInput-1", "test" );
+
+        SiteConfig siteConfig = SiteConfig.create().
+            application( ApplicationKey.from( "myapp" ) ).
+            config( siteConfigDataSet ).build();
+        new SiteConfigsDataSerializer().toProperties( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
+
+        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
+
+        // exercise
+        final DataValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
+
+        assertTrue( result.hasErrors() );
+        assertEquals( 1, result.size() );
+    }
+
+    private SiteDescriptor createSiteDescriptor()
+    {
+        final Form config = Form.create().
+            addFormItem( createTextLineInput( "textInput-1", "some-label" ).build() ).
+            build();
+        return SiteDescriptor.create().form( config ).build();
+    }
+
+    private Input.Builder createTextLineInput( final String name, final String label )
+    {
+        return Input.create().
+            inputType( InputTypeName.TEXT_LINE ).
+            label( label ).
+            name( name ).
+            inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() ).
+            immutable( true );
+    }
+
+    @Test
+    public void testSiteConfigTextRegexpPasses()
+    {
+        final ContentType contentType = ContentType.create().
+            superType( ContentTypeName.structured() ).
+            name( ContentTypeName.site() ).
+            build();
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        PropertyTree rootDataSet = new PropertyTree();
+
+        PropertyTree siteConfigDataSet = new PropertyTree();
+        siteConfigDataSet.setString( "textInput-1", "1234" );
+
+        SiteConfig siteConfig = SiteConfig.create().
+            application( ApplicationKey.from( "myapp" ) ).
+            config( siteConfigDataSet ).build();
+        new SiteConfigsDataSerializer().toProperties( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
+
+        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
+
+        // exercise
+        final DataValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
+
+        assertFalse( result.hasErrors() );
+        assertEquals( 0, result.size() );
+    }
+
+    private DataValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName )
+    {
+        return ValidateContentDataCommand.create().
+            contentData( propertyTree ).
+            contentType( contentTypeName ).
+            contentTypeService( this.contentTypeService ).
+            mixinService( this.mixinService ).
+            siteService( this.siteService ).
+            build().
+            execute();
+    }
 }
