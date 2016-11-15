@@ -18,6 +18,8 @@ import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
 import AppBarTabId = api.app.bar.AppBarTabId;
+import ContentNamedEvent = api.content.event.ContentNamedEvent;
+import PropertyChangedEvent = api.PropertyChangedEvent;
 
 declare var CONFIG;
 
@@ -94,6 +96,10 @@ function initToolTip() {
     if (FOLLOW) { wemjq(document).on("mousemove", "." + CLS_ON, showAt); }
 }
 
+function updateTabTitle(title: string) {
+    wemjq('title').html(`${title} - Enonic XP Admin`);
+}
+
 function startApplication() {
 
     let application: api.app.Application = getApplication();
@@ -102,6 +108,20 @@ function startApplication() {
     let wizardParams = ContentWizardPanelParams.fromPath(application.getPath());
     if (wizardParams) {
         let wizard = new ContentWizardPanel(wizardParams);
+
+        wizard.onDataLoaded(content => updateTabTitle(content.getDisplayName()));
+        wizard.onWizardHeaderCreated(() => {
+            // header will be ready after rendering is complete
+            wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() === "displayName") {
+                    var contentType = (<ContentWizardPanel>wizard).getContentType(),
+                        name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
+
+                    updateTabTitle(name);
+                }
+            });
+        });
+
         body.appendChild(wizard);
         return;
     }

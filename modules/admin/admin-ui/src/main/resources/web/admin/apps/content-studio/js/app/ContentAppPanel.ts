@@ -300,7 +300,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         new OpenMoveDialogEvent(contents.map(content => content.getContentSummary())).fire();
     }
 
-    private handleContentNamedEvent(event: ContentNamedEvent) {
+    /*    private handleContentNamedEvent(event: ContentNamedEvent) {
 
         var wizard = event.getWizard(),
             tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
@@ -308,7 +308,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         var newTabId = AppBarTabId.forEdit(event.getContent().getId());
         tabMenuItem.setTabId(newTabId);
         wizard.setTabId(newTabId);
-    }
+     }*/
 
     private resolveTabMenuItemForContentBeingEditedOrViewed(content: ContentSummary): AppBarTabMenuItem {
         var result = this.resolveTabMenuItemForContentBeingEdited(content);
