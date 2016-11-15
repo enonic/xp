@@ -27,7 +27,6 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
-import com.enonic.xp.node.InternalPushNodesResult;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
