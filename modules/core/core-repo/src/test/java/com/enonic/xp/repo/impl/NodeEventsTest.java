@@ -182,6 +182,16 @@ public class NodeEventsTest
     }
 
     @Test
+    public void testRestored()
+    {
+        Event event = NodeEvents.restored();
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertEquals( NodeEvents.NODE_RESTORED_EVENT, event.getType() );
+    }
+
+    @Test
     public void testNullArguments()
     {
         Event eventCreated = NodeEvents.created( null );

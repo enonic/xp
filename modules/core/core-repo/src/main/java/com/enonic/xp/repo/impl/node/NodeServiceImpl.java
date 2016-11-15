@@ -527,6 +527,7 @@ public class NodeServiceImpl
     {
         final RestoreResult restoreResult = this.snapshotService.restore( params );
         this.storageService.invalidate();
+        this.eventPublisher.publish( NodeEvents.restored() );
         return restoreResult;
     }
 
