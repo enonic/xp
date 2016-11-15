@@ -28,8 +28,6 @@ public class NodeEventListener
 
     private final NodePushedHandler nodePushedHandler = new NodePushedHandler();
 
-    private final NodeRestoredHandler nodeRestoredHandler = new NodeRestoredHandler();
-
     @Override
     public int getOrder()
     {
@@ -74,9 +72,6 @@ public class NodeEventListener
                 break;
             case NodeEvents.NODE_PUSHED_EVENT:
                 handleEventType( event, nodePushedHandler );
-                break;
-            case NodeEvents.NODE_RESTORED_EVENT:
-                handleEventType( event, nodeRestoredHandler );
                 break;
         }
     }

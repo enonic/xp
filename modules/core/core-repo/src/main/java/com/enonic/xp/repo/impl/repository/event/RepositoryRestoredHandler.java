@@ -1,11 +1,11 @@
-package com.enonic.xp.repo.impl.node.event;
+package com.enonic.xp.repo.impl.repository.event;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StorageService;
 
-public class NodeRestoredHandler
-    extends AbstractNodeEventHandler
+public class RepositoryRestoredHandler
+    implements RepositoryEventHandler
 {
 
     @Override

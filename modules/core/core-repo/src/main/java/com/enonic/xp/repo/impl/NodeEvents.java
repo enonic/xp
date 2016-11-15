@@ -37,8 +37,6 @@ public class NodeEvents
 
     public static final String NODE_STATE_UPDATED_EVENT = "node.stateUpdated";
 
-    public static final String NODE_RESTORED_EVENT = "node.restored";
-
     public static Event created( final Node createdNode )
     {
         return event( NODE_CREATED_EVENT, createdNode );
@@ -80,13 +78,6 @@ public class NodeEvents
     public static Event duplicated( final Node duplicatedNode )
     {
         return event( NODE_DUPLICATED_EVENT, duplicatedNode );
-    }
-
-    public static Event restored()
-    {
-        return Event.create( NODE_RESTORED_EVENT ).
-            distributed( true ).
-            build();
     }
 
     public static Event updated( final Node updatedNode )

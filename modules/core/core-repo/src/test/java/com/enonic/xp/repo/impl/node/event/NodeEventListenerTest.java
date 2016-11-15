@@ -239,17 +239,4 @@ public class NodeEventListenerTest
                                                                                Mockito.eq( previousNodePath ),
                                                                                Mockito.isA( InternalContext.class ) );
     }
-
-    @Test
-    public void node_restored_event()
-        throws Exception
-    {
-        final Event localEvent = NodeEvents.restored();
-        nodeEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
-        Mockito.verify( storageService, Mockito.times( 1 ) ).invalidate();
-    }
-
-
 }
