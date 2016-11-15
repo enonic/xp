@@ -120,12 +120,13 @@ module api.content.form.inputtype.image {
             var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView(),
                 isMissingContent = option.displayValue.isEmptyContent();
 
-            optionView.onRendered(() => this.handleOptionViewRendered(selectedOption, optionView));
+            optionView.onRendered(() => {
+                this.handleOptionViewRendered(selectedOption, optionView);
+                optionView.setOption(option);
+            });
 
             optionView.insertBeforeEl(this.toolbar);
 
-            optionView.setOption(option);
-            
             if (!silent) {
                 this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
             }
