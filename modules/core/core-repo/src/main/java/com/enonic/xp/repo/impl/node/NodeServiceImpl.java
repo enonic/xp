@@ -27,6 +27,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.InternalPushNodesResult;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -315,7 +316,7 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target, final PushNodesListener pushListener )
     {
-        final PushNodesResult pushNodesResult = PushNodesCommand.create().
+        final InternalPushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -325,9 +326,9 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( pushNodesResult.getSuccessful().isNotEmpty() )
+        if ( pushNodesResult.getPushNodeEntries().isNotEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessful() ) );
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getPushNodeEntries() ) );
         }
 
         return pushNodesResult;
