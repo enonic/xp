@@ -21,6 +21,8 @@ module api.ui.selector {
 
         private maxHeight: number;
 
+        private customHeight: number;
+
         private width: number;
 
         private grid: api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>;
@@ -47,6 +49,7 @@ module api.ui.selector {
             this.filter = config.filter;
             this.dataIdProperty = config.dataIdProperty || "value";
             this.maxHeight = config.maxHeight;
+            this.customHeight = config.maxHeight;
             this.width = config.width;
             this.multipleSelections = config.multipleSelections || false;
 
@@ -200,16 +203,27 @@ module api.ui.selector {
             var gridEl = this.grid.getEl();
             var rowsHeight = this.getOptionCount() * this.optionDisplayValueViewer.getPreferredHeight();
 
-            if (rowsHeight < this.maxHeight) {
+            if (rowsHeight < this.customHeight) {
                 var borderWidth = gridEl.getBorderTopWidth() + gridEl.getBorderBottomWidth();
                 gridEl.setHeightPx(rowsHeight + borderWidth);
                 this.grid.getOptions().setAutoHeight(true);
-            } else if (gridEl.getHeight() < this.maxHeight) {
-                gridEl.setHeightPx(this.maxHeight);
+            } else if (gridEl.getHeight() < this.customHeight) {
+                gridEl.setHeightPx(this.customHeight);
+                this.grid.getOptions().setAutoHeight(false);
+            } else if (this.customHeight !== this.maxHeight) {
+                gridEl.setHeightPx(this.customHeight);
                 this.grid.getOptions().setAutoHeight(false);
             }
 
             this.grid.resizeCanvas();
+        }
+
+        setCustomHeight(height: number) {
+            this.customHeight = Math.min(height, this.maxHeight);
+        }
+
+        resetCustomHeight() {
+            this.customHeight = this.maxHeight;
         }
 
         markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
