@@ -69,6 +69,7 @@ public class NodeEventListener
                 break;
             case NodeEvents.NODE_DUPLICATED_EVENT:
                 handleEventType( event, nodeCreatedHandler );
+                break;
             case NodeEvents.NODE_PUSHED_EVENT:
                 handleEventType( event, nodePushedHandler );
                 break;
