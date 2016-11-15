@@ -41,13 +41,15 @@ public class FindNodeIdsByParentCommandTest
             name( "node1_1" ).
             build() );
 
-        final Node node1_1_1 = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1_1_1" ) ).
             parent( node1_1.path() ).
             name( "node1_1_1" ).
             build() );
 
         refresh();
+
+        printContentRepoIndex();
 
         final FindNodesByParentResult result = FindNodeIdsByParentCommand.create().
             parentPath( root.path() ).
@@ -61,4 +63,56 @@ public class FindNodeIdsByParentCommandTest
         assertEquals( 2, result.getNodeIds().getSize() );
     }
 
+
+    @Test
+    public void find_after_move_to_folder_with_same_name()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node" ) ).
+            parent( NodePath.ROOT ).
+            name( "node" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node.path() ).
+            name( "node1_1" ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            name( "node1_1_1" ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        refresh();
+
+        MoveNodeCommand.create().
+            newParent( node2.path() ).
+            id( node1_1.id() ).
+            indexServiceInternal( indexServiceInternal ).
+            searchService( searchService ).
+            storageService( storageService ).
+            build().
+            execute();
+
+        final FindNodesByParentResult children = FindNodeIdsByParentCommand.create().
+            parentPath( node.path() ).
+            recursive( true ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+
+        assertEquals( 0, children.getNodeIds().getSize() );
+
+    }
 }

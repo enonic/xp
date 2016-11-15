@@ -101,8 +101,8 @@ public class FindNodeIdsByParentCommand
         }
         else
         {
-            builder.query( QueryExpr.from(
-                CompareExpr.like( FieldExpr.from( NodeIndexPath.PARENT_PATH ), ValueExpr.string( parentPath.toString() + "*" ) ) ) );
+            final ValueExpr parentPathExpr = ValueExpr.string( parentPath.toString() + "/*" );
+            builder.query( QueryExpr.from( CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), parentPathExpr ) ) );
         }
 
         return builder.build();
