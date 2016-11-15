@@ -46,6 +46,7 @@ import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
+import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
@@ -125,6 +126,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetDependenciesResult;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
@@ -465,12 +467,17 @@ public final class ContentResource
     public DependenciesJson getDependencies( @QueryParam("id") final String id )
     {
 
-        final ContentId contentId = ContentId.from( id );
+        final GetDependenciesResult result = contentService.getDependencies( ContentId.from( id ) );
 
-        final ResolveDependenciesAggregationFactory resolveDependenciesAggregationFactory =
-            new ResolveDependenciesAggregationFactory( contentTypeIconUrlResolver, contentService );
+        final List<DependenciesAggregationJson> inbound = result.getInbound().stream().
+            map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
+            Collectors.toList() );
 
-        return resolveDependenciesAggregationFactory.create( contentId );
+        final List<DependenciesAggregationJson> outbound = result.getOutbound().stream().
+            map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
+            Collectors.toList() );
+
+        return new DependenciesJson(inbound, outbound);
     }
 
     @POST
