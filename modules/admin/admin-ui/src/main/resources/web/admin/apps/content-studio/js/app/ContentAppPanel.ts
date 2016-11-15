@@ -20,6 +20,7 @@ import AppBarTabId = api.app.bar.AppBarTabId;
 import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
 import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
+import UriHelper = api.util.UriHelper;
 
 export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<ContentSummaryAndCompareStatus> {
 
@@ -150,36 +151,42 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
             var wizardParams = new ContentWizardPanelParams()
                 .setTabId(tabId)
                 .setContentTypeName(contentTypeSummary.getContentTypeName())
-                .setParentContent(newContentEvent.getParentContent())
+                .setParentContentId(newContentEvent.getParentContent() ? newContentEvent.getParentContent().getContentId() : undefined)
                 .setCreateSite(newContentEvent.getContentType().isSite());
 
-            var wizard = new ContentWizardPanel(wizardParams);
+            let tab: Window = this.openWizardTab(wizardParams, tabId);
 
-            wizard.onDataLoaded((loadedContent: Content) => {
-                var newTabId = AppBarTabId.forNew(loadedContent.getContentId().toString());
-                tabMenuItem.setTabId(newTabId);
-                wizard.setTabId(newTabId);
-            });
+            /* var wizard = new ContentWizardPanel(wizardParams);
 
-            wizard.onContentNamed(this.handleContentNamedEvent.bind(this));
+             wizard.onDataLoaded((loadedContent: Content) => {
+             var newTabId = AppBarTabId.forNew(loadedContent.getContentId().toString());
+             tabMenuItem.setTabId(newTabId);
+             wizard.setTabId(newTabId);
+             });
 
-            tabMenuItem = new AppBarTabMenuItemBuilder()
-                .setLabel(api.content.ContentUnnamed.prettifyUnnamed(contentTypeSummary.getDisplayName()))
-                .setTabId(tabId).setCloseAction(wizard.getCloseAction())
-                .build();
+             wizard.onContentNamed(this.handleContentNamedEvent.bind(this));
 
-            this.addWizardPanel(tabMenuItem, wizard);
+             tabMenuItem = new AppBarTabMenuItemBuilder()
+             .setLabel(api.content.ContentUnnamed.prettifyUnnamed(contentTypeSummary.getDisplayName()))
+             .setTabId(tabId).setCloseAction(wizard.getCloseAction())
+             .build();
 
-            if (newContentEvent.getContentType().isSite() && this.getBrowsePanel()) {
-                var content: Content = newContentEvent.getParentContent();
-                if (!!content) { // refresh site's node
-                    this.getBrowsePanel().getTreeGrid().refreshNodeById(content.getId());
-                }
-            }
+             this.addWizardPanel(tabMenuItem, wizard);
+
+             if (newContentEvent.getContentType().isSite() && this.getBrowsePanel()) {
+             var content: Content = newContentEvent.getParentContent();
+             if (!!content) { // refresh site's node
+             this.getBrowsePanel().getTreeGrid().refreshNodeById(content.getId());
+             }
+             }*/
 
         }
     }
 
+    private openWizardTab(params: ContentWizardPanelParams, tabId: AppBarTabId): Window {
+        let wizardUrl = 'content-studio#/' + params.toPath().toString();
+        return window.open(wizardUrl, tabId.toString());
+    }
 
     private handleEdit(event: api.content.event.EditContentEvent) {
 
@@ -204,38 +211,40 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
                 var wizardParams = new ContentWizardPanelParams()
                     .setTabId(tabId)
                     .setContentTypeName(contentTypeName)
-                    .setContentSummary(contentSummary);
+                    .setContentId(contentSummary.getContentId());
 
-                var wizard = new ContentWizardPanel(wizardParams);
+                let tab: Window = this.openWizardTab(wizardParams, tabId);
 
-                if (closeViewPanelMenuItem != null) {
-                    this.getAppBarTabMenu().deselectNavigationItem();
-                    this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
-                    this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
-                }
+                /* var wizard = new ContentWizardPanel(wizardParams);
 
-                var name = contentSummary.getDisplayName();
-                if (api.util.StringHelper.isBlank(name)) {
-                    wizard.onDataLoaded((loadedContent) => {
-                        tabMenuItem.setLabel(api.content.ContentUnnamed.prettifyUnnamed(wizard.getContentType().getDisplayName()));
-                    })
-                }
+                 if (closeViewPanelMenuItem != null) {
+                 this.getAppBarTabMenu().deselectNavigationItem();
+                 this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
+                 this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
+                 }
 
-                tabMenuItem = new AppBarTabMenuItemBuilder()
-                    .setLabel(name)
-                    .setMarkUnnamed(!contentSummary.getDisplayName())
-                    .setMarkInvalid(!contentSummary.isValid())
-                    .setTabId(tabId)
-                    .setEditing(true)
-                    .setCloseAction(wizard.getCloseAction()).build();
+                 var name = contentSummary.getDisplayName();
+                 if (api.util.StringHelper.isBlank(name)) {
+                 wizard.onDataLoaded((loadedContent) => {
+                 tabMenuItem.setLabel(api.content.ContentUnnamed.prettifyUnnamed(wizard.getContentType().getDisplayName()));
+                 })
+                 }
 
-                this.addWizardPanel(tabMenuItem, wizard);
+                 tabMenuItem = new AppBarTabMenuItemBuilder()
+                 .setLabel(name)
+                 .setMarkUnnamed(!contentSummary.getDisplayName())
+                 .setMarkInvalid(!contentSummary.isValid())
+                 .setTabId(tabId)
+                 .setEditing(true)
+                 .setCloseAction(wizard.getCloseAction()).build();
 
-                var viewTabId = AppBarTabId.forView(contentSummary.getId());
-                var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
-                if (viewTabMenuItem != null) {
-                    this.removePanelByIndex(viewTabMenuItem.getIndex());
-                }
+                 this.addWizardPanel(tabMenuItem, wizard);
+
+                 var viewTabId = AppBarTabId.forView(contentSummary.getId());
+                 var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
+                 if (viewTabMenuItem != null) {
+                 this.removePanelByIndex(viewTabMenuItem.getIndex());
+                 }*/
 
             }
         });

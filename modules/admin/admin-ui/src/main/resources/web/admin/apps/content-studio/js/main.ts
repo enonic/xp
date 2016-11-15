@@ -12,6 +12,12 @@ import {ShowNewContentDialogEvent} from "./app/browse/ShowNewContentDialogEvent"
 import {SortContentDialog} from "./app/browse/SortContentDialog";
 import {MoveContentDialog} from "./app/browse/MoveContentDialog";
 import {EditPermissionsDialog} from "./app/wizard/EditPermissionsDialog";
+import {ContentWizardPanelParams} from "./app/wizard/ContentWizardPanelParams";
+import {ContentWizardPanel} from "./app/wizard/ContentWizardPanel";
+import UriHelper = api.util.UriHelper;
+import ContentTypeName = api.schema.content.ContentTypeName;
+import ContentId = api.content.ContentId;
+import AppBarTabId = api.app.bar.AppBarTabId;
 
 declare var CONFIG;
 
@@ -56,7 +62,7 @@ function initToolTip() {
             if (!tooltipText) { //if no text then probably hovering over children of original element that has title attr
                 return;
             }
-            
+
             var tooltipWidth = tooltipText.length * 7.5;
             var windowWidth = wemjq(window).width();
             if (nleft + tooltipWidth >= windowWidth) {
@@ -90,9 +96,15 @@ function initToolTip() {
 
 function startApplication() {
 
-    var application: api.app.Application = getApplication();
+    let application: api.app.Application = getApplication();
+    let body = api.dom.Body.get();
 
-    var body = api.dom.Body.get();
+    let wizardParams = ContentWizardPanelParams.fromPath(application.getPath());
+    if (wizardParams) {
+        let wizard = new ContentWizardPanel(wizardParams);
+        body.appendChild(wizard);
+        return;
+    }
 
     var appBar = new api.app.bar.AppBar(application);
     var appPanel = new ContentAppPanel(appBar, application.getPath());
@@ -145,16 +157,16 @@ function startApplication() {
                                 newContentDialog.setParentContent(newParentContent);
                                 newContentDialog.open();
                             }).catch((reason: any) => {
-                                api.DefaultErrorHandler.handle(reason);
-                            }).done();
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
                     }
                     else {
                         newContentDialog.setParentContent(newParentContent);
                         newContentDialog.open();
                     }
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
         else {
             newContentDialog.setParentContent(null);
