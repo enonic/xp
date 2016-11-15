@@ -31,8 +31,10 @@
     "lodash": "^4.13.1",
     "require-dir": "^0.3.0",
     "through": "^2.3.8",
-    "ts-loader": "^0.8.2",
-    "typescript": "1.6.2",
+    "ts-loader": "^1.2.1",
+    "tslint": "^3.2.0",
+    "tslint-loader": "^2.1.0",
+    "typescript": "2.0.0",
     "vinyl": "^1.1.1",
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1"
