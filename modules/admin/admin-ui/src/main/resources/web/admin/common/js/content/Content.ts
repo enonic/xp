@@ -99,15 +99,33 @@ module api.content {
             return copy;
         }
 
-        private extraDataEqualsIgnoreEmpty(extraData: ExtraData[], otherMeta: ExtraData[]): boolean {
-            extraData = extraData.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
-            otherMeta = otherMeta.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
-
-            var comparator = new api.content.util.ExtraDataByMixinNameComparator();
-            return api.ObjectHelper.arrayEquals(extraData.sort(comparator.compare), otherMeta.sort(comparator.compare));
+        dataEquals(other: PropertyTree, ignoreEmptyValues: boolean = false): boolean {
+            let data, otherData;
+            if (ignoreEmptyValues) {
+                data = this.trimPropertyTree(this.data);
+                otherData = this.trimPropertyTree(other);
+            } else {
+                data = this.data;
+                otherData = other;
+            }
+            return api.ObjectHelper.equals(data, otherData);
         }
 
-        equals(o: api.Equitable, ignoreEmptyValues: boolean = false): boolean {
+        extraDataEquals(other: ExtraData[], ignoreEmptyValues: boolean = false): boolean {
+            let extraData, otherExtraData;
+            if (ignoreEmptyValues) {
+                extraData = this.extraData.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
+                otherExtraData = other.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
+            } else {
+                extraData = this.extraData;
+                otherExtraData = other;
+            }
+            var comparator = new api.content.util.ExtraDataByMixinNameComparator();
+
+            return api.ObjectHelper.arrayEquals(extraData.sort(comparator.compare), otherExtraData.sort(comparator.compare));
+        }
+
+        equals(o: api.Equitable, ignoreEmptyValues: boolean = false, shallow: boolean = false): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Content)) {
                 return false;
             }
@@ -118,23 +136,12 @@ module api.content {
 
             var other = <Content>o;
 
-            if (ignoreEmptyValues) {
-                if (!api.ObjectHelper.equals(this.trimPropertyTree(this.data), this.trimPropertyTree(other.data))) {
+            if (!shallow) {
+                if (!this.dataEquals(other.getContentData(), ignoreEmptyValues)) {
                     return false;
                 }
-            } else {
-                if (!api.ObjectHelper.equals(this.data, other.data)) {
-                    return false;
-                }
-            }
 
-            if (ignoreEmptyValues) {
-                if (!this.extraDataEqualsIgnoreEmpty(this.extraData, other.extraData)) {
-                    return false;
-                }
-            } else {
-                var comparator = new api.content.util.ExtraDataByMixinNameComparator();
-                if (!api.ObjectHelper.arrayEquals(this.extraData.sort(comparator.compare), other.extraData.sort(comparator.compare))) {
+                if (!this.extraDataEquals(other.getAllExtraData(), ignoreEmptyValues)) {
                     return false;
                 }
             }

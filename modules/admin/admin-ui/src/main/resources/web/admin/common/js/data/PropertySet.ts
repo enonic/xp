@@ -423,6 +423,55 @@ module api.data {
             return true;
         }
 
+        public diff(other: PropertySet): PropertyTreeDiff {
+            let checkedProperties: String[] = [],
+                diff = this.doDiff(other, checkedProperties),
+            // run inverse diff to find properties, which were added to the original set
+                inverseDiff = other.doDiff(this, checkedProperties);
+
+            diff.added = diff.added.concat(inverseDiff.removed);
+
+            return diff;
+        }
+
+        private doDiff(other: PropertySet, checkedProperties: String[] = []): PropertyTreeDiff {
+            let added = [],
+                removed = [],
+                modified = [];
+
+            this.forEach((property) => {
+                if (checkedProperties.indexOf(property.getPath().toString()) == -1) {
+                    let type = property.getType(),
+                        otherProperty = other.getProperty(property.getName(), property.getIndex());
+
+                    if (!otherProperty) {
+                        removed.push(property);
+                    } else if (!type.equals(api.data.ValueTypes.DATA)) {
+                        if (!property.equals(otherProperty)) {
+                            modified.push({
+                                oldValue: property,
+                                newValue: otherProperty
+                            });
+                        }
+                        checkedProperties.push(property.getPath().toString());
+                    } else {
+                        let propertySetValue = property.getValue().getPropertySet(),
+                            diff = propertySetValue.doDiff(otherProperty.getValue().getPropertySet(), checkedProperties);
+
+                        added = added.concat(diff.added);
+                        removed = removed.concat(diff.removed);
+                        modified = modified.concat(diff.modified);
+                    }
+                }
+            });
+
+            return {
+                added: added,
+                removed: removed,
+                modified: modified
+            }
+        }
+
         /**
          * Copies this PropertySet (deep copy).
          * @param destinationTree The [[PropertyTree]] that the copied PropertySet will be attached to.
