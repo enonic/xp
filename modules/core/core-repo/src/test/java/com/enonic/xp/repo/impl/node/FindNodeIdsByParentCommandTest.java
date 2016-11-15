@@ -49,8 +49,6 @@ public class FindNodeIdsByParentCommandTest
 
         refresh();
 
-        printContentRepoIndex();
-
         final FindNodesByParentResult result = FindNodeIdsByParentCommand.create().
             parentPath( root.path() ).
             recursive( true ).
