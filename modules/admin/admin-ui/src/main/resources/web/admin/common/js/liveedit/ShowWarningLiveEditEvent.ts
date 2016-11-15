@@ -5,8 +5,9 @@ module api.liveedit {
         private message: string;
 
         constructor(message: string) {
-            this.message = message;
             super();
+
+            this.message = message;
         }
 
         getMessage(): string {

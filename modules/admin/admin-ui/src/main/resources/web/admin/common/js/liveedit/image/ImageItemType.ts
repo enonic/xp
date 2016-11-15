@@ -15,7 +15,7 @@ module api.liveedit.image {
         }
 
         constructor() {
-            super("image", this.getDefaultConfigJson("image"));
+            super("image");
         }
 
         createView(config: CreateItemViewConfig<RegionView,ImageComponent>): ImageComponentView {

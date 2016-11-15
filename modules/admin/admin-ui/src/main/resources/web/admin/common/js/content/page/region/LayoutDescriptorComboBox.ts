@@ -55,8 +55,9 @@ module api.content.page.region {
         private descriptor: LayoutDescriptor;
 
         constructor(option: Option<LayoutDescriptor>) {
-            this.descriptor = option.displayValue;
             super(option);
+
+            this.descriptor = option.displayValue;
             this.addClass("layout-descriptor-selected-option-view");
         }
 

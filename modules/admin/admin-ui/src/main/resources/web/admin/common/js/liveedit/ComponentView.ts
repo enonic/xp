@@ -99,11 +99,11 @@ module api.liveedit {
 
         private component: COMPONENT;
 
-        private moving: boolean;
+        private moving: boolean = false;
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[] = [];
 
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[] = [];
 
         private propertyChangedListener: (event: ComponentPropertyChangedEvent) => void;
 
@@ -112,12 +112,6 @@ module api.liveedit {
         public static debug: boolean = false;
 
         constructor(builder: ComponentViewBuilder<COMPONENT>) {
-
-            this.itemViewAddedListeners = [];
-            this.itemViewRemovedListeners = [];
-            this.moving = false;
-            this.parentRegionView = builder.parentRegionView;
-
             super(new ItemViewBuilder().
                     setItemViewIdProducer(builder.itemViewProducer
                         ? builder.itemViewProducer
@@ -128,10 +122,18 @@ module api.liveedit {
                     setElement(builder.element).
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
-                    setContextMenuActions(this.createComponentContextMenuActions(builder.contextMenuActions,
-                builder.inspectActionRequired, this.parentRegionView.getLiveEditModel())).
                     setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
+
+            this.setContextMenuActions(
+                this.createComponentContextMenuActions(
+                    builder.contextMenuActions,
+                    builder.inspectActionRequired,
+                    this.parentRegionView.getLiveEditModel()
+                )
+            );
+            
+            this.parentRegionView = this.getParentItemView();
 
             this.propertyChangedListener = () => this.refreshEmptyState();
             this.resetListener = () => {

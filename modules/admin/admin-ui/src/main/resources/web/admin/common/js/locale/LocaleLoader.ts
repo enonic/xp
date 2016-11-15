@@ -3,17 +3,19 @@ module api.locale {
     export class LocaleLoader extends api.util.loader.BaseLoader<api.locale.json.LocaleListJson, Locale> {
 
         private preservedSearchString: string;
+        protected request: GetLocalesRequest;
 
-        private getLocalesRequest: GetLocalesRequest;
+        protected createRequest(): GetLocalesRequest {
+            return new GetLocalesRequest();
+        }
 
-        constructor() {
-            this.getLocalesRequest = new GetLocalesRequest();
-            super(this.getLocalesRequest);
+        protected getRequest(): GetLocalesRequest {
+            return this.request;
         }
 
         search(searchString: string): wemQ.Promise<Locale[]> {
             
-            this.getLocalesRequest.setSearchQuery(searchString);
+            this.getRequest().setSearchQuery(searchString);
 
             return this.load();
         }

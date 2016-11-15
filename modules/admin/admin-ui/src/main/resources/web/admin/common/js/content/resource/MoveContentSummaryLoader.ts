@@ -9,25 +9,32 @@ module api.content.resource {
 
     export class MoveContentSummaryLoader extends ContentSummaryPreLoader {
 
-        private contentSummaryRequest: ContentSummaryRequest;
+        protected request: ContentSummaryRequest;
 
         private filterContentPaths: ContentPath[];
 
         private filterContentTypes: ContentType[];
 
         constructor() {
-            this.contentSummaryRequest = new ContentSummaryRequest();
-            super(this.contentSummaryRequest);
+            super();
+        }
+
+        protected createRequest(): ContentSummaryRequest {
+            return new ContentSummaryRequest();
+        }
+
+        protected getRequest(): ContentSummaryRequest {
+            return this.request;
         }
 
         setSize(size: number) {
-            this.contentSummaryRequest.setSize(size);
+            this.getRequest().setSize(size);
         }
 
         setFilterContentPaths(contentPaths: ContentPath[]) {
             this.filterContentPaths = contentPaths;
             const path = contentPaths.length === 1 ? contentPaths[0] : null;
-            this.contentSummaryRequest.setContentPath(path);
+            this.getRequest().setContentPath(path);
         }
 
         setFilterContentTypes(contentTypes: ContentType[]) {
@@ -35,12 +42,12 @@ module api.content.resource {
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
-            this.contentSummaryRequest.setSearchString(searchString);
+            this.getRequest().setSearchString(searchString);
             return this.load();
         }
 
         resetSearchString() {
-            this.contentSummaryRequest.setSearchString("");
+            this.getRequest().setSearchString("");
         }
 
         load(): wemQ.Promise<ContentSummary[]> {
@@ -59,7 +66,7 @@ module api.content.resource {
                         contents = this.filterContent(contents, contentTypes);
                     }
                     if (contents && contents.length > 0) {
-                        if (!this.contentSummaryRequest.getSearchString() || this.contentSummaryRequest.getSearchString().length == 0) {
+                        if (!this.getRequest().getSearchString() || this.getRequest().getSearchString().length == 0) {
                             contents.sort(new api.content.util.ContentByPathComparator().compare);
                         }
                         this.notifyLoadedData(contents);
@@ -75,11 +82,11 @@ module api.content.resource {
         }
 
         isPartiallyLoaded(): boolean {
-            return this.contentSummaryRequest.isPartiallyLoaded();
+            return this.getRequest().isPartiallyLoaded();
         }
 
         resetParams() {
-            this.contentSummaryRequest.resetParams()
+            this.getRequest().resetParams()
         }
 
         private filterContent(contents: ContentSummary[], contentTypes: ContentType[]): ContentSummary[] {

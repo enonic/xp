@@ -2,29 +2,37 @@ module api.security {
 
     export class PrincipalLoader extends api.util.loader.BaseLoader<any, any> {
 
-        private findRequest: FindPrincipalListRequest;
+        protected request: FindPrincipalListRequest;
         private skipPrincipalKeys: { [key:string]:PrincipalKey; };
 
         constructor() {
-            this.findRequest = new FindPrincipalListRequest();
+            super();
+
             this.skipPrincipalKeys = {};
             // allow all by default
             this.setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]);
-            super(this.findRequest);
         }
 
+        protected createRequest(): FindPrincipalListRequest {
+            return new FindPrincipalListRequest();
+        }
+
+        protected getRequest(): FindPrincipalListRequest {
+            return this.request;
+        }
+        
         setUserStoreKey(key: UserStoreKey): PrincipalLoader {
-            this.findRequest.setUserStoreKey(key);
+            this.getRequest().setUserStoreKey(key);
             return this;
         }
 
         setAllowedTypes(principalTypes: PrincipalType[]): PrincipalLoader {
-            this.findRequest.setAllowedTypes(principalTypes);
+            this.getRequest().setAllowedTypes(principalTypes);
             return this;
         }
 
         search(searchString: string): wemQ.Promise<Principal[]> {
-            this.findRequest.setSearchQuery(searchString);
+            this.getRequest().setSearchQuery(searchString);
             return this.load();
         }
 
@@ -33,13 +41,13 @@ module api.security {
             principalKeys.forEach((principalKey: PrincipalKey) => {
                 this.skipPrincipalKeys[principalKey.toString()] = principalKey;
             });
-            this.findRequest.setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
+            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
             return this;
         }
 
         skipPrincipal(principalKey: PrincipalKey): PrincipalLoader {
             this.skipPrincipalKeys[principalKey.toString()] = principalKey;
-            this.findRequest.setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
+            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
             return this;
         }
 

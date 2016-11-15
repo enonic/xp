@@ -33,10 +33,6 @@ module api.content {
             return true;
         }
 
-        toStringIncludingHidden() {
-            return super.toString();
-        }
-
         public static newUnnamed() {
             return new ContentUnnamed(ContentName.UNNAMED_PREFIX);
         }

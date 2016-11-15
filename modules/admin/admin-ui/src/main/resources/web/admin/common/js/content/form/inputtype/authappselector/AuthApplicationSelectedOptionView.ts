@@ -20,9 +20,9 @@ module api.content.site.inputtype.authappselector {
 
         private siteConfig: SiteConfig;
 
-        private editClickedListeners: {(event: MouseEvent): void;}[];
+        private editClickedListeners: {(event: MouseEvent): void;}[] = [];
 
-        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey): void}[];
+        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey): void}[] = [];
 
         private formContext: ContentFormContext;
 
@@ -32,15 +32,13 @@ module api.content.site.inputtype.authappselector {
 
         constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext,
                     readOnly: boolean = false) {
-            this.editClickedListeners = [];
-            this.siteConfigFormDisplayedListeners = [];
+            super(option);
+
             this.readOnly = readOnly;
 
             this.application = option.displayValue;
             this.siteConfig = siteConfig;
             this.formContext = formContext;
-
-            super(option);
         }
 
         doRender(): wemQ.Promise<boolean> {

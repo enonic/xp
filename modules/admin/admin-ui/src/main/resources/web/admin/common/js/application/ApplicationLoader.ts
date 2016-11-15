@@ -5,19 +5,28 @@ module api.application {
 
     export class ApplicationLoader extends api.util.loader.BaseLoader<ApplicationListResult, Application> {
 
-        private listApplicationsRequest: ListApplicationsRequest;
-
+        protected request: ListApplicationsRequest;
+        
         private filterObject: Object;
 
         constructor(filterObject: Object, request?: ListApplicationsRequest) {
-            super(this.listApplicationsRequest = request || new ListApplicationsRequest());
+            super(request);
+
             if (filterObject) {
                 this.filterObject = filterObject;
             }
         }
 
+        protected createRequest(): ListApplicationsRequest {
+            return new ListApplicationsRequest();
+        }
+
+        protected getRequest(): ListApplicationsRequest {
+            return this.request;
+        }
+        
         search(searchString: string): wemQ.Promise<Application[]> {
-            this.listApplicationsRequest.setSearchQuery(searchString);
+            this.getRequest().setSearchQuery(searchString);
             return this.load();
         }
 

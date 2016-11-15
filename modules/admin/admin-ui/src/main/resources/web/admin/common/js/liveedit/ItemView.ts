@@ -125,13 +125,6 @@ module api.liveedit {
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
 
-            this.type = builder.type;
-            this.parentItemView = builder.parentView;
-            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
-            this.itemViewIdProducer = builder.itemViewIdProducer;
-            this.contextMenuActions = builder.contextMenuActions;
-            this.contextMenuTitle = builder.contextMenuTitle;
-
             var props: api.dom.ElementBuilder = null;
             if (builder.element) {
                 var elementFromElementBuilder = new api.dom.ElementFromElementBuilder();
@@ -146,7 +139,16 @@ module api.liveedit {
                 newElementBuilder.setGenerateId(false);
                 props = newElementBuilder;
             }
+
             super(props);
+
+            this.type = builder.type;
+            this.parentItemView = builder.parentView;
+            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
+            this.itemViewIdProducer = builder.itemViewIdProducer;
+            this.contextMenuActions = builder.contextMenuActions;
+            this.contextMenuTitle = builder.contextMenuTitle;
+
             this.addClassEx("item-view");
 
             this.setDraggable(true);
@@ -174,8 +176,7 @@ module api.liveedit {
             }
 
             if (builder.placeholder) {
-                this.placeholder = builder.placeholder;
-                this.appendChild(this.placeholder);
+                this.setPlaceholder(builder.placeholder);
             }
 
             this.onRemoved(this.invalidateContextMenu.bind(this));
@@ -183,6 +184,19 @@ module api.liveedit {
             this.bindMouseListeners();
         }
 
+        protected setPlaceholder(placeholder: ItemViewPlaceholder) {
+            this.placeholder = placeholder;
+            this.appendChild(placeholder);
+        }
+        
+        public setContextMenuActions(actions: api.ui.Action[]) {
+            this.contextMenuActions = actions;
+        }
+
+        public setContextMenuTitle(title: ItemViewContextMenuTitle) {
+            this.contextMenuTitle = title;
+        }
+        
         private bindMouseListeners() {
             var pageView = this.getPageView();
 
@@ -329,11 +343,15 @@ module api.liveedit {
         }
 
         getPageView(): PageView {
-            var pageView = this;
-            while (!PageItemType.get().equals(pageView.getType())) {
-                pageView = pageView.parentItemView;
+            var itemView: ItemView = null;
+            while (!itemView) {
+                if (PageItemType.get().equals(itemView.getType())) {
+                    return itemView.getPageView();
+                }
+
+                itemView = itemView.parentItemView;
             }
-            return <PageView> pageView;
+            return null;
         }
 
         remove(): ItemView {

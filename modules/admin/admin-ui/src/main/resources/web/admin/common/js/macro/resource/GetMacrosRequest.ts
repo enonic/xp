@@ -6,9 +6,12 @@ module api.macro.resource {
 
         private applicationKeys: ApplicationKey[];
 
-        constructor(applicationKeys: ApplicationKey[]) {
+        constructor() {
             super();
             super.setMethod("POST");
+        }
+
+        setApplicationKeys(applicationKeys: ApplicationKey[]) {
             this.applicationKeys = applicationKeys;
         }
 

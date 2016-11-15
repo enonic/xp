@@ -28,17 +28,16 @@ module api.form {
         private formItemSet: FormItemSet;
 
         constructor(config: FormItemSetOccurrencesConfig) {
-            this.occurrencesCollapsed = false;
-            this.context = config.context;
-            this.formItemSet = config.formItemSet;
-            this.parent = config.parent;
-
             super(<FormItemOccurrencesConfig>{
                 formItem: config.formItemSet,
                 propertyArray: config.propertyArray,
                 occurrenceViewContainer: config.occurrenceViewContainer,
                 allowedOccurrences: config.formItemSet.getOccurrences()
             });
+
+            this.context = config.context;
+            this.formItemSet = config.formItemSet;
+            this.parent = config.parent;
         }
 
         getFormItemSet(): FormItemSet {

@@ -117,40 +117,31 @@ module api.liveedit {
             pageModel.unPageModeChanged(this.pageModeChangedListener);
         }
 
-        constructor(builder: PageViewBuilder) {
-// move super() call here?!
-            this.liveEditModel = builder.liveEditModel;
-            this.pageModel = builder.liveEditModel.getPageModel();
-
-            this.regionViews = [];
-            this.viewsById = {};
-            this.itemViewAddedListeners = [];
-            this.itemViewRemovedListeners = [];
-            this.pageLockedListeners = [];
-            this.ignorePropertyChanges = false;
-            this.disableContextMenu = false;
-            this.highlightingAllowed = true;
-            this.nextClickDisabled = false;
-
-            var inspectAction = new api.ui.Action("Inspect").onExecuted(() => {
+        private initActions(pageModel: PageModel): api.ui.Action[] {
+            let inspectAction = new api.ui.Action("Inspect").onExecuted(() => {
                 new PageInspectedEvent().fire();
             });
-            var resetAction = new api.ui.Action('Reset');
+
+            let resetAction = new api.ui.Action('Reset');
             resetAction.onExecuted(() => {
                 if (PageView.debug) {
                     console.log('PageView.reset');
                 }
                 this.setIgnorePropertyChanges(true);
-                this.pageModel.reset(this);
+                pageModel.reset(this);
                 this.setIgnorePropertyChanges(false);
             });
-            this.unlockedScreenActions = [inspectAction, resetAction];
 
-            if (this.pageModel.getMode() == PageMode.AUTOMATIC || this.pageModel.getMode() == PageMode.NO_CONTROLLER) {
+            if (pageModel.getMode() == PageMode.AUTOMATIC || pageModel.getMode() == PageMode.NO_CONTROLLER) {
                 resetAction.setEnabled(false);
             }
 
-            this.registerPageModel(this.pageModel, resetAction);
+            this.registerPageModel(pageModel, resetAction);
+
+            return [inspectAction, resetAction];
+        }
+
+        private initListeners() {
 
             this.scrolledListener = (event: WheelEvent) => {
                 this.toggleStickyToolbar();
@@ -188,15 +179,42 @@ module api.liveedit {
                 });
             };
 
+            this.listenToMouseEvents();
+
+            this.onRemoved(event => this.unregisterPageModel(this.pageModel));
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                if (this.isTextEditMode()) {
+                    this.updateVerticalSpaceForEditorToolbar();
+                }
+            });
+        }
+
+        constructor(builder: PageViewBuilder) {
+
             super(new ItemViewBuilder()
                 .setLiveEditModel(builder.liveEditModel)
                 .setItemViewIdProducer(builder.itemViewProducer)
-                .setPlaceholder(new PagePlaceholder(this))
                 .setViewer(new api.content.ContentSummaryViewer())
                 .setType(PageItemType.get())
                 .setElement(builder.element)
-                .setContextMenuActions(this.unlockedScreenActions)
                 .setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
+
+            this.setPlaceholder(new PagePlaceholder(this));
+            this.setContextMenuActions(this.unlockedScreenActions = this.initActions(builder.liveEditModel.getPageModel()));
+            
+            this.liveEditModel = builder.liveEditModel;
+            this.pageModel = builder.liveEditModel.getPageModel();
+
+            this.regionViews = [];
+            this.viewsById = {};
+            this.itemViewAddedListeners = [];
+            this.itemViewRemovedListeners = [];
+            this.pageLockedListeners = [];
+            this.ignorePropertyChanges = false;
+            this.disableContextMenu = false;
+            this.highlightingAllowed = true;
+            this.nextClickDisabled = false;
 
             this.addClassEx('page-view');
 
@@ -215,15 +233,8 @@ module api.liveedit {
                 this.setLocked(true);
             }
 
-            this.listenToMouseEvents();
+            this.initListeners();
 
-            this.onRemoved(event => this.unregisterPageModel(this.pageModel));
-
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-                if (this.isTextEditMode()) {
-                    this.updateVerticalSpaceForEditorToolbar();
-                }
-            });
         }
 
         private createCloseTextEditModeEl(): api.dom.Element {
@@ -497,6 +508,10 @@ module api.liveedit {
             this.toggleStickyToolbar();
         }
 
+        getPageView(): PageView {
+            return this;
+        }
+        
         private updateVerticalSpaceForEditorToolbar() {
             var result = this.getEditorToolbarWidth();
 

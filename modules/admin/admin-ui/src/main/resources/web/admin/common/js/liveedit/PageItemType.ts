@@ -12,7 +12,11 @@ module api.liveedit {
         }
 
         constructor() {
-            super("page", <ItemTypeConfigJson>{
+            super("page");
+        }
+
+        protected getItemTypeConfig(itemType: string): ItemTypeConfigJson {
+            return <ItemTypeConfigJson>{
                 cssSelector: '[data-portal-component-type=page]',
                 draggable: false,
                 cursor: 'pointer',
@@ -23,7 +27,7 @@ module api.liveedit {
                     fill: 'rgba(255, 255, 255, 0)' // not used
                 },
                 contextMenuConfig: ['reset']
-            });
+            };
         }
 
         createView(config: CreateItemViewConfig<any,any>): PageView {

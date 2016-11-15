@@ -18,18 +18,15 @@ module api.aggregation {
             return null;
         }
 
-        public
-            getBuckets(): api.aggregation.Bucket[] {
+        public getBuckets(): api.aggregation.Bucket[] {
             return this.buckets;
         }
 
-        public
-            addBucket(bucket: api.aggregation.Bucket) {
+        public addBucket(bucket: api.aggregation.Bucket) {
             this.buckets.push(bucket);
         }
 
-        public static
-            fromJson(json: api.aggregation.BucketAggregationJson): BucketAggregation {
+        public static fromJson(json: api.aggregation.BucketAggregationJson): BucketAggregation {
 
             var bucketAggregation: BucketAggregation = new BucketAggregation(json.name);
 

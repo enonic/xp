@@ -5,30 +5,43 @@ module api.content.form.inputtype.contentselector {
 
     export class ContentSelectorLoader extends ContentSummaryPreLoader {
 
-        private contentSelectorQueryRequest: ContentSelectorQueryRequest;
-
+        protected request: ContentSelectorQueryRequest;
+        
         constructor(builder: Builder) {
-            this.contentSelectorQueryRequest = new ContentSelectorQueryRequest();
-            super(this.contentSelectorQueryRequest);
-            this.contentSelectorQueryRequest.setContent(builder.content);
-            this.contentSelectorQueryRequest.setInputName(builder.inputName);
-            this.contentSelectorQueryRequest.setContentTypeNames(builder.contentTypeNames);
-            this.contentSelectorQueryRequest.setAllowedContentPaths(builder.allowedContentPaths);
-            this.contentSelectorQueryRequest.setRelationshipType(builder.relationshipType);
+            super();
+
+            this.initRequest(builder);
         }
 
+        protected createRequest(): ContentSelectorQueryRequest {
+            return new ContentSelectorQueryRequest();
+        }
+
+        private initRequest(builder: Builder) {
+            let request = this.getRequest();
+            request.setContent(builder.content);
+            request.setInputName(builder.inputName);
+            request.setContentTypeNames(builder.contentTypeNames);
+            request.setAllowedContentPaths(builder.allowedContentPaths);
+            request.setRelationshipType(builder.relationshipType);
+        }
+        
+        protected getRequest(): ContentSelectorQueryRequest {
+            return this.request;
+        }
+        
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
-            this.contentSelectorQueryRequest.setQueryExpr(searchString);
+            this.getRequest().setQueryExpr(searchString);
             return this.load();
         }
 
         isPartiallyLoaded(): boolean {
-            return this.contentSelectorQueryRequest.isPartiallyLoaded();
+            return this.getRequest().isPartiallyLoaded();
         }
 
         resetParams() {
-            this.contentSelectorQueryRequest.resetParams();
+            this.getRequest().resetParams();
         }
 
         // delegate the postLoad to ComboBox to trigger it before the end of the list

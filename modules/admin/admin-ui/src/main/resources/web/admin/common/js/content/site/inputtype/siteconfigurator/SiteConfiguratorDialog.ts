@@ -25,10 +25,9 @@ module api.content.site.inputtype.siteconfigurator {
         private cancelCallback: () => void;
 
         constructor(application:Application, formView:FormView, okCallback?:() => void, cancelCallback?:() => void) {
-            super({
-                title: this.initHeader(application)
-            });
+            super();
 
+            this.setTitleConfig(this.initHeader(application));
             this.formView = formView;
             this.okCallback = okCallback;
             this.cancelCallback = cancelCallback;

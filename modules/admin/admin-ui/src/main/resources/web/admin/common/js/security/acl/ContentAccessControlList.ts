@@ -7,8 +7,9 @@ module api.security.acl {
         private contentId: api.content.ContentId;
 
         constructor(id: string, entries?: AccessControlEntry[]) {
-            this.contentId = new api.content.ContentId(id);
             super(entries);
+
+            this.contentId = new api.content.ContentId(id);
         }
 
         getContentId(): api.content.ContentId {

@@ -21,8 +21,9 @@ module api.content.page {
         private pageTemplate: PageTemplate;
 
         constructor(option: api.ui.selector.Option<PageTemplate>) {
-            this.pageTemplate = option.displayValue;
             super(option);
+
+            this.pageTemplate = option.displayValue;
             this.addClass("page-template-selected-option-view");
         }
 

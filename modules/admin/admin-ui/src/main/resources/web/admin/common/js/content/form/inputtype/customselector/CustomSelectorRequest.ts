@@ -21,12 +21,15 @@ module api.content.form.inputtype.customselector {
         private results: CustomSelectorItem[];
         private loaded: boolean = false;
 
-        constructor(requestPath: string) {
+        constructor() {
             super();
-            this.requestPath = requestPath;
             this.setMethod('GET');
         }
 
+        setRequestPath(requestPath: string) {
+            this.requestPath = requestPath;
+        }
+        
         isPartiallyLoaded(): boolean {
             return this.results.length > 0 && !this.loaded;
         }

@@ -51,7 +51,7 @@ module api.liveedit.part {
                 this.setDisplayName(partComponent.getName().toString());
             }
         }
-
+        
         private reloadDescriptorsOnApplicationChange(siteModel: SiteModel, request: GetPartDescriptorsByApplicationsRequest) {
             request.setApplicationKeys(siteModel.getApplicationKeys());
             this.comboBox.getLoader().load();

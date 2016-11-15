@@ -252,8 +252,6 @@ module api.content.form.inputtype.contentselector {
                 let contentIdsStr = contentIds.map(id => id.toString());
                 return result.filter(content => contentIdsStr.indexOf(content.getId()) >= 0);
             });
-
-            return ContentSelector.loadSummariesResult.promise;
         }
 
         private setupSortable() {

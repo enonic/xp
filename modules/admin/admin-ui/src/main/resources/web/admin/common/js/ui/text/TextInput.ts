@@ -91,8 +91,8 @@ module api.ui.text {
                 to = this.getValue().length;
             }
 
-            if (htmlEl.createTextRange) {
-                var selRange = htmlEl.createTextRange();
+            if (htmlEl.hasOwnProperty("createTextRange")) {
+                var selRange = htmlEl["createTextRange"];
                 selRange.collapse(true);
                 selRange.moveStart('character', from);
                 selRange.moveEnd('character', to);

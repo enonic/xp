@@ -46,9 +46,11 @@ module api.ui.text {
         private mode: string;
 
         constructor(builder: CodeAreaBuilder) {
+            super();
+
             this.textArea = new TextArea(builder.name, builder.value);
 
-            super(this.textArea);
+            this.setWrappedInput(this.textArea);
 
             this.mode = builder.mode;
             this.options = {

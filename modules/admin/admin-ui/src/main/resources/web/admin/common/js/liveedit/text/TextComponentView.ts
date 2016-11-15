@@ -49,17 +49,16 @@ module api.liveedit.text {
         private currentDialogConfig;
 
         constructor(builder: TextComponentViewBuilder) {
+            super(builder.
+                setPlaceholder(new TextPlaceholder()).
+                setViewer(new TextComponentViewer()).
+                setComponent(builder.component));
 
+            this.setContextMenuActions(this.createTextContextMenuActions());
             this.lastClicked = 0;
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.textComponent = builder.component;
             this.isInitializingEditor = false;
-
-            super(builder.
-                setContextMenuActions(this.createTextContextMenuActions()).
-                setPlaceholder(new TextPlaceholder()).
-                setViewer(new TextComponentViewer()).
-                setComponent(this.textComponent));
 
             this.addClassEx('text-view');
 

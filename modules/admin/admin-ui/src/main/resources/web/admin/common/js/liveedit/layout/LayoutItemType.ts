@@ -15,7 +15,7 @@ module api.liveedit.layout {
         }
 
         constructor() {
-            super("layout", this.getDefaultConfigJson("layout"));
+            super("layout");
         }
 
         isComponentType(): boolean {

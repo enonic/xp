@@ -6,15 +6,15 @@ module api.macro.resource {
 
     export class MacrosLoader extends api.util.loader.BaseLoader<MacrosJson, MacroDescriptor> {
 
-        private getMacrosRequest: GetMacrosRequest;
-
+        protected request: GetMacrosRequest;
         private hasRelevantData: boolean;
 
         constructor(applicationKeys: ApplicationKey[]) {
-            this.getMacrosRequest = new GetMacrosRequest(applicationKeys);
+            super();
+            
+            this.getRequest().setApplicationKeys(applicationKeys);
             this.hasRelevantData = false;
-            super(this.getMacrosRequest);
-
+            
             ApplicationEvent.on((event: ApplicationEvent) => {
                 if (event.getEventType() == ApplicationEventType.STARTED || event.getEventType() == ApplicationEventType.STOPPED ||
                     event.getEventType() == ApplicationEventType.UPDATED) {
@@ -23,6 +23,14 @@ module api.macro.resource {
             });
         }
 
+        protected createRequest(): GetMacrosRequest {
+            return new GetMacrosRequest();
+        }
+
+        protected getRequest(): GetMacrosRequest {
+            return this.request;
+        }
+        
         private invalidate() {
             this.hasRelevantData = false;
         }

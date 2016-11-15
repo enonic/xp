@@ -32,7 +32,7 @@ module api.ui {
 
         private afterExecuteListeners: {(action: Action): void}[] = [];
 
-        constructor(label: string, shortcut?: string, global?: boolean) {
+        constructor(label?: string, shortcut?: string, global?: boolean) {
             this.label = label;
 
             if (shortcut) {
@@ -99,8 +99,10 @@ module api.ui {
         setLabel(value: string) {
 
             if (value !== this.label) {
+                if (!!this.label) {
+                    this.notifyPropertyChanged();
+                }
                 this.label = value;
-                this.notifyPropertyChanged();
             }
         }
 

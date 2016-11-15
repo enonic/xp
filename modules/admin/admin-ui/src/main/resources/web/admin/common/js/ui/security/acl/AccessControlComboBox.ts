@@ -13,18 +13,19 @@ module api.ui.security.acl {
         private aceSelectedOptionsView: ACESelectedOptionsView;
 
         constructor() {
-            this.aceSelectedOptionsView = new ACESelectedOptionsView();
-
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<AccessControlEntry>().
                 setMaximumOccurrences(0).
                 setComboBoxName("principalSelector").
                 setIdentifierMethod("getPrincipalKey").
                 setLoader(new AccessControlEntryLoader()).
                 setHideComboBoxWhenMaxReached(false).
-                setSelectedOptionsView(this.aceSelectedOptionsView).
+                setSelectedOptionsView(new ACESelectedOptionsView()).
                 setOptionDisplayValueViewer(new AccessControlEntryViewer()).
                 setDelayedInputValueChangedHandling(500);
+            
             super(builder);
+
+            this.aceSelectedOptionsView = <ACESelectedOptionsView>builder.getSelectedOptionsView();
         }
 
         setEditable(editable: boolean) {

@@ -34,7 +34,7 @@ module api.ui.dialog {
 
         public static debug: boolean = false;
 
-        constructor(config: ModalDialogConfig) {
+        constructor(config?: ModalDialogConfig) {
             super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
 
             this.config = config;
@@ -47,8 +47,10 @@ module api.ui.dialog {
             this.cancelButton.onClicked(() => this.cancelAction.execute());
             wrapper.appendChild(this.cancelButton);
 
-            this.title = this.config.title;
-            wrapper.appendChild(this.title);
+            if (this.config && this.config.title) {
+                this.title = this.config.title;
+                wrapper.appendChild(this.title);
+            }
 
             this.contentPanel = new ModalDialogContentPanel();
             wrapper.appendChild(this.contentPanel);
@@ -143,6 +145,10 @@ module api.ui.dialog {
             this.buttonRow.addAction(cancelAction);
         }
 
+        setTitleConfig(title: ModalDialogHeader) {
+            this.title = title;
+        }
+        
         setTitle(value: string) {
             this.title.setTitle(value);
         }

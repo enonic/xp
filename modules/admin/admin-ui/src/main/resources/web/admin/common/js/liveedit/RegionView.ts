@@ -74,18 +74,37 @@ module api.liveedit {
 
         private mouseOverListener;
 
-        public static debug: boolean;
+        public static debug: boolean = false;
 
         constructor(builder: RegionViewBuilder) {
+            super(new ItemViewBuilder().
+                setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).
+                setType(RegionItemType.get()).
+                setElement(builder.element).
+                setPlaceholder(new RegionPlaceholder(builder.region)).
+                setViewer(new RegionComponentViewer()).
+                setParentElement(builder.parentElement).
+                setParentView(builder.parentView).
+                setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
+
+            this.setContextMenuActions(this.createRegionContextMenuActions(builder.parentView.getLiveEditModel()));
+            this.addClassEx("region-view");
 
             this.componentViews = [];
             this.componentIndex = 0;
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
             this.parentView = builder.parentView;
-            RegionView.debug = false;
+
+            this.setRegion(builder.region);
+
+            this.parseComponentViews();
+        }
+
+        private initListeners() {
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView(), event.isNew());
+
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
 
                 // Check if removed ItemView is a child, and remove it if so
@@ -100,18 +119,6 @@ module api.liveedit {
                 this.notifyItemViewRemoved(event.getView());
             };
 
-            super(new ItemViewBuilder().
-                setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).
-                setType(RegionItemType.get()).
-                setElement(builder.element).
-                setPlaceholder(new RegionPlaceholder(builder.region)).
-                setViewer(new RegionComponentViewer()).
-                setParentElement(builder.parentElement).setParentView(builder.parentView).setContextMenuActions(
-                this.createRegionContextMenuActions(builder.parentView.getLiveEditModel())).
-                setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
-
-            this.addClassEx("region-view");
-
             this.componentAddedListener = (event: api.content.page.region.ComponentAddedEvent) => {
                 if (RegionView.debug) {
                     console.log('RegionView.handleComponentAdded: ' + event.getComponentPath().toString())
@@ -119,6 +126,7 @@ module api.liveedit {
 
                 this.refreshEmptyState();
             };
+
             this.componentRemovedListener = (event: api.content.page.region.ComponentRemovedEvent) => {
                 if (RegionView.debug) {
                     console.log('RegionView.handleComponentRemoved: ' + event.getComponentPath().toString())
@@ -127,9 +135,6 @@ module api.liveedit {
                 this.refreshEmptyState();
             };
 
-            this.setRegion(builder.region);
-
-            this.parseComponentViews();
 
             this.onMouseDown(this.memorizeLastMouseDownTarget.bind(this));
 

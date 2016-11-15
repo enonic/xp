@@ -6,15 +6,18 @@ module api.ui.selector.dropdown {
 
         private loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
 
-        constructor(name: string, loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>,
-                    dropdownConfig: DropdownConfig<OPTION_DISPLAY_VALUE>) {
+        constructor(name: string, dropdownConfig: DropdownConfig<OPTION_DISPLAY_VALUE>) {
             super(name, dropdownConfig);
 
-            this.loader = loader;
+            this.loader = this.createLoader();
 
             this.initLoaderListeners();
         }
 
+        protected createLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
+            throw new Error('Must be implemented by inheritors');
+        }
+        
         private initLoaderListeners() {
             this.loader.onLoadedData(this.handleLoadedData.bind(this));
 

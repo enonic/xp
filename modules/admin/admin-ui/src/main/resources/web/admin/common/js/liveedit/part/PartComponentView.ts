@@ -21,18 +21,17 @@ module api.liveedit.part {
         private partPlaceholder: PartPlaceholder;
 
         constructor(builder: PartComponentViewBuilder) {
+            super(builder.
+                setViewer(new PartComponentViewer()).
+                setInspectActionRequired(true));
+
+            this.setPlaceholder(this.partPlaceholder = new PartPlaceholder(this));
+
             this.contentViews = [];
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.partComponent = builder.component;
 
-            this.partPlaceholder = new PartPlaceholder(this);
-
             this.resetHrefForRootLink(builder);
-
-            super(builder.
-                setViewer(new PartComponentViewer()).
-                setPlaceholder(this.partPlaceholder).
-                setInspectActionRequired(true));
 
             this.parseContentViews(this);
         }

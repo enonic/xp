@@ -44,15 +44,14 @@ module api.form.inputtype.support {
         private input: api.form.Input;
 
         constructor(config: InputOccurrencesBuilder) {
-            this.baseInputTypeView = config.baseInputTypeView;
-            this.input = config.input;
-
             super(<FormItemOccurrencesConfig>{
                 formItem: config.input,
                 propertyArray: config.propertyArray,
                 occurrenceViewContainer: config.baseInputTypeView,
                 allowedOccurrences: config.input.getOccurrences()
             });
+            this.baseInputTypeView = config.baseInputTypeView;
+            this.input = config.input;
         }
 
         hasValidUserInput(): boolean {

@@ -56,8 +56,9 @@ module api.content.page.region {
         private descriptor: PartDescriptor;
 
         constructor(option: Option<PartDescriptor>) {
-            this.descriptor = option.displayValue;
             super(option);
+
+            this.descriptor = option.displayValue;
             this.addClass("part-descriptor-selected-option-view");
         }
 

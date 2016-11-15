@@ -12,9 +12,9 @@ module api.content.page.region {
 
     export class FragmentDropdown extends RichDropdown<ContentSummary> {
 
-        constructor(name: string, loader: ContentSummaryLoader) {
+        constructor(name: string) {
 
-            super(name, loader, {
+            super(name, {
                 optionDisplayValueViewer: new ContentSummaryViewer(),
                 dataIdProperty: "value"
             });

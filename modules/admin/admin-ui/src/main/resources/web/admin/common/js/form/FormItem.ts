@@ -65,19 +65,19 @@ module api.form {
         public toFormItemJson(): api.form.json.FormItemTypeWrapperJson {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(this, Input)) {
-                return (<Input>this).toInputJson();
+                return (<Input><any>this).toInputJson();
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormItemSet)) {
-                return (<api.form.FormItemSet>this).toFormItemSetJson();
+                return (<api.form.FormItemSet><any>this).toFormItemSetJson();
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FieldSet)) {
-                return (<FieldSet>this).toFieldSetJson();
+                return (<FieldSet><any>this).toFieldSetJson();
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSet)) {
-                return (<api.form.FormOptionSet>this).toFormOptionSetJson();
+                return (<api.form.FormOptionSet><any>this).toFormOptionSetJson();
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSetOption)) {
-                return (<api.form.FormOptionSetOption>this).toFormOptionSetOptionJson();
+                return (<api.form.FormOptionSetOption><any>this).toFormOptionSetOptionJson();
             }
             else {
                 throw new Error("Unsupported FormItem: " + this);

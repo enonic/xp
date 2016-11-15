@@ -60,27 +60,35 @@ module api.security.acl {
 
     export class AccessControlEntryLoader extends api.util.loader.BaseLoader<PrincipalListJson, AccessControlEntry> {
 
-        private findRequest: FindAccessControlEntriesRequest;
+        protected request: FindAccessControlEntriesRequest;
 
         constructor() {
-            this.findRequest = new FindAccessControlEntriesRequest();
+            super();
+            
             // allow all by default
             this.setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]);
-            super(this.findRequest);
         }
 
+        protected createRequest(): FindAccessControlEntriesRequest {
+            return new FindAccessControlEntriesRequest();
+        }
+
+        protected getRequest(): FindAccessControlEntriesRequest {
+            return this.request;
+        }
+        
         setUserStoreKey(key: UserStoreKey): AccessControlEntryLoader {
-            this.findRequest.setUserStoreKey(key);
+            this.getRequest().setUserStoreKey(key);
             return this;
         }
 
         setAllowedTypes(principalTypes: PrincipalType[]): AccessControlEntryLoader {
-            this.findRequest.setAllowedTypes(principalTypes);
+            this.getRequest().setAllowedTypes(principalTypes);
             return this;
         }
 
         search(searchString: string): wemQ.Promise<AccessControlEntry[]> {
-            this.findRequest.setSearchQuery(searchString);
+            this.getRequest().setSearchQuery(searchString);
             return this.load();
         }
 

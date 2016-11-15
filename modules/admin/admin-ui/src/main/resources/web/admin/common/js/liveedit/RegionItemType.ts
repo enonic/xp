@@ -11,7 +11,15 @@ module api.liveedit {
         }
 
         constructor() {
-            super("region", <ItemTypeConfigJson>{
+            super("region");
+        }
+
+        static getRegionName(element: api.dom.Element): string {
+            return element.getEl().getAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
+        }
+
+        protected getItemTypeConfig(itemType: string): ItemTypeConfigJson {
+            return <ItemTypeConfigJson>{
                 cssSelector: '[data-portal-region]',
                 draggable: false,
                 cursor: 'pointer',
@@ -23,13 +31,9 @@ module api.liveedit {
                 },
                 contextMenuConfig: ['parent', 'clearRegion']
 
-            });
+            };
         }
-
-        static getRegionName(element: api.dom.Element): string {
-            return element.getEl().getAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
-        }
-
+        
         createView(config: CreateItemViewConfig<ItemView,Region>): RegionView {
             return new RegionView(new RegionViewBuilder().
                 setParentView(config.parentView).

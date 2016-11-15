@@ -21,20 +21,33 @@ module api.ui.text {
         private blurListeners: {(event: FocusEvent):void}[];
 
         constructor() {
+            super();
+
             this.focusListeners = [];
             this.blurListeners = [];
-            this.input = new InputEl(undefined, 'email');
-            this.input.setPattern(
+            
+            this.input = this.createInput();
+            
+            this.setWrappedInput(this.input);
+            
+            this.addClass("email-input just-shown");
+            this.updateStatus('available');
+        }
+
+
+        createInput(): InputEl {
+            let input = new InputEl(undefined, 'email');
+            input.setPattern(
                 '^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
 
-            this.input.onFocus((event: FocusEvent) => {
+            input.onFocus((event: FocusEvent) => {
                 this.notifyFocused(event);
             });
 
-            this.input.onBlur((event: FocusEvent) => {
+            input.onBlur((event: FocusEvent) => {
                 this.notifyBlurred(event);
             });
-            this.input.onInput((event: Event) => {
+            input.onInput((event: Event) => {
                 if (this.checkTimeout) {
                     clearTimeout(this.checkTimeout);
                 }
@@ -42,12 +55,10 @@ module api.ui.text {
                 this.checkTimeout = setTimeout((email) => this.checkAvailability(email), 500, this.input.getValue());
 
             });
-
-            super(this.input);
-            this.addClass("email-input just-shown");
-            this.updateStatus('available');
+            
+            return input;
         }
-
+        
         getInput(): InputEl {
             return this.input;
         }

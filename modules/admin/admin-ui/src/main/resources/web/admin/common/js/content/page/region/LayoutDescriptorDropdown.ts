@@ -2,9 +2,9 @@ module api.content.page.region {
 
     export class LayoutDescriptorDropdown extends DescriptorBasedDropdown<LayoutDescriptor> {
 
-        constructor(name: string, loader: LayoutDescriptorLoader) {
+        constructor(name: string) {
 
-            super(name, loader, {
+            super(name, {
                 optionDisplayValueViewer: new LayoutDescriptorViewer(),
                 dataIdProperty: "value",
                 noOptionsText: "No layouts available"

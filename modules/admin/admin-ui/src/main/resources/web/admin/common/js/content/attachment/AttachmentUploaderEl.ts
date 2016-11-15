@@ -21,15 +21,17 @@ module api.content.attachment {
             if (config.url == undefined) {
                 config.url = api.util.UriHelper.getRestUri("content/createAttachment");
             }
-            if (config.attachmentRemoveCallback) {
-                this.removeCallback = config.attachmentRemoveCallback;
-            }
             if (config.selfIsDropzone == undefined) {
                 config.selfIsDropzone = true;
             }
 
-            this.attachmentItems = [];
             super(config);
+
+            this.attachmentItems = [];
+            
+            if (config.attachmentRemoveCallback) {
+                this.removeCallback = config.attachmentRemoveCallback;
+            }
 
             this.addClass('attachment-uploader-el');
         }

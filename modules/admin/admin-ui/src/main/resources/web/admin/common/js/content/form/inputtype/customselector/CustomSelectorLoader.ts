@@ -4,33 +4,42 @@ module api.content.form.inputtype.customselector {
 
     export class CustomSelectorLoader extends PostLoader<CustomSelectorResponse, CustomSelectorItem> {
 
-        private customSelectorRequest: CustomSelectorRequest;
-
+        protected request: CustomSelectorRequest;
+        
         constructor(requestPath: string) {
-            this.customSelectorRequest = new CustomSelectorRequest(requestPath);
-            super(this.customSelectorRequest);
+            super();
+
+            this.getRequest().setRequestPath(requestPath);
+        }
+
+        protected createRequest(): CustomSelectorRequest {
+            return new CustomSelectorRequest();
+        }
+
+        protected getRequest(): CustomSelectorRequest {
+            return this.request;
         }
 
         search(searchString: string): wemQ.Promise<CustomSelectorItem[]> {
 
-            this.customSelectorRequest.setQuery(searchString);
+            this.getRequest().setQuery(searchString);
             return this.load();
         }
 
         protected sendPreLoadRequest(ids: string): Q.Promise<CustomSelectorItem[]> {
 
-            return this.customSelectorRequest.setIds(ids.split(";")).sendAndParse().then((results) => {
-                this.customSelectorRequest.setIds([]);
+            return this.getRequest().setIds(ids.split(";")).sendAndParse().then((results) => {
+                this.getRequest().setIds([]);
                 return results;
             });
         }
 
         resetParams() {
-            return this.customSelectorRequest.resetParams();
+            return this.getRequest().resetParams();
         }
 
         isPartiallyLoaded(): boolean {
-            return this.customSelectorRequest.isPartiallyLoaded();
+            return this.getRequest().isPartiallyLoaded();
         }
 
         filterFn(item: CustomSelectorItem): boolean {

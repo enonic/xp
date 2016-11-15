@@ -30,6 +30,7 @@ module api.ui.selector.combobox {
         public static debug: boolean = false;
 
         constructor(builder: RichComboBoxBuilder<OPTION_DISPLAY_VALUE>) {
+            super();
 
             this.loadedListeners = [];
             this.loadingListeners = [];
@@ -63,8 +64,9 @@ module api.ui.selector.combobox {
             });
 
             this.errorContainer = new api.dom.DivEl('error-container');
-
-            super(this.comboBox, this.errorContainer, this.selectedOptionsView);
+            
+            this.setWrappedInput(this.comboBox);
+            this.setAdditionalElements(this.errorContainer, this.selectedOptionsView);
 
             if (!api.util.StringHelper.isBlank(builder.comboBoxName)) {
                 this.setName(builder.comboBoxName);
@@ -509,6 +511,10 @@ module api.ui.selector.combobox {
             return this;
         }
 
+        getSelectedOptionsView(): SelectedOptionsView<T> {
+            return this.selectedOptionsView;
+        }
+        
         setMaximumOccurrences(maximumOccurrences: number): RichComboBoxBuilder<T> {
             this.maximumOccurrences = maximumOccurrences;
             return this;

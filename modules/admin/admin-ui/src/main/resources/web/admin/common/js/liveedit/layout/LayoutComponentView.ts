@@ -27,9 +27,15 @@ module api.liveedit.layout {
 
         private itemViewRemovedListener: (event: ItemViewRemovedEvent) => void;
 
-        public static debug: boolean;
+        public static debug: boolean = false;
 
         constructor(builder: LayoutComponentViewBuilder) {
+            super(builder.
+                setViewer(new LayoutComponentViewer()).
+                setInspectActionRequired(true));
+
+            this.setPlaceholder(new LayoutPlaceholder(this));
+            
             this.regionViews = [];
 
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
@@ -38,11 +44,6 @@ module api.liveedit.layout {
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView(), event.isNew());
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => this.notifyItemViewRemoved(event.getView());
-
-            super(builder.
-                setViewer(new LayoutComponentViewer()).
-                setPlaceholder(new LayoutPlaceholder(this)).
-                setInspectActionRequired(true));
 
             this.parseRegions();
         }

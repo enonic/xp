@@ -37,12 +37,12 @@ module api.util.htmlarea.dialog {
         static maxImageWidth = 640;
 
         constructor(config: HtmlAreaImage, content: api.content.ContentSummary) {
+            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"), "image-modal-dialog");
+
             this.imageElement = <HTMLImageElement>config.element;
             this.elementContainer = config.container;
             this.content = content;
             this.callback = config.callback;
-
-            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"), "image-modal-dialog");
         }
 
         protected getMainFormItems(): FormItem[] {

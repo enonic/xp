@@ -31,6 +31,11 @@ module api.liveedit.fragment {
         private fragmentLoadErrorListeners: {(event: api.liveedit.FragmentLoadErrorEvent): void}[];
 
         constructor(builder: FragmentComponentViewBuilder) {
+           
+            super(builder.
+                    setViewer(new FragmentComponentViewer()).
+                    setInspectActionRequired(true));
+
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentComponent = builder.component;
             this.fragmentContainsLayout = false;
@@ -38,9 +43,8 @@ module api.liveedit.fragment {
             this.fragmentContentLoadedListeners = [];
             this.fragmentLoadErrorListeners = [];
 
-            super(builder.setPlaceholder(new FragmentPlaceholder(this)).setViewer(
-                new FragmentComponentViewer()).setInspectActionRequired(true));
-
+            this.setPlaceholder(new FragmentPlaceholder(this));
+            
             this.fragmentComponent.onPropertyValueChanged((e: api.content.page.region.ComponentPropertyValueChangedEvent) => {
                 if (e.getPropertyName() === FragmentComponent.PROPERTY_FRAGMENT) {
                     this.loadFragmentContent();

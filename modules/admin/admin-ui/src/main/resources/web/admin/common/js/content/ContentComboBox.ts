@@ -73,8 +73,8 @@ module api.content {
         private id: string;
 
         constructor(option: api.ui.selector.Option<ContentSummary>) {
-            this.id = option.value;
             super(option);
+            this.id = option.value;
         }
 
         doRender(): wemQ.Promise<boolean> {

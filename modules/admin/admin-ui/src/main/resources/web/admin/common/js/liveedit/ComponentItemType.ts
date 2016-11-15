@@ -4,15 +4,11 @@ module api.liveedit {
 
     export class ComponentItemType extends ItemType {
 
-        constructor(shortName: string, config: ItemTypeConfigJson) {
-            super(shortName, config);
-        }
-
         createView(config: CreateItemViewConfig<RegionView,Component>): ComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
         }
-
-        protected getDefaultConfigJson(itemType: string): ItemTypeConfigJson {
+        
+        protected getItemTypeConfig(itemType: string): ItemTypeConfigJson {
             return <ItemTypeConfigJson>{
                 cssSelector: '[data-portal-component-type=' + itemType + ']',
                 draggable: true,
