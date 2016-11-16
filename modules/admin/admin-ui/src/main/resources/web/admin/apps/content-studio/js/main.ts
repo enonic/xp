@@ -105,7 +105,7 @@ function startApplication() {
     let application: api.app.Application = getApplication();
     let body = api.dom.Body.get();
 
-    let wizardParams = ContentWizardPanelParams.fromPath(application.getPath());
+    let wizardParams = ContentWizardPanelParams.fromApp(application);
     if (wizardParams) {
         let wizard = new ContentWizardPanel(wizardParams);
 

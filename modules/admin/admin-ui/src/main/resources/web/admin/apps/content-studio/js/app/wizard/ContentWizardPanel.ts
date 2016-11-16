@@ -312,6 +312,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     protected createMainToolbar(): Toolbar {
         return new ContentWizardToolbar({
+            application: this.contentParams.application,
             saveAction: this.wizardActions.getSaveAction(),
             deleteAction: this.wizardActions.getDeleteAction(),
             duplicateAction: this.wizardActions.getDuplicateAction(),

@@ -184,7 +184,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
     }
 
     private openWizardTab(params: ContentWizardPanelParams, tabId: AppBarTabId): Window {
-        let wizardUrl = 'content-studio#/' + params.toPath().toString();
+        let wizardUrl = 'content-studio#/' + params.toString();
         return window.open(wizardUrl, tabId.toString());
     }
 

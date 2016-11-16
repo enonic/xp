@@ -5,8 +5,11 @@ import ContentId = api.content.ContentId;
 import Content = api.content.Content;
 import ContentBuilder = api.content.ContentBuilder;
 import Path = api.rest.Path;
+import Application = api.app.Application;
 
 export class ContentWizardPanelParams {
+
+    application: Application;
 
     createSite: boolean = false;
 
@@ -18,6 +21,10 @@ export class ContentWizardPanelParams {
 
     contentId: api.content.ContentId;
 
+    setApplication(app: Application): ContentWizardPanelParams {
+        this.application = app;
+        return this;
+    }
 
     setTabId(value: api.app.bar.AppBarTabId): ContentWizardPanelParams {
         this.tabId = value;
@@ -44,16 +51,16 @@ export class ContentWizardPanelParams {
         return this;
     }
 
-    toPath(): Path {
-        let hash = this.contentId ?
-                   'edit/' + this.contentId.toString() :
-                   'new/' + this.contentTypeName.toString() +
-                   (this.parentContentId ? '/' + this.parentContentId.toString() : '');
-        return Path.fromString(hash);
+    toString(): string {
+        return this.contentId ?
+               'edit/' + this.contentId.toString() :
+               'new/' + this.contentTypeName.toString() +
+               (this.parentContentId ? '/' + this.parentContentId.toString() : '');
     }
 
-    static fromPath(path: Path): ContentWizardPanelParams {
-        let tabId, wizardParams;
+    static fromApp(app: Application): ContentWizardPanelParams {
+        let path = app.getPath(),
+            tabId, wizardParams;
         switch (path.getElement(0)) {
         case 'new':
             let contentTypeName = new ContentTypeName(path.getElement(1));
@@ -63,6 +70,7 @@ export class ContentWizardPanelParams {
             }
             tabId = AppBarTabId.forNew(contentTypeName.getApplicationKey().getName());
             wizardParams = new ContentWizardPanelParams()
+                .setApplication(app)
                 .setContentTypeName(contentTypeName)
                 .setParentContentId(parentContentId)
                 .setCreateSite(contentTypeName.isSite())
@@ -72,6 +80,7 @@ export class ContentWizardPanelParams {
             let contentId = new ContentId(path.getElement(1));
             tabId = AppBarTabId.forEdit(contentId.toString());
             wizardParams = new ContentWizardPanelParams()
+                .setApplication(app)
                 .setContentId(contentId)
                 .setTabId(tabId);
             break;
