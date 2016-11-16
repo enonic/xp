@@ -30,8 +30,9 @@ module api.app.wizard {
             this.noAction.onExecuted(() => {
                 this.doCloseWithoutSaveCheck();
             });
-            this.addAction(this.noAction);
+            // this.addAction(this.noAction);
 
+            this.addCancelButtonToBottom();
             this.getCancelAction().setMnemonic("c");
         }
 

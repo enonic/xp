@@ -122,6 +122,20 @@ function startApplication() {
             });
         });
 
+        wizard.onClosed(event => window.close());
+
+        api.dom.WindowDOM.get().onBeforeUnload((event) => {
+            if (wizard.hasUnsavedChanges()) {
+                wizard.askUserForSaveChangesBeforeClosing();
+                let message = 'Wizard has unsaved changes. Continue without saving ?';
+                (event || window.event)['returnValue'] = message;
+                return message;
+            } else {
+                // do close to notify everybody
+                wizard.close(false);
+            }
+        });
+
         body.appendChild(wizard);
         return;
     }
