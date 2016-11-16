@@ -1,5 +1,4 @@
 import ComboBox = api.ui.selector.combobox.ComboBox;
-import Spy = jasmine.Spy;
 import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
 import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 import Viewer = api.ui.Viewer;

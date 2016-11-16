@@ -105,18 +105,6 @@ module api.ui.selector {
             this.grid.subscribeOnSelectedRowsChanged((e, args) => {
                 this.notifyMultipleSelection(args.rows);
             });
-
-            this.gridData.onRowsChanged((e, args) => {
-                // this.markSelections();
-                // TODO: After refactoring during task CMS-3104, this does not seem to be necessary
-                // TODO: Remove this when sure or re-implement
-            });
-
-            this.gridData.onRowCountChanged((e, args) => {
-                // this.markSelections();
-                // TODO: After refactoring during task CMS-3104, this does not seem to be necessary
-                // TODO: Remove this when sure or re-implement
-            });
         }
 
         getElement(): api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>> {
@@ -257,23 +245,13 @@ module api.ui.selector {
         }
 
         hasActiveRow(): boolean {
-            var activeCell = this.grid.getActiveCell();
-            if (activeCell) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return !!this.grid.getActiveCell();
         }
 
         getActiveRow(): number {
-            var activeCell = this.grid.getActiveCell();
-            if (activeCell) {
-                return activeCell.row;
-            }
-            else {
-                return -1;
-            }
+            const activeCell = this.grid.getActiveCell();
+
+            return !activeCell ? -1 : activeCell.row;
         }
 
         navigateToFirstRow() {
@@ -282,12 +260,6 @@ module api.ui.selector {
 
         navigateToRow(row: number) {
             this.grid.setActiveCell(row, 0);
-        }
-
-        navigateToFirstRowIfNotActive() {
-            if (!this.grid.getActiveCell()) {
-                this.navigateToFirstRow();
-            }
         }
 
         navigateToNextRow() {

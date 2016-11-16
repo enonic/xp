@@ -43,16 +43,16 @@ module api.ui.selector.combobox {
         skipAutoDropShowOnValueChange?: boolean
     }
 
-    enum Position {
+    export enum PositionType {
         BELOW,
         ABOVE,
         FLEXIBLE_BELOW,
         FLEXIBLE_ABOVE
     }
 
-    interface DropdownPosition {
+    export interface DropdownPosition {
 
-        position: Position;
+        position: PositionType;
 
         height: number;
     }
@@ -182,18 +182,18 @@ module api.ui.selector.combobox {
             const dropdownPosition = this.dropdownOverflowsBottom();
 
             switch (dropdownPosition.position) {
-            case Position.BELOW:
+            case PositionType.BELOW:
                 this.placeDropdownBelow();
                 break;
-            case Position.ABOVE:
+            case PositionType.ABOVE:
                 this.placeDropdownAbove();
                 break;
-            case Position.FLEXIBLE_BELOW:
+            case PositionType.FLEXIBLE_BELOW:
                 // change dd height
                 this.comboBoxDropdown.resizeDropdownTo(dropdownPosition.height);
                 this.placeDropdownBelow();
                 break;
-            case Position.FLEXIBLE_ABOVE:
+            case PositionType.FLEXIBLE_ABOVE:
                 // change dd height
                 this.comboBoxDropdown.resizeDropdownTo(dropdownPosition.height);
                 this.placeDropdownAbove();
@@ -226,16 +226,16 @@ module api.ui.selector.combobox {
             let height;
 
             if (sizeBelowInput > dropdownHeight) {
-                position = Position.BELOW;
+                position = PositionType.BELOW;
                 height = dropdownHeight;
             } else if (sizeAboveInput > dropdownHeight) {
-                position = Position.ABOVE;
+                position = PositionType.ABOVE;
                 height = dropdownHeight;
             } else if (sizeBelowInput > sizeAboveInput) {
-                position = Position.FLEXIBLE_BELOW;
+                position = PositionType.FLEXIBLE_BELOW;
                 height = sizeBelowInput;
             } else { //sizeBelowInput < sizeAboveInput
-                position = Position.FLEXIBLE_ABOVE;
+                position = PositionType.FLEXIBLE_ABOVE;
                 height = sizeAboveInput;
             }
 
