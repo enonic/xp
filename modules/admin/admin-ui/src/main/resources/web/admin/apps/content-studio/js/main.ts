@@ -103,43 +103,57 @@ function updateTabTitle(title: string) {
 function startApplication() {
 
     let application: api.app.Application = getApplication();
-    let body = api.dom.Body.get();
 
     let wizardParams = ContentWizardPanelParams.fromApp(application);
     if (wizardParams) {
-        let wizard = new ContentWizardPanel(wizardParams);
-
-        wizard.onDataLoaded(content => updateTabTitle(content.getDisplayName()));
-        wizard.onWizardHeaderCreated(() => {
-            // header will be ready after rendering is complete
-            wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() === "displayName") {
-                    var contentType = (<ContentWizardPanel>wizard).getContentType(),
-                        name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
-
-                    updateTabTitle(name);
-                }
-            });
-        });
-
-        wizard.onClosed(event => window.close());
-
-        api.dom.WindowDOM.get().onBeforeUnload((event) => {
-            if (wizard.hasUnsavedChanges()) {
-                wizard.askUserForSaveChangesBeforeClosing();
-                let message = 'Wizard has unsaved changes. Continue without saving ?';
-                (event || window.event)['returnValue'] = message;
-                return message;
-            } else {
-                // do close to notify everybody
-                wizard.close(false);
-            }
-        });
-
-        body.appendChild(wizard);
-        return;
+        startContentWizard(wizardParams);
+    } else {
+        startContentApplication(application);
     }
 
+    application.setLoaded(true);
+
+    this.serverEventsListener.start();
+    this.lostConnectionDetector.startPolling();
+
+    api.content.event.ContentServerEventsHandler.getInstance().start();
+}
+
+function startContentWizard(wizardParams: ContentWizardPanelParams) {
+    let wizard = new ContentWizardPanel(wizardParams);
+
+    wizard.onDataLoaded(content => updateTabTitle(content.getDisplayName()));
+    wizard.onWizardHeaderCreated(() => {
+        // header will be ready after rendering is complete
+        wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+            if (event.getPropertyName() === "displayName") {
+                var contentType = (<ContentWizardPanel>wizard).getContentType(),
+                    name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
+
+                updateTabTitle(name);
+            }
+        });
+    });
+
+    wizard.onClosed(event => window.close());
+
+    api.dom.WindowDOM.get().onBeforeUnload((event) => {
+        if (wizard.hasUnsavedChanges()) {
+            wizard.askUserForSaveChangesBeforeClosing();
+            let message = 'Wizard has unsaved changes. Continue without saving ?';
+            (event || window.event)['returnValue'] = message;
+            return message;
+        } else {
+            // do close to notify everybody
+            wizard.close(false);
+        }
+    });
+
+    api.dom.Body.get().appendChild(wizard);
+}
+
+function startContentApplication(application: api.app.Application) {
+    let body = api.dom.Body.get();
     var appBar = new api.app.bar.AppBar(application);
     var appPanel = new ContentAppPanel(appBar, application.getPath());
 
@@ -215,9 +229,6 @@ function startApplication() {
     var sortDialog = new SortContentDialog();
     var moveDialog = new MoveContentDialog();
     var editPermissionsDialog = new EditPermissionsDialog();
-    application.setLoaded(true);
-    this.serverEventsListener.start();
-    this.lostConnectionDetector.startPolling();
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {
@@ -227,8 +238,6 @@ function startApplication() {
             }
         }
     };
-
-    api.content.event.ContentServerEventsHandler.getInstance().start();
 }
 
 window.onload = function () {

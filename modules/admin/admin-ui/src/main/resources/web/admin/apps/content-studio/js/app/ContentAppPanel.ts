@@ -1,6 +1,5 @@
 import "../api.ts";
 import {NewContentEvent} from "./create/NewContentEvent";
-import {ContentWizardPanel} from "./wizard/ContentWizardPanel";
 import {ViewContentEvent} from "./browse/ViewContentEvent";
 import {SortContentEvent} from "./browse/SortContentEvent";
 import {MoveContentEvent} from "./browse/MoveContentEvent";
@@ -39,7 +38,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         this.route(path);
     }
 
-    addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<Content>) {
+    /*    addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<Content>) {
         super.addWizardPanel(tabMenuItem, wizardPanel);
 
         wizardPanel.onWizardHeaderCreated(() => {
@@ -63,7 +62,7 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         contentWizardPanel.onValidityChanged((event: api.ValidityChangedEvent) => {
             tabMenuItem.markInvalid(!contentWizardPanel.isValid());
         });
-    }
+     }*/
 
     private route(path?: api.rest.Path) {
         var action = path ? path.getElement(0) : undefined;
