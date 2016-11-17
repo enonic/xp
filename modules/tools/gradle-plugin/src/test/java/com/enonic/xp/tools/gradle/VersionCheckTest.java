@@ -15,6 +15,12 @@ public class VersionCheckTest
     }
 
     @Test
+    public void newInstance()
+    {
+        new VersionCheck();
+    }
+
+    @Test
     public void testRightVersions()
     {
         VersionCheck.checkGradleVersion( mockVersion( "2.6" ) );

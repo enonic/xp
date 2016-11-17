@@ -5,6 +5,7 @@ dependencies {
     compile 'org.dm.gradle:gradle-bundle-plugin:0.6.3'
     compile 'org.osgi:osgi.core:6.0.0'
     compile 'com.google.guava:guava:18.0'
+    testCompile gradleTestKit()
 }
 
 pluginBundle {
