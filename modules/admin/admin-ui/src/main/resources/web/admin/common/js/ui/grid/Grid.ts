@@ -132,9 +132,10 @@ module api.ui.grid {
             return this.dataView;
         }
 
-        setColumns(columns: GridColumn<T>[]) {
+        setColumns(columns: GridColumn<T>[], toBegin: boolean = false) {
             if (this.checkboxSelectorPlugin) {
-                columns.unshift(this.checkboxSelectorPlugin.getColumnDefinition());
+                let pluginColumn = this.checkboxSelectorPlugin.getColumnDefinition();
+                toBegin ? columns.push(pluginColumn) : columns.unshift(pluginColumn);
             }
             this.slickGrid.setColumns(columns);
         }
