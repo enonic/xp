@@ -1274,7 +1274,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         } else {
 
-            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent), true).build();
             return !viewedContent.equals(persistedContent, true);
         }
     }
@@ -1323,18 +1323,21 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var optionSets = this.getOptionSetsInForm(this.getContentType().getForm());
 
         optionSets.forEach((optionSet) => {
-            var parentProperty = data.getProperty(optionSet.getPath().toString());
-            if (!!parentProperty) {
-                var optionSetProperty = parentProperty.getPropertySet();
+            var property = data.getProperty(optionSet.getPath().toString());
+            if (!!property) {
+                var optionSetProperty = property.getPropertySet();
                 var selectionArray = optionSetProperty.getPropertyArray("_selected");
                 if (!selectionArray) {
                     return;
                 }
                 optionSet.getOptions().forEach((option: api.form.FormOptionSetOption) => {
-                    if (!selectionArray.getProperties().some((selectedOptionName: api.data.Property) => {
-                            return (selectedOptionName.getString() == option.getName());
-                        })
-                    ) {
+                    var isSelected = false;
+                    selectionArray.forEach((selectedOptionName: api.data.Property) => {
+                        if (selectedOptionName.getString() == option.getName()) {
+                            isSelected = true;
+                        }
+                    })
+                    if (!isSelected) {
                         optionSetProperty.removeProperty(option.getName(), 0);
                     }
                 })

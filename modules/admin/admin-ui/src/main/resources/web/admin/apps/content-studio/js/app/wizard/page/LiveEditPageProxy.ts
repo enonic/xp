@@ -166,11 +166,7 @@ export class LiveEditPageProxy {
 
     private createLiveEditIFrame(): api.dom.IFrameEl {
         var liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
-        liveEditIFrame.hide();
-        liveEditIFrame.onLoaded(() => {
-            liveEditIFrame.getHTMLElement().style.display = "";
-            this.handleIFrameLoadedEvent()
-        });
+        liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
 
         return liveEditIFrame;
     }
@@ -178,7 +174,6 @@ export class LiveEditPageProxy {
     private createPlaceholderIFrame(): api.dom.IFrameEl {
         var placeholderIFrame = new api.dom.IFrameEl("live-edit-frame-blank");
         placeholderIFrame.setSrc(CONFIG.assetsUri + "/live-edit/js/_blank.html");
-        placeholderIFrame.hide();
 
         return placeholderIFrame;
     }
@@ -294,13 +289,13 @@ export class LiveEditPageProxy {
     }
 
     private hideEditorAndShowPlaceholder() {
-        this.liveEditIFrame.hide();
-        this.placeholderIFrame.show();
+        this.liveEditIFrame.removeClass('shown');
+        this.placeholderIFrame.addClass('shown');
     }
 
     private hidePlaceholderAndShowEditor() {
-        this.placeholderIFrame.hide();
-        this.liveEditIFrame.show();
+        this.placeholderIFrame.removeClass('shown');
+        this.liveEditIFrame.addClass('shown')
     }
 
     public skipNextReloadConfirmation(skip: boolean) {

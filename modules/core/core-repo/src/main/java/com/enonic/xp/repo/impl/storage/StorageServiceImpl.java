@@ -23,7 +23,6 @@ import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
-import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
@@ -143,14 +142,7 @@ public class StorageServiceImpl
         for ( final PushNodeEntry entry : entries )
         {
             final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
-
-            this.branchService.store( NodeBranchEntry.create().
-                nodeVersionId( entry.getNodeVersionId() ).
-                nodeId( nodeBranchEntry.getNodeId() ).
-                nodeState( nodeBranchEntry.getNodeState() ).
-                timestamp( nodeBranchEntry.getTimestamp() ).
-                nodePath( nodeBranchEntry.getNodePath() ).
-                build(), InternalContext.create( context ).
+            this.branchService.store( nodeBranchEntry, entry.getCurrentTargetPath(), InternalContext.create( context ).
                 branch( entries.getTargetBranch() ).
                 build() );
             if ( pushListener != null )
@@ -252,6 +244,12 @@ public class StorageServiceImpl
     }
 
     @Override
+    public void invalidate()
+    {
+        this.branchService.evictAllPaths();
+    }
+
+    @Override
     public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
         this.branchService.cachePath( nodeId, nodePath, context );
@@ -268,6 +266,20 @@ public class StorageServiceImpl
     {
         this.branchService.evictPath( params.getExistingPath(), context );
         this.branchService.cachePath( params.getNodeId(), params.getNewPath(), context );
+    }
+
+    @Override
+    public void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath currentTargetPath,
+                                  final InternalContext context )
+    {
+        if ( !nodePath.equals( currentTargetPath ) )
+        {
+            if ( currentTargetPath != null )
+            {
+                this.branchService.evictPath( currentTargetPath, context );
+            }
+            this.branchService.cachePath( nodeId, nodePath, context );
+        }
     }
 
     private Node doGetNode( final NodeBranchEntry nodeBranchEntry )
@@ -338,16 +350,13 @@ public class StorageServiceImpl
     {
         final NodeVersion nodeVersion = NodeVersion.from( node );
 
-        this.branchService.move( MoveBranchParams.create().
-            branchNodeVersion( NodeBranchEntry.create().
-                nodeVersionId( nodeVersionId ).
-                nodeId( nodeVersion.getId() ).
-                nodeState( node.getNodeState() ).
-                timestamp( node.getTimestamp() ).
-                nodePath( node.path() ).
-                build() ).
-            previousPath( previousPath ).
-            build(), context );
+        this.branchService.store( NodeBranchEntry.create().
+            nodeVersionId( nodeVersionId ).
+            nodeId( nodeVersion.getId() ).
+            nodeState( node.getNodeState() ).
+            timestamp( node.getTimestamp() ).
+            nodePath( node.path() ).
+            build(), previousPath, context );
 
         this.indexDataService.store( node, context );
 

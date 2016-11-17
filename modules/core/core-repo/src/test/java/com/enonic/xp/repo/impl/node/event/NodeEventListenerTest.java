@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -11,6 +12,8 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.PushNodeEntries;
+import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
@@ -202,5 +205,38 @@ public class NodeEventListenerTest
                                                                                 Mockito.isA( InternalContext.class ) );
     }
 
+    @Test
+    public void node_pushed_event()
+        throws Exception
+    {
+        final NodeId nodeId = NodeId.from( "node1" );
+        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+        final NodePath previousNodePath = NodePath.create( NodePath.ROOT, "previousName" ).build();
 
+        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
+            nodeId( nodeId ).
+            nodePath( nodePath ).
+            nodeState( NodeState.DEFAULT ).
+            build();
+        final PushNodeEntry pushNodeEntry = PushNodeEntry.create().
+            nodeBranchEntry( nodeBranchEntry ).
+            currentTargetPath( previousNodePath ).
+            build();
+
+        final PushNodeEntries pushNodeEntries = PushNodeEntries.create().
+            targetRepo( ContentConstants.CONTENT_REPO.getId() ).
+            targetBranch( ContentConstants.BRANCH_MASTER ).
+            add( pushNodeEntry ).
+            build();
+
+        final Event localEvent = NodeEvents.pushed( pushNodeEntries );
+
+        nodeEventListener.onEvent( Event.create( localEvent ).
+            localOrigin( false ).
+            build() );
+
+        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodePushed( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                               Mockito.eq( previousNodePath ),
+                                                                               Mockito.isA( InternalContext.class ) );
+    }
 }

@@ -1,11 +1,28 @@
 @occurrence-label-margin-left: 10px;
 
-.form-item-set-view, .form-option-set-view {
-  margin: 10px 0;
-
-  &.valid {
-
+.form-item-set-view {
+  > .occurrence-views-container > .form-item-set-occurrence-view {
+    padding: 10px;
   }
+
+  &.max-1-occurrence {
+    .form-item-set-occurrence-view {
+      padding: 0px;
+
+      > .form-item-set-occurrences-container {
+        padding: 0 10px;
+      }
+    }
+  }
+}
+
+.form-option-set-view .form-item-set-view {
+  > .occurrence-views-container > .form-item-set-occurrence-view {
+    padding-bottom: 20px;
+  }
+}
+
+.form-item-set-view, .form-option-set-view {
 
   .display-validation-errors &.invalid {
     outline: 2px solid @input-red-text;
@@ -16,13 +33,42 @@
     &.odd > .validation-viewer {
       color: @admin-white;
     }
+
+    .occurrence-views-container .form-option-set-occurrence-view {
+      padding-top: 10px;
+
+      > .help-text {
+        padding-left: 10px;
+      }
+
+      > .remove-button {
+        margin-right: 10px;
+      }
+    }
+
+    &.max-1-occurrence {
+      padding-bottom: 5px;
+
+      .form-option-set-occurrence-view {
+        > .form-occurrence-draggable-label {
+          margin-left: @occurrence-label-margin-left;
+        }
+
+        > .form-item-set-occurrences-container, > .form-option-set-occurrences-container {
+          padding: 0 10px;
+        }
+      }
+    }
   }
 
   &:not(.max-1-occurrence) {
-    .occurrence-views-container {
+    > .occurrence-views-container {
       background-color: @admin-bg-light-gray;
-      padding: 10px 10px 0px;
+      padding: 10px 10px 0px 10px;
       .clearfix();
+    }
+    > .bottom-button-row {
+      padding-top: 0px;
     }
   }
 
@@ -66,7 +112,7 @@
   & > .bottom-button-row {
     box-sizing: border-box;
     background-color: @admin-bg-light-gray;
-    padding: 0 10px 10px 10px;
+    padding: 10px;
     clear: left;
     .clearfix();
 
@@ -116,42 +162,41 @@
 
   &.max-1-occurrence {
     margin-bottom: 0px;
-    .occurrence-views-container {
-      .form-item-set-occurrence-view, .form-option-set-occurrence-view {
-        margin-bottom: 0px;
-      }
 
-      .bottom-button-row {
-        display: none;
+    .occurrence-views-container {
+      > .form-option-set-occurrence-view {
+        margin-bottom: 0px;
+        padding: 0px;
       }
 
       &:empty + .bottom-button-row {
         display: block;
+        padding-left: 0px;
+        padding-bottom: 0px;
+        background-color: @admin-white;
       }
     }
 
     > .bottom-button-row {
-      background-color: @admin-white;
-      .collapse-button {
-        display: none !important;
-      }
+      display: none;
     }
+
   }
 
   .occurrence-views-container {
-    .form-item-set-occurrence-view, .form-option-set-occurrence-view {
+    .form-option-set-occurrence-view {
+      padding: 10px;
+    }
 
+    .form-item-set-occurrence-view, .form-option-set-occurrence-view {
       clear: left;
       margin: 0px;
-      padding: 10px 0;
-      background-color: white;
       margin-bottom: 10px;
+      background-color: white;
 
       .form-occurrence-draggable-label {
         font-size: 14px;
         color: #777777;
-        margin-bottom: 10px;
-        margin-left: @occurrence-label-margin-left;
 
         .required {
           &:after {
@@ -162,11 +207,8 @@
 
         .help-text-toggler {
           margin-top: 3px;
+          margin-right: 10px;
         }
-      }
-
-      .form-occurrence-draggable-label + .help-text {
-        margin-left: @occurrence-label-margin-left;
       }
 
       .drag-handle {
@@ -189,7 +231,7 @@
         .icon-close();
         .focusable();
 
-        margin: 5px 10px 0 8px;
+        margin: 5px 0 0 0;
         border: 1px solid transparent;
         line-height: 12px;
         float: right;
@@ -197,15 +239,28 @@
         cursor: pointer;
       }
 
-      .form-item-set-occurrences-container > *:not(:last-child) {
-        margin-bottom: 15px;
+      .form-option-set-occurrences-container {
+        padding-bottom: 10px;
       }
 
       .form-item-set-occurrences-container, .form-option-set-occurrences-container {
-        padding: 10px 10px 10px;
+        margin-top: 10px;
       }
-
     }
+    .form-option-set-occurrence-view {
+      padding-bottom: 0px;
+    }
+  }
+}
+
+.display-validation-errors .form-item-set-view.invalid {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 0 !important;
+
+  .input-view.invalid {
+    margin: 0px -10px 5px -10px;
   }
 }
 

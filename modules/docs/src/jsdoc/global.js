@@ -62,7 +62,14 @@ var app = {
      *
      * @type string
      */
-    version: ''
+    version: '',
+
+    /**
+     * Application configuration. This configuration is set using files in
+     * $XP_HOME/config/<app-name>.cfg.
+     *
+     * @type Object
+     */
 };
 
 /**

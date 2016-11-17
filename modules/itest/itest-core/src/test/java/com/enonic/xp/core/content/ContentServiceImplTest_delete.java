@@ -12,6 +12,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.data.PropertyTree;
@@ -328,4 +329,28 @@ public class ContentServiceImplTest_delete
     }
 
 
+    @Test
+    public void move_to_folder_starting_with_same_name_and_delete()
+        throws Exception
+    {
+
+        final Content site = createContent( ContentPath.ROOT, "site" );
+        final Content child1 = createContent( site.getPath(), "child1" );
+        createContent( child1.getPath(), "child1_1" );
+        createContent( child1.getPath(), "child2_1" );
+
+        final Content site2 = createContent( ContentPath.ROOT, "site2" );
+
+        refresh();
+
+        this.contentService.move( new MoveContentParams( child1.getId(), site2.getPath() ) );
+
+        final DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( site.getPath() ).
+            build() );
+
+        assertEquals( 1, result.getDeletedContents().getSize() );
+
+
+    }
 }
