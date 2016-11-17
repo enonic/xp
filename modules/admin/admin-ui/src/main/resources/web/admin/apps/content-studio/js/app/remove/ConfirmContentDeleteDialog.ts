@@ -21,9 +21,7 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     private deleteConfig: ConfirmContentDeleteDialogConfig;
 
     constructor(deleteConfig: ConfirmContentDeleteDialogConfig) {
-        super({
-            title: new api.ui.dialog.ModalDialogHeader("Confirm delete")
-        });
+        super("Confirm delete");
 
         this.deleteConfig = deleteConfig;
 
@@ -52,7 +50,7 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     }
 
     private addSubtitle() {
-        this.appendChildToTitle(new api.dom.H6El("confirm-delete-subtitle").setHtml(
+        this.appendChildToHeader(new api.dom.H6El("confirm-delete-subtitle").setHtml(
             "You are about to delete important content. This action cannot be undone."));
     }
 

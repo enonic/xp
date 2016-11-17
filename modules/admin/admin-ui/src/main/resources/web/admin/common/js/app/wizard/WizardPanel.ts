@@ -13,15 +13,14 @@ module api.app.wizard {
 
         tabId: api.app.bar.AppBarTabId;
 
-        persistedItem: EQUITABLE;
-
-        actions: WizardActions<any>;
-
+        persistedItem?: EQUITABLE;
     }
 
     export class WizardPanel<EQUITABLE extends api.Equitable> extends api.ui.panel.Panel implements api.ui.Closeable, api.ui.ActionContainer {
 
         protected params: WizardPanelParams<EQUITABLE>;
+
+        protected wizardActions: WizardActions<EQUITABLE>;
 
         private persistedItem: EQUITABLE;
 
@@ -90,6 +89,8 @@ module api.app.wizard {
 
             this.params = params;
 
+            this.wizardActions = this.createWizardActions();
+            
             if (params.persistedItem) {
                 this.setPersistedItem(params.persistedItem);
                 this.formState.setIsNew(false);
@@ -132,6 +133,10 @@ module api.app.wizard {
             })
         }
 
+        protected createWizardActions(): WizardActions<EQUITABLE> {
+            throw Error('Override me');
+        }
+        
         /*
          Loads necessary data for rendering on wizard open
          */
@@ -516,9 +521,9 @@ module api.app.wizard {
                 console.debug("WizardPanel.updateToolbarActions: isNew", this.formState.isNew());
             }
             if (this.formState.isNew()) {
-                this.params.actions.enableActionsForNew();
+                this.wizardActions.enableActionsForNew();
             } else {
-                this.params.actions.enableActionsForExisting(this.getPersistedItem());
+                this.wizardActions.enableActionsForExisting(this.getPersistedItem());
             }
         }
 
@@ -620,7 +625,7 @@ module api.app.wizard {
         }
 
         getActions(): api.ui.Action[] {
-            return this.params.actions.getActions();
+            return this.wizardActions.getActions();
         }
 
         getSteps(): WizardStep[] {

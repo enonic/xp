@@ -10,14 +10,20 @@ module api.app.view {
 
         private closedListeners: {(event: ItemViewClosedEvent<M>):void}[] = [];
 
-        constructor(toolbar: api.ui.toolbar.Toolbar, panel: api.ui.panel.Panel) {
+        constructor() {
             super("item-view-panel");
-            this.toolbar = toolbar;
-            this.panel = panel;
-            this.appendChild(this.toolbar);
-            this.appendChild(this.panel);
         }
 
+        setToolbar(toolbar: api.ui.toolbar.Toolbar) {
+            this.toolbar = toolbar;
+            this.appendChild(this.toolbar);
+        }
+
+        setPanel(panel: api.ui.panel.Panel) {
+            this.panel = panel;
+            this.appendChild(this.panel);
+        }
+        
         /*
          As long as the close action is excluded from the toolbar,
          we should add it along with the other toolbar actions to be able to close tabs.

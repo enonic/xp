@@ -49,7 +49,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         topDescription.getEl().setInnerHtml('Drag and drop components into the page');
 
         this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
-        this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: "comp"});
+        this.insertablesGrid = new InsertablesGrid(this.insertablesDataView);
 
         this.insertablesDataView.setItems(Insertables.ALL, "name");
 

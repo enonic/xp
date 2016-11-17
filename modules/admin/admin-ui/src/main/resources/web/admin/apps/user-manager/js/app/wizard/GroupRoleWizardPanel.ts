@@ -15,11 +15,10 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
     private membersWizardStepForm: PrincipalMembersWizardStepForm;
 
     constructor(membersWizardStepForm: PrincipalMembersWizardStepForm, params: PrincipalWizardPanelParams) {
+        super(params);
 
         this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
         this.membersWizardStepForm = membersWizardStepForm;
-
-        super(params);
 
         this.addClass("group-role-wizard-panel");
     }

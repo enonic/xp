@@ -24,9 +24,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     private onMarketLoaded;
 
     constructor() {
-        super({
-            title: new api.ui.dialog.ModalDialogHeader("Install Application")
-        });
+        super("Install Application");
 
         this.addClass("install-application-dialog hidden");
 

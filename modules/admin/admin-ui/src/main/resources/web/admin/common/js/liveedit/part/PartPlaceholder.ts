@@ -6,7 +6,6 @@ module api.liveedit.part {
     import PartDescriptor = api.content.page.region.PartDescriptor;
     import PartDescriptorLoader = api.content.page.region.PartDescriptorLoader;
     import PartDescriptorComboBox = api.content.page.region.PartDescriptorComboBox;
-    import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPartDescriptorsByApplicationsRequest;
     import PartItemType = api.liveedit.part.PartItemType;
     import PageItemType = api.liveedit.PageItemType;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
@@ -24,12 +23,9 @@ module api.liveedit.part {
             this.addClassEx("part-placeholder").addClass(api.StyleHelper.getCommonIconCls("part"));
 
             this.partComponentView = partView;
-
-            var request = new GetPartDescriptorsByApplicationsRequest(partView.getLiveEditModel().getSiteModel().getApplicationKeys());
-            var loader = new PartDescriptorLoader(request);
-            loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
-            this.comboBox = new PartDescriptorComboBox(loader);
-            loader.load();
+            
+            this.comboBox = new PartDescriptorComboBox();
+            this.comboBox.loadDescriptors(partView.getLiveEditModel().getSiteModel().getApplicationKeys());
 
             this.appendChild(this.comboBox);
 
@@ -41,8 +37,8 @@ module api.liveedit.part {
             });
 
             var siteModel = partView.getLiveEditModel().getSiteModel();
-            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
-            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
+            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel));
+            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel));
 
             this.displayName = new api.dom.H3El('display-name');
             this.appendChild(this.displayName);
@@ -52,9 +48,8 @@ module api.liveedit.part {
             }
         }
         
-        private reloadDescriptorsOnApplicationChange(siteModel: SiteModel, request: GetPartDescriptorsByApplicationsRequest) {
-            request.setApplicationKeys(siteModel.getApplicationKeys());
-            this.comboBox.getLoader().load();
+        private reloadDescriptorsOnApplicationChange(siteModel: SiteModel) {
+            this.comboBox.loadDescriptors(siteModel.getApplicationKeys());
         }
 
         setDisplayName(name: string) {

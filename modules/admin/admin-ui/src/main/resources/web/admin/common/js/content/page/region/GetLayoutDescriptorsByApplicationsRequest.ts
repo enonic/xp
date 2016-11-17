@@ -6,11 +6,6 @@ module api.content.page.region {
 
         private applicationKeys: api.application.ApplicationKey[];
 
-        constructor(applicationKey: api.application.ApplicationKey[]) {
-            super();
-            this.applicationKeys = applicationKey;
-        }
-
         setApplicationKeys(applicationKeys: api.application.ApplicationKey[]) {
             this.applicationKeys = applicationKeys;
         }

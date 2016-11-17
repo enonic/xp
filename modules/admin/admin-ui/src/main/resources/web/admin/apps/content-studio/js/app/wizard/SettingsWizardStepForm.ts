@@ -86,7 +86,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
     reset() {
         return this.localeCombo.resetBaseValues();
-        return this.ownerCombo.resetBaseValues();
     }
 
     private setModel(model: ContentSettingsModel) {

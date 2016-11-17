@@ -9,7 +9,7 @@ module api.ui.selector.combobox {
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.dom.CompositeFormInputEl {
 
-        private loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
+        protected loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
 
         private selectedOptionsView: SelectedOptionsView<OPTION_DISPLAY_VALUE>;
 
@@ -55,7 +55,7 @@ module api.ui.selector.combobox {
 
             comboBoxConfig.skipAutoDropShowOnValueChange = true;
 
-            this.loader = builder.loader;
+            this.loader = builder.loader || this.createLoader();
             this.comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(name, comboBoxConfig, this.loader);
             this.setupLoader();
 
@@ -81,6 +81,14 @@ module api.ui.selector.combobox {
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder.loader, PostLoader)) {
                 this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>builder.loader).postLoad.bind(builder.loader));
             }
+        }
+
+        protected createLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
+            throw "Must be implemented by inheritors";
+        }
+
+        load() {
+            this.loader.load();
         }
 
         private handleLastRange(handler: () => void) {

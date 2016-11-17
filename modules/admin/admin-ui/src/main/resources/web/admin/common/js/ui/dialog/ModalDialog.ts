@@ -2,8 +2,8 @@ module api.ui.dialog {
 
     import DivEl = api.dom.DivEl;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+
     export interface ModalDialogConfig {
-        title: api.ui.dialog.ModalDialogHeader;
         forceHorizontalCentering?: boolean;
         ignoreClickOutside?: boolean;
     }
@@ -12,7 +12,7 @@ module api.ui.dialog {
 
         private config: ModalDialogConfig;
 
-        private title: api.ui.dialog.ModalDialogHeader;
+        protected header: api.ui.dialog.ModalDialogHeader;
 
         private contentPanel: ModalDialogContentPanel;
 
@@ -34,7 +34,7 @@ module api.ui.dialog {
 
         public static debug: boolean = false;
 
-        constructor(config?: ModalDialogConfig) {
+        constructor(title: string = "", config?: ModalDialogConfig) {
             super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
 
             this.config = config;
@@ -46,11 +46,15 @@ module api.ui.dialog {
             this.cancelButton = new api.dom.DivEl("cancel-button-top");
             this.cancelButton.onClicked(() => this.cancelAction.execute());
             wrapper.appendChild(this.cancelButton);
-
+/*
             if (this.config && this.config.title) {
                 this.title = this.config.title;
                 wrapper.appendChild(this.title);
             }
+*/
+
+            this.header = this.createHeader(title);
+            wrapper.appendChild(this.header);
 
             this.contentPanel = new ModalDialogContentPanel();
             wrapper.appendChild(this.contentPanel);
@@ -116,6 +120,10 @@ module api.ui.dialog {
             });
         }
 
+        protected createHeader(title: string): api.ui.dialog.ModalDialogHeader {
+            return new api.ui.dialog.ModalDialogHeader(title);
+        }
+
         private isIgnoredElementClicked(element: HTMLElement): boolean {
             if (!!element && !!element.className && !!element.className.indexOf) {
                 return element.className.indexOf("mce-") > -1 || element.className.indexOf("html-area-modal-dialog") > -1;
@@ -145,20 +153,16 @@ module api.ui.dialog {
             this.buttonRow.addAction(cancelAction);
         }
 
-        setTitleConfig(title: ModalDialogHeader) {
-            this.title = title;
-        }
-        
         setTitle(value: string) {
-            this.title.setTitle(value);
+            this.header.setTitle(value);
         }
 
         appendChildToContentPanel(child: api.dom.Element) {
             this.contentPanel.appendChild(child);
         }
 
-        appendChildToTitle(child: api.dom.Element) {
-            this.title.appendChild(child);
+        appendChildToHeader(child: api.dom.Element) {
+            this.header.appendChild(child);
         }
 
         removeChildFromContentPanel(child: api.dom.Element) {

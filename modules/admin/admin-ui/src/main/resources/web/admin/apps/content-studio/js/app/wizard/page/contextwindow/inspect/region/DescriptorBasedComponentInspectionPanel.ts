@@ -1,4 +1,5 @@
 import "../../../../../../api.ts";
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
 
 import FormView = api.form.FormView;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
@@ -9,8 +10,6 @@ import SiteModel = api.content.site.SiteModel;
 import DescriptorBasedDropdown = api.content.page.region.DescriptorBasedDropdown;
 import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
 import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPartDescriptorsByApplicationsRequest;
-import {ComponentInspectionPanel} from "./ComponentInspectionPanel";
-import {ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
 
 export interface DescriptorBasedComponentInspectionPanelConfig extends ComponentInspectionPanelConfig {
 
@@ -58,7 +57,7 @@ export class DescriptorBasedComponentInspectionPanel<COMPONENT extends Descripto
     }
 
     protected reloadDescriptorsOnApplicationChange() {
-        this.selector.getLoader().load();
+        this.selector.load();
     }
 
     setupComponentForm(component: DescriptorBasedComponent, descriptor: Descriptor) {

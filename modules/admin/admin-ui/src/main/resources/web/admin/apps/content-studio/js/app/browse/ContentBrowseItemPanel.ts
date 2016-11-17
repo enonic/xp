@@ -9,8 +9,9 @@ export class ContentBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.c
     private grid: ContentTreeGrid;
 
     constructor(grid: ContentTreeGrid) {
-        this.grid = grid;
         super();
+
+        this.grid = grid;
     }
 
     createItemSelectionPanel(): ContentBrowseItemsSelectionPanel {

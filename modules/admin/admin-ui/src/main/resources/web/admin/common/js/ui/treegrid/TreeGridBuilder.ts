@@ -1,5 +1,6 @@
 module api.ui.treegrid {
 
+    import GridColumnConfig = api.ui.grid.GridColumnConfig;
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
     import GridOptions = api.ui.grid.GridOptions;
@@ -17,6 +18,8 @@ module api.ui.treegrid {
         private options: GridOptions<NODE>;
 
         private columns: GridColumn<TreeNode<NODE>>[] = [];
+
+        private columnConfig: GridColumnConfig[] = [];
 
         private classes: string = "";
 
@@ -140,7 +143,7 @@ module api.ui.treegrid {
             return this;
         }
 
-        setShowContextMenu(contextMenu: TreeGridContextMenu): TreeGridBuilder<NODE> {
+        setContextMenu(contextMenu: TreeGridContextMenu): TreeGridBuilder<NODE> {
             this.contextMenu = contextMenu;
             return this;
         }
@@ -155,6 +158,11 @@ module api.ui.treegrid {
             return this;
         }
 
+        setColumnConfig(columnConfig: GridColumnConfig[]): TreeGridBuilder<NODE> {
+            this.columnConfig = columnConfig;
+            return this;
+        }
+        
         setClasses(classes: string): TreeGridBuilder<NODE> {
             this.classes = classes;
             return this;
@@ -259,10 +267,36 @@ module api.ui.treegrid {
         getQuietErrorHandling(): boolean {
             return this.quietErrorHandling;
         }
+
+        private buildColumnsFromConfig() {
+            this.columnConfig.forEach((column: GridColumnConfig) => {
+                this.columns.push(this.buildColumn(column));
+            })
+        }
+        
+        private buildColumn(columnConfig: GridColumnConfig) {
+
+            return new GridColumnBuilder<TreeNode<NODE>>().
+                        setName(columnConfig.name).
+                        setId(columnConfig.id).
+                        setField(columnConfig.field).
+                        setFormatter(columnConfig.formatter).
+                        setCssClass(columnConfig.style.cssClass).
+                        setMinWidth(columnConfig.style.minWidth).
+                        setMaxWidth(columnConfig.style.maxWidth).
+                        setBehavior(columnConfig.behavior).
+                        build();
+        }
+
         /**
          Should be overriden by child class.
          */
         build(): TreeGrid<NODE> {
+
+            if (this.columnConfig) {
+                this.buildColumnsFromConfig();
+            }
+
             return new TreeGrid<NODE>(this);
         }
 

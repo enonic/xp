@@ -20,20 +20,18 @@ import WizardActions = api.app.wizard.WizardActions;
 
 export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
 
-    wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
+    protected wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
 
     userItemParams: UserItemWizardPanelParams<USER_ITEM_TYPE>;
 
     constructor(params: UserItemWizardPanelParams<USER_ITEM_TYPE>) {
 
-        this.userItemParams = params;
-        this.wizardActions = this.createWizardActions();
-
         super({
-            tabId: this.userItemParams.tabId,
-            persistedItem: this.userItemParams.persistedItem,
-            actions: this.wizardActions
+            tabId: params.tabId,
+            persistedItem: params.persistedItem
         });
+
+        this.userItemParams = params;
     }
 
     protected createWizardActions(): UserItemWizardActions<USER_ITEM_TYPE> {

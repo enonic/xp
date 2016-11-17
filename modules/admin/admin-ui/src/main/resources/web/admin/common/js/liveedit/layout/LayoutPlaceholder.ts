@@ -4,8 +4,6 @@ module api.liveedit.layout {
     import PageItemType = api.liveedit.PageItemType;
     import SiteModel = api.content.site.SiteModel;
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
-    import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
-    import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
     import LayoutDescriptorComboBox = api.content.page.region.LayoutDescriptorComboBox;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
@@ -20,11 +18,9 @@ module api.liveedit.layout {
             this.addClassEx("layout-placeholder");
             this.layoutComponentView = layoutView;
 
-            var request = new GetLayoutDescriptorsByApplicationsRequest(layoutView.getLiveEditModel().getSiteModel().getApplicationKeys());
-            var loader = new LayoutDescriptorLoader(request);
-            loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
-            this.comboBox = new LayoutDescriptorComboBox(loader);
-            loader.load();
+
+            this.comboBox = new LayoutDescriptorComboBox();
+            this.comboBox.loadDescriptors(layoutView.getLiveEditModel().getSiteModel().getApplicationKeys());
 
             this.appendChild(this.comboBox);
 
@@ -37,13 +33,12 @@ module api.liveedit.layout {
             });
 
             var siteModel = layoutView.getLiveEditModel().getSiteModel();
-            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
-            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
+            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel));
+            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel));
         }
 
-        private reloadDescriptorsOnApplicationChange(siteModel: SiteModel, request: GetLayoutDescriptorsByApplicationsRequest) {
-            request.setApplicationKeys(siteModel.getApplicationKeys());
-            this.comboBox.getLoader().load();
+        private reloadDescriptorsOnApplicationChange(siteModel: SiteModel) {
+            this.comboBox.loadDescriptors(siteModel.getApplicationKeys());
         }
 
         select() {

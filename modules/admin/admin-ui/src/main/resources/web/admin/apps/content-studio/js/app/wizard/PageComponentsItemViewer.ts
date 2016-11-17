@@ -18,8 +18,9 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
     private content: Content;
 
     constructor(content: Content) {
-        this.content = content;
         super('page-components-item-viewer');
+
+        this.content = content;
     }
 
     resolveDisplayName(object: ItemView): string {

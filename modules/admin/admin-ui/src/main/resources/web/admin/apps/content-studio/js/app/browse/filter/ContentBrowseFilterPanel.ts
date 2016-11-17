@@ -39,22 +39,14 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = "Content Types";
     static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = "Last Modified";
 
-    contentTypeAggregation: ContentTypeAggregationGroupView;
-    lastModifiedAggregation: AggregationGroupView;
+    private contentTypeAggregation: ContentTypeAggregationGroupView;
+    private lastModifiedAggregation: AggregationGroupView;
 
     private dependenciesSection: DependenciesSection;
 
     constructor() {
 
-        this.contentTypeAggregation = new ContentTypeAggregationGroupView(
-            ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME,
-            ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_DISPLAY_NAME);
-
-        this.lastModifiedAggregation = new AggregationGroupView(
-            ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME,
-            ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_DISPLAY_NAME);
-
-        super(null, [this.contentTypeAggregation, this.lastModifiedAggregation]);
+        super();
 
         this.initAggregationGroupView([this.contentTypeAggregation, this.lastModifiedAggregation]);
 
@@ -67,6 +59,18 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         });
     }
 
+    protected getGroupViews(): api.aggregation.AggregationGroupView[] {
+        this.contentTypeAggregation = new ContentTypeAggregationGroupView(
+            ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME,
+            ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_DISPLAY_NAME);
+
+        this.lastModifiedAggregation = new AggregationGroupView(
+            ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME,
+            ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_DISPLAY_NAME);
+        
+        return [this.contentTypeAggregation, this.lastModifiedAggregation];
+    }
+    
     protected appendExtraSection() {
         this.dependenciesSection = new DependenciesSection(this.removeDependencyItemCallback.bind(this));
         this.appendChild(this.dependenciesSection);

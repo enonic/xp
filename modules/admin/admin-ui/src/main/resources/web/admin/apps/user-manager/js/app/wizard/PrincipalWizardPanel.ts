@@ -32,12 +32,11 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     public static debug: boolean = false;
 
     constructor(params: PrincipalWizardPanelParams) {
+        super(params);
 
         this.principalNamedListeners = [];
 
         this.principalParams = params;
-
-        super(params);
     }
 
 

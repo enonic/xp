@@ -70,7 +70,7 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         var items = this.navigationItems.getAllItems();
         for (var key in items) {
             if (items[key].getChildOrder().equals(order)) {
-                var item = items.splice(key, 1)[0];
+                var item = items.splice(parseInt(key), 1)[0];
                 this.removeNavigationItems();
                 this.addNavigationItem(item);
                 this.addNavigationItems(items);

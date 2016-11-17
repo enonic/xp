@@ -35,14 +35,10 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
     private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
-    private loader: api.content.resource.FragmentContentSummaryLoader;
-
     constructor() {
         super(<ComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("fragment")
         });
-
-        this.loader = new api.content.resource.FragmentContentSummaryLoader();
     }
 
     setModel(liveEditModel: LiveEditModel) {
@@ -55,13 +51,12 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
         this.removeChildren();
 
-        this.fragmentSelector = new FragmentDropdown("", this.loader);
+        var sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
 
+        this.fragmentSelector = new FragmentDropdown(sitePath, this.liveEditModel.getContent().getPath());
         this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
 
-        var sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
-        this.loader.setParentSitePath(sitePath).setContentPath(this.liveEditModel.getContent().getPath());
-        this.loader.load();
+        this.fragmentSelector.load();
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
             // Ensure displayed selector option is removed when fragment is removed

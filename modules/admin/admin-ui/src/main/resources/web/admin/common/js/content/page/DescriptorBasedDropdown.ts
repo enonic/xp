@@ -7,14 +7,6 @@ module api.content.page.region {
     import RichDropdown = api.ui.selector.dropdown.RichDropdown;
 
     export class DescriptorBasedDropdown<DESCRIPTOR extends Descriptor> extends RichDropdown<DESCRIPTOR> {
-/*
-        constructor(name: string, dropdownConfig: DropdownConfig<DESCRIPTOR>) {
-            super(name, dropdownConfig);
-        }
-*/
-        protected createLoader(): api.util.loader.BaseLoader<any, DESCRIPTOR> {
-            throw new Error('Must be implemented in deriving classes!');
-        }
 
         protected createOption(descriptor: DESCRIPTOR): Option<DESCRIPTOR> {
             var indices: string[] = [];

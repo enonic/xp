@@ -184,10 +184,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         switch (contentBrowseItems.length) {
         case 0:
             return this.updateActionsByPermissionsNoItemsSelected();
-            break;
         case 1:
             return this.updateActionsByPermissionsSingleItemSelected(contentBrowseItems);
-            break;
         default:
             return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems);
         }

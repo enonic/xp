@@ -41,8 +41,7 @@ function setupBodyClickListeners(dialog) {
 }
 
 function setupAboutDialog() {
-    var aboutDialog = new api.ui.dialog.ModalDialog({
-        title: new api.ui.dialog.ModalDialogHeader(""),
+    var aboutDialog = new api.ui.dialog.ModalDialog("", {
         forceHorizontalCentering: true,
         ignoreClickOutside: true
     });

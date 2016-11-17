@@ -20,13 +20,29 @@ import ApplicationKey = api.application.ApplicationKey;
 export class ApplicationTreeGrid extends TreeGrid<Application> {
 
     constructor() {
-        super(new TreeGridBuilder<Application>().setColumns([
-            this.buildColumn("Name", "displayName", "displayName", ApplicationRowFormatter.nameFormatter, {minWidth: 250}),
-            this.buildColumn("Version", "version", "version", undefined, {cssClass: "version", minWidth: 50, maxWidth: 130}),
-            this.buildColumn("State", "state", "state", ApplicationRowFormatter.stateFormatter,
-                {cssClass: "state", minWidth: 80, maxWidth: 100})
-            ]).prependClasses("application-grid").setShowContextMenu(new TreeGridContextMenu(new ApplicationBrowseActions(this)))
+        super(new TreeGridBuilder<Application>().
+            setColumnConfig([{
+                name: "Name",
+                id: "displayName",
+                field:  "displayName",
+                formatter: ApplicationRowFormatter.nameFormatter,
+                style: {minWidth: 250}
+            }, {
+                name: "Version",
+                id: "version",
+                field:  "version",
+                style: {cssClass: "version", minWidth: 50, maxWidth: 130}
+            }, {
+                name: "State",
+                id: "state",
+                field:  "state",
+                formatter: ApplicationRowFormatter.stateFormatter,
+                style: {cssClass: "state", minWidth: 80, maxWidth: 100}
+            }]).
+            prependClasses("application-grid")
         );
+        
+        this.setContextMenu(new TreeGridContextMenu(new ApplicationBrowseActions(this)));
 
         this.initEventHandlers();
     }

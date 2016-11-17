@@ -41,12 +41,12 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     constructor(params: UserStoreWizardPanelParams) {
 
+        super(params);
+
         this.isUserStoreFormValid = false;
         this.userStoreNamedListeners = [];
 
         this.userStoreParams = params;
-
-        super(params);
 
         this.listenToUserItemEvents();
     }

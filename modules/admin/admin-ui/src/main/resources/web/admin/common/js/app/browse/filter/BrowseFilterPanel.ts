@@ -26,7 +26,7 @@ module api.app.browse.filter {
 
         private refreshStartedListeners: {():void}[] = [];
 
-        constructor(aggregations?: api.aggregation.Aggregation[], groupViews?: api.aggregation.AggregationGroupView[]) {
+        constructor(aggregations?: api.aggregation.Aggregation[]) {
             super();
             this.addClass('filter-panel');
 
@@ -58,6 +58,7 @@ module api.app.browse.filter {
             this.aggregationContainer.hide();
             this.appendChild(this.aggregationContainer);
 
+            let groupViews = this.getGroupViews(); 
             if (groupViews != null) {
                 groupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
@@ -92,6 +93,10 @@ module api.app.browse.filter {
             this.onShown(() => {
                 setTimeout(this.aggregationContainer.show.bind(this.aggregationContainer), 100);
             });
+        }
+
+        protected getGroupViews(): api.aggregation.AggregationGroupView[] {
+            return [];
         }
 
         protected appendExtraSection() {

@@ -17,10 +17,10 @@ module api.content.page {
 
         constructor(model: LiveEditModel) {
 
-            super('page-controller', {
+            super({
                 optionDisplayValueViewer: new PageDescriptorViewer(),
                 dataIdProperty: 'value'
-            });
+            }, 'page-controller');
 
             this.loadedDataListeners = [];
             this.liveEditModel = model;

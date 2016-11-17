@@ -2,16 +2,12 @@ import "../../../../api.ts";
 
 export class EmulatorGrid extends api.ui.grid.Grid<any> {
 
-    constructor(dataView: api.ui.grid.DataView<any>) {
-        super(dataView, this.createColumns(), this.createOptions());
-    }
-
-    private createOptions(): api.ui.grid.GridOptions<any> {
+    protected createOptions(): api.ui.grid.GridOptions<any> {
         return new api.ui.grid.GridOptionsBuilder().setHideColumnHeaders(true).setRowHeight(50).setHeight(450).setWidth(320)
             .build();
     }
 
-    private createColumns(): api.ui.grid.GridColumn<any>[] {
+    protected createColumns(): api.ui.grid.GridColumn<any>[] {
         return [new api.ui.grid.GridColumnBuilder().setName("device").setField("device").setId("device").setWidth(320).setCssClass(
             "grid-row").setFormatter((row, cell, value, columnDef, dataContext) => {
             return this.buildRow(row, cell, value).toString();

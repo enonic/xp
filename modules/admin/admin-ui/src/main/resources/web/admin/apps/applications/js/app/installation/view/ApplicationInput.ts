@@ -24,9 +24,10 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
     constructor(cancelAction: Action, className?: string, originalValue?: string) {
 
-        this.textInput = new InputEl("text");
+        super();
 
-        this.applicationUploaderEl = new ApplicationUploaderEl({
+        this.setWrappedInput(this.textInput = new InputEl("text"));
+        this.setAdditionalElements(this.applicationUploaderEl = new ApplicationUploaderEl({
             name: 'application-input-uploader',
             allowDrop: true,
             showResult: false,
@@ -34,9 +35,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             deferred: false,
             value: originalValue,
             showCancel: false
-        });
-
-        super(this.textInput, this.applicationUploaderEl);
+        }));
 
         this.LAST_KEY_PRESS_TIMEOUT = 1500;
         this.cancelAction = cancelAction;

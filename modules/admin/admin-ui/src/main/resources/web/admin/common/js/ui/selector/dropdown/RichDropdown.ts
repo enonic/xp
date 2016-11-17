@@ -4,9 +4,9 @@ module api.ui.selector.dropdown {
 
     export class RichDropdown<OPTION_DISPLAY_VALUE> extends Dropdown<OPTION_DISPLAY_VALUE> {
 
-        private loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
+        protected loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
 
-        constructor(name: string, dropdownConfig: DropdownConfig<OPTION_DISPLAY_VALUE>) {
+        constructor(dropdownConfig: DropdownConfig<OPTION_DISPLAY_VALUE>, name: string = "") {
             super(name, dropdownConfig);
 
             this.loader = this.createLoader();
@@ -30,7 +30,7 @@ module api.ui.selector.dropdown {
             this.loader.load();
         }
 
-        getLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
+        protected getLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
             return this.loader;
         }
 

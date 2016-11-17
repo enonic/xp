@@ -34,6 +34,8 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
     private componentPropertyChangedEventHandler;
 
+    protected selector: PartDescriptorDropdown;
+
     constructor() {
         super(<DescriptorBasedComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("part", "icon-xlarge")
@@ -44,15 +46,11 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
         this.removeChildren();
 
-        var descriptorsRequest = new GetPartDescriptorsByApplicationsRequest(this.liveEditModel.getSiteModel().getApplicationKeys());
-        var loader = new PartDescriptorLoader(descriptorsRequest);
-        loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
-
-        this.selector = new PartDescriptorDropdown("", loader);
+        this.selector = new PartDescriptorDropdown();
         this.partForm = new DescriptorBasedDropdownForm(this.selector, "Part");
 
-        loader.load();
-
+        this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
+        
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
             // Ensure displayed config form and selector option are removed when descriptor is removed
@@ -69,9 +67,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
     protected reloadDescriptorsOnApplicationChange() {
         if(this.selector) {
-            (<GetPartDescriptorsByApplicationsRequest>this.selector.getLoader().getRequest()).
-                setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
-            super.reloadDescriptorsOnApplicationChange();
+            this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
         }
     }
 

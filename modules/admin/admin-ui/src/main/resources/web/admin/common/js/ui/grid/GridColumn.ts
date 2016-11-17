@@ -1,5 +1,20 @@
 module api.ui.grid {
 
+    export interface GridColumnConfig {
+        name: string;
+        id: string;
+        field: string;
+        formatter?: Slick.Formatter<any>;
+        style: GridColumnStyle;
+        behavior?: any;
+    }
+
+    export interface GridColumnStyle {
+        cssClass?: string;
+        minWidth?: number;
+        maxWidth?: number;
+    }
+    
     export class GridColumnBuilder<T extends Slick.SlickData> {
 
         asyncPostRender: (cellNode:any, row:any, dataContext:any, colDef:any) => void;

@@ -25,8 +25,6 @@ import ContentResponse = api.content.resource.result.ContentResponse;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
-    private contentDialogTitle: NewContentDialogTitle;
-
     private parentContent: api.content.Content;
 
     private fileInput: api.ui.text.FileInput;
@@ -41,12 +39,10 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     protected loadMask: LoadMask;
 
+    protected header: NewContentDialogHeader;
+    
     constructor() {
-        this.contentDialogTitle = new NewContentDialogTitle("Create Content", "");
-
-        super({
-            title: this.contentDialogTitle
-        });
+        super("Create Content");
 
         this.addClass("new-content-dialog");
 
@@ -57,6 +53,14 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         api.dom.Body.get().appendChild(this);
     }
 
+    protected createHeader(): NewContentDialogHeader {
+        return new NewContentDialogHeader("Create Content", "");
+    }
+
+    protected getHeader(): NewContentDialogHeader {
+        return this.header;
+    }
+    
     private initElements() {
         this.initContentTypesLists();
         this.initFileInput();
@@ -252,9 +256,9 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private updateDialogTitlePath() {
         if (this.parentContent) {
-            this.contentDialogTitle.setPath(this.parentContent.getPath().toString());
+            this.getHeader().setPath(this.parentContent.getPath().toString());
         } else {
-            this.contentDialogTitle.setPath('');
+            this.getHeader().setPath('');
         }
     }
 
@@ -276,7 +280,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 }
 
-export class NewContentDialogTitle extends api.ui.dialog.ModalDialogHeader {
+export class NewContentDialogHeader extends api.ui.dialog.ModalDialogHeader {
 
     private pathEl: api.dom.PEl;
 

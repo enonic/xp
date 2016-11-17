@@ -4,7 +4,7 @@ module api.ui.grid {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
     export class Grid<T extends Slick.SlickData> extends api.dom.DivEl {
-
+        
         private defaultHeight = 400;
 
         private defaultWidth = 800;
@@ -29,10 +29,11 @@ module api.ui.grid {
 
         public static debug: boolean = false;
 
-        constructor(dataView: DataView<T>, columns: GridColumn<T>[], options?: GridOptions<T>) {
+        constructor(dataView: DataView<T>, gridColumns?: GridColumn<T>[], gridOptions?: GridOptions<T>) {
             super("grid");
 
-            options = new GridOptionsBuilder<T>(options).build();
+            let options = gridOptions || new GridOptionsBuilder<T>(this.createOptions()).build();
+            let columns = gridColumns || this.createColumns();
 
             if (options.isHideColumnHeaders()) {
                 this.addClass("no-header");
@@ -74,6 +75,14 @@ module api.ui.grid {
 
             // The only way to dataIdProperty before adding items
             this.dataView.setItems([], options.getDataIdProperty());
+        }
+        
+        protected createOptions(): api.ui.grid.GridOptions<any> {
+            throw "Must be implemented by inheritors";
+        }
+
+        protected createColumns(): api.ui.grid.GridColumn<any>[] {
+            throw "Must be implemented by inheritors";
         }
 
         setItemMetadata(metadataHandler: Function) {

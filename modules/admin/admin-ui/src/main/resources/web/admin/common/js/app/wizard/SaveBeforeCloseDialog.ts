@@ -10,9 +10,7 @@ module api.app.wizard {
         private noAction = new api.ui.Action('No', 'n');
 
         constructor(wizardPanel: api.app.wizard.WizardPanel<any>) {
-            super({
-                title: new api.ui.dialog.ModalDialogHeader("Close wizard")
-            });
+            super("Close wizard");
 
             this.wizardPanel = wizardPanel;
 
