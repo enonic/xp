@@ -36,12 +36,11 @@ module api.form {
 
             this.formItemLayer = new FormItemLayer(config.context);
             this.context = config.context;
+        }
 
+        protected initValidationMessageBlock() {
             this.selectionValidationMessage = new api.dom.DivEl("selection-message");
             this.appendChild(this.selectionValidationMessage);
-
-            this.renderSelectionValidationMessage(multiselectionState);
-
         }
 
         protected subscribeOnItemEvents() {
@@ -95,6 +94,8 @@ module api.form {
                     } else {
                         this.currentValidationState.flatten(this.currentValidationState);
                     }
+
+                    this.renderSelectionValidationMessage(multiselectionState);
 
                     if (this.currentValidationState.isValid() != previousValidationValid) {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
@@ -169,7 +170,7 @@ module api.form {
             return null;
         }
 
-        private ensureSelectionArrayExists(propertyArraySet: PropertySet) {
+        protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
             var selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
             if (!selectionPropertyArray) {
                 selectionPropertyArray =

@@ -58,6 +58,8 @@ module api.form {
                 this.toggleHelpText(this.getFormSet().isHelpTextOn());
             }
 
+            this.initValidationMessageBlock();
+
             this.formSetOccurrencesContainer = new api.dom.DivEl(this.occurrenceContainerClassName);
             this.appendChild(this.formSetOccurrencesContainer);
 
@@ -81,6 +83,9 @@ module api.form {
             }).done();
 
             return deferred.promise;
+        }
+
+        protected initValidationMessageBlock() {
         }
 
         getDataPath(): api.data.PropertyPath {
