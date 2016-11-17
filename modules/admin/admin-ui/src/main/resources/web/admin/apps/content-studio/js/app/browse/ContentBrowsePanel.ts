@@ -234,7 +234,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             const needUpdate = isNonZeroSelectionInMobileMode && !isNewlySelected;
 
-            debugger;
             if (panelNeedToUpdated || needUpdate) {
                 updateAndShowMobilePanel();
             }
