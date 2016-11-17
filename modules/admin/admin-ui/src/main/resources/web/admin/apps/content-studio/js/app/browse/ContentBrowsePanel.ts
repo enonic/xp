@@ -470,15 +470,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private processContentCreated(data: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) {
 
-        var results: wemQ.Promise<any>[] = []
-
-        var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
-        var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true);
-
-        var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
-            nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
-
-        var parentsOfContents: TreeNodeParentOfContent[] = [];
+        var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath()),
+            createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true),
+            parentsOfContents: TreeNodeParentOfContent[] = [];
 
         for (var i = 0; i < createResult.length; i++) {
 
@@ -493,6 +487,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                         var premerged = renameResult.map((curRenameResult) => {
                             return curRenameResult.getNodes();
                         });
+                        var nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
                         // merge array of nodes arrays
                         nodes = nodes.concat.apply(nodes, premerged);
 
@@ -503,7 +498,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                                 this.contentTreeGrid.updatePathsInChildren(node);
                             }
                         });
-                        results.push(this.contentTreeGrid.placeContentNodes(nodes));
                     } else {
                         dataToHandle.push(el);
                     }
@@ -515,23 +509,15 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             });
         }
 
-        if (!!parentsOfContents) {
-            results.push(this.contentTreeGrid.appendContentNodes(
-                parentsOfContents,
-                !isFiltered
-            ).then((results) => {
-                nodes = nodes.concat(results);
-            }));
-        }
+        this.contentTreeGrid.appendContentNodes(parentsOfContents).then((results: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+            this.contentTreeGrid.placeContentNodes(results).then(() => {
+                this.contentTreeGrid.initAndRender();
 
-        wemQ.allSettled(results).then(() => {
-
-            this.contentTreeGrid.initAndRender();
-
-            this.setRefreshOfFilterRequired();
-            window.setTimeout(() => {
-                this.refreshFilter();
-            }, 1000);
+                this.setRefreshOfFilterRequired();
+                window.setTimeout(() => {
+                    this.refreshFilter();
+                }, 1000);
+            });
         });
     }
 
