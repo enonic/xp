@@ -122,7 +122,10 @@ function startApplication() {
 function startContentWizard(wizardParams: ContentWizardPanelParams) {
     let wizard = new ContentWizardPanel(wizardParams);
 
-    wizard.onDataLoaded(content => updateTabTitle(content.getDisplayName()));
+    wizard.onDataLoaded(content => {
+        let contentType = (<ContentWizardPanel>wizard).getContentType();
+        updateTabTitle(content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
+    });
     wizard.onWizardHeaderCreated(() => {
         // header will be ready after rendering is complete
         wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {

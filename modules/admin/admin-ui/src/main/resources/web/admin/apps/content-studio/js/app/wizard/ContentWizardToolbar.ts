@@ -36,13 +36,18 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
         let homeAction = new Action(params.application.getName());
         homeAction.onExecuted((action) => {
             let appId = params.application.getId();
-            window.open(appId + '#/browse', appId);     // add browse to prevent tab reload because of url mismatch
+            let tabId;
+            if (navigator.userAgent.search("Chrome") > -1) {
+                // add tab id for browsers that can focus tabs by id
+                tabId = appId;
+            }
+            window.open(appId + '#/browse', tabId);     // add browse to prevent tab reload because of url mismatch
             return wemQ(null);
         });
 
         this.homeButton = new HomeButton(params.application, homeAction);
         super.addElement(this.homeButton);
-        
+
         super.addAction(params.saveAction);
         super.addAction(params.deleteAction);
         super.addAction(params.duplicateAction);

@@ -39,29 +39,29 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
     }
 
     /*    addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<Content>) {
-        super.addWizardPanel(tabMenuItem, wizardPanel);
+     super.addWizardPanel(tabMenuItem, wizardPanel);
 
-        wizardPanel.onWizardHeaderCreated(() => {
-            // header will be ready after rendering is complete
-            wizardPanel.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() === "displayName") {
-                    var contentType = (<ContentWizardPanel>wizardPanel).getContentType(),
-                        name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
+     wizardPanel.onWizardHeaderCreated(() => {
+     // header will be ready after rendering is complete
+     wizardPanel.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+     if (event.getPropertyName() === "displayName") {
+     var contentType = (<ContentWizardPanel>wizardPanel).getContentType(),
+     name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
 
-                    tabMenuItem.setLabel(name, !<string>event.getNewValue(), false);
-                }
-            });
-        });
+     tabMenuItem.setLabel(name, !<string>event.getNewValue(), false);
+     }
+     });
+     });
 
-        var contentWizardPanel = <ContentWizardPanel>wizardPanel;
+     var contentWizardPanel = <ContentWizardPanel>wizardPanel;
 
-        contentWizardPanel.onDataLoaded((content) => {
-            tabMenuItem.markInvalid(!content.isValid());
-        });
+     contentWizardPanel.onDataLoaded((content) => {
+     tabMenuItem.markInvalid(!content.isValid());
+     });
 
-        contentWizardPanel.onValidityChanged((event: api.ValidityChangedEvent) => {
-            tabMenuItem.markInvalid(!contentWizardPanel.isValid());
-        });
+     contentWizardPanel.onValidityChanged((event: api.ValidityChangedEvent) => {
+     tabMenuItem.markInvalid(!contentWizardPanel.isValid());
+     });
      }*/
 
     private route(path?: api.rest.Path) {
@@ -184,7 +184,12 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
 
     private openWizardTab(params: ContentWizardPanelParams, tabId: AppBarTabId): Window {
         let wizardUrl = 'content-studio#/' + params.toString();
-        return window.open(wizardUrl, tabId.toString());
+        let wizardId;
+        if (navigator.userAgent.search("Chrome") > -1) {
+            // add tab id for browsers that can focus tabs by id
+            wizardId = tabId.toString();
+        }
+        return window.open(wizardUrl, wizardId);
     }
 
     private handleEdit(event: api.content.event.EditContentEvent) {
@@ -301,12 +306,12 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
 
     /*    private handleContentNamedEvent(event: ContentNamedEvent) {
 
-        var wizard = event.getWizard(),
-            tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
-        // update tab id so that new wizard for the same content type can be created
-        var newTabId = AppBarTabId.forEdit(event.getContent().getId());
-        tabMenuItem.setTabId(newTabId);
-        wizard.setTabId(newTabId);
+     var wizard = event.getWizard(),
+     tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
+     // update tab id so that new wizard for the same content type can be created
+     var newTabId = AppBarTabId.forEdit(event.getContent().getId());
+     tabMenuItem.setTabId(newTabId);
+     wizard.setTabId(newTabId);
      }*/
 
     private resolveTabMenuItemForContentBeingEditedOrViewed(content: ContentSummary): AppBarTabMenuItem {
