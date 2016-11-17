@@ -6,9 +6,12 @@ module api.dom {
 
         private additionalElements: api.dom.Element[];
 
-        constructor() {
+        constructor(input?: api.dom.FormInputEl) {
             super("div", "composite-input");
 
+            if (input) {
+                this.setWrappedInput(input);
+            }
             this.additionalElements = [];
         }
         

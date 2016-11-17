@@ -158,10 +158,8 @@ describe("api.util.UriHelper", () => {
 
     describe("encodeUrlParams", () => {
         it("should return empty string if invalid arguments are passed", () => {
-            var expected = '';
-            expect(uh.encodeUrlParams(undefined)).toBe(expected);
-            expect(uh.encodeUrlParams('')).toBe(expected);
-            expect(uh.encodeUrlParams(null)).toBe(expected);
+            expect(uh.encodeUrlParams(undefined)).toBe(StringHelper.EMPTY_STRING);
+            expect(uh.encodeUrlParams(null)).toBe(StringHelper.EMPTY_STRING);
         });
         it("should return encoded string", () => {
             expect(uh.encodeUrlParams({d: 1, e: false, foo: { one: 'b% ar!', two: ['a', 'b', 'c']}})).toBe(

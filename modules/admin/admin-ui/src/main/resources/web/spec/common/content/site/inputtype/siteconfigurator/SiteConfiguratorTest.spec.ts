@@ -2,24 +2,23 @@ import Input = api.form.Input;
 import Site = api.content.site.Site;
 import ContentFormContext = api.content.form.ContentFormContext;
 import SiteConfigurator = api.content.site.inputtype.siteconfigurator.SiteConfigurator;
-import Application = api.application.Application;
+//import Application = api.application.Application;
 import SiteConfigProvider = api.content.site.inputtype.siteconfigurator.SiteConfigProvider;
 import SiteConfiguratorComboBox = api.content.site.inputtype.siteconfigurator.SiteConfiguratorComboBox;
 import SiteConfiguratorSelectedOptionsView = api.content.site.inputtype.siteconfigurator.SiteConfiguratorSelectedOptionsView;
 import ObjectHelper = api.ObjectHelper;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
-import ValueTypes = api.data.ValueTypes;
+//import ValueTypes = api.data.ValueTypes;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import InputJson = api.form.json.InputJson;
 import ContentJson = api.content.json.ContentJson;
 import ApplicationJson = api.application.json.ApplicationJson;
 import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
-import PropertyPath = api.data.PropertyPath;
+//import PropertyPath = api.data.PropertyPath;
 import ContentPath = api.content.ContentPath;
 import BaseInputTypeManagingAdd = api.form.inputtype.support.BaseInputTypeManagingAdd;
 import FormView = api.form.FormView;
-import PropertySet = api.data.PropertySet;
-import Spy = jasmine.Spy;
+//import PropertySet = api.data.PropertySet;
 import FormValidityChangedEvent = api.form.FormValidityChangedEvent;
 
 describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
@@ -105,7 +104,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         });
 
         describe("reset()", () => {
-            let resetSpy: Spy;
+            let resetSpy;
 
             beforeEach(() => {
                 resetSpy = spyOn(combobox, "resetBaseValues");
@@ -139,7 +138,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
         describe("displayValidationErrors()",() => {
 
-            let displayValidationErrorsSpy: Spy;
+            let displayValidationErrorsSpy;
 
             beforeEach(() => {
                 let selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
@@ -267,7 +266,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
     describe("test event listeners", () => {
 
-        let combobox, selectedOption, handlerSpy:Spy, event:SelectedOptionEvent<any>, validationSpy;
+        let combobox, selectedOption, handlerSpy, event:SelectedOptionEvent<any>, validationSpy;
 
         beforeEach((done) => {
             let createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
@@ -478,8 +477,10 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 permissions: [],
                 thumbnail: null,
                 type: "portal:site",
-                requireValid: false
-
+                requireValid: false,
+                publish: {
+                    from: "2016-10-24T15:03:47.914Z" 
+                }
             }
         )
     }

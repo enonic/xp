@@ -1,4 +1,4 @@
-import ObjectHelper = api.ObjectHelper;
+//import ObjectHelper = api.ObjectHelper;
 
 describe("api.ObjectHelper", () => {
 

@@ -1,7 +1,6 @@
 import Property = api.data.Property;
 import PropertyBuilder = api.data.PropertyBuilder;
 import ValueTypeString = api.data.ValueTypeString;
-import Spy = jasmine.Spy;
 import ValueTypePropertySet = api.data.ValueTypePropertySet;
 import ValueTypeDateTime = api.data.ValueTypeDateTime;
 import ValueTypeLocalDate = api.data.ValueTypeLocalDate;
@@ -165,7 +164,7 @@ describe("api.data.Property", () => {
         });
 
         describe("setIndex()", () => {
-            let listenerSpy: Spy;
+            let listenerSpy;
             beforeEach(() => {
                 listenerSpy = spyOn(property, "notifyPropertyIndexChangedEvent");
             });
@@ -182,7 +181,8 @@ describe("api.data.Property", () => {
         });
 
         describe("setValue()", () => {
-            let listenerSpy: Spy;
+            let listenerSpy;
+
             beforeEach(() => {
                 spyOn(console, "error").and.stub();
                 listenerSpy = spyOn(property, "notifyPropertyIndexChangedEvent");
@@ -206,7 +206,7 @@ describe("api.data.Property", () => {
             });
 
             describe("property set handling", () => {
-                let propertySet: PropertySet, propertySetSpy: Spy;
+                let propertySet: PropertySet, propertySetSpy;
 
                 beforeEach(() => {
                     propertySet = new PropertySet();

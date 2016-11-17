@@ -32,9 +32,9 @@ module api.ui.grid {
         constructor(dataView: DataView<T>, gridColumns?: GridColumn<T>[], gridOptions?: GridOptions<T>) {
             super("grid");
 
-            let options = gridOptions || new GridOptionsBuilder<T>(this.createOptions()).build();
+            let options = gridOptions || new GridOptionsBuilder<T>().build();
             let columns = gridColumns || this.createColumns();
-
+            
             if (options.isHideColumnHeaders()) {
                 this.addClass("no-header");
             }
@@ -76,7 +76,7 @@ module api.ui.grid {
             // The only way to dataIdProperty before adding items
             this.dataView.setItems([], options.getDataIdProperty());
         }
-        
+
         protected createOptions(): api.ui.grid.GridOptions<any> {
             throw "Must be implemented by inheritors";
         }

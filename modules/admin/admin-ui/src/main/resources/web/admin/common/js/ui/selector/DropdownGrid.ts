@@ -54,7 +54,8 @@ module api.ui.selector {
             if (this.filter) {
                 this.gridData.setFilter(this.filter);
             }
-            this.grid = new api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>(this.gridData);
+
+            this.grid = new api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>(this.gridData, this.createColumns(), this.createOptions());
 
             this.grid.addClass("options-container");
             this.grid.getEl().setPosition("absolute");
