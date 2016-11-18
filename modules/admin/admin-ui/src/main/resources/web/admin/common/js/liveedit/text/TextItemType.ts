@@ -31,10 +31,10 @@ module api.liveedit.text {
             return true;
         }
 
-        protected getItemTypeConfig(itemType: string): ItemTypeConfigJson {
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
             var config = super.getItemTypeConfig(itemType);
 
-            config.contextMenuConfig.push("edit");
+            config.getContextMenuConfig().push("edit");
 
             return config;
 

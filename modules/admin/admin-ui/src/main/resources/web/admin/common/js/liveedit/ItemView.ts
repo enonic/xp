@@ -198,8 +198,6 @@ module api.liveedit {
         }
         
         private bindMouseListeners() {
-            var pageView = this.getPageView();
-
             this.mouseEnterListener = this.handleMouseEnter.bind(this);
             this.onMouseEnter(this.mouseEnterListener);
 
@@ -266,7 +264,7 @@ module api.liveedit {
                 }
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
-
+/*
             this.pageItemViewAddedListener = (event) => {
                 if (this.isSelected()) {
                     this.deselect();
@@ -277,6 +275,7 @@ module api.liveedit {
             this.onRemoved(() => {
                 pageView.unItemViewAdded(this.pageItemViewAddedListener);
             });
+            */
         }
 
         protected unbindMouseListeners() {
@@ -343,15 +342,11 @@ module api.liveedit {
         }
 
         getPageView(): PageView {
-            var itemView: ItemView = null;
-            while (!itemView) {
-                if (PageItemType.get().equals(itemView.getType())) {
-                    return itemView.getPageView();
-                }
-
+            var itemView: ItemView = this;
+            while (!PageItemType.get().equals(itemView.getType())) {
                 itemView = itemView.parentItemView;
             }
-            return null;
+            return <PageView>itemView;
         }
 
         remove(): ItemView {

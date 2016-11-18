@@ -131,7 +131,9 @@ module api.ui.treegrid {
             this.appendChild(this.grid);
 
             if (builder.isAutoLoad()) {
-                this.reload().then(() => this.grid.resizeCanvas());
+                this.onAdded(() => {
+                    this.reload().then(() => this.grid.resizeCanvas());
+                });
             }
 
             this.initEventListeners(builder);

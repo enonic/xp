@@ -31,6 +31,8 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
             persistedItem: params.persistedItem
         });
 
+        this.loadData();
+
         this.userItemParams = params;
     }
 

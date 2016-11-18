@@ -16,24 +16,32 @@ module api.liveedit.part {
 
         private contentViews: ContentView[];
 
-        private partComponent: PartComponent;
+        //private partComponent: PartComponent;
 
-        private partPlaceholder: PartPlaceholder;
+        //private partPlaceholder: PartPlaceholder;
 
         constructor(builder: PartComponentViewBuilder) {
             super(builder.
                 setViewer(new PartComponentViewer()).
                 setInspectActionRequired(true));
 
-            this.setPlaceholder(this.partPlaceholder = new PartPlaceholder(this));
+            this.createPlaceholder();
 
             this.contentViews = [];
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
-            this.partComponent = builder.component;
+            //this.partComponent = builder.component;
 
             this.resetHrefForRootLink(builder);
 
             this.parseContentViews(this);
+        }
+
+        private createPlaceholder() {
+            var placeholder = new PartPlaceholder(this);
+            placeholder.setDisplayName(this.getComponent().getName().toString());
+
+            this.setPlaceholder(placeholder);
+
         }
 
         private resetHrefForRootLink(builder: PartComponentViewBuilder) {
@@ -41,7 +49,7 @@ module api.liveedit.part {
                 builder.element.getEl().setAttribute("href", "#");
             }
         }
-
+/*
         setComponent(partComponent: PartComponent) {
             super.setComponent(partComponent);
 
@@ -50,7 +58,7 @@ module api.liveedit.part {
                 this.partPlaceholder.setDisplayName(partComponent.getName().toString());
             }
         }
-
+*/
         addContent(view: ContentView) {
             this.contentViews.push(view);
         }
@@ -60,7 +68,7 @@ module api.liveedit.part {
         }
 
         isEmpty(): boolean {
-            return !this.partComponent || this.partComponent.isEmpty();
+            return !this.getComponent() || this.getComponent().isEmpty();
         }
 
         toItemViewArray(): ItemView[] {

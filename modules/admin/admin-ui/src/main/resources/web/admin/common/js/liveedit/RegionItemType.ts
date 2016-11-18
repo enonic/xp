@@ -18,8 +18,8 @@ module api.liveedit {
             return element.getEl().getAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
         }
 
-        protected getItemTypeConfig(itemType: string): ItemTypeConfigJson {
-            return <ItemTypeConfigJson>{
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
+            return new ItemTypeConfig(<ItemTypeConfigJson>{
                 cssSelector: '[data-portal-region]',
                 draggable: false,
                 cursor: 'pointer',
@@ -30,8 +30,7 @@ module api.liveedit {
                     fill: 'rgba(255, 255, 255, 0)' // not used
                 },
                 contextMenuConfig: ['parent', 'clearRegion']
-
-            };
+            });
         }
         
         createView(config: CreateItemViewConfig<ItemView,Region>): RegionView {

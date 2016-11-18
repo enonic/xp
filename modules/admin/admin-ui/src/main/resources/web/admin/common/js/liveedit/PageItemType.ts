@@ -15,8 +15,8 @@ module api.liveedit {
             super("page");
         }
 
-        protected getItemTypeConfig(itemType: string): ItemTypeConfigJson {
-            return <ItemTypeConfigJson>{
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
+            return new ItemTypeConfig(<ItemTypeConfigJson>{
                 cssSelector: '[data-portal-component-type=page]',
                 draggable: false,
                 cursor: 'pointer',
@@ -27,7 +27,7 @@ module api.liveedit {
                     fill: 'rgba(255, 255, 255, 0)' // not used
                 },
                 contextMenuConfig: ['reset']
-            };
+            });
         }
 
         createView(config: CreateItemViewConfig<any,any>): PageView {

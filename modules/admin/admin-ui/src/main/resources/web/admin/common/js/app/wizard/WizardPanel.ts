@@ -99,9 +99,6 @@ module api.app.wizard {
             // have to be in constructor because onValidityChanged uses it
             this.validityManager = new WizardValidityManager();
 
-            // call loadData even if persistedItem is set to load additional data
-            this.loadData();
-
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel: rendered", event);
@@ -140,7 +137,7 @@ module api.app.wizard {
         /*
          Loads necessary data for rendering on wizard open
          */
-        private loadData() {
+        protected loadData() {
             if (WizardPanel.debug) {
                 console.debug("WizardPanel.loadData");
             }

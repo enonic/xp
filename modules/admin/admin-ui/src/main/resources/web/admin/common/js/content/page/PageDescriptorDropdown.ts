@@ -13,10 +13,9 @@ module api.content.page {
 
         private liveEditModel: LiveEditModel;
 
-        private request: GetPageDescriptorsByApplicationsRequest;
+        protected loader: PageDescriptorLoader;
 
         constructor(model: LiveEditModel) {
-
             super({
                 optionDisplayValueViewer: new PageDescriptorViewer(),
                 dataIdProperty: 'value'
@@ -28,11 +27,14 @@ module api.content.page {
             this.initListeners();
         }
 
-        protected createLoader(): api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor> {
-            this.request = new GetPageDescriptorsByApplicationsRequest(this.liveEditModel.getSiteModel().getApplicationKeys());
+        load() {
+            this.loader.setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
 
-            return new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.request)
-                    .setComparator(new api.content.page.DescriptorByDisplayNameComparator());
+            super.load();
+        }
+
+        protected createLoader(): PageDescriptorLoader {
+            return new PageDescriptorLoader();
         }
 
         handleLoadedData(event: LoadedDataEvent<PageDescriptor>) {
@@ -48,7 +50,6 @@ module api.content.page {
             });
 
             var onApplicationAddedHandler = () => {
-                this.updateRequestApplicationKeys();
                 this.load();
             };
 
@@ -60,7 +61,6 @@ module api.content.page {
                     // no need to load as current controller's app was removed
                     this.liveEditModel.getPageModel().reset();
                 } else {
-                    this.updateRequestApplicationKeys();
                     this.load();
                 }
             };
@@ -89,10 +89,6 @@ module api.content.page {
             this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent<PageDescriptor>)=>void)=> {
                 listener.call(this, event);
             });
-        }
-
-        private updateRequestApplicationKeys() {
-            this.request.setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
         }
 
     }

@@ -15,6 +15,9 @@ module api.content.page.region {
 
         protected loader: FragmentContentSummaryLoader;
 
+        private parentSitePath: string;
+        private contentPath: ContentPath;
+
         constructor(sitePath: string, contentPath: ContentPath) {
 
             super({
@@ -22,7 +25,13 @@ module api.content.page.region {
                 dataIdProperty: "value"
             });
 
-            this.loader.setParentSitePath(sitePath).setContentPath(contentPath);
+            this.parentSitePath = sitePath;
+            this.contentPath = contentPath;
+        }
+
+        load() {
+            this.loader.setParentSitePath(this.parentSitePath).setContentPath(this.contentPath);
+            this.loader.load();
         }
 
         protected createLoader(): FragmentContentSummaryLoader {

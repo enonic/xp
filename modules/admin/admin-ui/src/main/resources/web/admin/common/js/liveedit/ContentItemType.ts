@@ -14,8 +14,8 @@ module api.liveedit {
             super("content");
         }
 
-        protected getItemTypeConfig(itemType: string): ItemTypeConfigJson {
-            return <ItemTypeConfigJson>{
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
+            return new ItemTypeConfig(<ItemTypeConfigJson>{
                 cssSelector: '[data-portal-component-type=content]',
                 draggable: false,
                 cursor: 'pointer',
@@ -26,7 +26,7 @@ module api.liveedit {
                     fill: 'rgba(0, 108, 255, .25)'
                 },
                 contextMenuConfig: ['parent', 'opencontent', 'view']
-            };
+            });
         }
         
         createView(config: CreateItemViewConfig<PartComponentView,any>): ContentView {

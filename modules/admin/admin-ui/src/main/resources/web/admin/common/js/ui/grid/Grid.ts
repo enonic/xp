@@ -32,7 +32,7 @@ module api.ui.grid {
         constructor(dataView: DataView<T>, gridColumns?: GridColumn<T>[], gridOptions?: GridOptions<T>) {
             super("grid");
 
-            let options = gridOptions || new GridOptionsBuilder<T>().build();
+            let options = gridOptions || this.createOptions();
             let columns = gridColumns || this.createColumns();
             
             if (options.isHideColumnHeaders()) {
@@ -78,7 +78,7 @@ module api.ui.grid {
         }
 
         protected createOptions(): api.ui.grid.GridOptions<any> {
-            throw "Must be implemented by inheritors";
+            return new GridOptionsBuilder<T>().build();
         }
 
         protected createColumns(): api.ui.grid.GridColumn<any>[] {

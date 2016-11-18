@@ -19,7 +19,7 @@ module api.liveedit {
             this.config = this.getItemTypeConfig(shortName);
         }
 
-        protected getItemTypeConfig(itemType: string) {
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
             return null;
         }
 

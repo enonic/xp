@@ -20,10 +20,6 @@ module api.content.resource {
             return this.request;
         }
         
-        protected initContentSummaryRequest(): ContentSummaryRequest {
-            return new ContentSummaryRequest();
-        }
-
         setAllowedContentTypes(contentTypes: string[]) {
             this.getRequest().setAllowedContentTypes(contentTypes);
         }

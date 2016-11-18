@@ -125,6 +125,8 @@ module api.liveedit {
                     setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
 
+            this.parentRegionView = builder.parentRegionView;
+
             this.setContextMenuActions(
                 this.createComponentContextMenuActions(
                     builder.contextMenuActions,
@@ -132,8 +134,6 @@ module api.liveedit {
                     this.parentRegionView.getLiveEditModel()
                 )
             );
-            
-            this.parentRegionView = this.getParentItemView();
 
             this.propertyChangedListener = () => this.refreshEmptyState();
             this.resetListener = () => {
