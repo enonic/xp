@@ -773,11 +773,11 @@ module api.app.wizard {
         }
 
         showMinimizeEditButton() {
-            this.minimizeEditButton.show();
+            this.addClass("wizard-panel--live");
         }
 
         hideMinimizeEditButton() {
-            this.minimizeEditButton.hide();
+            this.removeClass("wizard-panel--live");
         }
 
         private createSplitPanel(firstPanel: api.ui.panel.Panel, secondPanel: api.ui.panel.Panel): api.ui.panel.SplitPanel {
