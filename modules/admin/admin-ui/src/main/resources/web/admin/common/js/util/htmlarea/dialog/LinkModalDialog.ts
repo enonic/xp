@@ -33,7 +33,7 @@ module api.util.htmlarea.dialog {
         private static subjectPrefix = "?subject=";
 
         constructor(config: HtmlAreaAnchor, content: api.content.ContentSummary) {
-            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Link"), "link-modal-dialog");
+            super(config.editor, "Insert Link", "link-modal-dialog");
 
             this.link = config.element;
             this.linkText = config.text;

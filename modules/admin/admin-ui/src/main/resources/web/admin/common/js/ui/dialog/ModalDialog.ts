@@ -3,14 +3,7 @@ module api.ui.dialog {
     import DivEl = api.dom.DivEl;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
-    export interface ModalDialogConfig {
-        forceHorizontalCentering?: boolean;
-        ignoreClickOutside?: boolean;
-    }
-
     export class ModalDialog extends api.dom.DivEl {
-
-        private config: ModalDialogConfig;
 
         protected header: api.ui.dialog.ModalDialogHeader;
 
@@ -32,13 +25,15 @@ module api.ui.dialog {
 
         private tabbable: api.dom.Element[];
 
+        private forceHorizontalCentering: boolean;
+
         public static debug: boolean = false;
 
-        constructor(title: string = "", config?: ModalDialogConfig) {
+        constructor(title: string = "", forceHorizontalCentering: boolean = false) {
             super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
 
-            this.config = config;
-
+            this.forceHorizontalCentering = forceHorizontalCentering;
+            
             var wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
             this.appendChild(wrapper);
 
@@ -46,12 +41,6 @@ module api.ui.dialog {
             this.cancelButton = new api.dom.DivEl("cancel-button-top");
             this.cancelButton.onClicked(() => this.cancelAction.execute());
             wrapper.appendChild(this.cancelButton);
-/*
-            if (this.config && this.config.title) {
-                this.title = this.config.title;
-                wrapper.appendChild(this.title);
-            }
-*/
 
             this.header = this.createHeader(title);
             wrapper.appendChild(this.header);
@@ -69,7 +58,7 @@ module api.ui.dialog {
             footer.appendChild(this.buttonRow);
 
             this.mouseClickListener = (event: MouseEvent) => {
-                if (this.isVisible() && !!this.config.ignoreClickOutside == false) {
+                if (this.isVisible()) {
                     for (var element = event.target; element; element = (<any>element).parentNode) {
                         if (element == this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
@@ -185,7 +174,7 @@ module api.ui.dialog {
             super.hide();
             api.dom.Body.get().getHTMLElement().classList.remove("modal-dialog");
         }
-        
+
         protected centerMyself() {
             if (ModalDialog.debug) {
                 console.debug("ModalDialog.centerMyself", api.ClassHelper.getClassName(this));
@@ -193,7 +182,7 @@ module api.ui.dialog {
             var el = this.getEl();
             el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
 
-            if (this.config.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
+            if (this.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
                 this.centerHorisontally();
             } else {
                 el.setMarginLeft("0px");

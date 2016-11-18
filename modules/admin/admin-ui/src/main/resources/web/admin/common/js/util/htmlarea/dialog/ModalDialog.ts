@@ -17,12 +17,9 @@ module api.util.htmlarea.dialog {
 
         public static CLASS_NAME = "html-area-modal-dialog";
 
-        constructor(editor: HtmlAreaEditor, title: api.ui.dialog.ModalDialogHeader, cls?: string) {
-            /*super({
-                title: title
-            });*/
-            
-            super();
+        constructor(editor: HtmlAreaEditor, title: string, cls?: string) {
+
+            super(title);
 
             this.editor = editor;
 
