@@ -86,10 +86,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         this.setContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this)));
 
         let columns = builder.getColumns();
-        const nameColumn = columns[0];
-        const compareStatusColumn = columns[1];
-        const orderColumn = columns[1];
-        const modifiedTimeColumn = columns[1];
+        const nameColumn = columns[1];
+        const compareStatusColumn = columns[2];
+        const orderColumn = columns[3];
+        const modifiedTimeColumn = columns[4];
 
         let updateColumns = (force?: boolean) => {
             if (force) {

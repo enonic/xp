@@ -17,9 +17,6 @@ export class SlidablePanel extends DetailsPanel {
 
         this.setDoOffset(false);
         this.initSlideFunctions(builder.getSlideFrom());
-    }
-
-    protected subscribeOnEvents() {
         this.onSlidedIn(() => !!this.getItem() ? this.detailsView.updateActiveWidget() : null);
     }
 

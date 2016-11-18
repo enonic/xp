@@ -19,8 +19,6 @@ module api.ui.treegrid {
 
         private columns: GridColumn<TreeNode<NODE>>[] = [];
 
-        private columnConfig: GridColumnConfig[] = [];
-
         private classes: string = "";
 
         private autoLoad: boolean = true;
@@ -159,7 +157,9 @@ module api.ui.treegrid {
         }
 
         setColumnConfig(columnConfig: GridColumnConfig[]): TreeGridBuilder<NODE> {
-            this.columnConfig = columnConfig;
+            columnConfig.forEach((column: GridColumnConfig) => {
+                this.columns.push(this.buildColumn(column));
+            })
             return this;
         }
         
@@ -267,12 +267,6 @@ module api.ui.treegrid {
         getQuietErrorHandling(): boolean {
             return this.quietErrorHandling;
         }
-
-        private buildColumnsFromConfig() {
-            this.columnConfig.forEach((column: GridColumnConfig) => {
-                this.columns.push(this.buildColumn(column));
-            })
-        }
         
         private buildColumn(columnConfig: GridColumnConfig) {
 
@@ -292,11 +286,6 @@ module api.ui.treegrid {
          Should be overriden by child class.
          */
         build(): TreeGrid<NODE> {
-
-            if (this.columnConfig) {
-                this.buildColumnsFromConfig();
-            }
-
             return new TreeGrid<NODE>(this);
         }
 
