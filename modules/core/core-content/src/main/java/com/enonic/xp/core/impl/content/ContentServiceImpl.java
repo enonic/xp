@@ -51,6 +51,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetDependenciesResult;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
@@ -684,6 +685,14 @@ public class ContentServiceImpl
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
         final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
+    }
+
+    @Override
+    public GetDependenciesResult getDependencies( final ContentId id) {
+        final ResolveDependenciesAggregationFactory resolveDependenciesAggregationFactory =
+            new ResolveDependenciesAggregationFactory( this );
+
+        return resolveDependenciesAggregationFactory.create( id );
     }
 
     @Override

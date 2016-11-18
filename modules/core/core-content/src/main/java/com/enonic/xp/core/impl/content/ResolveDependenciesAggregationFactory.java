@@ -1,27 +1,30 @@
-package com.enonic.xp.admin.impl.rest.resource.content;
+package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.codehaus.jparsec.util.Lists;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
-import com.enonic.xp.admin.impl.json.content.DependenciesJson;
-import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetDependenciesResult;
 import com.enonic.xp.content.ResolveDependenciesAggregationResult;
+import com.enonic.xp.core.impl.content.serializer.PageDataSerializer;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.parser.QueryParser;
@@ -29,29 +32,22 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 public class ResolveDependenciesAggregationFactory
 {
-
-    final ContentTypeIconUrlResolver contentTypeIconUrlResolver;
+    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
 
     final ContentService contentService;
 
-    public ResolveDependenciesAggregationFactory( final ContentTypeIconUrlResolver contentTypeIconUrlResolver,
-                                                  final ContentService contentService )
+    public ResolveDependenciesAggregationFactory( final ContentService contentService )
     {
-        this.contentTypeIconUrlResolver = contentTypeIconUrlResolver;
         this.contentService = contentService;
     }
 
-    public DependenciesJson create( final ContentId contentId )
+    public GetDependenciesResult create( final ContentId contentId )
     {
-        final List<DependenciesAggregationJson> inbound = this.resolveInboundDependenciesAggregation( contentId ).stream().
-            map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
-            Collectors.toList() );
+        final Collection<ResolveDependenciesAggregationResult> inbound = this.resolveInboundDependenciesAggregation( contentId );
 
-        final List<DependenciesAggregationJson> outbound = this.resolveOutboundDependenciesAggregation( contentId ).stream().
-            map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
-            Collectors.toList() );
+        final Collection<ResolveDependenciesAggregationResult> outbound = this.resolveOutboundDependenciesAggregation( contentId );
 
-        return new DependenciesJson( inbound, outbound );
+        return GetDependenciesResult.create().inboundDependencies( inbound ).outboudDependencies( outbound ).build();
     }
 
     private Collection<ResolveDependenciesAggregationResult> resolveInboundDependenciesAggregation( final ContentId contentId )
@@ -80,12 +76,22 @@ public class ResolveDependenciesAggregationFactory
 
         final List<ContentId> contentIds = Lists.arrayList();
 
-        content.getData().getProperties( ValueTypes.REFERENCE ).forEach( property -> {
-            if ( !contentId.toString().equals( property.getValue().toString() ) )
-            {
-                contentIds.add( ContentId.from( property.getValue().toString() ) );
-            }
-        } );
+        final PropertySet contentPageData = new PropertyTree().getRoot();
+        if(content.getPage() != null)
+        {
+            PAGE_SERIALIZER.toData( content.getPage(), contentPageData );
+        }
+
+        Stream.concat( content.getData().getProperties( ValueTypes.REFERENCE ).stream(),
+                       contentPageData.getProperties( ValueTypes.REFERENCE ).stream() ).forEach( property ->
+                         {
+                             if ( !contentId.toString().equals(
+                                 property.getValue().toString() ) )
+                             {
+                                 contentIds.add( ContentId.from(
+                                     property.getValue().toString() ) );
+                             }
+                         } );
 
         final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( contentIds ) ) );
 

@@ -89,6 +89,8 @@ public interface ContentService
 
     AccessControlList getRootPermissions();
 
+    GetDependenciesResult getDependencies(final ContentId id);
+
     boolean contentExists( ContentId contentId );
 
     boolean contentExists( ContentPath contentPath );
