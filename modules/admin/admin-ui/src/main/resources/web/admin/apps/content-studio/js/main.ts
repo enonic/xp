@@ -14,6 +14,7 @@ import {MoveContentDialog} from "./app/browse/MoveContentDialog";
 import {EditPermissionsDialog} from "./app/wizard/EditPermissionsDialog";
 import {ContentWizardPanelParams} from "./app/wizard/ContentWizardPanelParams";
 import {ContentWizardPanel} from "./app/wizard/ContentWizardPanel";
+import {ContentEventsListener} from "./app/ContentEventsListener";
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -34,6 +35,7 @@ function getApplication(): api.app.Application {
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
+    this.clientEventsListener = new ContentEventsListener([application]);
 
     var messageId;
     this.lostConnectionDetector = new api.system.LostConnectionDetector();
@@ -111,9 +113,43 @@ function startApplication() {
         startContentApplication(application);
     }
 
+    initToolTip();
+
+    api.util.AppHelper.preventDragRedirect();
+
+    let contentDeleteDialog = new ContentDeleteDialog();
+    ContentDeletePromptEvent.on((event) => {
+        contentDeleteDialog
+            .setContentToDelete(event.getModels())
+            .setYesCallback(event.getYesCallback())
+            .setNoCallback(event.getNoCallback())
+            .open();
+    });
+
+    let contentPublishDialog = new ContentPublishDialog();
+    ContentPublishPromptEvent.on((event) => {
+        contentPublishDialog
+            .setContentToPublish(event.getModels())
+            .open();
+
+        if (event.isIncludeChildItems()) {
+            contentPublishDialog.setIncludeChildItems(event.isIncludeChildItems());
+        }
+    });
+
+    let contentUnpublishDialog = new ContentUnpublishDialog();
+    ContentUnpublishPromptEvent.on((event) => {
+        contentUnpublishDialog
+            .setContentToUnpublish(event.getModels())
+            .open();
+    });
+
+    let editPermissionsDialog = new EditPermissionsDialog();
+
     application.setLoaded(true);
 
     this.serverEventsListener.start();
+    this.clientEventsListener.start();
     this.lostConnectionDetector.startPolling();
 
     api.content.event.ContentServerEventsHandler.getInstance().start();
@@ -130,7 +166,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams) {
         // header will be ready after rendering is complete
         wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
             if (event.getPropertyName() === "displayName") {
-                var contentType = (<ContentWizardPanel>wizard).getContentType(),
+                let contentType = (<ContentWizardPanel>wizard).getContentType(),
                     name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
 
                 updateTabTitle(name);
@@ -156,44 +192,19 @@ function startContentWizard(wizardParams: ContentWizardPanelParams) {
 }
 
 function startContentApplication(application: api.app.Application) {
-    let body = api.dom.Body.get();
-    var appBar = new api.app.bar.AppBar(application);
-    var appPanel = new ContentAppPanel(appBar, application.getPath());
+    let body = api.dom.Body.get(),
+        appBar = new api.app.bar.AppBar(application),
+        appPanel = new ContentAppPanel(appBar, application.getPath());
+
+    this.clientEventsListener.setContentApp(appPanel);
 
     body.appendChild(appBar);
     body.appendChild(appPanel);
 
-    var contentDeleteDialog = new ContentDeleteDialog();
-    ContentDeletePromptEvent.on((event) => {
-        contentDeleteDialog
-            .setContentToDelete(event.getModels())
-            .setYesCallback(event.getYesCallback())
-            .setNoCallback(event.getNoCallback())
-            .open();
-    });
-
-    var contentPublishDialog = new ContentPublishDialog();
-    ContentPublishPromptEvent.on((event) => {
-        contentPublishDialog
-            .setContentToPublish(event.getModels())
-            .open();
-
-        if (event.isIncludeChildItems()) {
-            contentPublishDialog.setIncludeChildItems(event.isIncludeChildItems());
-        }
-    });
-
-    var contentUnpublishDialog = new ContentUnpublishDialog();
-    ContentUnpublishPromptEvent.on((event) => {
-        contentUnpublishDialog
-            .setContentToUnpublish(event.getModels())
-            .open();
-    });
-
-    var newContentDialog = new NewContentDialog();
+    let newContentDialog = new NewContentDialog();
     ShowNewContentDialogEvent.on((event) => {
 
-        var parentContent: api.content.ContentSummary = event.getParentContent()
+        let parentContent: api.content.ContentSummary = event.getParentContent()
             ? event.getParentContent().getContentSummary() : null;
 
         if (parentContent != null) {
@@ -225,17 +236,12 @@ function startContentApplication(application: api.app.Application) {
         }
     });
 
-    initToolTip();
-
-    api.util.AppHelper.preventDragRedirect();
-
-    var sortDialog = new SortContentDialog();
-    var moveDialog = new MoveContentDialog();
-    var editPermissionsDialog = new EditPermissionsDialog();
+    let sortDialog = new SortContentDialog();
+    let moveDialog = new MoveContentDialog();
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {
-            var eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            let eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
             if (eventType == api.app.AppLauncherEventType.Show) {
                 appPanel.activateCurrentKeyBindings();
             }
