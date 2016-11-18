@@ -216,15 +216,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
 
+        let panelNeedToUpdated: boolean;
+
         this.contentTreeGrid.onSelectionChanged(() => {
             const isNewlySelected = this.contentTreeGrid.isNewlySelected();
             const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
 
-            const needUpdate = isNonZeroSelectionInMobileMode && isNewlySelected;
-
-            if (needUpdate) {
-                updateAndShowMobilePanel();
-            }
+            panelNeedToUpdated = isNonZeroSelectionInMobileMode && isNewlySelected;
         });
 
         // Handles specific case, not handled by function above
@@ -236,7 +234,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             const needUpdate = isNonZeroSelectionInMobileMode && !isNewlySelected;
 
-            if (needUpdate) {
+            if (panelNeedToUpdated || needUpdate) {
                 updateAndShowMobilePanel();
             }
         });

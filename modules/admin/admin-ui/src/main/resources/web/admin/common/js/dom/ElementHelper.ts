@@ -190,6 +190,15 @@ module api.dom {
             return this.el.title;
         }
 
+        hasAnyParentClass(clsName: string): boolean {
+            let parent = this.getParent();
+            if(!parent) {
+                return false;
+            }
+
+            return parent.hasClass(clsName) || parent.hasAnyParentClass(clsName);
+        }
+
         hasClass(clsName: string): boolean {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
