@@ -54,7 +54,7 @@ module api.liveedit.text {
                 setViewer(new TextComponentViewer()).
                 setComponent(builder.component));
 
-            this.setContextMenuActions(this.createTextContextMenuActions());
+            this.addTextContextMenuActions();
             this.lastClicked = 0;
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.textComponent = builder.component;
@@ -446,15 +446,15 @@ module api.liveedit.text {
             }
             return this.rootElement.giveFocus();
         }
-
-        private createTextContextMenuActions(): api.ui.Action[] {
-            var actions: api.ui.Action[] = [];
-            actions.push(new api.ui.Action('Edit').onExecuted(() => {
-                this.startPageTextEditMode();
-                this.focusOnInit = true;
-                this.forceEditorFocus();
-            }));
-            return actions;
+        
+        private addTextContextMenuActions() {
+            this.addContextMenuActions([
+                new api.ui.Action('Edit').onExecuted(() => {
+                    this.startPageTextEditMode();
+                    this.focusOnInit = true;
+                    this.forceEditorFocus();
+                })
+            ]);
         }
     }
 }

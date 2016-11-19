@@ -44,7 +44,6 @@ module api.liveedit {
 
             this.parentPartComponentView = builder.parentPartComponentView;
 
-            this.setContextMenuActions(this.createContentContextMenuActions());
             this.setContextMenuTitle(new ContentViewContextMenuTitle(this));
 
         }

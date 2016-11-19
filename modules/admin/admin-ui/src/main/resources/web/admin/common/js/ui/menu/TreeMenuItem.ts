@@ -7,7 +7,10 @@ module api.ui.menu {
             super(action.hasParentAction() ? "dd" : "dt");
             
             this.action = action;
-            this.setClass(this.getCls(action, cls, expanded));
+            cls = this.getCls(action, cls, expanded);
+            if (cls) {
+                this.setClass(cls);
+            }
             this.getEl().setInnerHtml(action.getLabel());
             this.onClicked((event: MouseEvent) => {
                 if (action.isEnabled()) {

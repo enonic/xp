@@ -60,7 +60,7 @@ module api.liveedit {
 
         private pageLockedListeners: {(locked: boolean): void}[];
 
-        private unlockedScreenActions: api.ui.Action[];
+        private resetAction: api.ui.Action;
 
         private itemViewAddedListener: (event: ItemViewAddedEvent) => void;
 
@@ -86,9 +86,59 @@ module api.liveedit {
 
         private nextClickDisabled: boolean;
 
-        private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
+        constructor(builder: PageViewBuilder) {
+
+            super(new ItemViewBuilder()
+                .setLiveEditModel(builder.liveEditModel)
+                .setItemViewIdProducer(builder.itemViewProducer)
+                .setViewer(new api.content.ContentSummaryViewer())
+                .setType(PageItemType.get())
+                .setElement(builder.element)
+                .setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
+
+            this.setPlaceholder(new PagePlaceholder(this));
+            
+            this.addPageContextMenuActions();
+
+            this.pageModel = builder.liveEditModel.getPageModel();
+
+            this.registerPageModel();
+
+            this.regionViews = [];
+            this.viewsById = {};
+            this.itemViewAddedListeners = [];
+            this.itemViewRemovedListeners = [];
+            this.pageLockedListeners = [];
+            this.ignorePropertyChanges = false;
+            this.disableContextMenu = false;
+            this.highlightingAllowed = true;
+            this.nextClickDisabled = false;
+
+            this.addClassEx('page-view');
+            
+            this.initListeners();
+
+            this.parseItemViews();
+
+            this.closeTextEditModeButton = this.createCloseTextEditModeEl();
+
+            this.appendChild(this.closeTextEditModeButton);
+
+            this.refreshEmptyState();
+
+            // lock page by default for every content that has not been modified except for page template
+            var isCustomized = this.liveEditModel.getPageModel().isCustomized();
+            var isFragment = !!this.fragmentView;
+            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized && !isFragment) {
+                this.setLocked(true);
+            }
+
+
+        }
+        
+        private registerPageModel() {
             if (PageView.debug) {
-                console.log('PageView.registerPageModel', pageModel);
+                console.log('PageView.registerPageModel', this.pageModel);
             }
             this.propertyChangedListener = (event: api.PropertyChangedEvent) => {
                 // don't parse on regions change during reset, because it'll be done when page is loaded later
@@ -97,16 +147,16 @@ module api.liveedit {
                 }
                 this.refreshEmptyState();
             };
-            pageModel.onPropertyChanged(this.propertyChangedListener);
+            this.pageModel.onPropertyChanged(this.propertyChangedListener);
 
             this.pageModeChangedListener = (event: PageModeChangedEvent) => {
                 var resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
                 if (PageView.debug) {
                     console.log('PageView.pageModeChangedListener setting reset enabled', resetEnabled);
                 }
-                resetAction.setEnabled(resetEnabled);
+                this.resetAction.setEnabled(resetEnabled);
             };
-            pageModel.onPageModeChanged(this.pageModeChangedListener);
+            this.pageModel.onPageModeChanged(this.pageModeChangedListener);
         }
 
         private unregisterPageModel(pageModel: PageModel) {
@@ -117,13 +167,14 @@ module api.liveedit {
             pageModel.unPageModeChanged(this.pageModeChangedListener);
         }
 
-        private initActions(pageModel: PageModel): api.ui.Action[] {
+        private addPageContextMenuActions() {
+            let pageModel = this.liveEditModel.getPageModel();
             let inspectAction = new api.ui.Action("Inspect").onExecuted(() => {
                 new PageInspectedEvent().fire();
             });
 
-            let resetAction = new api.ui.Action('Reset');
-            resetAction.onExecuted(() => {
+            this.resetAction = new api.ui.Action('Reset');
+            this.resetAction.onExecuted(() => {
                 if (PageView.debug) {
                     console.log('PageView.reset');
                 }
@@ -131,14 +182,12 @@ module api.liveedit {
                 pageModel.reset(this);
                 this.setIgnorePropertyChanges(false);
             });
-
+            
             if (pageModel.getMode() == PageMode.AUTOMATIC || pageModel.getMode() == PageMode.NO_CONTROLLER) {
-                resetAction.setEnabled(false);
+                this.resetAction.setEnabled(false);
             }
 
-            this.registerPageModel(pageModel, resetAction);
-
-            return [inspectAction, resetAction];
+            this.addContextMenuActions([inspectAction, this.resetAction]);
         }
 
         private initListeners() {
@@ -189,54 +238,7 @@ module api.liveedit {
                 }
             });
         }
-
-        constructor(builder: PageViewBuilder) {
-
-            super(new ItemViewBuilder()
-                .setLiveEditModel(builder.liveEditModel)
-                .setItemViewIdProducer(builder.itemViewProducer)
-                .setViewer(new api.content.ContentSummaryViewer())
-                .setType(PageItemType.get())
-                .setElement(builder.element)
-                .setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
-
-            this.setPlaceholder(new PagePlaceholder(this));
-            this.setContextMenuActions(this.unlockedScreenActions = this.initActions(builder.liveEditModel.getPageModel()));
-            
-            this.liveEditModel = builder.liveEditModel;
-            this.pageModel = builder.liveEditModel.getPageModel();
-
-            this.regionViews = [];
-            this.viewsById = {};
-            this.itemViewAddedListeners = [];
-            this.itemViewRemovedListeners = [];
-            this.pageLockedListeners = [];
-            this.ignorePropertyChanges = false;
-            this.disableContextMenu = false;
-            this.highlightingAllowed = true;
-            this.nextClickDisabled = false;
-
-            this.addClassEx('page-view');
-
-            this.parseItemViews();
-
-            this.closeTextEditModeButton = this.createCloseTextEditModeEl();
-
-            this.appendChild(this.closeTextEditModeButton);
-
-            this.refreshEmptyState();
-
-            // lock page by default for every content that has not been modified except for page template
-            var isCustomized = this.liveEditModel.getPageModel().isCustomized();
-            var isFragment = !!this.fragmentView;
-            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized && !isFragment) {
-                this.setLocked(true);
-            }
-
-            this.initListeners();
-
-        }
-
+        
         private createCloseTextEditModeEl(): api.dom.Element {
             var closeButton = new api.dom.AEl("close-edit-mode-button icon-close2");
             closeButton.onClicked((event: MouseEvent) => {

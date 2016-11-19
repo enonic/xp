@@ -86,8 +86,8 @@ module api.liveedit {
                 setParentElement(builder.parentElement).
                 setParentView(builder.parentView).
                 setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
-
-            this.setContextMenuActions(this.createRegionContextMenuActions(builder.parentView.getLiveEditModel()));
+            
+            this.addRegionContextMenuActions();
             this.addClassEx("region-view");
 
             this.componentViews = [];
@@ -96,6 +96,8 @@ module api.liveedit {
             this.itemViewRemovedListeners = [];
             this.parentView = builder.parentView;
 
+            this.initListeners();
+            
             this.setRegion(builder.region);
 
             this.parseComponentViews();
@@ -165,16 +167,17 @@ module api.liveedit {
             this.mouseDownLastTarget = <HTMLElement> event.target;
         }
 
-        private createRegionContextMenuActions(liveEditModel: LiveEditModel) {
+        private addRegionContextMenuActions() {
             var actions: api.ui.Action[] = [];
 
             actions.push(this.createSelectParentAction());
-            actions.push(this.createInsertAction(liveEditModel));
+            actions.push(this.createInsertAction());
             actions.push(new api.ui.Action('Reset').onExecuted(() => {
                 this.deselect();
                 this.empty();
             }));
-            return actions;
+            
+            this.addContextMenuActions(actions);
         }
 
         getParentItemView(): ItemView {

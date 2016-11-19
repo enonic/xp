@@ -16,10 +16,6 @@ module api.liveedit.part {
 
         private contentViews: ContentView[];
 
-        //private partComponent: PartComponent;
-
-        //private partPlaceholder: PartPlaceholder;
-
         constructor(builder: PartComponentViewBuilder) {
             super(builder.
                 setViewer(new PartComponentViewer()).

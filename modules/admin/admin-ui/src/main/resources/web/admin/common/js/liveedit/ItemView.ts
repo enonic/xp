@@ -146,11 +146,12 @@ module api.liveedit {
             this.parentItemView = builder.parentView;
             this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
             this.itemViewIdProducer = builder.itemViewIdProducer;
-            this.contextMenuActions = builder.contextMenuActions;
             this.contextMenuTitle = builder.contextMenuTitle;
-
+            
             this.addClassEx("item-view");
-
+            
+            this.contextMenuActions = [];
+            
             this.setDraggable(true);
 
             this.mouseOver = false;
@@ -184,13 +185,13 @@ module api.liveedit {
             this.bindMouseListeners();
         }
 
+        protected addContextMenuActions(actions: api.ui.Action[]) {
+            this.contextMenuActions = this.contextMenuActions.concat(actions);
+        }
+        
         protected setPlaceholder(placeholder: ItemViewPlaceholder) {
             this.placeholder = placeholder;
             this.appendChild(placeholder);
-        }
-        
-        public setContextMenuActions(actions: api.ui.Action[]) {
-            this.contextMenuActions = actions;
         }
 
         public setContextMenuTitle(title: ItemViewContextMenuTitle) {
@@ -915,8 +916,8 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
-        protected createInsertAction(liveEditModel: LiveEditModel): api.ui.Action {
-            return new api.ui.Action('Insert').setChildActions(this.getInsertActions(liveEditModel));
+        protected createInsertAction(): api.ui.Action {
+            return new api.ui.Action('Insert').setChildActions(this.getInsertActions(this.liveEditModel));
         }
 
         protected createSelectParentAction(): api.ui.Action {
