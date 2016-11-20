@@ -13,7 +13,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.InternalPushNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;

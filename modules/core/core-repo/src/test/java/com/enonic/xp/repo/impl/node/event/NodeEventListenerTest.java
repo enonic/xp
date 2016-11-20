@@ -239,6 +239,4 @@ public class NodeEventListenerTest
                                                                                Mockito.eq( previousNodePath ),
                                                                                Mockito.isA( InternalContext.class ) );
     }
-
-
 }

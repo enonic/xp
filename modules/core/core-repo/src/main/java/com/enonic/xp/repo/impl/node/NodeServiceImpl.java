@@ -27,7 +27,6 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
-import com.enonic.xp.node.InternalPushNodesResult;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -64,6 +63,7 @@ import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
@@ -527,6 +527,7 @@ public class NodeServiceImpl
     {
         final RestoreResult restoreResult = this.snapshotService.restore( params );
         this.storageService.invalidate();
+        this.eventPublisher.publish( RepositoryEvents.restored() );
         return restoreResult;
     }
 
