@@ -9,6 +9,8 @@ public class NodeComparison
 {
     private final NodePath sourcePath;
 
+    private final NodePath targetPath;
+
     private final NodeId sourceId;
 
     private final NodeId targetId;
@@ -20,6 +22,7 @@ public class NodeComparison
         this.sourceId = sourceEntry != null ? sourceEntry.getNodeId() : null;
         this.targetId = targetEntry != null ? targetEntry.getNodeId() : null;
         this.sourcePath = sourceEntry != null ? sourceEntry.getNodePath() : null;
+        this.targetPath = targetEntry != null ? targetEntry.getNodePath() : null;
 
         this.compareStatus = compareStatus;
     }
@@ -37,6 +40,11 @@ public class NodeComparison
     public NodePath getSourcePath()
     {
         return sourcePath;
+    }
+
+    public NodePath getTargetPath()
+    {
+        return targetPath;
     }
 
     @Override
@@ -57,6 +65,10 @@ public class NodeComparison
         {
             return false;
         }
+        if ( targetPath != null ? !targetPath.equals( that.targetPath ) : that.targetPath != null )
+        {
+            return false;
+        }
         if ( sourceId != null ? !sourceId.equals( that.sourceId ) : that.sourceId != null )
         {
             return false;
@@ -73,6 +85,7 @@ public class NodeComparison
     public int hashCode()
     {
         int result = sourcePath != null ? sourcePath.hashCode() : 0;
+        result = 31 * result + ( targetPath != null ? targetPath.hashCode() : 0 );
         result = 31 * result + ( sourceId != null ? sourceId.hashCode() : 0 );
         result = 31 * result + ( targetId != null ? targetId.hashCode() : 0 );
         result = 31 * result + ( compareStatus != null ? compareStatus.hashCode() : 0 );

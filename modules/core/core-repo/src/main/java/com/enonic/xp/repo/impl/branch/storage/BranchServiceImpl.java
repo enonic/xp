@@ -61,6 +61,16 @@ public class BranchServiceImpl
     @Override
     public String store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
+        return store( nodeBranchEntry, null, context );
+    }
+
+    @Override
+    public String store( final NodeBranchEntry nodeBranchEntry, final NodePath previousPath, final InternalContext context )
+    {
+        if ( previousPath != null && !previousPath.equals( nodeBranchEntry.getNodePath() ) )
+        {
+            this.pathCache.evict( createPath( previousPath, context ) );
+        }
         return doStore( nodeBranchEntry, context );
     }
 
@@ -72,16 +82,6 @@ public class BranchServiceImpl
         doCache( context, nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
 
         return id;
-    }
-
-    @Override
-    public String move( final MoveBranchParams moveBranchParams, final InternalContext context )
-    {
-        final NodeBranchEntry nodeBranchEntry = moveBranchParams.getNodeBranchEntry();
-
-        this.pathCache.evict( createPath( moveBranchParams.getPreviousPath(), context ) );
-
-        return doStore( nodeBranchEntry, context );
     }
 
     @Override
@@ -179,6 +179,12 @@ public class BranchServiceImpl
     public void evictPath( final NodePath nodePath, final InternalContext context )
     {
         pathCache.evict( new BranchPath( context.getBranch(), nodePath ) );
+    }
+
+    @Override
+    public void evictAllPaths()
+    {
+        pathCache.evictAll();
     }
 
     private BranchPath createPath( final NodePath nodePath, final InternalContext context )
