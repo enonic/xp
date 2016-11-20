@@ -51,6 +51,11 @@ final class ApplicationFactory
         }
 
         final List<String> sourcePaths = ApplicationHelper.getSourcePaths( bundle );
+        if ( sourcePaths.isEmpty() )
+        {
+            return bundleUrlResolver;
+        }
+
         final ApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( sourcePaths );
 
         return new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver );

@@ -9,7 +9,7 @@ module api.form {
     export interface FormOptionSetOccurrenceViewConfig {
         context: FormContext;
 
-        formOptionSetOccurrence: FormOptionSetOccurrence;
+        formSetOccurrence: FormSetOccurrence<FormOptionSetOccurrenceView>;
 
         formOptionSet: FormOptionSet;
 
@@ -27,8 +27,9 @@ module api.form {
         private selectionValidationMessage: api.dom.DivEl;
 
         constructor(config: FormOptionSetOccurrenceViewConfig) {
-            super("form-option-set-occurrence-view", config.formOptionSetOccurrence);
-            this.formItemOccurrence = config.formOptionSetOccurrence;
+            super("form-option-set-occurrence-view", config.formSetOccurrence);
+            this.occurrenceContainerClassName = "form-option-set-occurrences-container";
+            this.formItemOccurrence = config.formSetOccurrence;
             this.formOptionSet = config.formOptionSet;
             this.propertySet = config.dataSet;
             this.ensureSelectionArrayExists(this.propertySet);
@@ -37,126 +38,71 @@ module api.form {
             this.context = config.context;
         }
 
-        getDataPath(): PropertyPath {
-
-            return this.propertySet.getProperty().getPath();
-        }
-
-        public layout(validate: boolean = true): wemQ.Promise<void> {
-
-            var deferred = wemQ.defer<void>();
-
-            this.removeChildren();
-
-            this.removeButton = new api.dom.AEl("remove-button");
-            this.appendChild(this.removeButton);
-            this.removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveButtonClicked();
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-
-            this.label = new FormOccurrenceDraggableLabel(this.formOptionSet.getLabel(), this.formOptionSet.getOccurrences());
-            this.appendChild(this.label);
-
-            if (this.formOptionSet.getHelpText()) {
-                this.helpText = new HelpTextContainer(this.formOptionSet.getHelpText());
-
-                this.helpText.onHelpTextToggled((show) => {
-                    this.formItemLayer.toggleHelpText(show);
-                });
-
-                this.label.appendChild(this.helpText.getToggler());
-                this.appendChild(this.helpText.getHelpText());
-
-                this.toggleHelpText(this.formOptionSet.isHelpTextOn());
-            }
-
+        protected initValidationMessageBlock() {
             this.selectionValidationMessage = new api.dom.DivEl("selection-message");
             this.appendChild(this.selectionValidationMessage);
+        }
 
-            this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-option-set-occurrences-container");
-            this.appendChild(this.formItemSetOccurrencesContainer);
+        protected subscribeOnItemEvents() {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
 
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(
-                this.formOptionSet.getFormItems()).setParentElement(this.formItemSetOccurrencesContainer).setParent(this).layout(
-                this.propertySet, validate);
+                    if (!this.currentValidationState) {
+                        return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
+                    }
 
-            layoutPromise.then((formItemViews: FormItemView[]) => {
+                    if (this.isNew()) {
+                        this.currentValidationState = new ValidationRecording();
+                        return;
+                    }
 
-                this.formItemViews = formItemViews;
-                if (validate) {
-                    this.validate(true);
-                }
+                    var previousValidState = this.currentValidationState.isValid();
+                    if (event.isValid()) {
+                        this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
+                    } else {
+                        this.currentValidationState.flatten(event.getRecording());
+                    }
 
-                this.formItemViews.forEach((formItemView: FormItemView) => {
-                    formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
-
-                        if (!this.currentValidationState) {
-                            return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
-                        }
-
-                        if (this.isNew()) {
-                            this.currentValidationState = new ValidationRecording();
-                            return;
-                        }
-
-                        var previousValidState = this.currentValidationState.isValid();
-                        if (event.isValid()) {
-                            this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
-                        } else {
-                            this.currentValidationState.flatten(event.getRecording());
-                        }
-
-                        if (previousValidState != this.currentValidationState.isValid()) {
-                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
-                                this.resolveValidationRecordingPath()).setIncludeChildren(true));
-                        }
-                    });
-
-                    (<FormOptionSetOptionView> formItemView).onSelectionChanged(() => {
-                        if (!this.currentValidationState) {
-                            return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
-                        }
-
-                        if (this.isNew()) {
-                            this.currentValidationState = new ValidationRecording();
-                            return;
-                        }
-
-                        var previousValidationValid = this.currentValidationState.isValid(),
-                            multiselectionState = this.validateMultiselection();
-
-                        if (multiselectionState.isValid()) {
-                            if (this.formOptionSet.isRadioSelection()) { // for radio - we clean all validation, as even selected item should not be validated
-                                this.currentValidationState.removeByPath(
-                                    new ValidationRecordingPath(this.getDataPath(), null), true, true);
-
-                            } else {
-                                this.currentValidationState.removeByPath(
-                                    new ValidationRecordingPath(this.getDataPath(), formItemView.getFormItem().getName()), true, true);
-                            }
-                        } else {
-                            this.currentValidationState.flatten(this.currentValidationState);
-                        }
-
-                        this.renderSelectionValidationMessage(multiselectionState);
-
-                        if (this.currentValidationState.isValid() != previousValidationValid) {
-                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
-                                this.resolveValidationRecordingPath()).setIncludeChildren(true));
-                        }
-                    })
+                    if (previousValidState != this.currentValidationState.isValid()) {
+                        this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
+                            this.resolveValidationRecordingPath()).setIncludeChildren(true));
+                    }
                 });
 
-                this.refresh();
-                deferred.resolve(null);
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+                (<FormOptionSetOptionView> formItemView).onSelectionChanged(() => {
+                    if (!this.currentValidationState) {
+                        return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
+                    }
 
-            return deferred.promise;
+                    if (this.isNew()) {
+                        this.currentValidationState = new ValidationRecording();
+                        return;
+                    }
+
+                    var previousValidationValid = this.currentValidationState.isValid(),
+                        multiselectionState = this.validateMultiselection();
+
+                    if (multiselectionState.isValid()) {
+                        if (this.formOptionSet.isRadioSelection()) { // for radio - we clean all validation, as even selected item should not be validated
+                            this.currentValidationState.removeByPath(
+                                new ValidationRecordingPath(this.getDataPath(), null), true, true);
+
+                        } else {
+                            this.currentValidationState.removeByPath(
+                                new ValidationRecordingPath(this.getDataPath(), formItemView.getFormItem().getName()), true, true);
+                        }
+                    } else {
+                        this.currentValidationState.flatten(this.currentValidationState);
+                    }
+
+                    this.renderSelectionValidationMessage(multiselectionState);
+
+                    if (this.currentValidationState.isValid() != previousValidationValid) {
+                        this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
+                            this.resolveValidationRecordingPath()).setIncludeChildren(true));
+                    }
+                })
+            });
         }
 
         private renderSelectionValidationMessage(selectionValidationRecording: ValidationRecording) {
@@ -224,7 +170,7 @@ module api.form {
             return null;
         }
 
-        private ensureSelectionArrayExists(propertyArraySet: PropertySet) {
+        protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
             var selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
             if (!selectionPropertyArray) {
                 selectionPropertyArray =
@@ -243,29 +189,10 @@ module api.form {
             });
         }
 
-        validate(silent: boolean = true, viewToSkipValidation?: FormOptionSetOptionView): ValidationRecording {
-
-            var allRecordings = new ValidationRecording();
-
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                if (viewToSkipValidation != formItemView) {
-                    var currRecording = formItemView.validate(silent);
-                    allRecordings.flatten(currRecording);
-                }
-            });
-
+        protected extraValidation(validationRecording: ValidationRecording) {
             var multiselectionState = this.validateMultiselection();
-            allRecordings.flatten(multiselectionState);
-
+            validationRecording.flatten(multiselectionState);
             this.renderSelectionValidationMessage(multiselectionState);
-
-            if (!silent) {
-                if (allRecordings.validityChanged(this.currentValidationState)) {
-                    this.notifyValidityChanged(new RecordingValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
-                }
-            }
-            this.currentValidationState = allRecordings;
-            return allRecordings;
         }
 
         private validateMultiselection(): ValidationRecording {
@@ -298,6 +225,12 @@ module api.form {
             return multiselectionRecording;
         }
 
+        protected getFormSet(): FormSet {
+            return this.formOptionSet;
+        }
 
+        protected getFormItems(): FormItem[] {
+            return this.formOptionSet.getFormItems();
+        }
     }
 }

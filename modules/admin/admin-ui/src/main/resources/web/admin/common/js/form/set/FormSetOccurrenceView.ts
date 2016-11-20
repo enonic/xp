@@ -19,10 +19,112 @@ module api.form {
 
         protected propertySet: PropertySet;
 
-        protected formItemSetOccurrencesContainer: api.dom.DivEl;
+        protected formSetOccurrencesContainer: api.dom.DivEl;
+
+        protected occurrenceContainerClassName: string;
 
         constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className, formItemOccurrence);
+        }
+
+        public layout(validate: boolean = true): wemQ.Promise<void> {
+
+            var deferred = wemQ.defer<void>();
+
+            this.removeChildren();
+
+            this.removeButton = new api.dom.AEl("remove-button");
+            this.appendChild(this.removeButton);
+            this.removeButton.onClicked((event: MouseEvent) => {
+                this.notifyRemoveButtonClicked();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
+
+            this.label = new FormOccurrenceDraggableLabel(this.getFormSet().getLabel(), this.getFormSet().getOccurrences());
+            this.appendChild(this.label);
+
+            if (this.getFormSet().getHelpText()) {
+                this.helpText = new HelpTextContainer(this.getFormSet().getHelpText());
+
+                this.helpText.onHelpTextToggled((show) => {
+                    this.formItemLayer.toggleHelpText(show);
+                });
+
+                this.label.appendChild(this.helpText.getToggler());
+                this.appendChild(this.helpText.getHelpText());
+
+                this.toggleHelpText(this.getFormSet().isHelpTextOn());
+            }
+
+            this.initValidationMessageBlock();
+
+            this.formSetOccurrencesContainer = new api.dom.DivEl(this.occurrenceContainerClassName);
+            this.appendChild(this.formSetOccurrencesContainer);
+
+
+            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(this.getFormItems()).setParentElement(
+                this.formSetOccurrencesContainer).setParent(this).layout(this.propertySet, validate);
+
+            layoutPromise.then((formItemViews: FormItemView[]) => {
+
+                this.formItemViews = formItemViews;
+                if (validate) {
+                    this.validate(true);
+                }
+
+                this.subscribeOnItemEvents();
+
+                this.refresh();
+                deferred.resolve(null);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+
+            return deferred.promise;
+        }
+
+        protected initValidationMessageBlock() {
+        }
+
+        getDataPath(): api.data.PropertyPath {
+            return this.propertySet.getProperty().getPath();
+        }
+
+        validate(silent: boolean = true): ValidationRecording {
+
+            var allRecordings = new ValidationRecording();
+
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                var currRecording = formItemView.validate(silent);
+                allRecordings.flatten(currRecording);
+            });
+
+            this.extraValidation(allRecordings);
+
+            if (!silent) {
+                if (allRecordings.validityChanged(this.currentValidationState)) {
+                    this.notifyValidityChanged(new RecordingValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
+                }
+            }
+            this.currentValidationState = allRecordings;
+            return allRecordings;
+        }
+
+        protected extraValidation(validationRecording: ValidationRecording) {
+        }
+
+        protected subscribeOnItemEvents() {
+            throw new Error("Must be implemented by inheritor");
+        }
+
+        protected getFormSet(): FormSet {
+            throw new Error("Must be implemented by inheritor");
+        }
+
+        protected getFormItems(): FormItem[] {
+            throw new Error("Must be implemented by inheritor");
         }
 
         toggleHelpText(show?: boolean): any {
@@ -35,6 +137,7 @@ module api.form {
             if (!set) {
                 set = propertyArray.addSet();
             }
+            this.ensureSelectionArrayExists(set);
             this.propertySet = set;
             return this.formItemLayer.update(this.propertySet, unchangedOnly);
         }
@@ -50,11 +153,15 @@ module api.form {
             return result;
         }
 
+        protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
+            // override if needed to add default selection to property set
+        }
+
         showContainer(show: boolean) {
             if (show) {
-                this.formItemSetOccurrencesContainer.show();
+                this.formSetOccurrencesContainer.show();
             } else {
-                this.formItemSetOccurrencesContainer.hide();
+                this.formSetOccurrencesContainer.hide();
             }
         }
 

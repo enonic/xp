@@ -83,6 +83,10 @@ public final class ApplicationHelper
     public static List<String> getSourcePaths( final Bundle bundle )
     {
         final String value = getHeader( bundle, X_SOURCE_PATHS, "" );
+        if ( Strings.isNullOrEmpty( value ) )
+        {
+            return Lists.newArrayList();
+        }
         return Lists.newArrayList( Splitter.on( ',' ).trimResults().split( value ) );
     }
 

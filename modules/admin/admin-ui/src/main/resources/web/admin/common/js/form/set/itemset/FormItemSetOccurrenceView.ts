@@ -8,7 +8,7 @@ module api.form {
 
         context: FormContext;
 
-        formItemSetOccurrence: FormItemSetOccurrence;
+        formSetOccurrence: FormSetOccurrence<FormItemSetOccurrenceView>;
 
         formItemSet: FormItemSet;
 
@@ -22,95 +22,36 @@ module api.form {
         private formItemSet: FormItemSet;
 
         constructor(config: FormItemSetOccurrenceViewConfig) {
-            super("form-item-set-occurrence-view", config.formItemSetOccurrence);
-            this.formItemOccurrence = config.formItemSetOccurrence;
+            super("form-item-set-occurrence-view", config.formSetOccurrence);
+            this.occurrenceContainerClassName = "form-item-set-occurrences-container";
+            this.formItemOccurrence = config.formSetOccurrence;
             this.formItemSet = config.formItemSet;
             this.propertySet = config.dataSet;
 
             this.formItemLayer = new FormItemLayer(config.context);
         }
 
-        getDataPath(): PropertyPath {
+        protected subscribeOnItemEvents() {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
 
-            return this.propertySet.getProperty().getPath();
-        }
+                    if (!this.currentValidationState) {
+                        return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
+                    }
 
-        public layout(validate: boolean = true): wemQ.Promise<void> {
+                    var previousValidState = this.currentValidationState.isValid();
+                    if (event.isValid()) {
+                        this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
+                    } else {
+                        this.currentValidationState.flatten(event.getRecording());
+                    }
 
-            var deferred = wemQ.defer<void>();
-
-            this.removeChildren();
-
-            this.removeButton = new api.dom.AEl("remove-button");
-            this.appendChild(this.removeButton);
-            this.removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveButtonClicked();
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
+                    if (previousValidState != this.currentValidationState.isValid()) {
+                        this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
+                            this.resolveValidationRecordingPath()).setIncludeChildren(true));
+                    }
+                });
             });
-
-            this.label = new FormOccurrenceDraggableLabel(this.formItemSet.getLabel(), this.formItemSet.getOccurrences());
-            this.appendChild(this.label);
-
-            if (this.formItemSet.getHelpText()) {
-                this.helpText = new HelpTextContainer(this.formItemSet.getHelpText());
-
-                this.helpText.onHelpTextToggled((show) => {
-                    this.formItemLayer.toggleHelpText(show);
-                });
-
-                this.label.appendChild(this.helpText.getToggler());
-                this.appendChild(this.helpText.getHelpText());
-
-                this.toggleHelpText(this.formItemSet.isHelpTextOn());
-            }
-
-            this.formItemSetOccurrencesContainer = new api.dom.DivEl("form-item-set-occurrences-container");
-            this.appendChild(this.formItemSetOccurrencesContainer);
-
-
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
-                setFormItems(this.formItemSet.getFormItems()).
-                setParentElement(this.formItemSetOccurrencesContainer).
-                setParent(this).
-                layout(this.propertySet, validate);
-
-            layoutPromise.then((formItemViews: FormItemView[]) => {
-
-                this.formItemViews = formItemViews;
-                if (validate) {
-                    this.validate(true);
-                }
-
-                this.formItemViews.forEach((formItemView: FormItemView) => {
-                    formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
-
-                        if (!this.currentValidationState) {
-                            return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
-                        }
-
-                        var previousValidState = this.currentValidationState.isValid();
-                        if (event.isValid()) {
-                            this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
-                        } else {
-                            this.currentValidationState.flatten(event.getRecording());
-                        }
-
-                        if (previousValidState != this.currentValidationState.isValid()) {
-                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
-                                this.resolveValidationRecordingPath()).setIncludeChildren(true));
-                        }
-                    });
-                });
-
-                this.refresh();
-                deferred.resolve(null);
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
-
-            return deferred.promise;
         }
 
         validate(silent: boolean = true): ValidationRecording {
@@ -119,7 +60,6 @@ module api.form {
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 var currRecording = formItemView.validate(silent);
                 allRecordings.flatten(currRecording);
-
             });
 
             if (!silent) {
@@ -129,6 +69,14 @@ module api.form {
             }
             this.currentValidationState = allRecordings;
             return allRecordings;
+        }
+
+        protected getFormSet(): FormSet {
+            return this.formItemSet;
+        }
+
+        protected getFormItems(): FormItem[] {
+            return this.formItemSet.getFormItems();
         }
     }
 
