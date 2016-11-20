@@ -13,10 +13,6 @@
     .fold-button {
       display: inline-block;
     }
-    .help-text-button {
-      position: absolute;
-      left: 730px;
-    }
   }
 
   .toolbar {
@@ -64,9 +60,10 @@
 
     .@{_COMMON_PREFIX}dropdown {
       margin-top: 32px;
-      width: 180px;
+      max-width: 180px;
 
       .wizard-step-navigator {
+        width: initial;
         margin-bottom: 0;
         padding-right: 0;
         background-color: @admin-white;
@@ -118,14 +115,20 @@
   }
 
   .help-text-button {
-    display: inline-block;
-    width: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 40px;
+    // margin left 34px is needed for calculations in js
+    // total width with margin should always be the same
+    margin: 0 7px 0 34px;
+    float: right;
+    vertical-align: top;
     overflow: hidden;
     z-index: @z-index-mask - 1;
     cursor: pointer;
-    vertical-align: top;
-    margin-top: 9px;
-
+    transition: all .3s 0s cubic-bezier(0, 0.25, 0.25, 1);
 
     &:after {
       display: block;
@@ -154,13 +157,5 @@
 ._0-240, ._240-360, ._360-540, ._540-720, ._720-960 {
   .wizard-step-navigator-and-toolbar {
     padding-left: 0;
-  }
-}
-
-.form-panel {
-  &._0-240, &._240-360, &._360-540 {
-    .help-text-button {
-      width: 45px;
-    }
   }
 }
