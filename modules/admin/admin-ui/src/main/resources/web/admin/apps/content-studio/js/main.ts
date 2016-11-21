@@ -177,8 +177,10 @@ function startContentWizard(wizardParams: ContentWizardPanelParams) {
     wizard.onClosed(event => window.close());
 
     api.dom.WindowDOM.get().onBeforeUnload((event) => {
+        if (wizard.isContentDeleted()) {
+            return;
+        }
         if (wizard.hasUnsavedChanges()) {
-            wizard.askUserForSaveChangesBeforeClosing();
             let message = 'Wizard has unsaved changes. Continue without saving ?';
             (event || window.event)['returnValue'] = message;
             return message;
@@ -188,7 +190,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams) {
         }
     });
 
-    api.dom.Body.get().appendChild(wizard);
+    api.dom.Body.get().addClass('wizard-page').appendChild(wizard);
 }
 
 function startContentApplication(application: api.app.Application) {
