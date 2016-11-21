@@ -501,20 +501,25 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     }
 
-    appendContentNodes(relationships: TreeNodeParentOfContent[],
-                       update: boolean = true): wemQ.Promise<any> {
+    appendContentNodes(relationships: TreeNodeParentOfContent[]): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>[]> {
 
-        var parallelPromises: wemQ.Promise<any>[] = [];
+        var deferred = wemQ.defer<TreeNode<ContentSummaryAndCompareStatus>[]>(),
+            parallelPromises: wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>[]>[] = [],
+            result: TreeNode<ContentSummaryAndCompareStatus>[] = [];
 
         relationships.forEach((relationship) => {
             parallelPromises.push(this.fetchChildrenIds(relationship.getNode()).then((contentIds: ContentId[]) => {
                 relationship.getChildren().forEach((content: ContentSummaryAndCompareStatus) => {
-                    this.appendContentNode(relationship.getNode(), content, contentIds.indexOf(content.getContentId()), false);
+                    result.push(this.appendContentNode(relationship.getNode(), content, contentIds.indexOf(content.getContentId()), false));
                 })
+                return result;
             }));
         });
 
-        return wemQ.allSettled(parallelPromises);
+        wemQ.all(parallelPromises).then(() => {
+            deferred.resolve(result);
+        });
+        return deferred.promise;
     }
 
     placeContentNode(parent: TreeNode<ContentSummaryAndCompareStatus>,
