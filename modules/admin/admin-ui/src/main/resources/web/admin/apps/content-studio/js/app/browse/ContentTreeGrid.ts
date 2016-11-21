@@ -69,11 +69,22 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         let updateColumns = (force?: boolean) => {
             if (force) {
                 var width = this.getEl().getWidth();
+                var checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
+
+                let curClass = nameColumn.getCssClass();
+
+                if(checkSelIsMoved) {
+                    nameColumn.setCssClass(curClass ? curClass : "" + "shifted");
+                } else {
+                    if(curClass && curClass.indexOf("shifted") >= 0) {
+                        nameColumn.setCssClass(curClass.replace("shifted", ""));
+                    }
+                }
 
                 if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
-                    this.getGrid().setColumns([nameColumn, orderColumn]);
+                    this.getGrid().setColumns([nameColumn, orderColumn], checkSelIsMoved);
                 } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
-                    this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn]);
+                    this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn], checkSelIsMoved);
                 } else {
                     if (ResponsiveRanges._540_720.isFitOrSmaller(width)) {
                         modifiedTimeColumn.setMaxWidth(90);
@@ -88,7 +99,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 this.getGrid().resizeCanvas();
             }
             // re-set the selection to update selected rows presentation
-            this.getGrid().setSelectedRows(this.getGrid().getSelectedRows());
         };
 
         this.initEventHandlers(updateColumns);
