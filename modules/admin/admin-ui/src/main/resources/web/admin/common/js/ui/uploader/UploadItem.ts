@@ -4,6 +4,7 @@ module api.ui.uploader {
 
         private file: FineUploaderFile;
         private model: MODEL;
+        private fileName: string;
 
         private failedListeners: {(): void}[] = [];
         private uploadStoppedListeners: {(): void}[] = [];
@@ -12,6 +13,7 @@ module api.ui.uploader {
 
         constructor(file: FineUploaderFile) {
             this.file = file;
+            this.fileName = file.name;
         }
 
         getId(): string {
@@ -38,11 +40,11 @@ module api.ui.uploader {
         }
 
         getName(): string {
-            return this.file.name;
+            return this.fileName;
         }
 
         setName(name: string): UploadItem<MODEL> {
-            this.file.name = name;
+            this.fileName = name;
             return this;
         }
 
@@ -89,7 +91,7 @@ module api.ui.uploader {
             if (this.file && other.file) {
 
                 if (!api.ObjectHelper.stringEquals(this.file.id, other.file.id) ||
-                    !api.ObjectHelper.stringEquals(this.file.name, other.file.name) ||
+                    !api.ObjectHelper.stringEquals(this.fileName, other.fileName) ||
                     !api.ObjectHelper.numberEquals(this.file.percent, other.file.percent) ||
                     //!api.ObjectHelper.stringEquals(this.file.type, other.file.type) ||
                     !api.ObjectHelper.numberEquals(this.file.size, other.file.size) ||
