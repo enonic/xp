@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.json.content;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.xp.content.ResolveDependenciesAggregationResult;
+import com.enonic.xp.content.ContentDependenciesAggregation;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 public class DependenciesAggregationJson
@@ -12,9 +12,9 @@ public class DependenciesAggregationJson
 
     private String iconUrl;
 
-    public DependenciesAggregationJson( final ResolveDependenciesAggregationResult aggregation, final ContentTypeIconUrlResolver contentTypeIconUrlResolver )
+    public DependenciesAggregationJson(final ContentDependenciesAggregation aggregation, final ContentTypeIconUrlResolver contentTypeIconUrlResolver )
     {
-        this.type = aggregation.getType();
+        this.type = aggregation.getType().toString();
         this.count = aggregation.getCount();
         this.iconUrl = contentTypeIconUrlResolver.resolve( ContentTypeName.from( this.type ) );
     }
