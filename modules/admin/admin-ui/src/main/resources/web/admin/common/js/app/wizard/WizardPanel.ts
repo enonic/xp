@@ -557,10 +557,6 @@ module api.app.wizard {
                 this.splitPanel.hideSplitter();
                 this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
 
-                if (!!this.helpTextToggleButton) {
-                    this.helpTextToggleButton.hide();
-                }
-
                 this.stepNavigator.onNavigationItemActivated(this.toggleMinimizeListener);
             } else {
                 this.splitPanel.loadPanelSizesAndDistribute();
@@ -570,11 +566,14 @@ module api.app.wizard {
                 this.stepsPanel.setListenToScroll(true);
                 this.stepNavigator.setScrollEnabled(true);
 
-                if (!!this.helpTextToggleButton) {
-                    this.helpTextToggleButton.show();
-                }
-
                 this.stepNavigator.selectNavigationItem(navigationIndex, false, true);
+            }
+
+            if (this.helpTextToggleButton) {
+                this.helpTextToggleButton.setVisible(!this.minimized);
+                // Additional resize after button is shown, but
+                // ResponsiveManager already handled callded checkAndMinimize
+                this.stepNavigatorAndToolbarContainer.checkAndMinimize();
             }
         }
 
