@@ -1,18 +1,15 @@
 import "../../api.ts";
-import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
-import {ContentPublishMenuManager} from "../browse/ContentPublishMenuManager";
+import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
+import {PublishDialogDependantList, isContentSummaryValid} from "./PublishDialogDependantList";
+import {ContentPublishPromptEvent} from "../browse/ContentPublishPromptEvent";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import CompareContentResults = api.content.resource.result.CompareContentResults;
-import DialogButton = api.ui.dialog.DialogButton;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
-import ContentIds = api.content.ContentIds;
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
-import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -20,7 +17,7 @@ import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
  * Dependant items number will change depending on includeChildren checkbox state as
  * resolved dependencies usually differ in that case.
  */
-export class ContentPublishDialog extends DependantItemsDialog {
+export class ContentPublishDialog extends ProgressBarDialog {
 
     private childrenCheckbox: api.ui.Checkbox;
 
@@ -32,14 +29,16 @@ export class ContentPublishDialog extends DependantItemsDialog {
     private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
     private stashedCount: {[checked: string]: number} = {};
 
-    private progressBar: api.ui.ProgressBar;
-
-    private static progressBarDelay: number = 2000; // If the content is still being published after this time, show the progress bar (in ms)
-    private static pollInterval: number = 500;  // Interval of task polling when publishing the content (in ms)
-    private static isPublishingClass: string = "is-publishing";
-
     constructor() {
-        super("Publishing Wizard", "Resolving items...", "Other items that will be published");
+        super(
+            "Publishing Wizard",
+            "Resolving items...",
+            "Other items that will be published",
+            "is-publishing",
+            () => {
+                new ContentPublishPromptEvent([]).fire();
+            }
+        );
 
         this.setAutoUpdateTitle(false);
         this.getEl().addClass("publish-dialog");
@@ -59,18 +58,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 this.reloadPublishDependencies().done();
             }
         });
-    }
-
-    private createProgressBar() {
-        if (this.progressBar) {
-            this.progressBar.setValue(0);
-            return this.progressBar;
-        }
-
-        let progressBar = new api.ui.ProgressBar(0);
-        this.appendChildToContentPanel(progressBar);
-
-        return progressBar;
     }
 
     protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -106,24 +93,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.childrenLoaded = false;
 
         super.open();
-    }
-
-
-    show() {
-        super.show(this.isProgressBarEnabled());
-    }
-
-    onPublishComplete() {
-        if (this.isProgressBarEnabled()) {
-            this.disableProgressBar();
-        }
-
-        if (this.isVisible()) {
-            this.close();
-            return;
-        }
-
-        this.hide();
     }
     
     close() {
@@ -197,7 +166,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
             this.dependantIds = result.getDependants();
-            this.setStashedCount(this.dependantIds.length)
+            this.setStashedCount(this.dependantIds.length);
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
@@ -298,7 +267,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         this.showLoadingSpinner();
 
-        this.setSubTitle(this.countTotal() + " items are being published...")
+        this.setSubTitle(this.countTotal() + " items are being published...");
 
         var selectedIds = this.getContentToPublishIds();
 
@@ -308,7 +277,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
             .setExcludedIds(this.excludedIds)
             .sendAndParse()
             .then((taskId: api.task.TaskId) => {
-                this.pollPublishTask(taskId);
+                this.pollTask(taskId);
             }).catch((reason) => {
             this.hideLoadingSpinner();
                 this.close();
@@ -316,69 +285,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
                     api.notify.showError(reason.message);
                 }
             });
-    }
-
-    private enableProgressBar() {
-        api.dom.Body.get().addClass(ContentPublishDialog.isPublishingClass);
-        ContentPublishMenuManager.getProgressBar().setValue(0);
-        this.addClass(ContentPublishDialog.isPublishingClass);
-        this.hideLoadingSpinner();
-        this.progressBar = this.createProgressBar();
-    }
-
-    private disableProgressBar() {
-        this.removeClass(ContentPublishDialog.isPublishingClass);
-        api.dom.Body.get().removeClass(ContentPublishDialog.isPublishingClass);
-    }
-
-    private isProgressBarEnabled() {
-        return this.hasClass(ContentPublishDialog.isPublishingClass);
-    }
-
-    private pollPublishTask(taskId: api.task.TaskId, elapsed: number = 0, interval: number = ContentPublishDialog.pollInterval) {
-        setTimeout(() => {
-            if (!this.isProgressBarEnabled() && elapsed >= ContentPublishDialog.progressBarDelay) {
-                this.enableProgressBar();
-            }
-
-            new api.task.GetTaskInfoRequest(taskId).sendAndParse().then((task: api.task.TaskInfo) => {
-                let state = task.getState();
-                if (!task) {
-                    return; // task probably expired, stop polling
-                }
-
-                let progress = task.getProgress();
-
-                if (state == api.task.TaskState.FINISHED) {
-                    this.setProgressValue(100);
-                    this.onPublishComplete();
-
-                    api.notify.showSuccess(progress.getInfo());
-                } else if (state == api.task.TaskState.FAILED) {
-                    this.onPublishComplete();
-
-                    api.notify.showError('Publishing failed: ' + progress.getInfo());
-                } else {
-                    this.setProgressValue(task.getProgressPercentage());
-                    this.pollPublishTask(taskId, elapsed + interval, interval);
-                }
-
-            }).catch((reason: any) => {
-                this.onPublishComplete();
-
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
-
-        }, interval);
-    }
-
-    private setProgressValue(value: number) {
-        if (this.isProgressBarEnabled()) {
-            this.progressBar.setValue(value);
-            if (!api.dom.Body.get().isShowingModalDialog()) {
-                ContentPublishMenuManager.getProgressBar().setValue(value);
-            }
-        }
     }
 
     protected countTotal(): number {
@@ -451,82 +357,4 @@ export class ContentPublishDialogAction extends api.ui.Action {
         super("Publish");
         this.setIconClass("publish-action");
     }
-}
-
-export class PublishDialogDependantList extends DialogDependantList {
-
-    private itemClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
-
-    private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
-
-
-    clearItems() {
-        this.removeClass("contains-removable");
-        super.clearItems();
-    }
-
-    createItemView(item: api.content.ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
-        let view = super.createItemView(item, readOnly);
-
-        if (CompareStatus.NEWER == item.getCompareStatus()) {
-            view.addClass("removable");
-            this.toggleClass("contains-removable", true);
-        }
-
-        view.onClicked((event) => {
-            if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass("remove")) {
-                this.notifyItemRemoveClicked(item);
-            } else {
-                this.notifyItemClicked(item)
-            }
-        });
-
-        if (!isContentSummaryValid(item)) {
-            view.addClass("invalid");
-            view.getEl().setTitle("Edit invalid content");
-        }
-
-        return view;
-    }
-
-    onItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.itemClickListeners.push(listener);
-    }
-
-    unItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.itemClickListeners = this.itemClickListeners.filter((curr) => {
-            return curr !== listener;
-        })
-    }
-
-    private notifyItemClicked(item) {
-        this.itemClickListeners.forEach(listener => {
-            listener(item);
-        })
-    }
-
-    onItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.removeClickListeners.push(listener);
-    }
-
-    unItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.removeClickListeners = this.removeClickListeners.filter((curr) => {
-            return curr !== listener;
-        })
-    }
-
-    private notifyItemRemoveClicked(item) {
-        this.removeClickListeners.forEach(listener => {
-            listener(item);
-        })
-    }
-
-}
-
-function isContentSummaryValid(item: ContentSummaryAndCompareStatus): boolean {
-    let status = item.getCompareStatus(),
-        summary = item.getContentSummary();
-
-    return status == CompareStatus.PENDING_DELETE ||
-           (summary.isValid() && !api.util.StringHelper.isBlank(summary.getDisplayName()) && !summary.getName().isUnnamed());
 }

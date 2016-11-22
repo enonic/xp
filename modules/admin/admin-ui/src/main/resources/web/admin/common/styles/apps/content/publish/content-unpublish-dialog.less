@@ -20,4 +20,16 @@
 
   }
 
+  .progress-bar {
+    display: none;
+  }
+
+  &.is-unpublishing {
+    .is-processing-mixin();
+
+    .item-list, .dialog-buttons button.unpublish-action {
+      display: none;
+    }
+  }
+
 }
