@@ -1,17 +1,11 @@
 module api.form.json {
 
-    export interface FormOptionSetJson extends FormItemJson {
+    export interface FormOptionSetJson extends FormSetJson {
 
         expanded?: boolean;
 
         options: FormOptionSetOptionJson[];
 
-        label: string;
-
-        occurrences: OccurrencesJson;
-
         multiselection: OccurrencesJson;
-
-        helpText?: string;
     }
 }

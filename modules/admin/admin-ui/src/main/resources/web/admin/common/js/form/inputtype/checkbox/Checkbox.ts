@@ -21,7 +21,9 @@ module api.content.form.inputtype.checkbox {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            this.setInputAlignment(inputConfig["alignment"]);
+            if (inputConfig) {
+                this.setInputAlignment(inputConfig["alignment"]);
+            }
         }
 
         private setInputAlignment(inputAlignmentObj) {

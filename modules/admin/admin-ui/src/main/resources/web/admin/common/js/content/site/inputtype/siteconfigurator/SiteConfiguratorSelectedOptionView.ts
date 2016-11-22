@@ -63,7 +63,6 @@ module api.content.site.inputtype.siteconfigurator {
             };
 
             this.formView = this.createFormView(this.siteConfig);
-            this.formView.layout();
 
             if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());

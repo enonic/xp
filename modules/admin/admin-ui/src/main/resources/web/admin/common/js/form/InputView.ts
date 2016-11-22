@@ -39,7 +39,7 @@ module api.form {
 
         private userInputValid: boolean;
 
-        private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: RecordingValidityChangedEvent): void}[] = [];
 
         private helpText: HelpTextContainer;
 
@@ -137,11 +137,8 @@ module api.form {
         private getPropertyArray(propertySet: PropertySet): PropertyArray {
             var array = propertySet.getPropertyArray(this.input.getName());
             if (!array) {
-                array = PropertyArray.create().
-                    setType(this.inputTypeView.getValueType()).
-                    setName(this.input.getName()).
-                    setParent(this.parentPropertySet).
-                    build();
+                array = PropertyArray.create().setType(this.inputTypeView.getValueType()).setName(this.input.getName()).setParent(
+                    this.parentPropertySet).build();
 
                 propertySet.addPropertyArray(array);
 
@@ -177,8 +174,11 @@ module api.form {
 
         private createInputTypeView(): api.form.inputtype.InputTypeView<any> {
             var inputType: api.form.InputTypeName = this.input.getInputType();
-            var inputTypeViewContext = this.getContext().createInputTypeViewContext(this.input.getInputTypeConfig(),
-                this.parentPropertySet.getPropertyPath(), this.input);
+            var inputTypeViewContext = this.getContext().createInputTypeViewContext(
+                this.input.getInputTypeConfig() || {},
+                this.parentPropertySet.getPropertyPath(),
+                this.input
+            );
 
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
                 return inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);

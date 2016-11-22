@@ -5,9 +5,7 @@ module api.form {
      *
      * The form items are kept in the order they where inserted.
      */
-    export class FormItemSet extends FormItem implements FormItemContainer {
-
-        private label: string;
+    export class FormItemSet extends FormSet implements FormItemContainer {
 
         private formItems: FormItem[] = [];
 
@@ -15,21 +13,12 @@ module api.form {
 
         private immutable: boolean;
 
-        private occurrences: Occurrences;
-
         private customText: string;
 
-        private helpText: string;
-
-        private helpTextIsOn: boolean = false;
-
         constructor(formItemSetJson: api.form.json.FormItemSetJson) {
-            super(formItemSetJson.name);
-            this.label = formItemSetJson.label;
+            super(formItemSetJson);
             this.immutable = formItemSetJson.immutable;
-            this.occurrences = Occurrences.fromJson(formItemSetJson.occurrences);
             this.customText = formItemSetJson.customText;
-            this.helpText = formItemSetJson.helpText;
 
             if (formItemSetJson.items != null) {
                 formItemSetJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
@@ -62,32 +51,12 @@ module api.form {
             return <Input>this.formItemByName[name];
         }
 
-        getLabel(): string {
-            return this.label;
-        }
-
         isImmutable(): boolean {
             return this.immutable;
         }
 
         getCustomText(): string {
             return this.customText;
-        }
-
-        getHelpText(): string {
-            return this.helpText;
-        }
-
-        getOccurrences(): Occurrences {
-            return this.occurrences;
-        }
-
-        isHelpTextOn(): boolean {
-            return this.helpTextIsOn;
-        }
-
-        toggleHelpText(show?: boolean) {
-            this.helpTextIsOn = show;
         }
 
         public toFormItemSetJson(): api.form.json.FormItemTypeWrapperJson {
@@ -115,23 +84,11 @@ module api.form {
 
             var other = <FormItemSet>o;
 
-            if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
-                return false;
-            }
-
             if (!api.ObjectHelper.booleanEquals(this.immutable, other.immutable)) {
                 return false;
             }
 
-            if (!api.ObjectHelper.equals(this.occurrences, other.occurrences)) {
-                return false;
-            }
-
             if (!api.ObjectHelper.stringEquals(this.customText, other.customText)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.stringEquals(this.helpText, other.helpText)) {
                 return false;
             }
 

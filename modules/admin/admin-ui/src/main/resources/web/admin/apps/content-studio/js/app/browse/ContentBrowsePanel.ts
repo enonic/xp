@@ -216,27 +216,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
 
-        this.contentTreeGrid.onSelectionChanged(() => {
-            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
-            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
-
-            const needUpdate = isNonZeroSelectionInMobileMode && isNewlySelected;
-
-            if (needUpdate) {
-                updateAndShowMobilePanel();
-            }
-        });
-
-        // Handles specific case, not handled by function above
-        // Handles click for selection [many] -> [single],
-        // where: [single] is a subset of [many]
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
-            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
-            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
-
-            const needUpdate = isNonZeroSelectionInMobileMode && !isNewlySelected;
-
-            if (needUpdate) {
+            if (this.isSomethingSelectedInMobileMode()) {
                 updateAndShowMobilePanel();
             }
         });
@@ -259,7 +240,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return item;
     }
 
-    private isNonZeroSelection(): boolean {
+    private isSomethingSelected(): boolean {
         return this.getFirstSelectedBrowseItem() != null;
     }
 
@@ -268,8 +249,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return this.mobileContentItemStatisticsPanel.isVisible();
     }
 
-    private isNonZeroSelectionInMobileMode(): boolean {
-        return this.isMobileMode() && this.isNonZeroSelection();
+    private isSomethingSelectedInMobileMode(): boolean {
+        return this.isMobileMode() && this.isSomethingSelected();
     }
 
     private setActiveDetailsPanel(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {

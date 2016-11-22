@@ -3,6 +3,7 @@
 ///<reference path='ObjectHelper.spec.ts' />
 
 ///<reference path='application/_spec.ts' />
+///<reference path='content/_spec.ts' />
 ///<reference path='data/_spec.ts' />
 ///<reference path='form/_spec.ts' />
 ///<reference path='i18n/_spec.ts' />
