@@ -48,6 +48,9 @@
         xpVersion: '{{xpVersion}}',
         appId: '{{appId}}'
     };
+
+    <!-- Append the launcher -->
+    !!xplauncher && xplauncher.call(this, '{{assetsUri}}', document);
 </script>
 
 <!-- App javascript -->
@@ -56,14 +59,6 @@
 
 <!-- Start the app -->
 <script type="text/javascript">
-    if (CONFIG.portalAssetsUrl) {
-        var launcherJs = document.createElement("script");
-        launcherJs.setAttribute("type", "text/javascript");
-        launcherJs.setAttribute("src", CONFIG.assetsUri + "/apps/launcher/js/_all.js");
-
-        document.getElementsByTagName("body")[0].appendChild(launcherJs);
-    }
-
     window.onload = function () {
         startApplication();
     }
