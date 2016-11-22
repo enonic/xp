@@ -2,8 +2,8 @@ module api.content.resource {
 
     import ListContentResult = api.content.resource.result.ListContentResult;
     import ContentResponse = api.content.resource.result.ContentResponse;
-    
-    export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
+
+    export class ListContentByIdRequest<CONTENT_JSON extends api.content.json.ContentSummaryJson,CONTENT extends api.content.ContentSummary> extends ContentResourceRequest<ListContentResult<CONTENT_JSON>, ContentResponse<CONTENT>> {
 
         private parentId: ContentId;
 
@@ -21,22 +21,22 @@ module api.content.resource {
             this.parentId = parentId;
         }
 
-        setExpand(value: api.rest.Expand): ListContentByIdRequest {
+        setExpand(value: api.rest.Expand): ListContentByIdRequest<CONTENT_JSON,CONTENT> {
             this.expand = value;
             return this;
         }
 
-        setFrom(value: number): ListContentByIdRequest {
+        setFrom(value: number): ListContentByIdRequest<CONTENT_JSON,CONTENT> {
             this.from = value;
             return this;
         }
 
-        setSize(value: number): ListContentByIdRequest {
+        setSize(value: number): ListContentByIdRequest<CONTENT_JSON,CONTENT> {
             this.size = value;
             return this;
         }
 
-        setOrder(value: api.content.order.ChildOrder): ListContentByIdRequest {
+        setOrder(value: api.content.order.ChildOrder): ListContentByIdRequest<CONTENT_JSON,CONTENT> {
             this.order = value;
             return this;
         }
@@ -44,7 +44,7 @@ module api.content.resource {
         getParams(): Object {
             return {
                 parentId: this.parentId ? this.parentId.toString() : null,
-                expand: this.expand,
+                expand: api.rest.Expand[this.expand],
                 from: this.from,
                 size: this.size,
                 childOrder: !!this.order ? this.order.toString() : ""
@@ -55,11 +55,18 @@ module api.content.resource {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
+        sendAndParse(): wemQ.Promise<ContentResponse<CONTENT>> {
 
-            return this.send().then((response: api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
+            return this.send().then((response: api.rest.JsonResponse<ListContentResult<CONTENT_JSON>>) => {
+                var contents: CONTENT[];
+                if (this.expand === api.rest.Expand.FULL) {
+                    contents = <any[]>Content.fromJsonArray(<any[]>response.getResult().contents);
+                }
+                else {
+                    contents = <any[]>ContentSummary.fromJsonArray(response.getResult().contents);
+                }
                 return new ContentResponse(
-                    ContentSummary.fromJsonArray(response.getResult().contents),
+                    contents,
                     new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
                 );
             });
