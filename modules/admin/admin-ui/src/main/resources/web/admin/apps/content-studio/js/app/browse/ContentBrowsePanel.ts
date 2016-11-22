@@ -470,15 +470,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private processContentCreated(data: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) {
 
-        var results: wemQ.Promise<any>[] = []
-
-        var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
-        var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true);
-
-        var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
-            nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
-
-        var parentsOfContents: TreeNodeParentOfContent[] = [];
+        var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath()),
+            createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true),
+            parentsOfContents: TreeNodeParentOfContent[] = [];
 
         for (var i = 0; i < createResult.length; i++) {
 
@@ -489,21 +483,22 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
 
                     if (oldPaths && oldPaths.length > 0) {
-                        var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(oldPaths);
+                        var movedNodes: TreeNode<ContentSummaryAndCompareStatus>[] = [],
+                            renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(oldPaths);
                         var premerged = renameResult.map((curRenameResult) => {
                             return curRenameResult.getNodes();
                         });
                         // merge array of nodes arrays
-                        nodes = nodes.concat.apply(nodes, premerged);
+                        movedNodes = movedNodes.concat.apply(movedNodes, premerged);
 
-                        nodes.forEach((node) => {
+                        movedNodes.forEach((node) => {
                             if (node.getDataId() === el.getId()) {
                                 node.setData(el);
                                 node.clearViewers();
                                 this.contentTreeGrid.updatePathsInChildren(node);
                             }
                         });
-                        results.push(this.contentTreeGrid.placeContentNodes(nodes));
+                        this.contentTreeGrid.placeContentNodes(movedNodes);
                     } else {
                         dataToHandle.push(el);
                     }
@@ -515,23 +510,22 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             });
         }
 
-        if (!!parentsOfContents) {
-            results.push(this.contentTreeGrid.appendContentNodes(
-                parentsOfContents,
-                !isFiltered
-            ).then((results) => {
-                nodes = nodes.concat(results);
-            }));
-        }
+        this.contentTreeGrid.appendContentNodes(parentsOfContents).then((results: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+            var appendedNodesThatShouldBeVisible = [];
+            results.forEach((appendedNode) => {
+                if (appendedNode.getParent() && appendedNode.getParent().isExpanded()) {
+                    appendedNodesThatShouldBeVisible.push(appendedNode);
+                }
+            });
 
-        wemQ.allSettled(results).then(() => {
+            this.contentTreeGrid.placeContentNodes(appendedNodesThatShouldBeVisible).then(() => {
+                this.contentTreeGrid.initAndRender();
 
-            this.contentTreeGrid.initAndRender();
-
-            this.setRefreshOfFilterRequired();
-            window.setTimeout(() => {
-                this.refreshFilter();
-            }, 1000);
+                this.setRefreshOfFilterRequired();
+                window.setTimeout(() => {
+                    this.refreshFilter();
+                }, 1000);
+            });
         });
     }
 
