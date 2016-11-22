@@ -21,6 +21,8 @@ import ContentId = api.content.ContentId;
 import AppBarTabId = api.app.bar.AppBarTabId;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import PropertyChangedEvent = api.PropertyChangedEvent;
+import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
+import Content = api.content.Content;
 
 declare var CONFIG;
 
@@ -36,6 +38,7 @@ function getApplication(): api.app.Application {
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
     this.clientEventsListener = new ContentEventsListener([application]);
+    this.iconUrlResolver = new ContentIconUrlResolver();
 
     var messageId;
     this.lostConnectionDetector = new api.system.LostConnectionDetector();
@@ -99,7 +102,20 @@ function initToolTip() {
 }
 
 function updateTabTitle(title: string) {
-    wemjq('title').html(`${title} - Enonic XP Admin`);
+    wemjq('title').html(`${title} / Content Studio`);
+}
+
+function updateFavicon(content: Content) {
+    let resolver = this.iconUrlResolver.setContent(content).setCrop(false);
+    wemjq('link[rel*=icon][sizes]').each((index, link) => {
+        let sizes = link.getAttribute('sizes').split('x');
+        if (sizes.length > 0) {
+            try {
+                resolver.setSize(parseInt(sizes[0]));
+            } catch (e) { }
+        }
+        link.setAttribute('href', resolver.resolve());
+    });
 }
 
 function startApplication() {
@@ -161,6 +177,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams) {
     wizard.onDataLoaded(content => {
         let contentType = (<ContentWizardPanel>wizard).getContentType();
         updateTabTitle(content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
+        updateFavicon(content);
     });
     wizard.onWizardHeaderCreated(() => {
         // header will be ready after rendering is complete
