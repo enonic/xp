@@ -142,7 +142,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private searchDataAndHandleResponse(contentQuery: ContentQuery) {
-        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.SUMMARY).sendAndParse().then(
+        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.FULL).sendAndParse().then(
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 this.handleDataSearchResult(contentQuery, contentQueryResult);
             }).catch((reason: any) => {
@@ -151,7 +151,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private refreshDataAndHandleResponse(contentQuery: ContentQuery) {
-        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.SUMMARY).sendAndParse().then(
+        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.FULL).sendAndParse().then(
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 if (contentQueryResult.getMetadata().getTotalHits() > 0) {
                     this.handleDataSearchResult(contentQuery, contentQueryResult);
@@ -214,7 +214,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         }
 
         return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(clonedContentQueryNoContentTypes).setExpand(
-            api.rest.Expand.SUMMARY).sendAndParse().then(
+            api.rest.Expand.FULL).sendAndParse().then(
             (contentQueryResultNoContentTypesSelected: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 return this.combineAggregations(contentQueryResult, contentQueryResultNoContentTypesSelected);
             });

@@ -383,11 +383,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             console.debug("ContentBrowsePanel: updated", data);
         }
 
-        var changed = this.doHandleContentUpdate(data);
+        return this.doHandleContentUpdate(data).then((changed) => {
+            this.updateStatisticsPanel(data);
 
-        this.updateStatisticsPanel(data);
-
-        return this.contentTreeGrid.placeContentNodes(changed);
+            return this.contentTreeGrid.placeContentNodes(changed);
+        });
     }
 
     private handleContentDeleted(paths: ContentPath[]) {
@@ -512,7 +512,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private doHandleContentUpdate(data: ContentSummaryAndCompareStatus[]): TreeNode<ContentSummaryAndCompareStatus>[] {
+    private doHandleContentUpdate(data: ContentSummaryAndCompareStatus[]): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>[]> {
         var changed = this.updateNodes(data);
 
         this.updateDetailsPanel(data);
@@ -520,10 +520,18 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.contentTreeGrid.invalidate();
 
         // Update since CompareStatus changed
-        let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
-        this.contentTreeGrid.notifyDataChanged(changedEvent);
+        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+            changed.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+                node.getData().setReadOnly(
+                    !(<api.content.Content>node.getData().getContentSummary()).isAnyPrincipalAllowed(loginResult.getPrincipals(),
+                        api.security.acl.Permission.MODIFY));
+            });
 
-        return changed;
+            let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
+            this.contentTreeGrid.notifyDataChanged(changedEvent);
+
+            return changed;
+        })
     }
 
     private updateNodes(data: ContentSummaryAndCompareStatus[]): TreeNode<ContentSummaryAndCompareStatus>[] {

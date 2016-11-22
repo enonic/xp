@@ -12,15 +12,23 @@ module api.content.resource {
 
             var deferred = wemQ.defer<ContentResponse<ContentSummaryAndCompareStatus>>();
 
-            new ListContentByIdRequest(parentContentId).setFrom(from).setSize(size).setOrder(childOrder).sendAndParse().then(
-                (response: ContentResponse<ContentSummary>)=> {
+            new ListContentByIdRequest<api.content.json.ContentJson, api.content.Content>(parentContentId).setFrom(from).setSize(
+                size).setOrder(childOrder).setExpand(api.rest.Expand.FULL).sendAndParse().then(
+                (response: ContentResponse<Content>)=> {
                     CompareContentRequest.fromContentSummaries(response.getContents()).sendAndParse().then(
                         (compareResults: CompareContentResults) => {
-                            var result = new ContentResponse<ContentSummaryAndCompareStatus>(
-                                ContentSummaryAndCompareStatusFetcher.updateCompareStatus(response.getContents(), compareResults),
-                                response.getMetadata()
-                            );
-                            deferred.resolve(result);
+                            var contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(
+                                response.getContents(), compareResults);
+                            new api.security.auth.IsAuthenticatedRequest().sendAndParse().then(
+                                (loginResult: api.security.auth.LoginResult) => {
+                                    contents.forEach((content: ContentSummaryAndCompareStatus) => {
+                                        content.setReadOnly(!(<api.content.Content>content.getContentSummary()).isAnyPrincipalAllowed(
+                                            loginResult.getPrincipals(), api.security.acl.Permission.MODIFY));
+                                    });
+                                    var result = new ContentResponse<ContentSummaryAndCompareStatus>(contents, response.getMetadata());
+                                    deferred.resolve(result);
+                                })
+
                         });
                 });
 

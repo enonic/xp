@@ -101,6 +101,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             // re-set the selection to update selected rows presentation
         };
 
+        this.onDataChanged(this.addTitleAttributeToReadOnlyRows.bind(this));
+
         this.initEventHandlers(updateColumns);
     }
 
@@ -152,13 +154,21 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
                 var contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
                     compareResults);
-                var metadata = contentQueryResult.getMetadata();
-                if (metadata.getTotalHits() > metadata.getHits()) {
-                    contents.push(new ContentSummaryAndCompareStatus());
-                }
-                this.filter(contents);
-                this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
-                this.notifyLoaded();
+                new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                    contents.forEach((content: ContentSummaryAndCompareStatus) => {
+                        content.setReadOnly(
+                            !(<api.content.Content>content.getContentSummary()).isAnyPrincipalAllowed(loginResult.getPrincipals(),
+                                api.security.acl.Permission.MODIFY));
+                    });
+                    var metadata = contentQueryResult.getMetadata();
+                    if (metadata.getTotalHits() > metadata.getHits()) {
+                        contents.push(new ContentSummaryAndCompareStatus());
+                    }
+                    this.filter(contents);
+                    this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
+                    this.notifyLoaded();
+                })
+                
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -229,7 +239,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             this.filterQuery.setFrom(from);
             this.filterQuery.setSize(ContentTreeGrid.MAX_FETCH_SIZE);
             return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.filterQuery).setExpand(
-                api.rest.Expand.SUMMARY).sendAndParse().then(
+                api.rest.Expand.FULL).sendAndParse().then(
                 (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                     var contentSummaries = contentQueryResult.getContents();
                     var compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
@@ -238,12 +248,22 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                             return el.getData();
                         }).slice(0, from).concat(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
                             compareResults));
-                        var meta = contentQueryResult.getMetadata();
-                        if (from + meta.getHits() < meta.getTotalHits()) {
-                            list.push(new ContentSummaryAndCompareStatus());
-                        }
-                        parentNode.setMaxChildren(meta.getTotalHits());
-                        return list;
+
+                        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then(
+                            (loginResult: api.security.auth.LoginResult) => {
+                                list.forEach((content: ContentSummaryAndCompareStatus) => {
+                                    content.setReadOnly(!(<api.content.Content>content.getContentSummary()).isAnyPrincipalAllowed(
+                                        loginResult.getPrincipals(), api.security.acl.Permission.MODIFY));
+                                });
+
+                                var meta = contentQueryResult.getMetadata();
+                                if (from + meta.getHits() < meta.getTotalHits()) {
+                                    list.push(new ContentSummaryAndCompareStatus());
+                                }
+                                parentNode.setMaxChildren(meta.getTotalHits());
+                                return list;
+                            });
+
                     });
                 });
         }
@@ -366,6 +386,11 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             super.selectAll();
             this.getGrid().unmask();
         }, 5);
+    }
+
+    protected collapseNode(node: TreeNode<ContentSummaryAndCompareStatus>) {
+        super.collapseNode(node);
+        this.addTitleAttributeToReadOnlyRows();
     }
 
     findByPaths(paths: api.content.ContentPath[], useParent: boolean = false): TreeNodesOfContentPath[] {
@@ -671,5 +696,32 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         return wemQ.all(parallelPromises).spread<void>(() => {
             return wemQ(null);
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+    }
+
+    private addTitleAttributeToReadOnlyRows() {
+        setTimeout(() => {
+            this.getRoot().getCurrentRoot().treeToList().forEach((node: TreeNode<ContentSummaryAndCompareStatus>, i) => {
+                if (node.getData().isReadOnly()) {
+                    let rowEl = wemjq(this.getHTMLElement()).find(".slick-row")[i];
+                    if (rowEl) {
+                        rowEl.title = "Read-only";
+                    }
+                }
+
+            })
+        }, 50);
+    }
+
+    protected handleItemMetadata(row: number) {
+        var node = this.getItem(row);
+        if (this.isEmptyNode(node)) {
+            return {cssClasses: 'empty-node'};
+        }
+
+        if (node.getData().isReadOnly()) {
+            return {cssClasses: 'readonly'};
+        }
+
+        return null;
     }
 }
