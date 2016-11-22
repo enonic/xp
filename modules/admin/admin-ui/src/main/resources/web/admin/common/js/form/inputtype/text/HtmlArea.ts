@@ -157,8 +157,21 @@ module api.form.inputtype.text {
                     });
                 } else if ((e.altKey) && e.keyCode === 9) {  // alt+tab for OSX
                     e.preventDefault();
-                    api.dom.FormEl.moveFocusToNextFocusable(api.dom.Element.fromHtmlElement(<HTMLElement>document.activeElement),
+
+                    let htmlAreaIframe = wemjq(textAreaWrapper.getHTMLElement()).find("iframe").get(0); // the one that event is triggered from
+                    let activeElement = this.isNotActiveElement(htmlAreaIframe) ? htmlAreaIframe : <HTMLElement>document.activeElement; // check if focused element is html area that triggered event
+                    let nextFocusable = api.dom.FormEl.getNextFocusable(api.dom.Element.fromHtmlElement(activeElement),
                         "iframe, input, select");
+
+                    if (nextFocusable) {
+                        if (this.isIframe(nextFocusable)) { // if iframe is next focusable then it is a html area and using it's own focus method
+                            let nextId = nextFocusable.getId().replace("_ifr", "");
+                            this.getEditor(nextId).focus();
+                        }
+                        else {
+                            nextFocusable.giveFocus();
+                        }
+                    }
                 }
             };
 
@@ -323,6 +336,16 @@ module api.form.inputtype.text {
 
         private newValue(s: string): Value {
             return new Value(s, ValueTypes.STRING);
+        }
+
+        private isNotActiveElement(htmlAreaIframe: HTMLElement): boolean {
+            let activeElement = wemjq(document.activeElement).get(0);
+
+            return htmlAreaIframe != activeElement;
+        }
+
+        private isIframe(element: Element): boolean {
+            return element.getEl().getTagName().toLowerCase() === "iframe";
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

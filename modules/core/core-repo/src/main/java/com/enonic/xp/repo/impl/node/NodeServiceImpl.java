@@ -63,6 +63,7 @@ import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
@@ -315,7 +316,7 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target, final PushNodesListener pushListener )
     {
-        final PushNodesResult pushNodesResult = PushNodesCommand.create().
+        final InternalPushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -325,9 +326,9 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( pushNodesResult.getSuccessful().isNotEmpty() )
+        if ( pushNodesResult.getPushNodeEntries().isNotEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessful() ) );
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getPushNodeEntries() ) );
         }
 
         return pushNodesResult;
@@ -526,6 +527,7 @@ public class NodeServiceImpl
     {
         final RestoreResult restoreResult = this.snapshotService.restore( params );
         this.storageService.invalidate();
+        this.eventPublisher.publish( RepositoryEvents.restored() );
         return restoreResult;
     }
 

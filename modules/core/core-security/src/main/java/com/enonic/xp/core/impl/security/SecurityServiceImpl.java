@@ -320,6 +320,7 @@ public final class SecurityServiceImpl
                         fieldName( PrincipalPropertyNames.MEMBER_KEY ).
                         addValue( ValueFactory.newString( member.toString() ) ).
                         build() ).
+                    size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).
                     build() );
                 return this.nodeService.getByIds( result.getNodeIds() );
             } );

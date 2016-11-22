@@ -1278,7 +1278,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         } else {
 
-            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent), true).build();
             return !viewedContent.equals(persistedContent, true);
         }
     }
