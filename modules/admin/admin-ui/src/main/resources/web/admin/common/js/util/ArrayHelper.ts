@@ -61,7 +61,7 @@ module api.util {
         }
 
         static findElementByFieldValue<T>(array: Array<T>, field: string, value: any): T {
-            var result: T;
+            var result: T = null;
 
             array.every((element: T) => {
                 if (element[field] == value) {
