@@ -7,6 +7,7 @@ module api.liveedit.fragment {
     import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
     import Content = api.content.Content;
     import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
+    import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
 
     export class FragmentComponentViewBuilder extends ComponentViewBuilder<FragmentComponent> {
@@ -50,6 +51,7 @@ module api.liveedit.fragment {
             this.parseContentViews(this);
 
             this.handleContentRemovedEvent();
+            this.handleContentUpdatedEvent();
         }
 
         private handleContentRemovedEvent() {
@@ -69,6 +71,20 @@ module api.liveedit.fragment {
 
             this.onRemoved((event) => {
                 ContentDeletedEvent.un(contentDeletedListener);
+            });
+        }
+
+        private handleContentUpdatedEvent() {
+            var contentUpdatedListener = (event: ContentUpdatedEvent) => {
+                if (event.getContentId().equals(this.fragmentComponent.getFragment())) {
+                    new FragmentComponentReloadRequiredEvent(this).fire();
+                }
+            }
+
+            ContentUpdatedEvent.on(contentUpdatedListener);
+
+            this.onRemoved((event) => {
+                ContentUpdatedEvent.un(contentUpdatedListener);
             });
         }
 
@@ -106,6 +122,7 @@ module api.liveedit.fragment {
                     new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
                         this.fragmentContent = content;
                         this.notifyFragmentContentLoaded();
+                        new api.liveedit.FragmentComponentLoadedEvent(this).fire();
                     }).catch((reason: any) => {
                         this.fragmentContent = null;
                         this.notifyFragmentContentLoaded();
@@ -155,6 +172,10 @@ module api.liveedit.fragment {
                 }
                 this.parseContentViews(childElement, itemType);
             });
+        }
+
+        getContentId(): api.content.ContentId {
+            return this.fragmentComponent ? this.fragmentComponent.getFragment() : null;
         }
 
         onFragmentContentLoaded(listener: (event: api.liveedit.FragmentComponentLoadedEvent) => void) {

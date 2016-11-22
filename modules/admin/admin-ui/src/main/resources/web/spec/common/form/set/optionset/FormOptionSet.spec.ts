@@ -29,7 +29,7 @@ module FormOptionSetSpec {
             });
 
             it("should correctly initialize occurrences config", function () {
-                expect(optionSet.getOccurrences().getMinimum()).toEqual(5);
+                expect(optionSet.getOccurrences().getMinimum()).toEqual(1);
                 expect(optionSet.getOccurrences().getMaximum()).toEqual(7);
             });
 
@@ -214,22 +214,22 @@ module FormOptionSetSpec {
         return new FormOptionSet(json);
     }
 
-    export function getOptionSetJsonWithOptions(): FormOptionSetJson {
-        let json: FormOptionSetJson = getOptionSetJson();
+    export function getOptionSetJsonWithOptions(expanded?: boolean): FormOptionSetJson {
+        let json: FormOptionSetJson = getOptionSetJson(expanded);
 
         json.options = getOptionsJson();
 
         return json;
     }
 
-    export function getOptionSetJson(): FormOptionSetJson {
+    export function getOptionSetJson(expanded: boolean = true): FormOptionSetJson {
         return {
             name: 'optionSet',
             label: 'Custom Option Set',
             helpText: 'Custom Help Text',
-            expanded: true,
+            expanded: expanded,
             occurrences: {
-                minimum: 5,
+                minimum: 1,
                 maximum: 7
             },
             multiselection: {

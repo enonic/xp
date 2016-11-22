@@ -43,6 +43,20 @@ module api.ui.selector.combobox {
         skipAutoDropShowOnValueChange?: boolean
     }
 
+    export enum PositionType {
+        BELOW,
+        ABOVE,
+        FLEXIBLE_BELOW,
+        FLEXIBLE_ABOVE
+    }
+
+    export interface DropdownPosition {
+
+        position: PositionType;
+
+        height: number;
+    }
+
     export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
 
         private icon: api.dom.ImgEl;
@@ -165,25 +179,67 @@ module api.ui.selector.combobox {
         }
 
         private doUpdateDropdownTopPositionAndWidth() {
+            const dropdownPosition = this.dropdownOverflowsBottom();
 
-            if (this.dropdownOverflowsBottom()) {
-                this.placeDropdownAbove()
-            } else {
+            switch (dropdownPosition.position) {
+            case PositionType.BELOW:
                 this.placeDropdownBelow();
+                break;
+            case PositionType.ABOVE:
+                this.placeDropdownAbove();
+                break;
+            case PositionType.FLEXIBLE_BELOW:
+                // change dd height
+                this.comboBoxDropdown.resizeDropdownTo(dropdownPosition.height);
+                this.placeDropdownBelow();
+                break;
+            case PositionType.FLEXIBLE_ABOVE:
+                // change dd height
+                this.comboBoxDropdown.resizeDropdownTo(dropdownPosition.height);
+                this.placeDropdownAbove();
             }
+
+            // reset the custom height, after dropdown is shown
+            this.comboBoxDropdown.resetDropdownSize();
 
             this.comboBoxDropdown.setWidth(Math.max(this.input.getEl().getWidthWithBorder(), this.minWidth));
         }
 
-        private dropdownOverflowsBottom(): boolean {
-            var inputEl = this.input.getEl();
+        private dropdownOverflowsBottom(): DropdownPosition {
+            const inputEl = this.input.getEl();
+            const parent = this.getScrollableParent(inputEl);
+            const dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
 
-            var parent = this.getScrollableParent(inputEl),
-                size = parent.getHeight() - (inputEl.getOffsetTop() - parent.getOffsetTop()) - inputEl.getHeight();
+            // distance is measured from the top of the viewport
+            const distanceToParentsTop = parent.getOffsetTop();
+            const distanceToInputsTop = inputEl.getOffsetTop();
 
-            var dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
+            const distanceToParentsBottom = distanceToParentsTop + parent.getHeight();
+            const distanceToInputsBottom = distanceToInputsTop + inputEl.getHeight();
 
-            return size < dropdown.getHeightWithBorder();
+            const sizeAboveInput = distanceToInputsTop - distanceToParentsTop;
+            const sizeBelowInput = distanceToParentsBottom - distanceToInputsBottom;
+
+            const dropdownHeight = dropdown.getHeightWithBorder();
+
+            let position;
+            let height;
+
+            if (sizeBelowInput > dropdownHeight) {
+                position = PositionType.BELOW;
+                height = dropdownHeight;
+            } else if (sizeAboveInput > dropdownHeight) {
+                position = PositionType.ABOVE;
+                height = dropdownHeight;
+            } else if (sizeBelowInput > sizeAboveInput) {
+                position = PositionType.FLEXIBLE_BELOW;
+                height = sizeBelowInput;
+            } else { //sizeBelowInput < sizeAboveInput
+                position = PositionType.FLEXIBLE_ABOVE;
+                height = sizeAboveInput;
+            }
+
+            return {position, height};
         }
 
         private placeDropdownBelow() {
@@ -235,10 +291,11 @@ module api.ui.selector.combobox {
 
         showDropdown() {
 
-            this.doUpdateDropdownTopPositionAndWidth();
-            this.notifyExpanded(true);
-
             this.comboBoxDropdown.showDropdown(this.getSelectedOptions(), this.isInputEmpty() ? this.noOptionsText : null);
+
+            this.doUpdateDropdownTopPositionAndWidth();
+
+            this.notifyExpanded(true);
 
             this.dropdownHandle.down();
 

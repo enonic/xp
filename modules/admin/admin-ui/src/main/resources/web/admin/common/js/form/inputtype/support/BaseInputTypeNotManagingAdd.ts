@@ -196,7 +196,6 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor");
         }
 
-
         onFocus(listener: (event: FocusEvent) => void) {
             this.inputOccurrences.onFocus(listener);
         }
@@ -247,8 +246,7 @@ module api.form.inputtype.support {
 
                 var valueFromPropertyArray = this.propertyArray.getValue(occurrenceView.getIndex());
                 if (valueFromPropertyArray) {
-                    var breaksRequiredContract = this.valueBreaksRequiredContract(valueFromPropertyArray);
-                    if (!breaksRequiredContract) {
+                    if (!this.valueBreaksRequiredContract(valueFromPropertyArray) && this.hasValidUserInput()) {
                         numberOfValids++;
                     }
                 }

@@ -216,7 +216,7 @@ final class CreateContentCommand
             {
                 InputValidator.
                     create().
-                    contentType( contentType ).
+                    form( contentType.getForm() ).
                     inputTypeResolver( InputTypes.BUILTIN ).
                     build().
                     validate( params.getData() );

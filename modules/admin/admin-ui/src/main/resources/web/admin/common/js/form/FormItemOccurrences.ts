@@ -28,11 +28,11 @@ module api.form {
 
         private allowedOccurrences: Occurrences;
 
-        private occurrenceAddedListeners: {(event: OccurrenceAddedEvent):void}[] = [];
+        private occurrenceAddedListeners: {(event: OccurrenceAddedEvent): void}[] = [];
 
-        private occurrenceRenderedListeners: {(event: OccurrenceRenderedEvent):void}[] = [];
+        private occurrenceRenderedListeners: {(event: OccurrenceRenderedEvent): void}[] = [];
 
-        private occurrenceRemovedListeners: {(event: OccurrenceRemovedEvent):void}[] = [];
+        private occurrenceRemovedListeners: {(event: OccurrenceRemovedEvent): void}[] = [];
 
         private focusListeners: {(event: FocusEvent): void}[] = [];
 

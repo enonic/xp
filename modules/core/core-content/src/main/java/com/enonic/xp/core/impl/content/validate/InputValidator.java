@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypeResolver;
-import com.enonic.xp.schema.content.ContentType;
 
 public final class InputValidator
 {
@@ -15,7 +14,7 @@ public final class InputValidator
 
     private InputValidator( final Builder builder )
     {
-        this.form = builder.contentType.getForm();
+        this.form = builder.form;
         this.inputTypeResolver = builder.inputTypeResolver;
     }
 
@@ -35,13 +34,13 @@ public final class InputValidator
 
     public static class Builder
     {
-        private ContentType contentType;
+        private Form form;
 
         private InputTypeResolver inputTypeResolver;
 
-        public Builder contentType( final ContentType contentType )
+        public Builder form( final Form form )
         {
-            this.contentType = contentType;
+            this.form = form;
             return this;
         }
 
@@ -53,7 +52,7 @@ public final class InputValidator
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.contentType, "ContentType is required" );
+            Preconditions.checkNotNull( this.form, "Form is required" );
             Preconditions.checkNotNull( this.inputTypeResolver, "InputTypeResolver is required" );
         }
 

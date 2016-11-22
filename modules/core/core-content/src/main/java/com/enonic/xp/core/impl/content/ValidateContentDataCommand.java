@@ -9,9 +9,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
+import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
+import com.enonic.xp.core.impl.content.validate.SiteConfigValidationError;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -102,11 +105,30 @@ final class ValidateContentDataCommand
                         {
                             this.resultBuilder.addAll(
                                 new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ) );
+
+                            validateSiteForm( siteDescriptor.getForm(), siteConfig );
                         }
 
                     }
                 }
             }
+        }
+    }
+
+    private void validateSiteForm( final Form form, final SiteConfig siteConfig )
+    {
+        try
+        {
+            InputValidator.
+                create().
+                form( form ).
+                inputTypeResolver( InputTypes.BUILTIN ).
+                build().
+                validate( siteConfig.getConfig() );
+        }
+        catch ( final Exception e )
+        {
+            this.resultBuilder.add( new SiteConfigValidationError( siteConfig.getApplicationKey().getName() ) );
         }
     }
 

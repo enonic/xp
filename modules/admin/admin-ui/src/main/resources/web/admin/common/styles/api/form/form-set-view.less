@@ -1,0 +1,305 @@
+@occurrence-label-margin-left: 10px;
+
+.form-item-set-view {
+  > .occurrence-views-container > .form-item-set-occurrence-view {
+    padding: 10px;
+  }
+
+  &.max-1-occurrence {
+    .form-item-set-occurrence-view {
+      padding: 0px;
+
+      > .form-item-set-occurrences-container {
+        padding: 0 10px;
+      }
+    }
+  }
+}
+
+.form-option-set-view .form-item-set-view {
+  > .occurrence-views-container > .form-item-set-occurrence-view {
+    padding-bottom: 20px;
+  }
+}
+
+.form-item-set-view, .form-option-set-view {
+
+  .display-validation-errors &.invalid {
+    outline: 2px solid @input-red-text;
+
+    &.odd {
+      outline: 2px solid @input-red-text;
+    }
+    &.odd > .validation-viewer {
+      color: @admin-white;
+    }
+
+    .occurrence-views-container .form-option-set-occurrence-view {
+      padding-top: 10px;
+
+      > .help-text {
+        padding-left: 10px;
+      }
+
+      > .remove-button {
+        margin-right: 10px;
+      }
+    }
+
+    &.max-1-occurrence {
+      padding-bottom: 5px;
+
+      .form-option-set-occurrence-view {
+        > .form-occurrence-draggable-label {
+          margin-left: @occurrence-label-margin-left;
+        }
+
+        > .form-item-set-occurrences-container, > .form-option-set-occurrences-container {
+          padding: 0 10px;
+        }
+      }
+    }
+  }
+
+  &:not(.max-1-occurrence) {
+    > .occurrence-views-container {
+      background-color: @admin-bg-light-gray;
+      padding: 10px 10px 0px 10px;
+      .clearfix();
+    }
+    > .bottom-button-row {
+      padding-top: 0px;
+    }
+  }
+
+  .form-item-set-drop-target-placeholder, .form-option-set-drop-target-placeholder {
+    border: 2px dashed #000;
+    padding: 14px;
+    color: #000;
+    font-size: 14px;
+    text-align: center;
+    margin: 10px;
+  }
+
+  .input-view {
+    .input-label {
+      max-width: 90px;
+      margin-right: 10px;
+    }
+
+    .input-type-view,
+    .bottom-button-row,
+    .validation-viewer {
+      margin-left: @form-label-width;
+    }
+
+    .bottom-button-row {
+      background-color: white;
+    }
+
+    &.label-over-input {
+      .input-label {
+        max-width: 100%;
+      }
+      .input-type-view,
+      .bottom-button-row,
+      .validation-viewer {
+        margin-left: 0;
+      }
+    }
+  }
+
+  & > .bottom-button-row {
+    box-sizing: border-box;
+    background-color: @admin-bg-light-gray;
+    padding: 10px;
+    clear: left;
+    .clearfix();
+
+    button {
+      margin-left: 0px;
+    }
+
+    .add-button {
+      float: left;
+    }
+
+    .collapse-button {
+      float: right;
+      text-decoration: underline;
+      line-height: 28px;
+      margin-right: 10px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  & > .validation-viewer {
+    background-color: @admin-bg-light-gray;
+    padding: 0 10px 10px 10px;
+    margin-left: 0 !important;
+  }
+
+  &.odd {
+    & > .occurrence-views-container {
+      background-color: #67656a;
+    }
+
+    & > .bottom-button-row {
+      background-color: #67656a;
+
+      .collapse-button {
+        color: white;
+      }
+    }
+
+    & > .validation-viewer {
+      background-color: #67656a;
+    }
+  }
+
+  &.max-1-occurrence {
+    margin-bottom: 0px;
+
+    .occurrence-views-container {
+      > .form-option-set-occurrence-view {
+        margin-bottom: 0px;
+        padding: 0px;
+      }
+
+      &:empty + .bottom-button-row {
+        display: block;
+        padding-left: 0px;
+        padding-bottom: 0px;
+        background-color: @admin-white;
+      }
+    }
+
+    > .bottom-button-row {
+      display: none;
+    }
+
+  }
+
+  .occurrence-views-container {
+    .form-option-set-occurrence-view {
+      padding: 10px;
+    }
+
+    .form-item-set-occurrence-view, .form-option-set-occurrence-view {
+      clear: left;
+      margin: 0px;
+      margin-bottom: 10px;
+      background-color: white;
+
+      .form-occurrence-draggable-label {
+        font-size: 14px;
+        color: #777777;
+
+        .required {
+          &:after {
+            content: '*';
+            color: @input-red-text;
+          }
+        }
+
+        .help-text-toggler {
+          margin-top: 3px;
+          margin-right: 10px;
+        }
+      }
+
+      .drag-handle {
+        display: none;
+      }
+
+      .drag-control {
+        cursor: move;
+
+        & > .drag-handle {
+          display: inline;
+          margin-right: 15px;
+          line-height: 14px;
+          font-size: 14px;
+        }
+      }
+
+      & > .remove-button {
+        &:extend(.icon);
+        .icon-close();
+        .focusable();
+
+        margin: 5px 0 0 0;
+        border: 1px solid transparent;
+        line-height: 12px;
+        float: right;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .form-option-set-occurrences-container {
+        padding-bottom: 10px;
+      }
+
+      .form-item-set-occurrences-container, .form-option-set-occurrences-container {
+        margin-top: 10px;
+      }
+    }
+    .form-option-set-occurrence-view {
+      padding-bottom: 0px;
+    }
+  }
+}
+
+.display-validation-errors .form-item-set-view.invalid {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 0 !important;
+
+  .input-view.invalid {
+    margin: 0px -10px 5px -10px;
+  }
+}
+
+._0-240, ._240-360, ._360-540, ._540-720 {
+  .form-item-set-view, .form-option-set-view {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    .input-view {
+
+      .input-label {
+        max-width: 100%;
+        margin-right: 0;
+      }
+
+      .input-type-view,
+      .bottom-button-row,
+      .validation-viewer {
+        margin-left: 0;
+      }
+    }
+  }
+}
+
+.context-window, ._0-240, ._240-360, ._360-540 {
+  .form-item-set-view, .form-option-set-view {
+    margin-left: -10px;
+    margin-right: -10px;
+
+    .input-view {
+      .input-label {
+        max-width: 100%;
+        margin-right: 0;
+      }
+
+      .input-type-view,
+      .bottom-button-row,
+      .validation-viewer {
+        margin-left: 0;
+      }
+    }
+  }
+}

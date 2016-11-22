@@ -15,7 +15,7 @@ public class PushNodesResult
 
     private final ImmutableSet<Failed> failed;
 
-    private PushNodesResult( Builder builder )
+    protected PushNodesResult( Builder builder )
     {
         successful = NodeBranchEntries.from( builder.successful );
         failed = ImmutableSet.copyOf( builder.failed );
@@ -36,7 +36,7 @@ public class PushNodesResult
         return new Builder();
     }
 
-    public static final class Builder
+    public static class Builder<T extends Builder>
     {
         private final List<NodeBranchEntry> successful = Lists.newLinkedList();
 
@@ -44,21 +44,21 @@ public class PushNodesResult
 
         private final Set<NodePath> addedParentPaths = Sets.newHashSet();
 
-        private Builder()
+        protected Builder()
         {
         }
 
-        public Builder addSuccess( final NodeBranchEntry success )
+        public T addSuccess( final NodeBranchEntry success )
         {
             this.successful.add( success );
             this.addedParentPaths.add( success.getNodePath() );
-            return this;
+            return (T) this;
         }
 
-        public Builder addFailed( final NodeBranchEntry failed, final Reason reason )
+        public T addFailed( final NodeBranchEntry failed, final Reason reason )
         {
             this.failed.add( new Failed( failed, reason ) );
-            return this;
+            return (T) this;
         }
 
         public boolean hasBeenAdded( final NodePath parentPath )

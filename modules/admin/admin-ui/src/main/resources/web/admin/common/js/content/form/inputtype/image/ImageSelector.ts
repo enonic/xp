@@ -315,7 +315,7 @@ module api.content.form.inputtype.image {
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
             return super.update(propertyArray, unchangedOnly).then(() => {
-                if (!unchangedOnly || !this.contentComboBox.isDirty()) {
+                if ((!unchangedOnly || !this.contentComboBox.isDirty()) && this.contentComboBox.isRendered()) {
                     this.contentComboBox.setValue(this.getValueFromPropertyArray(propertyArray));
                 }
             });

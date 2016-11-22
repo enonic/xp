@@ -181,12 +181,34 @@ module api.form {
                 }
                 this.selectHandle(button.getFirstChild());
                 this.notifySelectionChanged();
+
+                if (api.BrowserHelper.isFirefox() && !this.topEdgeIsVisible(button.getFirstChild())) {
+                    wemjq(this.getHTMLElement()).closest(".form-panel").scrollTop(
+                        this.calcDistToTopOfScrollableArea(button.getFirstChild()));
+                }
             });
             if (!!selectedProperty) {
                 this.subscribeOnRadioDeselect(selectedProperty);
                 subscribedOnDeselect = true;
             }
             return button;
+        }
+
+        private topEdgeIsVisible(el: api.dom.Element): boolean {
+            return this.calcDistToTopOfScrollableArea(el) > 0;
+        }
+
+        private calcDistToTopOfScrollableArea(el: api.dom.Element): number {
+            return el.getEl().getOffsetTop() - this.getToolbarOffsetTop();
+        }
+
+        private getToolbarOffsetTop(delta: number = 0): number {
+            var toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
+                stickyToolbarHeight = toolbar.outerHeight(true),
+                offset = toolbar.offset(),
+                stickyToolbarOffset = offset ? offset.top : 0;
+
+            return stickyToolbarOffset + stickyToolbarHeight + delta;
         }
 
         private subscribeOnRadioDeselect(property: Property) {
@@ -246,9 +268,10 @@ module api.form {
         }
 
         private selectHandle(input: api.dom.Element) {
+            let thisElSelector = "div[id='" + this.getEl().getId() + "']";
             this.expand();
             this.enableFormItems();
-            api.dom.FormEl.moveFocusToNextFocusable(input, "input, select");
+            api.dom.FormEl.moveFocusToNextFocusable(input, thisElSelector + " input, " + thisElSelector + " select, " + thisElSelector + " textarea");
             this.addClass("selected");
         }
 

@@ -3,15 +3,15 @@
   margin-top: -1px;
 
   &:before {
-    content:'';
-    display:block;
-    box-shadow:inset 0 2px 17px -8px rgba(0, 0, 0, 1), 0 0 0 0 rgba(0, 0, 0, 0.3);
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
+    content: '';
+    display: block;
+    box-shadow: inset 0 2px 17px -8px rgba(0, 0, 0, 1), 0 0 0 0 rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
   }
 
   .frame-container {
@@ -26,11 +26,16 @@
     background-color: white; //override liveFormPanels background color to get default browser background color for iframe
     -webkit-backface-visibility: hidden;
     margin: 0 auto;
-    display: block;
+    display: none;
     width: 100%;
     height: 100%;
     border: 0 none;
     padding: 0;
     overflow: auto;
+
+    &.shown {
+      display: block;
+    }
   }
+
 }
