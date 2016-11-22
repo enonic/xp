@@ -78,6 +78,7 @@ module api.liveedit.text {
                 } else if (!!this.htmlAreaEditor) {
                     this.reInitEditor(); // on added, inline editor losses its root element of the editable area
                 }
+                this.unhighlight();
             });
 
             this.getPageView().appendContainerForTextToolbar();
