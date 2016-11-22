@@ -25,7 +25,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         });
 
         this.image.onError((event: UIEvent) => {
-            this.setNoPreview();
+            this.setNoPreview(true);
         });
 
         this.appendChild(this.image);
@@ -57,7 +57,8 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                 if (frameWindow) {
                     frameWindow.addEventListener("click", this.frameClickHandler.bind(this));
                 }
-            } catch (reason) {}
+            } catch (reason) {
+            }
         });
     }
 
@@ -117,7 +118,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
             }
             if (item.getModel().getContentSummary().getType().isImage() ||
                 item.getModel().getContentSummary().getType().isVectorMedia()) {
-                this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
+                this.getEl().removeClass("no-preview page-preview failed").addClass("image-preview");
                 if (this.isVisible()) {
                     if (item.getModel().getContentSummary().getType().equals(ContentTypeName.MEDIA_VECTOR)) {
                         this.getEl().addClass("svg-preview");
@@ -135,10 +136,10 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
             } else {
                 this.showMask();
                 if (item.isRenderable()) {
-                    this.getEl().removeClass("image-preview no-preview svg-preview").addClass('page-preview');
+                    this.getEl().removeClass("image-preview no-preview svg-preview failed").addClass('page-preview');
                     var src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW, api.content.Branch.DRAFT);
                     // test if it returns no error( like because of used app was deleted ) first and show no preview otherwise
-                    wemjq.get(src).done(() => this.frame.setSrc(src)).fail(() => this.setNoPreview());
+                    wemjq.get(src).done(() => this.frame.setSrc(src)).fail(() => this.setNoPreview(true));
                 } else {
                     this.setNoPreview();
                 }
@@ -151,8 +152,10 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         return this.item;
     }
 
-    private setNoPreview() {
+    private setNoPreview(failed: boolean = false) {
         this.getEl().removeClass("image-preview page-preview svg-preview").addClass('no-preview');
+        this.getEl().toggleClass("failed", failed);
+
         this.frame.setSrc("about:blank");
         this.hideMask();
     }

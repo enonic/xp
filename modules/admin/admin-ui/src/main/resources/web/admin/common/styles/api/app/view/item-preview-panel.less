@@ -45,5 +45,11 @@
       margin-top: -20px;
       z-index: 2;
     }
+
+    &.failed {
+      &:after {
+        content: 'Failed to render content preview. Please check logs for errors or open preview in a new window';
+      }
+    }
   }
 }
