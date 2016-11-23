@@ -83,7 +83,7 @@ module api.content.form.inputtype.upload {
             });
 
             this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
-                this.validate(false);
+                this.validate(edit);
 
                 if (!edit && crop) {
                     this.saveEditDataToProperty(crop, zoom, focus);
