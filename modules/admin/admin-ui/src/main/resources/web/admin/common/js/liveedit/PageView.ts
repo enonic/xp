@@ -475,6 +475,10 @@ module api.liveedit {
                 }
             });
 
+            if (this.editorToolbar) {
+                this.editorToolbar.toggleClass("visible", flag);
+            }
+            
             if (flag) {
                 this.addVerticalSpaceForEditorToolbar();
 
@@ -488,7 +492,6 @@ module api.liveedit {
                 api.liveedit.Highlighter.get().updateLastHighlightedItemView();
                 api.liveedit.SelectedHighlighter.get().updateLastHighlightedItemView();
             }
-
         }
 
         private addVerticalSpaceForEditorToolbar() {
