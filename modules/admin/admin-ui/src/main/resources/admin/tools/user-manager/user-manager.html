@@ -45,26 +45,17 @@
         baseUri: '{{baseUri}}',
         adminUrl: '{{adminUrl}}',
         assetsUri: '{{assetsUri}}',
-        portalAssetsUrl : '{{portalAssetsUrl}}',
         xpVersion: '{{xpVersion}}',
         appId: '{{appId}}'
     };
+
+    <!-- Append the launcher -->
+    !!xplauncher && xplauncher.call(this, '{{assetsUri}}', document);
 </script>
 
 <!-- App javascript -->
 <script type="text/javascript" src="{{assetsUri}}/common/js/_all.js"></script>
 <script type="text/javascript" src="{{assetsUri}}/apps/{{appId}}/js/_all.js"></script>
-
-<!-- Start the app -->
-<script type="text/javascript">
-    if (CONFIG.portalAssetsUrl) {
-        var launcherJs = document.createElement("script");
-        launcherJs.setAttribute("type", "text/javascript");
-        launcherJs.setAttribute("src", CONFIG.assetsUri + "/apps/launcher/js/_all.js");
-
-        document.getElementsByTagName("body")[0].appendChild(launcherJs);
-    }
-</script>
 
 </body>
 </html>

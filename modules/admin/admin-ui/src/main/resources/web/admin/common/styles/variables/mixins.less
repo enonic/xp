@@ -12,7 +12,6 @@
 
   -webkit-box-shadow: @params;
   -moz-box-shadow: @params;
-  -o-box-shadow: @params;
   box-shadow: @params;
 }
 
@@ -750,4 +749,38 @@
   background-image: none;
   box-shadow: none;
   background-color: @bgColor;
+}
+
+.is-processing-mixin() {
+  .dependants {
+    display: none !important;
+  }
+
+  .progress-bar {
+    display: block;
+    margin-bottom: 20px;
+    height: 25px;
+
+    .progress-indicator {
+      background-color: @admin-green;
+    }
+  }
+
+  .button-container {
+    float: none;
+    text-align: center;
+
+    .cancel-button-bottom {
+      span {
+        display: none;
+      }
+      &:after {
+        content: 'OK';
+        color: @admin-white;
+        width: 100px;
+        line-height: 24px;
+        font-size: 16px;
+      }
+    }
+  }
 }

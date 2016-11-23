@@ -16,7 +16,7 @@ import {ToggleSearchPanelEvent} from "./ToggleSearchPanelEvent";
 import {ToggleSearchPanelWithDependenciesEvent} from "./ToggleSearchPanelWithDependenciesEvent";
 import {NewMediaUploadEvent} from "../create/NewMediaUploadEvent";
 import {ContentPreviewPathChangedEvent} from "../view/ContentPreviewPathChangedEvent";
-import {ContentPublishMenuManager} from "./ContentPublishMenuManager";
+import {ContentPublishMenuButton} from "./ContentPublishMenuButton";
 import {TreeNodeParentOfContent} from "./TreeNodeParentOfContent";
 import {TreeNodesOfContentPath} from "./TreeNodesOfContentPath";
 
@@ -119,11 +119,12 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 }
             });
 
-            new ContentPublishMenuManager(this.browseActions);
+            let contentPublishMenuButton = new ContentPublishMenuButton(this.browseActions);
+            
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-            this.toolbar.appendChild(ContentPublishMenuManager.getPublishMenuButton());
+            this.toolbar.appendChild(contentPublishMenuButton);
 
-            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
+            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
 
             return rendered;
         }).catch((error) => {
@@ -132,7 +133,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
+    private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager,
+                                           contentPublishMenuButton: ContentPublishMenuButton) {
 
         this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
                                                fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
@@ -146,13 +148,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
             if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
-                ContentPublishMenuManager.getPublishMenuButton().maximize();
+                contentPublishMenuButton.maximize();
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                     nonMobileDetailsPanelsManager.hideActivePanel();
                     ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
                 }
             } else {
-                ContentPublishMenuManager.getPublishMenuButton().minimize();
+                contentPublishMenuButton.minimize();
             }
         });
     }
@@ -216,27 +218,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
 
-        this.contentTreeGrid.onSelectionChanged(() => {
-            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
-            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
-
-            const needUpdate = isNonZeroSelectionInMobileMode && isNewlySelected;
-
-            if (needUpdate) {
-                updateAndShowMobilePanel();
-            }
-        });
-
-        // Handles specific case, not handled by function above
-        // Handles click for selection [many] -> [single],
-        // where: [single] is a subset of [many]
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
-            const isNewlySelected = this.contentTreeGrid.isNewlySelected();
-            const isNonZeroSelectionInMobileMode = this.isNonZeroSelectionInMobileMode();
-
-            const needUpdate = isNonZeroSelectionInMobileMode && !isNewlySelected;
-
-            if (needUpdate) {
+            if (this.isSomethingSelectedInMobileMode()) {
                 updateAndShowMobilePanel();
             }
         });
@@ -259,7 +242,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return item;
     }
 
-    private isNonZeroSelection(): boolean {
+    private isSomethingSelected(): boolean {
         return this.getFirstSelectedBrowseItem() != null;
     }
 
@@ -268,8 +251,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return this.mobileContentItemStatisticsPanel.isVisible();
     }
 
-    private isNonZeroSelectionInMobileMode(): boolean {
-        return this.isMobileMode() && this.isNonZeroSelection();
+    private isSomethingSelectedInMobileMode(): boolean {
+        return this.isMobileMode() && this.isSomethingSelected();
     }
 
     private setActiveDetailsPanel(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
@@ -470,15 +453,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private processContentCreated(data: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) {
 
-        var results: wemQ.Promise<any>[] = []
-
-        var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
-        var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true);
-
-        var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
-            nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
-
-        var parentsOfContents: TreeNodeParentOfContent[] = [];
+        var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath()),
+            createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true),
+            parentsOfContents: TreeNodeParentOfContent[] = [];
 
         for (var i = 0; i < createResult.length; i++) {
 
@@ -489,21 +466,22 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
 
                     if (oldPaths && oldPaths.length > 0) {
-                        var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(oldPaths);
+                        var movedNodes: TreeNode<ContentSummaryAndCompareStatus>[] = [],
+                            renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(oldPaths);
                         var premerged = renameResult.map((curRenameResult) => {
                             return curRenameResult.getNodes();
                         });
                         // merge array of nodes arrays
-                        nodes = nodes.concat.apply(nodes, premerged);
+                        movedNodes = movedNodes.concat.apply(movedNodes, premerged);
 
-                        nodes.forEach((node) => {
+                        movedNodes.forEach((node) => {
                             if (node.getDataId() === el.getId()) {
                                 node.setData(el);
                                 node.clearViewers();
                                 this.contentTreeGrid.updatePathsInChildren(node);
                             }
                         });
-                        results.push(this.contentTreeGrid.placeContentNodes(nodes));
+                        this.contentTreeGrid.placeContentNodes(movedNodes);
                     } else {
                         dataToHandle.push(el);
                     }
@@ -515,23 +493,22 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             });
         }
 
-        if (!!parentsOfContents) {
-            results.push(this.contentTreeGrid.appendContentNodes(
-                parentsOfContents,
-                !isFiltered
-            ).then((results) => {
-                nodes = nodes.concat(results);
-            }));
-        }
+        this.contentTreeGrid.appendContentNodes(parentsOfContents).then((results: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+            var appendedNodesThatShouldBeVisible = [];
+            results.forEach((appendedNode) => {
+                if (appendedNode.getParent() && appendedNode.getParent().isExpanded()) {
+                    appendedNodesThatShouldBeVisible.push(appendedNode);
+                }
+            });
 
-        wemQ.allSettled(results).then(() => {
+            this.contentTreeGrid.placeContentNodes(appendedNodesThatShouldBeVisible).then(() => {
+                this.contentTreeGrid.initAndRender();
 
-            this.contentTreeGrid.initAndRender();
-
-            this.setRefreshOfFilterRequired();
-            window.setTimeout(() => {
-                this.refreshFilter();
-            }, 1000);
+                this.setRefreshOfFilterRequired();
+                window.setTimeout(() => {
+                    this.refreshFilter();
+                }, 1000);
+            });
         });
     }
 

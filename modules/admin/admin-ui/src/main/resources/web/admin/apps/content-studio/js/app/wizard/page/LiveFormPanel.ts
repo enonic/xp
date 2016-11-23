@@ -447,6 +447,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy.onPageUnlocked((event: api.liveedit.PageUnlockedEvent) => {
             this.contextWindow.clearSelection();
+            this.minimizeContentFormPanelIfNeeded();
         });
 
         this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {

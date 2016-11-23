@@ -23,7 +23,6 @@ module api.form.inputtype.text {
         private content: api.content.ContentSummary;
         private contentPath: api.content.ContentPath;
         private applicationKeys: ApplicationKey[];
-        private hasStickyToolbar: boolean = false;
 
         private focusListeners: {(event: FocusEvent): void}[] = [];
 
@@ -75,7 +74,7 @@ module api.form.inputtype.text {
 
             var textAreaWrapper = new api.dom.DivEl();
 
-            this.editors.push({id: editorId, textAreaWrapper: textAreaWrapper, property: property});
+            this.editors.push({id: editorId, textAreaWrapper: textAreaWrapper, property: property, hasStickyToolbar: false});
 
             textAreaEl.onRendered(() => {
                 this.initEditor(editorId, property, textAreaWrapper);
@@ -135,7 +134,6 @@ module api.form.inputtype.text {
                     textAreaWrapper.removeClass(focusedEditorCls);
                 }
                 this.notifyBlurred(e);
-
             };
 
             var keydownHandler = (e) => {
@@ -192,7 +190,7 @@ module api.form.inputtype.text {
                 then((editor: HtmlAreaEditor) => {
                     this.setEditorContent(id, property);
                     if (this.notInLiveEdit()) {
-                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
+                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
 
@@ -226,14 +224,18 @@ module api.form.inputtype.text {
             };
         }
 
-        private setupStickyEditorToolbarForInputOccurence(inputOccurence: Element) {
+        private setupStickyEditorToolbarForInputOccurence(inputOccurence: Element, editorId: string) {
+            var scrollHandler = api.util.AppHelper.debounce((e) => {
+                this.updateStickyEditorToolbar(inputOccurence, this.getEditorInfo(editorId));
+            }, 20, false);
+            
             wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", (event) => {
-                this.updateStickyEditorToolbar(inputOccurence);
+                scrollHandler();
             });
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
                 this.updateEditorToolbarPos(inputOccurence);
-                this.updateEditorToolbarWidth(inputOccurence);
+                this.updateEditorToolbarWidth(inputOccurence, this.getEditorInfo(editorId));
             });
 
             this.onRemoved((event) => {
@@ -249,19 +251,19 @@ module api.form.inputtype.text {
             });
         }
 
-        private updateStickyEditorToolbar(inputOccurence: Element) {
+        private updateStickyEditorToolbar(inputOccurence: Element, editorInfo: HtmlAreaOccurrenceInfo) {
             if (!this.editorTopEdgeIsVisible(inputOccurence) && this.editorLowerEdgeIsVisible(inputOccurence)) {
-                if (!this.hasStickyToolbar) {
-                    this.hasStickyToolbar = true;
+                if (!editorInfo.hasStickyToolbar) {
+                    editorInfo.hasStickyToolbar = true;
                     inputOccurence.addClass("sticky-toolbar");
-                    this.updateEditorToolbarWidth(inputOccurence);
+                    this.updateEditorToolbarWidth(inputOccurence, editorInfo);
                 }
                 this.updateEditorToolbarPos(inputOccurence);
             }
-            else if (this.hasStickyToolbar) {
-                this.hasStickyToolbar = false;
+            else if (editorInfo.hasStickyToolbar) {
+                editorInfo.hasStickyToolbar = false;
                 inputOccurence.removeClass("sticky-toolbar");
-                this.updateEditorToolbarWidth(inputOccurence);
+                this.updateEditorToolbarWidth(inputOccurence, editorInfo);
             }
         }
 
@@ -269,8 +271,8 @@ module api.form.inputtype.text {
             wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").css({top: this.getToolbarOffsetTop(1)});
         }
 
-        private updateEditorToolbarWidth(inputOccurence: Element) {
-            if (this.hasStickyToolbar) {
+        private updateEditorToolbarWidth(inputOccurence: Element, editorInfo: HtmlAreaOccurrenceInfo) {
+            if (editorInfo.hasStickyToolbar) {
                 // Toolbar in sticky mode has position: fixed which makes it not
                 // inherit width of its parent, so we have to explicitly set width 
                 wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").width(inputOccurence.getEl().getWidth() - 3);
@@ -287,7 +289,9 @@ module api.form.inputtype.text {
         private editorLowerEdgeIsVisible(inputOccurence: Element): boolean {
             var distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea(inputOccurence);
             var editorToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
-            return (inputOccurence.getEl().getHeightWithoutPadding() - editorToolbarHeight + distToTopOfScrlblArea) > 0;
+            var mceStatusToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-statusbar").outerHeight(true);
+            return (inputOccurence.getEl().getHeightWithoutPadding() - editorToolbarHeight - mceStatusToolbarHeight +
+                    distToTopOfScrlblArea) > 0;
         }
 
         private calcDistToTopOfScrlbleArea(inputOccurence: Element): number {
@@ -424,11 +428,15 @@ module api.form.inputtype.text {
         }
 
         private reInitEditor(id: string) {
-            var savedEditor: HtmlAreaOccurrenceInfo = api.util.ArrayHelper.findElementByFieldValue(this.editors, "id", id);
+            var savedEditor: HtmlAreaOccurrenceInfo = this.getEditorInfo(id);
 
             if (!!savedEditor) {
                 this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);
             }
+        }
+
+        private getEditorInfo(id: string): HtmlAreaOccurrenceInfo {
+            return api.util.ArrayHelper.findElementByFieldValue(this.editors, "id", id);
         }
 
     }
@@ -437,6 +445,7 @@ module api.form.inputtype.text {
         id: string;
         textAreaWrapper: Element;
         property: Property;
+        hasStickyToolbar: boolean;
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("HtmlArea", HtmlArea));
