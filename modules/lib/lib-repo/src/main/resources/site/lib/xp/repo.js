@@ -21,7 +21,7 @@ function required(params, name) {
  *
  * @example-ref examples/repo/refresh.js
  *
- * @param {object} params JSON with the parameters.
+ * @param {object?} params JSON with the parameters.
  * @param {string} [params.mode='all'] Index type to be refreshed. Possible values: 'all' | 'search' | 'storage'.
  * @param {string} [params.repo='cms-repo'] Repository id: 'cms-repo' | 'system-repo'. Default is the current repository set in portal.
  *
