@@ -41,9 +41,9 @@ module api.content.form.inputtype.image {
         }
 
         private refreshUI() {
-            this.editButton.setLabel("Edit" + (this.editableCount > 0 ? " (" + this.editableCount + ")" : ""));
+            this.editButton.setLabel("Edit" + (this.editableCount > 1 ? " (" + this.editableCount + ")" : ""));
             this.editButton.setEnabled(this.editableCount > 0);
-            this.removeButton.setLabel("Remove " + (this.removableCount > 0 ? " (" + this.removableCount + ")" : ""));
+            this.removeButton.setLabel("Remove " + (this.removableCount > 1 ? " (" + this.removableCount + ")" : ""));
         }
 
         notifyEditClicked() {
