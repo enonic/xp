@@ -36,13 +36,13 @@ module api.content.site {
             return this.getSiteConfigs().map((config: SiteConfig) => config.getApplicationKey());
         }
 
-        equals(o: api.Equitable, ignoreEmptyValues: boolean = false): boolean {
+        equals(o: api.Equitable, ignoreEmptyValues: boolean = false, shallow: boolean = false): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Site)) {
                 return false;
             }
 
-            return super.equals(o, ignoreEmptyValues);
+            return super.equals(o, ignoreEmptyValues, shallow);
         }
 
         clone(): Site {
