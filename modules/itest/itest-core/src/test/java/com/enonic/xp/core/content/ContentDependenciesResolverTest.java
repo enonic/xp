@@ -87,11 +87,11 @@ public class ContentDependenciesResolverTest
         Assert.assertEquals( result.getInbound().size(), 2 );
 
         final ContentDependenciesAggregation siteAggregation = (ContentDependenciesAggregation) result.getInbound().toArray()[0];
-        Assert.assertEquals( siteAggregation.getType(), ContentTypeName.site().toString() );
+        Assert.assertEquals( siteAggregation.getType().toString(), ContentTypeName.site().toString() );
         Assert.assertEquals( siteAggregation.getCount(), 2 );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getInbound().toArray()[1];
-        Assert.assertEquals( folderAggregation.getType(), ContentTypeName.folder().toString() );
+        Assert.assertEquals( folderAggregation.getType().toString(), ContentTypeName.folder().toString() );
         Assert.assertEquals( folderAggregation.getCount(), 1 );
 
     }
@@ -135,11 +135,11 @@ public class ContentDependenciesResolverTest
         Assert.assertEquals( result.getOutbound().size(), 2 );
 
         final ContentDependenciesAggregation siteAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[0];
-        Assert.assertEquals( siteAggregation.getType(), ContentTypeName.site().toString() );
+        Assert.assertEquals( siteAggregation.getType().toString(), ContentTypeName.site().toString() );
         Assert.assertEquals( siteAggregation.getCount(), 1 );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[1];
-        Assert.assertEquals( folderAggregation.getType(), ContentTypeName.folder().toString() );
+        Assert.assertEquals( folderAggregation.getType().toString(), ContentTypeName.folder().toString() );
         Assert.assertEquals( folderAggregation.getCount(), 2 );
     }
 
@@ -174,7 +174,7 @@ public class ContentDependenciesResolverTest
         Assert.assertEquals( result.getOutbound().size(), 1 );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[0];
-        Assert.assertEquals( folderAggregation.getType(), ContentTypeName.folder().toString() );
+        Assert.assertEquals( folderAggregation.getType().toString(), ContentTypeName.folder().toString() );
         Assert.assertEquals( folderAggregation.getCount(), 2 );
     }
 }

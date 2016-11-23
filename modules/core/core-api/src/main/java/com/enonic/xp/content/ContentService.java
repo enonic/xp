@@ -8,6 +8,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.concurrent.Future;
 
 @Beta
@@ -89,6 +90,8 @@ public interface ContentService
     AccessControlList getRootPermissions();
 
     ContentDependencies getDependencies(final ContentId id);
+
+    Collection<ContentId> getOutboundDependenciesIds(final ContentId id);
 
     boolean contentExists( ContentId contentId );
 

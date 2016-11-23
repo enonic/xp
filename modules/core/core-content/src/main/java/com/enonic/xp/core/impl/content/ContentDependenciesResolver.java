@@ -2,26 +2,18 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.*;
-import com.enonic.xp.core.impl.content.serializer.PageDataSerializer;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.google.common.collect.Maps;
-import org.codehaus.jparsec.util.Lists;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ContentDependenciesResolver {
-    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer(ContentPropertyNames.PAGE);
 
-    final ContentService contentService;
+    private final ContentService contentService;
 
     public ContentDependenciesResolver(final ContentService contentService) {
         this.contentService = contentService;
@@ -38,7 +30,7 @@ public class ContentDependenciesResolver {
     private Collection<ContentDependenciesAggregation> resolveInboundDependenciesAggregation(final ContentId contentId) {
 
         final FindContentIdsByQueryResult result = this.contentService.find(ContentQuery.create().
-                queryExpr(QueryParser.parse("_references = '" + contentId.toString() + "'")).
+                queryExpr(QueryParser.parse("_references = '" + contentId.toString() + "' AND _id != '" + contentId.toString() + "'")).
                 aggregationQuery(TermsAggregationQuery.create("type").
                         fieldName("type").
                         orderDirection(TermsAggregationQuery.Direction.DESC).
@@ -53,28 +45,10 @@ public class ContentDependenciesResolver {
 
     private Collection<ContentDependenciesAggregation> resolveOutboundDependenciesAggregation(final ContentId contentId) {
 
-        final Content content = this.contentService.getById(contentId);
+        final Map<ContentTypeName, Long> aggregationJsonMap = Maps.newHashMap();
 
-        Map<ContentTypeName, Long> aggregationJsonMap = Maps.newHashMap();
-
-        final List<ContentId> contentIds = Lists.arrayList();
-
-        final PropertySet contentPageData = new PropertyTree().getRoot();
-        if (content.getPage() != null) {
-            PAGE_SERIALIZER.toData(content.getPage(), contentPageData);
-        }
-
-        Stream.concat(content.getData().getProperties(ValueTypes.REFERENCE).stream(),
-                contentPageData.getProperties(ValueTypes.REFERENCE).stream()).forEach(property ->
-        {
-            if (!contentId.toString().equals(
-                    property.getValue().toString())) {
-                contentIds.add(ContentId.from(
-                        property.getValue().toString()));
-            }
-        });
-
-        final Contents contents = this.contentService.getByIds(new GetContentByIdsParams(ContentIds.from(contentIds)));
+        final Contents contents = this.contentService.getByIds(
+                new GetContentByIdsParams(ContentIds.from(this.contentService.getOutboundDependenciesIds(contentId))));
 
         contents.forEach(existingContent -> {
             final ContentTypeName contentTypeName = existingContent.getType();

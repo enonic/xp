@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.concurrent.*;
 
 @Component(immediate = true)
@@ -622,6 +623,14 @@ public class ContentServiceImpl
             new ContentDependenciesResolver( this );
 
         return contentDependenciesResolver.resolve( id );
+    }
+
+    @Override
+    public Collection<ContentId> getOutboundDependenciesIds(final ContentId id) {
+        final ContentOutboundDependenciesIdsResolver contentOutboundDependenciesIdsResolver =
+                new ContentOutboundDependenciesIdsResolver( this );
+
+        return contentOutboundDependenciesIdsResolver.resolve( id );
     }
 
     @Override
