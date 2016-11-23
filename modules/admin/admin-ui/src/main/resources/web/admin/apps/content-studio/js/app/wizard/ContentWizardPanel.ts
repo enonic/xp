@@ -827,7 +827,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var result: string[] = [];
 
         formItemContainer.getFormItems().forEach((item) => {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)||
+            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSetOption)) {
@@ -1274,8 +1274,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         } else {
 
-            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent), true).build();
-            return !viewedContent.equals(persistedContent, true);
+            let viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+
+            // ignore empty values for auto-created content that hasn't been updated yet because it doesn't have data at all
+            let ignoreEmptyValues = !persistedContent.getModifiedTime() || !persistedContent.getCreatedTime() ||
+                                    persistedContent.getCreatedTime().getTime() == persistedContent.getModifiedTime().getTime();
+
+            return !viewedContent.equals(persistedContent, ignoreEmptyValues);
         }
     }
 
