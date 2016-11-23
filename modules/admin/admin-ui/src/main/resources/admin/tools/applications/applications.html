@@ -48,14 +48,14 @@
         xpVersion: '{{xpVersion}}',
         appId: '{{appId}}'
     };
-
-    <!-- Append the launcher -->
-    !!xplauncher && xplauncher.call(this, '{{assetsUri}}', document);
 </script>
 
 <!-- App javascript -->
 <script type="text/javascript" src="{{assetsUri}}/common/js/_all.js"></script>
 <script type="text/javascript" src="{{assetsUri}}/apps/{{appId}}/js/_all.js"></script>
+
+<!-- Append the launcher -->
+<script type="text/javascript" src="{{assetsUri}}/apps/launcher/js/_all.js" async></script>
 
 </body>
 </html>
