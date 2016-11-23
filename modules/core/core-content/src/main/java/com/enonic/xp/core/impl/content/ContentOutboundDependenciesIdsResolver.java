@@ -8,6 +8,7 @@ import com.enonic.xp.core.impl.content.serializer.PageDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jparsec.util.Lists;
 
 import java.util.Collection;
@@ -41,10 +42,11 @@ public class ContentOutboundDependenciesIdsResolver {
         Stream.concat(content.getData().getProperties(ValueTypes.REFERENCE).stream(),
                 contentPageData.getProperties(ValueTypes.REFERENCE).stream()).forEach(property ->
         {
-            if (!contentId.toString().equals(
-                    property.getValue().toString())) {
-                contentIds.add(ContentId.from(
-                        property.getValue().toString()));
+
+            final String value = property.getValue().toString();
+
+            if (!contentId.toString().equals(value) && StringUtils.isNotBlank(value)) {
+                contentIds.add(ContentId.from(value));
             }
         });
 
