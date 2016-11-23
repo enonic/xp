@@ -252,12 +252,7 @@ module api.liveedit.text {
                     this.processEditorValue();
                 }
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
-                if (api.BrowserHelper.isFirefox()) {
-                    var activeEditor = tinymce.activeEditor;
-                    if (!!activeEditor) {
-                        activeEditor.fire('blur');
-                    }
-                }
+                this.triggerEventInActiveEditorForFirefox('blur');
             }
 
             this.toggleClass('edit-mode', flag);
@@ -274,6 +269,17 @@ module api.liveedit.text {
                     }
                     this.rootElement.setHtml(TextComponentView.DEFAULT_TEXT, false);
                     this.selectText();
+                }
+
+                this.triggerEventInActiveEditorForFirefox('focus');
+            }
+        }
+
+        private triggerEventInActiveEditorForFirefox(eventName: string) {
+            if (api.BrowserHelper.isFirefox()) {
+                var activeEditor = tinymce.activeEditor;
+                if (activeEditor) {
+                    activeEditor.fire(eventName);
                 }
             }
         }
