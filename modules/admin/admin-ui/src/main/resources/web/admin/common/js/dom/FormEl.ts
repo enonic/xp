@@ -33,7 +33,7 @@ module api.dom {
             // set focus to the next visible input
             for (var i = index + 1; i < focusableElements.length; i++) {
                 var nextFocusable = api.dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(i));
-                if (nextFocusable.getEl().getTabIndex() && nextFocusable.getEl().getTabIndex() < 0) {
+                if (!nextFocusable.isVisible() || (nextFocusable.getEl().getTabIndex() && nextFocusable.getEl().getTabIndex() < 0 )) {
                     continue;
                 } else {
                     return nextFocusable;
