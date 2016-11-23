@@ -146,6 +146,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private contentUpdateDisabled: boolean;
 
+    private contentDeleted: boolean;
+
     public static debug: boolean = false;
 
     constructor(params: ContentWizardPanelParams) {
@@ -312,6 +314,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     protected createMainToolbar(): Toolbar {
         return new ContentWizardToolbar({
+            application: this.contentParams.application,
             saveAction: this.wizardActions.getSaveAction(),
             deleteAction: this.wizardActions.getDeleteAction(),
             duplicateAction: this.wizardActions.getDuplicateAction(),
@@ -669,6 +672,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                             publishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
                             this.persistedContentCompareStatus = this.currentContentCompareStatus = CompareStatus.PENDING_DELETE;
                         } else {
+                            this.contentDeleted = true;
                             this.close();
                         }
 
@@ -1609,6 +1613,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isContentRenderable(): boolean {
         return !!this.liveEditModel && this.liveEditModel.isPageRenderable();
+    }
+
+    public isContentDeleted(): boolean {
+        return this.contentDeleted;
     }
 
     private shouldOpenEditorByDefault(): boolean {
