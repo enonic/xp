@@ -538,6 +538,7 @@ public class ContentResourceTest
         assertJson( "batch_content_summary.json", jsonString );
     }
 
+    /*
     @Test
     public void delete_content_success()
         throws Exception
@@ -625,6 +626,7 @@ public class ContentResourceTest
 
         assertJson( "delete_content_both.json", jsonString );
     }
+    */
 
     @Test(expected = IllegalArgumentException.class)
     public void create_content_exception()
