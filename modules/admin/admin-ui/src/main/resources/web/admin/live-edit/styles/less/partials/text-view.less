@@ -104,6 +104,17 @@
   width: 100%;
   border-bottom: 1px solid #cccccc;
 
+  > div {
+    display: none;
+  }
+  &.visible {
+    .box-shadow(0px 8px 8px 0 @admin-toolbar-shadow);
+
+    > div {
+      display: block;
+    }
+  }
+
   .mce-abs-layout, .mce-toolbar-grp, .mce-flow-layout, .mce-container-body.mce-stack-layout {
     width: auto !important;
   }
@@ -118,10 +129,6 @@
 
   .mce-abs-layout-item, .mce-abs-end {
     position: static;
-  }
-
-  &.sticky-toolbar {
-    .box-shadow(0px 8px 8px 0 @admin-toolbar-shadow);
   }
 
   .mce-tinymce-inline {
