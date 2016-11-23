@@ -28,8 +28,8 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     private userStoreWizardStepForm: UserStoreWizardStepForm;
 
     private permissionsWizardStepForm: SecurityWizardStepForm;
-
-    private userStoreParams: UserStoreWizardPanelParams;
+    
+    //private userStoreParams: UserStoreWizardPanelParams;
 
     isUserStoreFormValid: boolean;
 
@@ -46,7 +46,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         this.isUserStoreFormValid = false;
         this.userStoreNamedListeners = [];
 
-        this.userStoreParams = params;
+        //this.userStoreParams = params;
 
         this.listenToUserItemEvents();
     }
@@ -56,7 +56,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             console.debug("UserStoreWizardPanel.doLoadData");
         }
         // don't call super.doLoadData to prevent saving new entity
-        return new UserStoreWizardDataLoader().loadData(this.userStoreParams)
+        return new UserStoreWizardDataLoader().loadData(this.getParams())
             .then((loader) => {
                 if (UserStoreWizardPanel.debug) {
                     console.debug("UserStoreWizardPanel.doLoadData: loaded data", loader);
@@ -123,7 +123,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
         }
 
-        wizardHeader.setPath(this.userStoreParams.persistedPath);
+        wizardHeader.setPath(this.getParams().persistedPath);
         wizardHeader.initNames(displayName, name, false);
 
         return wizardHeader;

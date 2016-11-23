@@ -87,7 +87,7 @@ module api.app.wizard {
         constructor(params: WizardPanelParams<EQUITABLE>) {
             super("wizard-panel");
 
-            this.params = params;
+            this.setParams(params);
 
             this.wizardActions = this.createWizardActions();
             
@@ -130,6 +130,14 @@ module api.app.wizard {
             })
         }
 
+        protected setParams(params: WizardPanelParams<EQUITABLE>) {
+            this.params = params;
+        }
+
+        protected getParams(): WizardPanelParams<EQUITABLE> {
+            return this.params;
+        }
+        
         protected createWizardActions(): WizardActions<EQUITABLE> {
             throw Error('Override me');
         }

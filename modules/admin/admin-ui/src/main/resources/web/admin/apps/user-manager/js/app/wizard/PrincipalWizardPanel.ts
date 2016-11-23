@@ -25,7 +25,7 @@ import PrincipalJson = api.security.PrincipalJson;
 
 export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
-    protected principalParams: PrincipalWizardPanelParams;
+    protected params: PrincipalWizardPanelParams;
 
     protected principalNamedListeners: {(event: PrincipalNamedEvent): void}[];
 
@@ -35,11 +35,12 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         super(params);
 
         this.principalNamedListeners = [];
-
-        this.principalParams = params;
     }
 
-
+    protected getParams(): PrincipalWizardPanelParams {
+        return this.params;
+    }
+    
     protected doLoadData(): Q.Promise<Principal> {
         if (PrincipalWizardPanel.debug) {
             console.debug("PrincipalWizardPanel.doLoadData");
@@ -49,7 +50,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 console.debug("PrincipalWizardPanel.doLoadData: loading data...");
             }
             // don't call super.doLoadData to prevent saving new entity
-            return new PrincipalWizardDataLoader().loadData(this.principalParams)
+            return new PrincipalWizardDataLoader().loadData(this.getParams())
                 .then((loader) => {
                     if (PrincipalWizardPanel.debug) {
                         console.debug("PrincipalWizardPanel.doLoadData: loaded data", loader);
@@ -109,7 +110,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
             });
         }
 
-        wizardHeader.setPath(this.principalParams.persistedPath);
+        wizardHeader.setPath(this.getParams().persistedPath);
         wizardHeader.initNames(displayName, name, false);
 
         return wizardHeader;
@@ -122,7 +123,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
             }
             this.addClass("principal-wizard-panel");
 
-            switch (this.principalParams.persistedType) {
+            switch (this.getParams().persistedType) {
             case PrincipalType.USER:
                 this.formIcon.addClass("icon-user");
                 break;
@@ -153,7 +154,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     getUserItemType(): string {
-        switch (this.principalParams.persistedType) {
+        switch (this.getParams().persistedType) {
         case PrincipalType.USER:
             return "User";
         case PrincipalType.GROUP:
@@ -166,11 +167,11 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     isParentOfSameType(): boolean {
-        return this.principalParams.parentOfSameType;
+        return this.getParams().parentOfSameType;
     }
 
     getUserStore(): UserStore {
-        return this.principalParams.userStore;
+        return this.getParams().userStore;
     }
 
     createSteps(principal?: Principal): WizardStep[] {
@@ -268,7 +269,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         if (this.getPersistedItem()) {
             Router.setHash("edit/" + this.getPersistedItem().getKey());
         } else {
-            Router.setHash("new/" + PrincipalType[this.principalParams.persistedType].toLowerCase());
+            Router.setHash("new/" + PrincipalType[this.getParams().persistedType].toLowerCase());
         }
     }
 }
