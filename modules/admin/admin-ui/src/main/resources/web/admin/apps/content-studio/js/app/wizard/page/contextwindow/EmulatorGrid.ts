@@ -2,10 +2,6 @@ import "../../../../api.ts";
 
 export class EmulatorGrid extends api.ui.grid.Grid<any> {
 
-    constructor(dataView: api.ui.grid.DataView<any>) {
-        super(dataView);
-    }
-
     protected createOptions(): api.ui.grid.GridOptions<any> {
         return new api.ui.grid.GridOptionsBuilder().setHideColumnHeaders(true).setRowHeight(50).setHeight(450).setWidth(320)
             .build();

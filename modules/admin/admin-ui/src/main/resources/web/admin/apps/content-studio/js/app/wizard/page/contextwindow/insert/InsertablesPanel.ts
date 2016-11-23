@@ -39,7 +39,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
 
     private contextWindowDraggable: JQuery;
 
-    public static debug = false;
+    public static debug = true;
 
     constructor(config: ComponentTypesPanelConfig) {
         super("insertables-panel");
@@ -49,7 +49,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         topDescription.getEl().setInnerHtml('Drag and drop components into the page');
 
         this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
-        this.insertablesGrid = new InsertablesGrid(this.insertablesDataView);
+        this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: "comp"});
 
         this.insertablesDataView.setItems(Insertables.ALL, "name");
 

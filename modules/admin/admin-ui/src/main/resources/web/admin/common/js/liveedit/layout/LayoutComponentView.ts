@@ -35,7 +35,6 @@ module api.liveedit.layout {
                 setInspectActionRequired(true));
 
             this.setPlaceholder(new LayoutPlaceholder(this));
-            
             this.regionViews = [];
 
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
@@ -81,6 +80,11 @@ module api.liveedit.layout {
 
         setComponent(layoutComponent: LayoutComponent) {
             super.setComponent(layoutComponent);
+            
+            if (!this.regionViews) {
+                return;
+            }
+            
             var regions = layoutComponent.getRegions().getRegions();
             this.regionViews.forEach((regionView: RegionView, index: number) => {
                 var region = regions[index];

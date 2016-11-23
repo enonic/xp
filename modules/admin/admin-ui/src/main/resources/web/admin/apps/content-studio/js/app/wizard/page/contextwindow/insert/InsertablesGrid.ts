@@ -11,19 +11,10 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
 
     private componentGridOptions: InsertablesGridOptions;
 
-    private componentDataView: api.ui.grid.DataView<Insertable>;
+    constructor(dataView: api.ui.grid.DataView<Insertable>, options: InsertablesGridOptions = {}) {
 
-    constructor(dataView: api.ui.grid.DataView<Insertable>) {
-        let options: api.ui.grid.GridOptions<Insertable> = new api.ui.grid.GridOptionsBuilder().
-                                                                setHideColumnHeaders(true).
-                                                                setRowHeight(50).
-                                                                setHeight(400).
-                                                                setWidth(320).
-                                                                build();
-        
-        super(dataView, null, options);
+        super(dataView);
 
-        this.componentDataView = dataView;
         this.componentGridOptions = options;
 
         this.onRendered((event) => {
@@ -32,7 +23,17 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
             }
         })
     }
-    
+
+
+    protected createOptions(): api.ui.grid.GridOptions<any> {
+        return new api.ui.grid.GridOptionsBuilder().
+                    setHideColumnHeaders(true).
+                    setRowHeight(50).
+                    setHeight(400).
+                    setWidth(320).
+                    build();
+    }
+
     protected createColumns(): api.ui.grid.GridColumn<Insertable>[] {
         return [
             new api.ui.grid.GridColumnBuilder().
