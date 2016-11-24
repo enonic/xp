@@ -12,6 +12,17 @@ import {ShowNewContentDialogEvent} from "./app/browse/ShowNewContentDialogEvent"
 import {SortContentDialog} from "./app/browse/SortContentDialog";
 import {MoveContentDialog} from "./app/browse/MoveContentDialog";
 import {EditPermissionsDialog} from "./app/wizard/EditPermissionsDialog";
+import {ContentWizardPanelParams} from "./app/wizard/ContentWizardPanelParams";
+import {ContentWizardPanel} from "./app/wizard/ContentWizardPanel";
+import {ContentEventsListener} from "./app/ContentEventsListener";
+import UriHelper = api.util.UriHelper;
+import ContentTypeName = api.schema.content.ContentTypeName;
+import ContentId = api.content.ContentId;
+import AppBarTabId = api.app.bar.AppBarTabId;
+import ContentNamedEvent = api.content.event.ContentNamedEvent;
+import PropertyChangedEvent = api.PropertyChangedEvent;
+import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
+import Content = api.content.Content;
 
 declare var CONFIG;
 
@@ -26,6 +37,8 @@ function getApplication(): api.app.Application {
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
+    this.clientEventsListener = new ContentEventsListener([application]);
+    this.iconUrlResolver = new ContentIconUrlResolver();
 
     var messageId;
     this.lostConnectionDetector = new api.system.LostConnectionDetector();
@@ -56,7 +69,7 @@ function initToolTip() {
             if (!tooltipText) { //if no text then probably hovering over children of original element that has title attr
                 return;
             }
-            
+
             var tooltipWidth = tooltipText.length * 7.5;
             var windowWidth = wemjq(window).width();
             if (nleft + tooltipWidth >= windowWidth) {
@@ -88,19 +101,43 @@ function initToolTip() {
     if (FOLLOW) { wemjq(document).on("mousemove", "." + CLS_ON, showAt); }
 }
 
+function updateTabTitle(title: string) {
+    wemjq('title').html(`${title} / Content Studio`);
+}
+
+function updateFavicon(content: Content) {
+    if (!content.isImage() && navigator.userAgent.search("Chrome") > -1) {
+        // Chrome currently doesn't support SVG favicons which are served for not image contents
+        return;
+    }
+    let resolver = this.iconUrlResolver.setContent(content).setCrop(false);
+    wemjq('link[rel*=icon][sizes]').each((index, link) => {
+        let sizes = link.getAttribute('sizes').split('x');
+        if (sizes.length > 0) {
+            try {
+                resolver.setSize(parseInt(sizes[0]));
+            } catch (e) { }
+        }
+        link.setAttribute('href', resolver.resolve());
+    });
+}
+
 function startApplication() {
 
-    var application: api.app.Application = getApplication();
+    let application: api.app.Application = getApplication();
 
-    var body = api.dom.Body.get();
+    let wizardParams = ContentWizardPanelParams.fromApp(application);
+    if (wizardParams) {
+        startContentWizard(wizardParams);
+    } else {
+        startContentApplication(application);
+    }
 
-    var appBar = new api.app.bar.AppBar(application);
-    var appPanel = new ContentAppPanel(appBar, application.getPath());
+    initToolTip();
 
-    body.appendChild(appBar);
-    body.appendChild(appPanel);
+    api.util.AppHelper.preventDragRedirect();
 
-    var contentDeleteDialog = new ContentDeleteDialog();
+    let contentDeleteDialog = new ContentDeleteDialog();
     ContentDeletePromptEvent.on((event) => {
         contentDeleteDialog
             .setContentToDelete(event.getModels())
@@ -109,7 +146,7 @@ function startApplication() {
             .open();
     });
 
-    var contentPublishDialog = new ContentPublishDialog();
+    let contentPublishDialog = new ContentPublishDialog();
     ContentPublishPromptEvent.on((event) => {
         contentPublishDialog
             .setContentToPublish(event.getModels())
@@ -120,17 +157,77 @@ function startApplication() {
         }
     });
 
-    var contentUnpublishDialog = new ContentUnpublishDialog();
+    let contentUnpublishDialog = new ContentUnpublishDialog();
     ContentUnpublishPromptEvent.on((event) => {
         contentUnpublishDialog
             .setContentToUnpublish(event.getModels())
             .open();
     });
 
-    var newContentDialog = new NewContentDialog();
+    let editPermissionsDialog = new EditPermissionsDialog();
+
+    application.setLoaded(true);
+
+    this.serverEventsListener.start();
+    this.clientEventsListener.start();
+    this.lostConnectionDetector.startPolling();
+
+    api.content.event.ContentServerEventsHandler.getInstance().start();
+}
+
+function startContentWizard(wizardParams: ContentWizardPanelParams) {
+    let wizard = new ContentWizardPanel(wizardParams);
+
+    wizard.onDataLoaded(content => {
+        let contentType = (<ContentWizardPanel>wizard).getContentType();
+        updateTabTitle(content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
+        updateFavicon(content);
+    });
+    wizard.onWizardHeaderCreated(() => {
+        // header will be ready after rendering is complete
+        wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+            if (event.getPropertyName() === "displayName") {
+                let contentType = (<ContentWizardPanel>wizard).getContentType(),
+                    name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
+
+                updateTabTitle(name);
+            }
+        });
+    });
+
+    wizard.onClosed(event => window.close());
+
+    api.dom.WindowDOM.get().onBeforeUnload((event) => {
+        if (wizard.isContentDeleted()) {
+            return;
+        }
+        if (wizard.hasUnsavedChanges()) {
+            let message = 'Wizard has unsaved changes. Continue without saving ?';
+            (event || window.event)['returnValue'] = message;
+            return message;
+        } else {
+            // do close to notify everybody
+            wizard.close(false);
+        }
+    });
+
+    api.dom.Body.get().addClass('wizard-page').appendChild(wizard);
+}
+
+function startContentApplication(application: api.app.Application) {
+    let body = api.dom.Body.get(),
+        appBar = new api.app.bar.AppBar(application),
+        appPanel = new ContentAppPanel(appBar, application.getPath());
+
+    this.clientEventsListener.setContentApp(appPanel);
+
+    body.appendChild(appBar);
+    body.appendChild(appPanel);
+
+    let newContentDialog = new NewContentDialog();
     ShowNewContentDialogEvent.on((event) => {
 
-        var parentContent: api.content.ContentSummary = event.getParentContent()
+        let parentContent: api.content.ContentSummary = event.getParentContent()
             ? event.getParentContent().getContentSummary() : null;
 
         if (parentContent != null) {
@@ -145,16 +242,16 @@ function startApplication() {
                                 newContentDialog.setParentContent(newParentContent);
                                 newContentDialog.open();
                             }).catch((reason: any) => {
-                                api.DefaultErrorHandler.handle(reason);
-                            }).done();
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
                     }
                     else {
                         newContentDialog.setParentContent(newParentContent);
                         newContentDialog.open();
                     }
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
         else {
             newContentDialog.setParentContent(null);
@@ -162,27 +259,17 @@ function startApplication() {
         }
     });
 
-    initToolTip();
-
-    api.util.AppHelper.preventDragRedirect();
-
-    var sortDialog = new SortContentDialog();
-    var moveDialog = new MoveContentDialog();
-    var editPermissionsDialog = new EditPermissionsDialog();
-    application.setLoaded(true);
-    this.serverEventsListener.start();
-    this.lostConnectionDetector.startPolling();
+    let sortDialog = new SortContentDialog();
+    let moveDialog = new MoveContentDialog();
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {
-            var eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            let eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
             if (eventType == api.app.AppLauncherEventType.Show) {
                 appPanel.activateCurrentKeyBindings();
             }
         }
     };
-
-    api.content.event.ContentServerEventsHandler.getInstance().start();
 }
 
 window.onload = function () {

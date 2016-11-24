@@ -146,6 +146,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private contentUpdateDisabled: boolean;
 
+    private contentDeleted: boolean;
+
     public static debug: boolean = false;
 
     constructor(params: ContentWizardPanelParams) {
@@ -312,6 +314,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     protected createMainToolbar(): Toolbar {
         return new ContentWizardToolbar({
+            application: this.contentParams.application,
             saveAction: this.wizardActions.getSaveAction(),
             deleteAction: this.wizardActions.getDeleteAction(),
             duplicateAction: this.wizardActions.getDuplicateAction(),
@@ -669,6 +672,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                             publishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
                             this.persistedContentCompareStatus = this.currentContentCompareStatus = CompareStatus.PENDING_DELETE;
                         } else {
+                            this.contentDeleted = true;
                             this.close();
                         }
 
@@ -827,7 +831,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var result: string[] = [];
 
         formItemContainer.getFormItems().forEach((item) => {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)||
+            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSetOption)) {
@@ -1274,8 +1278,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         } else {
 
-            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent), true).build();
-            return !viewedContent.equals(persistedContent, true);
+            let viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+
+            // ignore empty values for auto-created content that hasn't been updated yet because it doesn't have data at all
+            let ignoreEmptyValues = !persistedContent.getModifiedTime() || !persistedContent.getCreatedTime() ||
+                                    persistedContent.getCreatedTime().getTime() == persistedContent.getModifiedTime().getTime();
+
+            return !viewedContent.equals(persistedContent, ignoreEmptyValues);
         }
     }
 
@@ -1604,6 +1613,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isContentRenderable(): boolean {
         return !!this.liveEditModel && this.liveEditModel.isPageRenderable();
+    }
+
+    public isContentDeleted(): boolean {
+        return this.contentDeleted;
     }
 
     private shouldOpenEditorByDefault(): boolean {
