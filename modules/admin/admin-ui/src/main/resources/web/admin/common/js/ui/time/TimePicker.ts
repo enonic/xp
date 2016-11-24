@@ -6,8 +6,6 @@ module api.ui.time {
 
         minutes: number;
 
-        closeOnOutsideClick: boolean = true;
-
         setHours(value: number): TimePickerBuilder {
             this.hours = value;
             return this;
@@ -15,11 +13,6 @@ module api.ui.time {
 
         setMinutes(value: number): TimePickerBuilder {
             this.minutes = value;
-            return this;
-        }
-
-        setCloseOnOutsideClick(value: boolean): TimePickerBuilder {
-            this.closeOnOutsideClick = value;
             return this;
         }
 
@@ -48,20 +41,10 @@ module api.ui.time {
             }
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
+            this.input.setPlaceholder("mm:ss");
         }
 
         protected setupListeners(builder: TimePickerBuilder) {
-
-            if (builder.closeOnOutsideClick) {
-                api.util.AppHelper.focusInOut(this, () => {
-                    this.popup.hide();
-                }, 50, false);
-
-                // Prevent focus loss on mouse down
-                this.popup.onMouseDown((event: MouseEvent) => {
-                    event.preventDefault();
-                });
-            }
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
                 if (hours != null && minutes != null) {
