@@ -531,7 +531,7 @@ public class AbstractContentServiceTest
         final Content root = this.contentService.getById( rootId );
 
         final Branch branch = ContextAccessor.current().getBranch();
-        System.out.println( "** Content-tree in branch [" + branch.getName() + "], starting with path [" + root.getPath() + "]" );
+        System.out.println( "** Content-tree in branch [" + branch.getValue() + "], starting with path [" + root.getPath() + "]" );
 
         doPrintChildren( 0, root );
     }
