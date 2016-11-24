@@ -19,7 +19,7 @@ module api.liveedit.layout {
 
     export class LayoutComponentView extends ComponentView<LayoutComponent> {
 
-        private layoutComponent: LayoutComponent;
+        protected component: LayoutComponent;
 
         private regionViews: RegionView[];
 
@@ -38,7 +38,6 @@ module api.liveedit.layout {
             this.regionViews = [];
 
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
-            this.layoutComponent = builder.component;
             LayoutComponentView.debug = false;
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView(), event.isNew());
@@ -94,10 +93,6 @@ module api.liveedit.layout {
 
         getRegions(): RegionView[] {
             return this.regionViews;
-        }
-
-        isEmpty(): boolean {
-            return !this.layoutComponent || this.layoutComponent.isEmpty();
         }
 
         toItemViewArray(): ItemView[] {

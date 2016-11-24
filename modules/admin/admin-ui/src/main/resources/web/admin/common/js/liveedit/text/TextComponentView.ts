@@ -22,7 +22,7 @@ module api.liveedit.text {
 
     export class TextComponentView extends ComponentView<TextComponent> {
 
-        private textComponent: TextComponent;
+        protected component: TextComponent;
 
         private rootElement: api.dom.Element;
 
@@ -57,7 +57,6 @@ module api.liveedit.text {
             this.addTextContextMenuActions();
             this.lastClicked = 0;
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
-            this.textComponent = builder.component;
             this.isInitializingEditor = false;
 
             this.addClassEx('text-view');
@@ -158,10 +157,6 @@ module api.liveedit.text {
                 this.rootElement = new api.dom.SectionEl();
                 this.prependChild(this.rootElement);
             }
-        }
-
-        isEmpty(): boolean {
-            return !this.textComponent || this.textComponent.isEmpty();
         }
 
         private doHandleDbClick(event: MouseEvent) {
@@ -267,7 +262,7 @@ module api.liveedit.text {
                     this.initEditor();
                 }
 
-                if (this.textComponent.isEmpty()) {
+                if (this.component.isEmpty()) {
                     if (!!this.htmlAreaEditor) {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                     }
@@ -335,8 +330,8 @@ module api.liveedit.text {
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
-                    if (!!this.textComponent.getText()) {
-                        this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.textComponent.getText()));
+                    if (!!this.component.getText()) {
+                        this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.component.getText()));
                     } else {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                         this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
@@ -385,14 +380,14 @@ module api.liveedit.text {
             }
 
             if (this.isEditorEmpty()) {
-                this.textComponent.setText(TextComponentView.DEFAULT_TEXT);
+                this.component.setText(TextComponentView.DEFAULT_TEXT);
                 // copy editor content over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = TextComponentView.DEFAULT_TEXT;
             } else {
                 // copy editor raw content (without any processing!) over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = this.htmlAreaEditor.getContent({format: 'raw'});
                 // but save processed text to the component
-                this.textComponent.setText(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor));
+                this.component.setText(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor));
             }
         }
 

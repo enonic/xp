@@ -25,7 +25,6 @@ module api.liveedit.part {
 
             this.contentViews = [];
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
-            //this.partComponent = builder.component;
 
             this.resetHrefForRootLink(builder);
 

@@ -97,7 +97,7 @@ module api.liveedit {
 
         private parentRegionView: RegionView;
 
-        private component: COMPONENT;
+        protected component: COMPONENT;
 
         private moving: boolean = false;
 
@@ -439,6 +439,10 @@ module api.liveedit {
             return this.getParentItemView();
         }
 
+        isEmpty(): boolean {
+            return !this.component || this.component.isEmpty();
+        }
+        
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
             var parentItemView = ItemView.findParentItemViewAsHTMLElement(htmlElement);

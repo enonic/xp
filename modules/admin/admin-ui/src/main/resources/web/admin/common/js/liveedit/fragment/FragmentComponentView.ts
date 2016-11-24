@@ -20,7 +20,7 @@ module api.liveedit.fragment {
 
     export class FragmentComponentView extends ComponentView<FragmentComponent> {
 
-        private fragmentComponent: FragmentComponent;
+        protected component: FragmentComponent;
 
         private fragmentContainsLayout: boolean;
 
@@ -35,9 +35,10 @@ module api.liveedit.fragment {
             super(builder.
                     setViewer(new FragmentComponentViewer()).
                     setInspectActionRequired(true));
-
+            
+            this.addFragmentContextMenuActions();
+            
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
-            this.fragmentComponent = builder.component;
             this.fragmentContainsLayout = false;
             this.fragmentContent = null;
             this.fragmentContentLoadedListeners = [];
@@ -45,7 +46,7 @@ module api.liveedit.fragment {
 
             this.setPlaceholder(new FragmentPlaceholder(this));
             
-            this.fragmentComponent.onPropertyValueChanged((e: api.content.page.region.ComponentPropertyValueChangedEvent) => {
+            this.component.onPropertyValueChanged((e: api.content.page.region.ComponentPropertyValueChangedEvent) => {
                 if (e.getPropertyName() === FragmentComponent.PROPERTY_FRAGMENT) {
                     this.loadFragmentContent();
                 }
@@ -61,11 +62,11 @@ module api.liveedit.fragment {
         private handleContentRemovedEvent() {
             var contentDeletedListener = (event) => {
                 var deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
-                    return !deletedItem.isPending() && deletedItem.getContentId().equals(this.fragmentComponent.getFragment());
+                    return !deletedItem.isPending() && deletedItem.getContentId().equals(this.component.getFragment());
                 })
                 if (deleted) {
                     this.notifyFragmentLoadError();
-                    new api.liveedit.ShowWarningLiveEditEvent("Fragment " + this.fragmentComponent.getFragment() +
+                    new api.liveedit.ShowWarningLiveEditEvent("Fragment " + this.component.getFragment() +
                                                               " is no longer available").fire();
                     this.convertToBrokenFragmentView();
                 }
@@ -80,7 +81,7 @@ module api.liveedit.fragment {
 
         private handleContentUpdatedEvent() {
             var contentUpdatedListener = (event: ContentUpdatedEvent) => {
-                if (event.getContentId().equals(this.fragmentComponent.getFragment())) {
+                if (event.getContentId().equals(this.component.getFragment())) {
                     new FragmentComponentReloadRequiredEvent(this).fire();
                 }
             }
@@ -101,10 +102,6 @@ module api.liveedit.fragment {
             this.prependChild(errorSpan);
         }
 
-        isEmpty(): boolean {
-            return !this.fragmentComponent || this.fragmentComponent.isEmpty();
-        }
-
         containsLayout(): boolean {
             return this.fragmentContainsLayout;
         }
@@ -120,7 +117,7 @@ module api.liveedit.fragment {
         }
 
         private loadFragmentContent() {
-            var contentId = this.fragmentComponent.getFragment();
+            var contentId = this.component.getFragment();
             if (contentId) {
                 if (!this.fragmentContent || !contentId.equals(this.fragmentContent.getContentId())) {
                     new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
@@ -140,17 +137,19 @@ module api.liveedit.fragment {
             }
         }
 
-        protected getComponentContextMenuActions(actions: api.ui.Action[], liveEditModel: LiveEditModel): api.ui.Action[] {
-            if (this.fragmentComponent && !this.fragmentComponent.isEmpty()) {
-                actions.push(new api.ui.Action("Edit in new tab").onExecuted(() => {
+        private addFragmentContextMenuActions() {
+            if (this.component.isEmpty()) {
+                return;
+            }
+            this.addContextMenuActions([
+                new api.ui.Action("Edit in new tab").onExecuted(() => {
                     this.deselect();
-                    new GetContentByIdRequest(this.fragmentComponent.getFragment()).sendAndParse().then((content: Content)=> {
+                    new GetContentByIdRequest(this.component.getFragment()).sendAndParse().then((content: Content)=> {
                         var contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
                         new api.content.event.EditContentEvent([contentAndSummary]).fire();
                     });
-                }));
-            }
-            return actions;
+                })
+            ]);
         }
 
         private parseContentViews(parentElement?: api.dom.Element, parentType?: api.liveedit.ItemType) {
@@ -179,7 +178,7 @@ module api.liveedit.fragment {
         }
 
         getContentId(): api.content.ContentId {
-            return this.fragmentComponent ? this.fragmentComponent.getFragment() : null;
+            return this.component ? this.component.getFragment() : null;
         }
 
         onFragmentContentLoaded(listener: (event: api.liveedit.FragmentComponentLoadedEvent) => void) {
