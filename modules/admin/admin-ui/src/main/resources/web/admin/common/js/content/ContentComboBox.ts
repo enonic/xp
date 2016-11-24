@@ -8,7 +8,9 @@ module api.content {
     import RichSelectedOptionViewBuilder = api.ui.selector.combobox.RichSelectedOptionViewBuilder;
 
     export class ContentComboBox extends RichComboBox<ContentSummary> {
-
+        
+        protected loader: ContentSummaryLoader;
+        
         constructor(builder: ContentComboBoxBuilder) {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
@@ -30,6 +32,10 @@ module api.content {
             this.addClass('content-combo-box');
         }
 
+        getLoader(): ContentSummaryLoader {
+            return this.loader;
+        }
+        
         getContent(contentId: ContentId): ContentSummary {
             var option = this.getOptionByValue(contentId.toString());
             if (option) {

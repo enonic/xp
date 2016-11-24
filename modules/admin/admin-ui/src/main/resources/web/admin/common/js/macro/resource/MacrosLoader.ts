@@ -9,10 +9,9 @@ module api.macro.resource {
         protected request: GetMacrosRequest;
         private hasRelevantData: boolean;
 
-        constructor(applicationKeys: ApplicationKey[]) {
+        constructor() {
             super();
             
-            this.getRequest().setApplicationKeys(applicationKeys);
             this.hasRelevantData = false;
             
             ApplicationEvent.on((event: ApplicationEvent) => {
@@ -23,6 +22,10 @@ module api.macro.resource {
             });
         }
 
+        setApplicationKeys(applicationKeys: ApplicationKey[]) {
+            this.getRequest().setApplicationKeys(applicationKeys);
+        }        
+        
         protected createRequest(): GetMacrosRequest {
             return new GetMacrosRequest();
         }

@@ -10,20 +10,19 @@ module api.util.htmlarea.dialog {
 
     export class MacroModalDialog extends ModalDialog {
 
-        private content: api.content.ContentSummary;
-
-        private applicationKeys: ApplicationKey[];
-
         private macroDockedPanel: MacroDockedPanel;
+
+        private macroSelector: api.macro.MacroComboBox;
 
         private callback: Function;
 
         constructor(config: HtmlAreaMacro, content: api.content.ContentSummary, applicationKeys: ApplicationKey[]) {
             super(config.editor, "Insert Macro", "macro-modal-dialog");
 
-            this.content = content;
-            this.applicationKeys = applicationKeys;
             this.callback = config.callback;
+
+            this.macroSelector.getLoader().setApplicationKeys(applicationKeys);
+            this.macroDockedPanel.setContent(content);
         }
 
         protected layout() {
@@ -32,7 +31,7 @@ module api.util.htmlarea.dialog {
         }
 
         private makeMacroDockedPanel(): MacroDockedPanel {
-            var macroDockedPanel = new MacroDockedPanel(this.content);
+            var macroDockedPanel = new MacroDockedPanel();
 
             var debouncedPreviewRenderedHandler: () => void = api.util.AppHelper.debounce(() => {
                 this.centerMyself();
@@ -47,7 +46,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected getMainFormItems(): FormItem[] {
-            var macroSelector = this.createMacroSelector("macroId");
+            let macroSelector = this.createMacroSelector("macroId");
 
             this.setFirstFocusField(macroSelector.getInput());
 
@@ -57,12 +56,13 @@ module api.util.htmlarea.dialog {
         }
 
         private createMacroSelector(id: string): FormItem {
-            var loader = new api.macro.resource.MacrosLoader(this.applicationKeys),
+            var loader = new api.macro.resource.MacrosLoader(),
                 macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
                 formItem = this.createFormItem(id, "Macro", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>macroSelector),
                 macroSelectorComboBox = macroSelector.getComboBox();
 
+            this.macroSelector = macroSelector;
             this.addClass("macro-selector");
 
             macroSelectorComboBox.onOptionSelected((event: SelectedOptionEvent<api.macro.MacroDescriptor>) => {

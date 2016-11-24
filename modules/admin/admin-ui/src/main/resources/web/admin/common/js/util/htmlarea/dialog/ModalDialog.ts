@@ -116,7 +116,7 @@ module api.util.htmlarea.dialog {
             return panel;
         }
 
-        private createFieldSet(formItem: FormItem): Fieldset {
+        public createFieldSet(formItem: FormItem): Fieldset {
             var fieldSet = new Fieldset();
 
             fieldSet.addClass("modal-dialog-fieldset");

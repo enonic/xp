@@ -32,6 +32,7 @@ module api.util.htmlarea.dialog {
         private imagePreviewScrollHandler: ImagePreviewScrollHandler;
         private imageLoadMask: api.ui.mask.LoadMask;
         private dropzoneContainer: api.ui.uploader.DropzoneContainer;
+        private imageSelectorFormItem: FormItem;
 
         static imagePrefix = "image://";
         static maxImageWidth = 640;
@@ -39,39 +40,76 @@ module api.util.htmlarea.dialog {
         constructor(config: HtmlAreaImage, content: api.content.ContentSummary) {
             super(config.editor, "Insert Image", "image-modal-dialog");
 
-            this.imageElement = <HTMLImageElement>config.element;
             this.elementContainer = config.container;
             this.content = content;
             this.callback = config.callback;
+
+            this.initLoader();
+
+            if (config.element) {
+                this.imageElement = <HTMLImageElement>config.element;
+
+                this.loadImage();
+
+                this.setImageFieldValues(this.imageCaptionField, this.getCaption());
+                this.setImageFieldValues(this.imageAltTextField, this.getAltText());
+            }
+        }
+
+        private setImageFieldValues(field: FormItem, value: string) {
+            (<api.dom.InputEl>field.getInput()).setValue(value);
+        }
+
+        private initLoader() {
+            let loader = this.imageSelector.getLoader();
+
+            loader.setContentPath(this.content.getPath());
+            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE, api.schema.content.ContentTypeName.MEDIA_VECTOR]);
+
+            this.imageUploaderEl.setParams({
+                parent: this.content.getContentId().toString()
+            });
+        }
+
+        private loadImage() {
+            let loader = this.imageSelector.getLoader();
+
+            let singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
+                var imageContent = this.getImageContent(event.getData());
+                if (imageContent) {
+                    this.imageSelector.setValue(imageContent.getId());
+                    this.createImgElForExistingImage(imageContent);
+                    this.previewImage();
+                    this.imageSelectorFormItem.addClass("selected-item-preview");
+                }
+                loader.unLoadedData(singleLoadListener);
+            };
+            loader.onLoadedData(singleLoadListener);
+            
+            loader.load();
         }
 
         protected getMainFormItems(): FormItem[] {
-            var imageSelector = this.createImageSelector("imageId");
+            this.imageSelectorFormItem = this.createImageSelector("imageId");
 
-            this.addUploaderAndPreviewControls(imageSelector);
-            this.setFirstFocusField(imageSelector.getInput());
+            this.addUploaderAndPreviewControls();
+            this.setFirstFocusField(this.imageSelectorFormItem.getInput());
 
-            this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption());
-            this.imageAltTextField = this.createFormItem("altText", "Alternative text", null, this.getAltText());
+            this.imageCaptionField = this.createFormItem("caption", "Caption", null);
+            this.imageAltTextField = this.createFormItem("altText", "Alternative text", null);
 
             this.imageCaptionField.addClass("caption").hide();
             this.imageAltTextField.addClass("alttext").hide();
 
             return [
-                imageSelector,
+                this.imageSelectorFormItem,
                 this.imageCaptionField,
                 this.imageAltTextField
             ];
         }
 
         private createImageSelector(id: string): FormItem {
-            let loader = new api.content.resource.ContentSummaryLoader();
-            loader.setContentPath(this.content.getPath());
-
-            let imageSelector = api.content.ContentComboBox.create().
-                    setLoader(loader).
-                    setMaximumOccurrences(1).
-                    build(),
+            let imageSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build(),
 
                 formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>imageSelector),
@@ -82,23 +120,6 @@ module api.util.htmlarea.dialog {
             this.imageSelector = imageSelector;
 
             formItem.addClass("image-selector");
-
-            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE, api.schema.content.ContentTypeName.MEDIA_VECTOR]);
-
-            if (this.imageElement) {
-                var singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
-                    var imageContent = this.getImageContent(event.getData());
-                    if (imageContent) {
-                        imageSelector.setValue(imageContent.getId());
-                        this.createImgElForExistingImage(imageContent);
-                        this.previewImage();
-                        formItem.addClass("selected-item-preview");
-                    }
-                    loader.unLoadedData(singleLoadListener);
-                };
-                loader.onLoadedData(singleLoadListener);
-                loader.load();
-            }
 
             imageSelectorComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
                 var imageContent = event.getSelectedOption().getOption().displayValue;
@@ -138,8 +159,8 @@ module api.util.htmlarea.dialog {
             return formItem;
         }
 
-        private addUploaderAndPreviewControls(imageSelector: FormItem) {
-            var imageSelectorContainer = imageSelector.getInput().getParentElement();
+        private addUploaderAndPreviewControls() {
+            var imageSelectorContainer = this.imageSelectorFormItem.getInput().getParentElement();
 
             imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
             this.initDragAndDropUploaderEvents();
@@ -283,9 +304,6 @@ module api.util.htmlarea.dialog {
 
         private createImageUploader(): api.content.image.ImageUploaderEl {
             var uploader = new api.content.image.ImageUploaderEl({
-                params: {
-                    parent: this.content.getContentId().toString()
-                },
                 operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showResult: false,
