@@ -106,12 +106,12 @@ function updateTabTitle(title: string) {
     wemjq('title').html(`${title} / Content Studio`);
 }
 
-function updateFavicon(content: Content) {
+function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver) {
     if (!content.isImage() && navigator.userAgent.search("Chrome") > -1) {
         // Chrome currently doesn't support SVG favicons which are served for not image contents
         return;
     }
-    let resolver = this.iconUrlResolver.setContent(content).setCrop(false);
+    let resolver = iconUrlResolver.setContent(content).setCrop(false);
     wemjq('link[rel*=icon][sizes]').each((index, link) => {
         let sizes = link.getAttribute('sizes').split('x');
         if (sizes.length > 0) {
@@ -129,9 +129,6 @@ function startApplication() {
 
     let serverEventsListener = new api.app.ServerEventsListener([application]);
     serverEventsListener.start();
-
-    this.clientEventsListener = new ContentEventsListener([application]);
-    this.clientEventsListener.start();
 
     startLostConnectionDetector();
     
@@ -182,13 +179,12 @@ function startApplication() {
 
 function startContentWizard(wizardParams: ContentWizardPanelParams) {
     let wizard = new ContentWizardPanel(wizardParams);
-
-    this.iconUrlResolver = new ContentIconUrlResolver();
+    let iconUrlResolver = new ContentIconUrlResolver();
 
     wizard.onDataLoaded(content => {
         let contentType = (<ContentWizardPanel>wizard).getContentType();
         updateTabTitle(content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
-        updateFavicon(content);
+        updateFavicon(content, iconUrlResolver);
     });
     wizard.onWizardHeaderCreated(() => {
         // header will be ready after rendering is complete
@@ -226,7 +222,9 @@ function startContentApplication(application: api.app.Application) {
         appBar = new api.app.bar.AppBar(application),
         appPanel = new ContentAppPanel(appBar, application.getPath());
 
-    this.clientEventsListener.setContentApp(appPanel);
+    let clientEventsListener = new ContentEventsListener([application]);
+    clientEventsListener.setContentApp(appPanel);
+    clientEventsListener.start();
 
     body.appendChild(appBar);
     body.appendChild(appPanel);
