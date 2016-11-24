@@ -150,7 +150,7 @@ module api.ui.treegrid {
                         var node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
 
-                        } else if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
+                    } else if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
                         this.setActive(true);
                         if (elem.getAttribute("type") === "checkbox") {
                             this.grid.toggleRow(data.row);

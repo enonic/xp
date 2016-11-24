@@ -36,7 +36,7 @@ module api.form {
             if (this.formSet.getOccurrences().getMaximum() == 1) {
                 this.addClass("max-1-occurrence");
             }
-            
+
         }
 
         protected initOccurrences(): FormSetOccurrences<FormItemSetOccurrenceView> {

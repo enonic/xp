@@ -164,7 +164,7 @@ describe("api.util.UriHelper", () => {
             expect(uh.encodeUrlParams(null)).toBe(expected);
         });
         it("should return encoded string", () => {
-            expect(uh.encodeUrlParams({d: 1, e: false, foo: { one: 'b% ar!', two: ['a', 'b', 'c']}})).toBe(
+            expect(uh.encodeUrlParams({d: 1, e: false, foo: {one: 'b% ar!', two: ['a', 'b', 'c']}})).toBe(
                 'd=1&e=false&foo%5Bone%5D=b%25%20ar!&foo%5Btwo%5D%5B0%5D=a&foo%5Btwo%5D%5B1%5D=b&foo%5Btwo%5D%5B2%5D=c');
             // d=1&e=false&foo[one]=b% ar!&foo[two][0]=a&foo[two][1]=b&foo[two][2]=c
         })

@@ -109,7 +109,6 @@ describe("api.application.ApplicationLoader", () => {
                 filterSpy = spyOn(applications, "filter");
 
 
-
             });
 
             it("should apply filter", (done) => {

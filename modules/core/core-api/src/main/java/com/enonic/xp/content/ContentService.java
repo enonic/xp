@@ -1,14 +1,15 @@
 package com.enonic.xp.content;
 
+import java.io.InputStream;
+import java.util.concurrent.Future;
+
+import com.google.common.annotations.Beta;
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
-import com.google.common.annotations.Beta;
-import com.google.common.io.ByteSource;
-
-import java.io.InputStream;
-import java.util.concurrent.Future;
 
 @Beta
 public interface ContentService
@@ -90,7 +91,7 @@ public interface ContentService
 
     AccessControlList getRootPermissions();
 
-    ContentDependencies getDependencies(final ContentId id);
+    ContentDependencies getDependencies( final ContentId id );
 
     boolean contentExists( ContentId contentId );
 

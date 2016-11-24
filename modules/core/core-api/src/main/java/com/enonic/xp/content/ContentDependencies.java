@@ -1,8 +1,8 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
-
 import java.util.Collection;
+
+import com.google.common.annotations.Beta;
 
 @Beta
 public class ContentDependencies
@@ -11,7 +11,7 @@ public class ContentDependencies
 
     private final Collection<ContentDependenciesAggregation> outbound;
 
-    private ContentDependencies(Builder builder )
+    private ContentDependencies( Builder builder )
     {
         this.inbound = builder.inboundDependencies;
         this.outbound = builder.outboundDependencies;
@@ -48,7 +48,7 @@ public class ContentDependencies
             return this;
         }
 
-        public Builder outboundDependencies(final Collection<ContentDependenciesAggregation> value )
+        public Builder outboundDependencies( final Collection<ContentDependenciesAggregation> value )
         {
             this.outboundDependencies = value;
             return this;

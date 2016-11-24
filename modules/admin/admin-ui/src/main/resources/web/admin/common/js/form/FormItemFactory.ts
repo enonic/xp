@@ -21,7 +21,8 @@ module api.form {
                 return FormItemFactory.createFormOptionSet(<api.form.json.FormOptionSetJson>formItemTypeWrapperJson.FormOptionSet);
             }
             else if (formItemTypeWrapperJson.FormOptionSetOption) {
-                return FormItemFactory.createFormOptionSetOption(<api.form.json.FormOptionSetOptionJson>formItemTypeWrapperJson.FormOptionSetOption);
+                return FormItemFactory.createFormOptionSetOption(
+                    <api.form.json.FormOptionSetOptionJson>formItemTypeWrapperJson.FormOptionSetOption);
             }
 
             console.error("Unknown FormItem type: ", formItemTypeWrapperJson);

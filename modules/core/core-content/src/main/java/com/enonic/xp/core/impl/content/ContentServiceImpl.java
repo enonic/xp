@@ -1,6 +1,74 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.xp.content.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteSource;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.CompareContentParams;
+import com.enonic.xp.content.CompareContentResult;
+import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareContentsParams;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentDependencies;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentVersionId;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
+import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.FindContentByQueryParams;
+import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByParentResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.content.FindContentVersionsParams;
+import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetActiveContentVersionsParams;
+import com.enonic.xp.content.GetActiveContentVersionsResult;
+import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.MoveContentException;
+import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PushContentsResult;
+import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.ReorderChildContentsParams;
+import com.enonic.xp.content.ReorderChildContentsResult;
+import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ReprocessContentParams;
+import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.SetActiveContentVersionResult;
+import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -38,15 +106,6 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.util.BinaryReference;
-import com.google.common.io.ByteSource;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.osgi.service.component.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.*;
 
 @Component(immediate = true)
 public class ContentServiceImpl
@@ -646,9 +705,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ContentDependencies getDependencies(final ContentId id) {
-        final ContentDependenciesResolver contentDependenciesResolver =
-            new ContentDependenciesResolver( this );
+    public ContentDependencies getDependencies( final ContentId id )
+    {
+        final ContentDependenciesResolver contentDependenciesResolver = new ContentDependenciesResolver( this );
 
         return contentDependenciesResolver.resolve( id );
     }

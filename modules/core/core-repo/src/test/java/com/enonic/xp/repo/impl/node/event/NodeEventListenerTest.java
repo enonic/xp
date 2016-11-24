@@ -235,8 +235,8 @@ public class NodeEventListenerTest
             localOrigin( false ).
             build() );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodePushed( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
-                                                                               Mockito.eq( previousNodePath ),
-                                                                               Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodePushed( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                                   Mockito.eq( previousNodePath ),
+                                                                                   Mockito.isA( InternalContext.class ) );
     }
 }

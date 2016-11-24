@@ -192,7 +192,7 @@ module api.dom {
 
         hasAnyParentClass(clsName: string): boolean {
             let parent = this.getParent();
-            if(!parent) {
+            if (!parent) {
                 return false;
             }
 

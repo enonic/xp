@@ -10,13 +10,13 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.RepositoryEvents;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 @Component(immediate = true)
 public class RepositoryEventListener
     implements EventListener
 {
-    private StorageService storageService;
+    private NodeStorageService storageService;
 
     private final static Logger LOG = LoggerFactory.getLogger( RepositoryEventListener.class );
 
@@ -68,7 +68,7 @@ public class RepositoryEventListener
     }
 
     @Reference
-    public void setStorageService( final StorageService storageService )
+    public void setStorageService( final NodeStorageService storageService )
     {
         this.storageService = storageService;
     }

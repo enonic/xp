@@ -1,8 +1,9 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.google.common.annotations.Beta;
 
 @Beta
 public class ContentDependenciesAggregation
@@ -11,13 +12,13 @@ public class ContentDependenciesAggregation
 
     private Long count;
 
-    public ContentDependenciesAggregation(final Bucket bucket )
+    public ContentDependenciesAggregation( final Bucket bucket )
     {
-        this.type = ContentTypeName.from(bucket.getKey());
+        this.type = ContentTypeName.from( bucket.getKey() );
         this.count = bucket.getDocCount();
     }
 
-    public ContentDependenciesAggregation(final ContentTypeName type, final Long count )
+    public ContentDependenciesAggregation( final ContentTypeName type, final Long count )
     {
         this.type = type;
         this.count = count;

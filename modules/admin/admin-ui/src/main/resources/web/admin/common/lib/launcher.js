@@ -1,4 +1,4 @@
-var xplauncher = function(assetsUri, doc) {
+var xplauncher = function (assetsUri, doc) {
     if (assetsUri && !!doc) {
         var launcherJs = doc.createElement("script");
         launcherJs.setAttribute("type", "text/javascript");

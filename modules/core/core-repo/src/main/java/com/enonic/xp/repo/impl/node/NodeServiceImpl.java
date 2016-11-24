@@ -61,6 +61,7 @@ import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -555,7 +556,7 @@ public class NodeServiceImpl
     {
         verifyContext();
         final RestoreResult restoreResult = this.snapshotService.restore( params );
-        this.storageService.invalidate();
+        this.nodeStorageService.invalidate();
         this.eventPublisher.publish( RepositoryEvents.restored() );
         return restoreResult;
     }

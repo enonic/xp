@@ -76,7 +76,7 @@ module api.form {
             }
             return occurrences;
         }
-        
+
         toggleHelpText(show?: boolean) {
             this.getOccurrenceViews().forEach((view) => {
                 view.toggleHelpText(show);

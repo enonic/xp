@@ -134,7 +134,7 @@ public class ResolveSyncWorkCommand
         final NodeComparison rootNodeStatus = CompareNodeCommand.create().
             nodeId( this.publishRootNode.id() ).
             target( this.target ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             build().
             execute();
 

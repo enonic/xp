@@ -101,7 +101,7 @@ module api.form.inputtype.text {
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
             occurrence.getChildren().forEach((child) => {
-                if(ObjectHelper.iFrameSafeInstanceOf(child, api.ui.text.TextArea)) {
+                if (ObjectHelper.iFrameSafeInstanceOf(child, api.ui.text.TextArea)) {
                     (<api.ui.text.TextArea>child).resetBaseValues();
                 }
             })

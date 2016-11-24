@@ -60,7 +60,7 @@ module FormItemSetSpec {
             it("should create a form item for each item", function () {
                 expect(itemSet.getFormItems().length).toEqual(2);
             });
-            
+
             it("each item should have correct label", function () {
                 expect((<any>itemSet.getFormItems()[0]).getLabel()).toEqual("Itemset input");
                 expect((<any>itemSet.getFormItems()[1]).getLabel()).toEqual("Level 2 item set");

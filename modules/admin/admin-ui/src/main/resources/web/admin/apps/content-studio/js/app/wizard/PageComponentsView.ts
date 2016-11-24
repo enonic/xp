@@ -418,7 +418,7 @@ export class PageComponentsView extends api.dom.DivEl {
     private bindFragmentLoadErrorHandler(fragmentComponentView: FragmentComponentView) {
         fragmentComponentView.onFragmentLoadError((e) => {
             this.addToInvalidItems(e.getFragmentComponentView().getItemId().toString());
-            
+
         });
     }
 

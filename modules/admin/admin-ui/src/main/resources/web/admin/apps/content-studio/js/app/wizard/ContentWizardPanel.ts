@@ -827,7 +827,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var result: string[] = [];
 
         formItemContainer.getFormItems().forEach((item) => {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)||
+            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSetOption)) {

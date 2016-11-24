@@ -29,7 +29,7 @@ module api.content.json {
         requireValid: boolean;
 
         childOrder: ChildOrderJson;
-        
+
         publish: ContentPublishTimeRangeJson;
 
         language: string;

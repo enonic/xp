@@ -73,10 +73,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
                 let curClass = nameColumn.getCssClass();
 
-                if(checkSelIsMoved) {
+                if (checkSelIsMoved) {
                     nameColumn.setCssClass(curClass ? curClass : "" + "shifted");
                 } else {
-                    if(curClass && curClass.indexOf("shifted") >= 0) {
+                    if (curClass && curClass.indexOf("shifted") >= 0) {
                         nameColumn.setCssClass(curClass.replace("shifted", ""));
                     }
                 }

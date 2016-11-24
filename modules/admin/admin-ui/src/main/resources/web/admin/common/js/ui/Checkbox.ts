@@ -18,7 +18,7 @@ module api.ui {
             this.appendChild(this.checkbox);
             this.appendChild(this.label);
         }
-        
+
         isDisabled(): boolean {
             return this.checkbox.getEl().isDisabled();
         }
