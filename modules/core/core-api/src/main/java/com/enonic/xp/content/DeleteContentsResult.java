@@ -89,11 +89,11 @@ public class DeleteContentsResult
             return this;
         }
 
-        public Builder merge( final DeleteContentsResult result )
+        public Builder merge( final DeleteContentsResult.Builder result )
         {
-            this.pendingContents.addAll( result.pendingContents.getSet() );
-            this.deletedContents.addAll( result.deletedContents.getSet() );
-            this.failedContents.addAll( result.failedContents.getSet() );
+            this.pendingContents.addAll( result.pendingContents );
+            this.deletedContents.addAll( result.deletedContents );
+            this.failedContents.addAll( result.failedContents );
 
             return this;
         }

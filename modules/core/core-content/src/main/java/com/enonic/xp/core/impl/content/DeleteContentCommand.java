@@ -111,7 +111,7 @@ final class DeleteContentCommand
         return result.build();
     }
 
-    private DeleteContentsResult doDeleteContent( NodeId nodeToDelete )
+    private DeleteContentsResult.Builder doDeleteContent( NodeId nodeToDelete )
     {
         final CompareStatus rootNodeStatus = getCompareStatus( nodeToDelete );
 
@@ -144,13 +144,12 @@ final class DeleteContentCommand
 
             for ( final NodeId child : children )
             {
-                final DeleteContentsResult childDeleteResult = this.doDeleteContent( child );
+                final DeleteContentsResult.Builder childDeleteResult = this.doDeleteContent( child );
 
-                result.addDeleted( childDeleteResult.getDeletedContents() );
-                result.addPending( childDeleteResult.getPendingContents() );
+                result.merge( childDeleteResult );
             }
         }
-        return result.build();
+        return result;
     }
 
     private NodeIds deleteNodeInDraftAndMaster( final NodeId nodeToDelete )
