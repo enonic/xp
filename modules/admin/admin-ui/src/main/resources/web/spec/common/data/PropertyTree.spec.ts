@@ -10,7 +10,7 @@ describe("api.data.PropertyTree", () => {
             var tree = new PropertyTree();
             var root = tree.getRoot();
             expect(root).not.toBeNull();
-            expect(ObjectHelper.iFrameSafeInstanceOf(root, PropertySet)).toBeTruthy();
+            expect(api.ObjectHelper.iFrameSafeInstanceOf(root, PropertySet)).toBeTruthy();
             expect(root.getTree()).toBe(tree);
             expect(root.getProperty()).toBeNull();
         });

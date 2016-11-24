@@ -20,7 +20,7 @@ describe("api.application.ApplicationLoader", () => {
     });
 
     it("request property should be of correct type", () => {
-        expect(ObjectHelper.iFrameSafeInstanceOf(applicationLoader.request, ListApplicationsRequest)).toBeTruthy();
+        expect(api.ObjectHelper.iFrameSafeInstanceOf(applicationLoader.request, ListApplicationsRequest)).toBeTruthy();
     });
 
     describe("default loading behavior", () => {

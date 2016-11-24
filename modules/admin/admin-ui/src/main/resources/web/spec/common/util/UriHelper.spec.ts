@@ -1,12 +1,10 @@
-import UriHelper = api.util.UriHelper;
-
 describe("api.util.UriHelper", () => {
 
     window['CONFIG'] = {
         baseUri: 'http://localhost:8080/wem'
     };
 
-    var uh = UriHelper;
+    var uh = api.util.UriHelper;
 
     describe("getUri", () => {
         it("should return '/' string if no CONFIG.baseUri is present", () => {
