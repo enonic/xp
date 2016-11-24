@@ -101,6 +101,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             // re-set the selection to update selected rows presentation
         };
 
+        this.onDataChanged(this.addTitleAttributeToReadOnlyRows.bind(this));
+
         this.initEventHandlers(updateColumns);
     }
 
@@ -152,13 +154,16 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
                 var contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
                     compareResults);
-                var metadata = contentQueryResult.getMetadata();
-                if (metadata.getTotalHits() > metadata.getHits()) {
-                    contents.push(new ContentSummaryAndCompareStatus());
-                }
-                this.filter(contents);
-                this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
-                this.notifyLoaded();
+                ContentSummaryAndCompareStatusFetcher.updateReadOnly(contents).then(() => {
+                    var metadata = contentQueryResult.getMetadata();
+                    if (metadata.getTotalHits() > metadata.getHits()) {
+                        contents.push(new ContentSummaryAndCompareStatus());
+                    }
+                    this.filter(contents);
+                    this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
+                    this.notifyLoaded();
+                })
+                
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -234,16 +239,20 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     var contentSummaries = contentQueryResult.getContents();
                     var compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
                     return compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
-                        var list = parentNode.getChildren().map((el) => {
+                        var contents = parentNode.getChildren().map((el) => {
                             return el.getData();
                         }).slice(0, from).concat(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
                             compareResults));
-                        var meta = contentQueryResult.getMetadata();
-                        if (from + meta.getHits() < meta.getTotalHits()) {
-                            list.push(new ContentSummaryAndCompareStatus());
-                        }
-                        parentNode.setMaxChildren(meta.getTotalHits());
-                        return list;
+
+                        return ContentSummaryAndCompareStatusFetcher.updateReadOnly(contents).then(() => {
+                            var meta = contentQueryResult.getMetadata();
+                            if (from + meta.getHits() < meta.getTotalHits()) {
+                                contents.push(new ContentSummaryAndCompareStatus());
+                            }
+                            parentNode.setMaxChildren(meta.getTotalHits());
+                            return contents;
+                        });
+
                     });
                 });
         }
@@ -366,6 +375,11 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             super.selectAll();
             this.getGrid().unmask();
         }, 5);
+    }
+
+    protected collapseNode(node: TreeNode<ContentSummaryAndCompareStatus>) {
+        super.collapseNode(node);
+        this.addTitleAttributeToReadOnlyRows();
     }
 
     findByPaths(paths: api.content.ContentPath[], useParent: boolean = false): TreeNodesOfContentPath[] {
@@ -671,5 +685,32 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         return wemQ.all(parallelPromises).spread<void>(() => {
             return wemQ(null);
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+    }
+
+    private addTitleAttributeToReadOnlyRows() {
+        setTimeout(() => {
+            this.getRoot().getCurrentRoot().treeToList().forEach((node: TreeNode<ContentSummaryAndCompareStatus>, i) => {
+                if (node.getData().isReadOnly()) {
+                    let rowEl = wemjq(this.getHTMLElement()).find(".slick-row")[i];
+                    if (rowEl) {
+                        rowEl.title = "Read-only";
+                    }
+                }
+
+            })
+        }, 50);
+    }
+
+    protected handleItemMetadata(row: number) {
+        var node = this.getItem(row);
+        if (this.isEmptyNode(node)) {
+            return {cssClasses: 'empty-node'};
+        }
+
+        if (node.getData().isReadOnly()) {
+            return {cssClasses: 'readonly'};
+        }
+
+        return null;
     }
 }
