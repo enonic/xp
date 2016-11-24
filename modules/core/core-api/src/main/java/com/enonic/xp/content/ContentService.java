@@ -1,14 +1,15 @@
 package com.enonic.xp.content;
 
+import java.io.InputStream;
+import java.util.concurrent.Future;
+
+import com.google.common.annotations.Beta;
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
-import com.google.common.annotations.Beta;
-import com.google.common.io.ByteSource;
-
-import java.io.InputStream;
-import java.util.concurrent.Future;
 
 @Beta
 public interface ContentService
@@ -36,7 +37,7 @@ public interface ContentService
 
     PublishContentResult publish( PushContentParams params );
 
-    UnpublishContentsResult unpublishContent( final UnpublishContentParams params );
+    UnpublishContentsResult unpublishContent( UnpublishContentParams params );
 
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
@@ -64,12 +65,12 @@ public interface ContentService
 
     FindContentByParentResult findByParent( FindContentByParentParams params );
 
-    FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params );
+    FindContentIdsByParentResult findIdsByParent( FindContentByParentParams params );
 
     @Deprecated
     FindContentByQueryResult find( FindContentByQueryParams params );
 
-    FindContentIdsByQueryResult find( final ContentQuery query );
+    FindContentIdsByQueryResult find( ContentQuery query );
 
     CompareContentResult compare( CompareContentParams params );
 
@@ -79,7 +80,7 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
-    SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId );
+    SetActiveContentVersionResult setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 
@@ -90,7 +91,9 @@ public interface ContentService
 
     AccessControlList getRootPermissions();
 
-    ContentDependencies getDependencies(final ContentId id);
+    ContentDependencies getDependencies( ContentId id );
+
+    ContentIds getOutboundDependencies( ContentId id );
 
     boolean contentExists( ContentId contentId );
 
