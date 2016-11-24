@@ -126,7 +126,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             let contentPublishMenuButton = new ContentPublishMenuButton(this.getBrowseActions());
 
             this.browseToolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-            this.browseToolbar.appendChild(ContentPublishMenuManager.getPublishMenuButton());
+            this.browseToolbar.appendChild(contentPublishMenuButton);
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
 
@@ -482,10 +482,10 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                             if (node.getDataId() === el.getId()) {
                                 node.setData(el);
                                 node.clearViewers();
-                                this.contentTreeGrid.updatePathsInChildren(node);
+                                this.treeGrid.updatePathsInChildren(node);
                             }
                         });
-                        results.push(this.treeGrid.placeContentNodes(movedNodes));
+                        this.treeGrid.placeContentNodes(movedNodes);
                     } else {
                         dataToHandle.push(el);
                     }

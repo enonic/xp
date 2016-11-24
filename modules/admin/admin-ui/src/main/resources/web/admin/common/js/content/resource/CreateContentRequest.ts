@@ -69,7 +69,7 @@ module api.content.resource {
             return {
                 valid: this.valid,
                 requireValid: this.requireValid,
-                name: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
+                name: this.name.isUnnamed() ? ContentName.UNNAMED_PREFIX : this.name.toString(),
                 parent: this.parent.toString(),
                 contentType: this.contentType.toString(),
                 data: this.data.toJson(),

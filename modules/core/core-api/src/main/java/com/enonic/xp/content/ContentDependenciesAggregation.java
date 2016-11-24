@@ -1,8 +1,9 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.google.common.annotations.Beta;
 
 @Beta
 public class ContentDependenciesAggregation
