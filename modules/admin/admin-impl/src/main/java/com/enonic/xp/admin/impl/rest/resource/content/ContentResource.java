@@ -523,7 +523,7 @@ public final class ContentResource
             map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
             Collectors.toList() );
 
-        return new DependenciesJson(inbound, outbound);
+        return new DependenciesJson( inbound, outbound );
     }
 
     @POST
@@ -866,6 +866,31 @@ public final class ContentResource
             build();
 
         return new ContentSummaryListJson( contents, metaData, contentIconUrlResolver );
+    }
+
+    @POST
+    @Path("isReadOnlyContent")
+    public List<String> checkContentsReadOnly( final ContentIdsJson params )
+    {
+        final Contents contents = contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) );
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            return new ArrayList<>();
+        }
+
+        final List<String> result = new ArrayList<>();
+
+        contents.stream().forEach( content -> {
+            if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
+            {
+                result.add( content.getId().toString() );
+            }
+        } );
+
+        return result;
     }
 
     @GET

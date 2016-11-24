@@ -84,7 +84,7 @@ module api.ui.grid {
             this.slickDataView.onRowCountChanged.subscribe(listener);
         }
 
-        setItemMetadata(metadataHandler) {
+        setItemMetadataHandler(metadataHandler) {
             this.slickDataView.getItemMetadata = metadataHandler;
         }
     }

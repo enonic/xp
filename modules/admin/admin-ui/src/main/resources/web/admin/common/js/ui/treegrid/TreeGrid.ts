@@ -81,14 +81,7 @@ module api.ui.treegrid {
             this.gridData.setFilter((node: TreeNode<DATA>) => {
                 return node.isVisible();
             });
-            this.gridData.setItemMetadata((row) => {
-                const node = this.gridData.getItem(row);
-                if (this.isEmptyNode(node)) {
-                    return {cssClasses: 'empty-node'};
-                }
-
-                return null;
-            });
+            this.gridData.setItemMetadataHandler(this.handleItemMetadata.bind(this));
 
             
             this.columns = this.updateColumnsFormatter(builder.getColumns());
@@ -1073,7 +1066,7 @@ module api.ui.treegrid {
             this.grid.selectRow(row);
         }
 
-        private collapseNode(node: TreeNode<DATA>) {
+        protected collapseNode(node: TreeNode<DATA>) {
             node.setExpanded(false);
 
             // Save the selected collapsed rows in cache
@@ -1193,6 +1186,15 @@ module api.ui.treegrid {
         }
 
         sortNodeChildren(node: TreeNode<DATA>) {
+        }
+
+        protected handleItemMetadata(row: number) {
+            const node = this.gridData.getItem(row);
+            if (this.isEmptyNode(node)) {
+                return {cssClasses: 'empty-node'};
+            }
+
+            return null;
         }
     }
 }
