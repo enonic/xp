@@ -502,8 +502,12 @@ module api.ui.uploader {
             var file: FineUploaderFile = this.uploader.getFile(id);
             file.id = id;
 
+            if (name.lastIndexOf(".") > 0) {
+                name = name.substr(0, name.lastIndexOf("."));
+            }
+
             var uploadFile = new UploadItem<MODEL>(file);
-            this.uploadedItems.push(uploadFile);
+            this.uploadedItems.push(uploadFile.setName(name));
 
             this.setProgressVisible();
 

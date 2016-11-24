@@ -1,10 +1,28 @@
 @occurrence-label-margin-left: 10px;
 
-.form-item-set-view, .form-option-set-view {
-
-  &.valid {
-
+.form-item-set-view {
+  > .occurrence-views-container > .form-item-set-occurrence-view {
+    padding: 10px;
   }
+
+  &.max-1-occurrence {
+    .form-item-set-occurrence-view {
+      padding: 0px;
+
+      > .form-item-set-occurrences-container {
+        padding: 0 10px;
+      }
+    }
+  }
+}
+
+.form-option-set-view .form-item-set-view {
+  > .occurrence-views-container > .form-item-set-occurrence-view {
+    padding-bottom: 20px;
+  }
+}
+
+.form-item-set-view, .form-option-set-view {
 
   .display-validation-errors &.invalid {
     outline: 2px solid @input-red-text;
@@ -13,7 +31,7 @@
       outline: 2px solid @input-red-text;
     }
     &.odd > .validation-viewer {
-      color:white;
+      color: @admin-white;
     }
 
     .occurrence-views-container .form-option-set-occurrence-view {
@@ -44,10 +62,13 @@
   }
 
   &:not(.max-1-occurrence) {
-    .occurrence-views-container {
+    > .occurrence-views-container {
       background-color: @admin-bg-light-gray;
       padding: 10px 10px 0px 10px;
       .clearfix();
+    }
+    > .bottom-button-row {
+      padding-top: 0px;
     }
   }
 
@@ -91,7 +112,7 @@
   & > .bottom-button-row {
     box-sizing: border-box;
     background-color: @admin-bg-light-gray;
-    padding: 0 10px 10px 10px;
+    padding: 10px;
     clear: left;
     .clearfix();
 
@@ -143,7 +164,7 @@
     margin-bottom: 0px;
 
     .occurrence-views-container {
-      .form-option-set-occurrence-view {
+      > .form-option-set-occurrence-view {
         margin-bottom: 0px;
         padding: 0px;
       }
@@ -151,6 +172,7 @@
       &:empty + .bottom-button-row {
         display: block;
         padding-left: 0px;
+        padding-bottom: 0px;
         background-color: @admin-white;
       }
     }
@@ -162,12 +184,13 @@
   }
 
   .occurrence-views-container {
+    .form-option-set-occurrence-view {
+      padding: 10px;
+    }
 
     .form-item-set-occurrence-view, .form-option-set-occurrence-view {
-
       clear: left;
       margin: 0px;
-      padding: 10px;
       margin-bottom: 10px;
       background-color: white;
 
@@ -184,6 +207,7 @@
 
         .help-text-toggler {
           margin-top: 3px;
+          margin-right: 10px;
         }
       }
 
@@ -207,7 +231,7 @@
         .icon-close();
         .focusable();
 
-        margin: 5px 0 0 8px;
+        margin: 5px 0 0 0;
         border: 1px solid transparent;
         line-height: 12px;
         float: right;
@@ -215,11 +239,13 @@
         cursor: pointer;
       }
 
-      .form-item-set-occurrences-container, .form-option-set-occurrences-container {
-        margin-top: 10px;
+      .form-option-set-occurrences-container {
         padding-bottom: 10px;
       }
 
+      .form-item-set-occurrences-container, .form-option-set-occurrences-container {
+        margin-top: 10px;
+      }
     }
     .form-option-set-occurrence-view {
       padding-bottom: 0px;

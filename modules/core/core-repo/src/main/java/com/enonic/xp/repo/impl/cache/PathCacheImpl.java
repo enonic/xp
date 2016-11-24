@@ -30,6 +30,12 @@ public class PathCacheImpl
     }
 
     @Override
+    public void evictAll()
+    {
+        this.pathCache.invalidateAll();
+    }
+
+    @Override
     public String get( final CachePath path )
     {
         return this.pathCache.getIfPresent( path );

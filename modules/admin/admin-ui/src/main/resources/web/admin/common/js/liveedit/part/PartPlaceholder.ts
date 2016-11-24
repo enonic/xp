@@ -37,8 +37,16 @@ module api.liveedit.part {
             });
 
             var siteModel = partView.getLiveEditModel().getSiteModel();
-            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel));
-            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel));
+
+            let listener = () => this.reloadDescriptorsOnApplicationChange(siteModel);
+
+            siteModel.onApplicationAdded(listener);
+            siteModel.onApplicationRemoved(listener);
+
+            this.onRemoved(() => {
+                siteModel.unApplicationAdded(listener);
+                siteModel.unApplicationRemoved(listener);
+            });
 
             this.displayName = new api.dom.H3El('display-name');
             this.appendChild(this.displayName);

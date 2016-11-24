@@ -1,20 +1,18 @@
 package com.enonic.xp.repo.impl;
 
-import java.util.List;
-
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.PushNodeEntries;
+import com.enonic.xp.node.PushNodeEntry;
 
 import static org.junit.Assert.*;
 
@@ -38,41 +36,46 @@ public class NodeEventsTest
     {
         final Node pushed1 = createNode( "pushed1", NodePath.create( "/mynode1/pushed1" ).build(), "id1" );
         final Node pushed2 = createNode( "pushed2", NodePath.create( "/mynode1/pushed2" ).build(), "id2" );
-        final Node pushed3 = createNode( "pushed3", NodePath.create( "/mynode1/pushed3" ).build(), "id3" );
-        final Nodes nodes = Nodes.from( pushed1, pushed2, pushed3 );
+        final Node pushed3 = createNode( "pushed3Renamed", NodePath.create( "/mynode1/pushed3" ).build(), "id3" );
 
-        List<NodeBranchEntry> branchEntries = Lists.newArrayList();
-
-        branchEntries.add( NodeBranchEntry.create().
+        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
             nodeId( pushed1.id() ).
             nodePath( pushed1.path() ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( pushed1.getNodeVersionId() ).
-            build() );
-
-        branchEntries.add( NodeBranchEntry.create().
+            build();
+        final NodeBranchEntry nodeBranchEntry2 = NodeBranchEntry.create().
             nodeId( pushed2.id() ).
             nodePath( pushed2.path() ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( pushed2.getNodeVersionId() ).
-            build() );
-
-        branchEntries.add( NodeBranchEntry.create().
+            build();
+        final NodeBranchEntry nodeBranchEntry3 = NodeBranchEntry.create().
             nodeId( pushed3.id() ).
             nodePath( pushed3.path() ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( pushed3.getNodeVersionId() ).
-            build() );
+            build();
 
-        Event event = NodeEvents.pushed( NodeBranchEntries.from( branchEntries ) );
+        final PushNodeEntries pushNodeEntries = PushNodeEntries.create().
+            targetRepo( ContentConstants.CONTENT_REPO.getId() ).
+            targetBranch( ContentConstants.BRANCH_MASTER ).
+            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).build() ).
+            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build() ).
+            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry3 ).currentTargetPath(
+                NodePath.create( "/mynode1/pushed3/pushed3" ).build() ).build() ).
+            build();
+
+        Event event = NodeEvents.pushed( pushNodeEntries );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertTrue( event.hasValue( "nodes" ) );
         assertEquals( NodeEvents.NODE_PUSHED_EVENT, event.getType() );
-        assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=draft}" +
-                          ", {id=id2, path=/mynode1/pushed2/pushed2, branch=draft}" +
-                          ", {id=id3, path=/mynode1/pushed3/pushed3, branch=draft}]", event.getValue( "nodes" ).get().toString() );
+        assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=master}" +
+                          ", {id=id2, path=/mynode1/pushed2/pushed2, branch=master}" +
+                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, currentTargetPath=/mynode1/pushed3/pushed3}]",
+                      event.getValue( "nodes" ).get().toString() );
     }
 
     @Test

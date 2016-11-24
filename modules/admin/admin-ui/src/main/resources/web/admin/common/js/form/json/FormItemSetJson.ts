@@ -1,17 +1,11 @@
 module api.form.json {
 
-    export interface FormItemSetJson extends FormItemJson {
+    export interface FormItemSetJson extends FormSetJson {
 
         customText?: string;
-
-        helpText?: string;
 
         immutable?: boolean;
 
         items: FormItemTypeWrapperJson[];
-
-        label: string;
-
-        occurrences: OccurrencesJson;
     }
 }

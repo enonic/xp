@@ -25,8 +25,6 @@ module api.form {
      */
     export class FormItemSetOccurrences extends FormSetOccurrences<FormItemSetOccurrenceView> {
 
-        private formItemSet: FormItemSet;
-
         constructor(config: FormItemSetOccurrencesConfig) {
             super(<FormItemOccurrencesConfig>{
                 formItem: config.formItemSet,
@@ -36,61 +34,19 @@ module api.form {
             });
 
             this.context = config.context;
-            this.formItemSet = config.formItemSet;
+            this.formSet = config.formItemSet;
             this.parent = config.parent;
+            this.occurrencesCollapsed = false;
         }
 
-        getFormItemSet(): FormItemSet {
-            return this.formItemSet;
-        }
-
-        getAllowedOccurrences(): Occurrences {
-            return this.formItemSet.getOccurrences();
-        }
-
-        protected constructOccurrencesForNoData(): FormItemOccurrence<FormItemSetOccurrenceView>[] {
-            var occurrences: FormItemOccurrence<FormItemSetOccurrenceView>[] = [];
-            var minimumOccurrences = this.getAllowedOccurrences().getMinimum();
-
-            if (minimumOccurrences > 0) {
-                for (var i = 0; i < minimumOccurrences; i++) {
-                    occurrences.push(this.createNewOccurrence(this, i));
-                }
-            } else if (this.context.getShowEmptyFormItemSetOccurrences()) {
-                occurrences.push(this.createNewOccurrence(this, 0));
-            }
-
-            return occurrences;
-        }
-
-        protected constructOccurrencesForData(): FormItemOccurrence<FormItemSetOccurrenceView>[] {
-            var occurrences: FormItemOccurrence<FormItemSetOccurrenceView>[] = [];
-
-            this.propertyArray.forEach((property: Property, index: number) => {
-                occurrences.push(this.createNewOccurrence(this, index));
-            });
-
-            if (occurrences.length < this.formItemSet.getOccurrences().getMinimum()) {
-                for (var index: number = occurrences.length; index < this.formItemSet.getOccurrences().getMinimum(); index++) {
-                    occurrences.push(this.createNewOccurrence(this, index));
-                }
-            }
-            return occurrences;
-        }
-
-        createNewOccurrence(formItemOccurrences: FormItemOccurrences<FormItemSetOccurrenceView>,
-                            insertAtIndex: number): FormItemOccurrence<FormItemSetOccurrenceView> {
-            return new FormItemSetOccurrence(<FormItemSetOccurrences>formItemOccurrences, insertAtIndex)
-        }
-
-        createNewOccurrenceView(occurrence: FormItemSetOccurrence): FormItemSetOccurrenceView {
+        createNewOccurrenceView(occurrence: FormSetOccurrence<FormItemSetOccurrenceView>): FormItemSetOccurrenceView {
 
             var dataSet = this.getSetFromArray(occurrence);
 
             var newOccurrenceView = new FormItemSetOccurrenceView(<FormItemSetOccurrenceViewConfig>{
                 context: this.context,
-                formItemSetOccurrence: occurrence,
-                formItemSet: this.formItemSet,
+                formSetOccurrence: occurrence,
+                formItemSet: <FormItemSet> this.formSet,
                 parent: this.parent,
                 dataSet: dataSet
             });

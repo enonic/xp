@@ -58,6 +58,11 @@ module api.dom {
             return this.wrappedInput.isDirty();
         }
 
+        resetBaseValues() {
+            super.resetBaseValues();
+            this.wrappedInput.resetBaseValues();
+        }
+
         onDirtyChanged(listener: (dirty: boolean) => void) {
             this.wrappedInput.onDirtyChanged(listener);
         }

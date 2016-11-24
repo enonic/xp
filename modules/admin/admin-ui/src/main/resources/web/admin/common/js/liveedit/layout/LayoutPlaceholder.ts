@@ -18,7 +18,6 @@ module api.liveedit.layout {
             this.addClassEx("layout-placeholder");
             this.layoutComponentView = layoutView;
 
-
             this.comboBox = new LayoutDescriptorComboBox();
             this.comboBox.loadDescriptors(layoutView.getLiveEditModel().getSiteModel().getApplicationKeys());
 
@@ -33,8 +32,16 @@ module api.liveedit.layout {
             });
 
             var siteModel = layoutView.getLiveEditModel().getSiteModel();
-            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel));
-            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel));
+
+            let listener = () => this.reloadDescriptorsOnApplicationChange(siteModel);
+
+            siteModel.onApplicationAdded(listener);
+            siteModel.onApplicationRemoved(listener);
+
+            this.onRemoved(() => {
+                siteModel.unApplicationAdded(listener);
+                siteModel.unApplicationRemoved(listener);
+            });
         }
 
         private reloadDescriptorsOnApplicationChange(siteModel: SiteModel) {

@@ -1,7 +1,6 @@
 var mustache = require('/lib/xp/mustache');
-var portal = require('/lib/xp/portal');
 
-function handleGet(req) {
+function handleGet() {
     var uriScriptHelper = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper");
     var adminUrl = uriScriptHelper.generateAdminUri();
     var assetsUri = uriScriptHelper.generateAdminAssetsUri();
@@ -11,7 +10,6 @@ function handleGet(req) {
         adminUrl: adminUrl,
         assetsUri: assetsUri,
         baseUri: '',
-        portalAssetsUrl: portal.assetUrl({path: ""}),
         xpVersion: app.version,
         appId: 'user-manager',
         appName: 'Users'

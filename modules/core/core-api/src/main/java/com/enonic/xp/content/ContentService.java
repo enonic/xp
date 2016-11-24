@@ -1,15 +1,14 @@
 package com.enonic.xp.content;
 
-import java.io.InputStream;
-import java.util.concurrent.Future;
-
-import com.google.common.annotations.Beta;
-import com.google.common.io.ByteSource;
-
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
+import com.google.common.annotations.Beta;
+import com.google.common.io.ByteSource;
+
+import java.io.InputStream;
+import java.util.concurrent.Future;
 
 @Beta
 public interface ContentService
@@ -36,6 +35,8 @@ public interface ContentService
     PushContentsResult push( PushContentParams params );
 
     PublishContentResult publish( PushContentParams params );
+
+    UnpublishContentsResult unpublishContent( final UnpublishContentParams params );
 
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
@@ -89,12 +90,12 @@ public interface ContentService
 
     AccessControlList getRootPermissions();
 
+    ContentDependencies getDependencies(final ContentId id);
+
     boolean contentExists( ContentId contentId );
 
     boolean contentExists( ContentPath contentPath );
 
     Content reprocess( ContentId contentId );
-
-    UnpublishContentsResult unpublishContent( final UnpublishContentParams params );
 
 }

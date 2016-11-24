@@ -4,6 +4,7 @@ package com.enonic.xp.core.impl.content.serializer;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.ImageComponent;
+import com.enonic.xp.util.Reference;
 
 public class ImageComponentDataSerializer
     extends ComponentDataSerializer<ImageComponent, ImageComponent>
@@ -15,7 +16,7 @@ public class ImageComponentDataSerializer
         applyComponentToData( component, asData );
         if ( component.getImage() != null )
         {
-            asData.addString( "image", component.getImage().toString() );
+            asData.addReference( "image", Reference.from( component.getImage().toString() ) );
         }
         if ( component.hasConfig() )
         {

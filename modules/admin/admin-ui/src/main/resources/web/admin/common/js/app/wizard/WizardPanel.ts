@@ -489,30 +489,45 @@ module api.app.wizard {
         }
 
         updateStickyToolbar() {
-            var scrollTop = this.formPanel.getHTMLElement().scrollTop;
-            var wizardHeaderHeight = this.getWizardHeader().getEl().getHeightWithMargin();
-            var navigationWidth;
-            let mainToolbar = this.getMainToolbar();
-            if (scrollTop > wizardHeaderHeight) {
+            const scrollTop = this.formPanel.getHTMLElement().scrollTop;
+            const wizardNavigatorHeight = this.stepNavigatorAndToolbarContainer.getEl().getHeightWithBorder();
+
+            const stickyHeight = this.getWizardHeader().getEl().getHeightWithMargin();
+            // Height, when navigator soon to become sticky
+            // Can be used to update the position of the elements in it
+            const preStickyHeight = stickyHeight - wizardNavigatorHeight;
+
+            const mainToolbar = this.getMainToolbar();
+
+            if (scrollTop > stickyHeight) {
                 mainToolbar.removeClass("scroll-shadow");
-                var stepNavigatorEl = this.stepNavigatorAndToolbarContainer.getEl().addClass("scroll-stick");
+                this.stepNavigatorAndToolbarContainer.addClass("scroll-stick");
                 if (!this.stepNavigatorPlaceholder) {
+                    const stepNavigatorEl = this.stepNavigatorAndToolbarContainer.getEl();
                     this.stepNavigatorPlaceholder = new api.dom.DivEl('toolbar-placeholder');
                     this.stepNavigatorPlaceholder.insertAfterEl(this.stepNavigatorAndToolbarContainer);
                     this.stepNavigatorPlaceholder.getEl().setWidthPx(stepNavigatorEl.getWidth()).setHeightPx(stepNavigatorEl.getHeight());
                 }
-            } else if (scrollTop < wizardHeaderHeight) {
+            } else if (scrollTop < stickyHeight) {
                 mainToolbar.addClass("scroll-shadow");
                 this.stepNavigatorAndToolbarContainer.removeClass("scroll-stick");
                 if (this.stepNavigatorPlaceholder) {
                     this.stepNavigatorPlaceholder.remove();
-                    this.stepNavigatorPlaceholder = undefined;
+                    this.stepNavigatorPlaceholder = null;
                 }
             }
+
+            if (scrollTop > preStickyHeight) {
+                this.stepNavigatorAndToolbarContainer.addClass("pre-scroll-stick");
+            } else if (scrollTop < preStickyHeight) {
+                this.stepNavigatorAndToolbarContainer.removeClass("pre-scroll-stick");
+            }
+
             if (scrollTop == 0) {
                 mainToolbar.removeClass("scroll-shadow");
             }
 
+            let navigationWidth;
             if (this.minimized) {
                 navigationWidth = this.splitPanel.getEl().getHeight();
             } else {
@@ -552,10 +567,6 @@ module api.app.wizard {
                 this.splitPanel.hideSplitter();
                 this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
 
-                if (!!this.helpTextToggleButton) {
-                    this.helpTextToggleButton.hide();
-                }
-
                 this.stepNavigator.onNavigationItemActivated(this.toggleMinimizeListener);
             } else {
                 this.splitPanel.loadPanelSizesAndDistribute();
@@ -565,11 +576,14 @@ module api.app.wizard {
                 this.stepsPanel.setListenToScroll(true);
                 this.stepNavigator.setScrollEnabled(true);
 
-                if (!!this.helpTextToggleButton) {
-                    this.helpTextToggleButton.show();
-                }
-
                 this.stepNavigator.selectNavigationItem(navigationIndex, false, true);
+            }
+
+            if (this.helpTextToggleButton) {
+                this.helpTextToggleButton.setVisible(!this.minimized);
+                // Additional resize after button is shown, but
+                // ResponsiveManager already handled callded checkAndMinimize
+                this.stepNavigatorAndToolbarContainer.checkAndMinimize();
             }
         }
 
@@ -783,11 +797,11 @@ module api.app.wizard {
         }
 
         showMinimizeEditButton() {
-            this.minimizeEditButton.show();
+            this.addClass("wizard-panel--live");
         }
 
         hideMinimizeEditButton() {
-            this.minimizeEditButton.hide();
+            this.removeClass("wizard-panel--live");
         }
 
         private createSplitPanel(firstPanel: api.ui.panel.Panel, secondPanel: api.ui.panel.Panel): api.ui.panel.SplitPanel {

@@ -12,6 +12,8 @@ module api.form {
 
         protected occurrencesCollapsed: boolean = false;
 
+        protected formSet: FormSet;
+
         constructor(config: FormItemOccurrencesConfig) {
             super(config);
         }
@@ -24,6 +26,19 @@ module api.form {
             });
         }
 
+        getFormSet(): FormSet {
+            return this.formSet;
+        }
+
+        getAllowedOccurrences(): Occurrences {
+            return this.formSet.getOccurrences();
+        }
+
+        createNewOccurrence(formItemOccurrences: FormItemOccurrences<V>,
+                            insertAtIndex: number): FormItemOccurrence<V> {
+            return new FormSetOccurrence(<FormSetOccurrences<V>>formItemOccurrences, insertAtIndex);
+        }
+
         protected getSetFromArray(occurrence): PropertySet {
             var dataSet = this.propertyArray.getSet(occurrence.getIndex());
             if (!dataSet) {
@@ -32,6 +47,36 @@ module api.form {
             return dataSet;
         }
 
+        protected constructOccurrencesForNoData(): FormItemOccurrence<V>[] {
+            var occurrences: FormItemOccurrence<V>[] = [];
+            var minimumOccurrences = this.getAllowedOccurrences().getMinimum();
+
+            if (minimumOccurrences > 0) {
+                for (var i = 0; i < minimumOccurrences; i++) {
+                    occurrences.push(this.createNewOccurrence(this, i));
+                }
+            } else if (this.context.getShowEmptyFormItemSetOccurrences()) {
+                occurrences.push(this.createNewOccurrence(this, 0));
+            }
+
+            return occurrences;
+        }
+
+        protected constructOccurrencesForData(): FormItemOccurrence<V>[] {
+            var occurrences: FormItemOccurrence<V>[] = [];
+
+            this.propertyArray.forEach((property: Property, index: number) => {
+                occurrences.push(this.createNewOccurrence(this, index));
+            });
+
+            if (occurrences.length < this.getAllowedOccurrences().getMinimum()) {
+                for (var index: number = occurrences.length; index < this.getAllowedOccurrences().getMinimum(); index++) {
+                    occurrences.push(this.createNewOccurrence(this, index));
+                }
+            }
+            return occurrences;
+        }
+        
         toggleHelpText(show?: boolean) {
             this.getOccurrenceViews().forEach((view) => {
                 view.toggleHelpText(show);

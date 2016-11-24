@@ -133,17 +133,9 @@ module api.content.form.inputtype.upload {
 
             new api.content.resource.GetContentByIdRequest(contentId).sendAndParse().then((content: api.content.Content) => {
                 var deleteRequest = new api.content.resource.DeleteContentRequest();
-
                 deleteRequest.addContentPath(content.getPath());
-                deleteRequest.sendAndParse().then((result: api.content.resource.result.DeleteContentResult) => {
-                    this.mediaUploaderEl.getResultContainer().removeChildren();
-                    this.uploaderWrapper.addClass("empty");
-                    property.setValue(this.newInitialValue());
-                    
-                    if (result.getDeleted() > 0) {
-                        var itemStr = (result.getDeleted() == 1) ? " item was" : " items were";
-                        api.notify.showSuccess(result.getDeleted() + itemStr + ' deleted');
-                    }
+                deleteRequest.sendAndParseWithPolling().then((message: string) => {
+                    api.notify.showSuccess(message);
                 }).catch((reason: any) => {
                     if (reason && reason.message) {
                         api.notify.showError(reason.message);

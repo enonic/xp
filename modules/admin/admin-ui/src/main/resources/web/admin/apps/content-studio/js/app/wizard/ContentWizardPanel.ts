@@ -825,7 +825,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var result: string[] = [];
 
         formItemContainer.getFormItems().forEach((item) => {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)||
+            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSet) ||
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSetOption)) {
@@ -1272,8 +1272,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         } else {
 
-            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
-            return !viewedContent.equals(persistedContent, true);
+            let viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+
+            // ignore empty values for auto-created content that hasn't been updated yet because it doesn't have data at all
+            let ignoreEmptyValues = !persistedContent.getModifiedTime() || !persistedContent.getCreatedTime() ||
+                                    persistedContent.getCreatedTime().getTime() == persistedContent.getModifiedTime().getTime();
+
+            return !viewedContent.equals(persistedContent, ignoreEmptyValues);
         }
     }
 
@@ -1321,22 +1326,25 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var optionSets = this.getOptionSetsInForm(this.getContentType().getForm());
 
         optionSets.forEach((optionSet) => {
-            var optionSetProperty = data.getProperty(optionSet.getPath().toString()).getPropertySet();
-            var selectionArray = optionSetProperty.getPropertyArray("_selected");
-            if (!selectionArray) {
-                return;
-            }
-            optionSet.getOptions().forEach((option: api.form.FormOptionSetOption) => {
-                var isSelected = false;
-                selectionArray.forEach((selectedOptionName: api.data.Property) => {
-                    if (selectedOptionName.getString() == option.getName()) {
-                        isSelected = true;
+            var property = data.getProperty(optionSet.getPath().toString());
+            if (!!property) {
+                var optionSetProperty = property.getPropertySet();
+                var selectionArray = optionSetProperty.getPropertyArray("_selected");
+                if (!selectionArray) {
+                    return;
+                }
+                optionSet.getOptions().forEach((option: api.form.FormOptionSetOption) => {
+                    var isSelected = false;
+                    selectionArray.forEach((selectedOptionName: api.data.Property) => {
+                        if (selectedOptionName.getString() == option.getName()) {
+                            isSelected = true;
+                        }
+                    })
+                    if (!isSelected) {
+                        optionSetProperty.removeProperty(option.getName(), 0);
                     }
                 })
-                if (!isSelected) {
-                    optionSetProperty.removeProperty(option.getName(), 0);
-                }
-            })
+            }
         });
 
         return data;

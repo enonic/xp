@@ -669,8 +669,8 @@ module api.ui.image {
             editContainer.appendChildren(this.editResetButton, applyButton, cancelButton);
 
             var standbyContainer = new DivEl('standby-container');
-            var resetButton = new Button('Reset');
-            resetButton.addClass('button-reset red').setVisible(false).onClicked((event: MouseEvent) => {
+            var resetButton = new Button('Reset filters');
+            resetButton.addClass('button-reset transparent').setVisible(false).onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
                 this.resetCropPosition();

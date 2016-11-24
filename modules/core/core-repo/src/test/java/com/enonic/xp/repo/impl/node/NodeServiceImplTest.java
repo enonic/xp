@@ -133,10 +133,7 @@ public class NodeServiceImplTest
             parent( NodePath.ROOT ).
             build() );
 
-        nodeService.rename( RenameNodeParams.create().
-            nodeName( NodeName.from( "my-node-edited" ) ).
-            nodeId( createdNode.id() ).
-            build() );
+        doRename( createdNode.id(), "my-node-edited" );
 
         final Node renamedNode = nodeService.getById( createdNode.id() );
 
@@ -185,6 +182,11 @@ public class NodeServiceImplTest
             name( "myNode" ).
             build() );
 
+        final Node node2 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "myNode2" ).
+            build() );
+
         final SnapshotResult result = this.nodeService.snapshot( SnapshotParams.create().
             snapshotName( "my-snapshot" ).
             repositoryId( CTX_DEFAULT.getRepositoryId() ).
@@ -193,8 +195,12 @@ public class NodeServiceImplTest
         assertEquals( SnapshotResult.State.SUCCESS, result.getState() );
 
         doDeleteNode( node.id() );
+        doRename( node2.id(), "myNode2Renamed" );
 
         assertNull( getNodeById( node.id() ) );
+        assertNull( getNodeByPath( node.path() ) );
+        assertNull( getNodeByPath( NodePath.create( "/myNode2" ).build() ) );
+        assertNotNull( getNodeByPath( NodePath.create( "/myNode2Renamed" ).build() ) );
 
         this.nodeService.restore( RestoreParams.create().
             snapshotName( "my-snapshot" ).
@@ -202,6 +208,9 @@ public class NodeServiceImplTest
             build() );
 
         assertNotNull( getNodeById( node.id() ) );
+        assertNotNull( getNodeByPath( node.path() ) );
+        assertNotNull( getNodeByPath( NodePath.create( "/myNode2" ).build() ) );
+        assertNull( getNodeByPath( NodePath.create( "/myNode2Renamed" ).build() ) );
     }
 
     @Test(expected = SnapshotException.class)
@@ -268,6 +277,14 @@ public class NodeServiceImplTest
         final ByteSource source = this.nodeService.getBinary( node.id(), binaryRef1 );
 
         assertArrayEquals( source.read(), binarySource.getBytes() );
+    }
+
+    private void doRename( final NodeId nodeId, final String newName )
+    {
+        nodeService.rename( RenameNodeParams.create().
+            nodeName( NodeName.from( newName ) ).
+            nodeId( nodeId ).
+            build() );
     }
 
 }

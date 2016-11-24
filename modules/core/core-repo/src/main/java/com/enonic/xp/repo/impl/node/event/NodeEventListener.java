@@ -26,6 +26,8 @@ public class NodeEventListener
 
     private final NodeMovedHandler nodeMovedHandler = new NodeMovedHandler();
 
+    private final NodePushedHandler nodePushedHandler = new NodePushedHandler();
+
     @Override
     public int getOrder()
     {
@@ -67,6 +69,9 @@ public class NodeEventListener
                 break;
             case NodeEvents.NODE_DUPLICATED_EVENT:
                 handleEventType( event, nodeCreatedHandler );
+                break;
+            case NodeEvents.NODE_PUSHED_EVENT:
+                handleEventType( event, nodePushedHandler );
                 break;
         }
     }

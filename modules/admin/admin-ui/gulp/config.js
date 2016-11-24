@@ -97,6 +97,7 @@ var CONFIG = {
         ],
         // list of files / patterns to load in the browser
         files: [
+            'node_modules/phantomjs-polyfill-object-assign/object-assign-polyfill.js',
             'src/main/resources/web/admin/common/lib/_all.js',
             'src/main/resources/web/admin/common/js/_all.js',
             'src/main/resources/web/spec/_all.js'

@@ -21,6 +21,8 @@ module api.ui.selector {
 
         private maxHeight: number;
 
+        private customHeight: number;
+
         private width: number;
 
         private grid: api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>;
@@ -47,6 +49,7 @@ module api.ui.selector {
             this.filter = config.filter;
             this.dataIdProperty = config.dataIdProperty || "value";
             this.maxHeight = config.maxHeight;
+            this.customHeight = config.maxHeight;
             this.width = config.width;
             this.multipleSelections = config.multipleSelections || false;
 
@@ -73,18 +76,6 @@ module api.ui.selector {
 
             this.grid.subscribeOnSelectedRowsChanged((e, args) => {
                 this.notifyMultipleSelection(args.rows);
-            });
-
-            this.gridData.onRowsChanged((e, args) => {
-                // this.markSelections();
-                // TODO: After refactoring during task CMS-3104, this does not seem to be necessary
-                // TODO: Remove this when sure or re-implement
-            });
-
-            this.gridData.onRowCountChanged((e, args) => {
-                // this.markSelections();
-                // TODO: After refactoring during task CMS-3104, this does not seem to be necessary
-                // TODO: Remove this when sure or re-implement
             });
         }
 
@@ -205,16 +196,27 @@ module api.ui.selector {
             var gridEl = this.grid.getEl();
             var rowsHeight = this.getOptionCount() * this.optionDisplayValueViewer.getPreferredHeight();
 
-            if (rowsHeight < this.maxHeight) {
+            if (rowsHeight < this.customHeight) {
                 var borderWidth = gridEl.getBorderTopWidth() + gridEl.getBorderBottomWidth();
                 gridEl.setHeightPx(rowsHeight + borderWidth);
                 this.grid.getOptions().setAutoHeight(true);
-            } else if (gridEl.getHeight() < this.maxHeight) {
-                gridEl.setHeightPx(this.maxHeight);
+            } else if (gridEl.getHeight() < this.customHeight) {
+                gridEl.setHeightPx(this.customHeight);
+                this.grid.getOptions().setAutoHeight(false);
+            } else if (this.customHeight !== this.maxHeight) {
+                gridEl.setHeightPx(this.customHeight);
                 this.grid.getOptions().setAutoHeight(false);
             }
 
             this.grid.resizeCanvas();
+        }
+
+        setCustomHeight(height: number) {
+            this.customHeight = Math.min(height, this.maxHeight);
+        }
+
+        resetCustomHeight() {
+            this.customHeight = this.maxHeight;
         }
 
         markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
@@ -248,23 +250,13 @@ module api.ui.selector {
         }
 
         hasActiveRow(): boolean {
-            var activeCell = this.grid.getActiveCell();
-            if (activeCell) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return !!this.grid.getActiveCell();
         }
 
         getActiveRow(): number {
-            var activeCell = this.grid.getActiveCell();
-            if (activeCell) {
-                return activeCell.row;
-            }
-            else {
-                return -1;
-            }
+            const activeCell = this.grid.getActiveCell();
+
+            return !activeCell ? -1 : activeCell.row;
         }
 
         navigateToFirstRow() {
@@ -273,12 +265,6 @@ module api.ui.selector {
 
         navigateToRow(row: number) {
             this.grid.setActiveCell(row, 0);
-        }
-
-        navigateToFirstRowIfNotActive() {
-            if (!this.grid.getActiveCell()) {
-                this.navigateToFirstRow();
-            }
         }
 
         navigateToNextRow() {

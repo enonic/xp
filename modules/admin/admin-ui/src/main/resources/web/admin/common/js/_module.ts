@@ -59,6 +59,8 @@
 ///<reference path='locale/_module.ts' />
 ///<reference path='locale/json/_module.ts' />
 
+///<reference path='task/_module.ts' />
+
 ///<reference path='ui/responsive/_module.ts' />
 
 ///<reference path='ui/_module.ts' />
@@ -166,8 +168,6 @@
 ///<reference path='app/wizard/_module.ts' />
 
 ///<reference path='system/_module.ts' />
-
-///<reference path='task/_module.ts' />
 
 ///<reference path='liveedit/_module.ts' />
 ///<reference path='liveedit/image/_module.ts' />

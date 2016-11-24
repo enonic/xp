@@ -1,5 +1,4 @@
 import "../../api.ts";
-import {DeleteAction} from "../view/DeleteAction";
 
 export interface ConfirmContentDeleteDialogConfig {
 
@@ -60,25 +59,8 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
         this.confirmDeleteAction.setIconClass("confirm-delete-action");
         this.confirmDeleteAction.setEnabled(false);
         this.confirmDeleteAction.onExecuted(() => {
-
-            if (!!this.deleteConfig.yesCallback) {
-                !!this.deleteConfig.deleteRequest.getParams()["deleteOnline"]
-                    ? this.deleteConfig.yesCallback([])
-                    : this.deleteConfig.yesCallback();
-            }
-
-            this.deleteConfig.deleteRequest.sendAndParse().then((result: api.content.resource.result.DeleteContentResult) => {
-                this.close();
-                DeleteAction.showDeleteResult(result);
-            }).catch((reason: any) => {
-                if (reason && reason.message) {
-                    api.notify.showError(reason.message);
-                } else {
-                    api.notify.showError('Content could not be deleted.');
-                }
-            }).finally(() => {
-
-            }).done();
+            this.close();
+            this.deleteConfig.yesCallback();
         });
 
         this.confirmDeleteButton = this.addAction(this.confirmDeleteAction, true, true);
@@ -132,5 +114,15 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
 
     private isCorrectNumberEntered(): boolean {
         return this.input.getValue() == this.deleteConfig.totalItemsToDelete.toString();
+    }
+
+    private enableActions() {
+        this.confirmDeleteAction.setEnabled(true);
+        this.getCancelAction().setEnabled(true);
+    }
+
+    private disableActions() {
+        this.confirmDeleteAction.setEnabled(false);
+        this.getCancelAction().setEnabled(false);
     }
 }
