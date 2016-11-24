@@ -12,8 +12,10 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
@@ -405,12 +407,12 @@ public class ContentServiceImplTest_publish
 
     private void doDelete( final ContentPath f1Path, boolean instantly )
     {
-        final DeleteContentParams deleteContentParams = DeleteContentParams.create().
-            contentPath( f1Path ).
+        final DeleteContentsParams deleteContentsParams = DeleteContentsParams.create().
+            contentPaths( ContentPaths.from( f1Path ) ).
             deleteOnline( instantly ).
             build();
 
-        this.contentService.deleteWithoutFetch( deleteContentParams );
+        this.contentService.deleteWithoutFetch( deleteContentsParams );
     }
 
     private PublishContentResult doPublish( final boolean includeChildren, final ContentId... contentIds )

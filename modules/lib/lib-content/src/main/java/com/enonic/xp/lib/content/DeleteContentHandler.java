@@ -5,7 +5,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.DeleteContentsParams;
 import com.enonic.xp.context.ContextAccessor;
 
 public final class DeleteContentHandler
@@ -41,14 +42,14 @@ public final class DeleteContentHandler
 
     private boolean deleteByPath( final ContentPath path )
     {
-        final DeleteContentParams params = DeleteContentParams.create().
-            contentPath( path ).
+        final DeleteContentsParams params = DeleteContentsParams.create().
+            contentPaths( ContentPaths.from( path ) ).
             deleteOnline( isMasterBranch() ).
             build();
         return doDelete( params );
     }
 
-    private boolean doDelete( final DeleteContentParams params )
+    private boolean doDelete( final DeleteContentsParams params )
     {
         try
         {
