@@ -30,6 +30,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
@@ -701,11 +702,20 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ContentDependencies getDependencies(final ContentId id) {
-        final ContentDependenciesResolver contentDependenciesResolver =
-            new ContentDependenciesResolver( this );
+    public ContentDependencies getDependencies( final ContentId id )
+    {
+        final ContentDependenciesResolver contentDependenciesResolver = new ContentDependenciesResolver( this );
 
         return contentDependenciesResolver.resolve( id );
+    }
+
+    @Override
+    public ContentIds getOutboundDependencies( final ContentId id )
+    {
+        final ContentOutboundDependenciesIdsResolver contentOutboundDependenciesIdsResolver =
+            new ContentOutboundDependenciesIdsResolver( this );
+
+        return contentOutboundDependenciesIdsResolver.resolve( id );
     }
 
     @Override

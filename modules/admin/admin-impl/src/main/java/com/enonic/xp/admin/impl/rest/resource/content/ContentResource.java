@@ -494,11 +494,11 @@ public final class ContentResource
                 final StringBuilder builder = new StringBuilder();
                 if ( deleted > 0 )
                 {
-                    builder.append( deleted ).append( " items deleted. " );
+                    builder.append( deleted ).append( " items are deleted. " );
                 }
                 if ( pending > 0 )
                 {
-                    builder.append( pending ).append( " items marked for deletion. " );
+                    builder.append( pending ).append( " items are marked for deletion. " );
                 }
                 if ( failed > 0 )
                 {
