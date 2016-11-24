@@ -2,24 +2,18 @@ import Input = api.form.Input;
 import Site = api.content.site.Site;
 import ContentFormContext = api.content.form.ContentFormContext;
 import SiteConfigurator = api.content.site.inputtype.siteconfigurator.SiteConfigurator;
-import Application = api.application.Application;
 import SiteConfigProvider = api.content.site.inputtype.siteconfigurator.SiteConfigProvider;
 import SiteConfiguratorComboBox = api.content.site.inputtype.siteconfigurator.SiteConfiguratorComboBox;
 import SiteConfiguratorSelectedOptionsView = api.content.site.inputtype.siteconfigurator.SiteConfiguratorSelectedOptionsView;
-import ObjectHelper = api.ObjectHelper;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
-import ValueTypes = api.data.ValueTypes;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import InputJson = api.form.json.InputJson;
 import ContentJson = api.content.json.ContentJson;
 import ApplicationJson = api.application.json.ApplicationJson;
 import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
-import PropertyPath = api.data.PropertyPath;
 import ContentPath = api.content.ContentPath;
 import BaseInputTypeManagingAdd = api.form.inputtype.support.BaseInputTypeManagingAdd;
 import FormView = api.form.FormView;
-import PropertySet = api.data.PropertySet;
-import Spy = jasmine.Spy;
 import FormValidityChangedEvent = api.form.FormValidityChangedEvent;
 
 describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
@@ -478,8 +472,8 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 permissions: [],
                 thumbnail: null,
                 type: "portal:site",
-                requireValid: false
-
+                requireValid: false,
+                publish: {from: ""}
             }
         )
     }

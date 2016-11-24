@@ -1,6 +1,5 @@
 module api.task {
 
-
     export class TaskInfo {
 
         private id: TaskId;

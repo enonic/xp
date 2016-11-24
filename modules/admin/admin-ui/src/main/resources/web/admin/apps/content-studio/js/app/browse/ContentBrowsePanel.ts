@@ -16,7 +16,7 @@ import {ToggleSearchPanelEvent} from "./ToggleSearchPanelEvent";
 import {ToggleSearchPanelWithDependenciesEvent} from "./ToggleSearchPanelWithDependenciesEvent";
 import {NewMediaUploadEvent} from "../create/NewMediaUploadEvent";
 import {ContentPreviewPathChangedEvent} from "../view/ContentPreviewPathChangedEvent";
-import {ContentPublishMenuManager} from "./ContentPublishMenuManager";
+import {ContentPublishMenuButton} from "./ContentPublishMenuButton";
 import {TreeNodeParentOfContent} from "./TreeNodeParentOfContent";
 import {TreeNodesOfContentPath} from "./TreeNodesOfContentPath";
 
@@ -119,11 +119,12 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 }
             });
 
-            new ContentPublishMenuManager(this.browseActions);
+            let contentPublishMenuButton = new ContentPublishMenuButton(this.browseActions);
+            
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-            this.toolbar.appendChild(ContentPublishMenuManager.getPublishMenuButton());
+            this.toolbar.appendChild(contentPublishMenuButton);
 
-            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
+            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
 
             return rendered;
         }).catch((error) => {
@@ -132,7 +133,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
+    private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager,
+                                           contentPublishMenuButton: ContentPublishMenuButton) {
 
         this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
                                                fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
@@ -146,13 +148,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
             if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
-                ContentPublishMenuManager.getPublishMenuButton().maximize();
+                contentPublishMenuButton.maximize();
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                     nonMobileDetailsPanelsManager.hideActivePanel();
                     ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
                 }
             } else {
-                ContentPublishMenuManager.getPublishMenuButton().minimize();
+                contentPublishMenuButton.minimize();
             }
         });
     }

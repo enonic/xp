@@ -30,6 +30,18 @@ Other software licenses used by this product:
     CDDL and others.
     JavaMail is included in Java, but has some special licensing: https://java.net/projects/javamail/pages/License
 
+    ATTO Parser
+    MIT License
+    https://github.com/tpolecat/atto
+
+    Tiny MCE
+    GNU LGPL 2.1
+    https://raw.githubusercontent.com/tinymce/tinymce/master/LICENSE.TXT
+
+    Web Components
+    BSD "style" license:
+    https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md
+
 Javascript library licenses used by this product:
 
     CodeMirror
@@ -43,10 +55,6 @@ Javascript library licenses used by this product:
     Fine Uploader
     MIT License
     http://fineuploader.com/
-
-    MediumEditor
-    Very liberal license from Davi Ferreira
-    https://github.com/daviferreira/medium-editor/blob/master/LICENSE
 
     Hasher
     MIT License

@@ -299,6 +299,19 @@ public class ContentServiceImpl
     }
 
     @Override
+    public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
+    {
+        return UnpublishContentCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    @Override
     public Content getById( final ContentId contentId )
     {
         return doGetById( contentId );
@@ -695,19 +708,6 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
-            build().
-            execute();
-    }
-
-    @Override
-    public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
-    {
-        return UnpublishContentCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }

@@ -290,51 +290,99 @@ public final class ContentResource
 
     @POST
     @Path("delete")
-    public DeleteContentResultJson delete( final DeleteContentJson json )
+    public TaskResultJson delete( final DeleteContentJson params )
     {
-        final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
+        final RunnableTask runnableTask = ( id, progressReporter ) -> deleteTask( params, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Delete content" );
+        return new TaskResultJson( taskId );
+    }
 
-        final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
+    private void deleteTask( final DeleteContentJson params, final ProgressReporter progressReporter )
+    {
+        final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( params.getContentPaths() ) );
+        final Context ctx = ContextAccessor.current();
+        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
+        progressReporter.info( "Deleting content" );
 
-        final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
-
+        // TODO: Move cycle to DeleteContentResult, pass the listener
+        final DeleteContentProgressListener listener = new DeleteContentProgressListener( progressReporter );
+        int deleted = 0;
+        int pending = 0;
+        int failed = 0;
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
                 contentPath( contentToDelete ).
-                deleteOnline( json.isDeleteOnline() ).
+                deleteOnline( params.isDeleteOnline() ).
                 build();
 
             try
             {
                 DeleteContentsResult result = contentService.deleteWithoutFetch( deleteContentParams );
 
-                jsonResult.addPending( result.getPendingContents().getSize() );
-                jsonResult.addSuccess( result.getDeletedContents().getSize() );
-
+                deleted += result.getDeletedContents().getSize();
+                pending += result.getPendingContents().getSize();
             }
             catch ( final Exception e )
             {
                 try
                 {
                     Content content = contentService.getByPath( contentToDelete );
-                    if ( content != null && StringUtils.isEmpty( jsonResult.getFailureReason() ) )
+                    if ( content != null )
                     {
-                        jsonResult.setFailureReason( e.getMessage() );
+                        failed++;
                     }
                 }
                 catch ( final Exception e2 )
                 {
-                    if ( StringUtils.isEmpty( jsonResult.getFailureReason() ) )
-                    {
-                        jsonResult.setFailureReason( e2.getMessage() );
-                    }
+                    failed++;
                 }
-
             }
+
+            listener.contentDeleted( 1 );
         }
 
-        return jsonResult;
+        progressReporter.info( getDeleteMessage( deleted, pending, failed ) );
+    }
+
+    private String getDeleteMessage( final int deleted, final int pending, final int failed )
+    {
+        final int total = deleted + pending + failed;
+        switch ( total )
+        {
+            case 0:
+                return "Nothing to delete";
+
+            case 1:
+                if ( deleted == 1 )
+                {
+                    return "The item is deleted";
+                }
+                else if ( pending == 1 )
+                {
+                    return "The item is marked for deletion";
+                }
+                else
+                { // failed
+                    return "Content could not be deleted";
+                }
+
+            default:
+                final StringBuilder builder = new StringBuilder();
+                if ( deleted > 0 )
+                {
+                    builder.append( deleted ).append( " items deleted. " );
+                }
+                if ( pending > 0 )
+                {
+                    builder.append( pending ).append( " items marked for deletion. " );
+                }
+                if ( failed > 0 )
+                {
+                    builder.append( failed ).append( " failed to be deleted. " );
+                }
+                return builder.toString();
+        }
     }
 
     @GET
@@ -442,6 +490,55 @@ public final class ContentResource
                 }
         }
         return "";
+    }
+
+    @POST
+    @Path("unpublish")
+    public TaskResultJson unpublish( final UnpublishContentJson params )
+    {
+        final RunnableTask runnableTask = ( id, progressReporter ) -> unpublishTask( params, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Unpublish content" );
+        return new TaskResultJson( taskId );
+    }
+
+    private void unpublishTask( final UnpublishContentJson params, final ProgressReporter progressReporter )
+    {
+        final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final Context ctx = ContextAccessor.current();
+        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
+        progressReporter.info( "Unpublishing content" );
+
+        final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
+            unpublishBranch( ContentConstants.BRANCH_MASTER ).
+            contentIds( contentIds ).
+            includeChildren( params.isIncludeChildren() ).
+            pushListener( new PushContentProgressListener( progressReporter ) ).
+            build() );
+
+        final ContentIds unpublishedContents = result.getUnpublishedContents();
+
+        String contentName = "";
+        if ( unpublishedContents.getSize() == 1 )
+        {
+            contentName = result.getContentName();
+        }
+
+        progressReporter.info( getUnpublishMessage( unpublishedContents.getSize(), contentName ) );
+    }
+
+    private String getUnpublishMessage( final int unpublished, final String contentName )
+    {
+        switch ( unpublished )
+        {
+            case 0:
+                return "Nothing to unpublish.";
+
+            case 1:
+                return "\"" + contentName + "\" is unpublished";
+
+            default:
+                return unpublished + " items are unpublished";
+        }
     }
 
     @POST
@@ -1037,19 +1134,6 @@ public final class ContentResource
             this.contentService.setActiveContentVersion( params.getContentId(), params.getVersionId() );
 
         return new ContentIdJson( setActiveContentVersionResult.getContentId() );
-    }
-
-    @POST
-    @Path("unpublish")
-    public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
-    {
-        final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
-            contentIds( ContentIds.from( params.getIds() ) ).
-            includeChildren( params.isIncludeChildren() ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
-            build() );
-
-        return new UnpublishContentResultJson( result.getUnpublishedContents().getSize(), result.getContentName() );
     }
 
     @GET

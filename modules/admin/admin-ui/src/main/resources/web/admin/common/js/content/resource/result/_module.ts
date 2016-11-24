@@ -1,6 +1,5 @@
 ///<reference path='ContentResponse.ts' />
 ///<reference path='ListContentResult.ts' />
-///<reference path='DeleteContentResult.ts' />
 ///<reference path='BatchContentResult.ts' />
 ///<reference path='MoveContentResult.ts' />
 ///<reference path='ContentQueryResult.ts' />
