@@ -43,6 +43,17 @@ module api.ui.panel {
 
             this.getEl().setTopPx(top);
         }
+
+        protected resolveActions(panel: api.ui.panel.Panel): api.ui.Action[] {
+            var actions = [];
+            if (api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.wizard.WizardPanel) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.browse.BrowsePanel) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.view.ItemViewPanel)) {
+                var actionContainer: api.ui.ActionContainer = <any>panel;
+                actions = actions.concat(actionContainer.getActions());
+            }
+            return actions;
+        }
     }
 
 }

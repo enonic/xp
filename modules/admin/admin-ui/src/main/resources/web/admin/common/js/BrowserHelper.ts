@@ -51,6 +51,10 @@ module api {
             return BrowserHelper.IS_IE;
         }
 
+        static isOSX(): boolean {
+            return /Mac/.test(navigator.platform);
+        }
+
         static isIOS(): boolean {
             return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
         }

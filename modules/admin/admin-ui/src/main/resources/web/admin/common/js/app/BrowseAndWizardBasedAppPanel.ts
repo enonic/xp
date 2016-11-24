@@ -77,17 +77,9 @@ module api.app {
             return true;
         }
 
-        private resolveActions(panel: api.ui.panel.Panel): api.ui.Action[] {
-            var actions = [];
-            actions = actions.concat(this.appBar.getActions());
-
-            if (api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.wizard.WizardPanel) ||
-                api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.browse.BrowsePanel) ||
-                api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.view.ItemViewPanel)) {
-                var actionContainer: api.ui.ActionContainer = <any>panel;
-                actions = actions.concat(actionContainer.getActions());
-            }
-            return actions;
+        protected resolveActions(panel: api.ui.panel.Panel): api.ui.Action[] {
+            let actions = super.resolveActions(panel);
+            return actions.concat(this.appBar.getActions());
         }
     }
 }
