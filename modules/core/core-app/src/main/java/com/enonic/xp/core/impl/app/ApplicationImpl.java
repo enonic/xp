@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
 import java.time.Instant;
-import java.util.Map;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -12,6 +11,7 @@ import org.osgi.framework.VersionRange;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 
 import static com.enonic.xp.core.impl.app.ApplicationHelper.X_APPLICATION_URL;
@@ -32,10 +32,10 @@ final class ApplicationImpl
 
     private final ClassLoader classLoader;
 
-    private final Map<String, String> config;
+    private final Configuration config;
 
-    public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader,
-                            final Map<String, String> config )
+    ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader,
+                     final Configuration config )
     {
         this.bundle = bundle;
         this.key = ApplicationKey.from( bundle );
@@ -141,7 +141,7 @@ final class ApplicationImpl
     }
 
     @Override
-    public Map<String, String> getConfig()
+    public Configuration getConfig()
     {
         return this.config;
     }

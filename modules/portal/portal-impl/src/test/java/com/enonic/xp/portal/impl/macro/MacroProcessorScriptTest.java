@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.macro.MacroContext;
@@ -67,6 +68,7 @@ public class MacroProcessorScriptTest
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getBundle() ).thenReturn( bundle );
         Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );

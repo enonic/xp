@@ -25,6 +25,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
@@ -160,7 +161,6 @@ public class ContentResourceTest
 
         final PropertyTree aContentData = aContent.getData();
         aContentData.setLocalDate( "myProperty", currentDate );
-
         aContentData.setLong( "mySet.setProperty1", 1L );
         aContentData.setLong( "mySet.setProperty2", 2L );
 
@@ -551,7 +551,7 @@ public class ContentResourceTest
             type( ContentTypeName.folder() ).
             build();
 
-        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( content.getId()).build();
+        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( content.getId() ).build();
         Mockito.when( contentService.deleteWithoutFetch( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( result );
 
         final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
@@ -604,7 +604,7 @@ public class ContentResourceTest
             displayName( "one" ).
             build();
 
-        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( aContent2.getId()).build();
+        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( aContent2.getId() ).build();
         Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
@@ -1155,6 +1155,9 @@ public class ContentResourceTest
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            publishInfo( ContentPublishInfo.create().
+                from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
+                build() ).
             build();
     }
 

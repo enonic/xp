@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentState;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
@@ -24,11 +25,14 @@ public class UnpublishContentCommand
 {
     private final UnpublishContentParams params;
 
+    private final PushContentListener pushContentListener;
+
     private UnpublishContentCommand( final Builder builder )
     {
         super( builder );
 
         this.params = builder.params;
+        this.pushContentListener = builder.pushContentListener;
     }
 
     public UnpublishContentsResult execute()
@@ -83,7 +87,7 @@ public class UnpublishContentCommand
             result.getNodeIds().forEach( ( id ) -> recursiveUnpublish( id, true, contentsBuilder ) );
         }
         final NodeIds nodes = this.nodeService.deleteById( nodeId );
-        if ( nodes != null )
+        if ( nodes != null && nodes.isNotEmpty() )
         {
             contentsBuilder.add( ContentId.from( nodes.first().toString() ) );
         }
@@ -121,9 +125,17 @@ public class UnpublishContentCommand
     {
         private UnpublishContentParams params;
 
+        private PushContentListener pushContentListener;
+
         public Builder params( final UnpublishContentParams params )
         {
             this.params = params;
+            return this;
+        }
+
+        public Builder pushListener( final PushContentListener pushContentListener )
+        {
+            this.pushContentListener = pushContentListener;
             return this;
         }
 

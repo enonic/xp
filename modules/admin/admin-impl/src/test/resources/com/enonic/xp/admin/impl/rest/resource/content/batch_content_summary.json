@@ -20,7 +20,9 @@
       "name": "my_a_content",
       "owner": "user:myStore:me",
       "path": "/my_a_content",
-      "publishedTime" : null,
+      "publish": {
+        "from": "2016-11-02T10:36:00Z"
+      },
       "thumbnail": null,
       "type": "myapplication:my_type"
     },
@@ -44,7 +46,9 @@
       "name": "my_b_content",
       "owner": "user:myStore:me",
       "path": "/my_b_content",
-      "publishedTime" : null,
+      "publish": {
+        "from": "2016-11-02T10:36:00Z"
+      },
       "thumbnail": null,
       "type": "myapplication:my_type"
     }

@@ -49,6 +49,24 @@ public class ContentServiceImplTest_media
         assertEquals( 1, attachments.getSize() );
     }
 
+    @Test
+    public void no_file_extension_in_display_name()
+        throws Exception
+    {
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
+            name( "Small cat.jpg" ).
+            parent( ContentPath.ROOT );
+
+        Mockito.when( this.mixinService.getByContentType( Mockito.any( ContentType.class ) ) ).thenReturn( Mixins.empty() );
+        final Content content = this.contentService.create( createMediaParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertEquals( "Small cat.jpg", storedContent.getName().toString() );
+        assertEquals( "Small cat", storedContent.getDisplayName() );
+    }
+
 
     @Test
     public void update_media_image()

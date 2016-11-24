@@ -1,13 +1,13 @@
 package com.enonic.xp.core.content;
 
-import java.time.Instant;
-
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -32,20 +32,23 @@ public class ContentServiceImplTest_publish_update_publishedTime
         throws Exception
     {
         final Content content = doCreateContent();
-        assertNull( content.getPublishedTime() );
+        assertNull( content.getPublishInfo() );
+        assertVersions( content.getId(), 1 );
 
         doPublishContent( content );
+        assertVersions( content.getId(), 2 );
 
         final Content storedContent = this.contentService.getById( content.getId() );
-        assertNotNull( storedContent.getPublishedTime() );
+        assertNotNull( storedContent.getPublishInfo() );
+        assertNotNull( storedContent.getPublishInfo().getFrom() );
 
         final Content publishedContent = ContextBuilder.from( ContextAccessor.current() ).
             branch( WS_OTHER ).
             build().
             callWith( () -> this.contentService.getById( content.getId() ) );
-        assertNotNull( publishedContent.getPublishedTime() );
+        assertNotNull( publishedContent.getPublishInfo() );
 
-        assertEquals( storedContent.getPublishedTime(), publishedContent.getPublishedTime() );
+        assertEquals( storedContent.getPublishInfo(), publishedContent.getPublishInfo() );
     }
 
     @Test
@@ -55,48 +58,70 @@ public class ContentServiceImplTest_publish_update_publishedTime
         final Content content = doCreateContent();
 
         doPublishContent( content );
+        assertVersions( content.getId(), 2 );
 
-        final Instant originalPublishTime = this.contentService.getById( content.getId() ).getPublishedTime();
+        final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
+        assertNotNull( publishInfo );
+        assertNotNull( publishInfo.getFrom() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).
-            editor( edit -> {
-                edit.displayName = "new display name";
-            } );
+            editor( edit -> edit.displayName = "new display name" );
 
         this.contentService.update( updateContentParams );
 
         doPublishContent( content );
+        assertVersions( content.getId(), 3 );
 
-        final Instant unUpdatedPublishTime = this.contentService.getById( content.getId() ).getPublishedTime();
+        final ContentPublishInfo unUpdatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
-        assertEquals( originalPublishTime, unUpdatedPublishTime );
+        assertEquals( publishInfo.getFrom(), unUpdatedPublishInfo.getFrom() );
     }
-
 
     @Test
     public void set_publish_time_again_if_reset()
         throws Exception
     {
         final Content content = doCreateContent();
-
         doPublishContent( content );
 
-        final Instant originalPublishTime = this.contentService.getById( content.getId() ).getPublishedTime();
+        final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).
-            editor( edit -> {
-                edit.publishedTime = null;
-            } );
+            editor( edit -> edit.publishInfo = null );
 
         this.contentService.update( updateContentParams );
 
         doPublishContent( content );
 
-        final Instant updatedPublishTime = this.contentService.getById( content.getId() ).getPublishedTime();
+        final ContentPublishInfo updatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
-        assertTrue( updatedPublishTime.isAfter( originalPublishTime ) );
+        assertTrue( updatedPublishInfo.getFrom().isAfter( publishInfo.getFrom() ) );
+    }
+
+    @Test
+    public void publish_from_is_removed_on_duplicate()
+        throws Exception
+    {
+
+        final Content rootContent = createContent( ContentPath.ROOT );
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( rootContent.getId() ) ).
+            target( WS_OTHER ).
+            build() );
+
+        final Content duplicateContent = doDuplicateContent( rootContent );
+
+        assertTrue( duplicateContent.getPublishInfo().getFrom() == null );
+    }
+
+    private Content doDuplicateContent( final Content rootContent )
+    {
+        final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
+        final Content duplicatedContent = contentService.duplicate( params );
+
+        return this.contentService.getById( duplicatedContent.getId() );
     }
 
     private void doPublishContent( final Content content )

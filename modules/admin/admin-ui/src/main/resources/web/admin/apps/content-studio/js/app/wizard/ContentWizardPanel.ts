@@ -146,10 +146,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private contentUpdateDisabled: boolean;
 
-    /**
-     * Whether constructor is being currently executed or not.
-     */
-
     public static debug: boolean = false;
 
     constructor(params: ContentWizardPanelParams) {
@@ -186,9 +182,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getSaveAction().onExecuted(() => {
-            if (this.isNew) { // validation might have not been called for some cases for new item
-                this.contentWizardStepForm.validate();
-            }
+            this.contentWizardStepForm.validate();
             this.displayValidationErrors();
         });
 
@@ -286,7 +280,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 if (loader.content) {
                     // in case of new content will be created in super.loadData()
-                    this.isNew = false;
+                    this.formState.setIsNew(false);
                     this.setPersistedItem(loader.content);
                 }
                 this.defaultModels = loader.defaultModels;
@@ -415,7 +409,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 var thumbnailUploader = this.getFormIcon();
                 thumbnailUploader.toggleClass("invalid", isThisValid);
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
-                if (!this.isNew) {
+                if (!this.formState.isNew()) {
                     this.displayValidationErrors();
                 }
             });
@@ -699,6 +693,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var updateHandler = (contentId: ContentId, compareStatus?: CompareStatus) => {
 
             if (this.isCurrentContentId(contentId)) {
+                if (compareStatus != undefined) {
+                    this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
+                    this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
+                }
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     let isAlreadyUpdated = content.equals(this.getPersistedItem());
 
@@ -706,11 +704,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         this.setPersistedItem(content);
                         this.updateWizard(content, true);
 
-                        if (compareStatus != undefined) {
-                            this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
-                            this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
-
-                        }
                         if (this.isEditorEnabled()) {
                             // also update live form panel for renderable content without asking
                             this.updateLiveForm();
@@ -834,10 +827,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var result: string[] = [];
 
         formItemContainer.getFormItems().forEach((item) => {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet)) {
-                result = result.concat(this.getHtmlAreasInForm(<api.form.FieldSet> item));
-            } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)) {
-                result = result.concat(this.getHtmlAreasInForm(<api.form.FormItemSet> item));
+            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)||
+                api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSet) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSetOption)) {
+                result = result.concat(this.getHtmlAreasInForm(<any>item));
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.Input)) {
                 var input = <api.form.Input> item;
                 if (input.getInputType().getName() === "HtmlArea") {
@@ -1042,7 +1036,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
                     this.contentWizardStepForm.getFormView().addClass("panel-may-display-validation-errors");
-                    if (this.isNew) {
+                    if (this.formState.isNew()) {
                         this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
                     } else {
                         this.displayValidationErrors();
@@ -1217,9 +1211,27 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return deferred.promise;
     }
 
+    private getOptionSetsInForm(formItemContainer: api.form.FormItemContainer): api.form.FormOptionSet[] {
+        var result: api.form.FormOptionSet[] = [];
+
+        formItemContainer.getFormItems().forEach((item) => {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSetOption)) {
+                result = result.concat(this.getOptionSetsInForm(<any>item));
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSet)) {
+                var optionSet = <api.form.FormOptionSet> item;
+                result.push(optionSet);
+            }
+        });
+
+        return result;
+    }
+
     updatePersistedItem(): wemQ.Promise<Content> {
         var persistedContent = this.getPersistedItem();
-        var viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
+
+        var viewedContent = this.assembleViewedContent(persistedContent.newBuilder(), true).build();
 
         var updatePersistedContentRoutine = new UpdatePersistedContentRoutine(this, persistedContent,
             viewedContent).setUpdateContentRequestProducer(
@@ -1233,8 +1245,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             var contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0) ?
                                    '\"' + content.getDisplayName() + '\"' : "Content";
             api.notify.showFeedback(contentToDisplay + ' saved');
-            //new api.content.ContentUpdatedEvent(content.getContentId()).fire();
-            // Since event doesn't fire, update origin value for the display name
             this.getWizardHeader().resetBaseValues();
 
             return content;
@@ -1264,7 +1274,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         } else {
 
-            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent), true).build();
             return !viewedContent.equals(persistedContent, true);
         }
     }
@@ -1281,12 +1291,17 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         }
     }
 
-    private assembleViewedContent(viewedContentBuilder: ContentBuilder): ContentBuilder {
+    private assembleViewedContent(viewedContentBuilder: ContentBuilder, cleanFormRedundantData: boolean = false): ContentBuilder {
 
         viewedContentBuilder.setName(this.resolveContentNameForUpdateRequest());
         viewedContentBuilder.setDisplayName(this.getWizardHeader().getDisplayName());
         if (this.contentWizardStepForm) {
-            viewedContentBuilder.setData(this.contentWizardStepForm.getData());
+            if (!cleanFormRedundantData) {
+                viewedContentBuilder.setData(this.contentWizardStepForm.getData());
+            } else {
+                var data: api.data.PropertyTree = new api.data.PropertyTree(this.contentWizardStepForm.getData().getRoot()); // copy
+                viewedContentBuilder.setData(this.cleanFormRedundantData(data));
+            }
         }
 
         var extraData: ExtraData[] = [];
@@ -1302,6 +1317,34 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         viewedContentBuilder.setPage(this.assembleViewedPage());
         return viewedContentBuilder;
+    }
+
+    private cleanFormRedundantData(data: api.data.PropertyTree): api.data.PropertyTree {
+        var optionSets = this.getOptionSetsInForm(this.getContentType().getForm());
+
+        optionSets.forEach((optionSet) => {
+            var property = data.getProperty(optionSet.getPath().toString());
+            if (!!property) {
+                var optionSetProperty = property.getPropertySet();
+                var selectionArray = optionSetProperty.getPropertyArray("_selected");
+                if (!selectionArray) {
+                    return;
+                }
+                optionSet.getOptions().forEach((option: api.form.FormOptionSetOption) => {
+                    var isSelected = false;
+                    selectionArray.forEach((selectedOptionName: api.data.Property) => {
+                        if (selectedOptionName.getString() == option.getName()) {
+                            isSelected = true;
+                        }
+                    })
+                    if (!isSelected) {
+                        optionSetProperty.removeProperty(option.getName(), 0);
+                    }
+                })
+            }
+        });
+
+        return data;
     }
 
     private assembleViewedPage(): Page {
@@ -1448,14 +1491,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 content.isInheritPermissionsEnabled()).setPermissions(content.getPermissions().clone()).build();
             this.setPersistedItem(updatedContent);
         }
-
     }
 
     private createFormContext(content: Content): ContentFormContext {
         var formContext: ContentFormContext = <ContentFormContext>ContentFormContext.create().setSite(this.site).setParentContent(
             this.parentContent).setPersistedContent(content).setContentTypeName(
-            this.contentType ? this.contentType.getContentTypeName() : undefined).setShowEmptyFormItemSetOccurrences(
-            this.isItemPersisted()).build();
+            this.contentType ? this.contentType.getContentTypeName() : undefined).setFormState(
+            this.formState).setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).build();
         return formContext;
     }
 
@@ -1593,6 +1635,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         if (this.isContentFormValid) {
             if (!this.hasUnsavedChanges()) {
+                // WARN: intended to restore status to persisted value if data is changed to original values,
+                // but if invoked after save this will revert status to persisted one as well 
                 this.currentContentCompareStatus = this.persistedContentCompareStatus;
 
             } else if (publishControls.isOnline()) {

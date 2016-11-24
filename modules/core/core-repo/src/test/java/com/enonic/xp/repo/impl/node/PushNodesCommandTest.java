@@ -9,7 +9,10 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -25,6 +28,7 @@ public class PushNodesCommandTest
     {
         super.setUp();
         this.createDefaultRootNode();
+        CTX_OTHER.callWith( this::createDefaultRootNode );
     }
 
     @Test
@@ -95,6 +99,55 @@ public class PushNodesCommandTest
         assertEquals( 1, result.getSuccessful().getSize() );
         assertEquals( 1, result.getFailed().size() );
         assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailed().iterator().next().getReason() );
+    }
+
+    @Test
+    public void push_fail_if_node_already_exists()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+
+        CTX_OTHER.callWith( () -> createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() ) );
+
+        final PushNodesResult result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+
+        assertEquals( 1, result.getFailed().size() );
+        assertEquals( PushNodesResult.Reason.ALREADY_EXIST, result.getFailed().iterator().next().getReason() );
+    }
+
+    @Test
+    public void push_rename_push_test()
+        throws Exception
+    {
+        PushNodesResult result;
+
+        //Creates and pushes a content
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+        result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        assertEquals( 1, result.getSuccessful().getSize() );
+        assertNotNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+
+        //Renames the content
+        renameNode( node, "my-node-renamed" );
+        assertNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPath( NodePath.create( "/my-node-renamed" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+
+        //Pushed the renames content
+        result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        assertEquals( 1, result.getSuccessful().getSize() );
+        assertNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node-renamed" ).build() ) );
     }
 
     @Test
@@ -256,12 +309,40 @@ public class PushNodesCommandTest
 
         pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
-        renameNode( parent );
-        renameNode( child1 );
-        renameNode( child1_1 );
+        renameNode( parent, "parent-renamed" );
+        renameNode( child1, "child1-renamed" );
+        renameNode( child1_1, "child1_1-renamed" );
 
         final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
+        assertEquals( 2, result.getSuccessful().getSize() );
+    }
+
+
+    @Test
+    public void rename_to_name_already_there_but_renamed_in_same_push()
+        throws Exception
+    {
+        final Node a = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "a" ).
+            setNodeId( NodeId.from( "a" ) ).
+            build() );
+
+        final Node b = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "b" ).
+            setNodeId( NodeId.from( "b" ) ).
+            build() );
+
+        pushNodes( NodeIds.from( a.id() ), WS_OTHER );
+
+        renameNode( a.id(), "a_old" );
+        renameNode( b.id(), "a" );
+
+        final PushNodesResult result = pushNodes( NodeIds.from( b.id(), a.id() ), WS_OTHER );
+
+        assertEquals( 0, result.getFailed().size() );
         assertEquals( 2, result.getSuccessful().getSize() );
     }
 
@@ -314,13 +395,13 @@ public class PushNodesCommandTest
         pushNodes( NodeIds.from( node.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
                    WS_OTHER );
 
-        renameNode( node );
-        renameNode( child1 );
-        renameNode( child1_1 );
-        renameNode( child1_1_1 );
-        renameNode( node2 );
-        renameNode( child2 );
-        renameNode( child2_1 );
+        renameNode( node, "node1-renamed" );
+        renameNode( child1, "child1-renamed" );
+        renameNode( child1_1, "child1_1-renamed" );
+        renameNode( child1_1_1, "child1_1_1-renamed" );
+        renameNode( node2, "node2-renamed" );
+        renameNode( child2, "child2-renamed" );
+        renameNode( child2_1, "child2_1-renamed" );
 
         final PushNodesResult result =
             pushNodes( NodeIds.from( child1_1_1.id(), child1_1.id(), node.id(), child2_1.id(), node2.id(), child1.id(), child2.id() ),
@@ -329,12 +410,38 @@ public class PushNodesCommandTest
         assertEquals( 7, result.getSuccessful().getSize() );
     }
 
-
-    private void renameNode( final Node node )
+    private void renameNode( final Node node, final String newName )
     {
-        MoveNodeCommand.create().
-            id( node.id() ).
-            newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
+        doRenameNode( node.id(), newName );
+    }
+
+    private void renameNode( final NodeId nodeId, final String newName )
+    {
+        doRenameNode( nodeId, newName );
+    }
+
+    private void doRenameNode( final NodeId nodeId, final String newName )
+    {
+        RenameNodeCommand.create().
+            params( RenameNodeParams.create().
+                nodeId( nodeId ).
+                nodeName( NodeName.from( newName ) ).
+                build() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            build().
+            execute();
+    }
+
+    protected void setPendingDelete( final NodeId nodeId )
+    {
+        SetNodeStateCommand.create().
+            params( SetNodeStateParams.create().
+                nodeId( nodeId ).
+                nodeState( NodeState.PENDING_DELETE ).
+                recursive( true ).
+                build() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

@@ -6,6 +6,8 @@ module api.form {
 
         private helpTextToggler: api.dom.DivEl;
 
+        private toggleListeners: {(show: boolean): void}[] = [];
+
         constructor(value: string) {
             this.helpTextToggler = new api.dom.DivEl("help-text-toggler");
             this.helpTextToggler.setHtml("?");
@@ -20,6 +22,7 @@ module api.form {
             this.helpTextToggler.onClicked(() => {
                 this.helpTextDiv.toggleClass("visible");
                 this.helpTextToggler.toggleClass("on");
+                this.notifyHelpTextToggled(this.helpTextDiv.hasClass("visible"));
             });
         }
 
@@ -34,6 +37,20 @@ module api.form {
 
         getHelpText(): api.dom.DivEl {
             return this.helpTextDiv;
+        }
+
+        onHelpTextToggled(listener: (show: boolean) => void) {
+            this.toggleListeners.push(listener);
+        }
+
+        unHelpTextToggled(listener: (show: boolean) => void) {
+            this.toggleListeners = this.toggleListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyHelpTextToggled(show: boolean) {
+            this.toggleListeners.forEach(listener => listener(show));
         }
     }
 }

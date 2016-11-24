@@ -59,7 +59,9 @@ public class ContentPropertyNames
 
     public static final String ATTACHMENT_NAME = "name";
 
-    public static final String PUBLISHED_TIME = "publishedTime";
+    public static final String PUBLISH_INFO = "publish";
+
+    public static final String PUBLISH_FROM = "from";
 
     public static final String ATTACHMENT_MIMETYPE = "mimeType";
 

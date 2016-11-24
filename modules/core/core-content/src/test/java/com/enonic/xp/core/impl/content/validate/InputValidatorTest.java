@@ -36,7 +36,7 @@ public class InputValidatorTest
         final ContentType contentType = createContentTypeForAllInputTypes( ContentTypeName.audioMedia() );
         this.inputValidator = InputValidator.
             create().
-            contentType( contentType ).
+            form( contentType.getForm() ).
             inputTypeResolver( InputTypes.BUILTIN ).
             build();
     }

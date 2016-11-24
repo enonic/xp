@@ -18,7 +18,6 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class MainResource
     implements JaxRsComponent
 {
-
     private final ResourceHandler resourceHandler;
 
     public MainResource()

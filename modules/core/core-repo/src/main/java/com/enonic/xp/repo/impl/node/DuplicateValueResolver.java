@@ -32,10 +32,28 @@ abstract class DuplicateValueResolver
         return doResolve( existingName, DISPLAY_NAME_SEPARATOR );
     }
 
+    public static String fileName( final String existingName )
+    {
+        int dotIndex = existingName.lastIndexOf( "." );
+        String name = existingName;
+        String extension = null;
+        if ( dotIndex > -1 )
+        {
+            name = existingName.substring( 0, dotIndex );
+            extension = existingName.substring( dotIndex + 1 );
+        }
+        return doResolve( name, NAME_SEPARATOR, extension );
+    }
 
     private static String doResolve( final String existingName, final String separator )
     {
-        final DuplicateName duplicateName = DuplicateName.from( existingName, separator );
+        return doResolve( existingName, separator, null );
+    }
+
+
+    private static String doResolve( final String existingName, final String separator, final String extension )
+    {
+        final DuplicateName duplicateName = DuplicateName.from( existingName, separator, extension );
 
         return duplicateName.getNextValue();
     }
@@ -46,11 +64,18 @@ abstract class DuplicateValueResolver
 
         String baseName;
 
+        String extension;
+
         private String separator;
 
         private boolean isCopy()
         {
             return copyCounter != null;
+        }
+
+        private boolean hasExtension()
+        {
+            return extension != null;
         }
 
         private String getNextValue()
@@ -76,10 +101,11 @@ abstract class DuplicateValueResolver
             return name.trim();
         }
 
-        private static DuplicateName from( final String name, final String separator )
+        private static DuplicateName from( final String name, final String separator, final String extension )
         {
             DuplicateName duplicateName = new DuplicateName();
             duplicateName.separator = separator;
+            duplicateName.extension = extension;
 
             final String normalizedName = normalizeName( name );
 
@@ -126,7 +152,20 @@ abstract class DuplicateValueResolver
         @Override
         public String toString()
         {
-            return baseName + ( isCopy() ? this.separator + COPY_TOKEN + ( copyCounter > 1 ? this.separator + copyCounter : "" ) : "" );
+            StringBuilder builder = new StringBuilder().append( baseName );
+            if ( isCopy() )
+            {
+                builder.append( this.separator ).append( COPY_TOKEN );
+                if ( copyCounter > 1 )
+                {
+                    builder.append( this.separator ).append( copyCounter );
+                }
+            }
+            if ( hasExtension() )
+            {
+                builder.append( "." ).append( extension );
+            }
+            return builder.toString();
         }
     }
 }

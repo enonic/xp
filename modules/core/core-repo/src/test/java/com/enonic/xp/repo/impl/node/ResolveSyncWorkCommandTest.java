@@ -5,10 +5,8 @@ import java.util.Set;
 
 import org.codehaus.jparsec.util.Strings;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyTree;
@@ -1037,11 +1035,12 @@ public class ResolveSyncWorkCommandTest
 
         refresh();
 
-        result = resolveSyncWorkResult( "s1" );
-
+        // Since this is pending delete, it should force-include the children even it the commands give "false"
+        result = resolveSyncWorkResult( NodeId.from( "s1" ), false );
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
-            child( "a1", "a2", "a2_1", "a2_1_1" ) );
+            child( "a1", "a2", "a2_1", "a2_1_1" ).
+            referred( "b2_1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
         assertNodes( result, ExpectedNodes.create().
@@ -1196,39 +1195,31 @@ public class ResolveSyncWorkCommandTest
             parent( "b2", "s2" ) );
     }
 
-    @Ignore("Just for development testing")
+
+    /*
+      * s1
+      ** a1
+      ** a2
+      *** a2_1 -> b2_1
+      **** a2_1_1
+      * s2
+      ** b1
+      ** b2
+      *** b2_1
+   */
     @Test
-    public void test_large_tree()
+    public void not_include_dependencies()
     {
-        final Node rootNode = createNode( CreateNodeParams.create().
-            name( "rootnode" ).
-            setNodeId( NodeId.from( "rootnode" ) ).
-            parent( NodePath.ROOT ).
-            build(), false );
-
-        final Stopwatch timer2 = Stopwatch.createStarted();
-
-        for ( int i = 0; i <= 100; i++ )
-        {
-            final Node parent = createNode( CreateNodeParams.create().
-                name( "myNode" + "-" + i ).
-                setNodeId( NodeId.from( "myNode" + "-" + i ) ).
-                parent( rootNode.path() ).
-                build() );
-
-            createChildren( parent.path(), 100 );
-        }
-
-        timer2.stop();
-        System.out.println( timer2.toString() + " creating nodes" );
-
+        createS1S2Tree();
         refresh();
 
-        final Stopwatch timer = Stopwatch.createStarted();
-        final ResolveSyncWorkResult result = resolveSyncWorkResult( rootNode.id(), true );
-        timer.stop();
-        System.out.println( timer.toString() + " diffing " + result.getNodeComparisons().getNodeIds() + " nodes" );
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), true, false );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ).
+            child( "a1", "a2", "a2_1", "a2_1_1" ) );
     }
+
 
     private void createChildren( final NodePath parent, final int numberOfChildren )
     {
@@ -1242,7 +1233,17 @@ public class ResolveSyncWorkCommandTest
         }
     }
 
-
+    /*
+        * s1
+        ** a1
+        ** a2
+        *** a2_1 -> b2_1
+        **** a2_1_1
+        * s2
+        ** b1
+        ** b2
+        *** b2_1
+     */
     private void createS1S2Tree()
     {
         final Node s1 = createNode( CreateNodeParams.create().
@@ -1376,9 +1377,16 @@ public class ResolveSyncWorkCommandTest
 
     private ResolveSyncWorkResult resolveSyncWorkResult( final NodeId nodeId, final NodeIds excludeIds, final boolean includeChildren )
     {
+        return resolveSyncWorkResult( nodeId, excludeIds, includeChildren, true );
+    }
+
+    private ResolveSyncWorkResult resolveSyncWorkResult( final NodeId nodeId, final NodeIds excludeIds, final boolean includeChildren,
+                                                         final boolean includeReferences )
+    {
         return ResolveSyncWorkCommand.create().
             nodeId( nodeId ).
             target( WS_OTHER ).
+            includeDependencies( includeReferences ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

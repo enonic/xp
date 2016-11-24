@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.content;
 
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -105,6 +108,39 @@ public final class ModifyContentHandler
         {
             target.extraDatas = createExtraDatas( (Map) extraData );
         }
+
+        final Object publishInfo = map.get( "publish" );
+
+        if ( publishInfo instanceof Map )
+        {
+            target.publishInfo = createContentPublishInfo( (Map) publishInfo );
+        }
+    }
+
+    private ContentPublishInfo createContentPublishInfo( final Map<String, Object> value )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+
+        final ContentPublishInfo.Builder builder = ContentPublishInfo.create();
+
+        final Object from = value.get( "from" );
+
+        if ( from != null )
+        {
+            try
+            {
+                builder.from( Instant.parse( from.toString() ) );
+            }
+            catch ( DateTimeParseException e )
+            {
+                throw new IllegalArgumentException( "publish.from value could not be parsed to instant: [" + from + "]" );
+            }
+        }
+
+        return builder.build();
     }
 
     private PropertyTree createPropertyTree( final Map<?, ?> value, final ContentTypeName contentTypeName )

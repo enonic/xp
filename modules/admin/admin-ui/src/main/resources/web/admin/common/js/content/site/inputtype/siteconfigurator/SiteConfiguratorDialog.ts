@@ -103,15 +103,23 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private handleSelectorsDropdowns(formView: FormView) {
-            var comboboxArray = [];
-            formView.getChildren().forEach((element: api.dom.Element) => {
-                this.findItemViewsAndSubscribe(element, comboboxArray);
-            });
+            var comboboxes = this.getComboboxesFromFormView(formView);
+
             this.getContentPanel().onScroll((event) => {
-                comboboxArray.forEach((comboBox: ComboBox<any>) => {
+                comboboxes.forEach((comboBox: ComboBox<any>) => {
                     comboBox.hideDropdown();
                 });
             });
+        }
+
+        private getComboboxesFromFormView(formView: FormView): ComboBox<any>[] {
+            var comboboxArray = [];
+
+            formView.getChildren().forEach((element: api.dom.Element) => {
+                this.findComboboxesInElement(element, comboboxArray);
+            });
+
+            return comboboxArray;
         }
 
         private handleDialogClose(formView: FormView) {
@@ -126,44 +134,25 @@ module api.content.site.inputtype.siteconfigurator {
             });
         }
 
-        private findItemViewsAndSubscribe(element: api.dom.Element, comboboxArray: ComboBox<any>[]) {
+        private findComboboxesInElement(element: api.dom.Element, comboboxArray: ComboBox<any>[]) {
             if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
-                this.checkItemViewAndSubscribe(<InputView> element, comboboxArray);
+                this.findComboboxInItemView(<InputView> element, comboboxArray);
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(element, api.form.FieldSetView)) {
                 var fieldSetView: api.form.FieldSetView = <api.form.FieldSetView> element;
                 fieldSetView.getFormItemViews().forEach((formItemView: api.form.FormItemView) => {
-                    this.findItemViewsAndSubscribe(formItemView, comboboxArray);
+                    this.findComboboxesInElement(formItemView, comboboxArray);
                 });
             }
         }
 
-        private checkItemViewAndSubscribe(itemView: api.form.FormItemView, comboboxArray: ComboBox<any>[]) {
+        private findComboboxInItemView(itemView: api.form.FormItemView, comboboxArray: ComboBox<any>[]) {
             var inputView: InputView = <InputView> itemView;
             if (this.isContentOrImageOrPrincipalOrComboSelectorInput(inputView)) {
                 var combobox = this.getComboboxFromSelectorInputView(inputView);
                 if (!!combobox) {
                     comboboxArray.push(combobox);
                 }
-                this.subscribeCombobox(combobox);
             }
-        }
-
-        private subscribeCombobox(comboBox: ComboBox<any>) {
-            if (!!comboBox) {
-                comboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                    if (event.isExpanded()) {
-                        this.adjustSelectorDropDown(comboBox.getInput(), event.getDropdownElement().getEl());
-                    }
-                });
-            }
-        }
-
-        private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
-            var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
-
-            dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder() - 2);
-            dropDownElement.setTopPx(inputPosition.top + inputElement.getEl().getHeightWithBorder() - 1);
-            dropDownElement.setLeftPx(inputPosition.left);
         }
 
         private getComboboxFromSelectorInputView(inputView: InputView): ComboBox<any> {

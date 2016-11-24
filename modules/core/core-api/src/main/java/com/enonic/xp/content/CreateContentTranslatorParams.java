@@ -48,6 +48,8 @@ public class CreateContentTranslatorParams
 
     private final ChildOrder childOrder;
 
+    private final ContentPublishInfo contentPublishInfo;
+
     private final Locale language;
 
     private CreateContentTranslatorParams( Builder builder )
@@ -71,6 +73,7 @@ public class CreateContentTranslatorParams
         this.createAttachments = builder.createAttachments;
         this.childOrder = builder.childOrder;
         this.language = builder.language;
+        this.contentPublishInfo = builder.contentPublishInfo;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -168,6 +171,11 @@ public class CreateContentTranslatorParams
         return language;
     }
 
+    public ContentPublishInfo getContentPublishInfo()
+    {
+        return contentPublishInfo;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -196,6 +204,8 @@ public class CreateContentTranslatorParams
 
         private ChildOrder childOrder;
 
+        private ContentPublishInfo contentPublishInfo;
+
         private Locale language;
 
         private Builder()
@@ -216,6 +226,7 @@ public class CreateContentTranslatorParams
             this.inheritPermissions = params.isInheritPermissions();
             this.childOrder = params.getChildOrder();
             this.language = params.getLanguage();
+            this.contentPublishInfo = params.getContentPublishInfo();
         }
 
         public Builder contentData( final PropertyTree data )
@@ -305,6 +316,12 @@ public class CreateContentTranslatorParams
         public Builder language( final Locale language )
         {
             this.language = language;
+            return this;
+        }
+
+        public Builder contentPublishInfo( final ContentPublishInfo info )
+        {
+            this.contentPublishInfo = info;
             return this;
         }
 

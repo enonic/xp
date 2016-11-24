@@ -59,7 +59,7 @@ module api.data {
          * @param newIndex
          */
         setIndex(newIndex: number) {
-            var oldIndex = newIndex;
+            var oldIndex = this.index;
             this.index = newIndex;
 
             if (oldIndex != newIndex) {
@@ -109,6 +109,16 @@ module api.data {
             this.parent = null;
             this.propertyIndexChangedListeners = [];
             this.propertyValueChangedListeners = [];
+        }
+
+        reset() {
+            if (!this.hasNullValue()) {
+                if (this.getType().equals(ValueTypes.DATA)) {
+                    this.getPropertySet().reset();
+                } else {
+                    this.setValue(this.getType().newNullValue());
+                }
+            }
         }
 
         getParent(): PropertySet {
@@ -229,10 +239,10 @@ module api.data {
 
         copy(destinationPropertyArray: PropertyArray) {
 
-            var destinationTree = destinationPropertyArray.getTree();
-
             var value: Value;
+
             if (this.value.isPropertySet() && this.value.isNotNull()) {
+                var destinationTree = destinationPropertyArray.getTree();
                 var copiedPropertySet = this.value.getPropertySet().copy(destinationTree);
                 value = new Value(copiedPropertySet, ValueTypes.DATA);
             }
@@ -240,13 +250,12 @@ module api.data {
                 value = this.value;
             }
 
-            var copy = Property.create().
+            return Property.create().
                 setName(this.name).
                 setValue(value).
                 setIndex(this.index).
                 setArray(destinationPropertyArray).
                 build();
-            return copy;
         }
 
         onPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {

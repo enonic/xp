@@ -129,6 +129,9 @@ var expectedJson = {
             "size": 12345,
             "mimeType": "application/pdf"
         }
+    },
+    "publish": {
+        "from": "2016-11-03T10:00:00Z"
     }
 };
 

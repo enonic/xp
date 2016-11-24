@@ -1,9 +1,8 @@
 module api.liveedit.image {
 
     import ComponentView = api.liveedit.ComponentView;
-    import ContentView = api.liveedit.ContentView;
-    import RegionView = api.liveedit.RegionView;
     import ImageComponent = api.content.page.region.ImageComponent;
+    import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 
     export class ImageComponentViewBuilder extends ComponentViewBuilder<ImageComponent> {
 
@@ -28,6 +27,25 @@ module api.liveedit.image {
                 setInspectActionRequired(true));
 
             this.initializeImage();
+
+            this.handleContentRemovedEvent();
+        }
+
+        private handleContentRemovedEvent() {
+            var contentDeletedListener = (event) => {
+                var deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
+                    return !deletedItem.isPending() && deletedItem.getContentId().equals(this.imageComponent.getImage());
+                })
+                if (deleted) {
+                    this.remove();
+                }
+            }
+
+            ContentDeletedEvent.on(contentDeletedListener);
+
+            this.onRemoved((event) => {
+                ContentDeletedEvent.un(contentDeletedListener);
+            });
         }
 
         private initializeImage() {

@@ -1,6 +1,5 @@
 module api.task {
 
-
     export class TaskProgress {
 
         private info: string;

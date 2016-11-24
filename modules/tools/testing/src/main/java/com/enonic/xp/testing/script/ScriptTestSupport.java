@@ -11,12 +11,11 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
-import com.google.common.collect.Maps;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.Context;
@@ -161,7 +160,7 @@ public abstract class ScriptTestSupport
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.classLoader( getClass().getClassLoader() );
         builder.urlResolver( new ClassLoaderApplicationUrlResolver( getClass().getClassLoader() ) );
-        builder.config( Maps.newHashMap() );
+        builder.config( ConfigBuilder.create().build() );
         builder.bundle( createBundle() );
         return builder.build();
     }

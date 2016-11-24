@@ -33,7 +33,7 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
             let fragmentComponent = fragmentView.getFragmentRootComponent();
             if (fragmentComponent) {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent, TextComponent)) {
-                    return this.extractTextFromTextComponent(<TextComponent>fragmentComponent);
+                    return this.extractTextFromTextComponent(<TextComponent>fragmentComponent) || fragmentComponent.getName().toString();
                 }
                 return fragmentComponent.getName().toString();
             }
@@ -67,7 +67,7 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
 
     private extractTextFromTextComponent(textComponent: TextComponent): string {
         var tmp = document.createElement("DIV");
-        tmp.innerHTML = textComponent.getText();
+        tmp.innerHTML = textComponent.getText() || "";
         return (tmp.textContent || tmp.innerText || "").trim();
     }
 }

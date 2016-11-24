@@ -54,9 +54,13 @@ public interface NodeStorageService
 
     NodeId getIdForPath( final NodePath nodePath, final InternalContext context );
 
+    void invalidate();
+
     void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
 
     void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
 
     void handleNodeMoved( final NodeMovedParams params, final InternalContext context );
+
+    void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath currentTargetPath, InternalContext nodeContext );
 }

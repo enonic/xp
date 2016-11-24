@@ -29,10 +29,6 @@ final class IdentityHandlerWorker
     {
         //Prepares the request
         Content content = getContentOrNull( getContentSelector() );
-        if ( content != null && content.isRoot() )
-        {
-            content = null;
-        }
         this.request.setContent( content );
         final Site site = getSiteOrNull( content );
         this.request.setSite( site );

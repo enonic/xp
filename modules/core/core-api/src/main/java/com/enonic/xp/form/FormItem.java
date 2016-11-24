@@ -86,6 +86,26 @@ public abstract class FormItem
         return (Layout) this;
     }
 
+    public FormOptionSetOption toFormOptionSetOption()
+    {
+        if ( !( this instanceof FormOptionSetOption ) )
+        {
+            throw new IllegalArgumentException(
+                "This FormItem [" + getName() + "] is not a FormOptionSetOption: " + this.getClass().getSimpleName() );
+        }
+        return (FormOptionSetOption) this;
+    }
+
+    public FormOptionSet toFormOptionSet()
+    {
+        if ( !( this instanceof FormOptionSet ) )
+        {
+            throw new IllegalArgumentException(
+                "This FormItem [" + getName() + "] is not a FormOptionSet: " + this.getClass().getSimpleName() );
+        }
+        return (FormOptionSet) this;
+    }
+
     @Override
     public boolean equals( final Object o )
     {

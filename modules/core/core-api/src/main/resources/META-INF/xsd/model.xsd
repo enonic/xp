@@ -50,6 +50,7 @@
         <xs:element name="inline" type="inline"/>
         <xs:element name="field-set" type="fieldSet"/>
         <xs:element name="item-set" type="itemSet"/>
+        <xs:element name="option-set" type="optionSet"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -131,6 +132,39 @@
         <xs:attribute name="name" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="optionSet">
+    <xs:complexContent>
+      <xs:extension base="formItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="label" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="expanded" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+          <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="options" type="optionSetOptions"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="optionSetOptions">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="option" type="optionSetOption"/>
+    </xs:sequence>
+    <xs:attribute name="minimum" type="xs:int"/>
+    <xs:attribute name="maximum" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="optionSetOption">
+    <xs:sequence>
+      <xs:element minOccurs="1" name="label" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="default" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+      <xs:element minOccurs="0" name="items" type="formItems"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="contentType">

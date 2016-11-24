@@ -1,6 +1,6 @@
 module api.content.resource {
 
-    export class UnpublishContentRequest extends ContentResourceRequest<api.content.json.UnpublishContentJson, any> {
+    export class UnpublishContentRequest extends ContentResourceRequest<api.task.TaskIdJson, api.task.TaskId> {
 
         private ids: ContentId[] = [];
 
@@ -43,25 +43,10 @@ module api.content.resource {
             return api.rest.Path.fromParent(super.getResourcePath(), "unpublish");
         }
 
-        static feedback(jsonResponse: api.rest.JsonResponse<api.content.json.UnpublishContentJson>) {
-
-            var result = jsonResponse.getResult(),
-                total = result.successes;
-
-            switch (total) {
-            case 0:
-                api.notify.showFeedback('Nothing to unpublish.');
-                break;
-            case 1:
-                if (total === 1) {
-                    api.notify.showFeedback(`"${result.contentName}" is unpublished`);
-                }
-                break;
-            default: // > 1
-                if (total > 0) {
-                    api.notify.showFeedback(`${total} items are unpublished`);
-                }
-            }
+        sendAndParse(): wemQ.Promise<api.task.TaskId> {
+            return this.send().then((response: api.rest.JsonResponse<api.task.TaskIdJson>) => {
+                return api.task.TaskId.fromJson(response.getResult());
+            });
         }
     }
 }

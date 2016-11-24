@@ -35,7 +35,6 @@ function handleGet(req) {
         forumIconUrl: forumIconUrl,
         marketIconUrl: marketIconUrl,
         baseUri: '',
-        portalAssetsUrl: portal.assetUrl({path: ""}),
         xpVersion: app.version,
         docLinkPrefix: docLinkPrefix
     };

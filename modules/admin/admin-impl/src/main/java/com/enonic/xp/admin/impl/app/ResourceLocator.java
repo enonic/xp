@@ -5,8 +5,8 @@ import java.net.URL;
 
 public interface ResourceLocator
 {
-    public boolean shouldCache();
+    boolean shouldCache();
 
-    public URL findResource( String name )
+    URL findResource( String name )
         throws IOException;
 }

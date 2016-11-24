@@ -17,7 +17,7 @@ module api.form.inputtype.text {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var regexpConfig = inputConfig['regexp'] && inputConfig['regexp'][0];
+            var regexpConfig = inputConfig && inputConfig['regexp'] && inputConfig['regexp'][0];
             var regexp = regexpConfig && regexpConfig['value'];
             this.regexpStr = regexp || null;
         }
@@ -39,11 +39,9 @@ module api.form.inputtype.text {
             inputEl.setName(this.getInput().getName() + "-" + index);
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                var isValid = this.isValid(event.getNewValue(), inputEl);
-                if (isValid) {
-                    var value = ValueTypes.STRING.newValue(event.getNewValue());
-                    this.notifyOccurrenceValueChanged(inputEl, value);
-                }
+                var isValid = this.isValid(event.getNewValue(), inputEl),
+                    value = isValid ? ValueTypes.STRING.newValue(event.getNewValue()) : this.newInitialValue();
+                this.notifyOccurrenceValueChanged(inputEl, value);
                 inputEl.updateValidationStatusOnUserInput(isValid);
             });
             return inputEl;
@@ -65,10 +63,6 @@ module api.form.inputtype.text {
         }
 
         availableSizeChanged() {
-        }
-
-        private newValue(s: string): Value {
-            return new Value(s, ValueTypes.STRING);
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

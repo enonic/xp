@@ -4,13 +4,21 @@ module api.form {
 
     export class FormItemOccurrenceView extends api.dom.DivEl {
 
-        private formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>;
+        protected formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>;
 
-        private removeButtonClickedListeners: {(event: RemoveButtonClickedEvent<FormItemOccurrenceView>):void}[] = [];
+        private removeButtonClickedListeners: {(event: RemoveButtonClickedEvent<FormItemOccurrenceView>): void}[] = [];
+
+        protected helpText: HelpTextContainer;
 
         constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className);
             this.formItemOccurrence = formItemOccurrence;
+        }
+
+        toggleHelpText(show?: boolean) {
+            if (!!this.helpText) {
+                this.helpText.toggleHelpText(show);
+            }
         }
 
         getDataPath(): api.data.PropertyPath {

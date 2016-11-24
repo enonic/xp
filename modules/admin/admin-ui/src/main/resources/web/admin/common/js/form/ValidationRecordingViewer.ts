@@ -9,19 +9,19 @@ module api.form {
 
         constructor() {
             super('validation-viewer');
+            this.list = new api.dom.UlEl();
         }
 
         doLayout(object: ValidationRecording) {
             super.doLayout(object);
 
-            if (!this.list) {
-                this.list = new api.dom.UlEl();
+            if (!this.list.isRendered()) {
                 this.appendChild(this.list);
             } else {
                 this.list.removeChildren();
             }
 
-            if (object) {
+            if (object && this.list.getChildren().length == 0) {
                 object.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
                     this.list.appendChild(this.createItemView(path, true));
                 });

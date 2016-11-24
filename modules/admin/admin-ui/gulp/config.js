@@ -86,6 +86,60 @@ var CONFIG = {
             ],
             dest: 'common/lib/'
         }
+    },
+    spec: {
+        frameworks: ['jasmine'],
+        plugins: [
+            'karma-jasmine',
+            'karma-coverage',
+            'karma-phantomjs-launcher',
+            'karma-remap-istanbul'
+        ],
+        // list of files / patterns to load in the browser
+        files: [
+            'node_modules/phantomjs-polyfill-object-assign/object-assign-polyfill.js',
+            'src/main/resources/web/admin/common/lib/_all.js',
+            'src/main/resources/web/admin/common/js/_all.js',
+            'src/main/resources/web/spec/_all.js'
+        ],
+
+        coverageReporter: {
+            type : 'json',
+            subdir : '.',
+            dir : 'src/main/resources/web/spec/coverage/',
+            file : 'coverage.json'
+        },
+        
+        preprocessors: {
+            // source files, that you wanna generate coverage for
+            // do not include tests or libraries
+            // (these files will be instrumented by Istanbul)
+            'src/main/resources/web/admin/common/js/_all.js': ['coverage']
+        },
+
+        port: 9876,
+
+        // enable / disable watching file and executing tests whenever any file changes
+        autoWatch: false,
+
+        // start these browsers
+        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+        browsers: ['PhantomJS'],
+
+        reporters: ['progress', 'coverage', 'karma-remap-istanbul'],
+
+        remapIstanbulReporter: {
+            src: 'src/main/resources/web/spec/coverage/coverage.json',
+            reports: {
+                lcovonly: 'src/main/resources/web/spec/coverage/lcov.info',
+                html: 'src/main/resources/web/spec/coverage/html/report'
+            },
+            timeoutNotCreated: 5000, // default value
+            timeoutNoMoreFiles: 1000 // default value
+        },
+        // Continuous Integration mode
+        // if true, Karma captures browsers, runs the tests and exits
+        singleRun: true
     }
 };
 

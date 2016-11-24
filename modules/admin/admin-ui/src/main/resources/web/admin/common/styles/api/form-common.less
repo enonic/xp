@@ -28,10 +28,6 @@
     .input-view {
       padding-top: 10px;
     }
-    &.display-validation-errors .input-view {
-      padding: 10px;
-      margin: 0px -10px 5px -10px;
-    }
   }
 
   &.display-validation-errors {
@@ -39,16 +35,11 @@
     .input-view {
 
       &.invalid {
-        margin: 0 0 5px 0;
         padding: 10px;
         .input-view-error();
 
         .upload-button {
           background-color: @admin-white;
-        }
-
-        .help-text-toggler {
-          margin-right: 1px;
         }
 
         .help-text p {
@@ -73,8 +64,11 @@
 
   .form-element-spacing(@form-field-set-spacing);
 
-  .field-set-view, .form-item-set-view {
-    .form-element-spacing(@form-field-set-spacing);
+  .field-set-view, .form-item-set-view, .form-option-set-view {
+
+    &:not(:last-child) {
+      margin-bottom: @form-field-spacing;
+    }
   }
 
   fieldset {
@@ -109,7 +103,6 @@
     width: 17px;
     text-align: center;
     font-size: 12px;
-    margin-right: 11px;
     color: white;
     background: @form-button-bg-hover;
     .border-radius(50%);

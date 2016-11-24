@@ -20,7 +20,7 @@ module api.dom {
             this.getEl().removeEventListener("submit", listener);
         }
 
-        static moveFocusToNextFocusable(input: Element, focusableSelector?: string) {
+        static getNextFocusable(input: Element, focusableSelector?: string): Element {
             var focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : "input, button, select");
 
             // find index of current input
@@ -36,9 +36,19 @@ module api.dom {
                 if (nextFocusable.getEl().getTabIndex() && nextFocusable.getEl().getTabIndex() < 0) {
                     continue;
                 } else {
-                    nextFocusable.giveFocus();
-                    return;
+                    return nextFocusable;
                 }
+            }
+
+            return null;
+        }
+
+        static moveFocusToNextFocusable(input: Element, focusableSelector?: string) {
+
+            var nextFocusable = FormEl.getNextFocusable(input, focusableSelector);
+
+            if (nextFocusable) {
+                nextFocusable.giveFocus();
             }
         }
 

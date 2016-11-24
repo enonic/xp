@@ -76,6 +76,10 @@ import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
 import Panel = api.ui.panel.Panel;
 import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 
+import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
+import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
+import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentReloadRequiredEvent;
+
 export interface LiveFormPanelConfig {
 
     contentType: ContentTypeName;
@@ -354,10 +358,25 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.contextWindow.slideOut();
             this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
         });
+
+        var contentEventListener = (event) => {
+            this.propagateEvent(event);
+        }
+
+        ContentDeletedEvent.on(contentEventListener);
+        ContentUpdatedEvent.on(contentEventListener);
+        this.onRemoved(() => {
+            ContentDeletedEvent.un(contentEventListener);
+            ContentUpdatedEvent.un(contentEventListener);
+        });
     }
 
     skipNextReloadConfirmation(skip: boolean) {
         this.liveEditPageProxy.skipNextReloadConfirmation(skip);
+    }
+
+    propagateEvent(event: api.event.Event) {
+        this.liveEditPageProxy.propagateEvent(event);
     }
 
     loadPage(clearInspection: boolean = true) {
@@ -428,6 +447,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy.onPageUnlocked((event: api.liveedit.PageUnlockedEvent) => {
             this.contextWindow.clearSelection();
+            this.minimizeContentFormPanelIfNeeded();
         });
 
         this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
@@ -532,6 +552,25 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
             var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(event.getFragmentContent());
             new api.content.event.EditContentEvent([summaryAndStatus]).fire();
+        });
+
+        this.liveEditPageProxy.onFragmentReloadRequired((event: FragmentComponentReloadRequiredEvent) => {
+            var fragmentView = event.getFragmentComponentView();
+
+            var componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
+                fragmentView.getComponentPath(),
+                RenderingMode.EDIT,
+                api.content.Branch.DRAFT);
+
+            fragmentView.showLoadingSpinner();
+            this.liveEditPageProxy.loadComponent(fragmentView, componentUrl).then(() => {
+                // fragmentView.hideLoadingSpinner();
+            }).catch((errorMessage: any) => {
+                api.DefaultErrorHandler.handle(errorMessage);
+
+                fragmentView.hideLoadingSpinner();
+                fragmentView.showRenderingError(componentUrl, errorMessage);
+            });
         });
 
         this.liveEditPageProxy.onShowWarning((event: ShowWarningLiveEditEvent) => {

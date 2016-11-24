@@ -18,8 +18,12 @@ module api.ui {
             this.appendChild(this.checkbox);
             this.appendChild(this.label);
         }
+        
+        isDisabled(): boolean {
+            return this.checkbox.getEl().isDisabled();
+        }
 
-        private initCheckbox(inputAlignment: InputAlignment) {
+        private initCheckbox(inputAlignment: InputAlignment) {            // we need an id for the label to interact nicely
             // we need an id for the label to interact nicely
             this.checkbox = <api.dom.InputEl> new api.dom.Element(new api.dom.NewElementBuilder().setTagName('input').setGenerateId(true));
             this.checkbox.getEl().setAttribute('type', 'checkbox');
@@ -96,8 +100,11 @@ module api.ui {
             return this;
         }
 
-        setDisabled(value: boolean): Checkbox {
+        setDisabled(value: boolean, cls?: string): Checkbox {
             this.checkbox.getEl().setDisabled(value);
+            if (cls) {
+                this.toggleClass(cls, value);
+            }
             return this;
         }
 

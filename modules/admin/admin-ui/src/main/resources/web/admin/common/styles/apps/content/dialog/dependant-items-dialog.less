@@ -27,7 +27,7 @@
     display: block;
 
     .status {
-      margin-right: 5px;
+      margin-right: 10px;
       display: inline-block;
       float: right;
 
@@ -87,10 +87,6 @@
           .browse-selection-item {
             padding-left: 0px;
 
-            .dependant-item-viewer {
-              width: calc(~'100% - 90px');
-            }
-
             .names-and-icon-view .wrapper {
               margin-left: 10px;
             }
@@ -105,17 +101,15 @@
           padding-left: 10px;
 
           .remove {
-            height: 16px;
-          }
-          .remove, .status {
             display: none;
+            height: 16px;
           }
 
           &.removable {
 
             margin-left: -25px;
 
-            .remove, .status {
+            .remove {
               display: block;
             }
           }
@@ -145,7 +139,7 @@
           }
 
           .dependant-item-viewer {
-            width: calc(~'100% - 20px');
+            width: calc(~'100% - 90px');
 
             &.pending-delete .names-view {
               .main-name, .sub-name {

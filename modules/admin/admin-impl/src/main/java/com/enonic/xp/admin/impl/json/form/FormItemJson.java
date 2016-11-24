@@ -10,10 +10,11 @@ import com.enonic.xp.form.FormItem;
 @Beta
 @SuppressWarnings("UnusedDeclaration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
-@JsonSubTypes(
-    {@JsonSubTypes.Type(value = InputJson.class, name = "Input"), @JsonSubTypes.Type(value = FormItemSetJson.class, name = "FormItemSet"),
+@JsonSubTypes({@JsonSubTypes.Type(value = InputJson.class, name = "Input"),
+    @JsonSubTypes.Type(value = FormItemSetJson.class, name = "FormItemSet"),
         @JsonSubTypes.Type(value = FieldSetJson.class, name = "FieldSet"),
-        @JsonSubTypes.Type(value = InlineMixinJson.class, name = "InlineMixin")})
+    @JsonSubTypes.Type(value = InlineMixinJson.class, name = "InlineMixin"),
+    @JsonSubTypes.Type(value = FormOptionSetJson.class, name = "FormOptionSet")})
 public abstract class FormItemJson<T extends FormItem>
 {
     public abstract String getName();

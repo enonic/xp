@@ -17,13 +17,13 @@ final class ResourceHandler
 
     private ResourceLocator resourceLocator;
 
-    public Response handle( final String path )
+    Response handle( final String path )
         throws Exception
     {
         return handle( path, false );
     }
 
-    public Response handle( final String path, final boolean caching )
+    Response handle( final String path, final boolean caching )
         throws Exception
     {
         final Response.ResponseBuilder builder = doHandle( path );
@@ -38,7 +38,7 @@ final class ResourceHandler
         return builder.build();
     }
 
-    public Response.ResponseBuilder doHandle( final String path )
+    private Response.ResponseBuilder doHandle( final String path )
         throws Exception
     {
         final InputStream in = findResource( path );
@@ -73,7 +73,7 @@ final class ResourceHandler
         return url.openStream();
     }
 
-    public void setResourceLocator( final ResourceLocator resourceLocator )
+    void setResourceLocator( final ResourceLocator resourceLocator )
     {
         this.resourceLocator = resourceLocator;
     }

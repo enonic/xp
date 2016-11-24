@@ -37,6 +37,8 @@ module api.content {
 
         private modifiedTime: Date;
 
+        private publishFromTime: Date;
+
         private deletable: boolean;
 
         private editable: boolean;
@@ -66,6 +68,7 @@ module api.content {
             this.id = builder.id;
             this.createdTime = builder.createdTime;
             this.modifiedTime = builder.modifiedTime;
+            this.publishFromTime = builder.publishFromTime;
             this.deletable = builder.deletable;
             this.editable = builder.editable;
             this.childOrder = builder.childOrder;
@@ -157,6 +160,10 @@ module api.content {
             return this.modifiedTime;
         }
 
+        getPublishFromTime(): Date {
+            return this.publishFromTime;
+        }
+
         isDeletable(): boolean {
             return this.deletable;
         }
@@ -237,6 +244,9 @@ module api.content {
             if (!api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
                 return false;
             }
+            if (!api.ObjectHelper.dateEquals(this.publishFromTime, other.publishFromTime)) {
+                return false;
+            }
             if (!api.ObjectHelper.booleanEquals(this.deletable, other.deletable)) {
                 return false;
             }
@@ -299,6 +309,8 @@ module api.content {
 
         modifiedTime: Date;
 
+        publishFromTime: Date;
+
         deletable: boolean;
 
         editable: boolean;
@@ -328,6 +340,7 @@ module api.content {
                 this.requireValid = source.isRequireValid();
                 this.createdTime = source.getCreatedTime();
                 this.modifiedTime = source.getModifiedTime();
+                this.publishFromTime = source.getPublishFromTime();
                 this.deletable = source.isDeletable();
                 this.editable = source.isEditable();
                 this.childOrder = source.getChildOrder();
@@ -337,7 +350,6 @@ module api.content {
         }
 
         fromContentSummaryJson(json: api.content.json.ContentSummaryJson): ContentSummaryBuilder {
-
             super.fromContentIdBaseItemJson(json);
 
             this.name = ContentName.fromString(json.name);
@@ -358,6 +370,7 @@ module api.content {
             this.id = json.id;
             this.createdTime = json.createdTime ? new Date(Date.parse(json.createdTime)) : null;
             this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+            this.publishFromTime = json.publish && json.publish.from ? new Date(Date.parse(json.publish.from)) : null;
 
             this.deletable = json.deletable;
             this.editable = json.editable;

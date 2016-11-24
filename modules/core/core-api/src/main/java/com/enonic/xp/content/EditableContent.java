@@ -45,7 +45,7 @@ public class EditableContent
 
     public Instant modifiedTime;
 
-    public Instant publishedTime;
+    public ContentPublishInfo publishInfo;
 
     public EditableContent( final Content source )
     {
@@ -62,7 +62,7 @@ public class EditableContent
         this.language = source.getLanguage();
         this.creator = source.getCreator();
         this.createdTime = source.getCreatedTime();
-        this.publishedTime = source.getPublishedTime();
+        this.publishInfo = source.getPublishInfo();
     }
 
     public Content build()
@@ -80,7 +80,7 @@ public class EditableContent
             language( language ).
             creator( creator ).
             createdTime( createdTime ).
-            publishedTime( publishedTime ).
+            publishInfo( publishInfo ).
             build();
     }
 }

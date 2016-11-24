@@ -8,6 +8,7 @@ import com.google.common.collect.ListMultimap;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
@@ -33,7 +34,6 @@ public final class ContentMapper
         gen.value( "modifier", value.getModifier() );
         gen.value( "createdTime", value.getCreatedTime() );
         gen.value( "modifiedTime", value.getModifiedTime() );
-        gen.value( "publishedTime", value.getPublishedTime() );
         gen.value( "type", value.getType() );
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "hasChildren", value.hasChildren() );
@@ -44,12 +44,23 @@ public final class ContentMapper
         serializeExtraData( gen, value.getAllExtraData() );
         serializePage( gen, value.getPage() );
         serializeAttachments( gen, value.getAttachments() );
+        serializePublishInfo( gen, value.getPublishInfo() );
     }
 
     private static void serializeData( final MapGenerator gen, final PropertyTree value )
     {
         gen.map( "data" );
         new PropertyTreeMapper( value ).serialize( gen );
+        gen.end();
+    }
+
+    private static void serializePublishInfo( final MapGenerator gen, final ContentPublishInfo info )
+    {
+        gen.map( "publish" );
+        if ( info != null )
+        {
+            gen.value( "from", info.getFrom() );
+        }
         gen.end();
     }
 

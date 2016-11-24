@@ -20,7 +20,8 @@ var expectedJson = {
             "data": {},
             "x": {},
             "page": {},
-            "attachments": {}
+            "attachments": {},
+            "publish": {}
         },
         {
             "_id": "id2",
@@ -37,7 +38,8 @@ var expectedJson = {
             "data": {},
             "x": {},
             "page": {},
-            "attachments": {}
+            "attachments": {},
+            "publish": {}
         },
         {
             "_id": "id3",
@@ -54,7 +56,8 @@ var expectedJson = {
             "data": {},
             "x": {},
             "page": {},
-            "attachments": {}
+            "attachments": {},
+            "publish": {}
         }
     ],
     "aggregations": {

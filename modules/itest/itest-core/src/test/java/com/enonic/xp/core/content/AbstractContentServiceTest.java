@@ -27,8 +27,13 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentVersionsParams;
+import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -54,7 +59,6 @@ import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTes
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
-import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -485,4 +489,85 @@ public class AbstractContentServiceTest
                               "]", content.getId(), next );
         }
     }
+
+    protected void assertVersions( final ContentId contentId, final int expected )
+    {
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( contentId ).
+            build() );
+
+        assertEquals( expected, versions.getHits() );
+
+        final Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+
+        Instant lastModified = null;
+
+        while ( iterator.hasNext() )
+        {
+            final ContentVersion next = iterator.next();
+
+            if ( lastModified != null )
+            {
+                assertTrue( next.getModified().isBefore( lastModified ) );
+            }
+
+            lastModified = next.getModified();
+        }
+    }
+
+    protected void printContentTree( final ContentId rootId )
+    {
+        doPrintContentTree( rootId );
+    }
+
+    protected void printContentTree( final ContentId rootId, final Context context )
+    {
+        context.runWith( () -> doPrintContentTree( rootId ) );
+    }
+
+    private void doPrintContentTree( final ContentId rootId )
+    {
+
+        final Content root = this.contentService.getById( rootId );
+
+        final Branch branch = ContextAccessor.current().getBranch();
+        System.out.println( "** Content-tree in branch [" + branch.getName() + "], starting with path [" + root.getPath() + "]" );
+
+        doPrintChildren( 0, root );
+    }
+
+    private void doPrintChildren( int ident, final Content root )
+    {
+        System.out.println( createString( root, ident ) );
+
+        ident += 3;
+
+        final FindContentByParentResult result = this.contentService.findByParent( FindContentByParentParams.create().
+            parentId( root.getId() ).
+            size( -1 ).
+            build() );
+
+        for ( final Content content : result.getContents() )
+        {
+            doPrintChildren( ident, content );
+        }
+    }
+
+    private String createString( final Content content, final int indent )
+    {
+        final Branch currentBranch = ContextAccessor.current().getBranch();
+
+      /*  final CompareContentResult compareStatus = this.contentService.compare(
+            new CompareContentParams( content.getId(), currentBranch.equals( WS_DEFAULT ) ? WS_OTHER : WS_DEFAULT ) );
+*/
+        StringBuilder builder = new StringBuilder();
+        builder.append( new String( new char[indent] ).replace( '\0', ' ' ) );
+        builder.append( "'" );
+        builder.append( "--" );
+        builder.append( content.getName() );
+        // builder.append( " (" + compareStatus.getCompareStatus().toString().toLowerCase() + ")" );
+
+        return builder.toString();
+    }
+
 }

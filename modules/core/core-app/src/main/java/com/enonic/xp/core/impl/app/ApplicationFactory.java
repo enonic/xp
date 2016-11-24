@@ -3,14 +3,14 @@ package com.enonic.xp.core.impl.app;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 import org.osgi.framework.Bundle;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.config.ApplicationConfigMap;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
@@ -21,12 +21,9 @@ final class ApplicationFactory
 {
     private final RunMode runMode;
 
-    private final Function<String, Map<String, String>> configFactory;
-
-    public ApplicationFactory( final RunMode runMode, final Function<String, Map<String, String>> configFactory )
+    ApplicationFactory( final RunMode runMode )
     {
         this.runMode = runMode;
-        this.configFactory = configFactory;
     }
 
     public Application create( final Bundle bundle )
@@ -39,11 +36,13 @@ final class ApplicationFactory
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.bundle( bundle );
         builder.urlResolver( createUrlResolver( bundle ) );
-        builder.config( this.configFactory.apply( bundle.getSymbolicName() ) );
+
+        final ApplicationKey key = ApplicationKey.from( bundle.getSymbolicName() );
+        builder.config( ApplicationConfigMap.INSTANCE.get( key ) );
         return builder.build();
     }
 
-    protected ApplicationUrlResolver createUrlResolver( final Bundle bundle )
+    ApplicationUrlResolver createUrlResolver( final Bundle bundle )
     {
         final ApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
         if ( this.runMode != RunMode.DEV )
@@ -52,6 +51,11 @@ final class ApplicationFactory
         }
 
         final List<String> sourcePaths = ApplicationHelper.getSourcePaths( bundle );
+        if ( sourcePaths.isEmpty() )
+        {
+            return bundleUrlResolver;
+        }
+
         final ApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( sourcePaths );
 
         return new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver );

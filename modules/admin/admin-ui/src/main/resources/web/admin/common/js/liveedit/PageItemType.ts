@@ -19,7 +19,7 @@ module api.liveedit {
                 iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-page',
                 highlighterStyle: {
                     stroke: 'rgba(20, 20, 20, 1)', // not used
-                    strokeDasharray: '',
+                    strokeDasharray: '7 7',
                     fill: 'rgba(255, 255, 255, 0)' // not used
                 },
                 contextMenuConfig: ['reset']

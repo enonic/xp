@@ -63,7 +63,6 @@ module api.content.site.inputtype.siteconfigurator {
             };
 
             this.formView = this.createFormView(this.siteConfig);
-            this.formView.layout();
 
             if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
@@ -168,6 +167,7 @@ module api.content.site.inputtype.siteconfigurator {
             formView.addClass("site-form");
 
             formView.onLayoutFinished(() => {
+                formView.displayValidationErrors(true);
                 formView.validate(false, true);
                 this.toggleClass("invalid", !formView.isValid());
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());

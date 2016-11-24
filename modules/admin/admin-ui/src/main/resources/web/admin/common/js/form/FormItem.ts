@@ -11,8 +11,11 @@ module api.form {
         }
 
         setParent(parent: FormItem) {
-            if (!(api.ObjectHelper.iFrameSafeInstanceOf(parent, FormItemSet) || api.ObjectHelper.iFrameSafeInstanceOf(parent, FieldSet))) {
-                throw new Error("A parent FormItem must either be a FormItemSet or a FieldSet");
+            if (!(api.ObjectHelper.iFrameSafeInstanceOf(parent, FormItemSet) ||
+                  api.ObjectHelper.iFrameSafeInstanceOf(parent, FieldSet) ||
+                  api.ObjectHelper.iFrameSafeInstanceOf(parent, FormOptionSet) ||
+                  api.ObjectHelper.iFrameSafeInstanceOf(parent, FormOptionSetOption))) {
+                throw new Error("A parent FormItem must either be a FormItemSet, FieldSet or a FormOptionSet");
             }
 
             this.parent = parent;
@@ -24,6 +27,10 @@ module api.form {
 
         getPath(): FormItemPath {
             return this.resolvePath();
+        }
+
+        getParent(): FormItem {
+            return this.parent;
         }
 
         private resolvePath(): FormItemPath {
@@ -61,10 +68,16 @@ module api.form {
                 return (<Input>this).toInputJson();
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormItemSet)) {
-                return (<FormItemSet>this).toFormItemSetJson();
+                return (<api.form.FormItemSet>this).toFormItemSetJson();
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, Layout)) {
-                return (<Layout>this).toLayoutJson();
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FieldSet)) {
+                return (<FieldSet>this).toFieldSetJson();
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSet)) {
+                return (<api.form.FormOptionSet>this).toFormOptionSetJson();
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSetOption)) {
+                return (<api.form.FormOptionSetOption>this).toFormOptionSetOptionJson();
             }
             else {
                 throw new Error("Unsupported FormItem: " + this);

@@ -2,6 +2,7 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexPath;
 
 @Beta
@@ -13,5 +14,6 @@ public class ContentIndexPath
 
     public static final IndexPath CREATED_TIME = IndexPath.from( ContentPropertyNames.CREATED_TIME );
 
-    public static final IndexPath PUBLISHED_TIME = IndexPath.from( ContentPropertyNames.PUBLISHED_TIME );
+    public static final IndexPath PUBLISHED_TIME =
+        IndexPath.from( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ).toString() );
 }

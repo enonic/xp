@@ -17,6 +17,12 @@ module api.form {
             else if (formItemTypeWrapperJson.FieldSet) {
                 return FormItemFactory.createFieldSetLayout(<api.form.json.FieldSetJson>formItemTypeWrapperJson.FieldSet);
             }
+            else if (formItemTypeWrapperJson.FormOptionSet) {
+                return FormItemFactory.createFormOptionSet(<api.form.json.FormOptionSetJson>formItemTypeWrapperJson.FormOptionSet);
+            }
+            else if (formItemTypeWrapperJson.FormOptionSetOption) {
+                return FormItemFactory.createFormOptionSetOption(<api.form.json.FormOptionSetOptionJson>formItemTypeWrapperJson.FormOptionSetOption);
+            }
 
             console.error("Unknown FormItem type: ", formItemTypeWrapperJson);
             return null;
@@ -26,12 +32,20 @@ module api.form {
             return Input.fromJson(inputJson);
         }
 
-        static createFormItemSet(formItemSetJson: api.form.json.FormItemSetJson): FormItemSet {
-            return new FormItemSet(formItemSetJson);
+        static createFormItemSet(formItemSetJson: api.form.json.FormItemSetJson): api.form.FormItemSet {
+            return new api.form.FormItemSet(formItemSetJson);
         }
 
         static createFieldSetLayout(fieldSetJson: api.form.json.FieldSetJson): FieldSet {
             return new FieldSet(fieldSetJson);
+        }
+
+        static createFormOptionSet(optionSetJson: api.form.json.FormOptionSetJson): api.form.FormOptionSet {
+            return new api.form.FormOptionSet(optionSetJson);
+        }
+
+        static createFormOptionSetOption(optionSetOptionJson: api.form.json.FormOptionSetOptionJson): api.form.FormOptionSetOption {
+            return new api.form.FormOptionSetOption(optionSetOptionJson);
         }
     }
 }

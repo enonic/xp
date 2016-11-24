@@ -1,11 +1,11 @@
 import "../../../../../api.ts";
+import {WidgetItemView} from "../../WidgetItemView";
 
 import ContentSummary = api.content.ContentSummary;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {WidgetItemView} from "../../WidgetItemView";
 
 export class PropertiesWidgetItemView extends WidgetItemView {
 
@@ -21,11 +21,38 @@ export class PropertiesWidgetItemView extends WidgetItemView {
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
         var content = item.getContentSummary();
-        if (!api.ObjectHelper.equals(content, this.content)) {
+        if (!content.equals(this.content)) {
+            if (!this.content) {
+                this.initListeners();
+            }
             this.content = content;
             return this.layout();
         }
+
         return wemQ<any>(null);
+    }
+
+
+    private initListeners() {
+
+        let layoutOnPublishStateChange = (contents: ContentSummaryAndCompareStatus[]) => {
+            let thisContentId = this.content.getId();
+
+            let content: ContentSummaryAndCompareStatus = contents.filter((content) => {
+                return thisContentId == content.getId();
+            })[0];
+
+            if (!!content) {
+                this.setContentAndUpdateView(content);
+            }
+        };
+
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+
+        serverEvents.onContentPublished(layoutOnPublishStateChange);
+        
+        //Uncomment the line below if we need to redo the layout on unpublish
+        //serverEvents.onContentUnpublished(layoutOnPublishStateChange);
     }
 
     public layout(): wemQ.Promise<any> {
@@ -58,7 +85,6 @@ export class PropertiesWidgetItemView extends WidgetItemView {
 
         var strings: FieldString[];
 
-
         strings = [
             new FieldString().setName("Type").setValue(this.content.getType().getLocalName()
                 ? this.content.getType().getLocalName() : this.content.getType().toString()),
@@ -70,10 +96,13 @@ export class PropertiesWidgetItemView extends WidgetItemView {
 
             this.content.getOwner() ? new FieldString().setName("Owner").setValue(this.content.getOwner().getId()) : null,
 
-            this.content.getModifiedTime() ? new FieldString().setName("Modified").setValue(
-                DateTimeFormatter.createHtmlNoTimestamp(this.content.getModifiedTime())) : null,
+            new FieldString().setName("Created").setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
 
-            new FieldString().setName("Created").setValue(DateTimeFormatter.createHtmlNoTimestamp(this.content.getCreatedTime())),
+            this.content.getModifiedTime() ? new FieldString().setName("Modified").setValue(
+                DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
+
+            new FieldString().setName("Published from").setValue(this.content.getPublishFromTime() ?
+                                                                DateTimeFormatter.createHtml(this.content.getPublishFromTime()) : " "),
 
             new FieldString().setName("Id").setValue(this.content.getId())
         ];

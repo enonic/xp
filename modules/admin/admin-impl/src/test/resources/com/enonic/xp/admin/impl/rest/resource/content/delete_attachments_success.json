@@ -24,7 +24,7 @@
   "page": null,
   "path": "/one",
   "permissions": [],
-  "publishedTime" : null,
+  "publish": null,
   "thumbnail": null,
   "type": "base:folder"
 }

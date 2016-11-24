@@ -122,6 +122,14 @@ module api.form {
             return previous == undefined || previous == null || !previous.equals(this);
         }
 
+        containsPathInBreaksMin(path: ValidationRecordingPath) {
+            return this.exists(path, this.breaksMinimumOccurrencesArray);
+        }
+
+        containsPathInBreaksMax(path: ValidationRecordingPath) {
+            return this.exists(path, this.breaksMaximumOccurrencesArray);
+        }
+
         private exists(path: ValidationRecordingPath, array: ValidationRecordingPath[]): boolean {
             for (var i = 0; i < array.length; i++) {
                 if (array[i].toString() == path.toString()) {

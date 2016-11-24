@@ -99,6 +99,15 @@ module api.ui.selector {
             this.dropdownGrid.setFilterArgs(args);
         }
 
+        resizeDropdownTo(height: number) {
+            this.dropdownGrid.setCustomHeight(height);
+            this.dropdownGrid.adjustGridHeight();
+        }
+
+        resetDropdownSize() {
+            this.dropdownGrid.resetCustomHeight();
+        }
+
         showDropdown(selectedOptions?: Option<OPTION_DISPLAY_VALUE>[], noOptionsText?: string) {
 
             if (this.hasOptions()) {

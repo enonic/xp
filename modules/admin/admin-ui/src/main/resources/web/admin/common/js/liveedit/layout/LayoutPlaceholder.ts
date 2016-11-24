@@ -37,8 +37,16 @@ module api.liveedit.layout {
             });
 
             var siteModel = layoutView.getLiveEditModel().getSiteModel();
-            siteModel.onApplicationAdded(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
-            siteModel.onApplicationRemoved(() => this.reloadDescriptorsOnApplicationChange(siteModel, request));
+
+            let listener = () => this.reloadDescriptorsOnApplicationChange(siteModel, request);
+
+            siteModel.onApplicationAdded(listener);
+            siteModel.onApplicationRemoved(listener);
+
+            this.onRemoved(() => {
+                siteModel.unApplicationAdded(listener);
+                siteModel.unApplicationRemoved(listener);
+            });
         }
 
         private reloadDescriptorsOnApplicationChange(siteModel: SiteModel, request: GetLayoutDescriptorsByApplicationsRequest) {

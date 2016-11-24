@@ -379,6 +379,12 @@ module api.data {
             });
         }
 
+        reset() {
+            this.forEach((property: Property) => {
+                property.reset();
+            });
+        }
+
         /**
          * Calls the given callback for each property with the given name.
          */

@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -54,12 +53,10 @@ public final class ApplicationServiceImpl
 
     private EventPublisher eventPublisher;
 
-    private ConfigurationAdmin configurationAdmin;
-
     @Activate
     public void activate( final BundleContext context )
     {
-        this.registry = new ApplicationRegistry( context, this.configurationAdmin );
+        this.registry = new ApplicationRegistry( context );
         this.context = context;
 
         ApplicationHelper.runAsAdmin( this::installAllStoredApplications );
@@ -541,11 +538,5 @@ public final class ApplicationServiceImpl
     public void removeInvalidator( final ApplicationInvalidator invalidator )
     {
         this.registry.removeInvalidator( invalidator );
-    }
-
-    @Reference
-    public void setConfigurationAdmin( final ConfigurationAdmin configurationAdmin )
-    {
-        this.configurationAdmin = configurationAdmin;
     }
 }

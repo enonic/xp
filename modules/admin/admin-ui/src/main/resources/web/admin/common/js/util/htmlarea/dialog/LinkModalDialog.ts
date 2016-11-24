@@ -251,11 +251,6 @@ module api.util.htmlarea.dialog {
                 loader.setAllowedContentTypeNames(contentTypeNames);
             }
 
-            contentSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                this.adjustDropDown(contentSelectorComboBox.getInput(), event.getDropdownElement().getEl());
-            });
-
-
             contentSelectorComboBox.onKeyDown((e: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isEscKey(e) && !contentSelectorComboBox.isDropdownShown()) {
                     // Prevent modal dialog from closing on Esc key when dropdown is expanded
@@ -274,23 +269,11 @@ module api.util.htmlarea.dialog {
                 dropDown.addOption(<Option<string>>{value: "#" + anchor, displayValue: anchor});
             });
 
-            dropDown.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                this.adjustDropDown(dropDown, event.getDropdownElement().getEl());
-            });
-
             if (this.getAnchor()) {
                 dropDown.setValue(this.getAnchor());
             }
 
             return this.createFormItem("anchor", "Anchor", Validators.required, null, <api.dom.FormItemEl>dropDown);
-        }
-
-        private adjustDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
-            var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
-
-            dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder());
-            dropDownElement.setTopPx(inputPosition.top + inputElement.getEl().getHeightWithBorder() - 1);
-            dropDownElement.setLeftPx(inputPosition.left);
         }
 
         private validateDockPanel(): boolean {

@@ -5,6 +5,8 @@ import org.junit.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -92,4 +94,75 @@ public class FormDefaultValuesProcessorImplTest
         assertNull( data.getString( "testInput" ) );
     }
 
+    @Test
+    public void testOptionSetItemsAreDefaulted()
+    {
+        FormOptionSet.Builder myOptionSet = FormOptionSet.create().required( false ).name( "myOptionSet" );
+        FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).defaultOption( true );
+
+        option1.
+            addFormItem( Input.create().
+                name( "myInput" ).
+                label( "Input" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "default" ).build() ).build() ).
+                build() ).
+            addFormItem( Input.create().
+                name( "myDouble" ).
+                label( "double" ).
+                inputType( InputTypeName.DOUBLE ).
+                defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "0" ).build() ).build() ).
+                build() );
+
+        myOptionSet.addOptionSetOption( option1.build() );
+
+        final Form form = Form.create().
+            addFormItem( myOptionSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( "default", data.getString( "myOptionSet.option1.myInput" ) );
+        assertEquals( new Double( 0 ), data.getDouble( "myOptionSet.option1.myDouble" ) );
+    }
+
+    @Test
+    public void testOptionSetIsNotDefaultedForUnselected()
+    {
+        FormOptionSet.Builder myOptionSet = FormOptionSet.create().required( false ).name( "myOptionSet" );
+
+        FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).defaultOption( true );
+        FormOptionSetOption.Builder option2 = FormOptionSetOption.create().name( "option2" );
+
+        option1.
+            addFormItem( Input.create().
+                name( "myInput" ).
+                label( "Input" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "default" ).build() ).build() ).
+                build() );
+        option2.
+            addFormItem( Input.create().
+                name( "myDouble" ).
+                label( "double" ).
+                inputType( InputTypeName.DOUBLE ).
+                defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "0" ).build() ).build() ).
+                build() );
+
+        myOptionSet.addOptionSetOption( option1.build() );
+        myOptionSet.addOptionSetOption( option2.build() );
+
+        final Form form = Form.create().
+            addFormItem( myOptionSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( "default", data.getString( "myOptionSet.option1.myInput" ) );
+        assertNull( data.getDouble( "myOptionSet.option1.myDouble" ) );
+    }
 }

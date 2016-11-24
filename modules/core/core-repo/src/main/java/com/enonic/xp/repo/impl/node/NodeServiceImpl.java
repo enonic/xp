@@ -331,7 +331,7 @@ public class NodeServiceImpl
         verifyContext();
         verifyBranchExists( target );
 
-        final PushNodesResult pushNodesResult = PushNodesCommand.create().
+        final InternalPushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -341,9 +341,9 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( pushNodesResult.getSuccessful().isNotEmpty() )
+        if ( pushNodesResult.getPushNodeEntries().isNotEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessful() ) );
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getPushNodeEntries() ) );
         }
 
         return pushNodesResult;
@@ -495,6 +495,7 @@ public class NodeServiceImpl
             nodeId( params.getNodeId() ).
             excludedNodeIds( params.getExcludedNodeIds() ).
             includeChildren( params.isIncludeChildren() ).
+            includeDependencies( params.isIncludeDependencies() ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -553,7 +554,10 @@ public class NodeServiceImpl
     public RestoreResult restore( final RestoreParams params )
     {
         verifyContext();
-        return this.snapshotService.restore( params );
+        final RestoreResult restoreResult = this.snapshotService.restore( params );
+        this.storageService.invalidate();
+        this.eventPublisher.publish( RepositoryEvents.restored() );
+        return restoreResult;
     }
 
     @Override

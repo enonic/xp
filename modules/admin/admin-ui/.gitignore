@@ -5,3 +5,4 @@ _home.*
 _launcher.*
 html-editor.css
 *.map
+src/main/resources/web/spec/coverage

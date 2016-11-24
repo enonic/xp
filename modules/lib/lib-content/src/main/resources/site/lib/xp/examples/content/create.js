@@ -28,7 +28,8 @@ var result1 = contentLib.create({
             }
         }
     },
-    "attachments": {}
+    "attachments": {},
+    "publish": {}
 });
 
 log.info('Content created with id ' + result1._id);
@@ -92,7 +93,8 @@ var expected = {
         }
     },
     "page": {},
-    "attachments": {}
+    "attachments": {},
+    "publish": {}
 };
 // END
 
@@ -111,5 +113,6 @@ assert.assertJsonEquals({
     "data": {},
     "x": {},
     "page": {},
-    "attachments": {}
+    "attachments": {},
+    "publish": {}
 }, result2);

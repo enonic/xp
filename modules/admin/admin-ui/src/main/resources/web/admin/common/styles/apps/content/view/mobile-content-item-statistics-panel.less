@@ -76,6 +76,7 @@
     overflow: hidden;
     display: block;
     cursor: pointer;
+    transform: rotate(180deg);
 
     .icon-trending_neutral();
   }
@@ -229,6 +230,19 @@
         background-color: transparent;
       }
 
+    }
+  }
+}
+
+// Transition when opeining content preview on a mobile
+body {
+  .appbar, .split-panel {
+    right: 0px;
+    .transition(right 0.3s linear);
+  }
+  &.mobile-statistics-panel {
+    .appbar, .split-panel {
+      right: 55px;
     }
   }
 }

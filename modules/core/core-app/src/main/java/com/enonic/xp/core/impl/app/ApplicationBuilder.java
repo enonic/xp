@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.app;
 
-import java.util.Map;
-
 import org.osgi.framework.Bundle;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.config.ConfigBuilder;
+import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 
 public final class ApplicationBuilder
@@ -17,7 +17,7 @@ public final class ApplicationBuilder
 
     private ClassLoader classLoader;
 
-    private Map<String, String> config;
+    private Configuration config;
 
     public ApplicationBuilder bundle( final Bundle bundle )
     {
@@ -37,7 +37,7 @@ public final class ApplicationBuilder
         return this;
     }
 
-    public ApplicationBuilder config( final Map<String, String> config )
+    public ApplicationBuilder config( final Configuration config )
     {
         this.config = config;
         return this;
@@ -51,6 +51,11 @@ public final class ApplicationBuilder
         if ( this.classLoader == null )
         {
             this.classLoader = new BundleClassLoader( this.bundle );
+        }
+
+        if ( this.config == null )
+        {
+            this.config = ConfigBuilder.create().build();
         }
 
         return new ApplicationImpl( this.bundle, this.urlResolver, this.classLoader, this.config );

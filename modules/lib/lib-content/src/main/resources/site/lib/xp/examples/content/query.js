@@ -97,7 +97,8 @@ var expected = {
             "data": {},
             "x": {},
             "page": {},
-            "attachments": {}
+            "attachments": {},
+            "publish": {}
         },
         {
             "_id": "id2",
@@ -114,7 +115,8 @@ var expected = {
             "data": {},
             "x": {},
             "page": {},
-            "attachments": {}
+            "attachments": {},
+            "publish": {}
         }
     ],
     "aggregations": {

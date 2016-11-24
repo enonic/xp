@@ -2,25 +2,25 @@ module api.form.json {
 
     export interface InputJson extends FormItemJson {
 
-        customText: string;
+        customText?: string;
 
-        helpText: string;
+        helpText?: string;
 
-        immutable: boolean;
+        immutable?: boolean;
 
-        indexed: boolean;
+        indexed?: boolean;
 
         label: string;
 
         occurrences: OccurrencesJson;
 
-        validationRegexp: string;
+        validationRegexp?: string;
 
         inputType: string;
 
-        config: any;
+        config?: any;
 
-        maximizeUIInputWidth: boolean;
+        maximizeUIInputWidth?: boolean;
 
         defaultValue?: {
             type: string;

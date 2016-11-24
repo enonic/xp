@@ -12,6 +12,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
@@ -99,6 +101,17 @@ public class JsonToPropertyTreeTranslatorTest
                 label( "Double" ).
                 inputType( InputTypeName.DOUBLE ).
                 build() ).
+            build();
+
+        final FormOptionSet formOptionSet = FormOptionSet.create().
+            name( "myOptionSet" ).
+            label( "My option set" ).
+            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).
+                addFormItem(
+                    Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
+            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).
+                addFormItem(
+                    Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 
         return Form.create().
@@ -194,6 +207,7 @@ public class JsonToPropertyTreeTranslatorTest
                 inputType( InputTypeName.IMAGE_UPLOADER ).
                 build() ).
             addFormItem( set ).
+            addFormItem( formOptionSet ).
             build();
     }
 

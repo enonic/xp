@@ -1,18 +1,12 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -32,15 +26,12 @@ final class ApplicationRegistry
 
     private final List<ApplicationInvalidator> invalidators;
 
-    private final ConfigurationAdmin configurationAdmin;
-
-    public ApplicationRegistry( final BundleContext context, final ConfigurationAdmin configurationAdmin )
+    public ApplicationRegistry( final BundleContext context )
     {
         this.context = context;
         this.applications = Maps.newConcurrentMap();
-        this.factory = new ApplicationFactory( RunMode.get(), this::loadConfig );
+        this.factory = new ApplicationFactory( RunMode.get() );
         this.invalidators = Lists.newCopyOnWriteArrayList();
-        this.configurationAdmin = configurationAdmin;
     }
 
     public ApplicationKeys getKeys()
@@ -125,37 +116,5 @@ final class ApplicationRegistry
     public void removeInvalidator( final ApplicationInvalidator invalidator )
     {
         this.invalidators.remove( invalidator );
-    }
-
-    private Map<String, String> loadConfig( final String pid )
-    {
-        final Map<String, String> result = Maps.newHashMap();
-        final Configuration config = loadConfigObject( pid );
-        if ( config == null )
-        {
-            return result;
-        }
-
-        final Dictionary<String, Object> props = config.getProperties();
-        if ( props == null )
-        {
-            return result;
-        }
-
-        final Iterator<String> keysIter = Iterators.forEnumeration( props.keys() );
-        keysIter.forEachRemaining( key -> result.put( key, props.get( key ).toString() ) );
-        return result;
-    }
-
-    private Configuration loadConfigObject( final String pid )
-    {
-        try
-        {
-            return this.configurationAdmin.getConfiguration( pid );
-        }
-        catch ( final Exception e )
-        {
-            return null;
-        }
     }
 }

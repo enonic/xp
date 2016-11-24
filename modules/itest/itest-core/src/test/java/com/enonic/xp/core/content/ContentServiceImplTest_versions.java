@@ -77,11 +77,8 @@ public class ContentServiceImplTest_versions
             target( CTX_OTHER.getBranch() ).
             build() );
 
-        final FindContentVersionsResult versionsBeforeUpdate = this.contentService.getVersions( FindContentVersionsParams.create().
-            contentId( content.getId() ).
-            build() );
-
-        assertEquals( 1, versionsBeforeUpdate.getHits() );
+        // Two versions, since publish adds one version
+        assertVersions( content.getId(), 2 );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).
@@ -91,11 +88,7 @@ public class ContentServiceImplTest_versions
 
         this.contentService.update( updateContentParams );
 
-        final FindContentVersionsResult versionsAfterUpdate = this.contentService.getVersions( FindContentVersionsParams.create().
-            contentId( content.getId() ).
-            build() );
-
-        assertEquals( 2, versionsAfterUpdate.getHits() );
+        assertVersions( content.getId(), 3 );
 
         final GetActiveContentVersionsResult activeVersions =
             this.contentService.getActiveVersions( GetActiveContentVersionsParams.create().

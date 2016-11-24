@@ -28,6 +28,10 @@
 
         &.invalid {
           background-color: @admin-input-red;
+
+          .names-view .sub-name {
+            color: @admin-dark-gray;
+          }
         }
       }
 
@@ -111,12 +115,6 @@
 
     @media screen and (max-height: 360px) {
       max-height: 200px;
-    }
-  }
-
-  .@{_COMMON_PREFIX}combobox, .content-combo-box {
-    .options-container {
-      position: fixed !important;
     }
   }
 

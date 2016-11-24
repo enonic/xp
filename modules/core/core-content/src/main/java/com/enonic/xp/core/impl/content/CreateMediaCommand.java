@@ -80,7 +80,7 @@ final class CreateMediaCommand
             parent( params.getParent() ).
             requireValid( true ).
             type( type ).
-            displayName( params.getName() ).
+            displayName( trimExtension( params.getName() ) ).
             contentData( data ).
             createAttachments( CreateAttachments.from( mediaAttachment ) ).
             inheritPermissions( true ).
@@ -95,6 +95,15 @@ final class CreateMediaCommand
             build();
 
         return createCommand.execute();
+    }
+
+    private String trimExtension( final String name )
+    {
+        if ( name.lastIndexOf( "." ) < 0 )
+        {
+            return name;
+        }
+        return name.substring( 0, name.lastIndexOf( "." ) );
     }
 
 
