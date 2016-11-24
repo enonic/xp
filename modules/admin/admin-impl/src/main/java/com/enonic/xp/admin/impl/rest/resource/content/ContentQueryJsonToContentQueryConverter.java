@@ -1,14 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.util.List;
+
+import org.codehaus.jparsec.util.Lists;
+
 import com.enonic.xp.admin.impl.rest.resource.content.json.AggregationQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.filter.FilterJson;
-import com.enonic.xp.content.*;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.query.parser.QueryParser;
-import org.codehaus.jparsec.util.Lists;
-
-import java.util.Collection;
-import java.util.List;
 
 public class ContentQueryJsonToContentQueryConverter {
     final private ContentQueryJson contentQueryJson;
@@ -43,10 +48,10 @@ public class ContentQueryJsonToContentQueryConverter {
     private void addOutboundContentIdsToFilter(final ContentQuery.Builder builder) {
         if (contentQueryJson.getMustBeReferencedById() != null) {
 
-            final Collection<ContentId> ids = this.contentService.getOutboundDependenciesIds(contentQueryJson.getMustBeReferencedById());
+            final ContentIds ids = this.contentService.getOutboundDependencies( contentQueryJson.getMustBeReferencedById());
 
             //TODO: no need to filter when we fix that removed content will be removed from references
-            builder.filterContentIds(getExistingContentIds(ContentIds.from(ids)));
+            builder.filterContentIds( getExistingContentIds( ids ) );
         }
 
     }
