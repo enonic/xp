@@ -14,8 +14,6 @@ module api.ui.time {
 
         closeOnSelect: boolean = true;
 
-        closeOnOutsideClick: boolean = true;
-
         setYear(value: number): DatePickerBuilder {
             this.year = value;
             return this;
@@ -43,11 +41,6 @@ module api.ui.time {
 
         setCloseOnSelect(value: boolean): DatePickerBuilder {
             this.closeOnSelect = value;
-            return this;
-        }
-
-        setCloseOnOutsideClick(value: boolean): DatePickerBuilder {
-            this.closeOnOutsideClick = value;
             return this;
         }
 
@@ -108,21 +101,10 @@ module api.ui.time {
             }
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
+            this.input.setPlaceholder("YYYY-MM-DD");
         }
 
         protected setupListeners(builder: DatePickerBuilder) {
-
-            if (builder.closeOnOutsideClick) {
-
-                api.util.AppHelper.focusInOut(this, () => {
-                    this.popup.hide();
-                }, 50, false);
-
-                // Prevent focus loss on mouse down
-                this.popup.onMouseDown((event: MouseEvent) => {
-                    event.preventDefault();
-                });
-            }
 
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {
