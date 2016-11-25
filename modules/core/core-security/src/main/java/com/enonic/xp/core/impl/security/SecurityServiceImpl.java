@@ -358,7 +358,10 @@ public final class SecurityServiceImpl
     @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
-        addRandomDelay();
+        if ( !( token instanceof VerifiedUsernameAuthToken ) && !( token instanceof VerifiedEmailAuthToken ) )
+        {
+            addRandomDelay();
+        }
 
         if ( isSuAuthenticationEnabled( token ) )
         {
