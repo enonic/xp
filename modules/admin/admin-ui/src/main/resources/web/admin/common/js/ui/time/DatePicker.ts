@@ -14,8 +14,6 @@ module api.ui.time {
 
         closeOnSelect: boolean = true;
 
-        closeOnOutsideClick: boolean = true;
-
         setYear(value: number): DatePickerBuilder {
             this.year = value;
             return this;
@@ -43,11 +41,6 @@ module api.ui.time {
 
         setCloseOnSelect(value: boolean): DatePickerBuilder {
             this.closeOnSelect = value;
-            return this;
-        }
-
-        setCloseOnOutsideClick(value: boolean): DatePickerBuilder {
-            this.closeOnOutsideClick = value;
             return this;
         }
 
@@ -108,43 +101,10 @@ module api.ui.time {
             }
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
-            this.input.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.togglePopupVisibility();
-            });
-            this.input.onFocus((e: FocusEvent) =>
-                setTimeout(() => {
-                    if (!this.popup.isVisible()) {
-                        e.preventDefault();
-                        this.popup.show();
-                    }
-                }, 150)
-            );
-        }
-
-        protected initPopupTrigger() {
-            this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-calendar');
+            this.input.setPlaceholder("YYYY-MM-DD");
         }
 
         protected setupListeners(builder: DatePickerBuilder) {
-
-            if (builder.closeOnOutsideClick) {
-
-                api.util.AppHelper.focusInOut(this, () => {
-                    this.popup.hide();
-                }, 50, false);
-
-                // Prevent focus loss on mouse down
-                this.popup.onMouseDown((event: MouseEvent) => {
-                    event.preventDefault();
-                });
-            }
-
-            this.popupTrigger.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.togglePopupVisibility();
-            });
 
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {
@@ -158,6 +118,10 @@ module api.ui.time {
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isArrowKey(event) || api.ui.KeyHelper.isModifierKey(event)) {
+                    return;
+                }
+                
                 var typedDate = this.input.getValue();
 
                 if (api.util.StringHelper.isEmpty(typedDate)) {
@@ -183,35 +147,6 @@ module api.ui.time {
                     }
                 }
                 this.updateInputStyling();
-            });
-
-            this.popup.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    if (!(document.activeElement == this.input.getEl().getHTMLElement())) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.popup.hide();
-                        this.popupTrigger.giveFocus();
-                    }
-                }
-            });
-
-            this.input.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) { // handles tab navigation events on date input
-                    if (!event.shiftKey) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.popupTrigger.giveFocus();
-                    } else {
-                        this.popup.hide();
-                    }
-                }
-            });
-
-            this.popupTrigger.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    this.popup.hide();
-                }
             });
         }
 

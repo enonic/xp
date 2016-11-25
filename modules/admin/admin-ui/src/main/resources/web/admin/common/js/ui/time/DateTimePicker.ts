@@ -18,8 +18,6 @@ module api.ui.time {
 
         closeOnSelect: boolean = false;
 
-        closeOnOutsideClick: boolean = true;
-
         timezone: Timezone;
 
         // use local timezone if timezone value is not initialized
@@ -65,11 +63,6 @@ module api.ui.time {
             return this;
         }
 
-        setCloseOnOutsideClick(value: boolean): DateTimePickerBuilder {
-            this.closeOnOutsideClick = value;
-            return this;
-        }
-
         setUseLocalTimezoneIfNotPresent(value: boolean): DateTimePickerBuilder {
             this.useLocalTimezoneIfNotPresent = value;
             return this;
@@ -110,10 +103,7 @@ module api.ui.time {
 
         protected initInput() {
             this.input = api.ui.text.TextInput.middle(undefined, this.formatDateTime(this.selectedDate));
-            this.input.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.togglePopupVisibility();
-            });
+            this.input.setPlaceholder("YYYY-MM-DD mm:ss");
         }
 
         protected initPopup(builder: DateTimePickerBuilder) {
@@ -136,35 +126,14 @@ module api.ui.time {
             });
         }
 
-        protected initPopupTrigger() {
-            this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-calendar');
-        }
-
         protected wrapChildrenAndAppend() {
             var wrapper = new api.dom.DivEl('wrapper');
-            wrapper.appendChildren<api.dom.Element>(this.input, this.popup, this.popupTrigger);
+            wrapper.appendChildren<api.dom.Element>(this.input, this.popup);
 
             this.appendChild(wrapper);
         }
 
         protected setupListeners(builder: DateTimePickerBuilder) {
-
-            if (builder.closeOnOutsideClick) {
-                api.util.AppHelper.focusInOut(this, () => {
-                    this.popup.hide();
-                }, 50, false);
-
-                // Prevent focus loss on mouse down
-                this.popup.onMouseDown((event: MouseEvent) => {
-                    event.preventDefault();
-                });
-            }
-
-            this.popupTrigger.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.togglePopupVisibility();
-            });
 
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {
@@ -205,35 +174,6 @@ module api.ui.time {
                 }
                 this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
                 this.updateInputStyling();
-            });
-
-            this.popup.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    if (!(document.activeElement == this.input.getEl().getHTMLElement())) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.popup.hide();
-                        this.popupTrigger.giveFocus();
-                    }
-                }
-            });
-
-            this.input.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) { // handles tab navigation events on date input
-                    if (!event.shiftKey) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.popupTrigger.giveFocus();
-                    } else {
-                        this.popup.hide();
-                    }
-                }
-            });
-
-            this.popupTrigger.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    this.popup.hide();
-                }
             });
         }
 
