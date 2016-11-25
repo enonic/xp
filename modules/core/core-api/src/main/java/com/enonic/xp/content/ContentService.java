@@ -30,7 +30,7 @@ public interface ContentService
     @Deprecated
     Contents delete( DeleteContentParams params );
 
-    DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
+    DeleteContentsResult deleteWithoutFetch( DeleteContentsParams params );
 
     @Deprecated
     PushContentsResult push( PushContentParams params );

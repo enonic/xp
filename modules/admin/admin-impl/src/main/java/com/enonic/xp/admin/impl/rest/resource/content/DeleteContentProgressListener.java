@@ -18,7 +18,13 @@ final class DeleteContentProgressListener
     @Override
     public void contentDeleted( final int count )
     {
-        progressCount = progressCount + count;
+        progressCount += count;
         progressReporter.progress( progressCount, progressCount );
+    }
+
+    @Override
+    public void contentResolved( final int count )
+    {
+        progressReporter.progress( progressCount, count );
     }
 }

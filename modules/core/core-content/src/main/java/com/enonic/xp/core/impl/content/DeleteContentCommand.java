@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -9,7 +8,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -30,7 +29,7 @@ import com.enonic.xp.node.SetNodeStateParams;
 final class DeleteContentCommand
     extends AbstractContentCommand
 {
-    private final DeleteContentParams params;
+    private final DeleteContentsParams params;
 
     private DeleteContentCommand( final Builder builder )
     {
@@ -49,9 +48,11 @@ final class DeleteContentCommand
 
         try
         {
-            final DeleteContentsResult deletedContents = doExecute();
-            nodeService.refresh( RefreshMode.SEARCH );
-            return deletedContents;
+            if ( params.getCallback() != null )
+            {
+                params.getCallback().contentResolved( params.getContentPaths().getSize() );
+            }
+            return doExecute();
         }
         catch ( NodeAccessException e )
         {
@@ -61,19 +62,56 @@ final class DeleteContentCommand
 
     private DeleteContentsResult doExecute()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
 
-        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
-        final Node nodeToDelete = this.nodeService.getByPath( nodePath );
+        final DeleteContentsResult.Builder result = DeleteContentsResult.create();
 
-        final DeleteContentsResult deletedContents = doDeleteContent( nodeToDelete.id() );
+        this.params.getContentPaths().forEach( contentPath ->
+                                               {
 
-        this.nodeService.refresh( RefreshMode.ALL );
+                                                   this.nodeService.refresh( RefreshMode.ALL );
 
-        return deletedContents;
+                                                   final NodePath nodePath =
+                                                       ContentNodeHelper.translateContentPathToNodePath( contentPath );
+                                                   final Node nodeToDelete = this.nodeService.getByPath( nodePath );
+
+                                                   try
+                                                   {
+                                                       result.merge( doDeleteContent( nodeToDelete.id() ) );
+
+                                                       this.nodeService.refresh( RefreshMode.ALL );
+
+                                                   }
+                                                   catch ( Exception e )
+                                                   {
+
+                                                       this.nodeService.refresh( RefreshMode.ALL );
+
+                                                       try
+                                                       {
+                                                           if ( this.nodeService.getByPath( nodePath ) != null )
+                                                           {
+                                                               result.addFailed( ContentId.from( nodeToDelete.id().toString() ) );
+                                                           }
+                                                       }
+                                                       catch ( Exception e1 )
+                                                       {
+                                                           result.addFailed( ContentId.from( nodeToDelete.id().toString() ) );
+                                                       }
+                                                   }
+
+                                                   if ( params.getCallback() != null )
+                                                   {
+                                                       params.getCallback().contentDeleted( 1 );
+                                                   }
+
+                                                   nodeService.refresh( RefreshMode.SEARCH );
+
+                                               } );
+
+        return result.build();
     }
 
-    private DeleteContentsResult doDeleteContent( NodeId nodeToDelete )
+    private DeleteContentsResult.Builder doDeleteContent( NodeId nodeToDelete )
     {
         final CompareStatus rootNodeStatus = getCompareStatus( nodeToDelete );
 
@@ -106,13 +144,12 @@ final class DeleteContentCommand
 
             for ( final NodeId child : children )
             {
-                final DeleteContentsResult childDeleteResult = this.doDeleteContent( child );
+                final DeleteContentsResult.Builder childDeleteResult = this.doDeleteContent( child );
 
-                result.addDeleted( childDeleteResult.getDeletedContents() );
-                result.addPending( childDeleteResult.getPendingContents() );
+                result.merge( childDeleteResult );
             }
         }
-        return result.build();
+        return result;
     }
 
     private NodeIds deleteNodeInDraftAndMaster( final NodeId nodeToDelete )
@@ -160,9 +197,9 @@ final class DeleteContentCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private DeleteContentParams params;
+        private DeleteContentsParams params;
 
-        public Builder params( final DeleteContentParams params )
+        public Builder params( final DeleteContentsParams params )
         {
             this.params = params;
             return this;
