@@ -5,6 +5,7 @@ import {SortContentTabMenuItems} from "./SortContentTabMenuItems";
 import ChildOrder = api.content.order.ChildOrder;
 import ContentSummary = api.content.ContentSummary;
 import DropdownHandle = api.ui.button.DropdownHandle;
+import ArrayHelper = api.util.ArrayHelper;
 
 export class SortContentTabMenu extends api.ui.tab.TabMenu {
 
@@ -66,18 +67,26 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         }
     }
 
+    replaceNavigationItems(items: SortContentTabMenuItem[]) {
+        this.removeNavigationItems();
+        this.addNavigationItems(items);
+    }
+
     selectNavigationItemByOrder(order: ChildOrder) {
-        var items = this.navigationItems.getAllItems();
-        for (var key in items) {
-            if (items[key].getChildOrder().equals(order)) {
-                var item = items.splice(parseInt(key), 1)[0];
-                this.removeNavigationItems();
-                this.addNavigationItem(item);
-                this.addNavigationItems(items);
+        const items = this.navigationItems.getAllItems();
+
+        items.some((item, index, array) => {
+            if (item.getChildOrder().equals(order)) {
+                // Move current order to the top of the list and select it
+                const reordered = array.slice();
+                ArrayHelper.moveElement(index, 0, reordered);
+                this.replaceNavigationItems(reordered);
                 this.selectNavigationItem(0);
-                break;
+
+                return true; // break
             }
-        }
+            return false;
+        });
     }
 
     selectManualSortingItem() {

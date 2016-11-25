@@ -71,6 +71,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
+        this.saveButton.giveFocus();
     }
 
     close() {
@@ -159,7 +160,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     private handleOpenSortDialogEvent(event) {
         this.parentContent = event.getContent();
         this.curChildOrder = this.getParentChildOrder();
-        this.prevChildOrder = undefined;
+        this.prevChildOrder = null;
         this.sortContentMenu.selectNavigationItemByOrder(this.curChildOrder);
 
         this.contentGrid.reload(this.parentContent);

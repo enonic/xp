@@ -175,6 +175,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.listenToContentEvents();
         this.handleSiteConfigApply();
         this.handleBrokenImageInTheWizard();
+        this.initBindings();
+    }
+
+    private initBindings() {
+        var nextActions = this.resolveActions(this);
+        let currentKeyBindings = api.ui.Action.getKeyBindings(nextActions);
+        api.ui.KeyBindings.get().bindKeys(currentKeyBindings);
     }
 
     protected createWizardActions(): ContentWizardActions {
