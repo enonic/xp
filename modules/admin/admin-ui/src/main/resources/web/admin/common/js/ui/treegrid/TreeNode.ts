@@ -120,8 +120,8 @@ module api.ui.treegrid {
         }
 
         getRoot(): TreeNode<DATA> {
-            var root = this,
-                parent = this.getParent();
+            var root: TreeNode<DATA> = this,
+                parent: TreeNode<DATA> = this.getParent();
             while (parent) {
                 root = parent;
                 parent = parent.getParent();

@@ -6,9 +6,10 @@ module api.ui.button {
         private tooltip: Tooltip;
 
         constructor(action: Action, showTooltip: boolean = true) {
-            this.action = action;
+            super();
 
-            super(this.createLabel(action));
+            this.action = action;
+            this.setLabel(this.createLabel(action));
             this.addClass("action-button");
 
             this.setEnabled(this.action.isEnabled());

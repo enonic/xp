@@ -10,7 +10,7 @@ module api.form {
 
         protected parent: FormSetOccurrenceView;
 
-        protected occurrencesCollapsed: boolean;
+        protected occurrencesCollapsed: boolean = false;
 
         protected formSet: FormSet;
 

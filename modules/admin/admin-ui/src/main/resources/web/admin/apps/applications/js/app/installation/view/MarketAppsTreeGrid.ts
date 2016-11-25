@@ -53,7 +53,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             .setField("displayName")
             .setCssClass("app-name-and-icon")
             .setMinWidth(170)
-            .setFormatter(this.nameFormatter)
+            .setFormatter(MarketAppsTreeGrid.nameFormatter)
             .build();
         var versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
             .setName("Version")
@@ -68,7 +68,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             .setField("status")
             .setCssClass("status")
             .setMinWidth(50)
-            .setFormatter(this.appStatusFormatter)
+            .setFormatter(MarketAppsTreeGrid.appStatusFormatter)
             .setCssClass("app-status").build();
 
         super(new TreeGridBuilder<MarketApplication>()
@@ -227,7 +227,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         });
     }
 
-    private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
+    public static nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
         const data = <MarketApplication>node.getData();
 
         if (data.getAppKey()) {
@@ -248,7 +248,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         return !data.getAppKey();
     }
 
-    private appStatusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
+    public static appStatusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
         let app = <MarketApplication>node.getData();
         let statusWrapper = new api.dom.DivEl();
 

@@ -16,9 +16,17 @@ module api.ui.text {
         private mediaUploaderEl: api.ui.uploader.MediaUploaderEl;
 
         constructor(className?: string, originalValue?: string) {
-            this.textInput = new InputEl("text");
+            super();
 
-            this.mediaUploaderEl = new api.ui.uploader.MediaUploaderEl({
+            this.setWrappedInput(this.textInput = new InputEl("text"));
+            this.setAdditionalElements(this.mediaUploaderEl = this.createMediaUploaderEl(originalValue));
+
+            this.addClass("file-input" + (className ? " " + className : ""));
+        }
+
+        private createMediaUploaderEl(originalValue?: string): api.ui.uploader.MediaUploaderEl {
+
+            let mediaUploaderEl = new api.ui.uploader.MediaUploaderEl({
                 operation: api.ui.uploader.MediaUploaderElOperation.create,
                 name: 'file-input-uploader',
                 allowDrop: true,
@@ -29,15 +37,14 @@ module api.ui.text {
                 value: originalValue
             });
 
-            this.mediaUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<api.content.Content>) => {
+            mediaUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<api.content.Content>) => {
                 var names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<api.content.Content>) => {
                     return uploadItem.getName();
                 });
                 this.textInput.setValue(names.join(', '));
             });
 
-            super(this.textInput, this.mediaUploaderEl);
-            this.addClass("file-input" + (className ? " " + className : ""));
+            return mediaUploaderEl;
         }
 
         setUploaderParams(params: {[key: string]: any}): FileInput {

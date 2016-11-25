@@ -41,11 +41,7 @@ function setupBodyClickListeners(dialog) {
 }
 
 function setupAboutDialog() {
-    var aboutDialog = new api.ui.dialog.ModalDialog({
-        title: new api.ui.dialog.ModalDialogHeader(""),
-        forceHorizontalCentering: true,
-        ignoreClickOutside: true
-    });
+    var aboutDialog = new api.ui.dialog.ModalDialog("", true);
     aboutDialog.addClass("xp-about-dialog");
     aboutDialog.appendChildToContentPanel(getAboutDialogContent());
     document.querySelector(".xp-about").addEventListener("click", function () {

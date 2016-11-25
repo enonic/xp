@@ -7,9 +7,13 @@ module api.app.wizard {
         private suspendedActions: api.ui.Action[] = [];
 
         constructor(...actions: api.ui.Action[]) {
-            this.actions = actions;
+            this.setActions(...actions);
         }
 
+        setActions(...actions: api.ui.Action[]) {
+            this.actions = actions;
+        }
+        
         enableActionsForNew() {
             throw new Error('Must be overridden by inheritors');
         }

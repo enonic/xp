@@ -236,7 +236,7 @@ module api.ui.image {
 
         setSrc(src: string) {
             this.image.setSrc(src);
-            var image: HTMLElement = <HTMLElement> this.clip.getHTMLElement().querySelector('image');
+            var image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('xlink:href', src);
         }
 
@@ -253,7 +253,7 @@ module api.ui.image {
         }
 
         private setImageClipPath(path: Element) {
-            var image = this.clip.getHTMLElement().querySelector('image');
+            var image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('clip-path', 'url(#' + path.getId() + ')');
         }
 

@@ -87,6 +87,8 @@ import Permission = api.security.acl.Permission;
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
+    protected wizardActions: ContentWizardActions;
+
     private contentParams: ContentWizardPanelParams;
 
     private parentContent: Content;
@@ -116,8 +118,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
     private requireValid: boolean;
-
-    private wizardActions: ContentWizardActions;
 
     private isContentFormValid: boolean;
 
@@ -151,9 +151,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     public static debug: boolean = false;
 
     constructor(params: ContentWizardPanelParams) {
+        super({
+            tabId: params.tabId
+        });
 
         this.contentParams = params;
-
+        
+        this.loadData();
+        
         this.isContentFormValid = false;
         this.isSecurityWizardStepFormAllowed = false;
 
@@ -164,16 +169,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
 
-        this.initWizardActions();
-
         this.metadataStepFormByName = {};
-
-        super({
-            tabId: params.tabId,
-            persistedItem: null,
-            actions: this.wizardActions
-        });
-
+        
         this.initListeners();
         this.listenToContentEvents();
         this.handleSiteConfigApply();
@@ -187,20 +184,22 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         api.ui.KeyBindings.get().bindKeys(currentKeyBindings);
     }
 
-    private initWizardActions() {
-        this.wizardActions = new ContentWizardActions(this);
-        this.wizardActions.getShowLiveEditAction().setEnabled(false);
-        this.wizardActions.getSaveAction().onExecuted(() => {
+    protected createWizardActions(): ContentWizardActions {
+        let wizardActions: ContentWizardActions = new ContentWizardActions(this);
+        wizardActions.getShowLiveEditAction().setEnabled(false);
+        wizardActions.getSaveAction().onExecuted(() => {
             this.contentWizardStepForm.validate();
             this.displayValidationErrors();
         });
 
-        this.wizardActions.getShowSplitEditAction().onExecuted(() => {
+        wizardActions.getShowSplitEditAction().onExecuted(() => {
             if (!this.inMobileViewMode) {
                 this.getCycleViewModeButton()
-                    .selectActiveAction(this.wizardActions.getShowLiveEditAction());
+                    .selectActiveAction(wizardActions.getShowLiveEditAction());
             }
         });
+        
+        return wizardActions;
     }
 
     private initListeners() {
@@ -271,7 +270,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         api.app.wizard.MaskContentWizardPanelEvent.on(event => {
             if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
-                this.params.actions.suspendActions(event.isMask());
+                this.wizardActions.suspendActions(event.isMask());
             }
         });
 
@@ -511,7 +510,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private createSteps(): wemQ.Promise<Mixin[]> {
-
         this.contentWizardStepForm = new ContentWizardStepForm();
         this.settingsWizardStepForm = new SettingsWizardStepForm();
         this.securityWizardStepForm = new SecurityWizardStepForm();
@@ -967,7 +965,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             console.debug("ContentWizardPanel.initLiveEditor at " + new Date().toISOString());
         }
         var deferred = wemQ.defer<void>();
-
+        
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getPreviewAction().setVisible(false);
         this.wizardActions.getPreviewAction().setEnabled(false);

@@ -11,24 +11,27 @@ function getApplication(): api.app.Application {
     var application = new api.app.Application('applications', 'Applications', 'AM', 'applications');
     application.setPath(api.rest.Path.fromString("/"));
     application.setWindow(window);
-    this.serverEventsListener = new api.app.ServerEventsListener([application]);
 
-    var messageId;
-    this.lostConnectionDetector = new api.system.LostConnectionDetector();
-    this.lostConnectionDetector.setAuthenticated(true);
-    this.lostConnectionDetector.onConnectionLost(() => {
+    return application;
+}
+
+function startLostConnectionDetector() {
+    let messageId;
+    let lostConnectionDetector = new api.system.LostConnectionDetector();
+    lostConnectionDetector.setAuthenticated(true);
+    lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
         messageId = api.notify.showError("Lost connection to server - Please wait until connection is restored", false);
     });
-    this.lostConnectionDetector.onSessionExpired(() => {
+    lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);
         window.location.href = api.util.UriHelper.getToolUri("");
     });
-    this.lostConnectionDetector.onConnectionRestored(() => {
+    lostConnectionDetector.onConnectionRestored(() => {
         api.notify.NotifyManager.get().hide(messageId);
     });
 
-    return application;
+    lostConnectionDetector.startPolling();
 }
 
 function startApplication() {
@@ -44,8 +47,11 @@ function startApplication() {
     api.util.AppHelper.preventDragRedirect();
 
     application.setLoaded(true);
-    this.serverEventsListener.start();
-    this.lostConnectionDetector.startPolling();
+
+    var serverEventsListener = new api.app.ServerEventsListener([application]);
+    serverEventsListener.start();
+    
+    startLostConnectionDetector();
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {

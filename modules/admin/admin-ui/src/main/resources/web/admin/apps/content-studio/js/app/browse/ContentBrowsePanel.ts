@@ -34,67 +34,71 @@ import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
-    private browseActions: ContentTreeGridActions;
-
-    private toolbar: ContentBrowseToolbar;
-
-    private contentTreeGrid: ContentTreeGrid;
-
-    private contentFilterPanel: ContentBrowseFilterPanel;
-
-    private contentBrowseItemPanel: ContentBrowseItemPanel;
+    protected treeGrid: ContentTreeGrid;
+    protected browseToolbar: ContentBrowseToolbar;
+    protected filterPanel: ContentBrowseFilterPanel;
 
     private mobileContentItemStatisticsPanel: MobileContentItemStatisticsPanel;
 
     constructor() {
-
-        this.contentTreeGrid = new ContentTreeGrid();
-
-        this.contentBrowseItemPanel = new ContentBrowseItemPanel(this.contentTreeGrid);
-
-        this.contentFilterPanel = new ContentBrowseFilterPanel();
-
-        this.browseActions = <ContentTreeGridActions>this.contentTreeGrid.getContextMenu().getActions();
-
-        this.toolbar = new ContentBrowseToolbar(this.browseActions);
-
-        super({
-            browseToolbar: this.toolbar,
-            treeGrid: this.contentTreeGrid,
-            browseItemPanel: this.contentBrowseItemPanel,
-            filterPanel: this.contentFilterPanel,
-            hasDetailsPanel: true
-        });
-
-        var showMask = () => {
-            if (this.isVisible()) {
-                this.contentTreeGrid.mask();
-            }
-        };
-        this.contentFilterPanel.onSearchStarted(showMask);
-        this.contentFilterPanel.onReset(showMask);
-        this.contentFilterPanel.onRefreshStarted(showMask);
-
-        this.getTreeGrid().onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
-            if (event.getType() === 'updated') {
-                let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
-                this.getBrowseItemPanel().updateItemViewers(browseItems);
-                this.browseActions.updateActionsEnabledState(
-                    this.treeNodesToBrowseItems(this.contentTreeGrid.getRoot().getFullSelection()));
-            }
-        });
+        
+        super();
 
         this.onShown(() => {
             Router.setHash("browse");
         });
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(item.isInRangeOrSmaller(ResponsiveRanges._360_540));
+            this.getBrowseActions().TOGGLE_SEARCH_PANEL.setVisible(item.isInRangeOrSmaller(ResponsiveRanges._360_540));
         });
 
         this.handleGlobalEvents();
     }
 
+    private getBrowseActions(): ContentTreeGridActions {
+        return <ContentTreeGridActions>this.treeGrid.getContextMenu().getActions();
+    }
+
+    protected createToolbar(): ContentBrowseToolbar {
+        return new ContentBrowseToolbar(this.getBrowseActions());
+    }
+
+    protected createTreeGrid(): ContentTreeGrid {
+        let treeGrid = new ContentTreeGrid();
+
+        treeGrid.onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
+            if (event.getType() === 'updated') {
+                let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
+                this.getBrowseItemPanel().updateItemViewers(browseItems);
+                treeGrid.getContextMenu().getActions().updateActionsEnabledState(
+                    this.treeNodesToBrowseItems(this.treeGrid.getRoot().getFullSelection()));
+            }
+        });
+
+
+        return treeGrid;
+    }
+
+    protected createBrowseItemPanel(): ContentBrowseItemPanel {
+        return new ContentBrowseItemPanel(this.treeGrid);
+    }
+
+    protected createFilterPanel(): ContentBrowseFilterPanel {
+        let filterPanel = new ContentBrowseFilterPanel();
+
+        let showMask = () => {
+            if (this.isVisible()) {
+                this.treeGrid.mask();
+            }
+        };
+
+        filterPanel.onSearchStarted(showMask);
+        filterPanel.onReset(showMask);
+        filterPanel.onRefreshStarted(showMask);
+        
+        return filterPanel;
+    }
+    
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
@@ -119,10 +123,10 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 }
             });
 
-            let contentPublishMenuButton = new ContentPublishMenuButton(this.browseActions);
-            
-            this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-            this.toolbar.appendChild(contentPublishMenuButton);
+            let contentPublishMenuButton = new ContentPublishMenuButton(this.getBrowseActions());
+
+            this.browseToolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
+            this.browseToolbar.appendChild(contentPublishMenuButton);
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
 
@@ -188,7 +192,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
-        this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.browseActions, detailsView);
+        this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
 
         const updateMobilePanel = () => {
             const defer = wemQ.defer();
@@ -234,7 +238,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private getFirstSelectedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
         var browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(!!fullSelection
                 ? fullSelection
-                : this.contentTreeGrid.getRoot().getFullSelection()),
+                : this.treeGrid.getRoot().getFullSelection()),
             item: BrowseItem<ContentSummaryAndCompareStatus> = null;
         if (browseItems.length > 0) {
             item = browseItems[0];
@@ -296,7 +300,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         ToggleSearchPanelWithDependenciesEvent.on((event: ToggleSearchPanelWithDependenciesEvent) => {
             this.showFilterPanel();
-            this.contentFilterPanel.setDependencyItem(event.getContent(), event.isInbound());
+            this.filterPanel.setDependencyItem(event.getContent(), event.isInbound());
         });
 
         NewMediaUploadEvent.on((event) => {
@@ -321,16 +325,16 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private selectContentInGridByPath(path: api.content.ContentPath) {
-        this.contentTreeGrid.expandTillNodeWithGivenPath(path, this.contentTreeGrid.getSelectedNodes()[0]);
+        this.treeGrid.expandTillNodeWithGivenPath(path, this.treeGrid.getSelectedNodes()[0]);
     }
 
     private isGivenPathSelectedInGrid(path: api.content.ContentPath): boolean {
-        var contentSummary: ContentSummaryAndCompareStatus = this.contentTreeGrid.getSelectedNodes()[0].getData();
+        var contentSummary: ContentSummaryAndCompareStatus = this.treeGrid.getSelectedNodes()[0].getData();
         return contentSummary.getPath().equals(path);
     }
 
     private isSingleItemSelectedInGrid(): boolean {
-        return this.contentTreeGrid.getSelectedNodes() && this.contentTreeGrid.getSelectedNodes().length == 1;
+        return this.treeGrid.getSelectedNodes() && this.treeGrid.getSelectedNodes().length == 1;
     }
 
     private getPathFromPreviewPath(contentPreviewPath: string): string {
@@ -387,7 +391,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         this.updateStatisticsPanel(data);
 
-        return this.contentTreeGrid.placeContentNodes(changed);
+        return this.treeGrid.placeContentNodes(changed);
     }
 
     private handleContentDeleted(paths: ContentPath[]) {
@@ -395,7 +399,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             console.debug("ContentBrowsePanel: deleted", paths);
         }
 
-        var nodes = this.contentTreeGrid.findByPaths(paths).map(el => el.getNodes());
+        var nodes = this.treeGrid.findByPaths(paths).map(el => el.getNodes());
         var merged = [];
         // merge array of nodes arrays
         merged = merged.concat.apply(merged, nodes);
@@ -407,20 +411,20 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             }
         });
 
-        this.contentTreeGrid.deleteContentNodes(merged);
+        this.treeGrid.deleteContentNodes(merged);
 
         // now get unique parents and update their hasChildren
         var uniqueParents = paths.map(path => path.getParentPath()).filter((parent, index, self) => {
             return self.indexOf(parent) === index;
         });
-        let parentNodes = this.contentTreeGrid.findByPaths(uniqueParents).map(parentNode => parentNode.getNodes());
+        let parentNodes = this.treeGrid.findByPaths(uniqueParents).map(parentNode => parentNode.getNodes());
         let mergedParentNodes = [];
         mergedParentNodes = mergedParentNodes.concat.apply(mergedParentNodes, parentNodes);
 
         mergedParentNodes.forEach((parentNode: TreeNode<ContentSummaryAndCompareStatus>) => {
             if (parentNode.getChildren().length == 0) {
                 // update parent if all children were deleted
-                this.contentTreeGrid.refreshNodeData(parentNode);
+                this.treeGrid.refreshNodeData(parentNode);
             }
         });
 
@@ -454,7 +458,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private processContentCreated(data: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) {
 
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath()),
-            createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true),
+            createResult: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(paths, true),
             parentsOfContents: TreeNodeParentOfContent[] = [];
 
         for (var i = 0; i < createResult.length; i++) {
@@ -467,7 +471,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
                     if (oldPaths && oldPaths.length > 0) {
                         var movedNodes: TreeNode<ContentSummaryAndCompareStatus>[] = [],
-                            renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(oldPaths);
+                            renameResult: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(oldPaths);
                         var premerged = renameResult.map((curRenameResult) => {
                             return curRenameResult.getNodes();
                         });
@@ -478,10 +482,10 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                             if (node.getDataId() === el.getId()) {
                                 node.setData(el);
                                 node.clearViewers();
-                                this.contentTreeGrid.updatePathsInChildren(node);
+                                this.treeGrid.updatePathsInChildren(node);
                             }
                         });
-                        this.contentTreeGrid.placeContentNodes(movedNodes);
+                        this.treeGrid.placeContentNodes(movedNodes);
                     } else {
                         dataToHandle.push(el);
                     }
@@ -493,7 +497,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             });
         }
 
-        this.contentTreeGrid.appendContentNodes(parentsOfContents).then((results: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+        this.treeGrid.appendContentNodes(parentsOfContents).then((results: TreeNode<ContentSummaryAndCompareStatus>[]) => {
             var appendedNodesThatShouldBeVisible = [];
             results.forEach((appendedNode) => {
                 if (appendedNode.getParent() && appendedNode.getParent().isExpanded()) {
@@ -501,8 +505,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 }
             });
 
-            this.contentTreeGrid.placeContentNodes(appendedNodesThatShouldBeVisible).then(() => {
-                this.contentTreeGrid.initAndRender();
+            this.treeGrid.placeContentNodes(appendedNodesThatShouldBeVisible).then(() => {
+                this.treeGrid.initAndRender();
 
                 this.setRefreshOfFilterRequired();
                 window.setTimeout(() => {
@@ -517,18 +521,18 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         this.updateDetailsPanel(data);
 
-        this.contentTreeGrid.invalidate();
+        this.treeGrid.invalidate();
 
         // Update since CompareStatus changed
         let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
-        this.contentTreeGrid.notifyDataChanged(changedEvent);
+        this.treeGrid.notifyDataChanged(changedEvent);
 
         return changed;
     }
 
     private updateNodes(data: ContentSummaryAndCompareStatus[]): TreeNode<ContentSummaryAndCompareStatus>[] {
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
-        var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
+        var treeNodes: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(paths);
 
         let changed = [];
         data.forEach((el) => {
@@ -549,7 +553,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             console.debug("ContentBrowsePanel: sorted", data);
         }
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
-        var sortResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
+        var sortResult: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(paths);
 
         var nodes = sortResult.map((el) => {
             return el.getNodes();
@@ -558,12 +562,12 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         // merge array of nodes arrays
         merged = merged.concat.apply(merged, nodes);
 
-        this.contentTreeGrid.sortNodesChildren(merged).then(() => this.contentTreeGrid.invalidate());
+        this.treeGrid.sortNodesChildren(merged).then(() => this.treeGrid.invalidate());
     }
 
     private handleNewMediaUpload(event: NewMediaUploadEvent) {
         event.getUploadItems().forEach((item: UploadItem<ContentSummary>) => {
-            this.contentTreeGrid.appendUploadNode(item);
+            this.treeGrid.appendUploadNode(item);
         });
     }
 

@@ -6,19 +6,24 @@ module api.dom {
 
         private additionalElements: api.dom.Element[];
 
-        constructor(wrappedInput: api.dom.FormInputEl, ...additionalElements: api.dom.Element[]) {
-            this.wrappedInput = wrappedInput;
-            this.additionalElements = [];
-
+        constructor(input?: api.dom.FormInputEl) {
             super("div", "composite-input");
 
-            this.appendChild(this.wrappedInput);
-
-            if (additionalElements) {
-                additionalElements.forEach((element: api.dom.Element) => {
-                    this.addAdditionalElement(element);
-                });
+            if (input) {
+                this.setWrappedInput(input);
             }
+            this.additionalElements = [];
+        }
+        
+        setAdditionalElements(...additionalElements: api.dom.Element[]) {
+            additionalElements.forEach((element: api.dom.Element) => {
+                this.addAdditionalElement(element);
+            });
+        }
+        
+        setWrappedInput(wrappedInput: api.dom.FormInputEl) {
+            this.wrappedInput = wrappedInput;
+            this.appendChild(this.wrappedInput);
         }
 
         doGetValue(): string {

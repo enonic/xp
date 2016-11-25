@@ -28,14 +28,14 @@ module api.content.site.inputtype.siteconfigurator {
         private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent): void};
 
         constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
+            super(option);
+
             this.editClickedListeners = [];
             this.siteConfigFormDisplayedListeners = [];
 
             this.application = option.displayValue;
             this.siteConfig = siteConfig;
             this.formContext = formContext;
-
-            super(option);
         }
 
         doRender(): wemQ.Promise<boolean> {

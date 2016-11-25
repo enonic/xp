@@ -12,7 +12,11 @@ module api.liveedit {
         }
 
         constructor() {
-            super("page", <ItemTypeConfigJson>{
+            super("page");
+        }
+
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
+            return new ItemTypeConfig(<ItemTypeConfigJson>{
                 cssSelector: '[data-portal-component-type=page]',
                 draggable: false,
                 cursor: 'pointer',

@@ -7,8 +7,8 @@ export class OpenChangePasswordDialogEvent extends api.event.Event {
     private principal: Principal;
 
     constructor(principal: Principal) {
-        this.principal = principal;
         super();
+        this.principal = principal;
     }
 
     getPrincipal() {

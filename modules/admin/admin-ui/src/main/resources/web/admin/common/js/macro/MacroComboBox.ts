@@ -8,6 +8,8 @@ module api.macro {
 
     export class MacroComboBox extends RichComboBox<MacroDescriptor> {
 
+        protected loader: MacrosLoader;
+
         constructor(builder: MacroComboBoxBuilder) {
 
             var richComboBoxBuilder = new RichComboBoxBuilder<MacroDescriptor>().
@@ -25,6 +27,10 @@ module api.macro {
             this.addClass('content-combo-box');
         }
 
+        getLoader(): MacrosLoader {
+            return this.loader;
+        }
+        
         createOption(val: MacroDescriptor): Option<MacroDescriptor> {
             return {
                 value: val.getKey().getRefString(),

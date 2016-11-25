@@ -12,10 +12,6 @@ module api.content.resource {
 
         private parentSitePath: string;
 
-        constructor() {
-            super();
-        }
-
         protected createSearchExpression(): ConstraintExpr {
             if (this.parentSitePath) {
                 var searchConstraint = super.createSearchExpression();

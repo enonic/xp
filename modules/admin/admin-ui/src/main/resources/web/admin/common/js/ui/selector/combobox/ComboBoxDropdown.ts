@@ -11,10 +11,6 @@ module api.ui.selector.combobox {
 
     export class ComboBoxDropdown<OPTION_DISPLAY_VALUE> extends DropdownList<OPTION_DISPLAY_VALUE> {
 
-        constructor(config: ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>) {
-            super(config);
-        }
-
         assembleGridConfig(config: ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>): DropdownGridConfig<OPTION_DISPLAY_VALUE> {
             return <DropdownGridConfig<OPTION_DISPLAY_VALUE>> {
                 maxHeight: config.maxHeight,

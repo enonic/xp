@@ -47,7 +47,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     createSteps(principal?: Principal): WizardStep[] {
         var steps: WizardStep[] = [];
 
-        this.userEmailWizardStepForm = new UserEmailWizardStepForm(this.principalParams.userStore.getKey());
+        this.userEmailWizardStepForm = new UserEmailWizardStepForm(this.getParams().userStore.getKey());
         this.userPasswordWizardStepForm = new UserPasswordWizardStepForm();
         this.userMembershipsWizardStepForm = new UserMembershipsWizardStepForm();
 

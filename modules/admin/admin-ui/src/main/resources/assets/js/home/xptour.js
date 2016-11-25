@@ -39,10 +39,7 @@ function checkAdminRights() {
 }
 
 function initDialog() {
-    tourDialog = new api.ui.dialog.ModalDialog({
-        title: new api.ui.dialog.ModalDialogHeader("Welcome Tour - Step 1 of 4"),
-        ignoreClickOutside: true
-    });
+    tourDialog = new api.ui.dialog.ModalDialog("Welcome Tour - Step 1 of 4");
     tourDialog.addClass("xp-tour-dialog");
 
     initNavigation();

@@ -99,7 +99,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         });
 
         describe("reset()", () => {
-            let resetSpy: Spy;
+            let resetSpy;
 
             beforeEach(() => {
                 resetSpy = spyOn(combobox, "resetBaseValues");
@@ -133,7 +133,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
         describe("displayValidationErrors()",() => {
 
-            let displayValidationErrorsSpy: Spy;
+            let displayValidationErrorsSpy;
 
             beforeEach(() => {
                 let selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
@@ -261,7 +261,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
     describe("test event listeners", () => {
 
-        let combobox, selectedOption, handlerSpy:Spy, event:SelectedOptionEvent<any>, validationSpy;
+        let combobox, selectedOption, handlerSpy, event:SelectedOptionEvent<any>, validationSpy;
 
         beforeEach((done) => {
             let createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
@@ -473,7 +473,9 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 thumbnail: null,
                 type: "portal:site",
                 requireValid: false,
-                publish: {from: ""}
+                publish: {
+                    from: "2016-10-24T15:03:47.914Z" 
+                }
             }
         )
     }

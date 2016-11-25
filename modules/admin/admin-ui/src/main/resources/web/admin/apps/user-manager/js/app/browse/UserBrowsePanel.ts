@@ -1,7 +1,4 @@
 import "../../api.ts";
-
-import TreeNode = api.ui.treegrid.TreeNode;
-import BrowseItem = api.app.browse.BrowseItem;
 import {UserItemsTreeGrid} from "./UserItemsTreeGrid";
 import {UserBrowseToolbar} from "./UserBrowseToolbar";
 import {UserTreeGridItem, UserTreeGridItemType} from "./UserTreeGridItem";
@@ -10,39 +7,24 @@ import {UserTreeGridActions} from "./UserTreeGridActions";
 import {PrincipalBrowseFilterPanel} from "./filter/PrincipalBrowseFilterPanel";
 import {Router} from "../Router";
 
+import TreeGrid = api.ui.treegrid.TreeGrid;
+import TreeNode = api.ui.treegrid.TreeNode;
+import BrowseItem = api.app.browse.BrowseItem;
+
 export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem> {
 
-    private browseActions: UserTreeGridActions;
-
-    private userTreeGrid: UserItemsTreeGrid;
-
-    private userFilterPanel: PrincipalBrowseFilterPanel;
-
-    private toolbar: UserBrowseToolbar;
+    protected treeGrid: UserItemsTreeGrid;
 
     constructor() {
-        this.userTreeGrid = new UserItemsTreeGrid();
-
-        this.browseActions = this.userTreeGrid.getTreeGridActions();
-        this.userFilterPanel = new PrincipalBrowseFilterPanel();
-        this.toolbar = new UserBrowseToolbar(this.browseActions);
-        // var browseItemPanel = components.detailPanel = new UserBrowseItemPanel();
-        var browseItemPanel = new UserBrowseItemPanel();
-
-        super({
-            browseToolbar: this.toolbar,
-            treeGrid: this.userTreeGrid,
-            browseItemPanel: browseItemPanel,
-            filterPanel: this.userFilterPanel
-        });
+        super();
 
         api.security.UserItemCreatedEvent.on((event) => {
-            this.userTreeGrid.appendUserNode(event.getPrincipal(), event.getUserStore(), event.isParentOfSameType());
+            this.treeGrid.appendUserNode(event.getPrincipal(), event.getUserStore(), event.isParentOfSameType());
             this.setRefreshOfFilterRequired();
         });
 
         api.security.UserItemUpdatedEvent.on((event) => {
-            this.userTreeGrid.updateUserNode(event.getPrincipal(), event.getUserStore());
+            this.treeGrid.updateUserNode(event.getPrincipal(), event.getUserStore());
         });
 
         api.security.UserItemDeletedEvent.on((event) => {
@@ -51,13 +33,31 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
              Deleting content won't trigger browsePanel.onShow event,
              because we are left on the same panel. We need to refresh manually.
              */
-            this.userTreeGrid.deleteUserNodes(event.getPrincipals(), event.getUserStores());
+            this.treeGrid.deleteUserNodes(event.getPrincipals(), event.getUserStores());
             this.refreshFilter();
         });
 
         this.onShown((event) => {
             Router.setHash("browse");
         });
+    }
+
+    protected createToolbar(): UserBrowseToolbar {
+        let browseActions = <UserTreeGridActions> this.treeGrid.getTreeGridActions();
+
+        return new UserBrowseToolbar(browseActions);
+    }
+
+    protected createTreeGrid(): UserItemsTreeGrid {
+        return new UserItemsTreeGrid();
+    }
+
+    protected createBrowseItemPanel(): UserBrowseItemPanel {
+        return new UserBrowseItemPanel();
+    }
+
+    protected createFilterPanel(): PrincipalBrowseFilterPanel {
+        return new PrincipalBrowseFilterPanel();
     }
 
     treeNodesToBrowseItems(nodes: TreeNode<UserTreeGridItem>[]): BrowseItem<UserTreeGridItem>[] {

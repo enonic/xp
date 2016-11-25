@@ -1,12 +1,10 @@
-import UriHelper = api.util.UriHelper;
-
 describe("api.util.UriHelper", () => {
 
     window['CONFIG'] = {
         baseUri: 'http://localhost:8080/wem'
     };
 
-    var uh = UriHelper;
+    var uh = api.util.UriHelper;
 
     describe("getUri", () => {
         it("should return '/' string if no CONFIG.baseUri is present", () => {
@@ -158,10 +156,8 @@ describe("api.util.UriHelper", () => {
 
     describe("encodeUrlParams", () => {
         it("should return empty string if invalid arguments are passed", () => {
-            var expected = '';
-            expect(uh.encodeUrlParams(undefined)).toBe(expected);
-            expect(uh.encodeUrlParams('')).toBe(expected);
-            expect(uh.encodeUrlParams(null)).toBe(expected);
+            expect(uh.encodeUrlParams(undefined)).toBe(StringHelper.EMPTY_STRING);
+            expect(uh.encodeUrlParams(null)).toBe(StringHelper.EMPTY_STRING);
         });
         it("should return encoded string", () => {
             expect(uh.encodeUrlParams({d: 1, e: false, foo: { one: 'b% ar!', two: ['a', 'b', 'c']}})).toBe(

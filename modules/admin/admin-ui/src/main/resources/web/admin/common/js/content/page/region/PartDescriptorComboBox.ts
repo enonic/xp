@@ -8,14 +8,30 @@ module api.content.page.region {
     import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
     import DescriptorKey = api.content.page.DescriptorKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class PartDescriptorComboBox extends RichComboBox<PartDescriptor> {
 
-        constructor(loader: PartDescriptorLoader) {
-            super(new RichComboBoxBuilder<PartDescriptor>().setIdentifierMethod("getKey").setOptionDisplayValueViewer(
-                new PartDescriptorViewer()).setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).setLoader(
-                loader).setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText(
-                "No parts available"));
+        protected loader: PartDescriptorLoader;
+
+        constructor() {
+            super(new RichComboBoxBuilder<PartDescriptor>().
+                    setIdentifierMethod("getKey").
+                    setOptionDisplayValueViewer(new PartDescriptorViewer()).
+                    setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
+                    setMaximumOccurrences(1).
+                    setNextInputFocusWhenMaxReached(false).
+                    setNoOptionsText("No parts available"));
+        }
+
+        loadDescriptors(applicationKeys: ApplicationKey[]) {
+            this.loader.setApplicationKeys(applicationKeys);
+
+            super.load();
+        }
+        
+        protected createLoader(): PartDescriptorLoader {
+            return new PartDescriptorLoader();
         }
 
         getDescriptor(descriptorKey: DescriptorKey): PartDescriptor {
@@ -56,8 +72,9 @@ module api.content.page.region {
         private descriptor: PartDescriptor;
 
         constructor(option: Option<PartDescriptor>) {
-            this.descriptor = option.displayValue;
             super(option);
+
+            this.descriptor = option.displayValue;
             this.addClass("part-descriptor-selected-option-view");
         }
 

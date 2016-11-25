@@ -6,15 +6,8 @@ import {ContentTreeGrid} from "./ContentTreeGrid";
 
 export class ContentBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.content.ContentSummaryAndCompareStatus> {
 
-    private grid: ContentTreeGrid;
-
-    constructor(grid: ContentTreeGrid) {
-        this.grid = grid;
-        super();
-    }
-
-    createItemSelectionPanel(): ContentBrowseItemsSelectionPanel {
-        return new ContentBrowseItemsSelectionPanel(this.grid);
+    createItemSelectionPanel(grid: ContentTreeGrid): ContentBrowseItemsSelectionPanel {
+        return new ContentBrowseItemsSelectionPanel(grid);
     }
 
     createItemStatisticsPanel(): ContentItemStatisticsPanel {

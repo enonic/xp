@@ -47,8 +47,6 @@ module api.ui.treegrid {
 
         private active: boolean;
 
-        private actions: TreeGridToolbarActions<any>;
-
         private loadedListeners: Function[] = [];
 
         private contextMenuListeners: Function[] = [];
@@ -92,6 +90,7 @@ module api.ui.treegrid {
                 return null;
             });
 
+            
             this.columns = this.updateColumnsFormatter(builder.getColumns());
 
             this.gridOptions = builder.getOptions();
@@ -116,25 +115,51 @@ module api.ui.treegrid {
 
             this.grid.syncGridSelection(false);
 
-            this.actions = new TreeGridToolbarActions(this);
+            if (builder.getContextMenu()) {
+                this.setContextMenu(builder.getContextMenu());
+            }
+
+            if (builder.isShowToolbar()) {
+                this.toolbar = new TreeGridToolbar(new TreeGridToolbarActions(this), this);
+                this.appendChild(this.toolbar);
+                // make sure it won't left from the cloned grid
+                this.removeClass("no-toolbar");
+            } else {
+                this.addClass("no-toolbar");
+            }
+
+            this.appendChild(this.grid);
+
+            if (builder.isAutoLoad()) {
+                this.onAdded(() => {
+                    this.reload().then(() => this.grid.resizeCanvas());
+                });
+            }
+
+            this.initEventListeners(builder);
+
+        }
+
+        private initEventListeners(builder: TreeGridBuilder<DATA>) {
+
+            let keyBindings = [];
+            let interval;
 
             this.onClicked(() => {
                 this.grid.focus();
             });
 
-            if (builder.getContextMenu()) {
-                this.contextMenu = builder.getContextMenu();
-                this.grid.subscribeOnContextMenu((event) => {
-                    event.preventDefault();
-                    this.setActive(false);
-                    var cell = this.grid.getCellFromEvent(event);
-                    this.grid.selectRow(cell.row);
-                    this.contextMenu.showAt(event.pageX, event.pageY);
-                    this.notifyContextMenuShown(event.pageX, event.pageY);
-                    this.setActive(true);
+            if (builder.isPartialLoadEnabled()) {
+
+                this.loadBufferSize = builder.getLoadBufferSize();
+                this.onRendered(() => {
+                    if (interval) {
+                        clearInterval(interval);
+                    }
+                    interval = setInterval(this.postLoad.bind(this), 200);
                 });
             }
-
+            
             this.grid.subscribeOnClick((event, data) => {
                 if (this.isActive()) {
                     this.setActive(false);
@@ -174,35 +199,6 @@ module api.ui.treegrid {
                 this.appendChild(this.errorPanel = new api.form.ValidationRecordingViewer());
                 this.errorPanel.hide();
             }
-
-            if (builder.isShowToolbar()) {
-                this.toolbar = new TreeGridToolbar(this.actions, this);
-                this.appendChild(this.toolbar);
-                // make sure it won't left from the cloned grid
-                this.removeClass("no-toolbar");
-            } else {
-                this.addClass("no-toolbar");
-            }
-
-            this.appendChild(this.grid);
-
-            if (builder.isAutoLoad()) {
-                this.reload().then(() => this.grid.resizeCanvas());
-            }
-
-            if (builder.isPartialLoadEnabled()) {
-
-                this.loadBufferSize = builder.getLoadBufferSize();
-                var interval;
-                this.onRendered(() => {
-                    if (interval) {
-                        clearInterval(interval);
-                    }
-                    interval = setInterval(this.postLoad.bind(this), 200);
-                });
-            }
-
-            var keyBindings = [];
 
             this.grid.onShown(() => {
                 this.scrollable = this.queryScrollable();
@@ -301,20 +297,25 @@ module api.ui.treegrid {
             });
 
             this.onLoaded(() => this.unmask());
+        }
+
+        public setContextMenu(contextMenu: TreeGridContextMenu) {
+            this.contextMenu = contextMenu;
+            this.grid.subscribeOnContextMenu((event) => {
+                event.preventDefault();
+                this.setActive(false);
+                var cell = this.grid.getCellFromEvent(event);
+                this.grid.selectRow(cell.row);
+                this.contextMenu.showAt(event.pageX, event.pageY);
+                this.notifyContextMenuShown(event.pageX, event.pageY);
+                this.setActive(true);
+            });
 
         }
 
         public isInRenderingView(): boolean {
             // TreeGrid in visible tab or TreeGrid is active
             return this.isVisible() && this.isActive();
-        }
-
-        buildColumn(name: string, id: string, field: string, formatter: Slick.Formatter<any>,
-            {cssClass = undefined, minWidth = undefined, maxWidth = undefined}) {
-
-            return new GridColumnBuilder<TreeNode<DATA>>()
-                .setName(name).setId(id).setField(field).setFormatter(formatter)
-                .setCssClass(cssClass).setMinWidth(minWidth).setMaxWidth(maxWidth).build();
         }
 
         private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {

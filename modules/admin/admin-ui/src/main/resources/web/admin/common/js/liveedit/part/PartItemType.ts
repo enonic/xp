@@ -14,7 +14,7 @@ module api.liveedit.part {
         }
 
         constructor() {
-            super("part", this.getDefaultConfigJson("part"));
+            super("part");
         }
 
         isComponentType(): boolean {

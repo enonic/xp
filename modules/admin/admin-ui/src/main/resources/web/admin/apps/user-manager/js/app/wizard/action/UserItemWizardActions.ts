@@ -1,5 +1,4 @@
 import "../../../api.ts";
-
 import {UserItemWizardPanel} from "../UserItemWizardPanel";
 import {DeleteUserItemAction} from "./DeleteUserItemAction";
 
@@ -12,10 +11,13 @@ export class UserItemWizardActions<USER_ITEM_TYPE extends api.Equitable> extends
     private delete: api.ui.Action;
 
     constructor(wizardPanel: UserItemWizardPanel<USER_ITEM_TYPE>) {
+        super();
+
         this.save = new api.app.wizard.SaveAction(wizardPanel);
         this.delete = new DeleteUserItemAction(wizardPanel);
         this.close = new api.app.wizard.CloseAction(wizardPanel);
-        super(this.save, this.delete, this.close);
+
+        this.setActions(this.save, this.delete, this.close);
     }
 
     enableActionsForNew() {

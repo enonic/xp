@@ -19,35 +19,32 @@ import ApplicationEventType = api.application.ApplicationEventType;
 
 export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Application> {
 
-    private browseActions: ApplicationBrowseActions;
-
-    private applicationTreeGrid: ApplicationTreeGrid;
-
-    private toolbar: ApplicationBrowseToolbar;
-
     private applicationIconUrl: string;
 
+    protected treeGrid: ApplicationTreeGrid;
+
     constructor() {
-
-        this.applicationTreeGrid = new ApplicationTreeGrid();
-
-        this.browseActions = <ApplicationBrowseActions> this.applicationTreeGrid.getContextMenu().getActions();
-
-        this.toolbar = new ApplicationBrowseToolbar(this.browseActions);
-        var browseItemPanel = new ApplicationBrowseItemPanel();
-
-        super({
-            browseToolbar: this.toolbar,
-            treeGrid: this.applicationTreeGrid,
-            browseItemPanel: browseItemPanel,
-            filterPanel: undefined
-        });
+        super();
 
         this.applicationIconUrl = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
 
         this.registerEvents();
     }
 
+    protected createToolbar(): ApplicationBrowseToolbar {
+        let browseActions = <ApplicationBrowseActions> this.treeGrid.getContextMenu().getActions();
+
+        return new ApplicationBrowseToolbar(browseActions);
+    }
+
+    protected createTreeGrid(): ApplicationTreeGrid {
+        return new ApplicationTreeGrid();
+    }
+
+    protected createBrowseItemPanel(): ApplicationBrowseItemPanel {
+        return new ApplicationBrowseItemPanel();
+    }
+    
     treeNodesToBrowseItems(nodes: TreeNode<Application>[]): BrowseItem<Application>[] {
         var browseItems: BrowseItem<Application>[] = [];
 
@@ -93,29 +90,29 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
 
         api.application.ApplicationEvent.on((event: ApplicationEvent) => {
             if (ApplicationEventType.INSTALLED == event.getEventType()) {
-                this.applicationTreeGrid.placeApplicationNode(event.getApplicationKey()).then(() => {
+                this.treeGrid.placeApplicationNode(event.getApplicationKey()).then(() => {
                     setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar
-                        this.applicationTreeGrid.triggerSelectionChangedListeners();
-                        var installedApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey()),
+                        this.treeGrid.triggerSelectionChangedListeners();
+                        var installedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey()),
                             installedAppName = !!installedApp ? installedApp.getDisplayName() : event.getApplicationKey();
                         api.notify.showFeedback("Application '" + installedAppName + "' installed successfully");
                     }, 200);
                 });
 
             } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
-                var uninstalledApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey()),
+                var uninstalledApp = this.treeGrid.getByApplicationKey(event.getApplicationKey()),
                     uninstalledAppName = !!uninstalledApp ? uninstalledApp.getDisplayName() : event.getApplicationKey();
                 api.notify.showFeedback("Application '" + uninstalledAppName + "' uninstalled successfully");
-                this.applicationTreeGrid.deleteApplicationNode(event.getApplicationKey());
+                this.treeGrid.deleteApplicationNode(event.getApplicationKey());
             } else if (ApplicationEventType.STOPPED == event.getEventType()) {
                 setTimeout(() => { // as uninstall usually follows stop event, lets wait to check if app still exists
-                    var stoppedApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey());
+                    var stoppedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
                     if (!!stoppedApp && api.app.ServerEventsConnection.getInstance().isConnected()) { // seems to be present in the grid and xp is running
-                        this.applicationTreeGrid.updateApplicationNode(event.getApplicationKey());
+                        this.treeGrid.updateApplicationNode(event.getApplicationKey());
                     }
                 }, 400);
             } else if (event.isNeedToUpdateApplication()) {
-                this.applicationTreeGrid.updateApplicationNode(event.getApplicationKey());
+                this.treeGrid.updateApplicationNode(event.getApplicationKey());
             }
         });
 
@@ -127,7 +124,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
 
     private handleNewAppUpload(event: api.application.ApplicationUploadStartedEvent) {
         event.getUploadItems().forEach((item: api.ui.uploader.UploadItem<Application>) => {
-            this.applicationTreeGrid.appendUploadNode(item);
+            this.treeGrid.appendUploadNode(item);
         });
     }
 }

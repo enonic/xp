@@ -1,5 +1,4 @@
 import "../../api.ts";
-
 import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
 import {ContentItemViewToolbar} from "./ContentItemViewToolbar";
 import {EditAction} from "./EditAction";
@@ -33,6 +32,7 @@ export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content
     private actions: api.ui.Action[];
 
     constructor() {
+        super();
 
         this.deckPanel = new api.ui.panel.DeckPanel();
 
@@ -47,7 +47,8 @@ export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content
             deleteAction: this.deleteAction
         });
 
-        super(toolbar, this.deckPanel);
+        this.setToolbar(toolbar);
+        this.setPanel(this.deckPanel);
 
         this.statisticsPanel = new ContentItemStatisticsPanel();
         this.previewPanel = new ContentItemPreviewPanel();

@@ -5,7 +5,9 @@ import {ContentTreeGrid} from "../ContentTreeGrid";
 export class ShowAllAction<DATA> extends Action {
 
     constructor(panel: ContentBrowseItemsSelectionPanel, treeGrid: ContentTreeGrid) {
-        super(this.createLabel(treeGrid.getRoot().getFullSelection().length));
+        super();
+
+        this.createLabel(treeGrid);
 
         this.setEnabled(true);
 
@@ -13,12 +15,15 @@ export class ShowAllAction<DATA> extends Action {
 
         treeGrid.onSelectionChanged(() => {
             const selectedCount = treeGrid.getRoot().getFullSelection().length;
-            this.setLabel(this.createLabel(selectedCount));
+            this.createLabel(treeGrid);
             this.setEnabled(selectedCount > 0);
         });
     }
 
-    private createLabel(count: number): string {
-        return count > 0 ? `Show All (${count})` : 'Show All';
+    private createLabel(treeGrid: ContentTreeGrid) {
+        let selectedCount = treeGrid.getRoot().getFullSelection().length;
+        let label = selectedCount > 0 ? `Show All (${selectedCount})` : 'Show All';
+
+        this.setLabel(label);
     }
 }

@@ -13,10 +13,14 @@ module api.liveedit {
 
         private config: ItemTypeConfig;
 
-        constructor(shortName: string, config: ItemTypeConfigJson) {
+        constructor(shortName: string) {
             ItemType.shortNameToInstance[shortName] = this;
             this.shortName = shortName;
-            this.config = new ItemTypeConfig(config);
+            this.config = this.getItemTypeConfig(shortName);
+        }
+
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
+            return null;
         }
 
         getShortName(): string {

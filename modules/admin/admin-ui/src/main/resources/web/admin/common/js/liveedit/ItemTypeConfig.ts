@@ -24,7 +24,7 @@ module api.liveedit {
         private iconCls: string;
         private cursor: string;
         private highlighterStyle: HighlighterStyle;
-        private contextMenuConfig: string[];
+        private contextMenuConfig: string[] = [];
 
         constructor(json: ItemTypeConfigJson) {
 

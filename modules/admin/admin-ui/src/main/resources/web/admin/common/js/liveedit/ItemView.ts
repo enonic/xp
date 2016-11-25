@@ -125,13 +125,6 @@ module api.liveedit {
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
 
-            this.type = builder.type;
-            this.parentItemView = builder.parentView;
-            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
-            this.itemViewIdProducer = builder.itemViewIdProducer;
-            this.contextMenuActions = builder.contextMenuActions;
-            this.contextMenuTitle = builder.contextMenuTitle;
-
             var props: api.dom.ElementBuilder = null;
             if (builder.element) {
                 var elementFromElementBuilder = new api.dom.ElementFromElementBuilder();
@@ -146,9 +139,19 @@ module api.liveedit {
                 newElementBuilder.setGenerateId(false);
                 props = newElementBuilder;
             }
-            super(props);
-            this.addClassEx("item-view");
 
+            super(props);
+
+            this.type = builder.type;
+            this.parentItemView = builder.parentView;
+            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
+            this.itemViewIdProducer = builder.itemViewIdProducer;
+            this.contextMenuTitle = builder.contextMenuTitle;
+            
+            this.addClassEx("item-view");
+            
+            this.contextMenuActions = [];
+            
             this.setDraggable(true);
 
             this.mouseOver = false;
@@ -174,8 +177,7 @@ module api.liveedit {
             }
 
             if (builder.placeholder) {
-                this.placeholder = builder.placeholder;
-                this.appendChild(this.placeholder);
+                this.setPlaceholder(builder.placeholder);
             }
 
             this.onRemoved(this.invalidateContextMenu.bind(this));
@@ -183,9 +185,20 @@ module api.liveedit {
             this.bindMouseListeners();
         }
 
-        private bindMouseListeners() {
-            var pageView = this.getPageView();
+        protected addContextMenuActions(actions: api.ui.Action[]) {
+            this.contextMenuActions = this.contextMenuActions.concat(actions);
+        }
+        
+        protected setPlaceholder(placeholder: ItemViewPlaceholder) {
+            this.placeholder = placeholder;
+            this.appendChild(placeholder);
+        }
 
+        public setContextMenuTitle(title: ItemViewContextMenuTitle) {
+            this.contextMenuTitle = title;
+        }
+        
+        private bindMouseListeners() {
             this.mouseEnterListener = this.handleMouseEnter.bind(this);
             this.onMouseEnter(this.mouseEnterListener);
 
@@ -252,7 +265,7 @@ module api.liveedit {
                 }
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
-
+/*
             this.pageItemViewAddedListener = (event) => {
                 if (this.isSelected()) {
                     this.deselect();
@@ -263,6 +276,7 @@ module api.liveedit {
             this.onRemoved(() => {
                 pageView.unItemViewAdded(this.pageItemViewAddedListener);
             });
+            */
         }
 
         protected unbindMouseListeners() {
@@ -329,11 +343,11 @@ module api.liveedit {
         }
 
         getPageView(): PageView {
-            var pageView = this;
-            while (!PageItemType.get().equals(pageView.getType())) {
-                pageView = pageView.parentItemView;
+            var itemView: ItemView = this;
+            while (!PageItemType.get().equals(itemView.getType())) {
+                itemView = itemView.parentItemView;
             }
-            return <PageView> pageView;
+            return <PageView>itemView;
         }
 
         remove(): ItemView {
@@ -902,8 +916,8 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
-        protected createInsertAction(liveEditModel: LiveEditModel): api.ui.Action {
-            return new api.ui.Action('Insert').setChildActions(this.getInsertActions(liveEditModel));
+        protected createInsertAction(): api.ui.Action {
+            return new api.ui.Action('Insert').setChildActions(this.getInsertActions(this.liveEditModel));
         }
 
         protected createSelectParentAction(): api.ui.Action {

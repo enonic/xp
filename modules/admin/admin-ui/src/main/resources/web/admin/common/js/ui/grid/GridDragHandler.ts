@@ -89,9 +89,9 @@ module api.ui.grid {
                 children = children.slice(1);
             }
 
-            for (var key in children) {
+            for (let key in children) {
                 if (data.rows[0] <= data.insertBefore) {//move item down
-                    if (key > data.rows[0] && key <= data.insertBefore) {
+                    if (key > data.rows[0].toString() && key <= data.insertBefore.toString()) {
                         children[key].getEl().setMarginTop("-" + this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
@@ -99,7 +99,7 @@ module api.ui.grid {
                     continue;
                 }
                 if (data.rows[0] >= data.insertBefore) {//move item up
-                    if (key < data.rows[0] && key >= data.insertBefore) {
+                    if (key < data.rows[0].toString() && key >= data.insertBefore.toString()) {
                         children[key].getEl().setMarginTop(this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);

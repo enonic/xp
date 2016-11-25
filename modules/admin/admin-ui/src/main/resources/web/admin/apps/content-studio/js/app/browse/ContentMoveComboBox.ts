@@ -8,16 +8,13 @@ import ContentPath = api.content.ContentPath;
 
 export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<ContentSummary> {
 
-    contentLoader: MoveContentSummaryLoader;
+    protected loader: MoveContentSummaryLoader;
 
     constructor() {
-        this.contentLoader = new MoveContentSummaryLoader();
-        this.contentLoader.setSize(-1);
         var richComboBoxBuilder: api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary>();
         richComboBoxBuilder
             .setMaximumOccurrences(1)
             .setComboBoxName("contentSelector")
-            .setLoader(this.contentLoader)
             .setSelectedOptionsView(new ContentSelectedOptionsView())
             .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
             .setDelayedInputValueChangedHandling(500)
@@ -26,16 +23,27 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
         super(richComboBoxBuilder);
     }
 
+    protected createLoader(): MoveContentSummaryLoader {
+        let loader = new MoveContentSummaryLoader();
+        loader.setSize(-1);
+
+        return loader;
+    }
+
+    getLoader(): MoveContentSummaryLoader {
+        return this.loader;
+    }
+
     setFilterContentPaths(contentPaths: ContentPath[]) {
-        this.contentLoader.setFilterContentPaths(contentPaths);
+        this.getLoader().setFilterContentPaths(contentPaths);
     }
 
     setFilterContentTypes(contentTypes: api.schema.content.ContentType[]) {
-        this.contentLoader.setFilterContentTypes(contentTypes);
+        this.getLoader().setFilterContentTypes(contentTypes);
     }
 
     clearCombobox() {
         super.clearCombobox();
-        this.contentLoader.resetSearchString();
+        this.getLoader().resetSearchString();
     }
 }

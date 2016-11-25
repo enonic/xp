@@ -4,17 +4,20 @@ module api.ui.selector.dropdown {
 
     export class RichDropdown<OPTION_DISPLAY_VALUE> extends Dropdown<OPTION_DISPLAY_VALUE> {
 
-        private loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
+        protected loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
 
-        constructor(name: string, loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>,
-                    dropdownConfig: DropdownConfig<OPTION_DISPLAY_VALUE>) {
+        constructor(dropdownConfig: DropdownConfig<OPTION_DISPLAY_VALUE>, name: string = "") {
             super(name, dropdownConfig);
 
-            this.loader = loader;
+            this.loader = this.createLoader();
 
             this.initLoaderListeners();
         }
 
+        protected createLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
+            throw new Error('Must be implemented by inheritors');
+        }
+        
         private initLoaderListeners() {
             this.loader.onLoadedData(this.handleLoadedData.bind(this));
 
@@ -27,7 +30,7 @@ module api.ui.selector.dropdown {
             this.loader.load();
         }
 
-        getLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
+        protected getLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
             return this.loader;
         }
 

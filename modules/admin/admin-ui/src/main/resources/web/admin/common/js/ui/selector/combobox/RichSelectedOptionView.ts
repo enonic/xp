@@ -11,14 +11,14 @@ module api.ui.selector.combobox {
         private removable: boolean;
 
         constructor(builder: RichSelectedOptionViewBuilder<T>) {
+            super(builder.option);
+
             this.optionDisplayValue = builder.option.displayValue;
             this.size = builder.size;
 
             this.editable = builder.editable;
             this.draggable = builder.draggable;
             this.removable = builder.removable;
-
-            super(builder.option);
         }
 
         resolveIconUrl(content: T): string {

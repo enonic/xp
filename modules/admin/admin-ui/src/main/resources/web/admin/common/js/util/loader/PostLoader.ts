@@ -4,10 +4,6 @@ module api.util.loader {
 
         private isPostLoading: boolean = false;
 
-        constructor(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
-            super(request);
-        }
-
         sendRequest(): wemQ.Promise<OBJECT[]> {
             if (!this.isPostLoading) {
                 this.resetParams();

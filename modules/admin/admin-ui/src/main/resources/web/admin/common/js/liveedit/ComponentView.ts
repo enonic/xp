@@ -97,13 +97,13 @@ module api.liveedit {
 
         private parentRegionView: RegionView;
 
-        private component: COMPONENT;
+        protected component: COMPONENT;
 
-        private moving: boolean;
+        private moving: boolean = false;
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[] = [];
 
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[] = [];
 
         private propertyChangedListener: (event: ComponentPropertyChangedEvent) => void;
 
@@ -112,12 +112,6 @@ module api.liveedit {
         public static debug: boolean = false;
 
         constructor(builder: ComponentViewBuilder<COMPONENT>) {
-
-            this.itemViewAddedListeners = [];
-            this.itemViewRemovedListeners = [];
-            this.moving = false;
-            this.parentRegionView = builder.parentRegionView;
-
             super(new ItemViewBuilder().
                     setItemViewIdProducer(builder.itemViewProducer
                         ? builder.itemViewProducer
@@ -128,11 +122,13 @@ module api.liveedit {
                     setElement(builder.element).
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
-                    setContextMenuActions(this.createComponentContextMenuActions(builder.contextMenuActions,
-                builder.inspectActionRequired, this.parentRegionView.getLiveEditModel())).
                     setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
 
+            this.parentRegionView = builder.parentRegionView;
+
+            this.addComponentContextMenuActions(builder.inspectActionRequired);
+            
             this.propertyChangedListener = () => this.refreshEmptyState();
             this.resetListener = () => {
                 // recreate the component view from scratch
@@ -172,17 +168,16 @@ module api.liveedit {
             component.unReset(this.resetListener);
         }
 
-        private createComponentContextMenuActions(actions: api.ui.Action[], inspectActionRequired: boolean,
-                                                  liveEditModel: LiveEditModel): api.ui.Action[] {
-            var isFragmentContent = liveEditModel.getContent().getType().isFragment();
+        private addComponentContextMenuActions(inspectActionRequired: boolean) {
+            var isFragmentContent = this.liveEditModel.getContent().getType().isFragment();
             var parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), PageView);
             var isTopFragmentComponent = parentIsPage && isFragmentContent;
 
-            var actions = actions || [];
+            var actions: api.ui.Action[] = [];
 
             if (!isTopFragmentComponent) {
                 actions.push(this.createSelectParentAction());
-                actions.push(this.createInsertAction(liveEditModel));
+                actions.push(this.createInsertAction());
             }
 
             if (inspectActionRequired) {
@@ -227,11 +222,7 @@ module api.liveedit {
                 }));
             }
 
-            return this.getComponentContextMenuActions(actions, liveEditModel);
-        }
-
-        protected getComponentContextMenuActions(actions: api.ui.Action[], liveEditModel: LiveEditModel): api.ui.Action[] {
-            return actions;
+            this.addContextMenuActions(actions);
         }
 
         remove(): ComponentView<Component> {
@@ -448,6 +439,10 @@ module api.liveedit {
             return this.getParentItemView();
         }
 
+        isEmpty(): boolean {
+            return !this.component || this.component.isEmpty();
+        }
+        
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
             var parentItemView = ItemView.findParentItemViewAsHTMLElement(htmlElement);

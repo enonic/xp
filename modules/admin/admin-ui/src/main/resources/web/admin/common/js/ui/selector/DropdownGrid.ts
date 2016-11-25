@@ -53,40 +53,12 @@ module api.ui.selector {
             this.width = config.width;
             this.multipleSelections = config.multipleSelections || false;
 
-            var columnFormatter =
-                (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: Option<OPTION_DISPLAY_VALUE>) => {
-                    this.optionDisplayValueViewer.setObject(value);
-                    return this.optionDisplayValueViewer.toString();
-                };
-
-            var columns: api.ui.grid.GridColumn<Option<OPTION_DISPLAY_VALUE>>[] = [
-                new api.ui.grid.GridColumnBuilder().
-                    setId("option").
-                    setName("Options").
-                    setField("displayValue").
-                    setFormatter(columnFormatter).
-                build()
-            ];
-
-            var options: api.ui.grid.GridOptions<Option<OPTION_DISPLAY_VALUE>> =
-                new api.ui.grid.GridOptionsBuilder().
-                    setWidth(this.width).
-                    setHeight(this.maxHeight).
-                    setHideColumnHeaders(true).
-                    setEnableColumnReorder(false).
-                    setFullWidthRows(true).
-                    setForceFitColumns(true).
-                    setRowHeight(this.optionDisplayValueViewer.getPreferredHeight()).
-                    setCheckableRows(this.multipleSelections).
-                    setMultiSelect(this.multipleSelections).
-                    setDataIdProperty(this.dataIdProperty).
-                build();
-
             this.gridData = new api.ui.grid.DataView<Option<OPTION_DISPLAY_VALUE>>();
             if (this.filter) {
                 this.gridData.setFilter(this.filter);
             }
-            this.grid = new api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>(this.gridData, columns, options);
+
+            this.grid = new api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>(this.gridData, this.createColumns(), this.createOptions());
 
             this.grid.addClass("options-container");
             this.grid.getEl().setPosition("absolute");
@@ -107,6 +79,39 @@ module api.ui.selector {
             });
         }
 
+        protected createOptions(): api.ui.grid.GridOptions<any> {
+
+            return new api.ui.grid.GridOptionsBuilder().
+                setWidth(this.width).
+                setHeight(this.maxHeight).
+                setHideColumnHeaders(true).
+                setEnableColumnReorder(false).
+                setFullWidthRows(true).
+                setForceFitColumns(true).
+                setRowHeight(this.optionDisplayValueViewer.getPreferredHeight()).
+                setCheckableRows(this.multipleSelections).
+                setMultiSelect(this.multipleSelections).
+                setDataIdProperty(this.dataIdProperty).
+                build();
+        }
+
+        protected createColumns(): api.ui.grid.GridColumn<any>[] {
+            var columnFormatter =
+                (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: Option<OPTION_DISPLAY_VALUE>) => {
+                    this.optionDisplayValueViewer.setObject(value);
+                    return this.optionDisplayValueViewer.toString();
+                };
+            
+            return [
+                new api.ui.grid.GridColumnBuilder().
+                setId("option").
+                setName("Options").
+                setField("displayValue").
+                setFormatter(columnFormatter).
+                build()
+            ];
+        }
+        
         getElement(): api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>> {
             return this.grid;
         }

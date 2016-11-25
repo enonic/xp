@@ -6,18 +6,36 @@ module api.content.page.region {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     import ContentSummary = api.content.ContentSummary;
-    import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
+    import ContentPath = api.content.ContentPath;
+    import FragmentContentSummaryLoader = api.content.resource.FragmentContentSummaryLoader;
 
     import RichDropdown = api.ui.selector.dropdown.RichDropdown;
 
     export class FragmentDropdown extends RichDropdown<ContentSummary> {
 
-        constructor(name: string, loader: ContentSummaryLoader) {
+        protected loader: FragmentContentSummaryLoader;
 
-            super(name, loader, {
+        private parentSitePath: string;
+        private contentPath: ContentPath;
+
+        constructor(sitePath: string, contentPath: ContentPath) {
+
+            super({
                 optionDisplayValueViewer: new ContentSummaryViewer(),
                 dataIdProperty: "value"
             });
+
+            this.parentSitePath = sitePath;
+            this.contentPath = contentPath;
+        }
+
+        load() {
+            this.loader.setParentSitePath(this.parentSitePath).setContentPath(this.contentPath);
+            this.loader.load();
+        }
+
+        protected createLoader(): FragmentContentSummaryLoader {
+            return new FragmentContentSummaryLoader();
         }
 
         protected createOption(fragment: ContentSummary): Option<ContentSummary> {

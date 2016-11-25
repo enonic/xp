@@ -8,10 +8,6 @@ module api.content.page.region {
 
     export class DescriptorBasedDropdown<DESCRIPTOR extends Descriptor> extends RichDropdown<DESCRIPTOR> {
 
-        constructor(name: string, loader: api.util.loader.BaseLoader<any, DESCRIPTOR>, dropdownConfig: DropdownConfig<DESCRIPTOR>) {
-            super(name, loader, dropdownConfig);
-        }
-
         protected createOption(descriptor: DESCRIPTOR): Option<DESCRIPTOR> {
             var indices: string[] = [];
             indices.push(descriptor.getDisplayName());

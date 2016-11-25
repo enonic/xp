@@ -29,9 +29,8 @@ module api.util.htmlarea.dialog {
 
         private panelRenderedListeners: {(): void}[] = [];
 
-        constructor(content: api.content.ContentSummary) {
+        constructor() {
             super();
-            this.content = content;
 
             this.addItem(MacroDockedPanel.CONFIGURATION_TAB_NAME, true, this.createConfigurationPanel());
             this.addItem(MacroDockedPanel.PREVIEW_TAB_NAME, true, this.createPreviewPanel());
@@ -47,6 +46,10 @@ module api.util.htmlarea.dialog {
             };
         }
 
+        public setContent(content: api.content.ContentSummary) {
+            this.content = content;
+        }
+        
         private createConfigurationPanel(): Panel {
             return this.configPanel = new Panel("macro-config-panel");
         }
