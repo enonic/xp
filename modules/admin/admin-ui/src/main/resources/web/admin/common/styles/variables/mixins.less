@@ -524,6 +524,18 @@
   }
 }
 
+.picker-icon(@content) {
+  &:before {
+    &:extend(.icon-base);
+    font-family: 'icomoon' !important;
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    font-size: 18px;
+    content: @content;
+  }
+}
+
 .picker-dialog(@width: 100%, @padding: 10px) {
   position: absolute;
   display: none;

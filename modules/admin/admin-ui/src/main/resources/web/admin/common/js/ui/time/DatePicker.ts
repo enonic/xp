@@ -108,23 +108,6 @@ module api.ui.time {
             }
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
-            this.input.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.togglePopupVisibility();
-            });
-            this.input.onFocus((e: FocusEvent) =>
-                setTimeout(() => {
-                    if (!this.popup.isVisible()) {
-                        e.preventDefault();
-                        this.popup.show();
-                    }
-                }, 150)
-            );
-        }
-
-        protected initPopupTrigger() {
-            this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-calendar');
         }
 
         protected setupListeners(builder: DatePickerBuilder) {
@@ -141,11 +124,6 @@ module api.ui.time {
                 });
             }
 
-            this.popupTrigger.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.togglePopupVisibility();
-            });
-
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {
                     this.popup.hide();
@@ -158,6 +136,10 @@ module api.ui.time {
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isArrowKey(event) || api.ui.KeyHelper.isModifierKey(event)) {
+                    return;
+                }
+                
                 var typedDate = this.input.getValue();
 
                 if (api.util.StringHelper.isEmpty(typedDate)) {
@@ -183,35 +165,6 @@ module api.ui.time {
                     }
                 }
                 this.updateInputStyling();
-            });
-
-            this.popup.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    if (!(document.activeElement == this.input.getEl().getHTMLElement())) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.popup.hide();
-                        this.popupTrigger.giveFocus();
-                    }
-                }
-            });
-
-            this.input.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) { // handles tab navigation events on date input
-                    if (!event.shiftKey) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.popupTrigger.giveFocus();
-                    } else {
-                        this.popup.hide();
-                    }
-                }
-            });
-
-            this.popupTrigger.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    this.popup.hide();
-                }
             });
         }
 
