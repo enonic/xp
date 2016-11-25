@@ -46,6 +46,10 @@ module api.ui {
             return event.keyCode === 39;
         }
 
+        static isArrowUpKey(event: KeyboardEvent): boolean {
+            return event.keyCode === 38;
+        }
+
         static isArrowDownKey(event: KeyboardEvent): boolean {
             return event.keyCode === 40;
         }

@@ -6,6 +6,7 @@ import ChildOrder = api.content.order.ChildOrder;
 import ContentSummary = api.content.ContentSummary;
 import DropdownHandle = api.ui.button.DropdownHandle;
 import ArrayHelper = api.util.ArrayHelper;
+import KeyHelper = api.ui.KeyHelper;
 
 export class SortContentTabMenu extends api.ui.tab.TabMenu {
 
@@ -25,7 +26,12 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         this.dropdownHandle = new DropdownHandle();
         this.appendChild(this.dropdownHandle);
         this.dropdownHandle.up();
-        this.dropdownHandle.onClicked((event: any) => {
+
+        this.initEventHandlers();
+    }
+
+    initEventHandlers() {
+        this.dropdownHandle.onClicked(() => {
             if (this.isMenuVisible()) {
                 this.hideMenu();
             } else {
@@ -33,6 +39,16 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
             }
         });
 
+        this.dropdownHandle.onKeyDown((event: KeyboardEvent) => {
+            if (KeyHelper.isArrowDownKey(event)) {
+                this.showMenu();
+            }
+            if (KeyHelper.isArrowUpKey(event)) {
+                this.hideMenu();
+            }
+            event.stopPropagation();
+            event.preventDefault();
+        });
     }
 
     protected hideMenu() {
@@ -108,6 +124,10 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         this.sortOrderChangedListeners.forEach((listener: () => void) => {
             listener.call(this);
         });
+    }
+
+    focus() {
+        this.dropdownHandle.giveFocus();
     }
 
 }

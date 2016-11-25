@@ -71,7 +71,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
-        this.saveButton.giveFocus();
+        this.sortContentMenu.focus();
     }
 
     close() {
