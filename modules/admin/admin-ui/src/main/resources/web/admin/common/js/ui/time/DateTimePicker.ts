@@ -18,8 +18,6 @@ module api.ui.time {
 
         closeOnSelect: boolean = false;
 
-        closeOnOutsideClick: boolean = true;
-
         timezone: Timezone;
 
         // use local timezone if timezone value is not initialized
@@ -65,11 +63,6 @@ module api.ui.time {
             return this;
         }
 
-        setCloseOnOutsideClick(value: boolean): DateTimePickerBuilder {
-            this.closeOnOutsideClick = value;
-            return this;
-        }
-
         setUseLocalTimezoneIfNotPresent(value: boolean): DateTimePickerBuilder {
             this.useLocalTimezoneIfNotPresent = value;
             return this;
@@ -110,6 +103,7 @@ module api.ui.time {
 
         protected initInput() {
             this.input = api.ui.text.TextInput.middle(undefined, this.formatDateTime(this.selectedDate));
+            this.input.setPlaceholder("YYYY-MM-DD mm:ss");
         }
 
         protected initPopup(builder: DateTimePickerBuilder) {
@@ -140,17 +134,6 @@ module api.ui.time {
         }
 
         protected setupListeners(builder: DateTimePickerBuilder) {
-
-            if (builder.closeOnOutsideClick) {
-                api.util.AppHelper.focusInOut(this, () => {
-                    this.popup.hide();
-                }, 50, false);
-
-                // Prevent focus loss on mouse down
-                this.popup.onMouseDown((event: MouseEvent) => {
-                    event.preventDefault();
-                });
-            }
 
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {

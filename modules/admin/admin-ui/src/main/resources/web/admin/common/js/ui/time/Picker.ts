@@ -31,6 +31,15 @@ module api.ui.time {
             this.popup.onShown(e => this.addClass("expanded"));
             this.popup.onHidden(e => this.removeClass("expanded"));
 
+            api.util.AppHelper.focusInOut(this, () => {
+                this.popup.hide();
+            }, 50, false);
+
+            // Prevent focus loss on mouse down
+            this.popup.onMouseDown((event: MouseEvent) => {
+                event.preventDefault();
+            });
+
             this.input.onClicked((e: MouseEvent) => {
                 e.preventDefault();
                 this.togglePopupVisibility();
