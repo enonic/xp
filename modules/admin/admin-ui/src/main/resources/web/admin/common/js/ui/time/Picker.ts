@@ -66,6 +66,8 @@ module api.ui.time {
                 if (api.ui.KeyHelper.isEnterKey(event)) {
                     this.popup.hide();
                     api.dom.FormEl.moveFocusToNextFocusable(this.input);
+                    event.stopPropagation();
+                    event.preventDefault();
                 } else if (api.ui.KeyHelper.isEscKey(event) || api.ui.KeyHelper.isArrowUpKey(event)) {
                     this.popup.hide();
                 } else if (api.ui.KeyHelper.isArrowDownKey(event)) {
