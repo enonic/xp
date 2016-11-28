@@ -44,6 +44,7 @@ import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FROM;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TO;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
 
@@ -153,7 +154,8 @@ public final class ContentDataSerializer
         if ( data != null )
         {
             final PropertySet publishInfo = contentAsData.addSet( PUBLISH_INFO );
-            publishInfo.ifNotNull().addInstant( PUBLISH_FROM, data.getFrom() );
+            publishInfo.addInstant( PUBLISH_FROM, data.getFrom() );
+            publishInfo.addInstant( PUBLISH_TO, data.getTo() );
         }
     }
 

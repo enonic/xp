@@ -50,6 +50,7 @@ public final class TestDataFixtures
         builder.data( newPropertyTree() );
         builder.publishInfo( ContentPublishInfo.create().
             from( Instant.parse( "2016-11-03T10:00:00Z" ) ).
+            to( Instant.parse( "2016-11-23T10:00:00Z" ) ).
             build() );
         builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );

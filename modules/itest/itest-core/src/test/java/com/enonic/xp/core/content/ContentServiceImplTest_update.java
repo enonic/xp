@@ -451,6 +451,7 @@ public class ContentServiceImplTest_update
             editor( edit -> {
                 edit.publishInfo = ContentPublishInfo.create().
                     from( Instant.parse( "2016-11-03T10:43:44Z" ) ).
+                    from( Instant.parse( "2016-11-23T10:43:44Z" ) ).
                     build();
             } );
 
