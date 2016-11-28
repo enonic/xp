@@ -192,6 +192,7 @@ public final class ContentDataSerializer
         {
             builder.publishInfo( ContentPublishInfo.create().
                 from( publishInfo.getInstant( PUBLISH_FROM ) ).
+                to( publishInfo.getInstant( PUBLISH_TO ) ).
                 build() );
         }
     }
