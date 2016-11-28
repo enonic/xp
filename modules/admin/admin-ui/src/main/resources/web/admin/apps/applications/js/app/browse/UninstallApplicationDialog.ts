@@ -12,9 +12,8 @@ export class UninstallApplicationDialog extends api.ui.dialog.ModalDialog {
 
 
     constructor(applications: Application[]) {
-        super({
-            title: new api.ui.dialog.ModalDialogHeader("Uninstall Applications")
-        });
+        super("Uninstall Applications");
+        
         this.applications = applications;
         this.addClass("uninstall-dialog");
 

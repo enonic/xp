@@ -6,8 +6,6 @@ module api.ui.time {
 
         minutes: number;
 
-        closeOnOutsideClick: boolean = true;
-
         setHours(value: number): TimePickerBuilder {
             this.hours = value;
             return this;
@@ -15,11 +13,6 @@ module api.ui.time {
 
         setMinutes(value: number): TimePickerBuilder {
             this.minutes = value;
-            return this;
-        }
-
-        setCloseOnOutsideClick(value: boolean): TimePickerBuilder {
-            this.closeOnOutsideClick = value;
             return this;
         }
 
@@ -48,12 +41,25 @@ module api.ui.time {
             }
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
-            this.input.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.togglePopupVisibility();
+            this.input.setPlaceholder("mm:ss");
+        }
+
+        protected setupListeners(builder: TimePickerBuilder) {
+
+            this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
+                if (hours != null && minutes != null) {
+                    this.input.setValue(this.formatTime(hours, minutes), false, true);
+                    this.validUserInput = true;
+                }
+
+                this.updateInputStyling();
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isArrowKey(event) || api.ui.KeyHelper.isModifierKey(event)) {
+                    return;
+                }
+
                 var typedTime = this.input.getValue();
                 if (api.util.StringHelper.isEmpty(typedTime)) {
                     this.validUserInput = true;
@@ -77,68 +83,6 @@ module api.ui.time {
                 }
 
                 this.updateInputStyling();
-            });
-        }
-
-        protected initPopupTrigger() {
-            this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-clock');
-        }
-
-        protected setupListeners(builder: TimePickerBuilder) {
-
-            if (builder.closeOnOutsideClick) {
-                api.util.AppHelper.focusInOut(this, () => {
-                    this.popup.hide();
-                }, 50, false);
-
-                // Prevent focus loss on mouse down
-                this.popup.onMouseDown((event: MouseEvent) => {
-                    event.preventDefault();
-                });
-            }
-
-            this.popupTrigger.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.togglePopupVisibility();
-            });
-
-            this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
-                if (hours != null && minutes != null) {
-                    this.input.setValue(this.formatTime(hours, minutes), false, true);
-                    this.validUserInput = true;
-                }
-
-                this.updateInputStyling();
-            });
-
-            this.popup.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    if (!(document.activeElement == this.input.getEl().getHTMLElement())) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.popup.hide();
-                        this.popupTrigger.giveFocus();
-                    }
-                }
-            });
-
-            this.input.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) { // handles tab navigation events on date input
-                    if (!event.shiftKey) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.popupTrigger.giveFocus();
-                    } else {
-                        this.popup.hide();
-                    }
-                }
-            });
-
-            this.popupTrigger.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    this.popup.hide();
-                }
             });
         }
 

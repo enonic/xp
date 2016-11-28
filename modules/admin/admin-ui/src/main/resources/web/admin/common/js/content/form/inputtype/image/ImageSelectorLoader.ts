@@ -8,8 +8,11 @@ module api.content.form.inputtype.image {
         private imageSelectorQueryRequest: ContentSelectorQueryRequest;
 
         constructor(builder: Builder) {
-            this.imageSelectorQueryRequest = new ContentSelectorQueryRequest();
-            super(this.imageSelectorQueryRequest);
+            let imageSelectorQueryRequest = new ContentSelectorQueryRequest();
+            
+            super(imageSelectorQueryRequest);
+
+            this.imageSelectorQueryRequest = imageSelectorQueryRequest;
             this.imageSelectorQueryRequest.setContent(builder.content);
             this.imageSelectorQueryRequest.setInputName(builder.inputName);
             this.imageSelectorQueryRequest.setContentTypeNames(builder.contentTypeNames);

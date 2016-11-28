@@ -360,7 +360,6 @@ module api.ui {
             case Tooltip.TRIGGER_HOVER:
             default:
                 return enter ? "mouseenter" : "mouseleave";
-                break;
             }
         }
 

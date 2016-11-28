@@ -1,20 +1,24 @@
 module api.ui.menu {
 
     export class TreeMenuItem extends api.dom.DdDtEl {
-
         private action: api.ui.Action;
-
+        
         constructor(action: api.ui.Action, cls: string = "", expanded: boolean = false) {
-            super(this.getTag(action), this.getCls(action, cls, expanded));
+            super(action.hasParentAction() ? "dd" : "dt");
+            
             this.action = action;
-            this.getEl().setInnerHtml(this.action.getLabel());
+            cls = this.getCls(action, cls, expanded);
+            if (cls) {
+                this.setClass(cls);
+            }
+            this.getEl().setInnerHtml(action.getLabel());
             this.onClicked((event: MouseEvent) => {
                 if (action.isEnabled()) {
                     if (action.hasChildActions()) {
                         this.toggleExpand();
                     }
                     else {
-                        this.action.execute();
+                        action.execute();
                     }
                 }
             });
@@ -28,10 +32,6 @@ module api.ui.menu {
 
         public toggleExpand() {
             this.toggleClass("expanded");
-        }
-
-        private getTag(action: api.ui.Action): string {
-            return action.hasParentAction() ? "dd" : "dt";
         }
 
         private getCls(action: api.ui.Action, cls: string = "", expanded: boolean = false): string {

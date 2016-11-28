@@ -47,16 +47,15 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     protected dependantIds: ContentId[];
 
     constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
-        super({
-            title: new api.ui.dialog.ModalDialogHeader(dialogName)
-        });
+        super(dialogName);
+        
         this.addClass("dependant-dialog");
 
         this.dialogName = dialogName;
 
         this.subTitle = new api.dom.H6El("sub-title")
             .setHtml(dialogSubName, false);
-        this.appendChildToTitle(this.subTitle);
+        this.appendChildToHeader(this.subTitle);
 
         this.itemList = this.createItemList();
         this.itemList.addClass("item-list");

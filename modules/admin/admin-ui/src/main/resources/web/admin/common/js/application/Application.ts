@@ -213,10 +213,7 @@ module api.application {
 
         iconUrl: string;
 
-
         constructor(source?: Application) {
-            this.applicationDependencies = [];
-            this.contentTypeDependencies = [];
             if (source) {
                 super(source);
                 this.applicationKey = source.getApplicationKey();
@@ -235,6 +232,10 @@ module api.application {
                 this.minSystemVersion = source.getMinSystemVersion();
                 this.maxSystemVersion = source.getMaxSystemVersion();
                 this.iconUrl = source.getIconUrl();
+            }
+            else {
+                this.applicationDependencies = [];
+                this.contentTypeDependencies = [];
             }
         }
 

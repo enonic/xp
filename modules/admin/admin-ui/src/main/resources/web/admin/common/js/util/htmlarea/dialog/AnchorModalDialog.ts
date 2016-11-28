@@ -7,7 +7,7 @@ module api.util.htmlarea.dialog {
 
         constructor(editor: HtmlAreaEditor) {
 
-            super(editor, new api.ui.dialog.ModalDialogHeader("Insert Anchor"));
+            super(editor, "Insert Anchor");
         }
 
         protected getMainFormItems(): FormItem[] {

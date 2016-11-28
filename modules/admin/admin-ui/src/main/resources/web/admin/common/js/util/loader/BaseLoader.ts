@@ -13,8 +13,8 @@ module api.util.loader {
     }
 
     export class BaseLoader<JSON, OBJECT> {
-
-        private request: api.rest.ResourceRequest<JSON, OBJECT[]>;
+        
+        protected request: api.rest.ResourceRequest<JSON, OBJECT[]>;
 
         private status: LoaderStatus = LoaderStatus.NOT_STARTED;
 
@@ -30,10 +30,18 @@ module api.util.loader {
 
         private comparator: Comparator<OBJECT>;
 
-        constructor(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
-            this.setRequest(request);
+        constructor(request?: api.rest.ResourceRequest<JSON, OBJECT[]>) {
+            this.setRequest(request || this.createRequest());
         }
 
+        protected createRequest(): api.rest.ResourceRequest<JSON, OBJECT[]> {
+            throw new Error('Must be implemented in deriving classes!');
+        }
+
+        protected getRequest(): api.rest.ResourceRequest<JSON, OBJECT[]> {
+            return this.request;
+        }
+        
         sendRequest(): wemQ.Promise<OBJECT[]> {
             return this.request.sendAndParse();
         }
@@ -102,10 +110,6 @@ module api.util.loader {
 
         setRequest(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
             this.request = request;
-        }
-
-        getRequest(): api.rest.ResourceRequest<JSON, OBJECT[]> {
-            return this.request;
         }
 
         search(searchString: string): wemQ.Promise<OBJECT[]> {

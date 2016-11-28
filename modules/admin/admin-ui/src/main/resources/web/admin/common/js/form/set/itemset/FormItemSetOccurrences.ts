@@ -26,17 +26,17 @@ module api.form {
     export class FormItemSetOccurrences extends FormSetOccurrences<FormItemSetOccurrenceView> {
 
         constructor(config: FormItemSetOccurrencesConfig) {
-            this.occurrencesCollapsed = false;
-            this.context = config.context;
-            this.formSet = config.formItemSet;
-            this.parent = config.parent;
-
             super(<FormItemOccurrencesConfig>{
                 formItem: config.formItemSet,
                 propertyArray: config.propertyArray,
                 occurrenceViewContainer: config.occurrenceViewContainer,
                 allowedOccurrences: config.formItemSet.getOccurrences()
             });
+
+            this.context = config.context;
+            this.formSet = config.formItemSet;
+            this.parent = config.parent;
+            this.occurrencesCollapsed = false;
         }
 
         createNewOccurrenceView(occurrence: FormSetOccurrence<FormItemSetOccurrenceView>): FormItemSetOccurrenceView {

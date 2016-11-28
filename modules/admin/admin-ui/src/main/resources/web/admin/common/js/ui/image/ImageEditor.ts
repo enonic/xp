@@ -236,7 +236,7 @@ module api.ui.image {
 
         setSrc(src: string) {
             this.image.setSrc(src);
-            var image: HTMLElement = <HTMLElement> this.clip.getHTMLElement().querySelector('image');
+            var image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('xlink:href', src);
         }
 
@@ -253,7 +253,7 @@ module api.ui.image {
         }
 
         private setImageClipPath(path: Element) {
-            var image = this.clip.getHTMLElement().querySelector('image');
+            var image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('clip-path', 'url(#' + path.getId() + ')');
         }
 
@@ -694,6 +694,7 @@ module api.ui.image {
             standbyContainer.appendChildren(resetButton, this.uploadButton);
 
             this.editCropButton = new Button();
+            new Tooltip(this.editCropButton, 'Crop Image', 1000);
             this.editCropButton.addClass('button-crop transparent icon-crop').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -710,6 +711,7 @@ module api.ui.image {
             });
 
             this.editFocusButton = new Button();
+            new Tooltip(this.editFocusButton, 'Set Autofocus', 1000);
             this.editFocusButton.addClass('button-focus transparent icon-center_focus_strong').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 

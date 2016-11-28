@@ -23,10 +23,12 @@ module api.content.page {
         regions: region.RegionDescriptor[];
 
         constructor(source?: PageDescriptor) {
-            this.regions = [];
             if (source) {
                 super(source);
                 this.regions = source.getRegions();
+            }
+            else {
+                this.regions = [];
             }
         }
 

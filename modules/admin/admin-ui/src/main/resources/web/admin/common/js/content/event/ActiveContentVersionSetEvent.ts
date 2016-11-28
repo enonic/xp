@@ -6,9 +6,9 @@ module api.content.event {
         private versionId: string;
 
         constructor(contentId: api.content.ContentId, versionId: string) {
+            super();
             this.contentId = contentId;
             this.versionId = versionId;
-            super();
         }
 
         getContentId(): api.content.ContentId {

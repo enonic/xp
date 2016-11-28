@@ -12,13 +12,13 @@ export class UserStoreWizardDataLoader {
 
     loadData(params: UserStoreWizardPanelParams): wemQ.Promise<UserStoreWizardDataLoader> {
         if (!params.persistedItem && !params.userStoreKey) {
-            return this.loadDataForNew(params);
+            return this.loadDataForNew();
         } else {
             return this.loadDataForEdit(params);
         }
     }
 
-    private loadDataForNew(params: UserStoreWizardPanelParams): wemQ.Promise<UserStoreWizardDataLoader> {
+    private loadDataForNew(): wemQ.Promise<UserStoreWizardDataLoader> {
 
         return this.loadDefaultUserStore().then((defaultUserStore: UserStore) => {
 
@@ -30,7 +30,7 @@ export class UserStoreWizardDataLoader {
 
     loadDataForEdit(params: UserStoreWizardPanelParams): wemQ.Promise<UserStoreWizardDataLoader> {
 
-        return this.loadDataForNew(params).then((loader) => {
+        return this.loadDataForNew().then((loader) => {
 
             return this.loadUserStoreToEdit(params).then((loadedUserStoreToEdit: UserStore) => {
 

@@ -5,8 +5,9 @@ module api.ui.treegrid.actions {
     export class ClearSelectionAction<DATA> extends Action {
 
         constructor(treeGrid: TreeGrid<DATA>) {
-            super(this.createLabel(treeGrid.getRoot().getFullSelection().length));
+            super();
 
+            this.createLabel(treeGrid);
             this.setEnabled(true);
             this.onExecuted(() => {
                 treeGrid.getRoot().clearStashedSelection();
@@ -14,14 +15,20 @@ module api.ui.treegrid.actions {
             });
 
             treeGrid.onSelectionChanged(() => {
-                var selectedCount = treeGrid.getRoot().getFullSelection().length;
-                this.setLabel(this.createLabel(selectedCount));
-                this.setEnabled(!!selectedCount);
+                this.createLabel(treeGrid);
+                this.setEnabled(!!this.getCount(treeGrid));
             });
         }
 
-        private createLabel(count: number): string {
-            return "Clear Selection" + ( !!count ? " (" + count + ")" : "");
+        private createLabel(treeGrid: TreeGrid<DATA>) {
+            let count = this.getCount(treeGrid);
+            let label = "Clear Selection" + ( !!count ? " (" + count + ")" : "");
+
+            this.setLabel(label);
+        }
+
+        private getCount(treeGrid: TreeGrid<DATA>): number {
+            return treeGrid.getRoot().getFullSelection().length;
         }
     }
 }

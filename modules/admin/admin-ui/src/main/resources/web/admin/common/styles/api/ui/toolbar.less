@@ -3,6 +3,7 @@
 
   background-color: @admin-white;
   height: @toolbar-height;
+  line-height: 41px;
   overflow: visible; // for the button glow
   .box-sizing(border-box);
   border-bottom: 1px solid @admin-bg-light-gray;
@@ -17,7 +18,10 @@
     }
 
     display: inline-block;
-    padding: 7px 14px;
+    vertical-align: top;
+    height: 100%;
+    line-height: 41px;
+    padding: 0 14px;
 
     &.pull-right {
       float: right;
@@ -25,7 +29,6 @@
 
     &[class*="icon-"] {
       font-size: 16px;
-      line-height: 24px;
 
       span {
         display: none;
@@ -38,10 +41,13 @@
     margin: 11px 7px;
   }
 
+  .menu-button {
+    height: 100%;
+  }
+
   .fold-button {
-    height: @toolbar-height - 1px; // minus border
     margin-right: 18px;
-    padding: 7px 27px 7px 17px;
+    padding: 0 27px 0 17px;
     position: relative; // for the dropdown to position itself
 
     &:after {

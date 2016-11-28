@@ -19,7 +19,7 @@ module api.liveedit.layout {
 
     export class LayoutComponentView extends ComponentView<LayoutComponent> {
 
-        private layoutComponent: LayoutComponent;
+        protected component: LayoutComponent;
 
         private regionViews: RegionView[];
 
@@ -27,22 +27,21 @@ module api.liveedit.layout {
 
         private itemViewRemovedListener: (event: ItemViewRemovedEvent) => void;
 
-        public static debug: boolean;
+        public static debug: boolean = false;
 
         constructor(builder: LayoutComponentViewBuilder) {
+            super(builder.
+                setViewer(new LayoutComponentViewer()).
+                setInspectActionRequired(true));
+
+            this.setPlaceholder(new LayoutPlaceholder(this));
             this.regionViews = [];
 
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
-            this.layoutComponent = builder.component;
             LayoutComponentView.debug = false;
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView(), event.isNew());
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => this.notifyItemViewRemoved(event.getView());
-
-            super(builder.
-                setViewer(new LayoutComponentViewer()).
-                setPlaceholder(new LayoutPlaceholder(this)).
-                setInspectActionRequired(true));
 
             this.parseRegions();
         }
@@ -80,6 +79,11 @@ module api.liveedit.layout {
 
         setComponent(layoutComponent: LayoutComponent) {
             super.setComponent(layoutComponent);
+            
+            if (!this.regionViews) {
+                return;
+            }
+            
             var regions = layoutComponent.getRegions().getRegions();
             this.regionViews.forEach((regionView: RegionView, index: number) => {
                 var region = regions[index];
@@ -89,10 +93,6 @@ module api.liveedit.layout {
 
         getRegions(): RegionView[] {
             return this.regionViews;
-        }
-
-        isEmpty(): boolean {
-            return !this.layoutComponent || this.layoutComponent.isEmpty();
         }
 
         toItemViewArray(): ItemView[] {

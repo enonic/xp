@@ -5,8 +5,9 @@ export class BaseContentModelEvent extends api.event.Event {
     private model: api.content.ContentSummaryAndCompareStatus[];
 
     constructor(model: api.content.ContentSummaryAndCompareStatus[]) {
-        this.model = model;
         super();
+
+        this.model = model;
     }
 
     getModels(): api.content.ContentSummaryAndCompareStatus[] {

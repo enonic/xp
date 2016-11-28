@@ -1,11 +1,11 @@
 import "../../api.ts";
+import {OpenChangePasswordDialogEvent} from "./OpenChangePasswordDialogEvent";
 
 import Principal = api.security.Principal;
 import PasswordGenerator = api.ui.text.PasswordGenerator;
 import DialogButton = api.ui.dialog.DialogButton;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
-import {OpenChangePasswordDialogEvent} from "./OpenChangePasswordDialogEvent";
 
 export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
 
@@ -18,9 +18,7 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     private changePasswordButton: DialogButton;
 
     constructor() {
-        super({
-            title: new api.ui.dialog.ModalDialogHeader("Change password")
-        });
+        super("Change password");
 
         this.getEl().addClass("change-password-dialog");
 

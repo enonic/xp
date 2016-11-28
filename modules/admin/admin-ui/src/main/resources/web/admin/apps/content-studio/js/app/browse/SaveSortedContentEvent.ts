@@ -5,8 +5,9 @@ export class SaveSortedContentEvent extends api.event.Event {
     private content: api.content.ContentSummary;
 
     constructor(content: api.content.ContentSummary) {
-        this.content = content;
         super();
+
+        this.content = content;
     }
 
     getContent(): api.content.ContentSummary {

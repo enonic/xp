@@ -38,6 +38,8 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
 
     private componentPropertyChangedEventHandler;
 
+    protected selector: LayoutDescriptorDropdown;
+
     constructor() {
         super(<DescriptorBasedComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("layout", "icon-xlarge")
@@ -48,14 +50,10 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
 
         this.removeChildren();
 
-        var descriptorsRequest = new GetLayoutDescriptorsByApplicationsRequest(this.liveEditModel.getSiteModel().getApplicationKeys());
-        var loader = new LayoutDescriptorLoader(descriptorsRequest);
-        loader.setComparator(new DescriptorByDisplayNameComparator());
-
-        this.selector = new LayoutDescriptorDropdown("", loader);
+        this.selector = new LayoutDescriptorDropdown();
         this.layoutForm = new DescriptorBasedDropdownForm(this.selector, "Layout");
 
-        loader.load();
+        this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
@@ -74,9 +72,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
 
     protected reloadDescriptorsOnApplicationChange() {
         if(this.selector) {
-            (<GetLayoutDescriptorsByApplicationsRequest>this.selector.getLoader().getRequest()).
-                setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
-            super.reloadDescriptorsOnApplicationChange();
+            this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
         }
     }
 

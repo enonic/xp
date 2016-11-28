@@ -22,7 +22,7 @@ module api.liveedit.text {
 
     export class TextComponentView extends ComponentView<TextComponent> {
 
-        private textComponent: TextComponent;
+        protected component: TextComponent;
 
         private rootElement: api.dom.Element;
 
@@ -49,17 +49,15 @@ module api.liveedit.text {
         private currentDialogConfig;
 
         constructor(builder: TextComponentViewBuilder) {
-
-            this.lastClicked = 0;
-            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
-            this.textComponent = builder.component;
-            this.isInitializingEditor = false;
-
             super(builder.
-                setContextMenuActions(this.createTextContextMenuActions()).
                 setPlaceholder(new TextPlaceholder()).
                 setViewer(new TextComponentViewer()).
-                setComponent(this.textComponent));
+                setComponent(builder.component));
+
+            this.addTextContextMenuActions();
+            this.lastClicked = 0;
+            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
+            this.isInitializingEditor = false;
 
             this.addClassEx('text-view');
 
@@ -162,10 +160,6 @@ module api.liveedit.text {
             }
         }
 
-        isEmpty(): boolean {
-            return !this.textComponent || this.textComponent.isEmpty();
-        }
-
         private doHandleDbClick(event: MouseEvent) {
             if (this.isEditMode() && this.isActive()) {
                 return;
@@ -253,12 +247,7 @@ module api.liveedit.text {
                     this.processEditorValue();
                 }
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
-                if (api.BrowserHelper.isFirefox()) {
-                    var activeEditor = tinymce.activeEditor;
-                    if (!!activeEditor) {
-                        activeEditor.fire('blur');
-                    }
-                }
+                this.triggerEventInActiveEditorForFirefox('blur');
             }
 
             this.toggleClass('edit-mode', flag);
@@ -269,12 +258,23 @@ module api.liveedit.text {
                     this.initEditor();
                 }
 
-                if (this.textComponent.isEmpty()) {
+                if (this.component.isEmpty()) {
                     if (!!this.htmlAreaEditor) {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                     }
                     this.rootElement.setHtml(TextComponentView.DEFAULT_TEXT, false);
                     this.selectText();
+                }
+
+                this.triggerEventInActiveEditorForFirefox('focus');
+            }
+        }
+
+        private triggerEventInActiveEditorForFirefox(eventName: string) {
+            if (api.BrowserHelper.isFirefox()) {
+                var activeEditor = tinymce.activeEditor;
+                if (activeEditor) {
+                    activeEditor.fire(eventName);
                 }
             }
         }
@@ -337,8 +337,8 @@ module api.liveedit.text {
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
-                    if (!!this.textComponent.getText()) {
-                        this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.textComponent.getText()));
+                    if (!!this.component.getText()) {
+                        this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.component.getText()));
                     } else {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                         this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
@@ -387,14 +387,14 @@ module api.liveedit.text {
             }
 
             if (this.isEditorEmpty()) {
-                this.textComponent.setText(TextComponentView.DEFAULT_TEXT);
+                this.component.setText(TextComponentView.DEFAULT_TEXT);
                 // copy editor content over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = TextComponentView.DEFAULT_TEXT;
             } else {
                 // copy editor raw content (without any processing!) over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = this.htmlAreaEditor.getContent({format: 'raw'});
                 // but save processed text to the component
-                this.textComponent.setText(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor));
+                this.component.setText(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor));
             }
         }
 
@@ -448,15 +448,15 @@ module api.liveedit.text {
             }
             return this.rootElement.giveFocus();
         }
-
-        private createTextContextMenuActions(): api.ui.Action[] {
-            var actions: api.ui.Action[] = [];
-            actions.push(new api.ui.Action('Edit').onExecuted(() => {
-                this.startPageTextEditMode();
-                this.focusOnInit = true;
-                this.forceEditorFocus();
-            }));
-            return actions;
+        
+        private addTextContextMenuActions() {
+            this.addContextMenuActions([
+                new api.ui.Action('Edit').onExecuted(() => {
+                    this.startPageTextEditMode();
+                    this.focusOnInit = true;
+                    this.forceEditorFocus();
+                })
+            ]);
         }
     }
 }

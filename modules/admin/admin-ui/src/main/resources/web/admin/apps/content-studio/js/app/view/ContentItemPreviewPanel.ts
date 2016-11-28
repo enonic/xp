@@ -7,12 +7,24 @@ import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
+import PEl = api.dom.PEl;
+
+
+enum PREVIEW_TYPE {
+    IMAGE,
+    SVG,
+    PAGE,
+    EMPTY,
+    FAILED
+}
 
 export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
     private image: api.dom.ImgEl;
     private item: ViewItem<ContentSummaryAndCompareStatus>;
     private skipNextSetItemCall: boolean = false;
+    private previewType: PREVIEW_TYPE;
+    private previewMessageEl: PEl;
 
     constructor() {
         super("content-item-preview-panel");
@@ -25,7 +37,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         });
 
         this.image.onError((event: UIEvent) => {
-            this.setNoPreview();
+            this.setPreviewType(PREVIEW_TYPE.FAILED);
         });
 
         this.appendChild(this.image);
@@ -57,7 +69,8 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                 if (frameWindow) {
                     frameWindow.addEventListener("click", this.frameClickHandler.bind(this));
                 }
-            } catch (reason) {}
+            } catch (reason) {
+            }
         });
     }
 
@@ -117,17 +130,20 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
             }
             if (item.getModel().getContentSummary().getType().isImage() ||
                 item.getModel().getContentSummary().getType().isVectorMedia()) {
-                this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
+
                 if (this.isVisible()) {
                     if (item.getModel().getContentSummary().getType().equals(ContentTypeName.MEDIA_VECTOR)) {
-                        this.getEl().addClass("svg-preview");
+                        this.setPreviewType(PREVIEW_TYPE.SVG);
                         var imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(
                             item.getModel().getContentId()).setTimestamp(
                             item.getModel().getContentSummary().getModifiedTime()).resolve();
                         this.image.setSrc(imgUrl);
                     } else {
                         this.addImageSizeToUrl(item);
+                        this.setPreviewType(PREVIEW_TYPE.IMAGE);
                     }
+                } else {
+                    this.setPreviewType(PREVIEW_TYPE.IMAGE);
                 }
                 if (!this.image.isLoaded()) {
                     this.showMask();
@@ -135,12 +151,12 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
             } else {
                 this.showMask();
                 if (item.isRenderable()) {
-                    this.getEl().removeClass("image-preview no-preview svg-preview").addClass('page-preview');
+                    this.setPreviewType(PREVIEW_TYPE.PAGE);
                     var src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW, api.content.Branch.DRAFT);
                     // test if it returns no error( like because of used app was deleted ) first and show no preview otherwise
-                    wemjq.get(src).done(() => this.frame.setSrc(src)).fail(() => this.setNoPreview());
+                    wemjq.get(src).done(() => this.frame.setSrc(src)).fail(() => this.setPreviewType(PREVIEW_TYPE.FAILED));
                 } else {
-                    this.setNoPreview();
+                    this.setPreviewType(PREVIEW_TYPE.EMPTY);
                 }
             }
         }
@@ -151,10 +167,56 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         return this.item;
     }
 
-    private setNoPreview() {
-        this.getEl().removeClass("image-preview page-preview svg-preview").addClass('no-preview');
+    private setPreviewType(previewType: PREVIEW_TYPE) {
+
+        if (this.previewType != previewType) {
+
+            this.getEl().removeClass("image-preview page-preview svg-preview no-preview");
+
+            if (this.previewMessageEl) {
+                this.previewMessageEl.remove();
+                this.previewMessageEl = null;
+            }
+
+            switch (previewType) {
+            case PREVIEW_TYPE.PAGE: {
+                this.getEl().addClass("page-preview");
+                break;
+            }
+            case PREVIEW_TYPE.IMAGE: {
+                this.getEl().addClass("image-preview");
+                break;
+            }
+            case PREVIEW_TYPE.SVG: {
+                this.getEl().addClass("svg-preview");
+                break;
+            }
+            case PREVIEW_TYPE.EMPTY: {
+                this.showPreviewMessage("Preview not available");
+                break;
+            }
+            case PREVIEW_TYPE.FAILED: {
+                this.showPreviewMessage(
+                    "Failed to render content preview.<br/> Please check logs for errors or open preview in a new window");
+                break;
+            }
+            }
+        }
+
+        this.previewType = previewType;
+
+        if (PREVIEW_TYPE.FAILED == previewType || PREVIEW_TYPE.EMPTY == previewType) {
+            this.hideMask();
+        }
+    }
+
+    private showPreviewMessage(value: string, escapeHtml: boolean = false) {
+        this.getEl().addClass("no-preview");
+
+        this.appendChild(this.previewMessageEl = new PEl("no-preview-message").setHtml(
+            value, false));
+
         this.frame.setSrc("about:blank");
-        this.hideMask();
     }
 
     private showMask() {

@@ -3,23 +3,28 @@ import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublish
 
 import CycleButton = api.ui.button.CycleButton;
 import TogglerButton = api.ui.button.TogglerButton;
+import HomeButton = api.app.bar.HomeButton;
+import Application = api.app.Application;
+import Action = api.ui.Action;
 
 export interface ContentWizardToolbarParams {
-    saveAction: api.ui.Action;
-    duplicateAction: api.ui.Action;
-    deleteAction: api.ui.Action;
-    publishAction: api.ui.Action;
-    publishTreeAction: api.ui.Action;
-    unpublishAction: api.ui.Action;
-    previewAction: api.ui.Action;
-    showLiveEditAction: api.ui.Action;
-    showFormAction: api.ui.Action;
-    showSplitEditAction: api.ui.Action;
-    publishMobileAction: api.ui.Action;
+    application: Application;
+    saveAction: Action;
+    duplicateAction: Action;
+    deleteAction: Action;
+    publishAction: Action;
+    publishTreeAction: Action;
+    unpublishAction: Action;
+    previewAction: Action;
+    showLiveEditAction: Action;
+    showFormAction: Action;
+    showSplitEditAction: Action;
+    publishMobileAction: Action;
 }
 
 export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
+    private homeButton: HomeButton;
     private contextWindowToggler: TogglerButton;
     private componentsViewToggler: TogglerButton;
     private cycleViewModeButton: CycleButton;
@@ -27,6 +32,22 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
     constructor(params: ContentWizardToolbarParams) {
         super("content-wizard-toolbar");
+
+        let homeAction = new Action(params.application.getName());
+        homeAction.onExecuted((action) => {
+            let appId = params.application.getId();
+            let tabId;
+            if (navigator.userAgent.search("Chrome") > -1) {
+                // add tab id for browsers that can focus tabs by id
+                tabId = appId;
+            }
+            window.open(appId + '#/browse', tabId);     // add browse to prevent tab reload because of url mismatch
+            return wemQ(null);
+        });
+
+        this.homeButton = new HomeButton(params.application, homeAction);
+        super.addElement(this.homeButton);
+
         super.addAction(params.saveAction);
         super.addAction(params.deleteAction);
         super.addAction(params.duplicateAction);

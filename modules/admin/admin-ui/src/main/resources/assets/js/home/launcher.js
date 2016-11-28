@@ -100,7 +100,7 @@ function openWindow(windowArr, anchorEl) {
         windowArr[windowId].focus();
     }
     else {
-        windowArr[windowId] = window.open(anchorEl.href);
+        windowArr[windowId] = window.open(anchorEl.href, windowId);
     }
 }
 

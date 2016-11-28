@@ -1,10 +1,10 @@
-module api.content.page.region {
+module api.content.page {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class PartDescriptorLoader extends api.util.loader.BaseLoader<PartDescriptorsJson, PartDescriptor> {
+    export class PageDescriptorLoader extends api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor> {
 
-        protected request: GetPartDescriptorsByApplicationsRequest;
+        protected request: GetPageDescriptorsByApplicationsRequest;
 
         constructor() {
             super();
@@ -12,12 +12,12 @@ module api.content.page.region {
             this.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
         }
 
-        filterFn(descriptor: PartDescriptor) {
+        filterFn(descriptor: PageDescriptor) {
             return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
         }
 
-        protected createRequest(): GetPartDescriptorsByApplicationsRequest {
-            return new GetPartDescriptorsByApplicationsRequest();
+        protected createRequest(): GetPageDescriptorsByApplicationsRequest {
+            return new GetPageDescriptorsByApplicationsRequest();
         }
         
         setApplicationKeys(applicationKeys: ApplicationKey[]) {

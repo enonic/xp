@@ -25,10 +25,11 @@ module api.content.site.inputtype.siteconfigurator {
         private cancelCallback: () => void;
 
         constructor(application:Application, formView:FormView, okCallback?:() => void, cancelCallback?:() => void) {
-            super({
-                title: this.initHeader(application)
-            });
+            super();
 
+            this.appendChildToHeader(this.getHeaderContent(application));
+
+            //this.setTitleConfig(this.initHeader(application));
             this.formView = formView;
             this.okCallback = okCallback;
             this.cancelCallback = cancelCallback;
@@ -83,9 +84,7 @@ module api.content.site.inputtype.siteconfigurator {
             });
         }
 
-        private initHeader(application:Application):ModalDialogHeader {
-            var dialogHeader = new ModalDialogHeader("");
-
+        protected getHeaderContent(application: Application): api.app.NamesAndIconView {
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.large)).setMainName(application.getDisplayName()).setSubName(
                 application.getName() + "-" + application.getVersion());
@@ -97,9 +96,8 @@ module api.content.site.inputtype.siteconfigurator {
             if (application.getDescription()) {
                 namesAndIconView.setSubName(application.getDescription());
             }
-            
-            dialogHeader.appendChild(namesAndIconView);
-            return dialogHeader;
+
+            return namesAndIconView;
         }
 
         private handleSelectorsDropdowns(formView: FormView) {

@@ -2,17 +2,10 @@ module api.ui.dialog {
 
     import DivEl = api.dom.DivEl;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
-    export interface ModalDialogConfig {
-        title: api.ui.dialog.ModalDialogHeader;
-        forceHorizontalCentering?: boolean;
-        ignoreClickOutside?: boolean;
-    }
 
     export class ModalDialog extends api.dom.DivEl {
 
-        private config: ModalDialogConfig;
-
-        private title: api.ui.dialog.ModalDialogHeader;
+        protected header: api.ui.dialog.ModalDialogHeader;
 
         private contentPanel: ModalDialogContentPanel;
 
@@ -32,13 +25,15 @@ module api.ui.dialog {
 
         private tabbable: api.dom.Element[];
 
+        private forceHorizontalCentering: boolean;
+
         public static debug: boolean = false;
 
-        constructor(config: ModalDialogConfig) {
+        constructor(title: string = "", forceHorizontalCentering: boolean = false) {
             super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
 
-            this.config = config;
-
+            this.forceHorizontalCentering = forceHorizontalCentering;
+            
             var wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
             this.appendChild(wrapper);
 
@@ -47,8 +42,8 @@ module api.ui.dialog {
             this.cancelButton.onClicked(() => this.cancelAction.execute());
             wrapper.appendChild(this.cancelButton);
 
-            this.title = this.config.title;
-            wrapper.appendChild(this.title);
+            this.header = this.createHeader(title);
+            wrapper.appendChild(this.header);
 
             this.contentPanel = new ModalDialogContentPanel();
             wrapper.appendChild(this.contentPanel);
@@ -63,7 +58,7 @@ module api.ui.dialog {
             footer.appendChild(this.buttonRow);
 
             this.mouseClickListener = (event: MouseEvent) => {
-                if (this.isVisible() && !!this.config.ignoreClickOutside == false) {
+                if (this.isVisible()) {
                     for (var element = event.target; element; element = (<any>element).parentNode) {
                         if (element == this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
@@ -114,6 +109,10 @@ module api.ui.dialog {
             });
         }
 
+        protected createHeader(title: string): api.ui.dialog.ModalDialogHeader {
+            return new api.ui.dialog.ModalDialogHeader(title);
+        }
+
         private isIgnoredElementClicked(element: HTMLElement): boolean {
             if (!!element && !!element.className && !!element.className.indexOf) {
                 return element.className.indexOf("mce-") > -1 || element.className.indexOf("html-area-modal-dialog") > -1;
@@ -144,15 +143,15 @@ module api.ui.dialog {
         }
 
         setTitle(value: string) {
-            this.title.setTitle(value);
+            this.header.setTitle(value);
         }
 
         appendChildToContentPanel(child: api.dom.Element) {
             this.contentPanel.appendChild(child);
         }
 
-        appendChildToTitle(child: api.dom.Element) {
-            this.title.appendChild(child);
+        appendChildToHeader(child: api.dom.Element) {
+            this.header.appendChild(child);
         }
 
         removeChildFromContentPanel(child: api.dom.Element) {
@@ -175,7 +174,7 @@ module api.ui.dialog {
             super.hide();
             api.dom.Body.get().getHTMLElement().classList.remove("modal-dialog");
         }
-        
+
         protected centerMyself() {
             if (ModalDialog.debug) {
                 console.debug("ModalDialog.centerMyself", api.ClassHelper.getClassName(this));
@@ -183,7 +182,7 @@ module api.ui.dialog {
             var el = this.getEl();
             el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
 
-            if (this.config.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
+            if (this.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
                 this.centerHorisontally();
             } else {
                 el.setMarginLeft("0px");

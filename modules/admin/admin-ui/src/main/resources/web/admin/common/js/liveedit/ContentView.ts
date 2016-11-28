@@ -40,10 +40,12 @@ module api.liveedit {
                 setType(ContentItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.parentElement).
-                setParentView(builder.parentPartComponentView).
-                setContextMenuActions(this.createContentContextMenuActions()).
-                setContextMenuTitle(new ContentViewContextMenuTitle(this)));
+                setParentView(builder.parentPartComponentView));
+
             this.parentPartComponentView = builder.parentPartComponentView;
+
+            this.setContextMenuTitle(new ContentViewContextMenuTitle(this));
+
         }
 
         private createContentContextMenuActions(): api.ui.Action[] {

@@ -22,9 +22,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     private moveMask: api.ui.mask.LoadMask;
 
     constructor() {
-        super({
-            title: new api.ui.dialog.ModalDialogHeader("Move item with children")
-        });
+        super("Move item with children");
+        
         this.addClass("move-content-dialog");
 
         this.contentPathSubHeader = new api.dom.H6El().addClass("content-path");

@@ -4,16 +4,12 @@ module api.liveedit {
 
     export class ComponentItemType extends ItemType {
 
-        constructor(shortName: string, config: ItemTypeConfigJson) {
-            super(shortName, config);
-        }
-
         createView(config: CreateItemViewConfig<RegionView,Component>): ComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
         }
-
-        protected getDefaultConfigJson(itemType: string): ItemTypeConfigJson {
-            return <ItemTypeConfigJson>{
+        
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
+            return new ItemTypeConfig(<ItemTypeConfigJson>{
                 cssSelector: '[data-portal-component-type=' + itemType + ']',
                 draggable: true,
                 cursor: 'move',
@@ -24,7 +20,7 @@ module api.liveedit {
                     fill: 'rgba(255, 255, 255, 0)' // not used
                 },
                 contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
-            };
+            });
         }
     }
 }

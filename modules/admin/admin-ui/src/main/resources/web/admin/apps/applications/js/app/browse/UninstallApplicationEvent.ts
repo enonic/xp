@@ -7,8 +7,8 @@ export class UninstallApplicationEvent extends Event {
     private applications: Application[];
 
     constructor(applications: Application[]) {
-        this.applications = applications;
         super();
+        this.applications = applications;
     }
 
     getApplications(): Application[] {

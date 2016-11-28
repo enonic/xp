@@ -4,46 +4,48 @@ module api.content.resource {
 
     export class ContentSummaryLoader extends ContentSummaryPreLoader {
 
-        private contentSummaryRequest: ContentSummaryRequest;
+        protected request: ContentSummaryRequest;
 
         constructor() {
-            this.contentSummaryRequest = this.initContentSummaryRequest();
-
-            super(this.contentSummaryRequest);
+            super();
 
             this.setSearchQueryExpr();
         }
 
-        protected initContentSummaryRequest(): ContentSummaryRequest {
+        protected createRequest(): ContentSummaryRequest {
             return new ContentSummaryRequest();
         }
 
+        protected getRequest(): ContentSummaryRequest {
+            return this.request;
+        }
+        
         setAllowedContentTypes(contentTypes: string[]) {
-            this.contentSummaryRequest.setAllowedContentTypes(contentTypes);
+            this.getRequest().setAllowedContentTypes(contentTypes);
         }
 
         setAllowedContentTypeNames(contentTypeNames: api.schema.content.ContentTypeName[]) {
-            this.contentSummaryRequest.setAllowedContentTypeNames(contentTypeNames);
+            this.getRequest().setAllowedContentTypeNames(contentTypeNames);
         }
 
         setSize(size: number) {
-            this.contentSummaryRequest.setSize(size);
+            this.getRequest().setSize(size);
         }
 
         setContentPath(path: ContentPath) {
-            this.contentSummaryRequest.setContentPath(path);
+            this.getRequest().setContentPath(path);
         }
 
         isPartiallyLoaded(): boolean {
-            return this.contentSummaryRequest.isPartiallyLoaded();
+            return this.getRequest().isPartiallyLoaded();
         }
 
         private setSearchQueryExpr(searchString: string = "") {
-            this.contentSummaryRequest.setSearchString(searchString);
+            this.getRequest().setSearchString(searchString);
         }
 
         resetParams() {
-            this.contentSummaryRequest.resetParams()
+            this.getRequest().resetParams()
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {

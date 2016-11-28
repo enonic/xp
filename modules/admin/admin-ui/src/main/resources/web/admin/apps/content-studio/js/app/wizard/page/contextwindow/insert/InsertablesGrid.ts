@@ -11,11 +11,10 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
 
     private componentGridOptions: InsertablesGridOptions;
 
-    private componentDataView: api.ui.grid.DataView<Insertable>;
-
     constructor(dataView: api.ui.grid.DataView<Insertable>, options: InsertablesGridOptions = {}) {
-        super(dataView, this.createColumns(), this.createOptions());
-        this.componentDataView = dataView;
+
+        super(dataView);
+
         this.componentGridOptions = options;
 
         this.onRendered((event) => {
@@ -25,16 +24,28 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
         })
     }
 
-    private createOptions(): api.ui.grid.GridOptions<Insertable> {
-        return new api.ui.grid.GridOptionsBuilder().setHideColumnHeaders(true).setRowHeight(50).setHeight(400).setWidth(320)
-            .build();
+
+    protected createOptions(): api.ui.grid.GridOptions<any> {
+        return new api.ui.grid.GridOptionsBuilder().
+                    setHideColumnHeaders(true).
+                    setRowHeight(50).
+                    setHeight(400).
+                    setWidth(320).
+                    build();
     }
 
-    private createColumns(): api.ui.grid.GridColumn<Insertable>[] {
-        return [new api.ui.grid.GridColumnBuilder().setName("component").setField("component").setId("component").setWidth(320).setCssClass(
-            "grid-row").setFormatter((row, cell, value, columnDef, dataContext) => {
-            return this.buildRow(row, cell, value, columnDef, <Insertable>dataContext).toString();
-        }).build()
+    protected createColumns(): api.ui.grid.GridColumn<Insertable>[] {
+        return [
+            new api.ui.grid.GridColumnBuilder().
+                setName("component").
+                setField("component").
+                setId("component").
+                setWidth(320).
+                setCssClass("grid-row").
+                setFormatter((row, cell, value, columnDef, dataContext) => {
+                    return this.buildRow(row, cell, value, columnDef, <Insertable>dataContext).toString();
+                }).
+                build()
         ];
     }
 

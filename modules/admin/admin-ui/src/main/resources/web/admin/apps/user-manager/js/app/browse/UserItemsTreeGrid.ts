@@ -29,15 +29,28 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
     constructor() {
 
-        this.treeGridActions = new UserTreeGridActions(this);
-        super(new TreeGridBuilder<UserTreeGridItem>().setColumns([
-            this.buildColumn("Name", "name", "displayName", UserItemsRowFormatter.nameFormatter, {minWidth: 250}),
-            this.buildColumn("ModifiedTime", "modifiedTime", "modifiedTime", DateTimeFormatter.format,
-                {cssClass: "modified", minWidth: 150, maxWidth: 170})
-            ]).setShowContextMenu(new TreeGridContextMenu(this.treeGridActions)).setPartialLoadEnabled(true).setLoadBufferSize(
-            20). // rows count
-            prependClasses("user-tree-grid")
+        super(new TreeGridBuilder<UserTreeGridItem>().
+                setColumnConfig([{
+                    name: "Name",
+                    id: "name",
+                    field:  "displayName",
+                    formatter: UserItemsRowFormatter.nameFormatter,
+                    style: {minWidth: 250}
+                }, {
+                    name: "ModifiedTime",
+                    id: "modifiedTime",
+                    field:  "modifiedTime",
+                    formatter: DateTimeFormatter.format,
+                    style: {cssClass: "modified", minWidth: 150, maxWidth: 170}
+                }]).
+                setPartialLoadEnabled(true).
+                setLoadBufferSize(20). // rows count
+                prependClasses("user-tree-grid")
         );
+
+        this.treeGridActions = new UserTreeGridActions(this);
+
+        this.setContextMenu(new TreeGridContextMenu(this.treeGridActions));
 
         this.initEventHandlers();
     }

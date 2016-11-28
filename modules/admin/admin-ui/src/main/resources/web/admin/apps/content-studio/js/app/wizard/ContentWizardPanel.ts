@@ -87,6 +87,8 @@ import Permission = api.security.acl.Permission;
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
+    protected wizardActions: ContentWizardActions;
+
     private contentParams: ContentWizardPanelParams;
 
     private parentContent: Content;
@@ -117,8 +119,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private requireValid: boolean;
 
-    private wizardActions: ContentWizardActions;
-
     private isContentFormValid: boolean;
 
     private contentNamedListeners: {(event: ContentNamedEvent): void}[];
@@ -146,12 +146,19 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private contentUpdateDisabled: boolean;
 
+    private contentDeleted: boolean;
+
     public static debug: boolean = false;
 
     constructor(params: ContentWizardPanelParams) {
+        super({
+            tabId: params.tabId
+        });
 
         this.contentParams = params;
-
+        
+        this.loadData();
+        
         this.isContentFormValid = false;
         this.isSecurityWizardStepFormAllowed = false;
 
@@ -162,36 +169,37 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
 
-        this.initWizardActions();
-
         this.metadataStepFormByName = {};
-
-        super({
-            tabId: params.tabId,
-            persistedItem: null,
-            actions: this.wizardActions
-        });
-
+        
         this.initListeners();
         this.listenToContentEvents();
         this.handleSiteConfigApply();
         this.handleBrokenImageInTheWizard();
+        this.initBindings();
     }
 
-    private initWizardActions() {
-        this.wizardActions = new ContentWizardActions(this);
-        this.wizardActions.getShowLiveEditAction().setEnabled(false);
-        this.wizardActions.getSaveAction().onExecuted(() => {
+    private initBindings() {
+        var nextActions = this.resolveActions(this);
+        let currentKeyBindings = api.ui.Action.getKeyBindings(nextActions);
+        api.ui.KeyBindings.get().bindKeys(currentKeyBindings);
+    }
+
+    protected createWizardActions(): ContentWizardActions {
+        let wizardActions: ContentWizardActions = new ContentWizardActions(this);
+        wizardActions.getShowLiveEditAction().setEnabled(false);
+        wizardActions.getSaveAction().onExecuted(() => {
             this.contentWizardStepForm.validate();
             this.displayValidationErrors();
         });
 
-        this.wizardActions.getShowSplitEditAction().onExecuted(() => {
+        wizardActions.getShowSplitEditAction().onExecuted(() => {
             if (!this.inMobileViewMode) {
                 this.getCycleViewModeButton()
-                    .selectActiveAction(this.wizardActions.getShowLiveEditAction());
+                    .selectActiveAction(wizardActions.getShowLiveEditAction());
             }
         });
+        
+        return wizardActions;
     }
 
     private initListeners() {
@@ -262,7 +270,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         api.app.wizard.MaskContentWizardPanelEvent.on(event => {
             if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
-                this.params.actions.suspendActions(event.isMask());
+                this.wizardActions.suspendActions(event.isMask());
             }
         });
 
@@ -312,6 +320,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     protected createMainToolbar(): Toolbar {
         return new ContentWizardToolbar({
+            application: this.contentParams.application,
             saveAction: this.wizardActions.getSaveAction(),
             deleteAction: this.wizardActions.getDeleteAction(),
             duplicateAction: this.wizardActions.getDuplicateAction(),
@@ -501,7 +510,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private createSteps(): wemQ.Promise<Mixin[]> {
-
         this.contentWizardStepForm = new ContentWizardStepForm();
         this.settingsWizardStepForm = new SettingsWizardStepForm();
         this.securityWizardStepForm = new SecurityWizardStepForm();
@@ -669,6 +677,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                             publishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
                             this.persistedContentCompareStatus = this.currentContentCompareStatus = CompareStatus.PENDING_DELETE;
                         } else {
+                            this.contentDeleted = true;
                             this.close();
                         }
 
@@ -956,7 +965,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             console.debug("ContentWizardPanel.initLiveEditor at " + new Date().toISOString());
         }
         var deferred = wemQ.defer<void>();
-
+        
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getPreviewAction().setVisible(false);
         this.wizardActions.getPreviewAction().setEnabled(false);
@@ -1274,8 +1283,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         } else {
 
-            var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent), true).build();
-            return !viewedContent.equals(persistedContent, true);
+            let viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+
+            // ignore empty values for auto-created content that hasn't been updated yet because it doesn't have data at all
+            let ignoreEmptyValues = !persistedContent.getModifiedTime() || !persistedContent.getCreatedTime() ||
+                                    persistedContent.getCreatedTime().getTime() == persistedContent.getModifiedTime().getTime();
+
+            return !viewedContent.equals(persistedContent, ignoreEmptyValues);
         }
     }
 
@@ -1604,6 +1618,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isContentRenderable(): boolean {
         return !!this.liveEditModel && this.liveEditModel.isPageRenderable();
+    }
+
+    public isContentDeleted(): boolean {
+        return this.contentDeleted;
     }
 
     private shouldOpenEditorByDefault(): boolean {

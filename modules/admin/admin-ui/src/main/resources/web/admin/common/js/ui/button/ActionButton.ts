@@ -6,9 +6,10 @@ module api.ui.button {
         private tooltip: Tooltip;
 
         constructor(action: Action, showTooltip: boolean = true) {
-            this.action = action;
+            super();
 
-            super(this.createLabel(action));
+            this.action = action;
+            this.setLabel(this.createLabel(action));
             this.addClass("action-button");
 
             this.setEnabled(this.action.isEnabled());
@@ -18,7 +19,11 @@ module api.ui.button {
             }
 
             if (this.action.hasShortcut() && showTooltip) {
-                this.tooltip = new Tooltip(this, this.action.getShortcut().getCombination(), 1000);
+                let combination = this.action.getShortcut().getCombination();
+                if (combination) {
+                    combination = combination.replace(/mod\+/i, BrowserHelper.isOSX() || BrowserHelper.isIOS() ? 'cmd+' : 'ctrl+');
+                }
+                this.tooltip = new Tooltip(this, combination, 1000);
                 api.ui.KeyBindings.get().onHelpKeyPressed((e) => {
                     if (this.action.isEnabled() && api.ui.KeyBindings.get().isActive(this.action.getShortcut())) {
                         if (KeyBindingAction[KeyBindingAction.KEYDOWN].toLowerCase() == e.type) {

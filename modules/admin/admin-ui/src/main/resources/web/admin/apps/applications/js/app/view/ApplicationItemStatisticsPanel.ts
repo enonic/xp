@@ -101,7 +101,10 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
     }
 
     private initMacros(applicationKey: ApplicationKey): wemQ.Promise<any> {
-        var macroPromises = [new api.macro.resource.GetMacrosRequest([applicationKey]).sendAndParse()]
+        let macroRequest = new api.macro.resource.GetMacrosRequest();
+        macroRequest.setApplicationKeys([applicationKey]);
+
+        let macroPromises = [macroRequest.sendAndParse()];
 
         return wemQ.all(macroPromises).spread((macros: MacroDescriptor[])=> {
 

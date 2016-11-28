@@ -5,34 +5,21 @@ module api.app.browse {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import TreeNode = api.ui.treegrid.TreeNode;
 
-    export interface BrowsePanelParams<M extends api.Equitable> {
-
-        browseToolbar: api.ui.toolbar.Toolbar;
-
-        treeGrid?: api.ui.treegrid.TreeGrid<Object>;
-
-        browseItemPanel: BrowseItemPanel<M>;
-
-        filterPanel?: api.app.browse.filter.BrowseFilterPanel;
-
-        hasDetailsPanel?: boolean;
-    }
-
     export class BrowsePanel<M extends api.Equitable> extends api.ui.panel.Panel implements api.ui.ActionContainer {
 
         private static SPLIT_PANEL_ALIGNMENT_TRESHOLD: number = 720;
 
-        private browseToolbar: api.ui.toolbar.Toolbar;
+        protected browseToolbar: api.ui.toolbar.Toolbar;
 
-        private treeGrid: api.ui.treegrid.TreeGrid<Object>;
+        protected treeGrid: api.ui.treegrid.TreeGrid<Object>;
+
+        protected filterPanel: api.app.browse.filter.BrowseFilterPanel;
 
         private gridAndToolbarPanel: api.ui.panel.Panel;
 
         private browseItemPanel: BrowseItemPanel<M>;
 
         private gridAndItemsSplitPanel: api.ui.panel.SplitPanel;
-
-        private filterPanel: api.app.browse.filter.BrowseFilterPanel;
 
         private filterAndGridSplitPanel: api.ui.panel.SplitPanel;
 
@@ -48,27 +35,14 @@ module api.app.browse {
 
         private toggleFilterPanelButton: api.ui.button.ActionButton;
 
-        constructor(params: BrowsePanelParams<M>) {
+        constructor() {
             super();
 
-            this.browseToolbar = params.browseToolbar;
-            this.treeGrid = params.treeGrid;
-            this.browseItemPanel = params.browseItemPanel;
-            this.filterPanel = params.filterPanel;
-
-            this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                let oldSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
-                this.treeGrid.deselectNodes([event.getBrowseItem().getId()]);
-                let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
-
-                if (oldSelectedCount === newSelectedCount) {
-                    this.treeGrid.getContextMenu().getActions()
-                        .updateActionsEnabledState(this.browseItemPanel.getItems())
-                        .then(() => {
-                            this.browseItemPanel.updateDisplayedPanel();
-                        });
-                }
-            });
+            this.treeGrid = this.createTreeGrid();
+            //this.browseItemPanel = this.createBrowseItemPanel();
+            this.filterPanel = this.createFilterPanel();
+            this.browseToolbar = this.createToolbar();
+            
 
             let selectionChangedDebouncedHandler = api.util.AppHelper.debounce(
                 (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
@@ -101,8 +75,45 @@ module api.app.browse {
             });
         }
 
+        protected createToolbar(): api.ui.toolbar.Toolbar {
+            throw "Must be implemented by inheritors";
+        }
+
+        protected createTreeGrid(): api.ui.treegrid.TreeGrid<Object> {
+            throw "Must be implemented by inheritors";
+        }
+
+        protected createBrowseItemPanel(): BrowseItemPanel<M> {
+            throw "Must be implemented by inheritors";
+        }
+
+        private initBrowseItemPanel() {
+
+            this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
+                let oldSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
+                this.treeGrid.deselectNodes([event.getBrowseItem().getId()]);
+                let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
+
+                if (oldSelectedCount === newSelectedCount) {
+                    this.treeGrid.getContextMenu().getActions()
+                        .updateActionsEnabledState(this.browseItemPanel.getItems())
+                        .then(() => {
+                            this.browseItemPanel.updateDisplayedPanel();
+                        });
+                }
+            });
+        }
+        
+        protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel {
+            return null;
+        }
+        
         doRender(): wemQ.Promise<boolean> {
             return super.doRender().then((rendered) => {
+                if (!this.browseItemPanel) {
+                    this.browseItemPanel = this.createBrowseItemPanel();
+                    this.initBrowseItemPanel();
+                }
                 this.gridAndItemsSplitPanel = new api.ui.panel.SplitPanelBuilder(this.treeGrid, this.browseItemPanel)
                     .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD)
                     .build();

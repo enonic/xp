@@ -15,16 +15,16 @@ module api.liveedit.image {
     export class ImageComponentView extends ComponentView<ImageComponent> {
 
         private image: api.dom.Element;
-        private imageComponent: ImageComponent;
+        protected component: ImageComponent;
 
         constructor(builder: ImageComponentViewBuilder) {
-            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
-            this.imageComponent = builder.component;
-
-            super(builder.setPlaceholder(
-                new ImagePlaceholder(this)).
+            super(builder.
                 setViewer(new ImageComponentViewer()).
                 setInspectActionRequired(true));
+
+            this.setPlaceholder(new ImagePlaceholder(this));
+
+            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
 
             this.initializeImage();
 
@@ -34,7 +34,7 @@ module api.liveedit.image {
         private handleContentRemovedEvent() {
             var contentDeletedListener = (event) => {
                 var deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
-                    return !deletedItem.isPending() && deletedItem.getContentId().equals(this.imageComponent.getImage());
+                    return !deletedItem.isPending() && deletedItem.getContentId().equals(this.component.getImage());
                 })
                 if (deleted) {
                     this.remove();
@@ -70,9 +70,6 @@ module api.liveedit.image {
             }
         }
 
-        isEmpty(): boolean {
-            return !this.imageComponent || this.imageComponent.isEmpty();
-        }
 
     }
 }

@@ -11,11 +11,26 @@ module api.content.page.region {
 
     export class LayoutDescriptorComboBox extends RichComboBox<LayoutDescriptor> {
 
-        constructor(loader: LayoutDescriptorLoader) {
-            super(new RichComboBoxBuilder<LayoutDescriptor>().setIdentifierMethod("getKey").setOptionDisplayValueViewer(
-                new LayoutDescriptorViewer()).setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).setLoader(
-                loader).setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText(
-                "No layouts available"));
+        protected loader: LayoutDescriptorLoader;
+
+        constructor() {
+            super(new RichComboBoxBuilder<LayoutDescriptor>().
+                        setIdentifierMethod("getKey").
+                        setOptionDisplayValueViewer(new LayoutDescriptorViewer()).
+                        setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
+                        setMaximumOccurrences(1).
+                        setNextInputFocusWhenMaxReached(false).
+                        setNoOptionsText("No layouts available"));
+        }
+
+        protected createLoader(): LayoutDescriptorLoader {
+            return new LayoutDescriptorLoader();
+        }
+
+        loadDescriptors(applicationKeys: ApplicationKey[]) {
+            this.loader.setApplicationKeys(applicationKeys);
+
+            super.load();
         }
 
         getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {
@@ -55,8 +70,9 @@ module api.content.page.region {
         private descriptor: LayoutDescriptor;
 
         constructor(option: Option<LayoutDescriptor>) {
-            this.descriptor = option.displayValue;
             super(option);
+
+            this.descriptor = option.displayValue;
             this.addClass("layout-descriptor-selected-option-view");
         }
 

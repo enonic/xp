@@ -31,6 +31,10 @@ module api.content {
             return true;
         }
 
+        toStringIncludingHidden() {
+            return this.toString();
+        }
+
         public static fromString(str: string): ContentName {
 
             api.util.assert(str != null, "name cannot be null");

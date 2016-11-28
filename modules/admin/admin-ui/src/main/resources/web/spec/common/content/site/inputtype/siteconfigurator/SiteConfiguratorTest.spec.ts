@@ -99,7 +99,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         });
 
         describe("reset()", () => {
-            let resetSpy: Spy;
+            let resetSpy;
 
             beforeEach(() => {
                 resetSpy = spyOn(combobox, "resetBaseValues");
@@ -131,16 +131,16 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
             })
         });
 
-        describe("displayValidationErrors()", () => {
+        describe("displayValidationErrors()",() => {
 
-            let displayValidationErrorsSpy: Spy;
+            let displayValidationErrorsSpy;
 
             beforeEach(() => {
                 let selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
                     <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
                 );
 
-                let formView = new FormView(null, null, null);
+                let formView = new FormView(null,null,null);
 
                 spyOn(combobox, 'getSelectedOptionViews').and.returnValue([selectedOption.getOptionView()]);
                 spyOn(selectedOption.getOptionView(), "getFormView").and.returnValue(formView);
@@ -150,19 +150,19 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 configurator.displayValidationErrors(null);
             });
 
-            it("formView displayValidationErrors method is called", () => {
+            it("formView displayValidationErrors method is called",() => {
                 expect(displayValidationErrorsSpy).toHaveBeenCalled();
             });
 
         });
-        describe("getValueType()", () => {
+        describe("getValueType()",() => {
 
             it("value type should be 'PropertySet'", () => {
                 expect(configurator.getValueType() == ValueTypes.DATA).toBeTruthy();
             });
 
         });
-        describe("newInitialValue()", () => {
+        describe("newInitialValue()",() => {
 
             it("initial value should be null", () => {
                 expect(configurator.newInitialValue()).toBeNull();
@@ -184,7 +184,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     configurator.giveFocus();
                 });
 
-                it("should not focus the combobox", () => {
+                it("should not focus the combobox",() => {
                     expect(focusSpy).not.toHaveBeenCalled();
                 });
 
@@ -196,7 +196,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     configurator.giveFocus();
                 });
 
-                it("should focus the combobox", () => {
+                it("should focus the combobox",() => {
                     expect(focusSpy).toHaveBeenCalled();
                 });
             });
@@ -212,7 +212,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
                 recording = new api.form.ValidationRecording();
 
-                let formView = new FormView(null, null, null);
+                let formView = new FormView(null,null,null);
 
                 spyOn(formView, "validate").and.returnValue(recording);
                 spyOn(selectedOption.getOptionView(), "getFormView").and.returnValue(formView);
@@ -229,15 +229,15 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     result = configurator.validate();
                 });
 
-                it("minimum occurrences breached", () => {
+                it("minimum occurrences breached",() => {
                     expect(result.isMinimumOccurrencesBreached()).toBe(true);
                 });
 
-                it("maximum occurrences breached", () => {
+                it("maximum occurrences breached",() => {
                     expect(result.isMaximumOccurrencesBreached()).toBe(true);
                 });
 
-                it("result is not valid", () => {
+                it("result is not valid",() => {
                     expect(result.isValid()).toBeFalsy();
                 });
             });
@@ -251,7 +251,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     result = configurator.validate();
                 });
 
-                it("result is valid", () => {
+                it("result is valid",() => {
                     expect(result.isValid()).toBeTruthy();
                 });
             });
@@ -261,7 +261,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
     describe("test event listeners", () => {
 
-        let combobox, selectedOption, handlerSpy: Spy, event: SelectedOptionEvent<any>, validationSpy;
+        let combobox, selectedOption, handlerSpy, event:SelectedOptionEvent<any>, validationSpy;
 
         beforeEach((done) => {
             let createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
@@ -336,10 +336,9 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
             let formView;
 
             beforeEach(() => {
-                formView = new FormView(null, null, null);
+                formView = new FormView(null,null,null);
 
-                combobox.getSelectedOptionsView().notifySiteConfigFormDisplayed(selectedOption.getOption().displayValue.getApplicationKey(),
-                    formView);
+                combobox.getSelectedOptionsView().notifySiteConfigFormDisplayed(selectedOption.getOption().displayValue.getApplicationKey(), formView);
             });
 
             it("should run validation", () => {
@@ -390,7 +389,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
         describe("when an option is deselected", () => {
             var fakePropertyArrayObj;
-
+            
             beforeEach(() => {
                 fakePropertyArrayObj = jasmine.createSpyObj('eventHandler', ['remove']);
                 spyOn(configurator, "getPropertyArray").and.returnValue(fakePropertyArrayObj);
@@ -474,7 +473,9 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 thumbnail: null,
                 type: "portal:site",
                 requireValid: false,
-                publish: {from: ""}
+                publish: {
+                    from: "2016-10-24T15:03:47.914Z" 
+                }
             }
         )
     }

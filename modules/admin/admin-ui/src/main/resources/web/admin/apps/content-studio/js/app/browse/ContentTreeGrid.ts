@@ -50,21 +50,46 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     private filterQuery: api.content.query.ContentQuery;
 
     constructor() {
-        const nameColumn = this.buildColumn("Name", "displayName", "contentSummary.displayName", ContentRowFormatter.nameFormatter,
-            {minWidth: 130});
-        const compareStatusColumn = this.buildColumn("CompareStatus", "compareStatus", "compareStatus", ContentRowFormatter.statusFormatter,
-            {cssClass: "status", minWidth: 75, maxWidth: 75});
-        const orderColumn = this.buildColumn("Order", "order", "contentSummary.order", ContentRowFormatter.orderFormatter,
-            {cssClass: "order", minWidth: 25, maxWidth: 40});
-        const modifiedTimeColumn = this.buildColumn("ModifiedTime", "modifiedTime", "contentSummary.modifiedTime", DateTimeFormatter.format,
-            {cssClass: "modified", minWidth: 135, maxWidth: 135});
-        const columns = [nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn];
+        let builder: TreeGridBuilder<ContentSummaryAndCompareStatus> =
+                    new TreeGridBuilder<ContentSummaryAndCompareStatus>().
+                            setColumnConfig([{
+                                name: "Name",
+                                id: "displayName",
+                                field:  "contentSummary.displayName",
+                                formatter: ContentRowFormatter.nameFormatter,
+                                style: {minWidth: 130}
+                            }, {
+                                name: "CompareStatus",
+                                id: "compareStatus",
+                                field:  "compareStatus",
+                                formatter: ContentRowFormatter.statusFormatter,
+                                style: {cssClass: "status", minWidth: 75, maxWidth: 75}
+                            }, {
+                                name: "Order",
+                                id: "order",
+                                field:  "contentSummary.order",
+                                formatter: ContentRowFormatter.orderFormatter,
+                                style: {cssClass: "order", minWidth: 25, maxWidth: 40}
+                            }, {
+                                name: "ModifiedTime",
+                                id: "modifiedTime",
+                                field:  "contentSummary.modifiedTime",
+                                formatter: DateTimeFormatter.format,
+                                style: {cssClass: "modified", minWidth: 135, maxWidth: 135}
+                            }]).
+                            setPartialLoadEnabled(true).
+                            setLoadBufferSize(20).// rows count
+                            prependClasses("content-tree-grid");
 
-        super(new TreeGridBuilder<ContentSummaryAndCompareStatus>()
-            .setColumns(columns).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this)))
-            .setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
-            prependClasses("content-tree-grid")
-        );
+        super(builder);
+
+        this.setContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this)));
+
+        let columns = builder.getColumns();
+        const nameColumn = columns[1];
+        const compareStatusColumn = columns[2];
+        const orderColumn = columns[3];
+        const modifiedTimeColumn = columns[4];
 
         let updateColumns = (force?: boolean) => {
             if (force) {

@@ -9,7 +9,7 @@ module api.ui.selector.combobox {
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.dom.CompositeFormInputEl {
 
-        private loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
+        protected loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
 
         private selectedOptionsView: SelectedOptionsView<OPTION_DISPLAY_VALUE>;
 
@@ -31,15 +31,9 @@ module api.ui.selector.combobox {
 
         constructor(builder: RichComboBoxBuilder<OPTION_DISPLAY_VALUE>) {
 
-            this.loadedListeners = [];
-            this.loadingListeners = [];
-
-            this.identifierMethod = builder.identifierMethod;
-            this.selectedOptionsView = builder.selectedOptionsView;
-
             var comboBoxConfig: ComboBoxConfig<OPTION_DISPLAY_VALUE> = {
                 maximumOccurrences: builder.maximumOccurrences,
-                selectedOptionsView: this.selectedOptionsView,
+                selectedOptionsView: builder.selectedOptionsView,
                 optionDisplayValueViewer: builder.optionDisplayValueViewer,
                 hideComboBoxWhenMaxReached: builder.hideComboBoxWhenMaxReached,
                 setNextInputFocusWhenMaxReached: builder.nextInputFocusWhenMaxReached,
@@ -49,22 +43,35 @@ module api.ui.selector.combobox {
                 noOptionsText: builder.noOptionsText,
                 maxHeight: builder.maxHeight,
                 displayMissingSelectedOptions: builder.displayMissingSelectedOptions,
-                removeMissingSelectedOptions: builder.removeMissingSelectedOptions
+                removeMissingSelectedOptions: builder.removeMissingSelectedOptions,
+                skipAutoDropShowOnValueChange: true
             };
+            
+            var comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(builder.comboBoxName, comboBoxConfig);
+            
+            super(comboBox);
 
-            comboBoxConfig.skipAutoDropShowOnValueChange = true;
+            this.comboBox = comboBox;
 
-            this.loader = builder.loader;
-            this.comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(name, comboBoxConfig, this.loader);
+            this.loader = builder.loader || this.createLoader();
             this.setupLoader();
+
+            this.comboBox.setLoader(this.loader);
+            
+            this.loadedListeners = [];
+            this.loadingListeners = [];
+
+            this.identifierMethod = builder.identifierMethod;
+            this.selectedOptionsView = builder.selectedOptionsView;
 
             this.comboBox.onClicked((event: MouseEvent) => {
                 this.comboBox.giveFocus();
             });
 
             this.errorContainer = new api.dom.DivEl('error-container');
-
-            super(this.comboBox, this.errorContainer, this.selectedOptionsView);
+            
+            this.setWrappedInput(this.comboBox);
+            this.setAdditionalElements(this.errorContainer, this.selectedOptionsView);
 
             if (!api.util.StringHelper.isBlank(builder.comboBoxName)) {
                 this.setName(builder.comboBoxName);
@@ -79,6 +86,14 @@ module api.ui.selector.combobox {
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder.loader, PostLoader)) {
                 this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>builder.loader).postLoad.bind(builder.loader));
             }
+        }
+
+        protected createLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
+            throw "Must be implemented by inheritors";
+        }
+
+        load() {
+            this.loader.load();
         }
 
         private handleLastRange(handler: () => void) {
@@ -376,12 +391,10 @@ module api.ui.selector.combobox {
 
         public static debug: boolean = false;
 
-        constructor(name: string, config: ComboBoxConfig<OPTION_DISPLAY_VALUE>,
-                    loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>) {
-            super(name, config);
+        public setLoader(loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>) {
             this.loader = loader;
         }
-
+        
         protected doSetValue(value: string, silent?: boolean) {
             if (!this.loader.isLoaded()) {
                 if (RichComboBox.debug) {
@@ -509,6 +522,10 @@ module api.ui.selector.combobox {
             return this;
         }
 
+        getSelectedOptionsView(): SelectedOptionsView<T> {
+            return this.selectedOptionsView;
+        }
+        
         setMaximumOccurrences(maximumOccurrences: number): RichComboBoxBuilder<T> {
             this.maximumOccurrences = maximumOccurrences;
             return this;

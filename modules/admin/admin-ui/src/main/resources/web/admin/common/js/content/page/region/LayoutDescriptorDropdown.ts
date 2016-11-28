@@ -2,13 +2,25 @@ module api.content.page.region {
 
     export class LayoutDescriptorDropdown extends DescriptorBasedDropdown<LayoutDescriptor> {
 
-        constructor(name: string, loader: LayoutDescriptorLoader) {
+        protected loader: LayoutDescriptorLoader;
 
-            super(name, loader, {
+        constructor() {
+
+            super({
                 optionDisplayValueViewer: new LayoutDescriptorViewer(),
                 dataIdProperty: "value",
                 noOptionsText: "No layouts available"
             });
+        }
+
+        loadDescriptors(applicationKeys: ApplicationKey[]) {
+            this.loader.setApplicationKeys(applicationKeys);
+
+            super.load();
+        }
+
+        protected createLoader(): LayoutDescriptorLoader {
+            return new LayoutDescriptorLoader();
         }
     }
 }

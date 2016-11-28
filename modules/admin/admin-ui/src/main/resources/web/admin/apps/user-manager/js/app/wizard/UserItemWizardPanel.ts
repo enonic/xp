@@ -20,20 +20,19 @@ import WizardActions = api.app.wizard.WizardActions;
 
 export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
 
-    wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
+    protected wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
 
-    userItemParams: UserItemWizardPanelParams<USER_ITEM_TYPE>;
+    protected params: UserItemWizardPanelParams<USER_ITEM_TYPE>;
 
     constructor(params: UserItemWizardPanelParams<USER_ITEM_TYPE>) {
 
-        this.userItemParams = params;
-        this.wizardActions = this.createWizardActions();
+        super(params);
 
-        super({
-            tabId: this.userItemParams.tabId,
-            persistedItem: this.userItemParams.persistedItem,
-            actions: this.wizardActions
-        });
+        this.loadData();
+    }
+
+    protected getParams(): UserItemWizardPanelParams<USER_ITEM_TYPE> {
+        return this.params;
     }
 
     protected createWizardActions(): UserItemWizardActions<USER_ITEM_TYPE> {
@@ -91,7 +90,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     getPersistedDisplayName(): string {
-        return this.userItemParams.persistedDisplayName;
+        return this.getParams().persistedDisplayName;
     }
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {

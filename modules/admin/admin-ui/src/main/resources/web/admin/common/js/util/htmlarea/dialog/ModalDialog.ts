@@ -17,10 +17,9 @@ module api.util.htmlarea.dialog {
 
         public static CLASS_NAME = "html-area-modal-dialog";
 
-        constructor(editor: HtmlAreaEditor, title: api.ui.dialog.ModalDialogHeader, cls?: string) {
-            super({
-                title: title
-            });
+        constructor(editor: HtmlAreaEditor, title: string, cls?: string) {
+
+            super(title);
 
             this.editor = editor;
 
@@ -117,7 +116,7 @@ module api.util.htmlarea.dialog {
             return panel;
         }
 
-        private createFieldSet(formItem: FormItem): Fieldset {
+        public createFieldSet(formItem: FormItem): Fieldset {
             var fieldSet = new Fieldset();
 
             fieldSet.addClass("modal-dialog-fieldset");

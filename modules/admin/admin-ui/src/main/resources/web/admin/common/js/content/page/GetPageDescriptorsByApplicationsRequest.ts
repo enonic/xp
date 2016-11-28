@@ -6,11 +6,6 @@ module api.content.page {
 
         private applicationKeys: ApplicationKey[];
 
-        constructor(applicationKeys: ApplicationKey[]) {
-            super();
-            this.applicationKeys = applicationKeys;
-        }
-
         setApplicationKeys(applicationKeys: ApplicationKey[]) {
             this.applicationKeys = applicationKeys;
         }

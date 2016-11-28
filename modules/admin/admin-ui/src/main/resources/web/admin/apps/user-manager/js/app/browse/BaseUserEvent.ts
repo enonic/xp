@@ -6,8 +6,9 @@ export class BaseUserEvent extends api.event.Event {
     private gridItems: UserTreeGridItem[];
 
     constructor(gridItems: UserTreeGridItem[]) {
-        this.gridItems = gridItems;
         super();
+
+        this.gridItems = gridItems;
     }
 
     getPrincipals(): UserTreeGridItem[] {

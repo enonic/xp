@@ -13,19 +13,15 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     private originalValues: AccessControlEntry[];
     private originalInherit: boolean;
 
-    private dialogTitle: EditPermissionsDialogTitle;
     private inheritPermissionsCheck: api.ui.Checkbox;
     private overwriteChildPermissionsCheck: api.ui.Checkbox;
     private comboBox: AccessControlComboBox;
     private applyAction: api.ui.Action;
 
+    protected header: EditPermissionsDialogHeader;
 
     constructor() {
-        this.dialogTitle = new EditPermissionsDialogTitle('Edit Permissions', '');
-
-        super({
-            title: this.dialogTitle
-        });
+        super();
 
         this.addClass('edit-permissions-dialog');
 
@@ -101,6 +97,14 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         this.addCancelButtonToBottom();
     }
 
+    protected createHeader(): EditPermissionsDialogHeader {
+        return new EditPermissionsDialogHeader('Edit Permissions', '');
+    }
+
+    protected getHeader(): EditPermissionsDialogHeader {
+        return this.header;
+    }
+
     private applyPermissions() {
         var permissions = new AccessControlList(this.getEntries());
         var req = new api.content.resource.ApplyContentPermissionsRequest().setId(this.content.getId()).setInheritPermissions(
@@ -173,9 +177,9 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
 
     show() {
         if (this.content) {
-            this.dialogTitle.setPath(this.content.getPath().toString());
+            this.getHeader().setPath(this.content.getPath().toString());
         } else {
-            this.dialogTitle.setPath('');
+            this.getHeader().setPath('');
         }
         super.show();
 
@@ -188,7 +192,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     }
 }
 
-export class EditPermissionsDialogTitle extends api.ui.dialog.ModalDialogHeader {
+export class EditPermissionsDialogHeader extends api.ui.dialog.ModalDialogHeader {
 
     private pathEl: api.dom.PEl;
 

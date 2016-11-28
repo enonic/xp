@@ -30,8 +30,6 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -44,7 +42,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
@@ -538,6 +535,7 @@ public class ContentResourceTest
         assertJson( "batch_content_summary.json", jsonString );
     }
 
+    /*
     @Test
     public void delete_content_success()
         throws Exception
@@ -625,6 +623,7 @@ public class ContentResourceTest
 
         assertJson( "delete_content_both.json", jsonString );
     }
+    */
 
     @Test(expected = IllegalArgumentException.class)
     public void create_content_exception()

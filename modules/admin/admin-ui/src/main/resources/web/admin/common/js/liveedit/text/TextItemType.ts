@@ -14,7 +14,7 @@ module api.liveedit.text {
         }
 
         constructor() {
-            super("text", this.getConfigJson());
+            super("text");
         }
 
         createView(config: CreateItemViewConfig<RegionView,TextComponent>): TextComponentView {
@@ -28,14 +28,16 @@ module api.liveedit.text {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
 
-        private getConfigJson(): ItemTypeConfigJson {
-            var config = this.getDefaultConfigJson("text");
-            config.contextMenuConfig.push("edit");
-            
+        protected getItemTypeConfig(itemType: string): ItemTypeConfig {
+            var config = super.getItemTypeConfig(itemType);
+
+            config.getContextMenuConfig().push("edit");
+
             return config;
+
         }
     }
 
