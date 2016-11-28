@@ -5,7 +5,7 @@ module api.content.page.region {
     export class PartDescriptorDropdown extends DescriptorBasedDropdown<PartDescriptor> {
 
         protected loader: PartDescriptorLoader;
-        
+
         constructor() {
 
             super({
@@ -20,7 +20,7 @@ module api.content.page.region {
 
             super.load();
         }
-        
+
         protected createLoader(): PartDescriptorLoader {
             return new PartDescriptorLoader();
         }

@@ -131,7 +131,7 @@ function startApplication() {
     serverEventsListener.start();
 
     startLostConnectionDetector();
-    
+
     let wizardParams = ContentWizardPanelParams.fromApp(application);
     if (wizardParams) {
         startContentWizard(wizardParams);

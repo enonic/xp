@@ -137,7 +137,7 @@ module api.app.wizard {
         protected getParams(): WizardPanelParams<EQUITABLE> {
             return this.params;
         }
-        
+
         protected createWizardActions(): WizardActions<EQUITABLE> {
             throw Error('Override me');
         }

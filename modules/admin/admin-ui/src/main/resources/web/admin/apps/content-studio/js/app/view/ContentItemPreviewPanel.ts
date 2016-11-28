@@ -179,23 +179,28 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
             }
 
             switch (previewType) {
-            case PREVIEW_TYPE.PAGE: {
+            case PREVIEW_TYPE.PAGE:
+            {
                 this.getEl().addClass("page-preview");
                 break;
             }
-            case PREVIEW_TYPE.IMAGE: {
+            case PREVIEW_TYPE.IMAGE:
+            {
                 this.getEl().addClass("image-preview");
                 break;
             }
-            case PREVIEW_TYPE.SVG: {
+            case PREVIEW_TYPE.SVG:
+            {
                 this.getEl().addClass("svg-preview");
                 break;
             }
-            case PREVIEW_TYPE.EMPTY: {
+            case PREVIEW_TYPE.EMPTY:
+            {
                 this.showPreviewMessage("Preview not available");
                 break;
             }
-            case PREVIEW_TYPE.FAILED: {
+            case PREVIEW_TYPE.FAILED:
+            {
                 this.showPreviewMessage(
                     "Failed to render content preview.<br/> Please check logs for errors or open preview in a new window");
                 break;

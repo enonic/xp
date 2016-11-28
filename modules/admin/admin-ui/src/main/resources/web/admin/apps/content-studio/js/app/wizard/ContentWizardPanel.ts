@@ -156,7 +156,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
 
         this.contentParams = params;
-        
+
         this.loadData();
         
         this.isContentFormValid = false;
@@ -170,7 +170,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
 
         this.metadataStepFormByName = {};
-        
+
         this.initListeners();
         this.listenToContentEvents();
         this.handleSiteConfigApply();
@@ -198,7 +198,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     .selectActiveAction(wizardActions.getShowLiveEditAction());
             }
         });
-        
+
         return wizardActions;
     }
 
@@ -965,7 +965,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             console.debug("ContentWizardPanel.initLiveEditor at " + new Date().toISOString());
         }
         var deferred = wemQ.defer<void>();
-        
+
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getPreviewAction().setVisible(false);
         this.wizardActions.getPreviewAction().setEnabled(false);

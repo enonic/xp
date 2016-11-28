@@ -90,7 +90,7 @@ module api.ui.treegrid {
                 return null;
             });
 
-            
+
             this.columns = this.updateColumnsFormatter(builder.getColumns());
 
             this.gridOptions = builder.getOptions();
@@ -159,7 +159,7 @@ module api.ui.treegrid {
                     interval = setInterval(this.postLoad.bind(this), 200);
                 });
             }
-            
+
             this.grid.subscribeOnClick((event, data) => {
                 if (this.isActive()) {
                     this.setActive(false);

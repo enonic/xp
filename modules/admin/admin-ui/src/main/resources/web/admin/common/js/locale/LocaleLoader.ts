@@ -14,7 +14,7 @@ module api.locale {
         }
 
         search(searchString: string): wemQ.Promise<Locale[]> {
-            
+
             this.getRequest().setSearchQuery(searchString);
 
             return this.load();

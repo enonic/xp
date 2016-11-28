@@ -28,9 +28,8 @@ module api.content.site.inputtype.siteconfigurator {
             builder.
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getApplicationKey').
-                setComboBoxName("applicationSelector").
-                setLoader(new SiteApplicationLoader(filterObject)).
-                setSelectedOptionsView(new SiteConfiguratorSelectedOptionsView(siteConfigProvider, formContext)).
+                setComboBoxName("applicationSelector").setLoader(new SiteApplicationLoader(filterObject)).setSelectedOptionsView(
+                new SiteConfiguratorSelectedOptionsView(siteConfigProvider, formContext)).
                 setOptionDisplayValueViewer(new ApplicationViewer()).
                 setValue(value).
                 setDelayedInputValueChangedHandling(500);

@@ -57,14 +57,14 @@ public class ContentDependenciesResolver
     {
         final Map<ContentTypeName, Long> aggregationJsonMap = Maps.newHashMap();
 
-        final Contents contents = this.contentService.getByIds(
-            new GetContentByIdsParams( this.contentService.getOutboundDependencies( contentId ) ) );
+        final Contents contents =
+            this.contentService.getByIds( new GetContentByIdsParams( this.contentService.getOutboundDependencies( contentId ) ) );
 
-        contents.forEach(existingContent -> {
+        contents.forEach( existingContent -> {
             final ContentTypeName contentTypeName = existingContent.getType();
-            final Long count = aggregationJsonMap.containsKey(contentTypeName) ? aggregationJsonMap.get(contentTypeName) + 1 : 1;
-            aggregationJsonMap.put(contentTypeName, count);
-        });
+            final Long count = aggregationJsonMap.containsKey( contentTypeName ) ? aggregationJsonMap.get( contentTypeName ) + 1 : 1;
+            aggregationJsonMap.put( contentTypeName, count );
+        } );
 
         return aggregationJsonMap.entrySet().
             stream().

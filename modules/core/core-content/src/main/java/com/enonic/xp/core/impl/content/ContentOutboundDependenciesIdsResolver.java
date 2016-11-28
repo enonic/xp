@@ -47,15 +47,14 @@ public class ContentOutboundDependenciesIdsResolver
 
         Stream.concat( content.getData().getProperties( ValueTypes.REFERENCE ).stream(),
                        contentPageData.getProperties( ValueTypes.REFERENCE ).stream() ).
-            forEach( property ->
-                     {
-                         final String value = property.getValue().toString();
+            forEach( property -> {
+                final String value = property.getValue().toString();
 
-                         if ( !contentId.toString().equals( value ) && StringUtils.isNotBlank( value ) )
-                         {
-                             contentIds.add( ContentId.from( value ) );
-                         }
-                     } );
+                if ( !contentId.toString().equals( value ) && StringUtils.isNotBlank( value ) )
+                {
+                    contentIds.add( ContentId.from( value ) );
+                }
+            } );
 
         return contentIds;
     }

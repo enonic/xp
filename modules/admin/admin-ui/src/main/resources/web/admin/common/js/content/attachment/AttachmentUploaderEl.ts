@@ -28,7 +28,7 @@ module api.content.attachment {
             super(config);
 
             this.attachmentItems = [];
-            
+
             if (config.attachmentRemoveCallback) {
                 this.removeCallback = config.attachmentRemoveCallback;
             }

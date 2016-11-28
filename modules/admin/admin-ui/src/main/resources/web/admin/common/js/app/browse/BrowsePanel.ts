@@ -103,7 +103,7 @@ module api.app.browse {
                 }
             });
         }
-        
+
         protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel {
             return null;
         }
