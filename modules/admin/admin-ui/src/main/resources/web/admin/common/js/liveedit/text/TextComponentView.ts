@@ -281,6 +281,7 @@ module api.liveedit.text {
 
         private onFocusHandler(e) {
             this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
+            console.log("focused: " + this)
         }
 
         private onBlurHandler(e) {
@@ -310,6 +311,15 @@ module api.liveedit.text {
             if (e.keyCode == 27 || saveShortcut) { // esc or Cmd-S
                 this.closePageTextEditMode();
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
+            } else if ((e.altKey) && e.keyCode === 9) { // alt+tab for OSX
+                var nextFocusable = api.dom.FormEl.getNextFocusable(this, ".xp-page-editor-text-view", true);
+                if (nextFocusable) {
+                    wemjq(nextFocusable.getHTMLElement()).simulate("click");
+                    nextFocusable.giveFocus();
+                }
+                else {
+                    this.htmlAreaEditor.fire("blur");
+                }
             }
         }
 
