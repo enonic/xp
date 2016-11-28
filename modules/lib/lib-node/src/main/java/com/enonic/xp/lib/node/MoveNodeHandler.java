@@ -10,14 +10,25 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RenameNodeParams;
 
 public final class MoveNodeHandler
-    extends OldBaseNodeHandler
+    extends BaseNodeHandler
 {
     private NodeKey source;
 
     private Target target;
 
-    @Override
-    protected Object doExecute()
+    private MoveNodeHandler( final Builder builder )
+    {
+        super( builder );
+        source = builder.source;
+        target = builder.target;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public Object execute()
     {
         return convert( executeMove() );
     }
@@ -80,16 +91,6 @@ public final class MoveNodeHandler
         return NodeName.from( UUID.randomUUID().toString() );
     }
 
-    public void setSource( final String source )
-    {
-        this.source = NodeKey.from( source );
-    }
-
-    public void setTarget( final String target )
-    {
-        this.target = new Target( target );
-    }
-
     private static class Target
     {
         private String value;
@@ -120,4 +121,32 @@ public final class MoveNodeHandler
         }
     }
 
+    public static final class Builder
+        extends BaseNodeHandler.Builder<Builder>
+    {
+        private NodeKey source;
+
+        private Target target;
+
+        private Builder()
+        {
+        }
+
+        public Builder source( final NodeKey val )
+        {
+            source = val;
+            return this;
+        }
+
+        public Builder target( final String val )
+        {
+            target = new Target( val );
+            return this;
+        }
+
+        public MoveNodeHandler build()
+        {
+            return new MoveNodeHandler( this );
+        }
+    }
 }

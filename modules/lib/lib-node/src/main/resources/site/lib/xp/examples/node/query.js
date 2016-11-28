@@ -1,9 +1,14 @@
 var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
+var repo = nodeLib.connect({
+    repoId: "cms-repo",
+    branch: "master"
+});
+
 // BEGIN
 // Query content using aggregations.
-var result = nodeLib.query({
+var result = repo.query({
     start: 0,
     count: 2,
     query: "startTime > instant('2016-10-11T14:38:54.454Z')",

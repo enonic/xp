@@ -12,7 +12,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
 public class DeleteNodeHandlerTest
-    extends OldBaseNodeHandlerTest
+    extends BaseNodeHandlerTest
 {
     private void mockGetNode()
     {

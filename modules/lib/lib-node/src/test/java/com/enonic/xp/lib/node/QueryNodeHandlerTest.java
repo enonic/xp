@@ -13,7 +13,7 @@ import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeQuery;
 
 public class QueryNodeHandlerTest
-    extends OldBaseNodeHandlerTest
+    extends BaseNodeHandlerTest
 {
     @Test
     public void testExample()

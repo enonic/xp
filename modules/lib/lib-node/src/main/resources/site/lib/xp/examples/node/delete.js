@@ -1,9 +1,14 @@
 var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
+var repo = nodeLib.connect({
+    repoId: "cms-repo",
+    branch: "master"
+});
+
 // BEGIN
 // Deletes a node.
-var result1 = nodeLib.delete({
+var result1 = repo.delete({
     key: 'nodeId'
 });
 
@@ -12,7 +17,7 @@ log.info(result1.length + ' nodes deleted.');
 
 // BEGIN
 // Deletes nodes.
-var result2 = nodeLib.delete({
+var result2 = repo.delete({
     keys: ['nodeId', '/node2-path', 'anotherNodeId']
 });
 

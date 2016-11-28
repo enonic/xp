@@ -23,7 +23,6 @@ function required(params, name) {
     if (value === undefined) {
         throw "Parameter '" + name + "' is required";
     }
-
     return value;
 }
 
@@ -31,7 +30,6 @@ function nullOrValue(value) {
     if (value === undefined) {
         return null;
     }
-
     return value;
 }
 
@@ -39,7 +37,6 @@ function valueOrDefault(value, defaultValue) {
     if (value === undefined) {
         return defaultValue;
     }
-
     return value;
 }
 
@@ -75,20 +72,10 @@ exports.binary = function (name, source) {
     return new BinaryAttachmentType(BinaryReferenceType.from(name), source);
 };
 
-
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
         throw "Parameter '" + name + "' is required";
-    }
-
-    return value;
-}
-
-function optional(params, name, defValue) {
-    var value = params[name];
-    if (value === undefined) {
-        return defValue;
     }
 
     return value;
@@ -109,6 +96,18 @@ Handle.prototype.modify = function (params) {
     return __.toNativeObject(this.native.modify(editor, key));
 };
 
+/**
+ * This function fetches nodes. If key is defined, the fetched node will be returned as a JSON object or null if not found.
+ * If keys is defined, the fetched nodes will be return as a JSON array.
+ *
+ * @example-ref examples/node/get.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} [params.key] Path or id to the node.
+ * @param {string[]} [params.keys] Path or id array to the nodes.
+ *
+ * @returns {object} The node or node array (as JSON) fetched from the repository.
+ */
 Handle.prototype.get = function (params) {
     if (params.key === undefined && params.keys === undefined) {
         throw "Parameter 'key' or 'keys' is required";
@@ -119,20 +118,90 @@ Handle.prototype.get = function (params) {
 };
 
 Handle.prototype.push = function (params) {
-    var pushNodeParams = __.newBean('com.enonic.xp.lib.node.PushNodeHandlerParams');
+    var handlerParams = __.newBean('com.enonic.xp.lib.node.PushNodeHandlerParams');
     params = params || {};
-    pushNodeParams.ids = required(params, 'keys');
-    pushNodeParams.targetBranch = required(params, 'target');
+    handlerParams.ids = required(params, 'keys');
+    handlerParams.targetBranch = required(params, 'target');
     if (params.resolve) {
-        pushNodeParams.resolve = params.resolve;
-        pushNodeParams.includeChildren = valueOrDefault(params.resolve.includeChildren, true);
+        handlerParams.resolve = params.resolve;
+        handlerParams.includeChildren = valueOrDefault(params.resolve.includeChildren, true);
         if (params.resolve.exclude) {
-            pushNodeParams.exclude = params.resolve.exclude;
+            handlerParams.exclude = params.resolve.exclude;
         }
     }
 
-    return __.toNativeObject(this.native.push(pushNodeParams));
+    return __.toNativeObject(this.native.push(handlerParams));
 };
+
+Handle.prototype.delete = function (params) {
+    if (params.key === undefined && params.keys === undefined) {
+        throw "Parameter 'key' or 'keys' is required";
+    }
+    var key = params.key ? params.key : null;
+    var keys = params.keys ? params.keys : [];
+    return __.toNativeObject(this.native.delete(key, keys));
+};
+
+
+Handle.prototype.modify = function (params) {
+    var editor = __.toScriptValue(params.editor);
+    var key = required(params, 'key');
+    return __.toNativeObject(this.native.modify(editor, key));
+};
+
+
+Handle.prototype.diff = function (params) {
+    var handlerParams = __.newBean('com.enonic.xp.lib.node.DiffBranchesHandlerParams');
+    params = params || {};
+    handlerParams.nodeId = required(params, 'key');
+    handlerParams.targetBranch = required(params, 'target');
+    handlerParams.includeChildren = valueOrDefault(params.includeChildren, false);
+
+    return __.toNativeObject(this.native.diff(handlerParams));
+};
+
+/**
+ * Rename a node or move it to a new path.
+ *
+ * @example-ref examples/node/move-1.js
+ * @example-ref examples/node/move-2.js
+ * @example-ref examples/node/move-3.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.source Path or id of the node to be moved or renamed.
+ * @param {string} params.target New path or name for the node. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the node.
+ *
+ * @returns {boolean} True if the node was successfully moved or renamed, false otherwise.
+ */
+Handle.prototype.move = function (params) {
+    var source = required(params, 'source');
+    var target = required(params, 'target');
+    return __.toNativeObject(this.native.move(source, target));
+};
+
+/**
+ * This command queries nodes.
+ *
+ * @example-ref examples/node/query.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {string} params.query Query expression.
+ * @param {string} [params.sort] Sorting expression.
+ * @param {string} [params.aggregations] Aggregations expression.
+ * @returns {boolean} Result of query.
+ */
+Handle.prototype.query = function (params) {
+    var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
+    handlerParams.start = params.start;
+    handlerParams.count = params.count;
+    handlerParams.query = nullOrValue(params.query);
+    handlerParams.sort = nullOrValue(params.sort);
+    handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    return __.toNativeObject(this.native.query(handlerParams));
+};
+
 
 exports.connect = function (context) {
 
@@ -154,160 +223,4 @@ exports.connect = function (context) {
     }
 
     return new Handle(factory.create(nodeHandleContext));
-};
-
-/**
- * This function creates a node.
- *
-
-
- * @example-ref examples/node/create.js
- *
- *
- * @returns {object} Node created as JSON.
- */
-
-
-exports.create = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.node.CreateNodeHandler');
-    params = params || {};
-    bean.params = __.toScriptValue(params);
-    return __.toNativeObject(bean.execute());
-};
-
-exports.modify = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.node.ModifyNodeHandler');
-    params = params || {};
-    bean.editor = __.toScriptValue(params.editor);
-    bean.key = required(params, 'key');
-    return __.toNativeObject(bean.execute());
-};
-
-exports.diff = function (params) {
-
-    var bean = __.newBean('com.enonic.xp.lib.node.DiffNodeHandler');
-    params = params || {};
-    bean.editor = __.toScriptValue(params.editor);
-    bean.key = required(params, 'key');
-    return __.toNativeObject(bean.execute());
-
-};
-
-exports.push = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.node.PushNodeHandler');
-    params = params || {};
-    bean.keys = required(params, 'keys');
-    bean.targetBranch = required(params, 'target');
-
-    if (params.resolve) {
-        bean.resolve = params.resolve;
-
-        bean.includeChildren = valueOrDefault(params.resolve.includeChildren, true);
-
-        if (params.resolve.exclude) {
-            bean.exclude = params.resolve.exclude;
-        }
-    }
-
-    return __.toNativeObject(bean.execute());
-};
-
-exports.diff = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.node.DiffBranchesHandler');
-    params = params || {};
-    bean.key = required(params, 'key');
-    bean.targetBranch = required(params, 'target');
-    bean.includeChildren = valueOrDefault(params.includeChildren, true);
-
-    return __.toNativeObject(bean.execute());
-};
-
-/**
- * This function fetches nodes. If key is defined, the fetched node will be returned as a JSON object or null if not found.
- * If keys is defined, the fetched nodes will be return as a JSON array.
- *
- * @example-ref examples/node/get.js
- *
- * @param {object} params JSON with the parameters.
- * @param {string} [params.key] Path or id to the node.
- * @param {string[]} [params.keys] Path or id array to the nodes.
- *
- * @returns {object} The node or node array (as JSON) fetched from the repository.
- */
-exports.get = function (params) {
-    if (params.key === undefined && params.keys === undefined) {
-        throw "Parameter 'key' or 'keys' is required";
-    }
-
-    var bean = __.newBean('com.enonic.xp.lib.node.GetNodeHandler');
-    bean.key = params.key ? params.key : null;
-    bean.keys = params.keys ? params.keys : [];
-    return __.toNativeObject(bean.execute());
-};
-
-
-/**
- * This function deletes nodes.
- *
- * @example-ref examples/node/delete.js
- *
- * @param {object} params JSON with the parameters.
- * @param {string} [params.key] Path or id to the node.
- * @param {string[]} [params.keys] Path or id array to the nodes.
- *
- * @returns {string[]} Id array of deleted nodes.
- */
-exports.delete = function (params) {
-    if (params.key === undefined && params.keys === undefined) {
-        throw "Parameter 'key' or 'keys' is required";
-    }
-    var bean = __.newBean('com.enonic.xp.lib.node.DeleteNodeHandler');
-    bean.key = params.key ? params.key : null;
-    bean.keys = params.keys ? params.keys : [];
-    return __.toNativeObject(bean.execute());
-};
-
-
-/**
- * Rename a node or move it to a new path.
- *
- * @example-ref examples/node/move-1.js
- * @example-ref examples/node/move-2.js
- * @example-ref examples/node/move-3.js
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.source Path or id of the node to be moved or renamed.
- * @param {string} params.target New path or name for the node. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the node.
- *
- * @returns {boolean} True if the node was successfully moved or renamed, false otherwise.
- */
-exports.move = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.node.MoveNodeHandler');
-    bean.source = required(params, 'source');
-    bean.target = required(params, 'target');
-    return __.toNativeObject(bean.execute());
-};
-
-
-/**
- * This command queries nodes.
- *
- * @example-ref examples/node/query.js
- *
- * @param {object} params JSON with the parameters.
- * @param {number} [params.start=0] Start index (used for paging).
- * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} params.query Query expression.
- * @param {string} [params.sort] Sorting expression.
- * @param {string} [params.aggregations] Aggregations expression.
- * @returns {boolean} Result of query.
- */
-exports.query = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.node.QueryNodeHandler');
-    bean.start = params.start;
-    bean.count = params.count;
-    bean.query = nullOrValue(params.query);
-    bean.sort = nullOrValue(params.sort);
-    bean.aggregations = __.toScriptValue(params.aggregations);
-    return __.toNativeObject(bean.execute());
 };

@@ -23,7 +23,7 @@ public final class GetNodeHandler
         keys = builder.keys;
     }
 
-    protected Object execute()
+    public Object execute()
     {
         if ( key != null )
         {

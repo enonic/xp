@@ -18,49 +18,85 @@ public class NodeHandler
 
     public Object create( final ScriptValue params )
     {
-        final CreateNodeHandler createHandler = CreateNodeHandler.create().
+        return execute( CreateNodeHandler.create().
             nodeService( this.nodeService ).
             params( params ).
-            build();
-
-        return this.context.callWith( createHandler::execute );
+            build() );
     }
 
     public Object modify( final ScriptValue editor, String key )
     {
-        final ModifyNodeHandler modifyHandler = ModifyNodeHandler.create().
+        return execute( ModifyNodeHandler.create().
             nodeService( this.nodeService ).
             key( NodeKey.from( key ) ).
             editor( editor ).
-            build();
-
-        return this.context.callWith( modifyHandler::execute );
+            build() );
     }
 
     public Object get( final String key, String[] keys )
     {
-        final GetNodeHandler getNodeHandler = GetNodeHandler.create().
+        return execute( GetNodeHandler.create().
             nodeService( this.nodeService ).
             key( NodeKey.from( key ) ).
             keys( NodeKeys.from( keys ) ).
-            build();
-
-        return this.context.callWith( getNodeHandler::execute );
+            build() );
     }
 
     public Object push( final PushNodeHandlerParams params )
     {
-        final PushNodeHandler pushNodeHandler = PushNodeHandler.create().
+        return execute( PushNodeHandler.create().
             nodeService( this.nodeService ).
             exclude( params.getExclude() ).
             includeChildren( params.isIncludeChildren() ).
             keys( params.getIds() ).
             resolve( params.isResolve() ).
             targetBranch( params.getTargetBranch() ).
-            build();
-
-        return this.context.callWith( pushNodeHandler::execute );
+            build() );
     }
 
+    public Object delete( final String key, String[] keys )
+    {
+        return execute( DeleteNodeHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            keys( NodeKeys.from( keys ) ).
+            build() );
+    }
+
+    public Object move( final String source, final String target )
+    {
+        return execute( MoveNodeHandler.create().
+            source( NodeKey.from( source ) ).
+            target( target ).
+            nodeService( this.nodeService ).
+            build() );
+    }
+
+    public Object diff( final DiffBranchesHandlerParams params )
+    {
+        return execute( DiffBranchesHandler.create().
+            includeChildren( params.isIncludeChildren() ).
+            nodeId( params.getNodeId() ).
+            targetBranch( params.getTargetBranch() ).
+            nodeService( this.nodeService ).
+            build() );
+    }
+
+    public Object query( final QueryNodeHandlerParams params )
+    {
+        return execute( QueryNodeHandler.create().
+            query( params.getQuery() ).
+            aggregations( params.getAggregations() ).
+            count( params.getCount() ).
+            start( params.getStart() ).
+            sort( params.getSort() ).
+            nodeService( this.nodeService ).
+            build() );
+    }
+
+    private Object execute( final BaseNodeHandler handler )
+    {
+        return this.context.callWith( handler::execute );
+    }
 }
 

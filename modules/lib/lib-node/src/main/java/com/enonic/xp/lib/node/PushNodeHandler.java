@@ -33,7 +33,7 @@ public final class PushNodeHandler
         exclude = builder.exclude;
     }
 
-    protected Object execute()
+    public Object execute()
     {
 
         final NodeIds.Builder toBePushed = NodeIds.create();

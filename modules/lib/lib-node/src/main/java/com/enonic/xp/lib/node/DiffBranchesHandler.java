@@ -8,20 +8,32 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 
 @SuppressWarnings("unused")
 public final class DiffBranchesHandler
-    extends OldBaseNodeHandler
+    extends BaseNodeHandler
 {
-    private NodeId key;
+    private NodeId nodeId;
 
     private Branch targetBranch;
 
     private boolean includeChildren = true;
 
-    @Override
-    protected Object doExecute()
+    private DiffBranchesHandler( final Builder builder )
+    {
+        super( builder );
+        nodeId = builder.nodeId;
+        targetBranch = builder.targetBranch;
+        setIncludeChildren( builder.includeChildren );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public Object execute()
     {
         final ResolveSyncWorkResult result = this.nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).
-            nodeId( key ).
+            nodeId( nodeId ).
             branch( targetBranch ).
             build() );
 
@@ -29,9 +41,9 @@ public final class DiffBranchesHandler
     }
 
     @SuppressWarnings("unused")
-    public void setKey( final String key )
+    public void setNodeId( final String nodeId )
     {
-        this.key = NodeId.from( key );
+        this.nodeId = NodeId.from( nodeId );
     }
 
     @SuppressWarnings("unused")
@@ -44,5 +56,42 @@ public final class DiffBranchesHandler
     public void setIncludeChildren( final boolean includeChildren )
     {
         this.includeChildren = includeChildren;
+    }
+
+    public static final class Builder
+        extends BaseNodeHandler.Builder<Builder>
+    {
+        private NodeId nodeId;
+
+        private Branch targetBranch;
+
+        private boolean includeChildren;
+
+        private Builder()
+        {
+        }
+
+        public Builder nodeId( final NodeId val )
+        {
+            nodeId = val;
+            return this;
+        }
+
+        public Builder targetBranch( final Branch val )
+        {
+            targetBranch = val;
+            return this;
+        }
+
+        public Builder includeChildren( final boolean val )
+        {
+            includeChildren = val;
+            return this;
+        }
+
+        public DiffBranchesHandler build()
+        {
+            return new DiffBranchesHandler( this );
+        }
     }
 }

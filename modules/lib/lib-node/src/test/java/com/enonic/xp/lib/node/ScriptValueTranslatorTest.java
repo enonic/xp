@@ -19,12 +19,11 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
-import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 
 public class ScriptValueTranslatorTest
-    extends ScriptTestSupport
+    extends BaseNodeHandlerTest
 {
     private ObjectMapper mapper;
 
@@ -36,7 +35,6 @@ public class ScriptValueTranslatorTest
         this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
         this.mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
         this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-
     }
 
     @Test

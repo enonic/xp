@@ -1,9 +1,14 @@
 var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
+var repo = nodeLib.connect({
+    repoId: "cms-repo",
+    branch: "master"
+});
+
 // BEGIN
 // Diff the given node in the current branch and the targetBranch
-var result = nodeLib.diff({
+var result = repo.diff({
     key: ['a'],
     target: 'otherBranch',
     includeChildren: true

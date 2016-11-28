@@ -22,7 +22,7 @@ public class CreateNodeHandler
         this.params = builder.params;
     }
 
-    protected Object execute()
+    public Object execute()
     {
         final ScriptValueTranslatorResult params = getParams( this.params );
         final CreateNodeParams createNodeParams = new CreateNodeParamsFactory().create( params );

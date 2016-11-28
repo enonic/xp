@@ -1,9 +1,14 @@
 var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
+var repo = nodeLib.connect({
+    repoId: "cms-repo",
+    branch: "master"
+});
+
 // BEGIN
 // Rename content by id. Keeps same parent.
-var content1 = nodeLib.move({
+var content1 = repo.move({
     source: 'nodeId',
     target: 'new-name'
 });

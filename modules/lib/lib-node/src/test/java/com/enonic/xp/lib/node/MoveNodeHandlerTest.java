@@ -14,7 +14,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
 public class MoveNodeHandlerTest
-    extends OldBaseNodeHandlerTest
+    extends BaseNodeHandlerTest
 {
     private NodePath parentPath;
 
@@ -26,7 +26,6 @@ public class MoveNodeHandlerTest
         parentPath = NodePath.ROOT;
         name = "my-name";
     }
-
 
     private void mockGetNode()
     {

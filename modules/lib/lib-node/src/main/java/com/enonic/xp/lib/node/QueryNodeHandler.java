@@ -14,9 +14,9 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.script.ScriptValue;
 
-@SuppressWarnings( "unused" )
+@SuppressWarnings("unused")
 public final class QueryNodeHandler
-    extends OldBaseNodeHandler
+    extends BaseNodeHandler
 {
     private Integer start;
 
@@ -30,8 +30,23 @@ public final class QueryNodeHandler
 
     private List<String> contentTypes;
 
-    @Override
-    protected Object doExecute()
+    private QueryNodeHandler( final Builder builder )
+    {
+        super( builder );
+        setStart( builder.start );
+        setCount( builder.count );
+        setQuery( builder.query );
+        setSort( builder.sort );
+        aggregations = builder.aggregations;
+        contentTypes = builder.contentTypes;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public Object execute()
     {
         final int start = valueOrDefault( this.start, 0 );
         final int count = valueOrDefault( this.count, 10 );
@@ -55,6 +70,7 @@ public final class QueryNodeHandler
 
         return convert( result );
     }
+
 
     private NodeQueryResultMapper convert( final FindNodesByQueryResult findQueryResult )
     {
@@ -84,5 +100,66 @@ public final class QueryNodeHandler
     public void setAggregations( final ScriptValue value )
     {
         this.aggregations = value != null ? value.getMap() : null;
+    }
+
+    public static final class Builder
+        extends BaseNodeHandler.Builder<Builder>
+    {
+        private Integer start;
+
+        private Integer count;
+
+        private String query;
+
+        private String sort;
+
+        private Map<String, Object> aggregations;
+
+        private List<String> contentTypes;
+
+        private Builder()
+        {
+        }
+
+        public Builder start( final Integer val )
+        {
+            start = val;
+            return this;
+        }
+
+        public Builder count( final Integer val )
+        {
+            count = val;
+            return this;
+        }
+
+        public Builder query( final String val )
+        {
+            query = val;
+            return this;
+        }
+
+        public Builder sort( final String val )
+        {
+            sort = val;
+            return this;
+        }
+
+        public Builder aggregations( final Map<String, Object> val )
+        {
+            aggregations = val;
+            return this;
+        }
+
+        public Builder contentTypes( final List<String> val )
+        {
+            contentTypes = val;
+            return this;
+        }
+
+        public QueryNodeHandler build()
+        {
+            return new QueryNodeHandler( this );
+        }
     }
 }

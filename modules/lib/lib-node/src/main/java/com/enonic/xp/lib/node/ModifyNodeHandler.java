@@ -29,7 +29,7 @@ public class ModifyNodeHandler
         return new Builder();
     }
 
-    protected Object execute()
+    public Object execute()
     {
         final Node node = getExistingNode();
 

@@ -2,7 +2,6 @@ var nodeLib = require('/lib/xp/node');
 
 var TestClass = Java.type('com.enonic.xp.lib.node.CreateNodeHandlerTest');
 var stream1 = TestClass.createByteSource('Hello World');
-var stream2 = TestClass.createByteSource('Hello World2');
 
 exports.object = function () {
     return {a: 1, b: 2};

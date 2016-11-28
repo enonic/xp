@@ -11,14 +11,25 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public final class DeleteNodeHandler
-    extends OldBaseNodeHandler
+    extends BaseNodeHandler
 {
     private NodeKey key;
 
     private NodeKeys keys;
 
-    @Override
-    protected Collection<String> doExecute()
+    private DeleteNodeHandler( final Builder builder )
+    {
+        super( builder );
+        key = builder.key;
+        keys = builder.keys;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public Collection<String> execute()
     {
         final ImmutableList.Builder<String> deletedNodeIds = ImmutableList.builder();
 
@@ -86,5 +97,34 @@ public final class DeleteNodeHandler
     public void setKeys( final String[] keys )
     {
         this.keys = NodeKeys.from( keys );
+    }
+
+    public static final class Builder
+        extends BaseNodeHandler.Builder<Builder>
+    {
+        private NodeKey key;
+
+        private NodeKeys keys;
+
+        private Builder()
+        {
+        }
+
+        public Builder key( final NodeKey val )
+        {
+            key = val;
+            return this;
+        }
+
+        public Builder keys( final NodeKeys val )
+        {
+            keys = val;
+            return this;
+        }
+
+        public DeleteNodeHandler build()
+        {
+            return new DeleteNodeHandler( this );
+        }
     }
 }
