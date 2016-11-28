@@ -60,6 +60,7 @@ public final class ContentMapper
         if ( info != null )
         {
             gen.value( "from", info.getFrom() );
+            gen.value( "to", info.getTo() );
         }
         gen.end();
     }
