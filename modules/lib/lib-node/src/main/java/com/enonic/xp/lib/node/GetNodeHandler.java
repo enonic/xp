@@ -16,8 +16,14 @@ public final class GetNodeHandler
 
     private NodeKeys keys;
 
-    @Override
-    protected Object doExecute()
+    private GetNodeHandler( final Builder builder )
+    {
+        super( builder );
+        key = builder.key;
+        keys = builder.keys;
+    }
+
+    protected Object execute()
     {
         if ( key != null )
         {
@@ -82,5 +88,39 @@ public final class GetNodeHandler
     public void setKeys( final String[] keys )
     {
         this.keys = NodeKeys.from( keys );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
+        extends BaseNodeHandler.Builder<Builder>
+    {
+        private NodeKey key;
+
+        private NodeKeys keys;
+
+        private Builder()
+        {
+        }
+
+        public Builder key( final NodeKey val )
+        {
+            key = val;
+            return this;
+        }
+
+        public Builder keys( final NodeKeys val )
+        {
+            keys = val;
+            return this;
+        }
+
+        public GetNodeHandler build()
+        {
+            return new GetNodeHandler( this );
+        }
     }
 }

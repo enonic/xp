@@ -1,9 +1,15 @@
 var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
+
+var repo = nodeLib.connect({
+    repoId: "cms-repo",
+    branch: "master"
+});
+
 // BEGIN
 // Fetches a node.
-var result1 = nodeLib.get({
+var result1 = repo.get({
     key: 'nodeId'
 });
 
@@ -16,7 +22,7 @@ if (result1) {
 
 // BEGIN
 // Fetches nodes.
-var result2 = nodeLib.get({
+var result2 = repo.get({
     keys: ['nodeId', '/node2-path', 'node3Id']
 });
 

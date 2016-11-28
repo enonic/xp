@@ -50,8 +50,8 @@ locateJava() {
 }
 
 setupDefaults() {
-    DEFAULT_JAVA_OPTS="-Djsse.enableSNIExtension=false -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark"
-    DEFAULT_JAVA_DEBUG_OPTS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
+  DEFAULT_JAVA_OPTS="-Djsse.enableSNIExtension=false"
+    DEFAULT_JAVA_DEBUG_OPTS="-Xdebug -Xnoagent -agentpath:/Users/runarmyklebust/Dev/Workspace/xp/home/libyjpagent.jnilib -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
 }
 
 setupOptions() {

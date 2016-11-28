@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RenameNodeParams;
 
 public final class MoveNodeHandler
-    extends BaseNodeHandler
+    extends OldBaseNodeHandler
 {
     private NodeKey source;
 

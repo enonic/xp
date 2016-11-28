@@ -13,7 +13,7 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 public final class PushNodeHandler
     extends BaseNodeHandler
 {
-    private NodeIds keys;
+    private NodeIds ids;
 
     private Branch targetBranch;
 
@@ -23,8 +23,17 @@ public final class PushNodeHandler
 
     private NodeIds exclude;
 
-    @Override
-    protected Object doExecute()
+    private PushNodeHandler( final Builder builder )
+    {
+        super( builder );
+        ids = builder.ids;
+        targetBranch = builder.targetBranch;
+        setResolve( builder.resolve );
+        setIncludeChildren( builder.includeChildren );
+        exclude = builder.exclude;
+    }
+
+    protected Object execute()
     {
 
         final NodeIds.Builder toBePushed = NodeIds.create();
@@ -36,10 +45,10 @@ public final class PushNodeHandler
         }
         else
         {
-            toBePushed.addAll( keys );
+            toBePushed.addAll( ids );
         }
 
-        final PushNodesResult push = this.nodeService.push( keys, targetBranch );
+        final PushNodesResult push = this.nodeService.push( ids, targetBranch );
 
         final NodeIds deletedNodes = doDelete( toBeDeleted );
 
@@ -60,7 +69,7 @@ public final class PushNodeHandler
 
     private void doResolve( final NodeIds.Builder toBePushed, final NodeIds.Builder toBeDeleted )
     {
-        for ( final NodeId nodeId : keys )
+        for ( final NodeId nodeId : ids )
         {
             final ResolveSyncWorkResult result = this.nodeService.resolveSyncWork( SyncWorkResolverParams.create().
                 nodeId( nodeId ).
@@ -83,9 +92,9 @@ public final class PushNodeHandler
         }
     }
 
-    public void setKeys( final String[] keys )
+    public void setIds( final String[] ids )
     {
-        this.keys = NodeIds.from( keys );
+        this.ids = NodeIds.from( ids );
     }
 
     public void setTargetBranch( final String targetBranch )
@@ -106,5 +115,63 @@ public final class PushNodeHandler
     public void setExclude( final String[] exclude )
     {
         this.exclude = NodeIds.from( exclude );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
+        extends BaseNodeHandler.Builder<Builder>
+    {
+        private NodeIds ids;
+
+        private Branch targetBranch;
+
+        private boolean resolve;
+
+        private boolean includeChildren;
+
+        private NodeIds exclude;
+
+        private Builder()
+        {
+        }
+
+        public Builder keys( final NodeIds val )
+        {
+            ids = val;
+            return this;
+        }
+
+        public Builder targetBranch( final Branch val )
+        {
+            targetBranch = val;
+            return this;
+        }
+
+        public Builder resolve( final boolean val )
+        {
+            resolve = val;
+            return this;
+        }
+
+        public Builder includeChildren( final boolean val )
+        {
+            includeChildren = val;
+            return this;
+        }
+
+        public Builder exclude( final NodeIds val )
+        {
+            exclude = val;
+            return this;
+        }
+
+        public PushNodeHandler build()
+        {
+            return new PushNodeHandler( this );
+        }
     }
 }

@@ -17,20 +17,17 @@ import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
-public class BaseNodeHandlerTest
+public class OldBaseNodeHandlerTest
     extends ScriptTestSupport
 {
     protected NodeService nodeService;
 
     protected RepositoryService repositoryService;
-
-    protected SecurityService securityService;
 
     @Override
     public void initialize()
@@ -38,16 +35,13 @@ public class BaseNodeHandlerTest
     {
         super.initialize();
 
-        this.repositoryService = Mockito.mock( RepositoryService.class );
         this.nodeService = Mockito.mock( NodeService.class );
-        this.securityService = Mockito.mock( SecurityService.class );
-
+        this.repositoryService = Mockito.mock( RepositoryService.class );
         addService( NodeService.class, this.nodeService );
         addService( RepositoryService.class, this.repositoryService );
-        addService( SecurityService.class, this.securityService );
     }
 
-    protected NodeBranchEntry createEntry( final String id )
+    NodeBranchEntry createEntry( final String id )
     {
         return NodeBranchEntry.create().
             nodeId( NodeId.from( id ) ).

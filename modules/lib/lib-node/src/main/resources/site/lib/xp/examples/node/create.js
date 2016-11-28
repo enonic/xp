@@ -5,9 +5,14 @@ var TestClass = Java.type('com.enonic.xp.lib.node.CreateNodeHandlerTest');
 var stream1 = TestClass.createByteSource('Hello World');
 var stream2 = TestClass.createByteSource('Hello World2');
 
+var repo = nodeLib.connect({
+    repoId: "cms-repo",
+    branch: "master"
+});
+
 // BEGIN
-// Creates a content.
-var result1 = nodeLib.create({
+// Creates a node.
+var result1 = repo.create({
     _name: "myName",
     displayName: "This is brand new node",
     someData: {

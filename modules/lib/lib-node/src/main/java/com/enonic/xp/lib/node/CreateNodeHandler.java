@@ -14,17 +14,21 @@ import com.enonic.xp.script.ScriptValue;
 public class CreateNodeHandler
     extends BaseNodeHandler
 {
-    private ScriptValue params;
+    private final ScriptValue params;
 
-    @Override
-    protected Object doExecute()
+    public CreateNodeHandler( final Builder builder )
+    {
+        super( builder );
+        this.params = builder.params;
+    }
+
+    protected Object execute()
     {
         final ScriptValueTranslatorResult params = getParams( this.params );
         final CreateNodeParams createNodeParams = new CreateNodeParamsFactory().create( params );
         final Node node = this.nodeService.create( createNodeParams );
         return new NodeMapper( node );
     }
-
 
     private ScriptValueTranslatorResult getParams( final ScriptValue params )
     {
@@ -37,9 +41,30 @@ public class CreateNodeHandler
         return mapper.valueToTree( value );
     }
 
-    @SuppressWarnings("unused")
-    public void setParams( final ScriptValue params )
+    public static Builder create()
     {
-        this.params = params;
+        return new Builder();
     }
+
+    public static class Builder
+        extends BaseNodeHandler.Builder<Builder>
+    {
+        private ScriptValue params;
+
+        private Builder()
+        {
+        }
+
+        public Builder params( final ScriptValue val )
+        {
+            params = val;
+            return this;
+        }
+
+        public CreateNodeHandler build()
+        {
+            return new CreateNodeHandler( this );
+        }
+    }
+
 }

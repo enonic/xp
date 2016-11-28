@@ -17,8 +17,19 @@ public class ModifyNodeHandler
 
     private ScriptValue editor;
 
-    @Override
-    protected Object doExecute()
+    private ModifyNodeHandler( final Builder builder )
+    {
+        super( builder );
+        key = builder.key;
+        setEditor( builder.editor );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    protected Object execute()
     {
         final Node node = getExistingNode();
 
@@ -91,4 +102,32 @@ public class ModifyNodeHandler
     }
 
 
+    public static final class Builder
+        extends BaseNodeHandler.Builder<Builder>
+    {
+        private NodeKey key;
+
+        private ScriptValue editor;
+
+        private Builder()
+        {
+        }
+
+        public Builder key( final NodeKey val )
+        {
+            key = val;
+            return this;
+        }
+
+        public Builder editor( final ScriptValue val )
+        {
+            editor = val;
+            return this;
+        }
+
+        public ModifyNodeHandler build()
+        {
+            return new ModifyNodeHandler( this );
+        }
+    }
 }

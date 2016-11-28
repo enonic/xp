@@ -1,42 +1,30 @@
 package com.enonic.xp.lib.node;
 
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.script.bean.ScriptBean;
 
 public abstract class BaseNodeHandler
-    implements ScriptBean
 {
-    protected NodeService nodeService;
+    protected final NodeService nodeService;
 
-    public final Object execute()
+    protected BaseNodeHandler( final Builder builder )
     {
-        return doExecute();
+        nodeService = builder.nodeService;
     }
 
-    protected abstract Object doExecute();
-
-    protected <T> T valueOrDefault( final T value, final T defValue )
+    public static abstract class Builder<B extends Builder>
     {
-        return value == null ? defValue : value;
-    }
+        private NodeService nodeService;
 
-    @Override
-    public void initialize( final BeanContext context )
-    {
-        this.nodeService = context.getService( NodeService.class ).get();
-    }
-
-    protected Node doGetNode( final NodeKey nodeKey )
-    {
-        if ( !nodeKey.isId() )
+        Builder()
         {
-            return nodeService.getByPath( nodeKey.getAsPath() );
         }
-        else
+
+        @SuppressWarnings("unchecked")
+        public B nodeService( final NodeService val )
         {
-            return nodeService.getById( nodeKey.getAsNodeId() );
+            nodeService = val;
+            return (B) this;
         }
+
     }
 }

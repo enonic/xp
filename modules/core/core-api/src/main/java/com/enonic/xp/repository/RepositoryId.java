@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 @Beta
 public final class RepositoryId
@@ -14,9 +15,12 @@ public final class RepositoryId
 
     private RepositoryId( final String value )
     {
-        Preconditions.checkNotNull( value, "RepositoryId cannot be null" );
-        Preconditions.checkArgument( !value.trim().isEmpty(), "RepositoryId cannot be blank" );
-        Preconditions.checkArgument( value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ), "RepositoryId format incorrect: " + value );
+        final String sanitizedValue = Strings.isNullOrEmpty( value ) ? value : value.toLowerCase();
+
+        Preconditions.checkNotNull( sanitizedValue, "RepositoryId cannot be null" );
+        Preconditions.checkArgument( !sanitizedValue.trim().isEmpty(), "RepositoryId cannot be blank" );
+        Preconditions.checkArgument( sanitizedValue.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ),
+                                     "RepositoryId format incorrect: " + value );
         this.value = value;
     }
 

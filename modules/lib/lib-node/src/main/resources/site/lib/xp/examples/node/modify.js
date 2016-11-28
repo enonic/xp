@@ -7,6 +7,11 @@ var assert = require('/lib/xp/assert');
 var TestClass = Java.type('com.enonic.xp.lib.node.CreateNodeHandlerTest');
 var stream1 = TestClass.createByteSource('Hello World');
 
+var repo = nodeLib.connect({
+    repoId: "cms-repo",
+    branch: "master"
+});
+
 
 function editor(node) {
 
@@ -46,7 +51,7 @@ function editor(node) {
 }
 
 // Modify node by id
-var result = nodeLib.modify({
+var result = repo.modify({
     key: 'abc',
     editor: editor
 });

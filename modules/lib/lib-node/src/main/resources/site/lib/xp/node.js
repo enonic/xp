@@ -7,6 +7,8 @@
  * @module lib/xp/node
  */
 
+var factory = __.newBean('com.enonic.xp.lib.node.NodeHandleFactory');
+
 var GeoPointType = Java.type("com.enonic.xp.util.GeoPoint");
 var InstantType = Java.type("java.time.Instant");
 var LocalDateType = Java.type("java.time.LocalDate");
@@ -73,6 +75,87 @@ exports.binary = function (name, source) {
     return new BinaryAttachmentType(BinaryReferenceType.from(name), source);
 };
 
+
+function required(params, name) {
+    var value = params[name];
+    if (value === undefined) {
+        throw "Parameter '" + name + "' is required";
+    }
+
+    return value;
+}
+
+function optional(params, name, defValue) {
+    var value = params[name];
+    if (value === undefined) {
+        return defValue;
+    }
+
+    return value;
+}
+
+function Handle(native) {
+    this.native = native;
+}
+
+Handle.prototype.create = function (params) {
+    var scriptValue = __.toScriptValue(params);
+    return __.toNativeObject(this.native.create(scriptValue));
+};
+
+Handle.prototype.modify = function (params) {
+    var editor = __.toScriptValue(params.editor);
+    var key = required(params, 'key');
+    return __.toNativeObject(this.native.modify(editor, key));
+};
+
+Handle.prototype.get = function (params) {
+    if (params.key === undefined && params.keys === undefined) {
+        throw "Parameter 'key' or 'keys' is required";
+    }
+    var key = params.key ? params.key : null;
+    var keys = params.keys ? params.keys : [];
+    return __.toNativeObject(this.native.get(key, keys));
+};
+
+Handle.prototype.push = function (params) {
+    var pushNodeParams = __.newBean('com.enonic.xp.lib.node.PushNodeHandlerParams');
+    params = params || {};
+    pushNodeParams.ids = required(params, 'keys');
+    pushNodeParams.targetBranch = required(params, 'target');
+    if (params.resolve) {
+        pushNodeParams.resolve = params.resolve;
+        pushNodeParams.includeChildren = valueOrDefault(params.resolve.includeChildren, true);
+        if (params.resolve.exclude) {
+            pushNodeParams.exclude = params.resolve.exclude;
+        }
+    }
+
+    return __.toNativeObject(this.native.push(pushNodeParams));
+};
+
+exports.connect = function (context) {
+
+    var nodeHandleContext = __.newBean('com.enonic.xp.lib.node.NodeHandleContext');
+    nodeHandleContext.repoId = required(context, 'repoId');
+    nodeHandleContext.branch = required(context, 'branch');
+
+    if (context.user) {
+        if (context.user.login) {
+            nodeHandleContext.username = context.user.login;
+        }
+        if (context.user.userStore) {
+            nodeHandleContext.userStore = context.user.userStore;
+        }
+    }
+
+    if (context.principals) {
+        nodeHandleContext.principals = context.principals;
+    }
+
+    return new Handle(factory.create(nodeHandleContext));
+};
+
 /**
  * This function creates a node.
  *
@@ -83,6 +166,8 @@ exports.binary = function (name, source) {
  *
  * @returns {object} Node created as JSON.
  */
+
+
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.node.CreateNodeHandler');
     params = params || {};

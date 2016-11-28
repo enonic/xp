@@ -16,7 +16,7 @@ import com.enonic.xp.script.ScriptValue;
 
 @SuppressWarnings( "unused" )
 public final class QueryNodeHandler
-    extends BaseNodeHandler
+    extends OldBaseNodeHandler
 {
     private Integer start;
 

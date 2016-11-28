@@ -1,9 +1,14 @@
 var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
+var repo = nodeLib.connect({
+    repoId: "cms-repo",
+    branch: "master"
+});
+
 // BEGIN
 // Push nodes from current branch
-var result = nodeLib.push({
+var result = repo.push({
     keys: ['a'],
     target: 'otherBranch'
 });

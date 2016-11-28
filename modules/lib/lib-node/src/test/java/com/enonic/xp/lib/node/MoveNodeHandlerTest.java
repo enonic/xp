@@ -14,7 +14,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
 public class MoveNodeHandlerTest
-    extends BaseNodeHandlerTest
+    extends OldBaseNodeHandlerTest
 {
     private NodePath parentPath;
 

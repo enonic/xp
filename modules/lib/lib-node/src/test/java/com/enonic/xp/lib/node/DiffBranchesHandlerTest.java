@@ -9,7 +9,7 @@ import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
 public class DiffBranchesHandlerTest
-    extends BaseNodeHandlerTest
+    extends OldBaseNodeHandlerTest
 {
 
     @Test

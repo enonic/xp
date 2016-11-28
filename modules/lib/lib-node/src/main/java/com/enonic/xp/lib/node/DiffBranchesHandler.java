@@ -8,7 +8,7 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 
 @SuppressWarnings("unused")
 public final class DiffBranchesHandler
-    extends BaseNodeHandler
+    extends OldBaseNodeHandler
 {
     private NodeId key;
 
