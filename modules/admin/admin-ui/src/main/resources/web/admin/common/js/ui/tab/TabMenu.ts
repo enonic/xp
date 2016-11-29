@@ -1,5 +1,6 @@
 module api.ui.tab {
 
+    import AppHelper = api.util.AppHelper;
     export class TabMenu extends api.dom.DivEl implements api.ui.Navigator {
 
         private tabMenuButton: TabMenuButton;
@@ -51,10 +52,8 @@ module api.ui.tab {
         }
 
         private initListeners() {
-            api.dom.Body.get().onClicked((event: MouseEvent) => {
-                if (!this.getEl().contains(<HTMLElement> event.target)) {
-                    this.hideMenu();
-                }
+            AppHelper.focusInOut(this, () => {
+                this.hideMenu();
             });
 
             this.onClicked((e: MouseEvent) => {
