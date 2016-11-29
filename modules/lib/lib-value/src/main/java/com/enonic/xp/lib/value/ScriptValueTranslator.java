@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.node;
+package com.enonic.xp.lib.value;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-class ScriptValueTranslator
+public class ScriptValueTranslator
 {
     private final PropertyTree propertyTree = new PropertyTree();
 

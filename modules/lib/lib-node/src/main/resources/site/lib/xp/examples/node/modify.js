@@ -1,10 +1,11 @@
 var nodeLib = require('/lib/xp/node');
+var valueLib = require('/lib/xp/value');
 var assert = require('/lib/xp/assert');
 
 // BEGIN
 // Editor to call for node.
 
-var TestClass = Java.type('com.enonic.xp.lib.node.CreateNodeHandlerTest');
+var TestClass = Java.type('com.enonic.xp.lib.node.BaseNodeHandlerTest');
 var stream1 = TestClass.createByteSource('Hello World');
 
 var repo = nodeLib.connect({
@@ -41,9 +42,9 @@ function editor(node) {
     };
 
     node.myString = 'modified';
-    node.mySet.myGeoPoint = nodeLib.geoPoint(0, 0);
+    node.mySet.myGeoPoint = valueLib.geoPoint(0, 0);
     node.myArray = ["modified1", "modified2", "modified3"];
-    node.myBinaryReference = nodeLib.binary('myFile', stream1);
+    node.myBinaryReference = valueLib.binary('myFile', stream1);
 
     delete node.toBeRemoved;
 

@@ -3,8 +3,6 @@ package com.enonic.xp.lib.node;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.CreateNodeParams;
@@ -36,9 +34,4 @@ public class CreateNodeHandlerTest
         runScript( "/site/lib/xp/examples/node/create.js" );
     }
 
-    @SuppressWarnings("unused")
-    public static ByteSource createByteSource( final String value )
-    {
-        return ByteSource.wrap( value.getBytes() );
-    }
 }

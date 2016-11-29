@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.lib.node.mapper.NodeMapper;
+import com.enonic.xp.lib.value.ScriptValueTranslator;
+import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.script.ScriptValue;

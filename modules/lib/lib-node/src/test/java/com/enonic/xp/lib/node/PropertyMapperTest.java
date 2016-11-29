@@ -10,19 +10,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.ValueType;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.lib.node.mapper.PropertyTreeMapper;
-import com.enonic.xp.node.BinaryAttachments;
+import com.enonic.xp.lib.value.ScriptValueTranslator;
+import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 
 import static org.junit.Assert.*;
 
-public class ScriptValueTranslatorTest
+public class PropertyMapperTest
     extends BaseNodeHandlerTest
 {
     private ObjectMapper mapper;
@@ -47,83 +45,12 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void geoPoint()
-        throws Exception
-    {
-        final PropertyTree properties = getPropertyTree( "geoPoint" );
-        assertNotNull( properties.getGeoPoint( "myGeoPoint" ) );
-        validateType( properties, "myGeoPoint", ValueTypes.GEO_POINT );
-    }
-
-    @Test
-    public void instant()
-        throws Exception
-    {
-        final PropertyTree properties = getPropertyTree( "instant" );
-        assertNotNull( properties.getInstant( "myInstant" ) );
-        validateType( properties, "myInstant", ValueTypes.DATE_TIME );
-    }
-
-    @Test
-    public void booleanTest()
-        throws Exception
-    {
-        final PropertyTree properties = getPropertyTree( "boolean" );
-        assertNotNull( properties.getBoolean( "myBoolean" ) );
-        validateType( properties, "myBoolean", ValueTypes.BOOLEAN );
-    }
-
-    @Test
-    public void reference()
-        throws Exception
-    {
-        final PropertyTree properties = getPropertyTree( "reference" );
-        assertNotNull( properties.getReference( "myReference" ) );
-        validateType( properties, "myReference", ValueTypes.REFERENCE );
-    }
-
-    @Test
-    public void localDateTime()
-        throws Exception
-    {
-        final PropertyTree properties = getPropertyTree( "localDateTime" );
-        assertNotNull( properties.getLocalDateTime( "myLocalDateTime" ) );
-        validateType( properties, "myLocalDateTime", ValueTypes.LOCAL_DATE_TIME );
-    }
-
-    @Test
-    public void localDate()
-        throws Exception
-    {
-        final PropertyTree properties = getPropertyTree( "localDate" );
-        assertNotNull( properties.getLocalDate( "myLocalDate" ) );
-        validateType( properties, "myLocalDate", ValueTypes.LOCAL_DATE );
-    }
-
-    @Test
-    public void localTime()
-        throws Exception
-    {
-        final PropertyTree properties = getPropertyTree( "localTime" );
-        assertNotNull( properties.getLocalTime( "myLocalTime" ) );
-        validateType( properties, "myLocalTime", ValueTypes.LOCAL_TIME );
-
-    }
-
-    @Test
     public void doubleTest()
         throws Exception
     {
         final PropertyTree properties = getPropertyTree( "double" );
 
         assertNotNull( properties.getDouble( "myDouble" ) );
-        validateType( properties, "myDouble", ValueTypes.DOUBLE );
-    }
-
-    private void validateType( final PropertyTree properties, final String propertyName, final ValueType valueType )
-    {
-        final Property prop = properties.getProperty( propertyName );
-        assertEquals( valueType, prop.getType() );
     }
 
     @Test
@@ -148,20 +75,6 @@ public class ScriptValueTranslatorTest
     {
         final PropertyTree properties = getPropertyTree( "indexConfig" );
         assertJson( "indexConfig-result", properties );
-    }
-
-    @Test
-    public void binary()
-        throws Exception
-    {
-        final ScriptValueTranslatorResult params = getCreateNodeHandlerParams( "binary" );
-        final PropertyTree properties = params.getPropertyTree();
-
-        assertNotNull( properties.getBinaryReference( "myBinary" ) );
-        validateType( properties, "myBinary", ValueTypes.BINARY_REFERENCE );
-
-        final BinaryAttachments binaryAttachments = params.getBinaryAttachments();
-        assertEquals( 1, binaryAttachments.getSize() );
     }
 
     @Test
@@ -198,10 +111,9 @@ public class ScriptValueTranslatorTest
 
     private ScriptValueTranslatorResult getCreateNodeHandlerParams( final String name )
     {
-        final ScriptExports exports = runScript( "/com/enonic/xp/lib/node/script-values.js" );
+        final ScriptExports exports = runScript( "/com/enonic/xp/lib/node/property-mapper.js" );
         final ScriptValue value = exports.executeMethod( name );
 
         return new ScriptValueTranslator().create( value );
     }
-
 }

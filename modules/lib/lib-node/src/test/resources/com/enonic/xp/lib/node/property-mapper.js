@@ -1,33 +1,3 @@
-var nodeLib = require('/lib/xp/node');
-
-var TestClass = Java.type('com.enonic.xp.lib.node.CreateNodeHandlerTest');
-var stream1 = TestClass.createByteSource('Hello World');
-
-exports.object = function () {
-    return {a: 1, b: 2};
-};
-
-exports.array = function () {
-    return {myArray: ["one", "two", "three"]};
-};
-
-exports.geoPoint = function () {
-    return {
-        myGeoPoint: nodeLib.geoPoint(80, -80),
-    }
-};
-
-exports.instant = function () {
-    return {
-        myInstant: nodeLib.instant("2016-08-01T11:22:00Z")
-    }
-};
-
-exports.boolean = function () {
-    return {
-        myBoolean: false
-    }
-};
 
 exports.double = function () {
     return {
@@ -35,35 +5,12 @@ exports.double = function () {
     }
 };
 
-
-exports.reference = function () {
-    return {
-        myReference: nodeLib.reference("1234")
-    }
+exports.object = function () {
+    return {a: 1, b: 2};
 };
 
-exports.localDateTime = function () {
-    return {
-        myLocalDateTime: nodeLib.localDateTime("2010-10-10T10:00:00")
-    }
-};
-
-exports.localDate = function () {
-    return {
-        myLocalDate: nodeLib.localDate("2010-10-10")
-    }
-};
-
-exports.localTime = function () {
-    return {
-        myLocalTime: nodeLib.localTime("10:00:30")
-    }
-};
-
-exports.binary = function () {
-    return {
-        myBinary: nodeLib.binary("myFile", stream1)
-    }
+exports.array = function () {
+    return {myArray: ["one", "two", "three"]};
 };
 
 exports.indexConfig = function () {

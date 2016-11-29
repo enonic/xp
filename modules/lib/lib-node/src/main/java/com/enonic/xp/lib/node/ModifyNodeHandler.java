@@ -2,6 +2,8 @@ package com.enonic.xp.lib.node;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.node.mapper.NodeMapper;
+import com.enonic.xp.lib.value.ScriptValueTranslator;
+import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;

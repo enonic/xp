@@ -1,9 +1,10 @@
 var nodeLib = require('/lib/xp/node');
+var valueLib = require('/lib/xp/value');
 var assert = require('/lib/xp/assert');
 
-var TestClass = Java.type('com.enonic.xp.lib.node.CreateNodeHandlerTest');
-var stream1 = TestClass.createByteSource('Hello World');
-var stream2 = TestClass.createByteSource('Hello World2');
+var TestClass = Java.type('com.enonic.xp.lib.node.BaseNodeHandlerTest');
+var byteSource1 = TestClass.createByteSource('Hello World');
+var byteSource2 = TestClass.createByteSource('Hello World2');
 
 var repo = nodeLib.connect({
     repoId: "cms-repo",
@@ -21,15 +22,15 @@ var result1 = repo.create({
         ],
         likes: "plywood",
         numberOfUselessGadgets: 123,
-        myGeoPoint: nodeLib.geoPoint(80, -80),
-        myGeoPoint2: nodeLib.geoPointString("80,-30"),
-        myInstant: nodeLib.instant("2016-08-01T11:22:00Z"),
-        myReference: nodeLib.reference("1234"),
-        myLocalDateTime: nodeLib.localDateTime("2016-01-08T10:00:00.000"),
-        myLocalDate: nodeLib.localDate("2016-01-08"),
-        myLocalTime: nodeLib.localTime("10:00:00.000"),
-        myBinaryReference: nodeLib.binary('myFile', stream1),
-        myBinaryReference2: nodeLib.binary('myFile2', stream2)
+        myGeoPoint: valueLib.geoPoint(80, -80),
+        myGeoPoint2: valueLib.geoPointString("80,-30"),
+        myInstant: valueLib.instant("2016-08-01T11:22:00Z"),
+        myReference: valueLib.reference("1234"),
+        myLocalDateTime: valueLib.localDateTime("2016-01-08T10:00:00.000"),
+        myLocalDate: valueLib.localDate("2016-01-08"),
+        myLocalTime: valueLib.localTime("10:00:00.000"),
+        myBinaryReference: valueLib.binary('myFile', byteSource1),
+        myBinaryReference2: valueLib.binary('myFile2', byteSource2)
     },
     _indexConfig: {
         default: "minimal",

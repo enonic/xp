@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.node;
+package com.enonic.xp.lib.value;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachments;

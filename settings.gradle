@@ -68,6 +68,7 @@ include 'lib:lib-websocket'
 include 'lib:lib-repo'
 include 'lib:lib-node'
 include 'lib:lib-task'
+include 'lib:lib-value'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
