@@ -24,6 +24,8 @@ module api.ui.tab {
 
         private enabled: boolean = true;
 
+        private focusIndex: number = -1;
+
         constructor(className?: string) {
             super("tab-menu" + (className ? " " + className : ""));
 
@@ -60,6 +62,64 @@ module api.ui.tab {
                     this.handleClick(e);
                 }
             });
+
+            this.menuEl.onKeyDown((event: KeyboardEvent) => {
+                if (this.isKeyNext(event)) {
+                    this.focusNextTab();
+                } else if (this.isKeyPrevious(event)) {
+                    this.focusPreviousTab();
+                } else if (KeyHelper.isApplyKey(event)) {
+                    const tab = this.tabs[this.focusIndex];
+                    if (tab) {
+                        tab.select();
+                    }
+                }
+
+                event.stopPropagation();
+                event.preventDefault();
+            });
+        }
+
+        giveFocusToMenu(): boolean {
+            const first = this.tabs[0];
+
+            if (first) {
+                this.focusIndex = 0;
+                return first.giveFocus();
+            }
+            return false;
+        }
+
+        returnFocusFromMenu(): boolean {
+            return this.giveFocus();
+        }
+
+        focusNextTab() {
+            const tabIndex = this.focusIndex + 1;
+
+            if (tabIndex < this.tabs.length) {
+                this.tabs[tabIndex].giveFocus();
+                this.focusIndex = tabIndex;
+            }
+        }
+
+        focusPreviousTab() {
+            const tabIndex = this.focusIndex - 1;
+
+            if (tabIndex >= 0) {
+                this.tabs[tabIndex].giveFocus();
+                this.focusIndex = tabIndex;
+            } else {
+                this.returnFocusFromMenu();
+            }
+        }
+
+        isKeyNext(event: KeyboardEvent) {
+            return KeyHelper.isArrowRightKey(event);
+        }
+
+        isKeyPrevious(event: KeyboardEvent) {
+            KeyHelper.isArrowLeftKey(event)
         }
 
         setEnabled(enabled: boolean): TabMenu {

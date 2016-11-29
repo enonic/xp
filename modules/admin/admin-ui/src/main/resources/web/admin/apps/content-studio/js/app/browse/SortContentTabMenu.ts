@@ -40,15 +40,42 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         });
 
         this.dropdownHandle.onKeyDown((event: KeyboardEvent) => {
+            const saveFocus = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+            };
+
             if (KeyHelper.isArrowDownKey(event)) {
-                this.showMenu();
-            }
-            if (KeyHelper.isArrowUpKey(event)) {
+                if (this.isMenuVisible()) {
+                    this.giveFocusToMenu();
+                } else {
+                    this.showMenu();
+                }
+                saveFocus(event);
+            } else if (KeyHelper.isArrowUpKey(event)) {
                 this.hideMenu();
+                saveFocus(event);
+            } else if (KeyHelper.isApplyKey(event)) {
+                if (this.isMenuVisible()) {
+                    this.hideMenu();
+                } else {
+                    this.showMenu();
+                }
+                saveFocus(event);
             }
-            event.stopPropagation();
-            event.preventDefault();
         });
+    }
+
+    returnFocusFromMenu(): boolean {
+        return this.focus();
+    }
+
+    isKeyNext(event: KeyboardEvent) {
+        return KeyHelper.isArrowDownKey(event);
+    }
+
+    isKeyPrevious(event: KeyboardEvent) {
+        return KeyHelper.isArrowUpKey(event)
     }
 
     protected hideMenu() {
@@ -126,8 +153,8 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         });
     }
 
-    focus() {
-        this.dropdownHandle.giveFocus();
+    focus(): boolean {
+        return this.dropdownHandle.giveFocus();
     }
 
 }

@@ -121,6 +121,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
         this.sortContentMenu.onSortOrderChanged(() => {
             this.handleOnSortOrderChangedEvent();
+            this.saveButton.giveFocus();
         });
     }
 
