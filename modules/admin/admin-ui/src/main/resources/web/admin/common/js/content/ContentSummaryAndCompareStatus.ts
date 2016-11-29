@@ -10,6 +10,8 @@ module api.content {
 
         private compareStatus: CompareStatus;
 
+        private readOnly: boolean;
+
         constructor() {
         }
 
@@ -110,6 +112,14 @@ module api.content {
             }
 
             return true;
+        }
+
+        setReadOnly(value: boolean) {
+            this.readOnly = value;
+        }
+
+        isReadOnly(): boolean {
+            return this.readOnly;
         }
     }
 }
