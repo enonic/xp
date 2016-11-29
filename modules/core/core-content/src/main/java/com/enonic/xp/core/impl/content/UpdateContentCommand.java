@@ -123,6 +123,8 @@ final class UpdateContentCommand
                     contentType( contentType ).
                     mediaInfo( mediaInfo ).
                     createAttachments( params.getCreateAttachments() ).
+                    editedContent( editedContent ).
+                    modifier( getCurrentUser() ).
                     build() );
 
                 editedContent = updateContentWithProcessedData( editedContent, result );
