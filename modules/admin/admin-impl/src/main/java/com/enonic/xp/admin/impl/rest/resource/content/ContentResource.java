@@ -148,6 +148,7 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
@@ -1205,8 +1206,12 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( contentIds );
         final Instant now = Instant.now();
-        final List<GetPublishStatusResultJson> getPublishStatusResultJsonList = contentService.getByIds( getContentByIdsParams ).
-            stream().
+
+        final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
+            branch( ContentConstants.BRANCH_MASTER ).
+            build().
+            callWith( () -> contentService.getByIds( getContentByIdsParams ) );
+        final List<GetPublishStatusResultJson> getPublishStatusResultJsonList = contents.stream().
             map( content -> {
                 final ContentPublishInfo publishInfo = content.getPublishInfo();
                 if ( publishInfo != null )
