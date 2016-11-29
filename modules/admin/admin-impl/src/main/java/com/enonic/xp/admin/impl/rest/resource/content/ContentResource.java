@@ -426,7 +426,6 @@ public final class ContentResource
     {
         final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( params.getContentPaths() ) );
         final Context ctx = ContextAccessor.current();
-        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
         progressReporter.info( "Deleting content" );
 
         // TODO: Move cycle to DeleteContentResult, pass the listener
@@ -542,7 +541,6 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
         final Context ctx = ContextAccessor.current();
-        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
         progressReporter.info( "Publishing content" );
 
         final PublishContentResult result = contentService.publish( PushContentParams.create().
@@ -630,7 +628,6 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final Context ctx = ContextAccessor.current();
-        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
         progressReporter.info( "Unpublishing content" );
 
         final PushContentListener listener = new UnpublishContentProgressListener( progressReporter );

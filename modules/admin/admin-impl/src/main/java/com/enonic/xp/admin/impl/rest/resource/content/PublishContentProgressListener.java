@@ -1,14 +1,28 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.task.ProgressReporter;
 
 final class PublishContentProgressListener
-    extends BasePushContentProgressListener
+    implements PushContentListener
 {
+
+    private final ProgressReporter progressReporter;
+
+    private int total = 0;
+
+    private int progressCount = 0;
 
     public PublishContentProgressListener( final ProgressReporter progressReporter )
     {
-        super( progressReporter );
+        this.progressReporter = progressReporter;
+    }
+
+    @Override
+    public void contentPushed( final int count )
+    {
+        progressCount = progressCount + count;
+        progressReporter.progress( progressCount, total );
     }
 
     @Override
