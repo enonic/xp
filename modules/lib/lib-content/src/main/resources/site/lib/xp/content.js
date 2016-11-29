@@ -25,6 +25,23 @@ function nullOrValue(value) {
 }
 
 /**
+ * @typedef ContentType
+ * @type Object
+ * @property {string} name Name of the content type.
+ * @property {string} displayName Display name of the content type.
+ * @property {string} description Description of the content type.
+ * @property {string} superType Name of the super type, or null if it has no super type.
+ * @property {boolean} abstract Whether or not content of this type may be instantiated.
+ * @property {boolean} final Whether or not it may be used as super type of other content types.
+ * @property {boolean} allowChildContent Whether or not allow creating child items on content of this type.
+ * @property {string} contentDisplayNameScript JavaScript code fragment for generating the content name based on values in the content form.
+ * @property {object} [icon] Icon of the content type.
+ * @property {object} [icon.data] Stream with the binary data for the icon.
+ * @property {string} [icon.mimeType] Mime type of the icon image.
+ * @property {string} [icon.modifiedTime] Modified time of the icon. May be used for caching.
+ */
+
+/**
  * This function fetches a content.
  *
  * @example-ref examples/content/get.js
@@ -390,4 +407,30 @@ exports.getPermissions = function (params) {
         bean.key = params.key;
     }
     return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Returns the properties and icon of the specified content type.
+ *
+ * @example-ref examples/content/getType.js
+ *
+ * @param name Name of the content type, as 'app:name' (e.g. 'com.enonic.myapp:article').
+ * @returns {ContentType} The content type object if found, or null otherwise.
+ */
+exports.getType = function (name) {
+    var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
+    bean.name = nullOrValue(name);
+    return __.toNativeObject(bean.getContentType());
+};
+
+/**
+ * Returns the list of all the content types currently registered in the system.
+ *
+ * @example-ref examples/content/listTypes.js
+ *
+ * @returns {ContentType[]} Array with all the content types found.
+ */
+exports.listTypes = function () {
+    var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
+    return __.toNativeObject(bean.getAllContentTypes());
 };
