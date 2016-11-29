@@ -31,6 +31,7 @@ public class DuplicateContentProcessor
         if ( publishInfo != null )
         {
             publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
+            publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
         }
 
         return builder.build();

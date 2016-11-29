@@ -15,6 +15,8 @@ public class PushContentParams
 
     private final Branch target;
 
+    private final ContentPublishInfo contentPublishInfo;
+
     private final boolean includeChildren;
 
     private final boolean includeDependencies;
@@ -26,6 +28,7 @@ public class PushContentParams
         contentIds = builder.contentIds;
         excludedContentIds = builder.excludedContentIds;
         target = builder.target;
+        contentPublishInfo = builder.contentPublishInfo;
         includeDependencies = builder.includeDependencies;
         includeChildren = builder.includeChildren;
         pushContentListener = builder.pushContentListener;
@@ -49,6 +52,11 @@ public class PushContentParams
     public Branch getTarget()
     {
         return target;
+    }
+
+    public ContentPublishInfo getContentPublishInfo()
+    {
+        return contentPublishInfo;
     }
 
     public boolean isIncludeChildren()
@@ -97,6 +105,8 @@ public class PushContentParams
 
         private Branch target;
 
+        private ContentPublishInfo contentPublishInfo;
+
         private boolean includeChildren = true;
 
         private boolean includeDependencies = true;
@@ -122,6 +132,13 @@ public class PushContentParams
         public Builder target( Branch target )
         {
             this.target = target;
+            return this;
+        }
+
+
+        public Builder contentPublishInfo( ContentPublishInfo contentPublishInfo )
+        {
+            this.contentPublishInfo = contentPublishInfo;
             return this;
         }
 

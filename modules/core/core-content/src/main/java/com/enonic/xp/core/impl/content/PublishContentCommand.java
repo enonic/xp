@@ -10,6 +10,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.context.Context;
@@ -31,6 +32,8 @@ public class PublishContentCommand
 
     private final Branch target;
 
+    private final ContentPublishInfo contentPublishInfo;
+
     private final boolean includeDependencies;
 
     private final boolean resolveSyncWork = true;
@@ -47,6 +50,7 @@ public class PublishContentCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
+        this.contentPublishInfo = builder.contentPublishInfo;
         this.includeDependencies = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PublishContentResult.create();
@@ -154,10 +158,21 @@ public class PublishContentCommand
             return;
         }
 
-        SetFirstTimePublishedCommand.create( this ).
-            nodeIds( nodesToPush ).
-            build().
-            execute();
+        if ( contentPublishInfo != null )
+        {
+            UpdatePublishInfoCommand.create( this ).
+                nodeIds( nodesToPush ).
+                contentPublishInfo( contentPublishInfo ).
+                build().
+                execute();
+        }
+        else
+        {
+            SetFirstTimePublishedCommand.create( this ).
+                nodeIds( nodesToPush ).
+                build().
+                execute();
+        }
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
 
@@ -210,6 +225,8 @@ public class PublishContentCommand
 
         private Branch target;
 
+        private ContentPublishInfo contentPublishInfo;
+
         private boolean includeDependencies = true;
 
         private boolean includeChildren = true;
@@ -231,6 +248,12 @@ public class PublishContentCommand
         public Builder target( final Branch target )
         {
             this.target = target;
+            return this;
+        }
+
+        public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
+        {
+            this.contentPublishInfo = contentPublishInfo;
             return this;
         }
 
