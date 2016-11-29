@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +52,9 @@ import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
+import com.enonic.xp.admin.impl.json.content.GetPublishStatusResultJson;
+import com.enonic.xp.admin.impl.json.content.GetPublishStatusResultsJson;
+import com.enonic.xp.admin.impl.json.content.PublishStatus;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
@@ -74,6 +78,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJs
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
+import com.enonic.xp.admin.impl.rest.resource.content.json.GetPublishStatusesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
@@ -109,6 +114,7 @@ import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
@@ -523,7 +529,7 @@ public final class ContentResource
             map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
             Collectors.toList() );
 
-        return new DependenciesJson(inbound, outbound);
+        return new DependenciesJson( inbound, outbound );
     }
 
     @POST
@@ -728,7 +734,7 @@ public final class ContentResource
                     iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
-                collect( Collectors.toList() );
+            collect( Collectors.toList() );
     }
 
     @POST
@@ -1190,6 +1196,35 @@ public final class ContentResource
             contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
 
         return new CompareContentResultsJson( compareResults );
+    }
+
+    @POST
+    @Path("getPublishStatuses")
+    public GetPublishStatusResultsJson compare( final GetPublishStatusesJson params )
+    {
+        final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( contentIds );
+        final Instant now = Instant.now();
+        final List<GetPublishStatusResultJson> getPublishStatusResultJsonList = contentService.getByIds( getContentByIdsParams ).
+            stream().
+            map( content -> {
+                final ContentPublishInfo publishInfo = content.getPublishInfo();
+                if ( publishInfo != null )
+                {
+                    if ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 )
+                    {
+                        return new GetPublishStatusResultJson( PublishStatus.EXPIRED, content.getId() );
+                    }
+
+                    if ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 )
+                    {
+                        return new GetPublishStatusResultJson( PublishStatus.PENDING, content.getId() );
+                    }
+                }
+                return new GetPublishStatusResultJson( PublishStatus.ONLINE, content.getId() );
+            } ).
+            collect( Collectors.toList() );
+        return new GetPublishStatusResultsJson( getPublishStatusResultJsonList );
     }
 
     @POST
