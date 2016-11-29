@@ -112,7 +112,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         let uploadCompletedHandler = (event: FileUploadCompleteEvent<Application>) => {
             if (event.getUploadItems() && !this.hasClass("hidden")) {
-                this.close();
             }
         };
 
@@ -120,6 +119,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         let uploadStartedHandler = (event: FileUploadStartedEvent<Application>) => {
             new api.application.ApplicationUploadStartedEvent(event.getUploadItems()).fire();
+            this.close();
         };
 
         this.uploadAppPanel.getApplicationInput().onUploadStarted(uploadStartedHandler);
