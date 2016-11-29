@@ -98,7 +98,7 @@ module api.content.form.inputtype.tag {
             var superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.tags.isDirty()) {
-                superPromise.then(() => {
+                return superPromise.then(() => {
                     this.tags.setValue(this.getValueFromPropertyArray(propertyArray));
                 });
             } else {
