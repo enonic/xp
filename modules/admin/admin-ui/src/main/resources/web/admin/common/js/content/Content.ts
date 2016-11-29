@@ -185,6 +185,14 @@ module api.content {
             }
             return new ContentBuilder().fromContentJson(json).build();
         }
+
+        static fromJsonArray(jsonArray: api.content.json.ContentJson[]): Content[] {
+            var array: Content[] = [];
+            jsonArray.forEach((json: api.content.json.ContentJson) => {
+                array.push(Content.fromJson(json));
+            });
+            return array;
+        }
     }
 
     export class ContentBuilder extends ContentSummaryBuilder {
