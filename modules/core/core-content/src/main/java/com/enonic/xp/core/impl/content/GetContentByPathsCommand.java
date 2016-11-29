@@ -40,7 +40,7 @@ final class GetContentByPathsCommand
             throw new ContentNotFoundException( ContentPath.from( ex.getPath().toString() ), ContextAccessor.current().getBranch() );
         }
 
-        return contents;
+        return filter( contents);
     }
 
     private Contents doExecute()

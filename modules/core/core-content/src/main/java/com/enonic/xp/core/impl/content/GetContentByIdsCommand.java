@@ -42,7 +42,7 @@ final class GetContentByIdsCommand
             throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
         }
 
-        return contents;
+        return filter( contents );
     }
 
     private Contents doExecute()

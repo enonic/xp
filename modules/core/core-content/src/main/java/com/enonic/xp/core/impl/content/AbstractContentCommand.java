@@ -1,10 +1,18 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -39,6 +47,70 @@ abstract class AbstractContentCommand
         return GetContentByPathCommand.create( contentPath, this ).
             build().
             execute();
+    }
+
+    Contents filter( Contents contents )
+    {
+        return filterScheduledPublished( contents );
+    }
+
+    Content filter( Content content )
+    {
+        return filterScheduledPublished( content );
+    }
+
+    Contents filterScheduledPublished( Contents contents )
+    {
+        //If the command is executed on master
+        //TODO Add a filter flag on contexts
+        if ( ContentConstants.BRANCH_MASTER.equals( ContextAccessor.current().getBranch() ) )
+        {
+            final Instant now = Instant.now();
+            final List<Content> filteredContentList = contents.stream().
+                filter( content -> {
+                    final ContentPublishInfo publishInfo = content.getPublishInfo();
+                    
+                    //If the content is expired or pending publish 
+                    if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
+                        ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
+                    {
+                        //Filters the content
+                        return false;
+                    }
+                    return true;
+                } ).
+                collect( Collectors.toList() );
+            return Contents.from( filteredContentList );
+        }
+
+        //Else, returns the content
+        return contents;
+    }
+
+
+    Content filterScheduledPublished( Content content )
+    {
+        //If the command is executed on master
+        //TODO Add a filter flag on contexts
+        if ( ContentConstants.BRANCH_MASTER.equals( ContextAccessor.current().getBranch() ) )
+        {
+            final ContentPublishInfo publishInfo = content.getPublishInfo();
+            if ( publishInfo != null )
+            {
+                final Instant now = Instant.now();
+
+                //If the content is expired or pending publish 
+                if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
+                    ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
+                {
+                    //Filters the content
+                    return null;
+                }
+            }
+        }
+
+        //Else, returns the content
+        return content;
     }
 
     public static class Builder<B extends Builder>

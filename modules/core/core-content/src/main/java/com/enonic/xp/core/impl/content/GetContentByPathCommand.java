@@ -32,7 +32,8 @@ final class GetContentByPathCommand
             throw new ContentNotFoundException( contentPath, ContextAccessor.current().getBranch() );
         }
 
-        return translator.fromNode( node, true );
+        final Content content = translator.fromNode( node, true );
+        return filter( content );
     }
 
     static Builder create( final ContentPath contentPath, final AbstractContentCommand source )
