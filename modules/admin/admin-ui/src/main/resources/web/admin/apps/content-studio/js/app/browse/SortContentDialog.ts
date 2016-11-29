@@ -91,7 +91,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
         this.contentGrid.getEl().addClass("sort-content-grid");
         this.contentGrid.onLoaded(() => {
             this.contentGrid.render(true);
-
+            this.centerMyself();
             if (this.contentGrid.getContentId()) {
                 this.open();
             }
