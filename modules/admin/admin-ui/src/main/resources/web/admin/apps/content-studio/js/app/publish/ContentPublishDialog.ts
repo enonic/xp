@@ -98,7 +98,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
     close() {
         super.close();
         this.childrenCheckbox.setChecked(false);
-        this.hideLoadingSpinner();
     }
 
 

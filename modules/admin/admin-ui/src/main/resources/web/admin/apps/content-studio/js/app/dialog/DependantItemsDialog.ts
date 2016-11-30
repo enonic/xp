@@ -144,6 +144,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.clearItems(true);
         this.dependantList.clearItems(true);
         this.dependantsContainer.setVisible(false);
+        this.hideLoadingSpinner();
     }
 
     setAutoUpdateTitle(value: boolean) {

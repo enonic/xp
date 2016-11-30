@@ -86,6 +86,11 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         this.instantDeleteCheckbox.setChecked(isChecked, true);
     }
 
+    close() {
+        super.close();
+        this.instantDeleteCheckbox.setChecked(false);
+    }
+
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
         this.setIgnoreItemsChanged(true);
         this.setListItems(contents);
@@ -115,11 +120,13 @@ export class ContentDeleteDialog extends ProgressBarDialog {
             const deleteRequest = this.createDeleteRequest();
             const content = this.getItemList().getItems().slice(0);
             const descendants = this.getDependantList().getItems().slice(0);
+            const instantDeleteStatus = this.instantDeleteCheckbox.isChecked();
             const yesCallback = () => {
                 this.setContentToDelete(content);
                 this.setDependantItems(descendants);
                 this.countItemsToDeleteAndUpdateButtonCounter();
                 this.open();
+                this.instantDeleteCheckbox.setChecked(instantDeleteStatus);
                 this.doDelete(true);
             };
 
@@ -137,13 +144,13 @@ export class ContentDeleteDialog extends ProgressBarDialog {
                 .sendAndParse()
                 .then((taskId: api.task.TaskId) => {
                     this.pollTask(taskId);
-                }).catch((reason) => {
-                this.hideLoadingSpinner();
-                this.close();
-                if (reason && reason.message) {
-                    api.notify.showError(reason.message);
-                }
-            });
+                })
+                .catch((reason) => {
+                    this.close();
+                    if (reason && reason.message) {
+                        api.notify.showError(reason.message);
+                    }
+                });
         }
     }
 
