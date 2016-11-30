@@ -25,9 +25,10 @@ final class FindContentIdsByQueryCommand
 
     FindContentIdsByQueryResult execute()
     {
-        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.query );
+        final NodeQuery.Builder nodeQuery = ContentQueryNodeQueryTranslator.translate( this.query );
+        addFilters( nodeQuery );
 
-        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
+        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery.build() );
 
         return FindContentIdsByQueryResult.create().
             contents( ContentNodeHelper.toContentIds( result.getNodeIds() ) ).

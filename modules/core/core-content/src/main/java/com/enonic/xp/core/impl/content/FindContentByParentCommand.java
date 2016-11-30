@@ -34,7 +34,7 @@ final class FindContentByParentCommand
         final Nodes nodes = this.nodeService.getByIds( result.getNodeIds() );
 
         final Contents contents = this.translator.fromNodes( nodes, true );
-        final Contents filteredContents = filter( contents );
+        final Contents filteredContents = filter( contents ); //TODO Should be done in query
 
         return FindContentByParentResult.create().
             contents( filteredContents ).

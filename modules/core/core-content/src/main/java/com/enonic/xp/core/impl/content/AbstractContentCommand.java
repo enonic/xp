@@ -9,16 +9,22 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.schema.content.ContentTypeService;
 
 abstract class AbstractContentCommand
@@ -121,8 +127,10 @@ abstract class AbstractContentCommand
         final PropertyTree data = node.data();
         if ( data.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
         {
-            final Instant publishFrom = data.getInstant( ContentPropertyNames.PUBLISH_INFO + "." + ContentPropertyNames.PUBLISH_FROM );
-            final Instant publishTo = data.getInstant( ContentPropertyNames.PUBLISH_INFO + "." + ContentPropertyNames.PUBLISH_TO );
+            final Instant publishFrom =
+                data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ) );
+            final Instant publishTo =
+                data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_TO ) );
             if ( ( publishTo != null && publishTo.compareTo( now ) < 0 ) || ( publishFrom != null && publishFrom.compareTo( now ) > 0 ) )
             {
                 //Filters the content
@@ -130,6 +138,27 @@ abstract class AbstractContentCommand
             }
         }
         return false;
+    }
+
+    protected void addFilters( NodeQuery.Builder nodeQuery )
+    {
+        if ( shouldFilterScheduledPublished() )
+        {
+            final BooleanFilter notPendingFilter = BooleanFilter.create().
+                mustNot( RangeFilter.create().
+                    fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).
+                    from( ValueFactory.newDateTime( Instant.now() ) ).
+                    build() ).
+                build();
+            final BooleanFilter notExpiredFilter = BooleanFilter.create().
+                mustNot( RangeFilter.create().
+                    fieldName( ContentIndexPath.PUBLISH_TO.getPath() ).
+                    to( ValueFactory.newDateTime( Instant.now() ) ).
+                    build() ).
+                build();
+            nodeQuery.addQueryFilter( notPendingFilter );
+            nodeQuery.addQueryFilter( notExpiredFilter );
+        }
     }
 
 
