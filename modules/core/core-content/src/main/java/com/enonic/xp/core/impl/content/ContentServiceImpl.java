@@ -722,27 +722,25 @@ public class ContentServiceImpl
     @Override
     public boolean contentExists( final ContentId contentId )
     {
-        try
-        {
-            return this.nodeService.nodeExists( NodeId.from( contentId ) );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return false;
-        }
+        return ContentExistsCommand.create( contentId ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     @Override
     public boolean contentExists( final ContentPath contentPath )
     {
-        try
-        {
-            return this.nodeService.nodeExists( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return false;
-        }
+        return ContentExistsCommand.create( contentPath ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     private <T> T runAsContentAdmin( final Callable<T> callable )

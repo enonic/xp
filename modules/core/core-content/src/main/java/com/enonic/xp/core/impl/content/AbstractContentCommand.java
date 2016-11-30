@@ -50,22 +50,19 @@ abstract class AbstractContentCommand
             execute();
     }
 
-    Contents filter( Contents contents )
+    protected Contents filter( Contents contents )
     {
         return filterScheduledPublished( contents );
     }
 
-    Content filter( Content content )
+    protected Content filter( Content content )
     {
         return filterScheduledPublished( content );
     }
 
-    Contents filterScheduledPublished( Contents contents )
+    protected Contents filterScheduledPublished( Contents contents )
     {
-        //If the command is executed on master and the flag includeScheduledPublished has not been set on the context
-        final Context currentContext = ContextAccessor.current();
-        if ( !Boolean.TRUE.equals( currentContext.getAttribute( "includeScheduledPublished" ) ) &&
-            ContentConstants.BRANCH_MASTER.equals( currentContext.getBranch() ) )
+        if ( shouldFilterScheduledPublished() )
         {
             final Instant now = Instant.now();
             final List<Content> filteredContentList = contents.stream().
@@ -90,11 +87,9 @@ abstract class AbstractContentCommand
     }
 
 
-    Content filterScheduledPublished( Content content )
+    protected Content filterScheduledPublished( Content content )
     {
-        //If the command is executed on master
-        //TODO Add a filter flag on contexts
-        if ( ContentConstants.BRANCH_MASTER.equals( ContextAccessor.current().getBranch() ) )
+        if ( shouldFilterScheduledPublished() )
         {
             final ContentPublishInfo publishInfo = content.getPublishInfo();
             if ( publishInfo != null )
@@ -114,6 +109,33 @@ abstract class AbstractContentCommand
         //Else, returns the content
         return content;
     }
+
+    protected boolean shouldFilterScheduledPublished()
+    {
+        //If the command is executed on master and the flag includeScheduledPublished has not been set on the context
+        final Context currentContext = ContextAccessor.current();
+        return !Boolean.TRUE.equals( currentContext.getAttribute( "includeScheduledPublished" ) ) &&
+            ContentConstants.BRANCH_MASTER.equals( currentContext.getBranch() );
+    }
+
+    protected boolean contentPendingOrExpired( Content content )
+    {
+        final ContentPublishInfo publishInfo = content.getPublishInfo();
+        if ( publishInfo != null )
+        {
+            final Instant now = Instant.now();
+
+            //If the content is expired or pending publish 
+            if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
+                ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
+            {
+                //Filters the content
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static class Builder<B extends Builder>
     {
