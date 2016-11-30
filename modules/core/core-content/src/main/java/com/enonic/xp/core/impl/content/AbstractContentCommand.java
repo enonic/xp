@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.NodeService;
@@ -61,15 +62,16 @@ abstract class AbstractContentCommand
 
     Contents filterScheduledPublished( Contents contents )
     {
-        //If the command is executed on master
-        //TODO Add a filter flag on contexts
-        if ( ContentConstants.BRANCH_MASTER.equals( ContextAccessor.current().getBranch() ) )
+        //If the command is executed on master and the flag includeScheduledPublished has not been set on the context
+        final Context currentContext = ContextAccessor.current();
+        if ( !Boolean.TRUE.equals( currentContext.getAttribute( "includeScheduledPublished" ) ) &&
+            ContentConstants.BRANCH_MASTER.equals( currentContext.getBranch() ) )
         {
             final Instant now = Instant.now();
             final List<Content> filteredContentList = contents.stream().
                 filter( content -> {
                     final ContentPublishInfo publishInfo = content.getPublishInfo();
-                    
+
                     //If the content is expired or pending publish 
                     if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
                         ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
