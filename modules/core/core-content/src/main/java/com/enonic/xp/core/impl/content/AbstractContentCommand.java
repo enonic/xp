@@ -66,18 +66,7 @@ abstract class AbstractContentCommand
         {
             final Instant now = Instant.now();
             final List<Content> filteredContentList = contents.stream().
-                filter( content -> {
-                    final ContentPublishInfo publishInfo = content.getPublishInfo();
-
-                    //If the content is expired or pending publish 
-                    if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
-                        ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
-                    {
-                        //Filters the content
-                        return false;
-                    }
-                    return true;
-                } ).
+                filter( content -> this.contentPendingOrExpired( content, now ) ).
                 collect( Collectors.toList() );
             return Contents.from( filteredContentList );
         }
@@ -91,22 +80,12 @@ abstract class AbstractContentCommand
     {
         if ( shouldFilterScheduledPublished() )
         {
-            final ContentPublishInfo publishInfo = content.getPublishInfo();
-            if ( publishInfo != null )
+            final Instant now = Instant.now();
+            if ( contentPendingOrExpired( content, now ) )
             {
-                final Instant now = Instant.now();
-
-                //If the content is expired or pending publish 
-                if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
-                    ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
-                {
-                    //Filters the content
-                    return null;
-                }
+                return null;
             }
         }
-
-        //Else, returns the content
         return content;
     }
 
@@ -118,13 +97,11 @@ abstract class AbstractContentCommand
             ContentConstants.BRANCH_MASTER.equals( currentContext.getBranch() );
     }
 
-    protected boolean contentPendingOrExpired( Content content )
+    protected boolean contentPendingOrExpired( final Content content, final Instant now )
     {
         final ContentPublishInfo publishInfo = content.getPublishInfo();
         if ( publishInfo != null )
         {
-            final Instant now = Instant.now();
-
             //If the content is expired or pending publish 
             if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
                 ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )

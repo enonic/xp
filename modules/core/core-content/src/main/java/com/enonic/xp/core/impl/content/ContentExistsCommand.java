@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -54,7 +56,7 @@ final class ContentExistsCommand
             }
 
             final Content content = translator.fromNode( node, false );
-            return !contentPendingOrExpired( content );
+            return !contentPendingOrExpired( content, Instant.now() );
         }
         else
         {
