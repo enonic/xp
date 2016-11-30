@@ -46,6 +46,7 @@ final class FindContentIdsByParentCommand
         setNodePathOrIdAsIdentifier( findNodesParam );
 
         findNodesParam.
+            queryFilters( createFilters() ).
             from( params.getFrom() ).
             size( params.getSize() ).
             childOrder( params.getChildOrder() ).

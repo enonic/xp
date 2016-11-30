@@ -13,6 +13,7 @@ import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.SearchService;
@@ -23,6 +24,8 @@ public class FindNodeIdsByParentCommand
     private final NodePath parentPath;
 
     private final NodeId parentId;
+
+    private final Filters queryFilters;
 
     private final Integer size;
 
@@ -39,6 +42,7 @@ public class FindNodeIdsByParentCommand
         super( builder );
         parentPath = builder.parentPath;
         parentId = builder.parentId;
+        queryFilters = builder.queryFilters == null ? Filters.from() : builder.queryFilters;
         size = builder.size;
         from = builder.from;
         childOrder = builder.childOrder;
@@ -89,6 +93,7 @@ public class FindNodeIdsByParentCommand
     private NodeQuery createFindChildrenQuery( final NodePath parentPath, final ChildOrder order )
     {
         final NodeQuery.Builder builder = NodeQuery.create().
+            addQueryFilters( queryFilters ).
             from( from ).
             size( size ).
             searchMode( countOnly ? SearchMode.COUNT : SearchMode.SEARCH ).
@@ -139,6 +144,8 @@ public class FindNodeIdsByParentCommand
 
         private NodeId parentId;
 
+        private Filters queryFilters;
+
         private Integer size = SearchService.GET_ALL_SIZE_FLAG;
 
         private Integer from = 0;
@@ -174,6 +181,13 @@ public class FindNodeIdsByParentCommand
         public Builder parentId( final NodeId val )
         {
             parentId = val;
+            return this;
+        }
+
+
+        public Builder queryFilters( Filters val )
+        {
+            this.queryFilters = val;
             return this;
         }
 

@@ -34,10 +34,9 @@ final class FindContentByParentCommand
         final Nodes nodes = this.nodeService.getByIds( result.getNodeIds() );
 
         final Contents contents = this.translator.fromNodes( nodes, true );
-        final Contents filteredContents = filter( contents ); //TODO Should be done in query
 
         return FindContentByParentResult.create().
-            contents( filteredContents ).
+            contents( contents ).
             totalHits( result.getTotalHits() ).
             hits( result.getHits() ).
             build();
@@ -50,6 +49,7 @@ final class FindContentByParentCommand
         setNodePathOrIdAsIdentifier( findNodesParam );
 
         findNodesParam.
+            queryFilters( createFilters() ).
             from( params.getFrom() ).
             size( params.getSize() ).
             childOrder( params.getChildOrder() ).
