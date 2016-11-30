@@ -99,7 +99,7 @@ final class ContentExistsCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkArgument( contentId != null || contentPath != null, "contentId or contentPath must be given" );
+            Preconditions.checkArgument( contentId != null || contentPath != null, "Either contentId or contentPath must be set" );
         }
 
         public ContentExistsCommand build()

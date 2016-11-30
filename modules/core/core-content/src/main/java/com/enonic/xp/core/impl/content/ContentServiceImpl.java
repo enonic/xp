@@ -761,13 +761,15 @@ public class ContentServiceImpl
     @Override
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference );
+        final Node node = nodeService.getById( NodeId.from( contentId.toString() ) );
+        return nodeService.getBinary( node, binaryReference );
     }
 
     @Override
     public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return nodeService.getBinaryKey( NodeId.from( contentId.toString() ), binaryReference );
+        final Node node = nodeService.getById( NodeId.from( contentId.toString() ) );
+        return nodeService.getBinaryKey( node, binaryReference );
     }
 
     @Override
@@ -789,7 +791,8 @@ public class ContentServiceImpl
     {
         try
         {
-            return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference ).openStream();
+            final Node node = nodeService.getById( NodeId.from( contentId.toString() ) );
+            return nodeService.getBinary( node, binaryReference ).openStream();
         }
         catch ( IOException e )
         {

@@ -574,11 +574,11 @@ public class NodeServiceImpl
     }
 
     @Override
-    public ByteSource getBinary( final NodeId nodeId, final BinaryReference reference )
+    public ByteSource getBinary( final Node node, final BinaryReference reference )
     {
         return GetBinaryCommand.create().
             binaryReference( reference ).
-            nodeId( nodeId ).
+            node( node ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
@@ -588,11 +588,11 @@ public class NodeServiceImpl
     }
 
     @Override
-    public String getBinaryKey( final NodeId nodeId, final BinaryReference reference )
+    public String getBinaryKey( final Node node, final BinaryReference reference )
     {
         return GetBinaryKeyCommand.create().
             binaryReference( reference ).
-            nodeId( nodeId ).
+            node( node ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
