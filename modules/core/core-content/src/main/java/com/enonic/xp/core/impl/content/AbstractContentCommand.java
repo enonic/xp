@@ -10,11 +10,14 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.schema.content.ContentTypeService;
 
@@ -105,6 +108,22 @@ abstract class AbstractContentCommand
             //If the content is expired or pending publish 
             if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
                 ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
+            {
+                //Filters the content
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean contentPendingOrExpired( final Node node, final Instant now )
+    {
+        final PropertyTree data = node.data();
+        if ( data.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
+        {
+            final Instant publishFrom = data.getInstant( ContentPropertyNames.PUBLISH_INFO + "." + ContentPropertyNames.PUBLISH_FROM );
+            final Instant publishTo = data.getInstant( ContentPropertyNames.PUBLISH_INFO + "." + ContentPropertyNames.PUBLISH_FROM );
+            if ( ( publishTo != null && publishTo.compareTo( now ) < 0 ) || ( publishFrom != null && publishFrom.compareTo( now ) > 0 ) )
             {
                 //Filters the content
                 return true;

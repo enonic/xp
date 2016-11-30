@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.node.Node;
@@ -54,9 +53,7 @@ final class ContentExistsCommand
             {
                 return false;
             }
-
-            final Content content = translator.fromNode( node, false );
-            return !contentPendingOrExpired( content, Instant.now() );
+            return !contentPendingOrExpired( node, Instant.now() );
         }
         else
         {
