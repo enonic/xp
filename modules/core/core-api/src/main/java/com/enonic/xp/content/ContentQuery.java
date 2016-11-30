@@ -50,11 +50,6 @@ public class ContentQuery
         return new Builder();
     }
 
-    public static Builder create( final ContentQuery source )
-    {
-        return new Builder( source );
-    }
-
     public QueryExpr getQueryExpr()
     {
         return queryExpr;
@@ -94,38 +89,17 @@ public class ContentQuery
     {
         private QueryExpr queryExpr;
 
-        private ContentTypeNames.Builder contentTypeNamesBuilder;
+        private ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
 
         private ContentIds filterContentIds;
 
-        private int from;
+        private int from = 0;
 
-        private int size;
+        private int size = DEFAULT_FETCH_SIZE;
 
-        private Set<AggregationQuery> aggregationQueries;
+        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
-        private Filters.Builder queryFilters;
-
-        private Builder()
-        {
-            this.contentTypeNamesBuilder = ContentTypeNames.create();
-            this.from = 0;
-            this.size = DEFAULT_FETCH_SIZE;
-            this.aggregationQueries = Sets.newHashSet();
-            this.queryFilters = Filters.create();
-        }
-
-        private Builder( ContentQuery source )
-        {
-            this.queryExpr = source.queryExpr;
-            this.contentTypeNamesBuilder = ContentTypeNames.create().addAll( source.contentTypeNames );
-            this.filterContentIds = source.filterContentIds;
-            this.from = source.from;
-            this.size = source.size;
-            this.aggregationQueries = Sets.newHashSet( source.aggregationQueries );
-            this.queryFilters = Filters.create();
-            source.queryFilters.forEach( this.queryFilters::add );
-        }
+        private Filters.Builder queryFilters = Filters.create();
 
         public Builder queryExpr( final QueryExpr queryExpr )
         {
