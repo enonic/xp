@@ -69,7 +69,7 @@ abstract class AbstractContentCommand
         {
             final Instant now = Instant.now();
             final List<Content> filteredContentList = contents.stream().
-                filter( content -> this.contentPendingOrExpired( content, now ) ).
+                filter( content -> !this.contentPendingOrExpired( content, now ) ).
                 collect( Collectors.toList() );
             return Contents.from( filteredContentList );
         }

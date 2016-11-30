@@ -4,7 +4,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NoNodeWithIdFoundException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -24,15 +23,15 @@ final class GetContentByIdCommand
 
     Content execute()
     {
+        final Content content;
         final NodeId nodeId = NodeId.from( contentId.toString() );
 
         try
         {
             final Node node = nodeService.getById( nodeId );
-            final Content content = translator.fromNode( node, true );
-            return filter( content );
+            content = filter( translator.fromNode( node, true ) );
         }
-        catch ( NoNodeWithIdFoundException | NodeNotFoundException e )
+        catch ( NodeNotFoundException e )
         {
             throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
         }
@@ -40,6 +39,11 @@ final class GetContentByIdCommand
         {
             throw Exceptions.newRuntime( "Error getting node" ).withCause( e );
         }
+        if ( content == null )
+        {
+            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
+        }
+        return content;
     }
 
     public static Builder create( final ContentId contentId, final AbstractContentCommand source )

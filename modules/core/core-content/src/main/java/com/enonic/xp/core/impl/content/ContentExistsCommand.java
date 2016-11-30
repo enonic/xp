@@ -57,6 +57,10 @@ final class ContentExistsCommand
             {
                 return false;
             }
+            if ( node == null )
+            {
+                return false;
+            }
             return !contentPendingOrExpired( node, Instant.now() );
         }
         else

@@ -5,13 +5,9 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NoNodeWithIdFoundException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
@@ -30,18 +26,7 @@ final class GetContentByIdsCommand
 
     Contents execute()
     {
-        final Contents contents;
-
-        try
-        {
-            contents = doExecute();
-        }
-        catch ( NoNodeWithIdFoundException ex )
-        {
-            final ContentId contentId = ContentId.from( ex.getId().toString() );
-            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
-        }
-
+        final Contents contents = doExecute();
         return filter( contents );
     }
 

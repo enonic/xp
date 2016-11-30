@@ -2,12 +2,9 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NoNodeAtPathFoundException;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.Nodes;
 
@@ -29,18 +26,8 @@ final class GetContentByPathsCommand
 
     Contents execute()
     {
-        final Contents contents;
-
-        try
-        {
-            contents = doExecute();
-        }
-        catch ( NoNodeAtPathFoundException ex )
-        {
-            throw new ContentNotFoundException( ContentPath.from( ex.getPath().toString() ), ContextAccessor.current().getBranch() );
-        }
-
-        return filter( contents);
+        final Contents contents = doExecute();
+        return filter( contents );
     }
 
     private Contents doExecute()
