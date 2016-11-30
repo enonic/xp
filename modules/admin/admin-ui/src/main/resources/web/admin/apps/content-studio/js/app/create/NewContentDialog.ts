@@ -40,7 +40,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     protected loadMask: LoadMask;
 
     protected header: NewContentDialogHeader;
-    
+
     constructor() {
         super("Create Content");
 
@@ -60,7 +60,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     protected getHeader(): NewContentDialogHeader {
         return this.header;
     }
-    
+
     private initElements() {
         this.initContentTypesLists();
         this.initFileInput();
@@ -84,9 +84,8 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.dropzoneContainer.hide();
         this.appendChild(this.dropzoneContainer);
 
-        this.fileInput = new api.ui.text.FileInput('large', undefined).
-            setPlaceholder("Search for content types").
-            setUploaderParams({parent: ContentPath.ROOT.toString()});
+        this.fileInput = new api.ui.text.FileInput('large', undefined).setPlaceholder("Search for content types").setUploaderParams(
+            {parent: ContentPath.ROOT.toString()});
 
         this.fileInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
 
@@ -139,12 +138,12 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private closeAndFireEventFromMediaUpload(event: FileUploadStartedEvent<Content>) {
         this.close();
-        new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire();
+        setTimeout(() => new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire(), 1);
     }
 
     private closeAndFireEventFromContentType(event: NewContentDialogItemSelectedEvent) {
         this.close();
-        new NewContentEvent(event.getItem().getContentType(), this.parentContent).fire();
+        setTimeout(() => new NewContentEvent(event.getItem().getContentType(), this.parentContent).fire(), 1);
     }
 
     private appendElementsToDialog() {
