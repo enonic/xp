@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 
 
 final class ContentExistsCommand
@@ -41,15 +42,18 @@ final class ContentExistsCommand
         if ( shouldFilterScheduledPublished() )
         {
             final Node node;
-            if ( contentId != null )
+            try
             {
-                node = nodeService.getById( NodeId.from( contentId ) );
+                if ( contentId != null )
+                {
+                    node = nodeService.getById( NodeId.from( contentId ) );
+                }
+                else
+                {
+                    node = nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
+                }
             }
-            else
-            {
-                node = nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
-            }
-            if ( node == null )
+            catch ( NodeNotFoundException e )
             {
                 return false;
             }

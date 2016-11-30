@@ -122,7 +122,7 @@ abstract class AbstractContentCommand
         if ( data.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
         {
             final Instant publishFrom = data.getInstant( ContentPropertyNames.PUBLISH_INFO + "." + ContentPropertyNames.PUBLISH_FROM );
-            final Instant publishTo = data.getInstant( ContentPropertyNames.PUBLISH_INFO + "." + ContentPropertyNames.PUBLISH_FROM );
+            final Instant publishTo = data.getInstant( ContentPropertyNames.PUBLISH_INFO + "." + ContentPropertyNames.PUBLISH_TO );
             if ( ( publishTo != null && publishTo.compareTo( now ) < 0 ) || ( publishFrom != null && publishFrom.compareTo( now ) > 0 ) )
             {
                 //Filters the content
