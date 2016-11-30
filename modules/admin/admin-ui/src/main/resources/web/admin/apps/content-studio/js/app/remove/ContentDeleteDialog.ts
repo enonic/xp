@@ -75,6 +75,15 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         });
     }
 
+    manageContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
+        this.setIgnoreItemsChanged(true);
+        this.setListItems(contents);
+        this.setIgnoreItemsChanged(false);
+        this.updateSubTitle();
+
+        return this;
+    }
+
     private manageInstantDeleteStatus(items: ContentSummaryAndCompareStatus[]) {
         const isHidden = this.isEveryOffline(items);
         const isChecked = isHidden ? false : this.isEveryPendingDelete(items);
@@ -92,13 +101,8 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
-        this.setIgnoreItemsChanged(true);
-        this.setListItems(contents);
-        this.setIgnoreItemsChanged(false);
-        this.updateSubTitle();
-
+        this.manageContentToDelete(contents);
         this.manageInstantDeleteStatus(contents);
-        
         this.manageDescendants();
 
         return this;
@@ -122,11 +126,12 @@ export class ContentDeleteDialog extends ProgressBarDialog {
             const descendants = this.getDependantList().getItems().slice(0);
             const instantDeleteStatus = this.instantDeleteCheckbox.isChecked();
             const yesCallback = () => {
-                this.setContentToDelete(content);
+                // Manually manage content and dependants without any requests
+                this.manageContentToDelete(content);
                 this.setDependantItems(descendants);
+                this.instantDeleteCheckbox.setChecked(instantDeleteStatus);
                 this.countItemsToDeleteAndUpdateButtonCounter();
                 this.open();
-                this.instantDeleteCheckbox.setChecked(instantDeleteStatus);
                 this.doDelete(true);
             };
 

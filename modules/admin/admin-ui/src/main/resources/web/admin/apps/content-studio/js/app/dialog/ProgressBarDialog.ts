@@ -76,10 +76,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
 
         if (this.isVisible()) {
             this.close();
-            return;
         }
-
-        this.hide();
     }
 
     protected pollTask(taskId: api.task.TaskId, elapsed: number = 0) {
