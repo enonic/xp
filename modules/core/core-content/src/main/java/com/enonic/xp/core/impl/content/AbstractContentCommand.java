@@ -21,9 +21,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.schema.content.ContentTypeService;
 
@@ -61,46 +61,41 @@ abstract class AbstractContentCommand
 
     protected Contents filter( Contents contents )
     {
-        return filterScheduledPublished( contents );
+        if ( shouldFilterScheduledPublished() )
+        {
+            return filterScheduledPublished( contents );
+        }
+        return contents;
     }
 
     protected Content filter( Content content )
     {
-        return filterScheduledPublished( content );
+        if ( shouldFilterScheduledPublished() )
+        {
+            return filterScheduledPublished( content );
+        }
+        return content;
     }
 
     protected Contents filterScheduledPublished( Contents contents )
     {
-        if ( shouldFilterScheduledPublished() )
-        {
-            final Instant now = Instant.now();
-            final List<Content> filteredContentList = contents.stream().
-                filter( content -> !this.contentPendingOrExpired( content, now ) ).
-                collect( Collectors.toList() );
-            return Contents.from( filteredContentList );
-        }
-
-        //Else, returns the content
-        return contents;
+        final Instant now = Instant.now();
+        final List<Content> filteredContentList = contents.stream().
+            filter( content -> !this.contentPendingOrExpired( content, now ) ).
+            collect( Collectors.toList() );
+        return Contents.from( filteredContentList );
     }
 
 
     protected Content filterScheduledPublished( Content content )
     {
-        if ( shouldFilterScheduledPublished() )
-        {
-            final Instant now = Instant.now();
-            if ( contentPendingOrExpired( content, now ) )
-            {
-                return null;
-            }
-        }
-        return content;
+        final Instant now = Instant.now();
+        return contentPendingOrExpired( content, now ) ? null : content;
     }
 
     protected boolean shouldFilterScheduledPublished()
     {
-        //If the command is executed on master and the flag includeScheduledPublished has not been set on the context
+        //Returns true if the command is executed on master and the flag includeScheduledPublished has not been set on the context
         final Context currentContext = ContextAccessor.current();
         return !Boolean.TRUE.equals( currentContext.getAttribute( "includeScheduledPublished" ) ) &&
             ContentConstants.BRANCH_MASTER.equals( currentContext.getBranch() );
@@ -111,11 +106,10 @@ abstract class AbstractContentCommand
         final ContentPublishInfo publishInfo = content.getPublishInfo();
         if ( publishInfo != null )
         {
-            //If the content is expired or pending publish 
+            //If publishTo is before the current time or publishFrom after the current time
             if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
                 ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
             {
-                //Filters the content
                 return true;
             }
         }
@@ -127,20 +121,20 @@ abstract class AbstractContentCommand
         final PropertyTree data = node.data();
         if ( data.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
         {
+            //If publishTo is before the current time or publishFrom after the current time
             final Instant publishFrom =
                 data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ) );
             final Instant publishTo =
                 data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_TO ) );
             if ( ( publishTo != null && publishTo.compareTo( now ) < 0 ) || ( publishFrom != null && publishFrom.compareTo( now ) > 0 ) )
             {
-                //Filters the content
                 return true;
             }
         }
         return false;
     }
 
-    protected void addFilters( NodeQuery.Builder nodeQuery )
+    protected Filters createFilters()
     {
         if ( shouldFilterScheduledPublished() )
         {
@@ -156,9 +150,9 @@ abstract class AbstractContentCommand
                     to( ValueFactory.newDateTime( Instant.now() ) ).
                     build() ).
                 build();
-            nodeQuery.addQueryFilter( notPendingFilter );
-            nodeQuery.addQueryFilter( notExpiredFilter );
+            return Filters.from( notPendingFilter, notExpiredFilter );
         }
+        return Filters.from();
     }
 
 

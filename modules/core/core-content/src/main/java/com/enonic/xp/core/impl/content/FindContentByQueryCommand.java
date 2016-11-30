@@ -28,10 +28,11 @@ final class FindContentByQueryCommand
 
     FindContentByQueryResult execute()
     {
-        final NodeQuery.Builder nodeQuery = ContentQueryNodeQueryTranslator.translate( this.params.getContentQuery() );
-        addFilters( nodeQuery );
+        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.params.getContentQuery() ).
+            addQueryFilters( createFilters() ).
+            build();
 
-        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery.build() );
+        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
         final NodeIds nodeIds = result.getNodeIds();
 
