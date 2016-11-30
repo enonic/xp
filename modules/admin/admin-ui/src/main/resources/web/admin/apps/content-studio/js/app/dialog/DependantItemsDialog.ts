@@ -275,6 +275,14 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.actionButton.setEnabled(true);
     }
 
+    protected toggleControls(enable: boolean) {
+        if (enable) {
+            this.unlockControls();
+        } else {
+            this.lockControls();
+        }
+    }
+
 }
 
 export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {

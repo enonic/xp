@@ -28,10 +28,10 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
         this.getEl().addClass("unpublish-dialog");
 
-        var unpublishAction = new ContentUnpublishDialogAction();
+        const unpublishAction = new ContentUnpublishDialogAction();
         unpublishAction.onExecuted(this.doUnpublish.bind(this));
         this.actionButton = this.addAction(unpublishAction, true, true);
-        this.actionButton.setEnabled(false);
+        this.lockControls();
 
         this.addCancelButtonToBottom();
 
@@ -55,7 +55,6 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
         this.getDependantList().clearItems();
         this.lockControls();
-        this.actionButton.setEnabled(false);
 
         return this.loadDescendantIds([CompareStatus.EQUAL,CompareStatus.NEWER,CompareStatus.PENDING_DELETE]).then(() => {
             this.loadDescendants(0, 20).
@@ -65,7 +64,6 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
                     // do not set requested contents as they are never going to change
 
                 this.unlockControls();
-                    this.actionButton.setEnabled(true);
                 }).finally(() => {
                     this.loadMask.hide();
                 });

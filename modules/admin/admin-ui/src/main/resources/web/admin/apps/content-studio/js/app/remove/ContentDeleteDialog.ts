@@ -58,7 +58,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
 
     protected manageDescendants() {
         this.loadMask.show();
-        this.actionButton.setEnabled(false);
+        this.lockControls();
 
         return this.loadDescendantIds().then(() => {
             this.loadDescendants(0, 20).
@@ -69,7 +69,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
                     this.centerMyself();
                 }).finally(() => {
                     this.loadMask.hide();
-                    this.actionButton.setEnabled(true);
+                this.unlockControls();
                 this.actionButton.giveFocus();
                 });
         });
