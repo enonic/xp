@@ -42,7 +42,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
         api.dom.Body.get().addClass(this.isProcessingClass);
 
         MenuButtonProgressBarManager.getProgressBar().setValue(0);
-        this.hideLoadingSpinner();
+        this.unlockControls();
         this.progressBar = this.createProgressBar();
         MenuButtonProgressBarManager.updateProgressHandler(this.processHandler);
     }

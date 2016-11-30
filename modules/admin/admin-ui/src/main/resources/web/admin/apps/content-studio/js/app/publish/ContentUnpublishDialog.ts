@@ -54,7 +54,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
         }
 
         this.getDependantList().clearItems();
-        this.showLoadingSpinner();
+        this.lockControls();
         this.actionButton.setEnabled(false);
 
         return this.loadDescendantIds([CompareStatus.EQUAL,CompareStatus.NEWER,CompareStatus.PENDING_DELETE]).then(() => {
@@ -64,7 +64,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
                     // do not set requested contents as they are never going to change
 
-                    this.hideLoadingSpinner();
+                this.unlockControls();
                     this.actionButton.setEnabled(true);
                 }).finally(() => {
                     this.loadMask.hide();
@@ -108,7 +108,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
     private doUnpublish() {
 
-        this.showLoadingSpinner();
+        this.lockControls();
 
         this.setSubTitle(this.countTotal() + " items are being unpublished...");
 
@@ -121,7 +121,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
             .then((taskId: api.task.TaskId) => {
                 this.pollTask(taskId);
             }).catch((reason) => {
-            this.hideLoadingSpinner();
+            this.unlockControls();
             this.close();
             if (reason && reason.message) {
                 api.notify.showError(reason.message);

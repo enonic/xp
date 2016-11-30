@@ -264,7 +264,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private doPublish() {
 
-        this.showLoadingSpinner();
+        this.lockControls();
 
         this.setSubTitle(this.countTotal() + " items are being published...");
 
@@ -278,7 +278,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             .then((taskId: api.task.TaskId) => {
                 this.pollTask(taskId);
             }).catch((reason) => {
-            this.hideLoadingSpinner();
+            this.unlockControls();
                 this.close();
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);

@@ -143,7 +143,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
                 this.instantDeleteCheckbox.isChecked() ? this.yesCallback([]) : this.yesCallback();
             }
 
-            this.showLoadingSpinner();
+            this.lockControls();
 
             this.createDeleteRequest()
                 .sendAndParse()

@@ -144,7 +144,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.clearItems(true);
         this.dependantList.clearItems(true);
         this.dependantsContainer.setVisible(false);
-        this.hideLoadingSpinner();
+        this.unlockControls();
     }
 
     setAutoUpdateTitle(value: boolean) {
@@ -265,12 +265,12 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         }
     }
 
-    protected showLoadingSpinner() {
+    protected lockControls() {
         this.addClass("locked");
         this.actionButton.setEnabled(false);
     }
 
-    protected hideLoadingSpinner() {
+    protected unlockControls() {
         this.removeClass("locked");
         this.actionButton.setEnabled(true);
     }
