@@ -1201,7 +1201,7 @@ public final class ContentResource
 
     @POST
     @Path("getPublishStatuses")
-    public GetPublishStatusResultsJson compare( final GetPublishStatusesJson params )
+    public GetPublishStatusResultsJson getPublishStatuses( final GetPublishStatusesJson params )
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( contentIds );
@@ -1209,6 +1209,7 @@ public final class ContentResource
 
         final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
             branch( ContentConstants.BRANCH_MASTER ).
+            attribute( "includeScheduledPublished", Boolean.TRUE ).
             build().
             callWith( () -> contentService.getByIds( getContentByIdsParams ) );
         final List<GetPublishStatusResultJson> getPublishStatusResultJsonList = contents.stream().

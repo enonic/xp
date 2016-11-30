@@ -71,9 +71,9 @@ public interface NodeService
 
     int applyPermissions( ApplyNodePermissionsParams params );
 
-    ByteSource getBinary( NodeId nodeId, BinaryReference reference );
+    ByteSource getBinary( Node node, BinaryReference reference );
 
-    String getBinaryKey( NodeId nodeId, BinaryReference reference );
+    String getBinaryKey( Node node, BinaryReference reference );
 
     Node createRootNode( CreateRootNodeParams params );
 

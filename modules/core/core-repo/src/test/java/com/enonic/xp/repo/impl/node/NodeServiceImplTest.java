@@ -251,7 +251,7 @@ public class NodeServiceImplTest
             attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) ).
             build() );
 
-        final String key = this.nodeService.getBinaryKey( node.id(), binaryRef1 );
+        final String key = this.nodeService.getBinaryKey( node, binaryRef1 );
 
         assertNotNull( key );
     }
@@ -274,7 +274,7 @@ public class NodeServiceImplTest
             attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) ).
             build() );
 
-        final ByteSource source = this.nodeService.getBinary( node.id(), binaryRef1 );
+        final ByteSource source = this.nodeService.getBinary( node, binaryRef1 );
 
         assertArrayEquals( source.read(), binarySource.getBytes() );
     }

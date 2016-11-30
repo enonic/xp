@@ -318,13 +318,13 @@ class NodeServiceMock
     }
 
     @Override
-    public ByteSource getBinary( final NodeId nodeId, final BinaryReference reference )
+    public ByteSource getBinary( final Node node, final BinaryReference reference )
     {
         return this.blobStore.get( reference );
     }
 
     @Override
-    public String getBinaryKey( final NodeId nodeId, final BinaryReference reference )
+    public String getBinaryKey( final Node node, final BinaryReference reference )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

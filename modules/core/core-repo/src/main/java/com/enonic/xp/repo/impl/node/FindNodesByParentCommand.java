@@ -62,6 +62,7 @@ public class FindNodesByParentCommand
 
         final NodeQueryResult nodeQueryResult = this.searchService.query( NodeQuery.create().
             parent( parentPath ).
+            addQueryFilters( params.getQueryFilters() ).
             from( params.getFrom() ).
             size( params.getSize() ).
             searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).

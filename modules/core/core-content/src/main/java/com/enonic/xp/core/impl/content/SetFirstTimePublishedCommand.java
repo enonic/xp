@@ -66,7 +66,7 @@ public class SetFirstTimePublishedCommand
         final NodeQuery query = NodeQuery.create().
             addQueryFilter( BooleanFilter.create().
                 mustNot( ExistsFilter.create().
-                    fieldName( ContentIndexPath.PUBLISHED_TIME.getPath() ).
+                    fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).
                     build() ).
                 must( ValueFilter.create().
                     fieldName( ContentPropertyNames.ID ).

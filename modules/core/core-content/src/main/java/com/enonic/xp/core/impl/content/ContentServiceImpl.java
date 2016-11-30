@@ -722,27 +722,25 @@ public class ContentServiceImpl
     @Override
     public boolean contentExists( final ContentId contentId )
     {
-        try
-        {
-            return this.nodeService.nodeExists( NodeId.from( contentId ) );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return false;
-        }
+        return ContentExistsCommand.create( contentId ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     @Override
     public boolean contentExists( final ContentPath contentPath )
     {
-        try
-        {
-            return this.nodeService.nodeExists( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return false;
-        }
+        return ContentExistsCommand.create( contentPath ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     private <T> T runAsContentAdmin( final Callable<T> callable )
@@ -763,13 +761,15 @@ public class ContentServiceImpl
     @Override
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference );
+        final Node node = nodeService.getById( NodeId.from( contentId.toString() ) );
+        return nodeService.getBinary( node, binaryReference );
     }
 
     @Override
     public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return nodeService.getBinaryKey( NodeId.from( contentId.toString() ), binaryReference );
+        final Node node = nodeService.getById( NodeId.from( contentId.toString() ) );
+        return nodeService.getBinaryKey( node, binaryReference );
     }
 
     @Override
@@ -791,7 +791,8 @@ public class ContentServiceImpl
     {
         try
         {
-            return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference ).openStream();
+            final Node node = nodeService.getById( NodeId.from( contentId.toString() ) );
+            return nodeService.getBinary( node, binaryReference ).openStream();
         }
         catch ( IOException e )
         {

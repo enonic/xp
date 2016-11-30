@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.BinaryReference;
 
 public class GetBinaryKeyCommand
@@ -15,19 +14,18 @@ public class GetBinaryKeyCommand
 
     private final PropertyPath propertyPath;
 
-    private final NodeId nodeId;
+    private final Node node;
 
     private GetBinaryKeyCommand( final Builder builder )
     {
         super( builder );
         this.binaryReference = builder.binaryReference;
         this.propertyPath = builder.propertyPath;
-        this.nodeId = builder.nodeId;
+        this.node = builder.node;
     }
 
     public String execute()
     {
-        final Node node = doGetById( this.nodeId );
         if ( binaryReference != null )
         {
             return getByBinaryReference( node );
@@ -82,7 +80,7 @@ public class GetBinaryKeyCommand
 
         private PropertyPath propertyPath;
 
-        private NodeId nodeId;
+        private Node node;
 
         public Builder binaryReference( final BinaryReference binaryReference )
         {
@@ -96,9 +94,9 @@ public class GetBinaryKeyCommand
             return this;
         }
 
-        public Builder nodeId( final NodeId nodeId )
+        public Builder node( final Node node )
         {
-            this.nodeId = nodeId;
+            this.node = node;
             return this;
         }
 
@@ -106,9 +104,7 @@ public class GetBinaryKeyCommand
         void validate()
         {
             super.validate();
-
-            Preconditions.checkNotNull( nodeId, "nodeId not set" );
-
+            Preconditions.checkNotNull( node, "node not set" );
             Preconditions.checkArgument( propertyPath != null || binaryReference != null,
                                          "Either propertyPath or binaryReference must be set" );
         }

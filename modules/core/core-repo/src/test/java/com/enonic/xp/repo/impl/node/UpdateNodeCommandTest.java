@@ -94,7 +94,7 @@ public class UpdateNodeCommandTest
         // Verify that the binary source for binary ref in the updated node is the updated version
 
         final ByteSource binary = GetBinaryCommand.create().
-            nodeId( updatedNode.id() ).
+            node( updatedNode ).
             binaryReference( binaryRef ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.blobStore ).
