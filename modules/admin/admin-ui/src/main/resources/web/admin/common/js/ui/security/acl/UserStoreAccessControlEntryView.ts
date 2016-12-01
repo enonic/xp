@@ -43,12 +43,7 @@ module api.ui.security.acl {
                 this.editable = editable;
             }
 
-            if (this.editable) {
-                this.removeClass("readonly");
-            }
-            else {
-                this.addClass("readonly");
-            }
+            this.toggleClass("readonly", !editable);
         }
 
         isEditable(): boolean {

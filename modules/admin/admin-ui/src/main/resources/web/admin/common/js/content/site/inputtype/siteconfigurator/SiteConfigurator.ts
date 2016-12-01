@@ -25,6 +25,8 @@ module api.content.site.inputtype.siteconfigurator {
 
         private context: api.form.inputtype.InputTypeViewContext;
 
+        private readOnly: boolean;
+
         private comboBox: SiteConfiguratorComboBox;
 
         private siteConfigProvider: SiteConfigProvider;
@@ -35,6 +37,16 @@ module api.content.site.inputtype.siteconfigurator {
             super("site-configurator");
             this.context = config;
             this.formContext = config.formContext;
+
+            new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                this.readOnly = !loginResult.getPrincipals().some(function (principal) {
+                    return principal.equals(api.security.RoleKeys.ADMIN) || principal.equals(api.security.RoleKeys.CMS_ADMIN);
+                });
+                // request may finish after rendered has been done
+                if (this.comboBox.isRendered()) {
+                    this.comboBox.setReadOnly(this.readOnly);
+                }
+            });
         }
 
         getValueType(): ValueType {
@@ -57,6 +69,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.siteConfigProvider.onAfterPropertyChanged(() => this.ignorePropertyChange = false);
 
             this.comboBox = this.createComboBox(input, this.siteConfigProvider);
+            this.comboBox.setReadOnly(this.readOnly);
 
             this.appendChild(this.comboBox);
 

@@ -39,5 +39,7 @@ module api.ui.selector.combobox {
         onOptionMoved(listener: (moved: SelectedOption<T>) => void);
 
         unOptionMoved(listener: (moved: SelectedOption<T>) => void);
+
+        setEditable(editable: boolean);
     }
 }
