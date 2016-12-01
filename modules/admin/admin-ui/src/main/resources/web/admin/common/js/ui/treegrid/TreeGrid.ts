@@ -1066,7 +1066,7 @@ module api.ui.treegrid {
             this.grid.selectRow(row);
         }
 
-        protected collapseNode(node: TreeNode<DATA>) {
+        private collapseNode(node: TreeNode<DATA>) {
             node.setExpanded(false);
 
             // Save the selected collapsed rows in cache
