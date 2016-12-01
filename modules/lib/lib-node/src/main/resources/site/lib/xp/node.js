@@ -1,11 +1,12 @@
 /**
- * Functions to find and manipulate nodes.
+ * Functions to get, query and manipulate nodes.
  *
  * @example
  * var nodeLib = require('/lib/xp/node');
  *
  * @module lib/xp/node
  */
+
 
 var factory = __.newBean('com.enonic.xp.lib.node.NodeHandleFactory');
 
@@ -40,16 +41,23 @@ function required(params, name) {
     return value;
 }
 
-function Handle(native) {
+/**
+ * Creates a new repo-connection.
+ *
+ * @param {*} native Native repo-connection object.
+ * @constructor
+ * @private
+ */
+function RepoConnection(native) {
     this.native = native;
 }
 
-Handle.prototype.create = function (params) {
+RepoConnection.prototype.create = function (params) {
     var scriptValue = __.toScriptValue(params);
     return __.toNativeObject(this.native.create(scriptValue));
 };
 
-Handle.prototype.modify = function (params) {
+RepoConnection.prototype.modify = function (params) {
     var editor = __.toScriptValue(params.editor);
     var key = required(params, 'key');
     return __.toNativeObject(this.native.modify(editor, key));
@@ -67,7 +75,7 @@ Handle.prototype.modify = function (params) {
  *
  * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
-Handle.prototype.get = function (params) {
+RepoConnection.prototype.get = function (params) {
     if (params.key === undefined && params.keys === undefined) {
         throw "Parameter 'key' or 'keys' is required";
     }
@@ -76,7 +84,7 @@ Handle.prototype.get = function (params) {
     return __.toNativeObject(this.native.get(key, keys));
 };
 
-Handle.prototype.push = function (params) {
+RepoConnection.prototype.push = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.PushNodeHandlerParams');
     params = params || {};
     handlerParams.ids = required(params, 'keys');
@@ -92,7 +100,7 @@ Handle.prototype.push = function (params) {
     return __.toNativeObject(this.native.push(handlerParams));
 };
 
-Handle.prototype.delete = function (params) {
+RepoConnection.prototype.delete = function (params) {
     if (params.key === undefined && params.keys === undefined) {
         throw "Parameter 'key' or 'keys' is required";
     }
@@ -102,14 +110,14 @@ Handle.prototype.delete = function (params) {
 };
 
 
-Handle.prototype.modify = function (params) {
+RepoConnection.prototype.modify = function (params) {
     var editor = __.toScriptValue(params.editor);
     var key = required(params, 'key');
     return __.toNativeObject(this.native.modify(editor, key));
 };
 
 
-Handle.prototype.diff = function (params) {
+RepoConnection.prototype.diff = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.DiffBranchesHandlerParams');
     params = params || {};
     handlerParams.nodeId = required(params, 'key');
@@ -132,7 +140,7 @@ Handle.prototype.diff = function (params) {
  *
  * @returns {boolean} True if the node was successfully moved or renamed, false otherwise.
  */
-Handle.prototype.move = function (params) {
+RepoConnection.prototype.move = function (params) {
     var source = required(params, 'source');
     var target = required(params, 'target');
     return __.toNativeObject(this.native.move(source, target));
@@ -151,7 +159,7 @@ Handle.prototype.move = function (params) {
  * @param {string} [params.aggregations] Aggregations expression.
  * @returns {boolean} Result of query.
  */
-Handle.prototype.query = function (params) {
+RepoConnection.prototype.query = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
     handlerParams.start = params.start;
     handlerParams.count = params.count;
@@ -161,7 +169,15 @@ Handle.prototype.query = function (params) {
     return __.toNativeObject(this.native.query(handlerParams));
 };
 
+/**
+ * Creates a connection to a repository with a given branch and authentication info.
+ *
+ * @example-ref examples/node/connect.js
+ *
+ * @param {object} context JSON with the parameters.
 
+ * @returns {RepoConnection} Returns a new repo-connection.
+ */
 exports.connect = function (context) {
 
     var nodeHandleContext = __.newBean('com.enonic.xp.lib.node.NodeHandleContext');
@@ -181,5 +197,5 @@ exports.connect = function (context) {
         nodeHandleContext.principals = context.principals;
     }
 
-    return new Handle(factory.create(nodeHandleContext));
+    return new RepoConnection(factory.create(nodeHandleContext));
 };
