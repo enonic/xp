@@ -1,5 +1,9 @@
 .site-configurator {
 
+  .@{_COMMON_PREFIX}combobox.readonly {
+    display: none;
+  }
+
   .multiple-occurrence {
     .selected-option {
       .drag-control, .site-form .remove {
@@ -38,6 +42,12 @@
       &.collapsed {
         .header {
           margin: 0;
+        }
+      }
+
+      &.readonly {
+        a.edit, a.remove {
+          display: none;
         }
       }
 

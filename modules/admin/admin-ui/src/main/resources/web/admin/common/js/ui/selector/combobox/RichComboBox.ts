@@ -88,6 +88,15 @@ module api.ui.selector.combobox {
             }
         }
 
+        setReadOnly(readOnly: boolean) {
+            super.setReadOnly(readOnly);
+
+            this.comboBox.setReadOnly(readOnly);
+            this.selectedOptionsView.setEditable(!readOnly);
+
+            this.toggleClass('readonly', readOnly);
+        }
+
         protected createLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
             throw "Must be implemented by inheritors";
         }

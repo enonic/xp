@@ -83,6 +83,9 @@ module api.ui.security {
             this.appendChild(removeButton);
         }
 
+        setEditable(editable: boolean) {
+        }
+
         setOption(option: api.ui.selector.Option<Principal>) {
             this.option = option;
             this.setObject(option.displayValue);

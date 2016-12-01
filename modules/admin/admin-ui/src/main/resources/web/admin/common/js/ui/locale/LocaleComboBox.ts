@@ -50,6 +50,9 @@ module api.ui.locale {
             this.appendChild(removeButton);
         }
 
+        setEditable(editable: boolean) {
+        }
+
         setOption(option: api.ui.selector.Option<Locale>) {
             this.option = option;
             this.setObject(option.displayValue);
