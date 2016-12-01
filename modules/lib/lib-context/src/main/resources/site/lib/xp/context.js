@@ -20,6 +20,7 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
  * @param {string} context.user.login Login of the user.
  * @param {string} [context.user.userStore] User store containing the user. By default, all the user stores will be used.
  * @param {array} [context.principals] Additional principals to execute the callback with.
+ * @param {object} [context.attributes] Additional Context attributes.
  * @param {function} callback Function to execute.
  * @returns {object} Result of the function execution.
  */
@@ -42,6 +43,9 @@ exports.run = function (context, callback) {
 
     if (context.principals) {
         params.principals = context.principals;
+    }
+    if (context.attributes) {
+        params.attributes = __.toScriptValue(context.attributes);
     }
 
     var result = bean.run(params);
