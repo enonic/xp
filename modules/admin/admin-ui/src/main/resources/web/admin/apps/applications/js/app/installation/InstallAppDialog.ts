@@ -3,7 +3,6 @@ import {MarketAppPanel} from "./view/MarketAppPanel";
 import {UploadAppPanel} from "./view/UploadAppPanel";
 
 import ApplicationKey = api.application.ApplicationKey;
-import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
@@ -109,13 +108,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         uploadAppPanel.getApplicationInput().onUploadFailed((event) => {
             uploadFailedHandler(event, uploadAppPanel.getApplicationInput().getUploader())
         });
-
-        let uploadCompletedHandler = (event: FileUploadCompleteEvent<Application>) => {
-            if (event.getUploadItems() && !this.hasClass("hidden")) {
-            }
-        };
-
-        this.uploadAppPanel.getApplicationInput().onUploadCompleted(uploadCompletedHandler);
 
         let uploadStartedHandler = (event: FileUploadStartedEvent<Application>) => {
             new api.application.ApplicationUploadStartedEvent(event.getUploadItems()).fire();
