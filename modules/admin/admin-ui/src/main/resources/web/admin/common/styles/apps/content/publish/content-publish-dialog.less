@@ -56,6 +56,92 @@
       display: none;
     }
   }
+
+  .dialog-buttons .xp-admin-common-button.show-schedule-action {
+
+    padding: 0px 10px;
+    line-height: 32px;
+    border: none;
+    margin: 0px;
+
+    background-color: transparent;
+    &:hover:not(:disabled) {
+      background-color: transparent;
+      opacity: 0.5;
+      box-shadow: none;
+    }
+    &:focus {
+      border: none;
+    }
+
+    &:after {
+      &:extend(.icon-base);
+      font-family: 'icomoon' !important;
+      content: "\e115";
+      position: relative;
+      top: 4px;
+      font-size: 22px;
+    }
+
+    > span {
+      display: none;
+    }
+  }
+
+  &.masked {
+
+    border: 1px solid;
+
+    &:after {
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: black;
+      opacity: 0.5;
+      content: "";
+      position: absolute;
+    }
+  }
+}
+
+.schedule-publish-dialog {
+  max-width: 580px;
+
+  .schedule-publish-dialog-subtitle {
+    margin-top: 20px;
+    background-color: @form-button-bg;
+    padding: 10px 20px;
+    color: @admin-white;
+  }
+
+  .dialog-content {
+    .date-time-picker {
+      margin: 5px 0px 10px 0px;
+
+      input {
+        .input-glow();
+      }
+
+      &.invalid {
+        input {
+          .input-error();
+        }
+      }
+
+    }
+
+    .publish-from-label, .publish-to-label {
+      font-size: 14px;
+    }
+
+    .publish-from-label {
+      &:after {
+        content: '*';
+        color: @input-red-text;
+      }
+    }
+  }
 }
 
 .@{_COMMON_PREFIX}modal-dialog {
