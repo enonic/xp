@@ -10,9 +10,9 @@ module api.content.resource {
 
         private includeChildren: boolean;
 
-        private publishFrom: LocalDateTime;
+        private publishFrom: Date;
 
-        private publishTo: LocalDateTime;
+        private publishTo: Date;
 
         constructor(contentId?: ContentId) {
             super();
@@ -42,12 +42,12 @@ module api.content.resource {
             return this;
         }
 
-        setPublishFrom(localDateTime: LocalDateTime) {
-            this.publishFrom = localDateTime;
+        setPublishFrom(publishFrom: Date) {
+            this.publishFrom = publishFrom;
         }
 
-        setPublishTo(localDateTime: LocalDateTime) {
-            this.publishTo = localDateTime;
+        setPublishTo(publishTo: Date) {
+            this.publishTo = publishTo;
         }
 
         getParams(): Object {
@@ -59,23 +59,11 @@ module api.content.resource {
                     return el.toString();
                 }),
                 includeChildren: this.includeChildren,
-                schedule: this.makeScheduleParam()
+                schedule: this.publishFrom ? {
+                    from: this.publishFrom.toISOString(),
+                    to: this.publishTo ? this.publishTo.toISOString() : undefined
+                } : null
             };
-        }
-
-        private makeScheduleParam(): Object {
-            if (!this.publishFrom) {
-                return null;
-            }
-            if (this.publishTo) {
-                return {
-                    from: this.publishFrom.toString(),
-                    to: this.publishTo.toString()
-                }
-            }
-            return {
-                from: this.publishFrom.toString()
-            }
         }
 
         getRequestPath(): api.rest.Path {

@@ -131,14 +131,12 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
         this.confirmScheduleAction.setEnabled(!this.fromDate.hasClass("invalid") && !this.toDate.hasClass("invalid"));
     }
 
-    getFromDate(): api.util.LocalDateTime {
-        var selectedDate = this.fromDate.getSelectedDateTime();
-        return selectedDate ? api.util.LocalDateTime.fromDate(selectedDate) : null;
+    getFromDate(): Date {
+        return this.fromDate.getSelectedDateTime();
     }
 
-    getToDate(): api.util.LocalDateTime {
-        var selectedDate = this.toDate.getSelectedDateTime();
-        return selectedDate ? api.util.LocalDateTime.fromDate(selectedDate) : null;
+    getToDate(): Date {
+        return this.toDate.getSelectedDateTime();
     }
 
     resetPublishDates() {

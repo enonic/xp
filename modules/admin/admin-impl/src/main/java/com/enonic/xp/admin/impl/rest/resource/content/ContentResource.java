@@ -546,6 +546,10 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
+        final ContentPublishInfo contentPublishInfo = params.getSchedule() == null ? null : ContentPublishInfo.create().
+            from( params.getSchedule().getPublishFrom() ).
+            to( params.getSchedule().getPublishTo() ).
+            build();
         final Context ctx = ContextAccessor.current();
         System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
         progressReporter.info( "Publishing content" );
@@ -554,6 +558,7 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             excludedContentIds( excludeContentIds ).
+            contentPublishInfo( contentPublishInfo ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
             pushListener( new PushContentProgressListener( progressReporter ) ).

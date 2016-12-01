@@ -1,35 +1,33 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.data.ValueTypes;
-
 public class PublishScheduleJson
 {
 
-    private LocalDateTime publishFrom;
+    private Instant publishFrom;
 
-    private LocalDateTime publishTo;
+    private Instant publishTo;
 
     @JsonCreator
     public PublishScheduleJson( @JsonProperty("from") final String publishFrom, @JsonProperty("to") final String publishTo )
     {
-        this.publishFrom = ValueTypes.LOCAL_DATE_TIME.convert( publishFrom );
+        this.publishFrom = Instant.parse( publishFrom );
         if ( publishTo != null )
         {
-            this.publishTo = ValueTypes.LOCAL_DATE_TIME.convert( publishTo );
+            this.publishTo = Instant.parse( publishTo );
         }
     }
 
-    public LocalDateTime getPublishFrom()
+    public Instant getPublishFrom()
     {
         return publishFrom;
     }
 
-    public LocalDateTime getPublishTo()
+    public Instant getPublishTo()
     {
         return publishTo;
     }
