@@ -14,6 +14,8 @@ public class ProcessUpdateParams
 
     private final ContentType contentType;
 
+    private final Content originalContent;
+
     private final Content editedContent;
 
     private final User modifier;
@@ -23,6 +25,7 @@ public class ProcessUpdateParams
         this.createAttachments = builder.createAttachments;
         contentType = builder.contentType;
         mediaInfo = builder.mediaInfo;
+        originalContent = builder.originalContent;
         editedContent = builder.editedContent;
         modifier = builder.modifier;
     }
@@ -41,6 +44,11 @@ public class ProcessUpdateParams
     public CreateAttachments getCreateAttachments()
     {
         return createAttachments;
+    }
+
+    public Content getOriginalContent()
+    {
+        return originalContent;
     }
 
     public Content getEditedContent()
@@ -67,6 +75,8 @@ public class ProcessUpdateParams
 
         private CreateAttachments createAttachments;
 
+        private Content originalContent;
+
         private Content editedContent;
 
         private User modifier;
@@ -90,6 +100,12 @@ public class ProcessUpdateParams
         public Builder createAttachments( final CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
+            return this;
+        }
+
+        public Builder originalContent( final Content originalContent )
+        {
+            this.originalContent = originalContent;
             return this;
         }
 

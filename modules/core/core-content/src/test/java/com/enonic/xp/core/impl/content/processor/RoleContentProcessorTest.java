@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
@@ -28,19 +27,13 @@ public class RoleContentProcessorTest
 
     private final RoleContentProcessor roleContentProcessor = new RoleContentProcessor();
 
-    private ContentService contentService;
-
     private SecurityService securityService;
 
     @Before
     public void setUp()
         throws Exception
     {
-
-        this.contentService = Mockito.mock( ContentService.class );
         this.securityService = Mockito.mock( SecurityService.class );
-
-        roleContentProcessor.setContentService( this.contentService );
         roleContentProcessor.setSecurityService( this.securityService );
     }
 
@@ -90,9 +83,7 @@ public class RoleContentProcessorTest
     {
         ProcessUpdateParams params = createProcessUpdateParams( PrincipalKeys.empty(), "white", "blue" );
 
-        final ProcessUpdateResult result = this.roleContentProcessor.processUpdate( params );
-
-        assertNull( result );
+        this.roleContentProcessor.processUpdate( params );
     }
 
     @Test
@@ -118,9 +109,9 @@ public class RoleContentProcessorTest
 
         Mockito.when( this.securityService.getMemberships( Mockito.eq( modifier.getKey() ) ) ).thenReturn( roleKeys );
         Mockito.when( this.securityService.getPrincipals( Mockito.eq( roleKeys ) ) ).thenReturn( roles );
-        Mockito.when( this.contentService.getById( Mockito.eq( editedContent.getId() ) ) ).thenReturn( originalContent );
 
         return ProcessUpdateParams.create().
+            originalContent( originalContent ).
             editedContent( editedContent ).
             modifier( modifier ).
             contentType( this.createSiteContentType() ).
@@ -136,7 +127,7 @@ public class RoleContentProcessorTest
     {
         PropertySet set = new PropertySet();
         set.addString( "applicationKey", "com.enonic.app.test" );
-        PropertySet siteConfig = set.addSet( "siteConfig" );
+        PropertySet siteConfig = set.addSet( "config" );
         siteConfig.addString( "backgroundColor", bgColor );
         return set;
     }
