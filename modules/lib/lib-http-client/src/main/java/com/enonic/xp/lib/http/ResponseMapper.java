@@ -12,8 +12,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.Response;
+
+import okhttp3.Headers;
+import okhttp3.Response;
 
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
