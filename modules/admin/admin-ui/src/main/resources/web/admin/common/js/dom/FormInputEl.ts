@@ -12,6 +12,8 @@ module api.dom {
 
         private dirty: boolean = false;
 
+        private readOnly: boolean;
+
         public static debug: boolean = false;
 
         constructor(tagName: string, className?: string, prefix?: string, originalValue?: string) {
@@ -33,7 +35,7 @@ module api.dom {
                     this.refreshDirtyState();
                     this.refreshValueChanged();
                 });
-                
+
                 if (!api.util.StringHelper.isBlank(this.originalValue)) {
                     if (FormInputEl.debug) {
                         console.debug(this.toString() + '.onAdded: setting original value = "' + this.originalValue + '"');
@@ -46,6 +48,14 @@ module api.dom {
             if (FormInputEl.debug) {
                 console.groupEnd();
             }
+        }
+
+        setReadOnly(readOnly: boolean) {
+            this.readOnly = readOnly;
+        }
+
+        isReadOnly(): boolean {
+            return this.readOnly;
         }
 
         getValue(): string {

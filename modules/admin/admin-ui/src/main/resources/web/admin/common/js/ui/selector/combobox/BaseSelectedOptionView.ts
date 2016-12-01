@@ -8,6 +8,8 @@ module api.ui.selector.combobox {
 
         private removeClickedListeners: {(): void;}[] = [];
 
+        private editable: boolean;
+
         constructor(option: api.ui.selector.Option<T>) {
             super("selected-option");
 
@@ -59,6 +61,15 @@ module api.ui.selector.combobox {
             this.removeClickedListeners = this.removeClickedListeners.filter(function (curr) {
                 return curr != listener;
             });
+        }
+
+        setEditable(editable: boolean) {
+            this.editable = editable;
+            this.toggleClass('readonly', !editable);
+        }
+
+        isEditable(): boolean {
+            return this.editable;
         }
     }
 }
