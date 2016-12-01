@@ -27,6 +27,8 @@ module api.ui.dialog {
 
         private forceHorizontalCentering: boolean;
 
+        private listOfClickIgnoredElements: api.dom.Element[] = [];
+
         public static debug: boolean = false;
 
         constructor(title: string = "", forceHorizontalCentering: boolean = false) {
@@ -109,15 +111,23 @@ module api.ui.dialog {
             });
         }
 
+        addClickIgnoredElement(elem: api.dom.Element) {
+            this.listOfClickIgnoredElements.push(elem);
+        }
+
         protected createHeader(title: string): api.ui.dialog.ModalDialogHeader {
             return new api.ui.dialog.ModalDialogHeader(title);
         }
 
         private isIgnoredElementClicked(element: HTMLElement): boolean {
+            var ignoredElementClicked = false;
             if (!!element && !!element.className && !!element.className.indexOf) {
-                return element.className.indexOf("mce-") > -1 || element.className.indexOf("html-area-modal-dialog") > -1;
+                ignoredElementClicked = element.className.indexOf("mce-") > -1 || element.className.indexOf("html-area-modal-dialog") > -1;
             }
-            return false;
+            ignoredElementClicked = ignoredElementClicked || this.listOfClickIgnoredElements.some((elem: api.dom.Element) => {
+                    return elem.getHTMLElement() == element || elem.getEl().contains(element);
+                });
+            return ignoredElementClicked;
         }
 
         private createDefaultCancelAction() {
