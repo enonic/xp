@@ -60,10 +60,6 @@ public final class ContentInitializer
             allowAll().
             build() ).
         add( AccessControlEntry.create().
-            principal( RoleKeys.CONTENT_MANAGER_EXPERT ).
-            allow( Permission.READ ).
-            build() ).
-        add( AccessControlEntry.create().
             principal( RoleKeys.CONTENT_MANAGER_APP ).
             allow( Permission.READ ).
             build() ).
