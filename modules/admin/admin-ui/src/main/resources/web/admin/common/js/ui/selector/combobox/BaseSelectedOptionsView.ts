@@ -19,7 +19,7 @@ module api.ui.selector.combobox {
 
         private optionMovedListeners: {(moved: SelectedOption<T>) : void}[] = [];
 
-        private editable: boolean;
+        private editable: boolean = true;
 
         constructor(className?: string) {
             super("selected-options" + (className ? " " + className : ""));

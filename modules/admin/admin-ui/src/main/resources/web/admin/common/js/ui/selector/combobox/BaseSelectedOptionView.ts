@@ -8,7 +8,7 @@ module api.ui.selector.combobox {
 
         private removeClickedListeners: {(): void;}[] = [];
 
-        private editable: boolean;
+        private editable: boolean = true;
 
         constructor(option: api.ui.selector.Option<T>) {
             super("selected-option");
