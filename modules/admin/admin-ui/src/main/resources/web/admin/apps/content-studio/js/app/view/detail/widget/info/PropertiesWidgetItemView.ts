@@ -101,8 +101,11 @@ export class PropertiesWidgetItemView extends WidgetItemView {
             this.content.getModifiedTime() ? new FieldString().setName("Modified").setValue(
                 DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
 
-            new FieldString().setName("Published from").setValue(this.content.getPublishFromTime() ?
-                                                                DateTimeFormatter.createHtml(this.content.getPublishFromTime()) : " "),
+            new FieldString().setName("Publish From").setValue(this.content.getPublishFromDate() ?
+                                                               DateTimeFormatter.createHtml(this.content.getPublishFromDate()) : " "),
+
+            new FieldString().setName("Publish To").setValue(this.content.getPublishToDate() ?
+                                                             DateTimeFormatter.createHtml(this.content.getPublishToDate()) : " "),
 
             new FieldString().setName("Id").setValue(this.content.getId())
         ];

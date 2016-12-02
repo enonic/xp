@@ -11,13 +11,19 @@ export class ContentSettingsModel implements api.Equitable {
 
     private owner: api.security.PrincipalKey;
     private language: string;
+    private publishFromDate: Date;
+    private publishToDate: Date;
 
     public static PROPERTY_OWNER: string = 'owner';
     public static PROPERTY_LANG: string = 'language';
+    public static PROPERTY_PUBLISH_FROM: string = 'publishFromDate';
+    public static PROPERTY_PUBLISH_TO: string = 'publishToDate';
 
     constructor(content: Content) {
         this.language = content.getLanguage();
         this.owner = content.getOwner();
+        this.publishFromDate = content.getPublishFromDate();
+        this.publishToDate = content.getPublishToDate();
     }
 
     getOwner(): api.security.PrincipalKey {
@@ -46,6 +52,24 @@ export class ContentSettingsModel implements api.Equitable {
         return this;
     }
 
+    setPublishFrom(publishFrom: Date, silent?: boolean): ContentSettingsModel {
+        if (!silent) {
+            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_PUBLISH_FROM, this.publishFromDate, publishFrom);
+            this.notifyPropertyChanged(event);
+        }
+        this.publishFromDate = publishFrom;
+        return this;
+    }
+
+    setPublishTo(publishTo: Date, silent?: boolean): ContentSettingsModel {
+        if (!silent) {
+            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_PUBLISH_TO, this.publishToDate, publishTo);
+            this.notifyPropertyChanged(event);
+        }
+        this.publishToDate = publishTo;
+        return this;
+    }
+
     onPropertyChanged(listener: {(event: api.PropertyChangedEvent): void;}) {
         this.propertyChangedListeners.push(listener);
     }
@@ -64,13 +88,16 @@ export class ContentSettingsModel implements api.Equitable {
             return false;
         } else {
             var otherModel = <ContentSettingsModel> other;
-            return otherModel.owner == this.owner && otherModel.language == this.language;
+            return otherModel.owner == this.owner && otherModel.language == this.language
+                   && otherModel.publishFromDate == this.publishFromDate && otherModel.publishToDate == this.publishToDate;
         }
     }
 
     apply(builder: api.content.ContentBuilder) {
         builder.owner = this.owner;
         builder.language = this.language;
+        builder.publishFromDate = this.publishFromDate;
+        builder.publishToDate = this.publishToDate;
     }
 
 }
