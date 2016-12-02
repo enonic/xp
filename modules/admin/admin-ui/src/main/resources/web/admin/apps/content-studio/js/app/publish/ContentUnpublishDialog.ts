@@ -28,10 +28,10 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
         this.getEl().addClass("unpublish-dialog");
 
-        var unpublishAction = new ContentUnpublishDialogAction();
+        const unpublishAction = new ContentUnpublishDialogAction();
         unpublishAction.onExecuted(this.doUnpublish.bind(this));
         this.actionButton = this.addAction(unpublishAction, true, true);
-        this.actionButton.setEnabled(false);
+        this.lockControls();
 
         this.addCancelButtonToBottom();
 
@@ -54,8 +54,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
         }
 
         this.getDependantList().clearItems();
-        this.showLoadingSpinner();
-        this.actionButton.setEnabled(false);
+        this.lockControls();
 
         return this.loadDescendantIds([CompareStatus.EQUAL,CompareStatus.NEWER,CompareStatus.PENDING_DELETE]).then(() => {
             this.loadDescendants(0, 20).
@@ -64,8 +63,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
                     // do not set requested contents as they are never going to change
 
-                    this.hideLoadingSpinner();
-                    this.actionButton.setEnabled(true);
+                this.unlockControls();
                 }).finally(() => {
                     this.loadMask.hide();
                 });
@@ -108,7 +106,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
     private doUnpublish() {
 
-        this.showLoadingSpinner();
+        this.lockControls();
 
         this.setSubTitle(this.countTotal() + " items are being unpublished...");
 
@@ -121,7 +119,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
             .then((taskId: api.task.TaskId) => {
                 this.pollTask(taskId);
             }).catch((reason) => {
-            this.hideLoadingSpinner();
+            this.unlockControls();
             this.close();
             if (reason && reason.message) {
                 api.notify.showError(reason.message);
