@@ -53,6 +53,7 @@ public class SetFirstTimePublishedCommand
                         publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
                     }
                     publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, now );
+                    publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
                 } ).
                 id( id ).
                 build() );

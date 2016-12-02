@@ -46,7 +46,11 @@ public class UpdatePublishInfoCommand
                         publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
                     }
                     publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, from );
-                    if ( to != null )
+                    if ( to == null )
+                    {
+                        publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
+                    }
+                    else
                     {
                         publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, to );
                     }
