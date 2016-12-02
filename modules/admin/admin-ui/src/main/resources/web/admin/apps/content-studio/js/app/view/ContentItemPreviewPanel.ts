@@ -75,15 +75,16 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
     }
 
     private frameClickHandler(event: UIEvent) {
-        if (this.isLinkClicked(event)) {
-            var href = (<any>event.target).href,
-                frameWindow = this.frame.getHTMLElement()["contentWindow"];
-            if (!!frameWindow && !UriHelper.isNavigatingOutsideOfXP(href, frameWindow)) {
-                var contentPreviewPath = UriHelper.trimUrlParams(UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(href,
+        let linkClicked: string = this.getLinkClicked(event);
+        if (linkClicked) {
+            var frameWindow = this.frame.getHTMLElement()["contentWindow"];
+            if (!!frameWindow && !UriHelper.isNavigatingOutsideOfXP(linkClicked, frameWindow)) {
+                var contentPreviewPath = UriHelper.trimUrlParams(
+                    UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(linkClicked,
                     frameWindow)));
                 if (!this.isNavigatingWithinSamePage(contentPreviewPath, frameWindow)) {
                     event.preventDefault();
-                    var clickedLinkRelativePath = "/" + UriHelper.trimWindowProtocolAndPortFromHref(href, frameWindow);
+                    var clickedLinkRelativePath = "/" + UriHelper.trimWindowProtocolAndPortFromHref(linkClicked, frameWindow);
                     this.skipNextSetItemCall = true;
                     new ContentPreviewPathChangedEvent(contentPreviewPath).fire();
                     this.showMask();
@@ -97,8 +98,21 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         }
     }
 
-    private isLinkClicked(event: UIEvent): boolean {
-        return event.target && (<any>event.target).tagName.toLowerCase() === 'a';
+    private getLinkClicked(event: UIEvent): string {
+        if (event.target && (<any>event.target).tagName.toLowerCase() === 'a') {
+            return (<any>event.target).href;
+        }
+
+        let el: Element = <Element>event.target;
+        if (el) {
+            while (el.parentNode) {
+                el = <Element>el.parentNode;
+                if (el.tagName && el.tagName.toLowerCase() === 'a') {
+                    return (<any>el).href;
+                }
+            }
+        }
+        return "";
     }
 
     private isNavigatingWithinSamePage(contentPreviewPath: string, frameWindow: Window): boolean {
