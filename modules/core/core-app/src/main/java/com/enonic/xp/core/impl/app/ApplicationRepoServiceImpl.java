@@ -73,8 +73,7 @@ public class ApplicationRepoServiceImpl
     @Override
     public ByteSource getApplicationSource( final NodeId nodeId )
     {
-        final Node node = this.nodeService.getById( nodeId );
-        return this.nodeService.getBinary( node, BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
+        return this.nodeService.getBinary( nodeId, BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
     }
 
     @Override
