@@ -1,8 +1,6 @@
 module api.content.json {
 
-    export interface CompareContentResultJson {
-
-        compareStatus: string;
+    export interface GetPublishStatusResultJson {
 
         publishStatus: string;
 

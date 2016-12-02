@@ -10,8 +10,8 @@
       padding-left: 0px;
     }
     .shifted .toggle.icon {
-        width: 45px;
-        margin-right: 0;
+      width: 45px;
+      margin-right: 0;
     }
   }
 
@@ -19,19 +19,34 @@
     line-height: 37px;
   }
 
-  .slick-cell {
-    &:not(.selected) {
-      &.status .equal {
-        color: @admin-green;
+  .grid .slick-row {
+    .slick-cell {
+      &:not(.selected) {
+        &.status .equal {
+          color: @admin-green;
+          &.pending {
+            color: darkorange;
+          }
+          &.expired {
+            color: @admin-red;
+          }
+        }
       }
-    }
 
-    &.order .sort-dialog-trigger:before {
-      margin-left: 6px;
-    }
+      &.status {
+        text-align: center;
+        div:not(.online) {
+          line-height: 18px;
+        }
+      }
 
-    &.slick-cell-checkboxsel:last-child {
-      padding-right: 20px;
+      &.order .sort-dialog-trigger:before {
+        margin-left: 6px;
+      }
+
+      &.slick-cell-checkboxsel:last-child {
+        padding-right: 20px;
+      }
     }
   }
 }

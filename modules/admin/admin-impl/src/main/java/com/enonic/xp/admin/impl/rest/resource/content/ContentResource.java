@@ -1201,7 +1201,12 @@ public final class ContentResource
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
 
-        return new CompareContentResultsJson( compareResults );
+        final GetPublishStatusesJson getPublishStatusesJson = new GetPublishStatusesJson();
+        getPublishStatusesJson.setIds( params.getIds() );
+
+        final GetPublishStatusResultsJson publishStatusesJson = getPublishStatuses( getPublishStatusesJson );
+
+        return new CompareContentResultsJson( compareResults, publishStatusesJson );
     }
 
     @POST

@@ -8,10 +8,13 @@ public class CompareContentResultJson
 
     private final String id;
 
-    public CompareContentResultJson( final CompareContentResult compareContentResult )
+    private final PublishStatus publishStatus;
+
+    public CompareContentResultJson( final CompareContentResult compareContentResult, final PublishStatus publishStatus )
     {
         this.compareStatus = compareContentResult.getCompareStatus().name();
         this.id = compareContentResult.getContentId().toString();
+        this.publishStatus = publishStatus;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -24,5 +27,10 @@ public class CompareContentResultJson
     public String getId()
     {
         return id;
+    }
+
+    public PublishStatus getPublishStatus()
+    {
+        return publishStatus;
     }
 }

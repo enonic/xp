@@ -4,18 +4,18 @@ import com.enonic.xp.content.ContentId;
 
 public class GetPublishStatusResultJson
 {
-    private final String publishStatus;
+    private final PublishStatus publishStatus;
 
     private final String id;
 
     public GetPublishStatusResultJson( final PublishStatus publishStatus, final ContentId contentId )
     {
-        this.publishStatus = publishStatus.toString();
+        this.publishStatus = publishStatus;
         this.id = contentId.toString();
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public String getPublishStatus()
+    public PublishStatus getPublishStatus()
     {
         return publishStatus;
     }

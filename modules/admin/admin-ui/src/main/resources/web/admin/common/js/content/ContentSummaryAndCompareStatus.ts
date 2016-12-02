@@ -10,6 +10,8 @@ module api.content {
 
         private compareStatus: CompareStatus;
 
+        private publishStatus: PublishStatus;
+
         constructor() {
         }
 
@@ -17,8 +19,10 @@ module api.content {
             return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary);
         }
 
-        public static fromContentAndCompareStatus(contentSummary: ContentSummary, compareStatus: CompareStatus) {
-            return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary).setCompareStatus(compareStatus);
+        public static fromContentAndCompareAndPublishStatus(contentSummary: ContentSummary, compareStatus: CompareStatus,
+                                                            publishStatus: PublishStatus) {
+            return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary).setCompareStatus(compareStatus).setPublishStatus(
+                publishStatus);
         }
 
         public static fromUploadItem(item: UploadItem<ContentSummary>): ContentSummaryAndCompareStatus {
@@ -40,6 +44,15 @@ module api.content {
 
         setCompareStatus(status: CompareStatus): ContentSummaryAndCompareStatus {
             this.compareStatus = status;
+            return this;
+        }
+
+        getPublishStatus(): PublishStatus {
+            return this.publishStatus;
+        }
+
+        setPublishStatus(publishStatus: PublishStatus): ContentSummaryAndCompareStatus {
+            this.publishStatus = publishStatus;
             return this;
         }
 
