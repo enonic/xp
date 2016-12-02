@@ -33,15 +33,18 @@
     "require-dir": "^0.3.0",
     "through": "^2.3.8",
     "ts-loader": "^1.2.1",
-    "tslint": "^3.2.0",
-    "tslint-loader": "^2.1.0",
-    "typescript": "2.0.0",
+    "tslint-loader": "^3.2.1",
+    "typescript": "^2.0.10",
     "vinyl": "^1.1.1",
-    "webpack": "^1.13.0",
+    "webpack": "^1.13.3",
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
     "jquery": "^2.2.3",
     "webcomponents.js": "^0.7.22"
+  },
+  "engines": {
+    "node": ">= 4.0.0",
+    "npm": ">= 2.14.2"
   }
 }

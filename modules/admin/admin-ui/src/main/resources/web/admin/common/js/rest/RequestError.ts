@@ -18,5 +18,9 @@ module api.rest {
         getStatusCode(): number {
             return this.statusCode;
         }
+
+        isNotFound() {
+            return this.statusCode === StatusCode.NOT_FOUND;
+        }
     }
 }

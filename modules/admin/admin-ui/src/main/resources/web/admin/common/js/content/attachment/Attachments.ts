@@ -33,7 +33,7 @@ module api.content.attachment {
         }
 
         getAttachmentByLabel(label: string): Attachment {
-            return this.attachmentByLabel[name];
+            return this.attachmentByLabel[label];
         }
 
         getAttachment(index: number): Attachment {

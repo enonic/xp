@@ -14,6 +14,6 @@ export class BaseInspectionPanel extends api.ui.panel.Panel {
     }
 
     isNotFoundError(reason: any) {
-        return reason instanceof RequestError && reason.statusCode === 404;
+        return reason instanceof RequestError && (<RequestError>reason).isNotFound();
     }
 }

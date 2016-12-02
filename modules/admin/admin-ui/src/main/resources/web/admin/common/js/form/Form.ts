@@ -58,6 +58,7 @@ module api.form {
         }
 
         addFormItem(formItem: FormItem) {
+            const name = formItem.getName();
             if (this.formItemByName[name]) {
                 throw new Error("FormItem already added: " + name);
             }

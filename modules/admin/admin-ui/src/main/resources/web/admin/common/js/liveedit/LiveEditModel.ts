@@ -154,7 +154,7 @@ module api.liveedit {
         }
 
         private static initPage(content: Content, pageMode: PageMode, pageModel: PageModel, promises: wemQ.Promise<any>[]) {
-            var page = content.getPage();
+            const page = content.getPage();
             if (pageMode == PageMode.FORCED_TEMPLATE) {
                 this.initForcedTemplatePage(content, page, pageModel, promises);
             }
@@ -168,7 +168,7 @@ module api.liveedit {
                 this.initNoControllerPage(pageModel);
             }
             else {
-                throw new Error("Unsupported PageMode for a Content: " + PageMode[pageMode]);
+                throw new Error("Unsupported PageMode for a Content: " + PageMode[<number>pageMode]);
             }
         }
 
