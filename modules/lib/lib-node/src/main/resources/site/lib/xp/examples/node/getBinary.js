@@ -9,13 +9,14 @@ var myRepo = nodeLib.connect({
     branch: 'master'
 });
 
-myRepo.create({
-    _name: "myName",
-    displayName: "This is brand new node"
+var binaryStream = myRepo.getBinary({
+    key: "/myNode",
+    binaryReference: "myBinaryReference"
 });
-
 
 // END
 
 
-assert.assertNotNull(myRepo);
+assert.assertNotNull(binaryStream);
+
+

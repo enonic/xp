@@ -32,15 +32,6 @@ function valueOrDefault(value, defaultValue) {
     return value;
 }
 
-function required(params, name) {
-    var value = params[name];
-    if (value === undefined) {
-        throw "Parameter '" + name + "' is required";
-    }
-
-    return value;
-}
-
 /**
  * Creates a new repo-connection.
  *
@@ -125,6 +116,27 @@ RepoConnection.prototype.diff = function (params) {
     handlerParams.includeChildren = valueOrDefault(params.includeChildren, false);
 
     return __.toNativeObject(this.native.diff(handlerParams));
+};
+
+
+/**
+ * This function returns a binary stream.
+ *
+ * @example-ref examples/node/getBinary.js
+ *
+ * @param {string} key Path or id to the node.
+ * @param {string} binaryReference to the binary.
+ *
+ * @returns {*} Stream of the binary.
+ */
+RepoConnection.prototype.getBinary = function (params) {
+
+    if (params.key === undefined && params.keys === undefined) {
+        throw "Parameter 'key' or 'keys' is required";
+    }
+    var key = params.key ? params.key : null;
+    var binaryReference = params.binaryReference;
+    return this.native.getBinary(key, binaryReference);
 };
 
 /**

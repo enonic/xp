@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.script.ScriptValue;
@@ -92,6 +94,16 @@ public class NodeHandler
             sort( params.getSort() ).
             nodeService( this.nodeService ).
             build() );
+    }
+
+    public ByteSource getBinary( final String key, final String binaryReference )
+    {
+        return this.context.callWith( () -> GetBinaryHandler.create().
+            key( NodeKey.from( key ) ).
+            binaryReference( binaryReference ).
+            nodeService( this.nodeService ).
+            build().
+            execute() );
     }
 
     private Object execute( final BaseNodeHandler handler )
