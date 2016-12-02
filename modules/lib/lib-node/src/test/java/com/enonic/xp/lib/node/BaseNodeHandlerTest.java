@@ -22,7 +22,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class BaseNodeHandlerTest
@@ -86,10 +85,6 @@ public class BaseNodeHandlerTest
             data( data ).
             indexConfigDocument( indexConfig ).
             permissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( PrincipalKey.ofAnonymous() ).
-                    allow( Permission.READ ).
-                    build() ).
                 add( AccessControlEntry.create().
                     principal( PrincipalKey.ofRole( "admin" ) ).
                     allowAll().

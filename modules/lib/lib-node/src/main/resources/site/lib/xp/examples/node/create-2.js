@@ -1,18 +1,20 @@
-var nodeLib = require('/lib/xp/node');
-var valueLib = require('/lib/xp/value');
 var assert = require('/lib/xp/assert');
 
 var TestClass = Java.type('com.enonic.xp.lib.node.BaseNodeHandlerTest');
 var byteSource1 = TestClass.createByteSource('Hello World');
 var byteSource2 = TestClass.createByteSource('Hello World2');
 
+// BEGIN
+var nodeLib = require('/lib/xp/node');
+var valueLib = require('/lib/xp/value');
+
+// Connect to repo
 var repo = nodeLib.connect({
     repoId: "cms-repo",
     branch: "master"
 });
 
-// BEGIN
-// Creates a node.
+// Create node.
 var result1 = repo.create({
     _name: "myName",
     displayName: "This is brand new node",
@@ -33,20 +35,18 @@ var result1 = repo.create({
         myBinaryReference2: valueLib.binary('myFile2', byteSource2)
     },
     _indexConfig: {
-        default: "minimal",
-        configs: {
-            path: "displayName",
-            config: "fulltext"
-        }
+        default: "byType",
+        configs: [
+            {
+                path: "displayName",
+                config: "fulltext"
+            },
+            {
+                path: "someData.cars",
+                config: "minimal"
+            }]
     },
     _permissions: [
-        {
-            "principal": "user:system:anonymous",
-            "allow": [
-                "READ"
-            ],
-            "deny": []
-        },
         {
             "principal": "role:admin",
             "allow": [
@@ -98,13 +98,6 @@ var expected = {
         },
         "_inheritsPermissions": false,
         "_permissions": [
-            {
-                "principal": "user:system:anonymous",
-                "allow": [
-                    "READ"
-                ],
-                "deny": []
-            },
             {
                 "principal": "role:admin",
                 "allow": [

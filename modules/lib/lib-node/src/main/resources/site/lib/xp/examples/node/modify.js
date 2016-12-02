@@ -2,18 +2,18 @@ var nodeLib = require('/lib/xp/node');
 var valueLib = require('/lib/xp/value');
 var assert = require('/lib/xp/assert');
 
-// BEGIN
-// Editor to call for node.
-
 var TestClass = Java.type('com.enonic.xp.lib.node.BaseNodeHandlerTest');
 var stream1 = TestClass.createByteSource('Hello World');
+
+
+// BEGIN
 
 var repo = nodeLib.connect({
     repoId: "cms-repo",
     branch: "master"
 });
 
-
+// Editor to call for node.
 function editor(node) {
 
     node._childOrder = "updatedOrderField DESC";

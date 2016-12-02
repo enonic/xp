@@ -62,13 +62,6 @@ var expected = {
     "_inheritsPermissions": false,
     "_permissions": [
         {
-            "principal": "user:system:anonymous",
-            "allow": [
-                "READ"
-            ],
-            "deny": []
-        },
-        {
             "principal": "role:admin",
             "allow": [
                 "READ",
