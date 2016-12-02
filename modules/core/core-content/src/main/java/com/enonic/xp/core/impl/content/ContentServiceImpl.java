@@ -761,13 +761,25 @@ public class ContentServiceImpl
     @Override
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference );
+        return GetBinaryCommand.create( contentId, binaryReference ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     @Override
     public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return nodeService.getBinaryKey( NodeId.from( contentId.toString() ), binaryReference );
+        return GetBinaryKeyCommand.create( contentId, binaryReference ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     @Override
