@@ -23,6 +23,8 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
@@ -176,6 +178,19 @@ public final class MixinServiceImpl
                 formItemSetBuilder.clearFormItems();
                 formItemSetBuilder.addFormItems( transformFormItems( (FieldSet) formItem, inlineMixinStack ) );
                 formItems.add( formItemSetBuilder.build() );
+            }
+            else if ( formItem instanceof FormOptionSet )
+            {
+                final FormOptionSet.Builder formOptionSetBuilder = FormOptionSet.create( (FormOptionSet) formItem );
+                formOptionSetBuilder.clearOptions();
+                for ( FormOptionSetOption option : (FormOptionSet) formItem )
+                {
+                    final FormOptionSetOption.Builder optionBuilder = FormOptionSetOption.create( option );
+                    optionBuilder.clearFormItems();
+                    optionBuilder.addFormItems( transformFormItems( option.getFormItems(), inlineMixinStack ) );
+                    formOptionSetBuilder.addOptionSetOption( optionBuilder.build() );
+                }
+                formItems.add( formOptionSetBuilder.build() );
             }
             else
             {
