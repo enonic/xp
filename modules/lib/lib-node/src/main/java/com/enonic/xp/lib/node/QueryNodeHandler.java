@@ -16,7 +16,7 @@ import com.enonic.xp.script.ScriptValue;
 
 @SuppressWarnings("unused")
 public final class QueryNodeHandler
-    extends BaseNodeHandler
+    extends AbstractNodeHandler
 {
     private Integer start;
 
@@ -103,7 +103,7 @@ public final class QueryNodeHandler
     }
 
     public static final class Builder
-        extends BaseNodeHandler.Builder<Builder>
+        extends AbstractNodeHandler.Builder<Builder>
     {
         private Integer start;
 

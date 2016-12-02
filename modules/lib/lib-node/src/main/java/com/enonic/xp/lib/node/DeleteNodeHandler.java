@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public final class DeleteNodeHandler
-    extends BaseNodeHandler
+    extends AbstractNodeHandler
 {
     private NodeKey key;
 
@@ -100,7 +100,7 @@ public final class DeleteNodeHandler
     }
 
     public static final class Builder
-        extends BaseNodeHandler.Builder<Builder>
+        extends AbstractNodeHandler.Builder<Builder>
     {
         private NodeKey key;
 

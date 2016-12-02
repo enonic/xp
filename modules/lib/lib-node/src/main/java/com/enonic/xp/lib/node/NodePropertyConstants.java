@@ -22,8 +22,6 @@ public class NodePropertyConstants
 
     public final static String TIMESTAMP = "_timestamp";
 
-    public final static String DATA = "_data";
-
     public final static String PERMISSIONS = "_permissions";
 
     public final static String ATTACHED_BINARIES = "_attachedBinaries";

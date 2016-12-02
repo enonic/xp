@@ -10,11 +10,11 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RenameNodeParams;
 
 public final class MoveNodeHandler
-    extends BaseNodeHandler
+    extends AbstractNodeHandler
 {
-    private NodeKey source;
+    private final NodeKey source;
 
-    private Target target;
+    private final Target target;
 
     private MoveNodeHandler( final Builder builder )
     {
@@ -93,7 +93,7 @@ public final class MoveNodeHandler
 
     private static class Target
     {
-        private String value;
+        private final String value;
 
         public Target( final String value )
         {
@@ -122,7 +122,7 @@ public final class MoveNodeHandler
     }
 
     public static final class Builder
-        extends BaseNodeHandler.Builder<Builder>
+        extends AbstractNodeHandler.Builder<Builder>
     {
         private NodeKey source;
 

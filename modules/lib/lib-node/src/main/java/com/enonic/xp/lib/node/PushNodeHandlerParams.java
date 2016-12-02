@@ -5,7 +5,7 @@ import com.enonic.xp.node.NodeIds;
 
 public class PushNodeHandlerParams
 {
-    private NodeIds ids;
+    private NodeKeys keys;
 
     private Branch targetBranch;
 
@@ -16,14 +16,14 @@ public class PushNodeHandlerParams
     private NodeIds exclude;
 
 
-    public NodeIds getIds()
+    public NodeKeys getKeys()
     {
-        return ids;
+        return keys;
     }
 
-    public void setIds( final String[] ids )
+    public void setKeys( final String[] keys )
     {
-        this.ids = NodeIds.from( ids );
+        this.keys = NodeKeys.from( keys );
     }
 
     public Branch getTargetBranch()

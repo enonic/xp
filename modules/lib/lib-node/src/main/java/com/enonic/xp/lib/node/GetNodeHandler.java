@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 
 public final class GetNodeHandler
-    extends BaseNodeHandler
+    extends AbstractNodeHandler
 {
     private NodeKey key;
 
@@ -96,7 +96,7 @@ public final class GetNodeHandler
     }
 
     public static final class Builder
-        extends BaseNodeHandler.Builder<Builder>
+        extends AbstractNodeHandler.Builder<Builder>
     {
         private NodeKey key;
 

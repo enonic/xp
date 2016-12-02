@@ -20,7 +20,7 @@ public class PermissionsFactory
             build() ).
         build();
 
-    private Iterable<PropertySet> permissions;
+    private final Iterable<PropertySet> permissions;
 
     public PermissionsFactory( final Iterable<PropertySet> permissions )
     {

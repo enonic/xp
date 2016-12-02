@@ -14,7 +14,7 @@ import com.enonic.xp.script.ScriptValue;
 
 @SuppressWarnings("unused")
 public class CreateNodeHandler
-    extends BaseNodeHandler
+    extends AbstractNodeHandler
 {
     private final ScriptValue params;
 
@@ -49,7 +49,7 @@ public class CreateNodeHandler
     }
 
     public static class Builder
-        extends BaseNodeHandler.Builder<Builder>
+        extends AbstractNodeHandler.Builder<Builder>
     {
         private ScriptValue params;
 

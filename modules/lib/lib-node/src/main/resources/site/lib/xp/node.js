@@ -146,7 +146,7 @@ RepoConnection.prototype.delete = function (params) {
 RepoConnection.prototype.push = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.PushNodeHandlerParams');
     params = params || {};
-    handlerParams.ids = required(params, 'keys');
+    handlerParams.keys = required(params, 'keys');
     handlerParams.targetBranch = required(params, 'target');
     if (params.resolve) {
         handlerParams.resolve = params.resolve;

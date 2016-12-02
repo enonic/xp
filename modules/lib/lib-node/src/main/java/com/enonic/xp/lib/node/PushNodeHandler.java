@@ -11,9 +11,9 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 
 @SuppressWarnings("unused")
 public final class PushNodeHandler
-    extends BaseNodeHandler
+    extends AbstractNodeHandler
 {
-    private NodeIds ids;
+    private NodeIds nodeIds;
 
     private Branch targetBranch;
 
@@ -26,7 +26,7 @@ public final class PushNodeHandler
     private PushNodeHandler( final Builder builder )
     {
         super( builder );
-        ids = builder.ids;
+        nodeIds = getNodeIds( builder.keys );
         targetBranch = builder.targetBranch;
         setResolve( builder.resolve );
         setIncludeChildren( builder.includeChildren );
@@ -35,7 +35,6 @@ public final class PushNodeHandler
 
     public Object execute()
     {
-
         final NodeIds.Builder toBePushed = NodeIds.create();
         final NodeIds.Builder toBeDeleted = NodeIds.create();
 
@@ -45,10 +44,10 @@ public final class PushNodeHandler
         }
         else
         {
-            toBePushed.addAll( ids );
+            toBePushed.addAll( nodeIds );
         }
 
-        final PushNodesResult push = this.nodeService.push( ids, targetBranch );
+        final PushNodesResult push = this.nodeService.push( nodeIds, targetBranch );
 
         final NodeIds deletedNodes = doDelete( toBeDeleted );
 
@@ -69,7 +68,7 @@ public final class PushNodeHandler
 
     private void doResolve( final NodeIds.Builder toBePushed, final NodeIds.Builder toBeDeleted )
     {
-        for ( final NodeId nodeId : ids )
+        for ( final NodeId nodeId : nodeIds )
         {
             final ResolveSyncWorkResult result = this.nodeService.resolveSyncWork( SyncWorkResolverParams.create().
                 nodeId( nodeId ).
@@ -92,9 +91,9 @@ public final class PushNodeHandler
         }
     }
 
-    public void setIds( final String[] ids )
+    public void setNodeIds( final String[] nodeIds )
     {
-        this.ids = NodeIds.from( ids );
+        this.nodeIds = NodeIds.from( nodeIds );
     }
 
     public void setTargetBranch( final String targetBranch )
@@ -123,9 +122,9 @@ public final class PushNodeHandler
     }
 
     public static final class Builder
-        extends BaseNodeHandler.Builder<Builder>
+        extends AbstractNodeHandler.Builder<Builder>
     {
-        private NodeIds ids;
+        private NodeKeys keys;
 
         private Branch targetBranch;
 
@@ -139,9 +138,9 @@ public final class PushNodeHandler
         {
         }
 
-        public Builder keys( final NodeIds val )
+        public Builder keys( final NodeKeys val )
         {
-            ids = val;
+            keys = val;
             return this;
         }
 

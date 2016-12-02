@@ -17,7 +17,7 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_PATH;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_SETTINGS;
 import static com.enonic.xp.lib.node.NodePropertyConstants.DEFAULT_CONFIG;
 
-public class IndexConfigDocMapper
+class IndexConfigDocMapper
     implements MapSerializable
 {
     private final IndexConfigDocument value;

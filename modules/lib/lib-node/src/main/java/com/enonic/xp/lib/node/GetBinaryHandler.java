@@ -2,12 +2,11 @@ package com.enonic.xp.lib.node;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.BinaryReference;
 
 public class GetBinaryHandler
-    extends BaseNodeHandler
+    extends AbstractNodeHandler
 {
     private final NodeKey nodeKey;
 
@@ -28,28 +27,12 @@ public class GetBinaryHandler
 
     public ByteSource execute()
     {
-        final NodeId nodeId;
-
-        if ( nodeKey.isId() )
-        {
-            nodeId = nodeKey.getAsNodeId();
-        }
-        else
-        {
-            final Node node = this.nodeService.getByPath( nodeKey.getAsPath() );
-            if ( node == null )
-            {
-                return null;
-            }
-
-            nodeId = node.id();
-        }
-
+        final NodeId nodeId = getNodeId( nodeKey );
         return this.nodeService.getBinary( nodeId, binaryReference );
     }
 
     public static final class Builder
-        extends BaseNodeHandler.Builder<Builder>
+        extends AbstractNodeHandler.Builder<Builder>
     {
         private NodeKey nodeKey;
 

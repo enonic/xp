@@ -8,7 +8,7 @@ import com.enonic.xp.script.ScriptValue;
 
 public class NodeHandler
 {
-    protected NodeService nodeService;
+    protected final NodeService nodeService;
 
     private final Context context;
 
@@ -50,7 +50,7 @@ public class NodeHandler
             nodeService( this.nodeService ).
             exclude( params.getExclude() ).
             includeChildren( params.isIncludeChildren() ).
-            keys( params.getIds() ).
+            keys( params.getKeys() ).
             resolve( params.isResolve() ).
             targetBranch( params.getTargetBranch() ).
             build() );
@@ -106,7 +106,7 @@ public class NodeHandler
             execute() );
     }
 
-    private Object execute( final BaseNodeHandler handler )
+    private Object execute( final AbstractNodeHandler handler )
     {
         return this.context.callWith( handler::execute );
     }

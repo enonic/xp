@@ -16,7 +16,7 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_SETTINGS;
 
 public class IndexConfigFactory
 {
-    public static final IndexConfig DEFAULT_CONFIG = IndexConfig.BY_TYPE;
+    private static final IndexConfig DEFAULT_CONFIG = IndexConfig.BY_TYPE;
 
     private final PropertySet propertySet;
 

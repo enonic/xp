@@ -13,7 +13,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.script.ScriptValue;
 
 public class ModifyNodeHandler
-    extends BaseNodeHandler
+    extends AbstractNodeHandler
 {
     private NodeKey key;
 
@@ -74,16 +74,7 @@ public class ModifyNodeHandler
 
     private Node getExistingNode()
     {
-        final Node node;
-
-        if ( this.key.isId() )
-        {
-            node = this.nodeService.getById( key.getAsNodeId() );
-        }
-        else
-        {
-            node = this.nodeService.getByPath( key.getAsPath() );
-        }
+        final Node node = doGetNode( key );
 
         if ( node == null )
         {
@@ -105,7 +96,7 @@ public class ModifyNodeHandler
 
 
     public static final class Builder
-        extends BaseNodeHandler.Builder<Builder>
+        extends AbstractNodeHandler.Builder<Builder>
     {
         private NodeKey key;
 
