@@ -6,17 +6,11 @@ import java.time.Instant;
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.Assert.*;
 
@@ -292,15 +286,14 @@ public class ContentServiceImplTest_findByParent
     public void test_not_published_yet_master()
         throws Exception
     {
-        createAuthorizedMasterContext().callWith( () ->
-                                                  {
-                                                      final FindContentByParentResult result =
-                                                          createAndFindContent( ContentPublishInfo.create().
-                                                              from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                              build() );
-                                                      assertEquals( 0, result.getTotalHits() );
-                                                      return null;
-                                                  } );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
+                                            {
+                                                final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
+                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                                                    build() );
+                                                assertEquals( 0, result.getTotalHits() );
+                                                return null;
+                                            } );
     }
 
     @Test
@@ -317,15 +310,14 @@ public class ContentServiceImplTest_findByParent
     public void test_publish_expired_master()
         throws Exception
     {
-        createAuthorizedMasterContext().callWith( () ->
-                                                  {
-                                                      final FindContentByParentResult result =
-                                                          createAndFindContent( ContentPublishInfo.create().
-                                                              to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                              build() );
-                                                      assertEquals( 0, result.getTotalHits() );
-                                                      return null;
-                                                  } );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
+                                            {
+                                                final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
+                                                    to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                                                    build() );
+                                                assertEquals( 0, result.getTotalHits() );
+                                                return null;
+                                            } );
     }
 
     @Test
@@ -343,35 +335,22 @@ public class ContentServiceImplTest_findByParent
     public void test_published_master()
         throws Exception
     {
-        createAuthorizedMasterContext().callWith( () ->
-                                                  {
-                                                      final FindContentByParentResult result =
-                                                          createAndFindContent( ContentPublishInfo.create().
-                                                              from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                              to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                              build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
+                                            {
+                                                final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
+                                                    from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                                                    to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                                                    build() );
 
-                                                      assertEquals( 1, result.getTotalHits() );
-                                                      return null;
-                                                  } );
+                                                assertEquals( 1, result.getTotalHits() );
+                                                return null;
+                                            } );
     }
 
-    private Context createAuthorizedMasterContext()
-    {
-        return ContextBuilder.create().
-            branch( ContentConstants.BRANCH_MASTER ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            authInfo( AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN ).
-                user( ContentInitializer.SUPER_USER ).
-                build() ).
-            build();
-    }
-
-    private FindContentByParentResult createAndFindContent( final ContentPublishInfo invalidInfo )
+    private FindContentByParentResult createAndFindContent( final ContentPublishInfo publishInfo )
         throws Exception
     {
-        createContent( ContentPath.ROOT, invalidInfo );
+        createContent( ContentPath.ROOT, publishInfo );
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
