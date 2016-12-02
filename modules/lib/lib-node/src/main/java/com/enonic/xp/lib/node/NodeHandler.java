@@ -3,6 +3,7 @@ package com.enonic.xp.lib.node;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.Context;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.script.ScriptValue;
 
@@ -92,6 +93,19 @@ public class NodeHandler
             count( params.getCount() ).
             start( params.getStart() ).
             sort( params.getSort() ).
+            nodeService( this.nodeService ).
+            build() );
+    }
+
+    public Object getChildren( final GetChildrenHandlerParams params )
+    {
+        return execute( GetChildrenNodeHandler.create().
+            parentKey( NodeKey.from( params.getParentKey() ) ).
+            count( params.getCount() ).
+            start( params.getStart() ).
+            childOrder( ChildOrder.from( params.getChildOrder() ) ).
+            countOnly( params.isCountOnly() ).
+            recursive( params.isRecursive() ).
             nodeService( this.nodeService ).
             build() );
     }

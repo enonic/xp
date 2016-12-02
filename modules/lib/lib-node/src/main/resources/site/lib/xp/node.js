@@ -132,7 +132,9 @@ RepoConnection.prototype.delete = function (params) {
 /**
  * This function push a node to a given branch.
  *
- * @example-ref examples/node/push.js
+ * @example-ref examples/node/push-1.js
+ * @example-ref examples/node/push-2.js
+ * @example-ref examples/node/push-3.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string[]} params.keys ids array to the nodes.
@@ -162,7 +164,7 @@ RepoConnection.prototype.push = function (params) {
 /**
  * This function resolves the differences for node between current and given branch
  *
- * @example-ref examples/node/push.js
+ * @example-ref examples/node/diff-1.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key key to resolve diff for
@@ -185,9 +187,9 @@ RepoConnection.prototype.diff = function (params) {
  * This function returns a binary stream.
  *
  * @example-ref examples/node/getBinary.js
- *
- * @param {string} key Path or id to the node.
- * @param {string} binaryReference to the binary.
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the node.
+ * @param {string} params.binaryReference to the binary.
  *
  * @returns {*} Stream of the binary.
  */
@@ -231,7 +233,7 @@ RepoConnection.prototype.move = function (params) {
  * @param {string} params.query Query expression.
  * @param {string} [params.sort] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
- * @returns {boolean} Result of query.
+ * @returns {object} Result of query.
  */
 RepoConnection.prototype.query = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
@@ -241,6 +243,31 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.sort = nullOrValue(params.sort);
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
     return __.toNativeObject(this.native.query(handlerParams));
+};
+
+/**
+ * Get children for given node.
+ *
+ * @example-ref examples/node/getChildren.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {number} params.parentKey path or id of parent to get children of
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {string} [params.childOrder] How to order the children (defaults to value stored on parent)
+ * @param {boolean} [params.countOnly] Optimize for count children only ( no children returned )
+ * @param {boolean} [params.recursive] Do recursive fetching of all children of children
+ * @returns {object} Result of getChildren.
+ */
+RepoConnection.prototype.getChildren = function (params) {
+    var handlerParams = __.newBean('com.enonic.xp.lib.node.GetChildrenHandlerParams');
+    handlerParams.parentKey = params.parentKey;
+    handlerParams.start = params.start;
+    handlerParams.count = params.count;
+    handlerParams.childOrder = nullOrValue(params.childOrder);
+    handlerParams.countOnly = valueOrDefault(params.countOnly, false);
+    handlerParams.recursive = valueOrDefault(params.recursive, false);
+    return __.toNativeObject(this.native.getChildren(handlerParams));
 };
 
 /**
