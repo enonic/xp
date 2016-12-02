@@ -326,7 +326,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private selectContentInGridByPath(path: api.content.ContentPath) {
-        this.treeGrid.expandTillNodeWithGivenPath(path, this.treeGrid.getSelectedNodes()[0]);
+        this.treeGrid.selectNodeByPath(path);
     }
 
     private isGivenPathSelectedInGrid(path: api.content.ContentPath): boolean {
