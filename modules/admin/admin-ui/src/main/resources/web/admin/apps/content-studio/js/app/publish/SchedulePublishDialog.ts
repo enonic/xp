@@ -32,6 +32,11 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     show() {
+        var fromDate = this.fromDate.getSelectedDateTime();
+        if (!fromDate) {
+            this.resetFromDate();
+        }
+        
         api.dom.Body.get().appendChild(this);
         super.show();
     }
@@ -140,8 +145,18 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     resetPublishDates() {
+        this.resetFromDate();
+        this.resetToDate();
+    }
+
+    private resetFromDate() {
         this.fromDate.setSelectedDateTime(new Date());
+        this.fromDate.removeClass("invalid");
+    }
+
+    private resetToDate() {
         this.toDate.setSelectedDateTime(null);
+        this.toDate.removeClass("invalid");
     }
 
     protected hasSubDialog(): boolean {
