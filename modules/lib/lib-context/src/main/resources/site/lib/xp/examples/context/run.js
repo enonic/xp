@@ -14,7 +14,10 @@ var result = contextLib.run({
         login: 'su',
         userStore: 'system'
     },
-    principals: ["role:system.admin"]
+    principals: ["role:system.admin"],
+    attributes: {
+        'includeScheduledPublished': true
+    }
 }, callback);
 
 log.info('Callback says "%s"', result);
