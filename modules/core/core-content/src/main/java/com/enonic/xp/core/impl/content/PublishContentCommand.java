@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -253,7 +254,17 @@ public class PublishContentCommand
 
         public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
         {
-            this.contentPublishInfo = contentPublishInfo;
+            if ( contentPublishInfo != null && contentPublishInfo.getFrom() == null )
+            {
+                this.contentPublishInfo = ContentPublishInfo.create().
+                    from( Instant.now() ).
+                    to( contentPublishInfo.getFrom() ).
+                    build();
+            }
+            else
+            {
+                this.contentPublishInfo = contentPublishInfo;
+            }
             return this;
         }
 
@@ -281,6 +292,13 @@ public class PublishContentCommand
             super.validate();
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( contentIds );
+            if ( contentPublishInfo != null )
+            {
+                final Instant publishFromInstant = contentPublishInfo.getFrom();
+                final Instant publishToInstant = contentPublishInfo.getTo();
+                Preconditions.checkArgument( publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
+                                             "'Publish to' must be set after 'publish from'" );
+            }
         }
 
         public PublishContentCommand build()
