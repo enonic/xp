@@ -34,6 +34,7 @@
 ///<reference path='ResolvePublishRequestedContentsRequest.ts' />
 ///<reference path='ResolvePublishDependenciesRequest.ts' />
 ///<reference path='CompareContentRequest.ts' />
+///<reference path='GetPublishStatusesRequest.ts' />
 ///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
 ///<reference path='GetActiveContentVersionsRequest.ts' />
 ///<reference path='GetContentVersionsRequest.ts' />
