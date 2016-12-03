@@ -25,6 +25,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -93,6 +94,15 @@ public class AbstractContentServiceTest
         principals( RoleKeys.AUTHENTICATED ).
         principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
         user( TEST_DEFAULT_USER ).
+        build();
+
+    public static final Context AUTHORIZED_MASTER_CONTEXT = ContextBuilder.create().
+        branch( ContentConstants.BRANCH_MASTER ).
+        repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+        authInfo( AuthenticationInfo.create().
+            principals( RoleKeys.ADMIN ).
+            user( ContentInitializer.SUPER_USER ).
+            build() ).
         build();
 
     protected static final Branch WS_DEFAULT = Branch.create().
