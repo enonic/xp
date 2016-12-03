@@ -44,12 +44,12 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                     break;
                 case ContentSettingsModel.PROPERTY_PUBLISH_FROM:
                     if (!this.updateUnchangedOnly || !this.publishFromInput.isDirty()) {
-                        this.publishFromInput.setValue(value ? value.toString() : "");
+                        this.publishFromInput.getPicker().setSelectedDateTime(value);
                     }
                     break;
                 case ContentSettingsModel.PROPERTY_PUBLISH_TO:
                     if (!this.updateUnchangedOnly || !this.publishToInput.isDirty()) {
-                        this.publishToInput.setValue(value ? value.toString() : "");
+                        this.publishToInput.getPicker().setSelectedDateTime(value);
                     }
                     break;
                 }
@@ -98,7 +98,10 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     update(content: api.content.Content, unchangedOnly: boolean = true) {
         this.updateUnchangedOnly = unchangedOnly;
 
-        this.model.setOwner(content.getOwner(), true).setLanguage(content.getLanguage(), true);
+        this.model.setOwner(content.getOwner()).
+            setLanguage(content.getLanguage()).
+            setPublishFrom(content.getPublishFromTime()).
+            setPublishTo(content.getPublishToTime());
     }
 
     reset() {
@@ -109,7 +112,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         api.util.assertNotNull(model, "Model can't be null");
 
         if (this.model) {
-            model.onPropertyChanged(this.modelChangeListener);
+            model.unPropertyChanged(this.modelChangeListener);
         }
 
         // 2-way data binding
