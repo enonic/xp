@@ -28,6 +28,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -232,8 +233,9 @@ public class AbstractContentServiceTest
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
         this.contentService.setTranslator( this.translator );
-        this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
-        } );
+        this.contentService.setFormDefaultValuesProcessor( ( form, data ) ->
+                                                           {
+                                                           } );
 
         createContentRepository();
         waitForClusterHealth();
@@ -291,6 +293,16 @@ public class AbstractContentServiceTest
         return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree() );
     }
 
+    protected Content createContent( ContentPath parentPath, final ContentPublishInfo publishInfo )
+        throws Exception
+    {
+        final CreateContentParams.Builder builder =
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree() ).
+                contentPublishInfo( publishInfo );
+
+        return doCreateContent( builder );
+    }
+
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
         throws Exception
     {
@@ -300,15 +312,24 @@ public class AbstractContentServiceTest
 
     private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
     {
-        final CreateContentParams createContentParams = CreateContentParams.create().
+        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data );
+        return doCreateContent( builder );
+    }
+
+    private Content doCreateContent( final CreateContentParams.Builder builder )
+    {
+        return this.contentService.create( builder.build() );
+    }
+
+    private CreateContentParams.Builder createContentBuilder( final ContentPath parentPath, final String displayName,
+                                                              final PropertyTree data )
+    {
+        return CreateContentParams.create().
             contentData( data ).
             displayName( displayName ).
             parent( parentPath ).
             contentData( data ).
-            type( ContentTypeName.folder() ).
-            build();
-
-        return this.contentService.create( createContentParams );
+            type( ContentTypeName.folder() );
     }
 
     protected PropertyTree createPropertyTreeForAllInputTypes()
@@ -486,8 +507,7 @@ public class AbstractContentServiceTest
             assertTrue( "Expected more content, iterator empty", iterator.hasNext() );
             final ContentId next = iterator.next();
             assertEquals( "Expected content with path [" + content.getPath() + "] in this position, found [" +
-                              this.contentService.getById( next ).getPath() +
-                              "]", content.getId(), next );
+                              this.contentService.getById( next ).getPath() + "]", content.getId(), next );
         }
     }
 
