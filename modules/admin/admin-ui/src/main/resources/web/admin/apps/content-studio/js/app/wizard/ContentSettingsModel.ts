@@ -11,19 +11,19 @@ export class ContentSettingsModel implements api.Equitable {
 
     private owner: api.security.PrincipalKey;
     private language: string;
-    private publishFromDate: Date;
-    private publishToDate: Date;
+    private publishFromTime: Date;
+    private publishToTime: Date;
 
     public static PROPERTY_OWNER: string = 'owner';
     public static PROPERTY_LANG: string = 'language';
-    public static PROPERTY_PUBLISH_FROM: string = 'publishFromDate';
-    public static PROPERTY_PUBLISH_TO: string = 'publishToDate';
+    public static PROPERTY_PUBLISH_FROM: string = 'publish.from';
+    public static PROPERTY_PUBLISH_TO: string = 'publish.to';
 
     constructor(content: Content) {
         this.language = content.getLanguage();
         this.owner = content.getOwner();
-        this.publishFromDate = content.getPublishFromDate();
-        this.publishToDate = content.getPublishToDate();
+        this.publishFromTime = content.getPublishFromTime();
+        this.publishToTime = content.getPublishToTime();
     }
 
     getOwner(): api.security.PrincipalKey {
@@ -54,19 +54,19 @@ export class ContentSettingsModel implements api.Equitable {
 
     setPublishFrom(publishFrom: Date, silent?: boolean): ContentSettingsModel {
         if (!silent) {
-            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_PUBLISH_FROM, this.publishFromDate, publishFrom);
+            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_PUBLISH_FROM, this.publishFromTime, publishFrom);
             this.notifyPropertyChanged(event);
         }
-        this.publishFromDate = publishFrom;
+        this.publishFromTime = publishFrom;
         return this;
     }
 
     setPublishTo(publishTo: Date, silent?: boolean): ContentSettingsModel {
         if (!silent) {
-            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_PUBLISH_TO, this.publishToDate, publishTo);
+            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_PUBLISH_TO, this.publishToTime, publishTo);
             this.notifyPropertyChanged(event);
         }
-        this.publishToDate = publishTo;
+        this.publishToTime = publishTo;
         return this;
     }
 
@@ -89,15 +89,15 @@ export class ContentSettingsModel implements api.Equitable {
         } else {
             var otherModel = <ContentSettingsModel> other;
             return otherModel.owner == this.owner && otherModel.language == this.language
-                   && otherModel.publishFromDate == this.publishFromDate && otherModel.publishToDate == this.publishToDate;
+                   && otherModel.publishFromTime == this.publishFromTime && otherModel.publishToTime == this.publishToTime;
         }
     }
 
     apply(builder: api.content.ContentBuilder) {
         builder.owner = this.owner;
         builder.language = this.language;
-        builder.publishFromDate = this.publishFromDate;
-        builder.publishToDate = this.publishToDate;
+        builder.publishFromTime = this.publishFromTime;
+        builder.publishToTime = this.publishToTime;
     }
 
 }

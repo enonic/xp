@@ -37,9 +37,9 @@ module api.content {
 
         private modifiedTime: Date;
 
-        private publishFromDate: Date;
+        private publishFromTime: Date;
 
-        private publishToDate: Date;
+        private publishToTime: Date;
 
         private deletable: boolean;
 
@@ -70,8 +70,8 @@ module api.content {
             this.id = builder.id;
             this.createdTime = builder.createdTime;
             this.modifiedTime = builder.modifiedTime;
-            this.publishFromDate = builder.publishFromDate;
-            this.publishToDate = builder.publishToDate;
+            this.publishFromTime = builder.publishFromTime;
+            this.publishToTime = builder.publishToTime;
             this.deletable = builder.deletable;
             this.editable = builder.editable;
             this.childOrder = builder.childOrder;
@@ -163,12 +163,12 @@ module api.content {
             return this.modifiedTime;
         }
 
-        getPublishFromDate(): Date {
-            return this.publishFromDate;
+        getPublishFromTime(): Date {
+            return this.publishFromTime;
         }
 
-        getPublishToDate(): Date {
-            return this.publishToDate;
+        getPublishToTime(): Date {
+            return this.publishToTime;
         }
 
         isDeletable(): boolean {
@@ -251,10 +251,10 @@ module api.content {
             if (!api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
                 return false;
             }
-            if (!api.ObjectHelper.dateEquals(this.publishFromDate, other.publishFromDate)) {
+            if (!api.ObjectHelper.dateEquals(this.publishFromTime, other.publishFromTime)) {
                 return false;
             }
-            if (!api.ObjectHelper.dateEquals(this.publishToDate, other.publishToDate)) {
+            if (!api.ObjectHelper.dateEquals(this.publishToTime, other.publishToTime)) {
                 return false;
             }
             if (!api.ObjectHelper.booleanEquals(this.deletable, other.deletable)) {
@@ -319,9 +319,9 @@ module api.content {
 
         modifiedTime: Date;
 
-        publishFromDate: Date;
+        publishFromTime: Date;
 
-        publishToDate: Date;
+        publishToTime: Date;
 
         deletable: boolean;
 
@@ -352,8 +352,8 @@ module api.content {
                 this.requireValid = source.isRequireValid();
                 this.createdTime = source.getCreatedTime();
                 this.modifiedTime = source.getModifiedTime();
-                this.publishFromDate = source.getPublishFromDate();
-                this.publishToDate = source.getPublishToDate();
+                this.publishFromTime = source.getPublishFromTime();
+                this.publishToTime = source.getPublishToTime();
                 this.deletable = source.isDeletable();
                 this.editable = source.isEditable();
                 this.childOrder = source.getChildOrder();
@@ -383,8 +383,8 @@ module api.content {
             this.id = json.id;
             this.createdTime = json.createdTime ? new Date(Date.parse(json.createdTime)) : null;
             this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
-            this.publishFromDate = json.publish && json.publish.from ? new Date(Date.parse(json.publish.from)) : null;
-            this.publishToDate = json.publish && json.publish.to ? new Date(Date.parse(json.publish.to)) : null;
+            this.publishFromTime = json.publish && json.publish.from ? new Date(Date.parse(json.publish.from)) : null;
+            this.publishToTime = json.publish && json.publish.to ? new Date(Date.parse(json.publish.to)) : null;
 
             this.deletable = json.deletable;
             this.editable = json.editable;

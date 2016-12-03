@@ -22,8 +22,8 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     private localeCombo: LocaleComboBox;
     private ownerCombo: PrincipalComboBox;
 
-    private publishFromDate: LocalDateTimeFormInput;
-    private publishToDate: LocalDateTimeFormInput;
+    private publishFromInput: LocalDateTimeFormInput;
+    private publishToInput: LocalDateTimeFormInput;
 
     constructor() {
         super("settings-wizard-step-form");
@@ -43,13 +43,13 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                     }
                     break;
                 case ContentSettingsModel.PROPERTY_PUBLISH_FROM:
-                    if (!this.updateUnchangedOnly || !this.publishFromDate.isDirty()) {
-                        this.publishFromDate.setValue(value ? value.toString() : "");
+                    if (!this.updateUnchangedOnly || !this.publishFromInput.isDirty()) {
+                        this.publishFromInput.setValue(value ? value.toString() : "");
                     }
                     break;
                 case ContentSettingsModel.PROPERTY_PUBLISH_TO:
-                    if (!this.updateUnchangedOnly || !this.publishToDate.isDirty()) {
-                        this.publishToDate.setValue(value ? value.toString() : "");
+                    if (!this.updateUnchangedOnly || !this.publishToInput.isDirty()) {
+                        this.publishToInput.setValue(value ? value.toString() : "");
                     }
                     break;
                 }
@@ -64,16 +64,22 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         var localeFormItem = new FormItemBuilder(this.localeCombo).setLabel('Language').build();
 
         var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
-
         this.ownerCombo = PrincipalComboBox.create().setLoader(loader).setMaxOccurences(1).setValue(
             content.getOwner() ? content.getOwner().toString() : undefined).setDisplayMissing(true).build();
-
         var ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
+
+        this.publishFromInput = new LocalDateTimeFormInput(this.content.getPublishFromTime());
+        var publishFromDateFormItem = new FormItemBuilder(this.publishFromInput).setLabel('Publish From').build();
+
+        this.publishToInput = new LocalDateTimeFormInput(this.content.getPublishToTime());
+        var publishToDateFormItem = new FormItemBuilder(this.publishToInput).setLabel('Publish To').build();
+
 
         var fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(localeFormItem);
         fieldSet.add(ownerFormItem);
-        this.initPublishDateInputs(fieldSet);
+        fieldSet.add(publishFromDateFormItem);
+        fieldSet.add(publishToDateFormItem);
 
         var form = new api.ui.form.Form().add(fieldSet);
 
@@ -87,17 +93,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         });
 
         this.setModel(new ContentSettingsModel(content));
-    }
-
-    private initPublishDateInputs(fieldSet: api.ui.form.Fieldset) {
-        this.publishFromDate = new LocalDateTimeFormInput(this.content.getPublishFromDate());
-        var publishFromDateFormItem = new FormItemBuilder(this.publishFromDate).setLabel('Publish From').build();
-
-        this.publishToDate = new LocalDateTimeFormInput(this.content.getPublishToDate());
-        var publishToDateFormItem = new FormItemBuilder(this.publishToDate).setLabel('Publish From').build();
-
-        fieldSet.add(publishFromDateFormItem);
-        fieldSet.add(publishToDateFormItem);
     }
 
     update(content: api.content.Content, unchangedOnly: boolean = true) {
@@ -114,7 +109,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         api.util.assertNotNull(model, "Model can't be null");
 
         if (this.model) {
-            model.unPropertyChanged(this.modelChangeListener);
+            model.onPropertyChanged(this.modelChangeListener);
         }
 
         // 2-way data binding
@@ -135,19 +130,21 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         this.localeCombo.onOptionSelected((event) => localeListener());
         this.localeCombo.onOptionDeselected((option) => localeListener());
 
-        this.publishFromDate.getPicker().onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-            this.ignorePropertyChange = true;
-            model.setPublishFrom(event.getDate());
-            this.ignorePropertyChange = false;
-            ;
-        });
+        this.publishFromInput.getPicker().
+            onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
+                this.ignorePropertyChange = true;
+                model.setPublishFrom(event.getDate());
+                this.ignorePropertyChange = false;
+                ;
+            });
 
-        this.publishToDate.getPicker().onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-            this.ignorePropertyChange = true;
-            model.setPublishTo(event.getDate());
-            this.ignorePropertyChange = false;
-            ;
-        });
+        this.publishToInput.getPicker().
+            onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
+                this.ignorePropertyChange = true;
+                model.setPublishTo(event.getDate());
+                this.ignorePropertyChange = false;
+                ;
+            });
 
         model.onPropertyChanged(this.modelChangeListener);
 

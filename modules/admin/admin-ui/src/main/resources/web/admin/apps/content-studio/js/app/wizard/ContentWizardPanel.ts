@@ -1272,7 +1272,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var updateContentRequest = new UpdateContentRequest(persistedContent.getId()).setRequireValid(this.requireValid).setContentName(
             viewedContent.getName()).setDisplayName(viewedContent.getDisplayName()).setData(viewedContent.getContentData()).setExtraData(
             viewedContent.getAllExtraData()).setOwner(viewedContent.getOwner()).setLanguage(viewedContent.getLanguage()).setPublishFrom(
-            viewedContent.getPublishFromDate()).setPublishTo(viewedContent.getPublishToDate());
+            viewedContent.getPublishFromTime()).setPublishTo(viewedContent.getPublishToTime());
 
         return updateContentRequest;
     }
