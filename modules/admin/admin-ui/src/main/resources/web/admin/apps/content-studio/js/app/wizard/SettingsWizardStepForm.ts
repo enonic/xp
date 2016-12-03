@@ -9,6 +9,7 @@ import FormItem = api.ui.form.FormItem;
 import Validators = api.ui.form.Validators;
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import LocaleComboBox = api.ui.locale.LocaleComboBox;
+import LocalDateTimeFormInput = api.form.LocalDateTimeFormInput;
 
 export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -20,6 +21,9 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private localeCombo: LocaleComboBox;
     private ownerCombo: PrincipalComboBox;
+
+    private publishFromInput: LocalDateTimeFormInput;
+    private publishToInput: LocalDateTimeFormInput;
 
     constructor() {
         super("settings-wizard-step-form");
@@ -38,6 +42,16 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                         this.ownerCombo.setValue(value ? value.toString() : "");
                     }
                     break;
+                case ContentSettingsModel.PROPERTY_PUBLISH_FROM:
+                    if (!this.updateUnchangedOnly || !this.publishFromInput.isDirty()) {
+                        this.publishFromInput.getPicker().setSelectedDateTime(value);
+                    }
+                    break;
+                case ContentSettingsModel.PROPERTY_PUBLISH_TO:
+                    if (!this.updateUnchangedOnly || !this.publishToInput.isDirty()) {
+                        this.publishToInput.getPicker().setSelectedDateTime(value);
+                    }
+                    break;
                 }
             }
         }
@@ -50,19 +64,22 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         var localeFormItem = new FormItemBuilder(this.localeCombo).setLabel('Language').build();
 
         var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
-
-        this.ownerCombo = PrincipalComboBox.create().
-        setLoader(loader).
-        setMaxOccurences(1).
-        setValue(content.getOwner() ? content.getOwner().toString() : undefined).
-        setDisplayMissing(true).
-        build();
-
+        this.ownerCombo = PrincipalComboBox.create().setLoader(loader).setMaxOccurences(1).setValue(
+            content.getOwner() ? content.getOwner().toString() : undefined).setDisplayMissing(true).build();
         var ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
+
+        this.publishFromInput = new LocalDateTimeFormInput(this.content.getPublishFromTime());
+        var publishFromDateFormItem = new FormItemBuilder(this.publishFromInput).setLabel('Publish From').build();
+
+        this.publishToInput = new LocalDateTimeFormInput(this.content.getPublishToTime());
+        var publishToDateFormItem = new FormItemBuilder(this.publishToInput).setLabel('Publish To').build();
+
 
         var fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(localeFormItem);
         fieldSet.add(ownerFormItem);
+        fieldSet.add(publishFromDateFormItem);
+        fieldSet.add(publishToDateFormItem);
 
         var form = new api.ui.form.Form().add(fieldSet);
 
@@ -81,7 +98,10 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     update(content: api.content.Content, unchangedOnly: boolean = true) {
         this.updateUnchangedOnly = unchangedOnly;
 
-        this.model.setOwner(content.getOwner(), true).setLanguage(content.getLanguage(), true);
+        this.model.setOwner(content.getOwner()).
+            setLanguage(content.getLanguage()).
+            setPublishFrom(content.getPublishFromTime()).
+            setPublishTo(content.getPublishToTime());
     }
 
     reset() {
@@ -112,6 +132,22 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         };
         this.localeCombo.onOptionSelected((event) => localeListener());
         this.localeCombo.onOptionDeselected((option) => localeListener());
+
+        this.publishFromInput.getPicker().
+            onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
+                this.ignorePropertyChange = true;
+                model.setPublishFrom(event.getDate());
+                this.ignorePropertyChange = false;
+                ;
+            });
+
+        this.publishToInput.getPicker().
+            onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
+                this.ignorePropertyChange = true;
+                model.setPublishTo(event.getDate());
+                this.ignorePropertyChange = false;
+                ;
+            });
 
         model.onPropertyChanged(this.modelChangeListener);
 

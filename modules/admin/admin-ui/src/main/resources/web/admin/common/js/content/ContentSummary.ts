@@ -39,6 +39,8 @@ module api.content {
 
         private publishFromTime: Date;
 
+        private publishToTime: Date;
+
         private deletable: boolean;
 
         private editable: boolean;
@@ -69,6 +71,7 @@ module api.content {
             this.createdTime = builder.createdTime;
             this.modifiedTime = builder.modifiedTime;
             this.publishFromTime = builder.publishFromTime;
+            this.publishToTime = builder.publishToTime;
             this.deletable = builder.deletable;
             this.editable = builder.editable;
             this.childOrder = builder.childOrder;
@@ -164,6 +167,10 @@ module api.content {
             return this.publishFromTime;
         }
 
+        getPublishToTime(): Date {
+            return this.publishToTime;
+        }
+
         isDeletable(): boolean {
             return this.deletable;
         }
@@ -247,6 +254,9 @@ module api.content {
             if (!api.ObjectHelper.dateEquals(this.publishFromTime, other.publishFromTime)) {
                 return false;
             }
+            if (!api.ObjectHelper.dateEquals(this.publishToTime, other.publishToTime)) {
+                return false;
+            }
             if (!api.ObjectHelper.booleanEquals(this.deletable, other.deletable)) {
                 return false;
             }
@@ -311,6 +321,8 @@ module api.content {
 
         publishFromTime: Date;
 
+        publishToTime: Date;
+
         deletable: boolean;
 
         editable: boolean;
@@ -341,6 +353,7 @@ module api.content {
                 this.createdTime = source.getCreatedTime();
                 this.modifiedTime = source.getModifiedTime();
                 this.publishFromTime = source.getPublishFromTime();
+                this.publishToTime = source.getPublishToTime();
                 this.deletable = source.isDeletable();
                 this.editable = source.isEditable();
                 this.childOrder = source.getChildOrder();
@@ -371,6 +384,7 @@ module api.content {
             this.createdTime = json.createdTime ? new Date(Date.parse(json.createdTime)) : null;
             this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
             this.publishFromTime = json.publish && json.publish.from ? new Date(Date.parse(json.publish.from)) : null;
+            this.publishToTime = json.publish && json.publish.to ? new Date(Date.parse(json.publish.to)) : null;
 
             this.deletable = json.deletable;
             this.editable = json.editable;

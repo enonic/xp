@@ -18,6 +18,10 @@ module api.content.resource {
 
         private owner: api.security.PrincipalKey;
 
+        private publishFrom: Date;
+
+        private publishTo: Date;
+
         constructor(id: string) {
             super();
             this.id = id;
@@ -65,6 +69,16 @@ module api.content.resource {
             return this;
         }
 
+        setPublishFrom(date: Date): UpdateContentRequest {
+            this.publishFrom = date;
+            return this;
+        }
+
+        setPublishTo(date: Date): UpdateContentRequest {
+            this.publishTo = date;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 contentId: this.id,
@@ -74,7 +88,9 @@ module api.content.resource {
                 meta: (this.meta || []).map((extraData: ExtraData) => extraData.toJson()),
                 displayName: this.displayName,
                 language: this.language,
-                owner: this.owner ? this.owner.toString() : undefined
+                owner: this.owner ? this.owner.toString() : undefined,
+                publishFrom: this.publishFrom,
+                publishTo: this.publishTo
             };
         }
 
