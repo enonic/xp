@@ -1,11 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -19,6 +22,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.UpdateNodeParams;
 
 public class UnpublishContentCommand
     extends AbstractContentCommand
@@ -56,13 +60,16 @@ public class UnpublishContentCommand
         }
 
         final ContentIds contentIds = contentBuilder.build();
-        final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().addUnpublished( contentIds );
+        final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
+            branch( ContentConstants.BRANCH_DRAFT ).
+            build();
 
+        draftContext.callWith( () -> removePublishInfo( contentIds ) );
+
+        final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().
+            addUnpublished( contentIds );
         if ( contentIds.getSize() == 1 )
         {
-            final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
-                branch( ContentConstants.BRANCH_DRAFT ).
-                build();
 
             draftContext.callWith( () -> {
                 resultBuilder.setContentName( this.getContent( contentIds.first() ).getDisplayName() );
@@ -113,6 +120,28 @@ public class UnpublishContentCommand
                 return null;
             } );
         }
+    }
+
+    private Void removePublishInfo( final ContentIds contentIds )
+    {
+        final Instant now = Instant.now();
+        for ( final ContentId contentId : contentIds )
+        {
+            this.nodeService.update( UpdateNodeParams.create().
+                editor( toBeEdited -> {
+
+                    if ( toBeEdited.data.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
+                    {
+                        toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
+                        toBeEdited.data.setString( ContentPropertyNames.MODIFIER, ContextAccessor.current().
+                            getAuthInfo().getUser().getKey().toString() );
+                        toBeEdited.data.removeProperty( ContentPropertyNames.PUBLISH_INFO );
+                    }
+                } ).
+                id( NodeId.from( contentId ) ).
+                build() );
+        }
+        return null;
     }
 
     public static Builder create()

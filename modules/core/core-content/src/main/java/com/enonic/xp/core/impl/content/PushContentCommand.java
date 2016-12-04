@@ -151,7 +151,7 @@ public class PushContentCommand
             return;
         }
 
-        SetFirstTimePublishedCommand.create( this ).
+        SetPublishInfoCommand.create( this ).
             nodeIds( nodesToPush ).
             build().
             execute();
