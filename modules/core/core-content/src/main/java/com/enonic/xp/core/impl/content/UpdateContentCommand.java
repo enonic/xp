@@ -11,6 +11,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
@@ -178,14 +179,17 @@ final class UpdateContentCommand
     private void validateBlockingChecks( final Content editedContent )
     {
         validatePropertyTree( editedContent );
-        if ( editedContent.getPublishInfo() != null )
+
+        final ContentPublishInfo publishInfo = editedContent.getPublishInfo();
+        if ( publishInfo != null )
         {
-            final Instant publishFromInstant = editedContent.getPublishInfo().getFrom();
-            Preconditions.checkNotNull( publishFromInstant, "'Publish from' must be set" );
-            final Instant publishToInstant = editedContent.getPublishInfo().getTo();
-            Preconditions.checkArgument( publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
-                                         "'Publish to' must be set after 'publish from'" );
+            final Instant publishFromInstant = publishInfo.getFrom();
+            final Instant publishToInstant = publishInfo.getTo();
+            Preconditions.checkArgument(
+                publishFromInstant == null || publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
+                "'Publish to' must be set after 'publish from'" );
         }
+        
         if ( editedContent.getType().isImageMedia() )
         {
             validateImageMediaProperties( editedContent );

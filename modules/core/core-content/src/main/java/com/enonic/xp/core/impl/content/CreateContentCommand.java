@@ -18,6 +18,7 @@ import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
@@ -429,13 +430,15 @@ final class CreateContentCommand
             super.validate();
             Preconditions.checkNotNull( params, "params must be given" );
             Preconditions.checkNotNull( formDefaultValuesProcessor );
-            if ( params.getContentPublishInfo() != null )
+
+            final ContentPublishInfo publishInfo = params.getContentPublishInfo();
+            if ( publishInfo != null )
             {
-                final Instant publishFromInstant = params.getContentPublishInfo().getFrom();
-                Preconditions.checkNotNull( publishFromInstant, "'Publish from' must be set" );
-                final Instant publishToInstant = params.getContentPublishInfo().getTo();
-                Preconditions.checkArgument( publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
-                                             "'Publish to' must be set after 'publish from'" );
+                final Instant publishFromInstant = publishInfo.getFrom();
+                final Instant publishToInstant = publishInfo.getTo();
+                Preconditions.checkArgument(
+                    publishFromInstant == null || publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
+                    "'Publish to' must be set after 'publish from'" );
             }
         }
 
