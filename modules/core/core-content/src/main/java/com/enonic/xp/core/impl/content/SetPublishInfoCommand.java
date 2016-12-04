@@ -2,36 +2,49 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.ExistsFilter;
+import com.enonic.xp.query.filter.ValueFilter;
 
-public class UpdatePublishInfoCommand
+public class SetPublishInfoCommand
     extends AbstractContentCommand
 {
     private final NodeIds nodeIds;
 
     private final ContentPublishInfo contentPublishInfo;
 
-    private UpdatePublishInfoCommand( final Builder builder )
+    private SetPublishInfoCommand( final Builder builder )
     {
         super( builder );
         this.nodeIds = builder.nodeIds;
-        this.contentPublishInfo = builder.contentPublishInfo;
+        this.contentPublishInfo = builder.contentPublishInfo == null ? ContentPublishInfo.create().build() : builder.contentPublishInfo;
     }
 
     public void execute()
     {
-        final Instant now = Instant.now();
-        final Instant from = contentPublishInfo.getFrom() == null ? now : contentPublishInfo.getFrom();
-        final Instant to = contentPublishInfo.getTo();
+        final NodeIds firstTimePublished = findNodesWithoutPublishInfo( nodeIds );
 
-        for ( final NodeId id : nodeIds )
+        if ( firstTimePublished.getSize() == 0 )
+        {
+            return;
+        }
+
+        final Instant now = Instant.now();
+        final Instant publishFrom = contentPublishInfo.getFrom() == null ? now : contentPublishInfo.getFrom();
+        final Instant publishTo = contentPublishInfo.getTo();
+
+        for ( final NodeId id : firstTimePublished )
         {
             this.nodeService.update( UpdateNodeParams.create().
                 editor( toBeEdited -> {
@@ -45,14 +58,14 @@ public class UpdatePublishInfoCommand
                     {
                         publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
                     }
-                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, from );
-                    if ( to == null )
+                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
+                    if ( publishTo == null )
                     {
                         publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
                     }
                     else
                     {
-                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, to );
+                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
                     }
                 } ).
                 id( id ).
@@ -62,12 +75,32 @@ public class UpdatePublishInfoCommand
         this.nodeService.refresh( RefreshMode.ALL );
     }
 
-    public static UpdatePublishInfoCommand.Builder create()
+    private NodeIds findNodesWithoutPublishInfo( final NodeIds nodesToPush )
+    {
+        final NodeQuery query = NodeQuery.create().
+            addQueryFilter( BooleanFilter.create().
+                mustNot( ExistsFilter.create().
+                    fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).
+                    build() ).
+                must( ValueFilter.create().
+                    fieldName( ContentPropertyNames.ID ).
+                    addValues( nodesToPush.getAsStrings() ).
+                    build() ).
+                build() ).
+            size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).
+            build();
+
+        final FindNodesByQueryResult result = this.nodeService.findByQuery( query );
+
+        return result.getNodeIds();
+    }
+
+    public static SetPublishInfoCommand.Builder create()
     {
         return new Builder();
     }
 
-    public static UpdatePublishInfoCommand.Builder create( final AbstractContentCommand source )
+    public static SetPublishInfoCommand.Builder create( final AbstractContentCommand source )
     {
         return new Builder( source );
     }
@@ -100,9 +133,9 @@ public class UpdatePublishInfoCommand
             return this;
         }
 
-        public UpdatePublishInfoCommand build()
+        public SetPublishInfoCommand build()
         {
-            return new UpdatePublishInfoCommand( this );
+            return new SetPublishInfoCommand( this );
         }
 
     }

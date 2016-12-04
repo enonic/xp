@@ -158,22 +158,12 @@ public class PublishContentCommand
         {
             return;
         }
-
-        if ( contentPublishInfo != null )
-        {
-            UpdatePublishInfoCommand.create( this ).
-                nodeIds( nodesToPush ).
-                contentPublishInfo( contentPublishInfo ).
-                build().
-                execute();
-        }
-        else
-        {
-            SetFirstTimePublishedCommand.create( this ).
-                nodeIds( nodesToPush ).
-                build().
-                execute();
-        }
+        
+        SetPublishInfoCommand.create( this ).
+            nodeIds( nodesToPush ).
+            contentPublishInfo( contentPublishInfo ).
+            build().
+            execute();
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
 

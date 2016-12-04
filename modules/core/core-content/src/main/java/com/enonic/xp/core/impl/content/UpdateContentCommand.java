@@ -178,6 +178,14 @@ final class UpdateContentCommand
     private void validateBlockingChecks( final Content editedContent )
     {
         validatePropertyTree( editedContent );
+        if ( editedContent.getPublishInfo() != null )
+        {
+            final Instant publishFromInstant = editedContent.getPublishInfo().getFrom();
+            Preconditions.checkNotNull( publishFromInstant, "'Publish from' must be set" );
+            final Instant publishToInstant = editedContent.getPublishInfo().getTo();
+            Preconditions.checkArgument( publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
+                                         "'Publish to' must be set after 'publish from'" );
+        }
         if ( editedContent.getType().isImageMedia() )
         {
             validateImageMediaProperties( editedContent );
