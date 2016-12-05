@@ -28,12 +28,6 @@ module api.ui.security.acl {
             this.aceSelectedOptionsView = <ACESelectedOptionsView>builder.getSelectedOptionsView();
         }
 
-        setEditable(editable: boolean) {
-            this.getSelectedOptions().forEach((option: SelectedOption<AccessControlEntry>) => {
-                (<ACESelectedOptionView>option.getOptionView()).setEditable(editable);
-            });
-        }
-
         onOptionValueChanged(listener: (item: AccessControlEntry) => void) {
             this.aceSelectedOptionsView.onItemValueChanged(listener);
         }
@@ -78,6 +72,12 @@ module api.ui.security.acl {
 
         constructor(className?: string) {
             super(className);
+        }
+
+        setEditable(editable: boolean) {
+            this.getSelectedOptions().forEach((option: SelectedOption<AccessControlEntry>) => {
+                option.getOptionView().setEditable(editable);
+            });
         }
 
         setMaximumOccurrences(value: number) {

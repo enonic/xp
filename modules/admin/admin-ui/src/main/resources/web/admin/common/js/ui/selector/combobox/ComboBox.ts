@@ -178,6 +178,15 @@ module api.ui.selector.combobox {
             this.setupListeners();
         }
 
+        setReadOnly(readOnly: boolean) {
+            super.setReadOnly(readOnly);
+
+            this.input.setReadOnly(readOnly)
+            this.selectedOptionsView.setEditable(!readOnly);
+
+            this.toggleClass('readonly', readOnly);
+        }
+
         private doUpdateDropdownTopPositionAndWidth() {
             const dropdownPosition = this.dropdownOverflowsBottom();
 

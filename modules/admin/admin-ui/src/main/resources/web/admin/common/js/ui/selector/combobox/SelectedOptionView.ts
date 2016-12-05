@@ -9,5 +9,7 @@ module api.ui.selector.combobox {
         onRemoveClicked(listener: {(): void;});
 
         unRemoveClicked(listener: {(): void;});
+
+        setEditable(editable: boolean);
     }
 }

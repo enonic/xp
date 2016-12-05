@@ -87,7 +87,7 @@ final class UpdateContentCommand
         editedContent = Content.create( editedContent ).
             valid( validated ).
             build();
-        editedContent = processContent( editedContent );
+        editedContent = processContent( contentBeforeChange, editedContent );
         editedContent = attachThumbnail( editedContent );
         editedContent = setModifiedTime( editedContent );
 
@@ -104,16 +104,16 @@ final class UpdateContentCommand
         return translator.fromNode( editedNode, true );
     }
 
-    private Content processContent( Content editedContent )
+    private Content processContent( final Content originalContent, Content editedContent )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( editedContent.getType() ) );
 
-        editedContent = runContentProcessors( editedContent, contentType );
+        editedContent = runContentProcessors( originalContent, editedContent, contentType );
 
         return editedContent;
     }
 
-    private Content runContentProcessors( Content editedContent, final ContentType contentType )
+    private Content runContentProcessors( final Content originalContent, Content editedContent, final ContentType contentType )
     {
         for ( final ContentProcessor contentProcessor : this.contentProcessors )
         {
@@ -123,6 +123,9 @@ final class UpdateContentCommand
                     contentType( contentType ).
                     mediaInfo( mediaInfo ).
                     createAttachments( params.getCreateAttachments() ).
+                    originalContent( originalContent ).
+                    editedContent( editedContent ).
+                    modifier( getCurrentUser() ).
                     build() );
 
                 editedContent = updateContentWithProcessedData( editedContent, result );

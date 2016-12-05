@@ -19,8 +19,17 @@ module api.ui.selector.combobox {
 
         private optionMovedListeners: {(moved: SelectedOption<T>) : void}[] = [];
 
+        private editable: boolean = true;
+
         constructor(className?: string) {
             super("selected-options" + (className ? " " + className : ""));
+        }
+
+        setEditable(editable: boolean) {
+            this.editable = editable;
+            this.getSelectedOptions().forEach((option: SelectedOption<T>) => {
+                option.getOptionView().setEditable(editable);
+            });
         }
 
         setOccurrencesSortable(sortable: boolean) {
@@ -107,7 +116,9 @@ module api.ui.selector.combobox {
 
             var selectedOption: SelectedOption<T> = this.createSelectedOption(option);
 
-            selectedOption.getOptionView().onRemoveClicked(() => this.removeOption(option));
+            let optionView = selectedOption.getOptionView();
+            optionView.onRemoveClicked(() => this.removeOption(option));
+            optionView.setEditable(this.editable);
 
             this.getSelectedOptions().push(selectedOption);
 
