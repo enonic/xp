@@ -1,9 +1,13 @@
 package com.enonic.xp.core.content;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.context.Context;
@@ -59,6 +63,22 @@ public class ContentServiceImplTest_duplicate
         assertEquals( childrenLevel2.getDisplayName(), duplicatedContent.getDisplayName() );
         assertEquals( childrenLevel2.getParentPath(), duplicatedContent.getParentPath() );
         assertEquals( childrenLevel2.getPath().toString() + "-copy", duplicatedContent.getPath().toString() );
+    }
+
+    @Test
+    public void publish_info()
+        throws Exception
+    {
+
+        final Content rootContent = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+            from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+            build() );
+
+        final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
+        final Content duplicatedContent = contentService.duplicate( params );
+
+        assertNotNull( duplicatedContent );
+        assertNull( duplicatedContent.getPublishInfo() );
     }
 
     @Test
