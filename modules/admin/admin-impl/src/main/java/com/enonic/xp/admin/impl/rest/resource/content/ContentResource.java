@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,9 +52,6 @@ import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
-import com.enonic.xp.admin.impl.json.content.GetPublishStatusResultJson;
-import com.enonic.xp.admin.impl.json.content.GetPublishStatusResultsJson;
-import com.enonic.xp.admin.impl.json.content.PublishStatus;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
@@ -79,7 +75,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJs
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
-import com.enonic.xp.admin.impl.rest.resource.content.json.GetPublishStatusesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
@@ -132,6 +127,8 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetPublishStatusesParams;
+import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
@@ -150,7 +147,6 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
@@ -999,13 +995,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }
@@ -1244,47 +1239,9 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
-
-        final GetPublishStatusesJson getPublishStatusesJson = new GetPublishStatusesJson();
-        getPublishStatusesJson.setIds( params.getIds() );
-
-        final GetPublishStatusResultsJson publishStatusesJson = getPublishStatuses( getPublishStatusesJson );
-
-        return new CompareContentResultsJson( compareResults, publishStatusesJson );
-    }
-
-    @POST
-    @Path("getPublishStatuses")
-    public GetPublishStatusResultsJson getPublishStatuses( final GetPublishStatusesJson params )
-    {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
-        final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( contentIds );
-        final Instant now = Instant.now();
-
-        final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_MASTER ).
-            attribute( "includeScheduledPublished", Boolean.TRUE ).
-            build().
-            callWith( () -> contentService.getByIds( getContentByIdsParams ) );
-        final List<GetPublishStatusResultJson> getPublishStatusResultJsonList = contents.stream().
-            map( content -> {
-                final ContentPublishInfo publishInfo = content.getPublishInfo();
-                if ( publishInfo != null )
-                {
-                    if ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 )
-                    {
-                        return new GetPublishStatusResultJson( PublishStatus.EXPIRED, content.getId() );
-                    }
-
-                    if ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 )
-                    {
-                        return new GetPublishStatusResultJson( PublishStatus.PENDING, content.getId() );
-                    }
-                }
-                return new GetPublishStatusResultJson( PublishStatus.ONLINE, content.getId() );
-            } ).
-            collect( Collectors.toList() );
-        return new GetPublishStatusResultsJson( getPublishStatusResultJsonList );
+        final GetPublishStatusesResult getPublishStatusesResult =
+            contentService.getPublishStatuses( new GetPublishStatusesParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+        return new CompareContentResultsJson( compareResults, getPublishStatusesResult );
     }
 
     @POST

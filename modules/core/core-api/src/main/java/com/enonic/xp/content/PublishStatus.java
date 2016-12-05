@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.json.content;
+package com.enonic.xp.content;
 
 public enum PublishStatus
 {

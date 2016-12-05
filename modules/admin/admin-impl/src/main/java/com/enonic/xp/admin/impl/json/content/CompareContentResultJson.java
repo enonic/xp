@@ -1,20 +1,29 @@
 package com.enonic.xp.admin.impl.json.content;
 
 import com.enonic.xp.content.CompareContentResult;
+import com.enonic.xp.content.GetPublishStatusResult;
 
 public class CompareContentResultJson
 {
-    private final String compareStatus;
-
     private final String id;
 
-    private final PublishStatus publishStatus;
+    private final String compareStatus;
 
-    public CompareContentResultJson( final CompareContentResult compareContentResult, final PublishStatus publishStatus )
+    private final String publishStatus;
+
+    public CompareContentResultJson( final CompareContentResult compareContentResult, final GetPublishStatusResult getPublishStatusResult )
     {
-        this.compareStatus = compareContentResult.getCompareStatus().name();
         this.id = compareContentResult.getContentId().toString();
-        this.publishStatus = publishStatus;
+        this.compareStatus = compareContentResult.getCompareStatus().name();
+        this.publishStatus = getPublishStatusResult == null || getPublishStatusResult.getPublishStatus() == null
+            ? null
+            : getPublishStatusResult.getPublishStatus().toString();
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getId()
+    {
+        return id;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -24,12 +33,7 @@ public class CompareContentResultJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public String getId()
-    {
-        return id;
-    }
-
-    public PublishStatus getPublishStatus()
+    public String getPublishStatus()
     {
         return publishStatus;
     }
