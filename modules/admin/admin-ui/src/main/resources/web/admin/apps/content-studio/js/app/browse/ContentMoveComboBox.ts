@@ -5,6 +5,7 @@ import MoveContentSummaryLoader = api.content.resource.MoveContentSummaryLoader;
 import ContentSummary = api.content.ContentSummary;
 import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
 import ContentPath = api.content.ContentPath;
+import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
 
 export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<ContentSummary> {
 
@@ -15,19 +16,13 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
         richComboBoxBuilder
             .setMaximumOccurrences(1)
             .setComboBoxName("contentSelector")
-            .setSelectedOptionsView(new ContentSelectedOptionsView())
+            .setLoader(new MoveContentSummaryLoader())
+            .setSelectedOptionsView(<SelectedOptionsView<ContentSummary>>new ContentSelectedOptionsView())
             .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
             .setDelayedInputValueChangedHandling(500)
             .setSkipAutoDropShowOnValueChange(true);
 
         super(richComboBoxBuilder);
-    }
-
-    protected createLoader(): MoveContentSummaryLoader {
-        let loader = new MoveContentSummaryLoader();
-        loader.setSize(-1);
-
-        return loader;
     }
 
     getLoader(): MoveContentSummaryLoader {

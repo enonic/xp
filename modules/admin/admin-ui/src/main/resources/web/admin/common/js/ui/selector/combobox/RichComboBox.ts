@@ -83,8 +83,8 @@ module api.ui.selector.combobox {
 
             this.addClass('rich-combobox');
 
-            if (api.ObjectHelper.iFrameSafeInstanceOf(builder.loader, PostLoader)) {
-                this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>builder.loader).postLoad.bind(builder.loader));
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this.loader, PostLoader)) {
+                this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>this.loader).postLoad.bind(this.loader));
             }
         }
 
