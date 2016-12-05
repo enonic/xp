@@ -281,7 +281,6 @@ module api.liveedit.text {
 
         private onFocusHandler(e) {
             this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
-            console.log("focused: " + this)
         }
 
         private onBlurHandler(e) {
