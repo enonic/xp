@@ -273,7 +273,7 @@ public class ContentServiceImplTest_findByParent
     }
 
     @Test
-    public void test_not_published_yet_draft()
+    public void test_pending_publish_draft()
         throws Exception
     {
         final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
@@ -283,17 +283,16 @@ public class ContentServiceImplTest_findByParent
     }
 
     @Test
-    public void test_not_published_yet_master()
+    public void test_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
-                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
-                                                assertEquals( 0, result.getTotalHits() );
-                                                return null;
-                                            } );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
+                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
+            assertEquals( 0, result.getTotalHits() );
+            return null;
+        } );
     }
 
     @Test
@@ -310,14 +309,13 @@ public class ContentServiceImplTest_findByParent
     public void test_publish_expired_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
-                                                    to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
-                                                assertEquals( 0, result.getTotalHits() );
-                                                return null;
-                                            } );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
+                to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                build() );
+            assertEquals( 0, result.getTotalHits() );
+            return null;
+        } );
     }
 
     @Test
@@ -335,16 +333,15 @@ public class ContentServiceImplTest_findByParent
     public void test_published_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
-                                                    from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
+                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                assertEquals( 1, result.getTotalHits() );
-                                                return null;
-                                            } );
+            assertEquals( 1, result.getTotalHits() );
+            return null;
+        } );
     }
 
     private FindContentByParentResult createAndFindContent( final ContentPublishInfo publishInfo )

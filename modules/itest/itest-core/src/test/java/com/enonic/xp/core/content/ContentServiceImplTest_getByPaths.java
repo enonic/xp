@@ -89,7 +89,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void test_not_published_yet_draft()
+    public void test_pending_publish_draft()
         throws Exception
     {
         final Content content1 = createContent( ContentPath.ROOT );
@@ -106,25 +106,24 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void test_not_published_yet_master()
+    public void test_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content1 = createContent( ContentPath.ROOT );
-                                                final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content1 = createContent( ContentPath.ROOT );
+            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
-                                                final Contents contents = this.contentService.getByPaths( paths );
+            final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
+            final Contents contents = this.contentService.getByPaths( paths );
 
-                                                assertEquals( contents.getSize(), 1 );
-                                                assertTrue( contents.contains( content1 ) );
-                                                assertFalse( contents.contains( content2 ) );
+            assertEquals( contents.getSize(), 1 );
+            assertTrue( contents.contains( content1 ) );
+            assertFalse( contents.contains( content2 ) );
 
-                                                return null;
-                                            } );
+            return null;
+        } );
     }
 
     @Test
@@ -148,21 +147,20 @@ public class ContentServiceImplTest_getByPaths
     public void test_publish_expired_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content1 = createContent( ContentPath.ROOT );
-                                                final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content1 = createContent( ContentPath.ROOT );
+            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
-                                                final Contents contents = this.contentService.getByPaths( paths );
+            final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
+            final Contents contents = this.contentService.getByPaths( paths );
 
-                                                assertEquals( contents.getSize(), 1 );
-                                                assertTrue( contents.contains( content1 ) );
-                                                assertFalse( contents.contains( content2 ) );
-                                                return null;
-                                            } );
+            assertEquals( contents.getSize(), 1 );
+            assertTrue( contents.contains( content1 ) );
+            assertFalse( contents.contains( content2 ) );
+            return null;
+        } );
     }
 
     @Test
@@ -187,21 +185,20 @@ public class ContentServiceImplTest_getByPaths
     public void test_published_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content1 = createContent( ContentPath.ROOT );
-                                                final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content1 = createContent( ContentPath.ROOT );
+            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
-                                                final Contents contents = this.contentService.getByPaths( paths );
+            final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
+            final Contents contents = this.contentService.getByPaths( paths );
 
-                                                assertEquals( contents.getSize(), 2 );
-                                                assertTrue( contents.contains( content1 ) );
-                                                assertTrue( contents.contains( content2 ) );
-                                                return null;
-                                            } );
+            assertEquals( contents.getSize(), 2 );
+            assertTrue( contents.contains( content1 ) );
+            assertTrue( contents.contains( content2 ) );
+            return null;
+        } );
     }
 }

@@ -66,63 +66,21 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
-    public void test_not_published_yet_master()
+    public void publish_info()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content rootContent = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
 
-                                                final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
-                                                final Content duplicatedContent = contentService.duplicate( params );
+        final Content rootContent = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+            from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+            build() );
 
-                                                assertNotNull( duplicatedContent );
-                                                assertNull( duplicatedContent.getPublishInfo().getFrom() );
-                                                return null;
-                                            } );
+        final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
+        final Content duplicatedContent = contentService.duplicate( params );
+
+        assertNotNull( duplicatedContent );
+        assertNull( duplicatedContent.getPublishInfo() );
     }
 
-    @Test
-    public void test_expired_master()
-        throws Exception
-    {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content rootContent = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
-
-                                                final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
-                                                final Content duplicatedContent = contentService.duplicate( params );
-
-                                                assertNotNull( duplicatedContent );
-                                                assertNull( duplicatedContent.getPublishInfo().getTo() );
-                                                return null;
-                                            } );
-    }
-
-    @Test
-    public void test_published_master()
-        throws Exception
-    {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content rootContent = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
-
-                                                final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
-                                                final Content duplicatedContent = contentService.duplicate( params );
-
-                                                assertNotNull( duplicatedContent );
-                                                assertNull( duplicatedContent.getPublishInfo().getTo() );
-                                                assertNull( duplicatedContent.getPublishInfo().getFrom() );
-                                                return null;
-                                            } );
-    }
     @Test
     public void some_metadata_reset_on_duplicate()
         throws Exception

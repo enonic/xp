@@ -23,7 +23,7 @@ public class ContentServiceImplTest_getById
     }
 
     @Test
-    public void test_not_published_yet_draft()
+    public void test_pending_publish_draft()
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -34,17 +34,16 @@ public class ContentServiceImplTest_getById
     }
 
     @Test(expected = ContentNotFoundException.class)
-    public void test_not_published_yet_master()
+    public void test_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                return this.contentService.getById( content.getId() );
-                                            } );
+            return this.contentService.getById( content.getId() );
+        } );
     }
 
     @Test
@@ -62,14 +61,13 @@ public class ContentServiceImplTest_getById
     public void test_publish_expired_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                return this.contentService.getById( content.getId() );
-                                            } );
+            return this.contentService.getById( content.getId() );
+        } );
     }
 
     @Test
@@ -88,15 +86,14 @@ public class ContentServiceImplTest_getById
     public void test_published_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                assertNotNull( this.contentService.getById( content.getId() ) );
-                                                return null;
-                                            } );
+            assertNotNull( this.contentService.getById( content.getId() ) );
+            return null;
+        } );
     }
 }

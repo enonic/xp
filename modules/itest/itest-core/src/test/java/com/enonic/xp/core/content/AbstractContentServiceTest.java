@@ -243,9 +243,8 @@ public class AbstractContentServiceTest
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
         this.contentService.setTranslator( this.translator );
-        this.contentService.setFormDefaultValuesProcessor( ( form, data ) ->
-                                                           {
-                                                           } );
+        this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
+        } );
 
         createContentRepository();
         waitForClusterHealth();

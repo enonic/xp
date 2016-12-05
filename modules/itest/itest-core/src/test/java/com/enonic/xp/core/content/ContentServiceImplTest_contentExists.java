@@ -22,7 +22,7 @@ public class ContentServiceImplTest_contentExists
     }
 
     @Test
-    public void test_not_published_yet_draft()
+    public void test_pending_publish_draft()
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -34,19 +34,18 @@ public class ContentServiceImplTest_contentExists
     }
 
     @Test
-    public void test_not_published_yet_master()
+    public void test_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                assertFalse( contentService.contentExists( content.getId() ) );
-                                                assertFalse( contentService.contentExists( content.getPath() ) );
-                                                return null;
-                                            } );
+            assertFalse( contentService.contentExists( content.getId() ) );
+            assertFalse( contentService.contentExists( content.getPath() ) );
+            return null;
+        } );
     }
 
     @Test
@@ -65,16 +64,15 @@ public class ContentServiceImplTest_contentExists
     public void test_publish_expired_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                assertFalse( this.contentService.contentExists( content.getId() ) );
-                                                assertFalse( this.contentService.contentExists( content.getPath() ) );
-                                                return null;
-                                            } );
+            assertFalse( this.contentService.contentExists( content.getId() ) );
+            assertFalse( this.contentService.contentExists( content.getPath() ) );
+            return null;
+        } );
     }
 
     @Test
@@ -94,16 +92,15 @@ public class ContentServiceImplTest_contentExists
     public void test_published_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                                                    from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                                                    to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                assertTrue( this.contentService.contentExists( content.getId() ) );
-                                                assertTrue( this.contentService.contentExists( content.getPath() ) );
-                                                return null;
-                                            } );
+            assertTrue( this.contentService.contentExists( content.getId() ) );
+            assertTrue( this.contentService.contentExists( content.getPath() ) );
+            return null;
+        } );
     }
 }

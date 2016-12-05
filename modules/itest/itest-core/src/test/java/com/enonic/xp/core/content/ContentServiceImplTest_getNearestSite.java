@@ -80,61 +80,57 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test(expected = ContentNotFoundException.class)
-    public void child_of_site_not_published_yet_master()
+    public void child_of_site_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content site = createSite();
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content site = createSite();
 
-                                                final Content child = createContent( site.getPath(), ContentPublishInfo.create().
-                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+            final Content child = createContent( site.getPath(), ContentPublishInfo.create().
+                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                return this.contentService.getNearestSite( child.getId() );
-                                            } );
+            return this.contentService.getNearestSite( child.getId() );
+        } );
     }
 
     @Test(expected = ContentNotFoundException.class)
-    public void deep_child_of_site_not_published_yet_master()
+    public void deep_child_of_site_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content site = createSite();
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content site = createSite();
 
-                                                final Content childLevel1 = createContent( site.getPath() );
-                                                final Content childLevel2 =
-                                                    createContent( childLevel1.getPath(), ContentPublishInfo.create().
-                                                        from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                        build() );
+            final Content childLevel1 = createContent( site.getPath() );
+            final Content childLevel2 = createContent( childLevel1.getPath(), ContentPublishInfo.create().
+                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                final Content childLevel3 = createContent( childLevel2.getPath() );
+            final Content childLevel3 = createContent( childLevel2.getPath() );
 
-                                                return this.contentService.getNearestSite( childLevel3.getId() );
+            return this.contentService.getNearestSite( childLevel3.getId() );
 
-                                            } );
+        } );
     }
 
     @Test(expected = ContentNotFoundException.class)
     public void child_of_site_published_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
-                                            {
-                                                final Content site = createSite();
+        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+            final Content site = createSite();
 
-                                                final Content child = createContent( site.getPath(), ContentPublishInfo.create().
-                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                                                    build() );
+            final Content child = createContent( site.getPath(), ContentPublishInfo.create().
+                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                build() );
 
-                                                final Site nearestSite = this.contentService.getNearestSite( child.getId() );
+            final Site nearestSite = this.contentService.getNearestSite( child.getId() );
 
-                                                assertEquals( site, nearestSite );
+            assertEquals( site, nearestSite );
 
-                                                return null;
-                                            } );
+            return null;
+        } );
     }
 
     private Content createSite()
