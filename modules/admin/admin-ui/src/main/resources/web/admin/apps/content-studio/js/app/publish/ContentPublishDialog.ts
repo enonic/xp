@@ -74,9 +74,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         var showScheduleAction = new ShowSchedulePublishDialogAction();
         showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
         this.showScheduleDialogButton = this.addAction(showScheduleAction, true, true);
-        this.lockControls();
-
-
+        this.showScheduleDialogButton.setEnabled(true);
     }
 
     protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
