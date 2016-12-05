@@ -100,7 +100,7 @@ public final class ResponseSerializer
     private void serializeBody( final HttpServletResponse response, final ByteSource body )
         throws IOException
     {
-        writeToStream( response, body.read() );
+        writeToStream( response, body );
     }
 
     private void serializeBody( final HttpServletResponse response, final byte[] body )
@@ -123,6 +123,17 @@ public final class ResponseSerializer
         if ( !isHeadRequest() )
         {
             response.getOutputStream().write( data );
+        }
+    }
+
+    private void writeToStream( final HttpServletResponse response, final ByteSource data )
+        throws IOException
+    {
+        response.setContentLength( Math.toIntExact( data.size() ) );
+
+        if ( !isHeadRequest() )
+        {
+            data.copyTo( response.getOutputStream() );
         }
     }
 
