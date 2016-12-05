@@ -10,22 +10,3 @@
     }
   }
 }
-
-.settings-wizard-step-form {
-  .publishFrom.missing {
-    label {
-      &:after {
-        content: " (should be set when Publish To is set)*";
-        color: @admin-red;
-      }
-    }
-  }
-  .publishTo.before-start {
-    label {
-      &:after {
-        content: " (can not be before Publish From)*";
-        color: @admin-red;
-      }
-    }
-  }
-}

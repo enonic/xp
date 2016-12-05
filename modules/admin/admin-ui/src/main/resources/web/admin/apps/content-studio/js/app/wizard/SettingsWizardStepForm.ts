@@ -75,7 +75,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
         this.publishFromInput = new LocalDateTimeFormInput(this.content.getPublishFromTime());
         this.publishFromInputFormItem = new FormItemBuilder(this.publishFromInput).setLabel('Publish From').build();
-        this.publishFromInputFormItem.addClass("publishFrom");
+        this.publishFromInputFormItem.addClass('highlight-validity-change');
 
         this.publishFromInput.getPicker().onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
             this.checkValidityAndNotify();
@@ -83,7 +83,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
         this.publishToInput = new LocalDateTimeFormInput(this.content.getPublishToTime());
         this.publishToInputFormItem = new FormItemBuilder(this.publishToInput).setLabel('Publish To').build();
-        this.publishToInputFormItem.addClass("publishTo");
+        this.publishToInputFormItem.addClass('highlight-validity-change');
 
         this.publishToInput.getPicker().onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
             this.checkValidityAndNotify();
@@ -135,16 +135,16 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         if (fromDate && this.publishFromInput.getPicker().isValid() && toDate && this.publishToInput.getPicker().isValid() &&
             toDate < fromDate) {
             isValid = false;
-            this.publishToInputFormItem.addClass("before-start");
+            this.publishToInputFormItem.addClass("invalid");
         } else {
-            this.publishToInputFormItem.removeClass("before-start");
+            this.publishToInputFormItem.removeClass("invalid");
         }
 
         if (!fromDate && toDate) { // only toDate is set
             isValid = false;
-            this.publishFromInputFormItem.addClass("missing");
+            this.publishFromInputFormItem.addClass("invalid");
         } else {
-            this.publishFromInputFormItem.removeClass("missing");
+            this.publishFromInputFormItem.removeClass("invalid");
         }
 
         return this.formValid = isValid;
@@ -193,7 +193,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 this.ignorePropertyChange = true;
                 model.setPublishFrom(event.getDate());
                 this.ignorePropertyChange = false;
-                ;
             });
 
         this.publishToInput.getPicker().
@@ -201,7 +200,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 this.ignorePropertyChange = true;
                 model.setPublishTo(event.getDate());
                 this.ignorePropertyChange = false;
-                ;
             });
 
         model.onPropertyChanged(this.modelChangeListener);
