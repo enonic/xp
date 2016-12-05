@@ -1,4 +1,4 @@
-package com.enonic.xp.internal.config;
+package com.enonic.xp.server.internal.config;
 
 import java.io.File;
 import java.util.Dictionary;

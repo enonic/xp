@@ -18,12 +18,12 @@ include 'core:core-blobstore'
 include 'core:core-auth'
 include 'core:core-macro'
 include 'core:core-task'
-include 'core:core-config'
 
 include 'server:server-shell'
 include 'server:server-status'
 include 'server:server-udc'
 include 'server:server-rest'
+include 'server:server-config'
 
 include 'script:script-api'
 include 'script:script-impl'

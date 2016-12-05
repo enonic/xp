@@ -6,5 +6,5 @@ dependencies {
 }
 
 bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - Config'
+    instruction 'Bundle-Name', 'Enonic XP Server - Config'
 }

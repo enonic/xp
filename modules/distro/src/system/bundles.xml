@@ -39,7 +39,6 @@
   <bundle level="10">${group}:admin-api:${version}</bundle>
 
   <!-- Core app bundles -->
-  <bundle level="12">${group}:core-config:${version}</bundle>
   <bundle level="22">${group}:core-event:${version}</bundle>
   <bundle level="22">${group}:core-schema:${version}</bundle>
   <bundle level="22">${group}:core-repo:${version}</bundle>
@@ -61,6 +60,7 @@
   <bundle level="22">${group}:core-task:${version}</bundle>
 
   <!-- Server bundles -->
+  <bundle level="12">${group}:server-config:${version}</bundle>
   <bundle level="17">${group}:server-shell:${version}</bundle>
   <bundle level="17">${group}:server-status:${version}</bundle>
   <bundle level="17">${group}:server-udc:${version}</bundle>
