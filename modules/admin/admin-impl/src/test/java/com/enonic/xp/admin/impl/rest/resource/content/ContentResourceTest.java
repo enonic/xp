@@ -703,6 +703,22 @@ public class ContentResourceTest
     }
 
     @Test
+    public void update_content_success_publish_dates_are_updated()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        String jsonString = request().path( "content/update" ).
+            entity( readFromFile( "update_content_params_with_publish_dates.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
+
+        assertJson( "update_content_success.json", jsonString );
+    }
+
+    @Test
     public void duplicate()
         throws Exception
     {

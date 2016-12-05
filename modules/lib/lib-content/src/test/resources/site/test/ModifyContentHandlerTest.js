@@ -91,7 +91,10 @@ var expectedJson = {
         }
     },
     "attachments": {},
-    "publish": {}
+    "publish": {
+        "from": "2018-11-03T10:00:01Z",
+        "to": "2018-11-03T10:00:01Z",
+    },
 };
 
 function editor(c) {
@@ -110,6 +113,9 @@ function editor(c) {
     };
 
     c.language = 'es';
+
+    c.publish.from = '2018-11-03T10:00:01Z';
+    c.publish.to = '2018-11-03T10:00:01Z';
 
     return c;
 }
