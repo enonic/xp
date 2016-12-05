@@ -32,11 +32,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     show() {
-        var fromDate = this.fromDate.getSelectedDateTime();
-        if (!fromDate) {
-            this.resetFromDate();
-        }
-        
+        this.resetPublishDates();
         api.dom.Body.get().appendChild(this);
         super.show();
     }
@@ -79,18 +75,12 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
     private initScheduleInputs() {
 
-        var publishFromDateTimeBuilder = new DateTimePickerBuilder();
-
-        this.fromDate = publishFromDateTimeBuilder.build();
-
+        this.fromDate = new DateTimePickerBuilder().build();
         this.fromDate.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
             this.validate();
         });
 
-        this.fromDate.setSelectedDateTime(new Date());
-
         this.toDate = new DateTimePickerBuilder().build();
-
         this.toDate.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
             this.validate();
         });

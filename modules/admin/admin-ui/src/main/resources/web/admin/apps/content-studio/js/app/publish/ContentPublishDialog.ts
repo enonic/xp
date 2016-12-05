@@ -288,7 +288,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
             });
             this.scheduleDialog.onSchedule(() => {
                 this.doPublish(true);
-                this.scheduleDialog.resetPublishDates();
             });
             this.addClickIgnoredElement(this.scheduleDialog);
         }
