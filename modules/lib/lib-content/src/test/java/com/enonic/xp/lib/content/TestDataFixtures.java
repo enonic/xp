@@ -100,6 +100,10 @@ public final class TestDataFixtures
             creator( PrincipalKey.from( "user:system:admin" ) ).
             createdTime( Instant.ofEpochSecond( 0 ) ).
             data( newSmallPropertyTree() ).
+            publishInfo( ContentPublishInfo.create().
+                from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
+                to( Instant.parse( "2016-11-22T10:36:00Z" ) ).
+                build() ).
             addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).
             page( newPage() );
 

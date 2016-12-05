@@ -6,10 +6,10 @@ import PrincipalType = api.security.PrincipalType;
 import PrincipalLoader = api.security.PrincipalLoader;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import FormItem = api.ui.form.FormItem;
-import Validators = api.ui.form.Validators;
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import LocaleComboBox = api.ui.locale.LocaleComboBox;
 import LocalDateTimeFormInput = api.form.LocalDateTimeFormInput;
+import ValidationRecording = api.form.ValidationRecording;
 
 export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -24,6 +24,11 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private publishFromInput: LocalDateTimeFormInput;
     private publishToInput: LocalDateTimeFormInput;
+
+    private publishFromInputFormItem: FormItem;
+    private publishToInputFormItem: FormItem;
+
+    private formValid: boolean = true;
 
     constructor() {
         super("settings-wizard-step-form");
@@ -69,19 +74,29 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         var ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
 
         this.publishFromInput = new LocalDateTimeFormInput(this.content.getPublishFromTime());
-        var publishFromDateFormItem = new FormItemBuilder(this.publishFromInput).setLabel('Publish From').build();
+        this.publishFromInputFormItem = new FormItemBuilder(this.publishFromInput).setLabel('Publish From').build();
+        this.publishFromInputFormItem.addClass("publishFrom");
+
+        this.publishFromInput.getPicker().onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
+            this.checkValidityAndNotify();
+        });
 
         this.publishToInput = new LocalDateTimeFormInput(this.content.getPublishToTime());
-        var publishToDateFormItem = new FormItemBuilder(this.publishToInput).setLabel('Publish To').build();
+        this.publishToInputFormItem = new FormItemBuilder(this.publishToInput).setLabel('Publish To').build();
+        this.publishToInputFormItem.addClass("publishTo");
+
+        this.publishToInput.getPicker().onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
+            this.checkValidityAndNotify();
+        });
 
 
         var fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(localeFormItem);
         fieldSet.add(ownerFormItem);
-        fieldSet.add(publishFromDateFormItem);
-        fieldSet.add(publishToDateFormItem);
+        fieldSet.add(this.publishFromInputFormItem);
+        fieldSet.add(this.publishToInputFormItem);
 
-        var form = new api.ui.form.Form().add(fieldSet);
+        var form = new api.ui.form.Form(api.form.FormView.VALIDATION_CLASS).add(fieldSet);
 
         this.appendChild(form);
 
@@ -91,8 +106,48 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         form.onBlur((event) => {
             this.notifyBlurred(event);
         });
+        form.onValidityChanged((event: api.ValidityChangedEvent) => {
+            this.checkValidityAndNotify();
+        });
 
         this.setModel(new ContentSettingsModel(content));
+    }
+
+    isValid(): boolean {
+        return this.checkValidity();
+    }
+
+    private checkValidityAndNotify() {
+        var prevValidityState = this.formValid,
+            currentValidityState = this.checkValidity();
+
+        if (prevValidityState != currentValidityState) {
+            this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(currentValidityState));
+        }
+    }
+
+    private checkValidity(): boolean {
+        var fromDate = this.publishFromInput.getPicker().getSelectedDateTime(),
+            toDate = this.publishToInput.getPicker().getSelectedDateTime(),
+            isValid = this.publishFromInput.getPicker().isValid() && this.publishToInput.getPicker().isValid();
+
+        // check toDate is before fromDate
+        if (fromDate && this.publishFromInput.getPicker().isValid() && toDate && this.publishToInput.getPicker().isValid() &&
+            toDate < fromDate) {
+            isValid = false;
+            this.publishToInputFormItem.addClass("before-start");
+        } else {
+            this.publishToInputFormItem.removeClass("before-start");
+        }
+
+        if (!fromDate && toDate) { // only toDate is set
+            isValid = false;
+            this.publishFromInputFormItem.addClass("missing");
+        } else {
+            this.publishFromInputFormItem.removeClass("missing");
+        }
+
+        return this.formValid = isValid;
     }
 
     update(content: api.content.Content, unchangedOnly: boolean = true) {
