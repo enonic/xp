@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -27,6 +26,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersionDiffResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -77,15 +77,14 @@ public class ResolveSyncWorkCommand
 
     public ResolveSyncWorkResult execute()
     {
-        final Stopwatch timer = Stopwatch.createStarted();
+        RefreshCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            refreshMode( RefreshMode.ALL ).
+            build().
+            execute();
+
         getAllPossibleNodesToBePublished();
-        timer.stop();
-
         final ResolveSyncWorkResult result = this.result.build();
-
-        final String speed = timer.elapsed( TimeUnit.SECONDS ) == 0 ? "N/A" : result.getSize() / timer.elapsed( TimeUnit.SECONDS ) + "/s";
-
-        LOG.debug( "ResolveSyncWorkCommand: " + timer + ", found " + result.getSize() + ", speed: " + speed );
         return result;
     }
 

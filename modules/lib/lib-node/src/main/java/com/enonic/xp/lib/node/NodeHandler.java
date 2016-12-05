@@ -56,14 +56,17 @@ public class NodeHandler
 
     public Object push( final PushNodeHandlerParams params )
     {
-        return execute( PushNodeHandler.create().
+        final PushNodeHandler handler = PushNodeHandler.create().
             nodeService( this.nodeService ).
             exclude( params.getExclude() ).
             includeChildren( params.isIncludeChildren() ).
+            key( params.getKey() ).
             keys( params.getKeys() ).
             resolve( params.isResolve() ).
             targetBranch( params.getTargetBranch() ).
-            build() );
+            build();
+
+        return execute( handler );
     }
 
     public Object diff( final DiffBranchesHandlerParams params )

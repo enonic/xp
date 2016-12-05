@@ -3,6 +3,7 @@ package com.enonic.xp.lib.node;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.lib.node.mapper.ResolveSyncWorkResultMapper;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
@@ -10,7 +11,7 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 public final class DiffBranchesHandler
     extends AbstractNodeHandler
 {
-    private NodeId nodeId;
+    private NodeKey nodeKey;
 
     private Branch targetBranch;
 
@@ -19,9 +20,9 @@ public final class DiffBranchesHandler
     private DiffBranchesHandler( final Builder builder )
     {
         super( builder );
-        nodeId = getNodeId( builder.nodeKey );
-        targetBranch = builder.targetBranch;
-        setIncludeChildren( builder.includeChildren );
+        this.nodeKey = builder.nodeKey;
+        this.targetBranch = builder.targetBranch;
+        this.includeChildren = builder.includeChildren;
     }
 
     public static Builder create()
@@ -31,6 +32,13 @@ public final class DiffBranchesHandler
 
     public Object execute()
     {
+        final NodeId nodeId = getNodeId( this.nodeKey );
+
+        if ( nodeId == null )
+        {
+            throw new NodeNotFoundException( "Node with key [" + this.nodeKey + "] not found" );
+        }
+
         final ResolveSyncWorkResult result = this.nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).
             nodeId( nodeId ).
@@ -38,24 +46,6 @@ public final class DiffBranchesHandler
             build() );
 
         return new ResolveSyncWorkResultMapper( result );
-    }
-
-    @SuppressWarnings("unused")
-    public void setNodeId( final String nodeId )
-    {
-        this.nodeId = NodeId.from( nodeId );
-    }
-
-    @SuppressWarnings("unused")
-    public void setTargetBranch( final String targetBranch )
-    {
-        this.targetBranch = Branch.from( targetBranch );
-    }
-
-    @SuppressWarnings("unused")
-    public void setIncludeChildren( final boolean includeChildren )
-    {
-        this.includeChildren = includeChildren;
     }
 
     public static final class Builder

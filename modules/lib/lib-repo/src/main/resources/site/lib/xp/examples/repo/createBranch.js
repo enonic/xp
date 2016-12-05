@@ -5,7 +5,7 @@ var assert = require('/lib/xp/assert');
 // Creates a branch
 try {
     var result = repoLib.createBranch({
-        id: 'test-branch'
+        branchId: 'test-branch'
     });
     log.info('Branch [' + result.id + '] created');
 } catch (e) {

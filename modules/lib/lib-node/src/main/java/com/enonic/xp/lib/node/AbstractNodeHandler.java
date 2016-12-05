@@ -59,11 +59,6 @@ public abstract class AbstractNodeHandler
 
     private NodeId doGetNodeId( final NodeKey nodeKey )
     {
-        if ( nodeKey == null )
-        {
-            return null;
-        }
-
         if ( nodeKey.isId() )
         {
             return nodeKey.getAsNodeId();

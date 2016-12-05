@@ -136,6 +136,7 @@ RepoConnection.prototype.delete = function (params) {
  * @example-ref examples/node/push-3.js
  *
  * @param {object} params JSON with the parameters.
+ * @param {string[]} params.key Id or path to the nodes
  * @param {string[]} params.keys Array of ids or paths to the nodes
  * @param {string} params.target Branch to push nodes to.
  * @param {boolean} [params.includeChildren=false] Also push children of given nodes
@@ -147,7 +148,11 @@ RepoConnection.prototype.delete = function (params) {
 RepoConnection.prototype.push = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.PushNodeHandlerParams');
     params = params || {};
-    handlerParams.keys = required(params, 'keys');
+    if (params.key === undefined && params.keys === undefined) {
+        throw "Parameter 'key' or 'keys' is required";
+    }
+    handlerParams.key = params.key ? params.key : null;
+    handlerParams.keys = params.keys ? params.keys : [];
     handlerParams.targetBranch = required(params, 'target');
     handlerParams.includeChildren = valueOrDefault(params.includeChildren, false);
     handlerParams.exclude = nullOrValue(params.exclude);
@@ -163,7 +168,7 @@ RepoConnection.prototype.push = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to resolve diff for
- * @param {string} params.target Branch to push nodes to.
+ * @param {string} params.target Branch to diff against.
  * @param {boolean} [params.includeChildren=false] also resolve dependencies for children
  *
  * @returns {object} DiffNodesResult

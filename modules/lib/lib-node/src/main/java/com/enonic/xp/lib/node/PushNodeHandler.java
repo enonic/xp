@@ -5,6 +5,7 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.lib.node.mapper.PushNodesResultMapper;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
@@ -13,7 +14,9 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 public final class PushNodeHandler
     extends AbstractNodeHandler
 {
-    private NodeIds nodeIds;
+    private NodeKey nodeKey;
+
+    private NodeKeys nodeKeys;
 
     private Branch targetBranch;
 
@@ -21,16 +24,17 @@ public final class PushNodeHandler
 
     private boolean includeChildren = true;
 
-    private NodeIds exclude;
+    private NodeKeys exclude;
 
     private PushNodeHandler( final Builder builder )
     {
         super( builder );
-        nodeIds = getNodeIds( builder.keys );
-        targetBranch = builder.targetBranch;
-        setResolve( builder.resolve );
-        setIncludeChildren( builder.includeChildren );
-        exclude = getNodeIds( builder.exclude );
+        this.nodeKey = builder.key;
+        this.nodeKeys = builder.keys;
+        this.targetBranch = builder.targetBranch;
+        this.resolve = builder.resolve;
+        this.includeChildren = builder.includeChildren;
+        this.exclude = builder.exclude;
     }
 
     public Object execute()
@@ -38,13 +42,15 @@ public final class PushNodeHandler
         final NodeIds.Builder toBePushed = NodeIds.create();
         final NodeIds.Builder toBeDeleted = NodeIds.create();
 
+        final NodeIds nodeIds = getNodeIds();
+
         if ( resolve )
         {
-            doResolve( toBePushed, toBeDeleted );
+            doResolve( nodeIds, toBePushed, toBeDeleted );
         }
         else
         {
-            toBePushed.addAll( nodeIds );
+            toBePushed.addAll( getNodeIds() );
         }
 
         final PushNodesResult push = this.nodeService.push( nodeIds, targetBranch );
@@ -52,6 +58,23 @@ public final class PushNodeHandler
         final NodeIds deletedNodes = doDelete( toBeDeleted );
 
         return new PushNodesResultMapper( push, deletedNodes );
+    }
+
+    private NodeIds getNodeIds()
+    {
+        if ( this.nodeKey != null )
+        {
+            final NodeId nodeId = getNodeId( this.nodeKey );
+            if ( nodeId == null )
+            {
+                throw new NodeNotFoundException( "Cannot publish node with key [" + this.nodeKey + "]" );
+            }
+            return NodeIds.from( nodeId );
+        }
+        else
+        {
+            return NodeIds.from( getNodeIds( this.nodeKeys ) );
+        }
     }
 
     private NodeIds doDelete( final NodeIds.Builder toBeDeleted )
@@ -66,14 +89,14 @@ public final class PushNodeHandler
         return builder.build();
     }
 
-    private void doResolve( final NodeIds.Builder toBePushed, final NodeIds.Builder toBeDeleted )
+    private void doResolve( final NodeIds nodeIds, final NodeIds.Builder toBePushed, final NodeIds.Builder toBeDeleted )
     {
         for ( final NodeId nodeId : nodeIds )
         {
             final ResolveSyncWorkResult result = this.nodeService.resolveSyncWork( SyncWorkResolverParams.create().
                 nodeId( nodeId ).
                 branch( targetBranch ).
-                excludedNodeIds( exclude ).
+                excludedNodeIds( getNodeIds( exclude ) ).
                 includeChildren( includeChildren ).
                 build() );
 
@@ -91,31 +114,6 @@ public final class PushNodeHandler
         }
     }
 
-    public void setNodeIds( final String[] nodeIds )
-    {
-        this.nodeIds = NodeIds.from( nodeIds );
-    }
-
-    public void setTargetBranch( final String targetBranch )
-    {
-        this.targetBranch = Branch.from( targetBranch );
-    }
-
-    public void setResolve( final boolean resolve )
-    {
-        this.resolve = resolve;
-    }
-
-    public void setIncludeChildren( final boolean includeChildren )
-    {
-        this.includeChildren = includeChildren;
-    }
-
-    public void setExclude( final String[] exclude )
-    {
-        this.exclude = NodeIds.from( exclude );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -124,6 +122,8 @@ public final class PushNodeHandler
     public static final class Builder
         extends AbstractNodeHandler.Builder<Builder>
     {
+        private NodeKey key;
+
         private NodeKeys keys;
 
         private Branch targetBranch;
@@ -136,6 +136,12 @@ public final class PushNodeHandler
 
         private Builder()
         {
+        }
+
+        public Builder key( final NodeKey val )
+        {
+            key = val;
+            return this;
         }
 
         public Builder keys( final NodeKeys val )

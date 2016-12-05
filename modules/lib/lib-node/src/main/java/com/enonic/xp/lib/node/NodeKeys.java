@@ -45,6 +45,11 @@ public class NodeKeys
         return new NodeKeys( keys );
     }
 
+    public static NodeKeys from( final NodeKey nodeKey )
+    {
+        return new NodeKeys( Lists.newArrayList( nodeKey ) );
+    }
+
     public static NodeKeys from( final String[] keys )
     {
         if ( keys == null )

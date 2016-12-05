@@ -6,6 +6,7 @@ import com.enonic.xp.lib.node.mapper.NodeMapper;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RenameNodeParams;
 
@@ -36,6 +37,11 @@ public final class MoveNodeHandler
     private Node executeMove()
     {
         final Node node = doGetNode( this.source );
+
+        if ( node == null )
+        {
+            throw new NodeNotFoundException( "Node to move with key [" + this.source + "] not found" );
+        }
 
         if ( target.isNewParentFolder() )
         {
