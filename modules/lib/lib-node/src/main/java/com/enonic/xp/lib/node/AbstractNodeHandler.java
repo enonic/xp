@@ -16,6 +16,11 @@ public abstract class AbstractNodeHandler
 
     protected Node doGetNode( final NodeKey nodeKey )
     {
+        if ( nodeKey == null )
+        {
+            return null;
+        }
+
         if ( !nodeKey.isId() )
         {
             return nodeService.getByPath( nodeKey.getAsPath() );
@@ -33,6 +38,11 @@ public abstract class AbstractNodeHandler
 
     protected NodeIds getNodeIds( final NodeKeys nodeKeys )
     {
+        if ( nodeKeys == null )
+        {
+            return NodeIds.empty();
+        }
+
         final NodeIds.Builder builder = NodeIds.create();
 
         for ( final NodeKey nodeKey : nodeKeys )
@@ -49,6 +59,11 @@ public abstract class AbstractNodeHandler
 
     private NodeId doGetNodeId( final NodeKey nodeKey )
     {
+        if ( nodeKey == null )
+        {
+            return null;
+        }
+
         if ( nodeKey.isId() )
         {
             return nodeKey.getAsNodeId();

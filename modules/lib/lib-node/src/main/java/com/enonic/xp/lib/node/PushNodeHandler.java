@@ -30,7 +30,7 @@ public final class PushNodeHandler
         targetBranch = builder.targetBranch;
         setResolve( builder.resolve );
         setIncludeChildren( builder.includeChildren );
-        exclude = builder.exclude;
+        exclude = getNodeIds( builder.exclude );
     }
 
     public Object execute()
@@ -132,7 +132,7 @@ public final class PushNodeHandler
 
         private boolean includeChildren;
 
-        private NodeIds exclude;
+        private NodeKeys exclude;
 
         private Builder()
         {
@@ -162,7 +162,7 @@ public final class PushNodeHandler
             return this;
         }
 
-        public Builder exclude( final NodeIds val )
+        public Builder exclude( final NodeKeys val )
         {
             exclude = val;
             return this;

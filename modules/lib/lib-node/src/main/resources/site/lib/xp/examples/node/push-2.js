@@ -11,9 +11,8 @@ var repo = nodeLib.connect({
 var result = repo.push({
     keys: ['a'],
     target: 'otherBranch',
-    resolve: {
-        includeChildren: true
-    }
+    resolve: true,
+    includeChildren: true
 });
 // END
 

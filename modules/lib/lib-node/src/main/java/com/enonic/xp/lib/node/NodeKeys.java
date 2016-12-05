@@ -24,6 +24,11 @@ public class NodeKeys
         return this.keys.stream();
     }
 
+    public static NodeKeys empty()
+    {
+        return new NodeKeys( Lists.newArrayList() );
+    }
+
     @Override
     public Iterator<NodeKey> iterator()
     {
@@ -32,11 +37,21 @@ public class NodeKeys
 
     public static NodeKeys from( final Collection<NodeKey> keys )
     {
+        if ( keys == null )
+        {
+            return NodeKeys.empty();
+        }
+
         return new NodeKeys( keys );
     }
 
     public static NodeKeys from( final String[] keys )
     {
+        if ( keys == null )
+        {
+            return NodeKeys.empty();
+        }
+
         return new NodeKeys( Arrays.stream( keys ).map( NodeKey::from ).collect( Collectors.toList() ) );
     }
 }

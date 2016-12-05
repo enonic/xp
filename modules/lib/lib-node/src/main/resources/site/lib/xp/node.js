@@ -88,13 +88,13 @@ RepoConnection.prototype.modify = function (params) {
 
 /**
  * This function fetches nodes. If key is defined, the fetched node will be returned as a JSON object or null if not found.
- * If keys is defined, the fetched nodes will be return as a JSON array.
+ * If keys is defined, the fetched nodes will be returned as a JSON array.
  *
  * @example-ref examples/node/get.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} [params.key] Path or id to the node.
- * @param {string[]} [params.keys] Path or id array to the nodes.
+ * @param {string[]} [params.keys] Array of ids or paths to the nodes
  *
  * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
@@ -107,15 +107,14 @@ RepoConnection.prototype.get = function (params) {
     return __.toNativeObject(this.native.get(key, keys));
 };
 
-
 /**
- * This function deletes a node.
+ * This function deletes a node or nodes.
  *
  * @example-ref examples/node/delete.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the node.
- * @param {string[]} [params.keys] Path or id array to the nodes.
+ * @param {string[]} [params.keys] Array of ids or paths to the nodes
  *
  * @returns {boolean} True if deleted, false otherwise.
  */
@@ -137,11 +136,11 @@ RepoConnection.prototype.delete = function (params) {
  * @example-ref examples/node/push-3.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string[]} params.keys ids array to the nodes.
+ * @param {string[]} params.keys Array of ids or paths to the nodes
  * @param {string} params.target Branch to push nodes to.
- * @param {boolean} params.resolve resolve dependencies before pushing
- * @param {boolean} params.resolve.includeChildren include children of given ids for pushing
- * @param {string[]} params.resolve.exclude exclude these nodes if not needed to maintain data integrity (e.g parents must be present in target)
+ * @param {boolean} [params.includeChildren=false] Also push children of given nodes
+ * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed
+ * @param {string[]} [params.exclude] Array of ids or paths to nodes not to be pushed (nodes needed to maintain data integrity (e.g parents must be present in target) will be pushed anyway)
  *
  * @returns {object} PushNodesResult
  */
@@ -150,13 +149,9 @@ RepoConnection.prototype.push = function (params) {
     params = params || {};
     handlerParams.keys = required(params, 'keys');
     handlerParams.targetBranch = required(params, 'target');
-    if (params.resolve) {
-        handlerParams.resolve = params.resolve;
-        handlerParams.includeChildren = valueOrDefault(params.resolve.includeChildren, true);
-        if (params.resolve.exclude) {
-            handlerParams.exclude = params.resolve.exclude;
-        }
-    }
+    handlerParams.includeChildren = valueOrDefault(params.includeChildren, false);
+    handlerParams.exclude = nullOrValue(params.exclude);
+    handlerParams.resolve = valueOrDefault(params.resolve, true);
 
     return __.toNativeObject(this.native.push(handlerParams));
 };
@@ -167,16 +162,16 @@ RepoConnection.prototype.push = function (params) {
  * @example-ref examples/node/diff-1.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key key to resolve diff for
+ * @param {string} params.key Path or id to resolve diff for
  * @param {string} params.target Branch to push nodes to.
- * @param {boolean} params.includeChildren also resolve dependencies for children
+ * @param {boolean} [params.includeChildren=false] also resolve dependencies for children
  *
  * @returns {object} DiffNodesResult
  */
 RepoConnection.prototype.diff = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.DiffBranchesHandlerParams');
     params = params || {};
-    handlerParams.nodeId = required(params, 'key');
+    handlerParams.key = required(params, 'key');
     handlerParams.targetBranch = required(params, 'target');
     handlerParams.includeChildren = valueOrDefault(params.includeChildren, false);
 
@@ -194,11 +189,7 @@ RepoConnection.prototype.diff = function (params) {
  * @returns {*} Stream of the binary.
  */
 RepoConnection.prototype.getBinary = function (params) {
-
-    if (params.key === undefined && params.keys === undefined) {
-        throw "Parameter 'key' or 'keys' is required";
-    }
-    var key = params.key ? params.key : null;
+    var key = required(params, 'key');
     var binaryReference = params.binaryReference;
     return this.native.getBinary(key, binaryReference);
 };
@@ -231,7 +222,7 @@ RepoConnection.prototype.move = function (params) {
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} params.query Query expression.
- * @param {string} [params.sort] Sorting expression.
+ * @param {string} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
  * @returns {object} Result of query.
  */
@@ -240,7 +231,7 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.start = params.start;
     handlerParams.count = params.count;
     handlerParams.query = nullOrValue(params.query);
-    handlerParams.sort = nullOrValue(params.sort);
+    handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
     return __.toNativeObject(this.native.query(handlerParams));
 };
@@ -255,8 +246,8 @@ RepoConnection.prototype.query = function (params) {
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} [params.childOrder] How to order the children (defaults to value stored on parent)
- * @param {boolean} [params.countOnly] Optimize for count children only ( no children returned )
- * @param {boolean} [params.recursive] Do recursive fetching of all children of children
+ * @param {boolean} [params.countOnly=false] Optimize for count children only ( no children returned )
+ * @param {boolean} [params.recursive=false] Do recursive fetching of all children of children
  * @returns {object} Result of getChildren.
  */
 RepoConnection.prototype.getChildren = function (params) {

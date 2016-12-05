@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.node;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeIds;
 
 public class PushNodeHandlerParams
 {
@@ -13,7 +12,7 @@ public class PushNodeHandlerParams
 
     private boolean includeChildren = true;
 
-    private NodeIds exclude;
+    private NodeKeys exclude;
 
 
     public NodeKeys getKeys()
@@ -56,13 +55,13 @@ public class PushNodeHandlerParams
         this.includeChildren = includeChildren;
     }
 
-    public NodeIds getExclude()
+    public NodeKeys getExclude()
     {
         return exclude;
     }
 
     public void setExclude( final String[] exclude )
     {
-        this.exclude = NodeIds.from( exclude );
+        this.exclude = NodeKeys.from( exclude );
     }
 }

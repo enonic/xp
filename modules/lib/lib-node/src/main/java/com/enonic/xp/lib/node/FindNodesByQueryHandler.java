@@ -15,7 +15,7 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.script.ScriptValue;
 
 @SuppressWarnings("unused")
-public final class QueryNodeHandler
+public final class FindNodesByQueryHandler
     extends AbstractNodeHandler
 {
     private Integer start;
@@ -30,7 +30,7 @@ public final class QueryNodeHandler
 
     private List<String> contentTypes;
 
-    private QueryNodeHandler( final Builder builder )
+    private FindNodesByQueryHandler( final Builder builder )
     {
         super( builder );
         setStart( builder.start );
@@ -157,9 +157,9 @@ public final class QueryNodeHandler
             return this;
         }
 
-        public QueryNodeHandler build()
+        public FindNodesByQueryHandler build()
         {
-            return new QueryNodeHandler( this );
+            return new FindNodesByQueryHandler( this );
         }
     }
 }

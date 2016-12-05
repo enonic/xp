@@ -45,6 +45,15 @@ public class NodeHandler
             build() );
     }
 
+    public Object delete( final String key, String[] keys )
+    {
+        return execute( DeleteNodeHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            keys( NodeKeys.from( keys ) ).
+            build() );
+    }
+
     public Object push( final PushNodeHandlerParams params )
     {
         return execute( PushNodeHandler.create().
@@ -57,12 +66,13 @@ public class NodeHandler
             build() );
     }
 
-    public Object delete( final String key, String[] keys )
+    public Object diff( final DiffBranchesHandlerParams params )
     {
-        return execute( DeleteNodeHandler.create().
+        return execute( DiffBranchesHandler.create().
+            includeChildren( params.isIncludeChildren() ).
+            key( params.getKey() ).
+            targetBranch( params.getTargetBranch() ).
             nodeService( this.nodeService ).
-            key( NodeKey.from( key ) ).
-            keys( NodeKeys.from( keys ) ).
             build() );
     }
 
@@ -75,19 +85,9 @@ public class NodeHandler
             build() );
     }
 
-    public Object diff( final DiffBranchesHandlerParams params )
-    {
-        return execute( DiffBranchesHandler.create().
-            includeChildren( params.isIncludeChildren() ).
-            nodeId( params.getNodeId() ).
-            targetBranch( params.getTargetBranch() ).
-            nodeService( this.nodeService ).
-            build() );
-    }
-
     public Object query( final QueryNodeHandlerParams params )
     {
-        return execute( QueryNodeHandler.create().
+        return execute( FindNodesByQueryHandler.create().
             query( params.getQuery() ).
             aggregations( params.getAggregations() ).
             count( params.getCount() ).

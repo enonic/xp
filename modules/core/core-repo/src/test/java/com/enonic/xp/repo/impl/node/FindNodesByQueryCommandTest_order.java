@@ -54,6 +54,22 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
+    public void defaultSorting()
+    {
+        final NodeQuery query = NodeQuery.create().
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
+
+    }
+
+
+    @Test
     public void testByLongSorting()
     {
         String[] orders = {FIELD_LONG + " " + ORDER_DESC};
@@ -89,7 +105,6 @@ public class FindNodesByQueryCommandTest_order
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
-
     }
 
     @Test
@@ -102,9 +117,7 @@ public class FindNodesByQueryCommandTest_order
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
-
     }
-
 
     @Test
     public void testByStringAndLongSorting()
@@ -129,7 +142,6 @@ public class FindNodesByQueryCommandTest_order
         Assert.assertEquals( "node1", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
         Assert.assertEquals( "node2", iterator.next().name().toString() );
-
     }
 
     @Test
@@ -142,7 +154,6 @@ public class FindNodesByQueryCommandTest_order
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
-
     }
 
     @Test
@@ -155,7 +166,6 @@ public class FindNodesByQueryCommandTest_order
         Assert.assertEquals( "node2", iterator.next().name().toString() );
         Assert.assertEquals( "node1", iterator.next().name().toString() );
         Assert.assertEquals( "node3", iterator.next().name().toString() );
-
     }
 
     private Map<String, Object> createPropertyMap( Long longValue, String stringValue, Boolean booleanValue )

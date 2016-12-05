@@ -12,7 +12,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeQuery;
 
-public class QueryNodeHandlerTest
+public class FindNodesByQueryHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test

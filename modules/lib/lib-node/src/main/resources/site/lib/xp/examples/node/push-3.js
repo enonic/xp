@@ -9,12 +9,11 @@ var repo = nodeLib.connect({
 // BEGIN
 // Rename content by id. Keeps same parent.
 var result = repo.push({
-    keys: ['a'],
+    keys: ['/a'],
     target: 'otherBranch',
-    resolve: {
-        includeChildren: true,
-        exclude: ['b', 'c']
-    }
+    resolve: true,
+    includeChildren: true,
+    exclude: ['/a/b', '/a/c']
 });
 // END
 

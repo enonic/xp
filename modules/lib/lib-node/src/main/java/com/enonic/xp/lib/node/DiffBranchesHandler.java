@@ -19,7 +19,7 @@ public final class DiffBranchesHandler
     private DiffBranchesHandler( final Builder builder )
     {
         super( builder );
-        nodeId = builder.nodeId;
+        nodeId = getNodeId( builder.nodeKey );
         targetBranch = builder.targetBranch;
         setIncludeChildren( builder.includeChildren );
     }
@@ -61,7 +61,7 @@ public final class DiffBranchesHandler
     public static final class Builder
         extends AbstractNodeHandler.Builder<Builder>
     {
-        private NodeId nodeId;
+        private NodeKey nodeKey;
 
         private Branch targetBranch;
 
@@ -71,9 +71,9 @@ public final class DiffBranchesHandler
         {
         }
 
-        public Builder nodeId( final NodeId val )
+        public Builder key( final NodeKey val )
         {
-            nodeId = val;
+            nodeKey = val;
             return this;
         }
 

@@ -1,19 +1,18 @@
 package com.enonic.xp.lib.node;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeId;
 
 public class DiffBranchesHandlerParams
 {
-    private NodeId nodeId;
+    private NodeKey key;
 
     private Branch targetBranch;
 
     private boolean includeChildren = true;
 
-    public void setNodeId( final String nodeId )
+    public void setKey( final String key )
     {
-        this.nodeId = NodeId.from( nodeId );
+        this.key = NodeKey.from( key );
     }
 
     public void setTargetBranch( final String targetBranch )
@@ -26,9 +25,9 @@ public class DiffBranchesHandlerParams
         this.includeChildren = includeChildren;
     }
 
-    public NodeId getNodeId()
+    public NodeKey getKey()
     {
-        return nodeId;
+        return key;
     }
 
     public Branch getTargetBranch()

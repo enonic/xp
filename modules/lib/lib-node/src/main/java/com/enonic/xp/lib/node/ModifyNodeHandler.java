@@ -80,6 +80,7 @@ public class ModifyNodeHandler
         {
             throw new NodeNotFoundException( "Cannot modify node with key: [" + this.key.getValue() + "]" );
         }
+
         return node;
     }
 
