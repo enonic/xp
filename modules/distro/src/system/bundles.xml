@@ -8,31 +8,38 @@
   <bundle level="5">org.apache.felix:org.apache.felix.scr:2.0.2</bundle>
 
   <!-- Library dependencies -->
-  <bundle level="10">com.google.guava:guava:18.0</bundle>
-  <bundle level="10">commons-lang:commons-lang:2.4</bundle>
-  <bundle level="10">commons-io:commons-io:2.4</bundle>
-  <bundle level="10">commons-codec:commons-codec:1.10</bundle>
-  <bundle level="10">com.fasterxml.jackson.core:jackson-core:2.6.2</bundle>
-  <bundle level="10">com.fasterxml.jackson.core:jackson-annotations:2.6.2</bundle>
-  <bundle level="10">com.fasterxml.jackson.core:jackson-databind:2.6.2</bundle>
-  <bundle level="10">com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.2</bundle>
-  <bundle level="10">com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.6.2</bundle>
-  <bundle level="10">com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2</bundle>
-  <bundle level="10">org.apache.tika:tika-core:1.13</bundle>
-  <bundle level="10">org.apache.tika:tika-bundle:1.13</bundle>
-  <bundle level="10">${group}:repack-jparsec:${version}</bundle>
-  <bundle level="10">${group}:repack-elasticsearch:${version}</bundle>
-  <bundle level="10">${group}:repack-resteasy:${version}</bundle>
-  <bundle level="10">${group}:repack-attoparser:${version}</bundle>
-  <bundle level="10">${group}:repack-okhttp:${version}</bundle>
-  <bundle level="10">io.dropwizard.metrics:metrics-core:3.1.2</bundle>
-  <bundle level="10">io.dropwizard.metrics:metrics-json:3.1.2</bundle>
-  <bundle level="10">io.dropwizard.metrics:metrics-jvm:3.1.2</bundle>
-  <bundle level="10">io.dropwizard.metrics:metrics-jetty9:3.1.2</bundle>
+  <bundle level="8">com.google.guava:guava:18.0</bundle>
+  <bundle level="8">commons-lang:commons-lang:2.4</bundle>
+  <bundle level="8">commons-io:commons-io:2.4</bundle>
+  <bundle level="8">commons-codec:commons-codec:1.10</bundle>
+  <bundle level="8">com.fasterxml.jackson.core:jackson-core:2.6.2</bundle>
+  <bundle level="8">com.fasterxml.jackson.core:jackson-annotations:2.6.2</bundle>
+  <bundle level="8">com.fasterxml.jackson.core:jackson-databind:2.6.2</bundle>
+  <bundle level="8">com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.2</bundle>
+  <bundle level="8">com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.6.2</bundle>
+  <bundle level="8">com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2</bundle>
+  <bundle level="8">org.apache.tika:tika-core:1.13</bundle>
+  <bundle level="8">org.apache.tika:tika-bundle:1.13</bundle>
+  <bundle level="8">${group}:repack-jparsec:${version}</bundle>
+  <bundle level="8">${group}:repack-elasticsearch:${version}</bundle>
+  <bundle level="8">${group}:repack-resteasy:${version}</bundle>
+  <bundle level="8">${group}:repack-attoparser:${version}</bundle>
+  <bundle level="8">${group}:repack-okhttp:${version}</bundle>
+  <bundle level="8">io.dropwizard.metrics:metrics-core:3.1.2</bundle>
+  <bundle level="8">io.dropwizard.metrics:metrics-json:3.1.2</bundle>
+  <bundle level="8">io.dropwizard.metrics:metrics-jvm:3.1.2</bundle>
+  <bundle level="8">io.dropwizard.metrics:metrics-jetty9:3.1.2</bundle>
+
+  <!-- API bundles -->
+  <bundle level="10">${group}:core-api:${version}</bundle>
+  <bundle level="10">${group}:script-api:${version}</bundle>
+  <bundle level="10">${group}:portal-api:${version}</bundle>
+  <bundle level="10">${group}:web-api:${version}</bundle>
+  <bundle level="10">${group}:jaxrs-api:${version}</bundle>
+  <bundle level="10">${group}:admin-api:${version}</bundle>
 
   <!-- Core app bundles -->
-  <bundle level="12">${group}:core-api:${version}</bundle>
-  <bundle level="13">${group}:core-config:${version}</bundle>
+  <bundle level="12">${group}:core-config:${version}</bundle>
   <bundle level="22">${group}:core-event:${version}</bundle>
   <bundle level="22">${group}:core-schema:${version}</bundle>
   <bundle level="22">${group}:core-repo:${version}</bundle>
@@ -60,27 +67,22 @@
   <bundle level="30">${group}:server-rest:${version}</bundle>
 
   <!-- Script app -->
-  <bundle level="24">${group}:script-api:${version}</bundle>
   <bundle level="24">${group}:script-impl:${version}</bundle>
 
   <!-- Web app -->
-  <bundle level="26">${group}:web-api:${version}</bundle>
   <bundle level="26">${group}:web-jetty:${version}</bundle>
   <bundle level="26">${group}:web-impl:${version}</bundle>
   <bundle level="26">${group}:web-vhost:${version}</bundle>
   <bundle level="26">${group}:web-dos:${version}</bundle>
 
   <!-- JaxRs app -->
-  <bundle level="28">${group}:jaxrs-api:${version}</bundle>
   <bundle level="28">${group}:jaxrs-impl:${version}</bundle>
 
   <!-- Portal app -->
-  <bundle level="30">${group}:portal-api:${version}</bundle>
   <bundle level="30">${group}:portal-owasp:${version}</bundle>
   <bundle level="30">${group}:portal-impl:${version}</bundle>
 
   <!-- Admin app -->
-  <bundle level="30">${group}:admin-api:${version}</bundle>
   <bundle level="30">${group}:admin-event:${version}</bundle>
   <bundle level="30">${group}:admin-ui:${version}</bundle>
   <bundle level="30">${group}:admin-impl:${version}</bundle>
