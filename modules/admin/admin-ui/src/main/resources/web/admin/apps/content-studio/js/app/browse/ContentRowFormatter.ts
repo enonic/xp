@@ -60,7 +60,7 @@ export class ContentRowFormatter {
 
             compareStatusText = api.content.CompareStatusFormatter.formatStatus(compareStatus);
 
-            if (PublishStatus[publishStatus]) { // publish status is present
+            if (compareStatus == CompareStatus.EQUAL && PublishStatus[publishStatus] && publishStatus != PublishStatus.ONLINE) {
                 statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(CompareStatus[value]));
                 statusEl.getEl().setText(compareStatusText);
                 statusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));
@@ -72,9 +72,7 @@ export class ContentRowFormatter {
                 publishStatusEl.addClass(ContentRowFormatter.makeClassName(CompareStatus[value]));
                 publishStatusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));
 
-                if (compareStatus == CompareStatus.EQUAL && publishStatus != PublishStatus.ONLINE) {
-                    return statusEl.toString() + publishStatusEl.toString();
-                }
+                return statusEl.toString() + publishStatusEl.toString();
             } else {
                 statusEl = new api.dom.SpanEl()
                 if (CompareStatus[value]) {
@@ -82,8 +80,8 @@ export class ContentRowFormatter {
                 }
 
                 statusEl.getEl().setText(compareStatusText);
+                return statusEl.toString();
             }
-            return statusEl.toString();
         } else if (!!data.getUploadItem()) {   // uploading node
             compareStatusText = new api.ui.ProgressBar(data.getUploadItem().getProgress());
             return new api.dom.SpanEl().appendChild(compareStatusText).toString();
