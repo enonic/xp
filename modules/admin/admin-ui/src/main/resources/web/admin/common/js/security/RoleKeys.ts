@@ -9,5 +9,7 @@ module api.security {
         public static ADMIN: PrincipalKey = PrincipalKey.ofRole('system.admin');
 
         public static CMS_ADMIN: PrincipalKey = PrincipalKey.ofRole('cms.admin');
+
+        public static CMS_EXPERT: PrincipalKey = PrincipalKey.ofRole('cms.expert');
     }
 }

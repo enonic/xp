@@ -66,7 +66,7 @@ function initToolTip() {
         pageX = 0, pageY = 0,
         showAt = function (e) {
             var ntop = pageY + OFFSET_Y, nleft = pageX + OFFSET_X;
-            var tooltipText = api.util.StringHelper.escapeHtml(wemjq(e.target).data(DATA));
+            var tooltipText = api.util.StringHelper.escapeHtml(wemjq(e.currentTarget || e.target).data(DATA));
             if (!tooltipText) { //if no text then probably hovering over children of original element that has title attr
                 return;
             }

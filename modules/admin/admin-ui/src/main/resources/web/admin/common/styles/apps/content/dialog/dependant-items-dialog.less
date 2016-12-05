@@ -17,6 +17,33 @@
     }
   }
 
+  &.locked {
+
+    .browse-selection-item {
+      .remove {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+    }
+
+    .dialog-buttons {
+
+      button:not(.cancel-button-bottom) {
+        font-family: 'icomoon';
+        pointer-events: none;
+        opacity: 0.5;
+
+        &:after {
+          .animation(rotate360, .5s, .0s, linear);
+          content: "\e007";
+          color: white;
+          display: inline-block;
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+
   .sub-title {
     margin-top: 20px;
   }
@@ -139,7 +166,7 @@
           }
 
           .dependant-item-viewer {
-            width: calc(~'100% - 90px');
+            width: calc(~'100% - 97px');
 
             &.pending-delete .names-view {
               .main-name, .sub-name {
@@ -182,27 +209,9 @@
                 display: none;
               }
             }
-
           }
         }
       }
     }
   }
-
-  .dialog-buttons {
-
-    button.spinner {
-      font-family: 'icomoon';
-
-      &:after {
-        .animation(rotate360, .5s, .0s, linear);
-        content: "\e007";
-        color: white;
-        display: inline-block;
-        margin-left: 5px;
-      }
-    }
-
-  }
-
 }

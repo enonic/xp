@@ -27,6 +27,8 @@ public final class RoleKeys
 
     public static final PrincipalKey CONTENT_MANAGER_APP = PrincipalKey.ofRole( "cms.cm.app" );
 
+    public static final PrincipalKey CONTENT_MANAGER_EXPERT = PrincipalKey.ofRole( "cms.expert" );
+
     public static final PrincipalKey CONTENT_MANAGER_ADMIN = PrincipalKey.ofRole( "cms.admin" );
 
 }

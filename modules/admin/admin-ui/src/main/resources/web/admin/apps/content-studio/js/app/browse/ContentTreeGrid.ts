@@ -126,8 +126,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             // re-set the selection to update selected rows presentation
         };
 
-        this.onDataChanged(this.addTitleAttributeToReadOnlyRows.bind(this));
-
         this.initEventHandlers(updateColumns);
     }
 
@@ -400,11 +398,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             super.selectAll();
             this.getGrid().unmask();
         }, 5);
-    }
-
-    protected collapseNode(node: TreeNode<ContentSummaryAndCompareStatus>) {
-        super.collapseNode(node);
-        this.addTitleAttributeToReadOnlyRows();
     }
 
     findByPaths(paths: api.content.ContentPath[], useParent: boolean = false): TreeNodesOfContentPath[] {
@@ -712,20 +705,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
     }
 
-    private addTitleAttributeToReadOnlyRows() {
-        setTimeout(() => {
-            this.getRoot().getCurrentRoot().treeToList().forEach((node: TreeNode<ContentSummaryAndCompareStatus>, i) => {
-                if (node.getData().isReadOnly()) {
-                    let rowEl = wemjq(this.getHTMLElement()).find(".slick-row")[i];
-                    if (rowEl) {
-                        rowEl.title = "Read-only";
-                    }
-                }
-
-            })
-        }, 50);
-    }
-
     protected handleItemMetadata(row: number) {
         var node = this.getItem(row);
         if (this.isEmptyNode(node)) {
@@ -733,7 +712,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }
 
         if (node.getData().isReadOnly()) {
-            return {cssClasses: 'readonly'};
+            return {cssClasses: "readonly' title='This content is read-only'"};
         }
 
         return null;
