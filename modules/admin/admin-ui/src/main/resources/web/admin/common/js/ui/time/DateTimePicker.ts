@@ -186,6 +186,8 @@ module api.ui.time {
         public setSelectedDateTime(date: Date) {
             this.input.setValue(this.formatDateTime(date));
             this.setDateTime(date);
+            this.validUserInput = true;
+            this.updateInputStyling();
         }
 
         private setDateTime(date: Date) {
