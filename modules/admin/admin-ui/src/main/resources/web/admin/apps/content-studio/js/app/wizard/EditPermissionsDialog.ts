@@ -55,7 +55,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
                 this.layoutInheritedPermissions();
             }
             this.comboBox.getComboBox().setVisible(!inheritPermissions);
-            this.comboBox.setEditable(!inheritPermissions);
+            this.comboBox.setReadOnly(inheritPermissions);
 
             comboBoxChangeListener();
         };

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -134,6 +135,7 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
@@ -431,7 +433,6 @@ public final class ContentResource
     {
         final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( params.getContentPaths() ) );
         final Context ctx = ContextAccessor.current();
-        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
         progressReporter.info( "Deleting content" );
 
         // TODO: Move cycle to DeleteContentResult, pass the listener
@@ -551,7 +552,6 @@ public final class ContentResource
             to( params.getSchedule().getPublishTo() ).
             build();
         final Context ctx = ContextAccessor.current();
-        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
         progressReporter.info( "Publishing content" );
 
         final PublishContentResult result = contentService.publish( PushContentParams.create().
@@ -561,7 +561,7 @@ public final class ContentResource
             contentPublishInfo( contentPublishInfo ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
-            pushListener( new PushContentProgressListener( progressReporter ) ).
+            pushListener( new PublishContentProgressListener( progressReporter ) ).
             build() );
 
         final ContentIds pushedContents = result.getPushedContents();
@@ -640,14 +640,26 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final Context ctx = ContextAccessor.current();
-        System.out.println( ctx.getAuthInfo().getPrincipals() + " - " + ctx.getBranch() );
         progressReporter.info( "Unpublishing content" );
+
+        final PushContentListener listener = new UnpublishContentProgressListener( progressReporter );
+
+        final ContentIds childrenIds = this.contentService.find(
+            ContentQuery.create().size( GET_ALL_SIZE_FLAG ).queryExpr( constructExprToFindChildren( contentIds ) ).
+                build() ).getContentIds();
+
+        final ContentIds filteredChildrenIds = ContentIds.from( this.filterIdsByStatus( childrenIds, Arrays.asList( CompareStatus.EQUAL,
+                                                                                                                    CompareStatus.PENDING_DELETE,
+                                                                                                                    CompareStatus.NEWER ) ).collect(
+            Collectors.toSet() ) );
+
+        listener.contentResolved( filteredChildrenIds.getSize() + contentIds.getSize() );
 
         final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             includeChildren( params.isIncludeChildren() ).
-            pushListener( new PushContentProgressListener( progressReporter ) ).
+            pushListener( listener ).
             build() );
 
         final ContentIds unpublishedContents = result.getUnpublishedContents();
@@ -880,6 +892,31 @@ public final class ContentResource
         return new ContentSummaryListJson( contents, metaData, contentIconUrlResolver );
     }
 
+    @POST
+    @Path("isReadOnlyContent")
+    public List<String> checkContentsReadOnly( final ContentIdsJson params )
+    {
+        final Contents contents = contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) );
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            return new ArrayList<>();
+        }
+
+        final List<String> result = new ArrayList<>();
+
+        contents.stream().forEach( content -> {
+            if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
+            {
+                result.add( content.getId().toString() );
+            }
+        } );
+
+        return result;
+    }
+
     @GET
     @Path("bypath")
     public ContentIdJson getByPath( @QueryParam("path") final String pathParam,
@@ -962,12 +999,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission -> {
-            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-            {
-                result.add( permission.name() );
-            }
-        } );
+        permissions.forEach( permission ->
+                             {
+                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+                                 {
+                                     result.add( permission.name() );
+                                 }
+                             } );
 
         return result;
     }
@@ -1112,20 +1150,26 @@ public final class ContentResource
 
         if ( isFilterNeeded )
         {
-            final CompareContentResults compareResults =
-                contentService.compare( new CompareContentsParams( result.getContentIds(), ContentConstants.BRANCH_MASTER ) );
-            final Map<ContentId, CompareContentResult> compareResultMap = compareResults.getCompareContentResultsMap();
-
-            return compareResultMap.entrySet().
-                stream().
-                filter( entry -> json.getFilterStatuses().contains( entry.getValue().getCompareStatus() ) ).
-                map( entry -> new ContentIdJson( entry.getKey() ) ).
+            return this.filterIdsByStatus( result.getContentIds(), json.getFilterStatuses() ).
+                map( id -> new ContentIdJson( id ) ).
                 collect( Collectors.toList() );
         }
         else
         {
             return result.getContentIds().stream().map( ContentIdJson::new ).collect( Collectors.toList() );
         }
+    }
+
+    private Stream<ContentId> filterIdsByStatus( final ContentIds ids, final Collection<CompareStatus> statuses )
+    {
+        final CompareContentResults compareResults =
+            contentService.compare( new CompareContentsParams( ids, ContentConstants.BRANCH_MASTER ) );
+        final Map<ContentId, CompareContentResult> compareResultMap = compareResults.getCompareContentResultsMap();
+
+        return compareResultMap.entrySet().
+            stream().
+            filter( entry -> statuses.contains( entry.getValue().getCompareStatus() ) ).
+            map( entry -> entry.getKey() );
     }
 
     @POST
@@ -1517,6 +1561,13 @@ public final class ContentResource
             map( contentPath -> ValueExpr.string( "/content" + contentPath ) ).collect( Collectors.toList() ) ) );
 
         return QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) );
+    }
+
+    private QueryExpr constructExprToFindChildren( final ContentIds contentsIds )
+    {
+        final ContentPaths contentPaths = this.contentService.getByIds( new GetContentByIdsParams( contentsIds ) ).getPaths();
+
+        return constructExprToFindChildren( contentPaths );
     }
 
     private boolean contentNameIsOccupied( final RenameContentParams renameParams )

@@ -58,7 +58,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
 
     protected manageDescendants() {
         this.loadMask.show();
-        this.actionButton.setEnabled(false);
+        this.lockControls();
 
         return this.loadDescendantIds().then(() => {
             this.loadDescendants(0, 20).
@@ -69,10 +69,19 @@ export class ContentDeleteDialog extends ProgressBarDialog {
                     this.centerMyself();
                 }).finally(() => {
                     this.loadMask.hide();
-                    this.actionButton.setEnabled(true);
+                this.unlockControls();
                 this.actionButton.giveFocus();
                 });
         });
+    }
+
+    manageContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
+        this.setIgnoreItemsChanged(true);
+        this.setListItems(contents);
+        this.setIgnoreItemsChanged(false);
+        this.updateSubTitle();
+
+        return this;
     }
 
     private manageInstantDeleteStatus(items: ContentSummaryAndCompareStatus[]) {
@@ -86,14 +95,14 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         this.instantDeleteCheckbox.setChecked(isChecked, true);
     }
 
-    setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
-        this.setIgnoreItemsChanged(true);
-        this.setListItems(contents);
-        this.setIgnoreItemsChanged(false);
-        this.updateSubTitle();
+    close() {
+        super.close();
+        this.instantDeleteCheckbox.setChecked(false);
+    }
 
+    setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
+        this.manageContentToDelete(contents);
         this.manageInstantDeleteStatus(contents);
-        
         this.manageDescendants();
 
         return this;
@@ -115,9 +124,12 @@ export class ContentDeleteDialog extends ProgressBarDialog {
             const deleteRequest = this.createDeleteRequest();
             const content = this.getItemList().getItems().slice(0);
             const descendants = this.getDependantList().getItems().slice(0);
+            const instantDeleteStatus = this.instantDeleteCheckbox.isChecked();
             const yesCallback = () => {
-                this.setContentToDelete(content);
+                // Manually manage content and dependants without any requests
+                this.manageContentToDelete(content);
                 this.setDependantItems(descendants);
+                this.instantDeleteCheckbox.setChecked(instantDeleteStatus);
                 this.countItemsToDeleteAndUpdateButtonCounter();
                 this.open();
                 this.doDelete(true);
@@ -131,19 +143,19 @@ export class ContentDeleteDialog extends ProgressBarDialog {
                 this.instantDeleteCheckbox.isChecked() ? this.yesCallback([]) : this.yesCallback();
             }
 
-            this.showLoadingSpinner();
+            this.lockControls();
 
             this.createDeleteRequest()
                 .sendAndParse()
                 .then((taskId: api.task.TaskId) => {
                     this.pollTask(taskId);
-                }).catch((reason) => {
-                this.hideLoadingSpinner();
-                this.close();
-                if (reason && reason.message) {
-                    api.notify.showError(reason.message);
-                }
-            });
+                })
+                .catch((reason) => {
+                    this.close();
+                    if (reason && reason.message) {
+                        api.notify.showError(reason.message);
+                    }
+                });
         }
     }
 

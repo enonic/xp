@@ -15,9 +15,21 @@ class ApplicationNameResolver
     public static String resolve( final ByteSource byteSource )
         throws Exception
     {
-        final File tmpFile = writeAsTmpFile( byteSource );
+        File tmpFile = null;
 
-        return findSymbolicName( tmpFile );
+        try
+        {
+            tmpFile = writeAsTmpFile( byteSource );
+
+            return findSymbolicName( tmpFile );
+        }
+        finally
+        {
+            if ( tmpFile != null )
+            {
+                tmpFile.delete();
+            }
+        }
     }
 
     private static String findSymbolicName( final File file )

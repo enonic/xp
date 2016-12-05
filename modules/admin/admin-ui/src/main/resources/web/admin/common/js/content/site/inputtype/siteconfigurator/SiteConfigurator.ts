@@ -20,10 +20,13 @@ module api.content.site.inputtype.siteconfigurator {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
+    import Promise = Q.Promise;
 
     export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<Application> {
 
         private context: api.form.inputtype.InputTypeViewContext;
+
+        private readOnly: boolean;
 
         private comboBox: SiteConfiguratorComboBox;
 
@@ -31,10 +34,19 @@ module api.content.site.inputtype.siteconfigurator {
 
         private formContext: api.content.form.ContentFormContext;
 
+        private readOnlyPromise: Promise<void>;
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("site-configurator");
             this.context = config;
             this.formContext = config.formContext;
+
+            this.readOnlyPromise =
+                new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                    this.readOnly = !loginResult.getPrincipals().some(function (principal) {
+                        return principal.equals(api.security.RoleKeys.ADMIN) || principal.equals(api.security.RoleKeys.CMS_ADMIN);
+                    });
+                });
         }
 
         getValueType(): ValueType {
@@ -57,6 +69,13 @@ module api.content.site.inputtype.siteconfigurator {
             this.siteConfigProvider.onAfterPropertyChanged(() => this.ignorePropertyChange = false);
 
             this.comboBox = this.createComboBox(input, this.siteConfigProvider);
+            if (this.readOnlyPromise.isFulfilled()) {
+                this.comboBox.setReadOnly(this.readOnly);
+            } else {
+                this.readOnlyPromise.then(() => {
+                    this.comboBox.setReadOnly(this.readOnly);
+                })
+            }
 
             this.appendChild(this.comboBox);
 

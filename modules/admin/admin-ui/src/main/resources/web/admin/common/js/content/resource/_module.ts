@@ -22,6 +22,7 @@
 ///<reference path='DuplicateContentRequest.ts' />
 ///<reference path='MoveContentRequest.ts' />
 ///<reference path='ListContentByIdRequest.ts' />
+///<reference path='isContentReadOnlyRequest.ts' />
 ///<reference path='ListContentByPathRequest.ts' />
 ///<reference path='DeleteContentRequest.ts' />
 ///<reference path='BatchContentRequest.ts' />

@@ -5,8 +5,7 @@ module api.ui.selector.combobox {
         private optionDisplayValue: T;
 
         private size: api.app.NamesAndIconViewSize;
-        
-        private editable: boolean;
+
         private draggable: boolean;
         private removable: boolean;
 
@@ -16,7 +15,7 @@ module api.ui.selector.combobox {
             this.optionDisplayValue = builder.option.displayValue;
             this.size = builder.size;
 
-            this.editable = builder.editable;
+            this.setEditable(builder.editable);
             this.draggable = builder.draggable;
             this.removable = builder.removable;
         }
@@ -42,7 +41,7 @@ module api.ui.selector.combobox {
             if (this.draggable) {
                 buttons.push(new api.dom.DivEl("drag-control"));
             }
-            if (this.editable) {
+            if (this.isEditable()) {
                 buttons.push(this.createEditButton(content));
             }
             if (this.removable) {

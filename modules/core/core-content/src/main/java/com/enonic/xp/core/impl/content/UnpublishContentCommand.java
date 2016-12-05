@@ -10,7 +10,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentState;
-import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
@@ -29,14 +28,16 @@ public class UnpublishContentCommand
 {
     private final UnpublishContentParams params;
 
-    private final PushContentListener pushContentListener;
-
     private UnpublishContentCommand( final Builder builder )
     {
         super( builder );
 
         this.params = builder.params;
-        this.pushContentListener = builder.pushContentListener;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public UnpublishContentsResult execute()
@@ -96,6 +97,10 @@ public class UnpublishContentCommand
         final NodeIds nodes = this.nodeService.deleteById( nodeId );
         if ( nodes != null && nodes.isNotEmpty() )
         {
+            if ( params.getPushContentListener() != null )
+            {
+                params.getPushContentListener().contentPushed( 1 );
+            }
             contentsBuilder.add( ContentId.from( nodes.first().toString() ) );
         }
     }
@@ -144,27 +149,14 @@ public class UnpublishContentCommand
         return null;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private UnpublishContentParams params;
 
-        private PushContentListener pushContentListener;
-
         public Builder params( final UnpublishContentParams params )
         {
             this.params = params;
-            return this;
-        }
-
-        public Builder pushListener( final PushContentListener pushContentListener )
-        {
-            this.pushContentListener = pushContentListener;
             return this;
         }
 

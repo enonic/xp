@@ -3,16 +3,17 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.task.ProgressReporter;
 
-final class PushContentProgressListener
+final class PublishContentProgressListener
     implements PushContentListener
 {
+
     private final ProgressReporter progressReporter;
 
     private int total = 0;
 
     private int progressCount = 0;
 
-    public PushContentProgressListener( final ProgressReporter progressReporter )
+    public PublishContentProgressListener( final ProgressReporter progressReporter )
     {
         this.progressReporter = progressReporter;
     }
