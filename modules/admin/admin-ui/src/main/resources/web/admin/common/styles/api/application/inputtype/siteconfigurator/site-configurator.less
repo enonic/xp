@@ -33,7 +33,7 @@
         &.invalid {
           background-color: @admin-input-red;
 
-          .names-view .sub-name {
+          .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}sub-name {
             color: @admin-dark-gray;
           }
         }
@@ -65,7 +65,7 @@
           cursor: move;
           flex: 0 1 100%;
 
-          .names-view {
+          .@{_COMMON_PREFIX}names-view {
             > * {
               cursor: move;
             }
@@ -100,7 +100,7 @@
     .names-and-icon-view {
       float: left;
 
-      .names-view h6 {
+      .@{_COMMON_PREFIX}names-view h6 {
         height: auto;
         font-size: 22px;
         line-height: 30px;

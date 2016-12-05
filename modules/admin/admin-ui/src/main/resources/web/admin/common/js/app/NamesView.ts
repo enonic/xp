@@ -9,14 +9,14 @@ module api.app {
         private addTitleAttribute: boolean;
 
         constructor(addTitleAttribute: boolean = true) {
-            super("names-view");
+            super("names-view", api.StyleHelper.COMMON_PREFIX);
 
-            this.addTitleAttribute = addTitleAttribute
+            this.addTitleAttribute = addTitleAttribute;
 
-            this.mainNameEl = new api.dom.H6El("main-name");
+            this.mainNameEl = new api.dom.H6El("main-name", api.StyleHelper.COMMON_PREFIX);
             this.appendChild(this.mainNameEl);
 
-            this.subNameEl = new api.dom.PEl("sub-name");
+            this.subNameEl = new api.dom.PEl("sub-name", api.StyleHelper.COMMON_PREFIX);
             this.appendChild(this.subNameEl);
         }
 
