@@ -186,13 +186,16 @@ final class UpdateContentCommand
         final ContentPublishInfo publishInfo = editedContent.getPublishInfo();
         if ( publishInfo != null )
         {
-            final Instant publishFromInstant = publishInfo.getFrom();
             final Instant publishToInstant = publishInfo.getTo();
-            Preconditions.checkArgument(
-                publishFromInstant == null || publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
-                "'Publish to' must be set after 'publish from'" );
+            if ( publishToInstant != null )
+            {
+                final Instant publishFromInstant = publishInfo.getFrom();
+                Preconditions.checkNotNull( publishFromInstant, "'Publish from' must be set if 'Publish from' is set." );
+                Preconditions.checkArgument( publishToInstant.compareTo( publishFromInstant ) >= 0,
+                                             "'Publish to' must be set after 'Publish from'." );
+            }
         }
-        
+
         if ( editedContent.getType().isImageMedia() )
         {
             validateImageMediaProperties( editedContent );

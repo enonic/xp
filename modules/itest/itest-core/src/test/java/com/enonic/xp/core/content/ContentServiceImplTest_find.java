@@ -78,6 +78,7 @@ public class ContentServiceImplTest_find
         throws Exception
     {
         final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create().
+            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             build() );
         assertEquals( 1, result.getTotalHits() );
@@ -89,6 +90,7 @@ public class ContentServiceImplTest_find
     {
         AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create().
+                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 build() );
             assertEquals( 0, result.getTotalHits() );

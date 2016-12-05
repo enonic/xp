@@ -51,6 +51,7 @@ public class ContentServiceImplTest_getByPath
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             build() );
 
@@ -63,6 +64,7 @@ public class ContentServiceImplTest_getByPath
     {
         AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 build() );
 

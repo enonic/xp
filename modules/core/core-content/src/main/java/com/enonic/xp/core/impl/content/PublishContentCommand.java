@@ -158,7 +158,7 @@ public class PublishContentCommand
         {
             return;
         }
-        
+
         SetPublishInfoCommand.create( this ).
             nodeIds( nodesToPush ).
             contentPublishInfo( contentPublishInfo ).
@@ -284,10 +284,13 @@ public class PublishContentCommand
             Preconditions.checkNotNull( contentIds );
             if ( contentPublishInfo != null )
             {
-                final Instant publishFromInstant = contentPublishInfo.getFrom();
                 final Instant publishToInstant = contentPublishInfo.getTo();
-                Preconditions.checkArgument( publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
-                                             "'Publish to' must be set after 'publish from'" );
+                if ( publishToInstant != null )
+                {
+                    final Instant publishFromInstant = contentPublishInfo.getFrom();
+                    Preconditions.checkArgument( publishToInstant.compareTo( publishFromInstant ) >= 0,
+                                                 "'Publish to' must be set after 'Publish from'." );
+                }
             }
         }
 
