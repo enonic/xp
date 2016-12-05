@@ -189,8 +189,7 @@ public class NodeExporter
         for ( final AttachedBinary attachedBinary : relativeNode.getAttachedBinaries() )
         {
             final BinaryReference reference = attachedBinary.getBinaryReference();
-            final Node node = this.nodeService.getById( relativeNode.id() );
-            final ByteSource byteSource = this.nodeService.getBinary( node, reference );
+            final ByteSource byteSource = this.nodeService.getBinary( relativeNode.id(), reference );
 
             if ( !dryRun )
             {

@@ -67,7 +67,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         var publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this, false));
         this.actionButton = this.addAction(publishAction, true, true);
-        this.actionButton.setEnabled(false);
+        this.lockControls();
     }
 
     private initShowScheduleAction() {
@@ -75,8 +75,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
         this.showScheduleDialogButton = this.addAction(showScheduleAction, true, true);
         this.showScheduleDialogButton.setEnabled(true);
-
-
     }
 
     protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -117,7 +115,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
     close() {
         super.close();
         this.childrenCheckbox.setChecked(false);
-        this.hideLoadingSpinner();
     }
 
 
@@ -149,12 +146,12 @@ export class ContentPublishDialog extends ProgressBarDialog {
             return this.reloadPublishDependencies(childrenNotLoadedYet);
         } else {
             // apply the stash to avoid extra heavy request
-            this.actionButton.setEnabled(false);
+            this.lockControls();
             this.loadMask.show();
             setTimeout(() => {
                 this.setDependantItems(stashedItems.slice());
                 this.centerMyself();
-                this.actionButton.setEnabled(true);
+                this.unlockControls();
                 this.loadMask.hide();
             }, 100);
             return wemQ<void>(null);
@@ -165,7 +162,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         if (this.isProgressBarEnabled()) {
             return wemQ<void>(null);
         }
-        this.actionButton.setEnabled(false);
+        this.lockControls();
         this.loadMask.show();
         this.disableCheckbox();
 
@@ -174,8 +171,12 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let ids = this.getContentToPublishIds(),
             loadChildren = this.childrenCheckbox.isChecked();
 
-        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().setIds(ids).setExcludedIds(
-            this.excludedIds).setIncludeChildren(loadChildren).build();
+        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.
+            create().
+            setIds(ids).
+            setExcludedIds(this.excludedIds).
+            setIncludeChildren(loadChildren).
+            build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
@@ -297,7 +298,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private doPublish(scheduled: boolean = false) {
 
-        this.showLoadingSpinner();
+        this.lockControls();
 
         this.setSubTitle(this.countTotal() + " items are being published...");
 
@@ -316,7 +317,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         publishRequest.sendAndParse().then((taskId: api.task.TaskId) => {
             this.pollTask(taskId);
         }).catch((reason) => {
-            this.hideLoadingSpinner();
+            this.unlockControls();
             this.close();
             if (reason && reason.message) {
                 api.notify.showError(reason.message);
@@ -351,7 +352,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         let canPublish = count > 0 && this.areItemsAndDependantsValid();
 
-        this.actionButton.setEnabled(canPublish);
+        this.toggleControls(canPublish);
         if (canPublish) {
             this.getButtonRow().focusDefaultAction();
             this.updateTabbable();

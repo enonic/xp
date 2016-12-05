@@ -177,13 +177,16 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
                 var contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
                     compareResults);
-                var metadata = contentQueryResult.getMetadata();
-                if (metadata.getTotalHits() > metadata.getHits()) {
-                    contents.push(new ContentSummaryAndCompareStatus());
-                }
-                this.filter(contents);
-                this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
-                this.notifyLoaded();
+                ContentSummaryAndCompareStatusFetcher.updateReadOnly(contents).then(() => {
+                    var metadata = contentQueryResult.getMetadata();
+                    if (metadata.getTotalHits() > metadata.getHits()) {
+                        contents.push(new ContentSummaryAndCompareStatus());
+                    }
+                    this.filter(contents);
+                    this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
+                    this.notifyLoaded();
+                })
+                
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -259,16 +262,20 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     var contentSummaries = contentQueryResult.getContents();
                     var compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
                     return compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
-                        var list = parentNode.getChildren().map((el) => {
+                        var contents = parentNode.getChildren().map((el) => {
                             return el.getData();
                         }).slice(0, from).concat(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
                             compareResults));
-                        var meta = contentQueryResult.getMetadata();
-                        if (from + meta.getHits() < meta.getTotalHits()) {
-                            list.push(new ContentSummaryAndCompareStatus());
-                        }
-                        parentNode.setMaxChildren(meta.getTotalHits());
-                        return list;
+
+                        return ContentSummaryAndCompareStatusFetcher.updateReadOnly(contents).then(() => {
+                            var meta = contentQueryResult.getMetadata();
+                            if (from + meta.getHits() < meta.getTotalHits()) {
+                                contents.push(new ContentSummaryAndCompareStatus());
+                            }
+                            parentNode.setMaxChildren(meta.getTotalHits());
+                            return contents;
+                        });
+
                     });
                 });
         }
@@ -696,5 +703,18 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         return wemQ.all(parallelPromises).spread<void>(() => {
             return wemQ(null);
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+    }
+
+    protected handleItemMetadata(row: number) {
+        var node = this.getItem(row);
+        if (this.isEmptyNode(node)) {
+            return {cssClasses: 'empty-node'};
+        }
+
+        if (node.getData().isReadOnly()) {
+            return {cssClasses: "readonly' title='This content is read-only'"};
+        }
+
+        return null;
     }
 }

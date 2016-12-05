@@ -4,6 +4,7 @@ module api.content.resource {
     import BatchContentRequest = api.content.resource.BatchContentRequest;
     import ContentResponse = api.content.resource.result.ContentResponse;
     import CompareContentResults = api.content.resource.result.CompareContentResults;
+    import resolve = Q.resolve;
 
     export class ContentSummaryAndCompareStatusFetcher {
 
@@ -16,11 +17,16 @@ module api.content.resource {
                 (response: ContentResponse<ContentSummary>)=> {
                     CompareContentRequest.fromContentSummaries(response.getContents()).sendAndParse().then(
                         (compareResults: CompareContentResults) => {
-                            var result = new ContentResponse<ContentSummaryAndCompareStatus>(
-                                ContentSummaryAndCompareStatusFetcher.updateCompareStatus(response.getContents(), compareResults),
-                                response.getMetadata()
-                            );
-                            deferred.resolve(result);
+                            var contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(
+                                response.getContents(), compareResults);
+
+                            ContentSummaryAndCompareStatusFetcher.updateReadOnly(contents).then(() => {
+                                var result = new ContentResponse<ContentSummaryAndCompareStatus>(
+                                    contents,
+                                    response.getMetadata()
+                                );
+                                deferred.resolve(result);
+                            })
                         });
                 });
 
@@ -122,6 +128,22 @@ module api.content.resource {
             });
 
             return list;
+        }
+
+        static updateReadOnly(contents: ContentSummaryAndCompareStatus[]): wemQ.Promise<any> {
+            return new isContentReadOnlyRequest(contents.map(content => content.getContentId())).sendAndParse().then(
+                (readOnlyContentIds: string[]) => {
+                    readOnlyContentIds.forEach((id: string) => {
+                        contents.some(content => {
+                            if (content.getId() === id) {
+                                content.setReadOnly(true);
+                                return true;
+                            }
+                        })
+                    });
+
+                    return true;
+                });
         }
     }
 }

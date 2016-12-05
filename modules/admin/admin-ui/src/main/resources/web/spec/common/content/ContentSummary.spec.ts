@@ -58,7 +58,8 @@ module ContentSummarySpec {
             owner: "user:myStore:me",
             path: "/my_a_content",
             publish: {
-                from: "2016-11-02T10:36:00Z"
+                from: "2016-11-02T10:36:00Z",
+                to: "2017-11-02T10:36:00Z",
             },
             thumbnail: null,
             type: "myapplication:my_type"

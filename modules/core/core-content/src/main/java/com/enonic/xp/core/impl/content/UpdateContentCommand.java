@@ -11,6 +11,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
@@ -87,7 +88,7 @@ final class UpdateContentCommand
         editedContent = Content.create( editedContent ).
             valid( validated ).
             build();
-        editedContent = processContent( editedContent );
+        editedContent = processContent( contentBeforeChange, editedContent );
         editedContent = attachThumbnail( editedContent );
         editedContent = setModifiedTime( editedContent );
 
@@ -104,16 +105,16 @@ final class UpdateContentCommand
         return translator.fromNode( editedNode, true );
     }
 
-    private Content processContent( Content editedContent )
+    private Content processContent( final Content originalContent, Content editedContent )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( editedContent.getType() ) );
 
-        editedContent = runContentProcessors( editedContent, contentType );
+        editedContent = runContentProcessors( originalContent, editedContent, contentType );
 
         return editedContent;
     }
 
-    private Content runContentProcessors( Content editedContent, final ContentType contentType )
+    private Content runContentProcessors( final Content originalContent, Content editedContent, final ContentType contentType )
     {
         for ( final ContentProcessor contentProcessor : this.contentProcessors )
         {
@@ -123,6 +124,9 @@ final class UpdateContentCommand
                     contentType( contentType ).
                     mediaInfo( mediaInfo ).
                     createAttachments( params.getCreateAttachments() ).
+                    originalContent( originalContent ).
+                    editedContent( editedContent ).
+                    modifier( getCurrentUser() ).
                     build() );
 
                 editedContent = updateContentWithProcessedData( editedContent, result );
@@ -178,6 +182,17 @@ final class UpdateContentCommand
     private void validateBlockingChecks( final Content editedContent )
     {
         validatePropertyTree( editedContent );
+
+        final ContentPublishInfo publishInfo = editedContent.getPublishInfo();
+        if ( publishInfo != null )
+        {
+            final Instant publishFromInstant = publishInfo.getFrom();
+            final Instant publishToInstant = publishInfo.getTo();
+            Preconditions.checkArgument(
+                publishFromInstant == null || publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
+                "'Publish to' must be set after 'publish from'" );
+        }
+        
         if ( editedContent.getType().isImageMedia() )
         {
             validateImageMediaProperties( editedContent );

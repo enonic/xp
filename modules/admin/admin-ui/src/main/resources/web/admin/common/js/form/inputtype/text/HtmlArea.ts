@@ -16,6 +16,9 @@ module api.form.inputtype.text {
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
     import ElementHelper = api.dom.ElementHelper;
     import ApplicationKey = api.application.ApplicationKey
+    import RoleKeys = api.security.RoleKeys;
+    import LoginResult = api.security.auth.LoginResult;
+    import Promise = Q.Promise;
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
@@ -33,6 +36,9 @@ module api.form.inputtype.text {
             exclude: ""
         };
 
+        private authRequest: Promise<void>;
+        private canSeeCode: boolean;
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
             super(config);
@@ -44,6 +50,13 @@ module api.form.inputtype.text {
             this.applicationKeys = config.site ? config.site.getApplicationKeys() : [];
 
             this.readConfig(config.inputConfig);
+
+            this.authRequest =
+                new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                    this.canSeeCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
+                                                                                    RoleKeys.CMS_ADMIN.equals(principal) ||
+                                                                                    RoleKeys.CMS_EXPERT.equals(principal));
+                });
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
@@ -77,7 +90,13 @@ module api.form.inputtype.text {
             this.editors.push({id: editorId, textAreaWrapper: textAreaWrapper, property: property, hasStickyToolbar: false});
 
             textAreaEl.onRendered(() => {
-                this.initEditor(editorId, property, textAreaWrapper);
+                if (this.authRequest.isFulfilled()) {
+                    this.initEditor(editorId, property, textAreaWrapper);
+                } else {
+                    this.authRequest.then(() => {
+                        this.initEditor(editorId, property, textAreaWrapper);
+                    })
+                }
             });
             textAreaEl.onRemoved(() => {
                 this.destroyEditor(editorId);
@@ -101,7 +120,7 @@ module api.form.inputtype.text {
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
             occurrence.getChildren().forEach((child) => {
-                if(ObjectHelper.iFrameSafeInstanceOf(child, api.ui.text.TextArea)) {
+                if (ObjectHelper.iFrameSafeInstanceOf(child, api.ui.text.TextArea)) {
                     (<api.ui.text.TextArea>child).resetBaseValues();
                 }
             })
@@ -178,21 +197,16 @@ module api.form.inputtype.text {
                 textAreaWrapper.addClass(focusedEditorCls);
             };
 
-            new HTMLAreaBuilder().
-                setSelector('textarea.' + id.replace(/\./g, '_')).
-                setAssetsUri(baseUrl).setInline(false).onCreateDialog(createDialogHandler).
-                setFocusHandler(focusHandler.bind(this)).
-                setBlurHandler(blurHandler.bind(this)).
-                setKeydownHandler(keydownHandler).setKeyupHandler(notifyValueChanged).setNodeChangeHandler(
-                notifyValueChanged).setContentPath(this.contentPath).setContent(this.content).setApplicationKeys(this.applicationKeys).
-                setTools(this.tools).
-                createEditor().
-                then((editor: HtmlAreaEditor) => {
-                    this.setEditorContent(id, property);
-                    if (this.notInLiveEdit()) {
-                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
-                    }
-                    this.removeTooltipFromEditorArea(textAreaWrapper);
+            new HTMLAreaBuilder().setSelector('textarea.' + id.replace(/\./g, '_')).setAssetsUri(baseUrl).setInline(false).onCreateDialog(
+                createDialogHandler).setFocusHandler(focusHandler.bind(this)).setBlurHandler(blurHandler.bind(this)).setKeydownHandler(
+                keydownHandler).setKeyupHandler(notifyValueChanged).setNodeChangeHandler(
+                notifyValueChanged).setContentPath(this.contentPath).setContent(this.content).setApplicationKeys(
+                this.applicationKeys).setTools(this.tools).setCanSeeCode(this.canSeeCode).createEditor().then((editor: HtmlAreaEditor) => {
+                this.setEditorContent(id, property);
+                if (this.notInLiveEdit()) {
+                    this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
+                }
+                this.removeTooltipFromEditorArea(textAreaWrapper);
 
                 var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
                     ".remove-button")[0];
@@ -203,13 +217,13 @@ module api.form.inputtype.text {
                     isMouseOverRemoveOccurenceButton = false;
                 });
 
-                    this.onShown((event) => {
-                        // invoke auto resize on shown in case contents have been updated while inactive
-                        if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
-                            editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
-                        }
-                    });
+                this.onShown((event) => {
+                    // invoke auto resize on shown in case contents have been updated while inactive
+                    if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
+                        editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
+                    }
                 });
+            });
         }
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
@@ -228,7 +242,7 @@ module api.form.inputtype.text {
             var scrollHandler = api.util.AppHelper.debounce((e) => {
                 this.updateStickyEditorToolbar(inputOccurence, this.getEditorInfo(editorId));
             }, 20, false);
-            
+
             wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", (event) => {
                 scrollHandler();
             });

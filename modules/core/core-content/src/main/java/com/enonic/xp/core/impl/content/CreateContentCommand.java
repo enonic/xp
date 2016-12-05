@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
@@ -428,6 +430,16 @@ final class CreateContentCommand
             super.validate();
             Preconditions.checkNotNull( params, "params must be given" );
             Preconditions.checkNotNull( formDefaultValuesProcessor );
+
+            final ContentPublishInfo publishInfo = params.getContentPublishInfo();
+            if ( publishInfo != null )
+            {
+                final Instant publishFromInstant = publishInfo.getFrom();
+                final Instant publishToInstant = publishInfo.getTo();
+                Preconditions.checkArgument(
+                    publishFromInstant == null || publishToInstant == null || publishToInstant.compareTo( publishFromInstant ) > 0,
+                    "'Publish to' must be set after 'publish from'" );
+            }
         }
 
         public CreateContentCommand build()

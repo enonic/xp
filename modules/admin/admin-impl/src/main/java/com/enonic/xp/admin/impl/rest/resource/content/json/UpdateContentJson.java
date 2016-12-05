@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
@@ -36,13 +38,16 @@ public final class UpdateContentJson
                        @JsonProperty("meta") final List<ExtraDataJson> extraDataJsonList,
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("requireValid") final String requireValid,
-                       @JsonProperty("owner") final String owner,
-                       @JsonProperty("language") final String language )
+                       @JsonProperty("owner") final String owner, @JsonProperty("language") final String language,
+                       @JsonProperty("publishFrom") final String publishFrom, @JsonProperty("publishTo") final String publishTo )
     {
         this.contentName = ContentName.from( contentName );
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( propertyArrayJsonList );
         final ExtraDatas extraDatas = parseExtradata( extraDataJsonList );
+        final ContentPublishInfo.Builder publishInfo = ContentPublishInfo.create();
+        publishInfo.from( StringUtils.isNotEmpty( publishFrom ) ? Instant.parse( publishFrom ) : null );
+        publishInfo.to( StringUtils.isNotEmpty( publishTo ) ? Instant.parse( publishTo ) : null );
 
         this.updateContentParams = new UpdateContentParams().
             requireValid( Boolean.valueOf( requireValid ) ).
@@ -53,6 +58,8 @@ public final class UpdateContentJson
                 edit.extraDatas = extraDatas;
                 edit.displayName = displayName;
                 edit.owner = StringUtils.isNotEmpty( owner ) ? PrincipalKey.from( owner ) : null;
+                edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
+                edit.publishInfo = publishInfo.build();
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
             } );
 
