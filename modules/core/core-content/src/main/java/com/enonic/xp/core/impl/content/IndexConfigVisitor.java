@@ -41,7 +41,7 @@ public class IndexConfigVisitor
         }
     }
 
-    private final PropertyPath createPath( final Input input )
+    private PropertyPath createPath( final Input input )
     {
         if ( this.parentElement == null )
         {
