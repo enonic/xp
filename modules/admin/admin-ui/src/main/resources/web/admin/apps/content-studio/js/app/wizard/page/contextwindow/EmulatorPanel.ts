@@ -39,6 +39,11 @@ export class EmulatorPanel extends api.ui.panel.Panel {
 
             this.liveEditPage.setWidth(width + units);
             this.liveEditPage.setHeight(height + units);
+
+            if (units === "px") {
+                this.updateLiveEditFrameContainerHeight(height);
+            }
+
         });
 
         wemjq(this.getHTMLElement()).on("click", ".rotate", (event: JQueryEventObject) => {
@@ -58,5 +63,48 @@ export class EmulatorPanel extends api.ui.panel.Panel {
                 this.grid.setActiveCell(0, 0); // select first option
             }
         });
+    }
+
+    private updateLiveEditFrameContainerHeight(height: number) { // this helps to put horizontal scrollbar in the bottom of live edit frame
+        var body = document.body,
+            html = document.documentElement;
+
+        var pageHeight = Math.max(body.scrollHeight, body.offsetHeight,
+            html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+        var frameParent = this.liveEditPage.getIFrame().getHTMLElement().parentElement;
+        if (height > pageHeight) {
+            frameParent.style.height = "";
+            frameParent.classList.add("overflow");
+        }
+        else {
+            frameParent.style.height = height + this.getScrollbarWidth() + "px";
+            frameParent.classList.remove("overflow");
+        }
+    }
+
+    private getScrollbarWidth(): number {
+        var outer = document.createElement("div");
+        outer.style.visibility = "hidden";
+        outer.style.width = "100px";
+        outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+
+        document.body.appendChild(outer);
+
+        var widthNoScroll = outer.offsetWidth;
+        // force scrollbars
+        outer.style.overflow = "scroll";
+
+        // add innerdiv
+        var inner = document.createElement("div");
+        inner.style.width = "100%";
+        outer.appendChild(inner);
+
+        var widthWithScroll = inner.offsetWidth;
+
+        // remove divs
+        outer.parentNode.removeChild(outer);
+
+        return widthNoScroll - widthWithScroll;
     }
 }
