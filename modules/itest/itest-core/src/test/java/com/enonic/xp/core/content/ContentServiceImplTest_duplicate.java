@@ -1,9 +1,13 @@
 package com.enonic.xp.core.content;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.context.Context;
@@ -61,6 +65,64 @@ public class ContentServiceImplTest_duplicate
         assertEquals( childrenLevel2.getPath().toString() + "-copy", duplicatedContent.getPath().toString() );
     }
 
+    @Test
+    public void test_not_published_yet_master()
+        throws Exception
+    {
+        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
+                                            {
+                                                final Content rootContent = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                                                    from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                                                    build() );
+
+                                                final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
+                                                final Content duplicatedContent = contentService.duplicate( params );
+
+                                                assertNotNull( duplicatedContent );
+                                                assertNull( duplicatedContent.getPublishInfo().getFrom() );
+                                                return null;
+                                            } );
+    }
+
+    @Test
+    public void test_expired_master()
+        throws Exception
+    {
+        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
+                                            {
+                                                final Content rootContent = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                                                    to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                                                    build() );
+
+                                                final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
+                                                final Content duplicatedContent = contentService.duplicate( params );
+
+                                                assertNotNull( duplicatedContent );
+                                                assertNull( duplicatedContent.getPublishInfo().getTo() );
+                                                return null;
+                                            } );
+    }
+
+    @Test
+    public void test_published_master()
+        throws Exception
+    {
+        AUTHORIZED_MASTER_CONTEXT.callWith( () ->
+                                            {
+                                                final Content rootContent = createContent( ContentPath.ROOT, ContentPublishInfo.create().
+                                                    from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                                                    to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
+                                                    build() );
+
+                                                final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
+                                                final Content duplicatedContent = contentService.duplicate( params );
+
+                                                assertNotNull( duplicatedContent );
+                                                assertNull( duplicatedContent.getPublishInfo().getTo() );
+                                                assertNull( duplicatedContent.getPublishInfo().getFrom() );
+                                                return null;
+                                            } );
+    }
     @Test
     public void some_metadata_reset_on_duplicate()
         throws Exception
