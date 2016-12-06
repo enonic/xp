@@ -10,7 +10,6 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesResult;
-import com.enonic.xp.content.PublishStatus;
 
 public class CompareContentResultsJson
 {
