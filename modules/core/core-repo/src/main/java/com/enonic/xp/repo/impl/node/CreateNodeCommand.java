@@ -15,8 +15,6 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -27,7 +25,6 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -182,6 +179,7 @@ public final class CreateNodeCommand
         return null;
     }
 
+
     private Long doResolveManualOrderValue( final Node parentNode )
     {
         final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
@@ -192,74 +190,12 @@ public final class CreateNodeCommand
         }
         else
         {
-            return resolveFromQuery( parentNode, insertManualStrategy );
+            return ResolveInsertOrderValueCommand.create( this ).
+                parentPath( parentNode.path() ).
+                insertManualStrategy( insertManualStrategy ).
+                build().
+                execute();
         }
-    }
-
-    private Long resolveFromQuery( final Node parentNode, final InsertManualStrategy insertManualStrategy )
-    {
-        RefreshCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            refreshMode( RefreshMode.SEARCH ).
-            build().
-            execute();
-
-        final ChildOrder childOrder =
-            insertManualStrategy.equals( InsertManualStrategy.LAST ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
-
-        final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
-            parentPath( parentNode.path() ).
-            childOrder( childOrder ).
-            size( 1 ).
-            build() );
-
-        if ( findNodesByParentResult.isEmpty() )
-        {
-            return NodeManualOrderValueResolver.START_ORDER_VALUE;
-        }
-        else
-        {
-            if ( InsertManualStrategy.LAST.equals( insertManualStrategy ) )
-            {
-                return insertAsLast( findNodesByParentResult );
-            }
-            else
-            {
-                return insertAsFirst( findNodesByParentResult );
-            }
-        }
-    }
-
-    private Long insertAsFirst( final FindNodesByParentResult findNodesByParentResult )
-    {
-        final Node first = GetNodeByIdCommand.create( this ).
-            id( findNodesByParentResult.getNodeIds().first() ).
-            build().
-            execute();
-
-        if ( first.getManualOrderValue() == null )
-        {
-            throw new IllegalArgumentException( "Expected that node " + first +
-                                                    " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
-        }
-
-        return first.getManualOrderValue() + NodeManualOrderValueResolver.ORDER_SPACE;
-    }
-
-    private Long insertAsLast( final FindNodesByParentResult findNodesByParentResult )
-    {
-        final Node first = GetNodeByIdCommand.create( this ).
-            id( findNodesByParentResult.getNodeIds().first() ).
-            build().
-            execute();
-
-        if ( first.getManualOrderValue() == null )
-        {
-            throw new IllegalArgumentException( "Expected that node " + first +
-                                                    " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
-        }
-
-        return first.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
     }
 
     private void verifyNotExistsAlready()
