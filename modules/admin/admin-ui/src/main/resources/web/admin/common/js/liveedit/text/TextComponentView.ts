@@ -225,7 +225,6 @@ module api.liveedit.text {
                     console.log('dblclick occured after ' + timeSinceLastClick + 'ms, notifying dbl click', this);
                     // end the group started by the first click first
                     console.groupEnd();
-                    console.groupEnd();
                 }
                 clearTimeout(this.singleClickTimer);
                 this.doHandleDbClick(event);
@@ -363,6 +362,7 @@ module api.liveedit.text {
                 this.htmlAreaEditor.focus();
                 wemjq(this.htmlAreaEditor.getElement()).simulate("click");
             }
+            this.startPageTextEditMode();
         }
 
         private collapseEditorMenuItems() {
