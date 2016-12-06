@@ -1020,7 +1020,9 @@ module api.ui.treegrid {
             this.grid.setSelectedRows(selection);
         }
 
-        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false) {
+        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false): wemQ.Promise<boolean> {
+            var deferred = wemQ.defer<boolean>();
+            
             node = node || this.root.getCurrentRoot();
 
             if (node) {
@@ -1034,6 +1036,7 @@ module api.ui.treegrid {
                             this.expandNode(child);
                         });
                     }
+                    deferred.resolve(true);
                 } else {
                     this.mask();
                     this.fetchData(node)
@@ -1046,12 +1049,16 @@ module api.ui.treegrid {
                                     this.expandNode(child);
                                 });
                             }
+                            deferred.resolve(true);
                         }).catch((reason: any) => {
                             this.handleError(reason);
+                        deferred.resolve(false);
                         }).finally(() => {
                         }).done(() => this.notifyLoaded());
                 }
             }
+
+            return deferred.promise;
         }
 
         protected updateExpanded() {
