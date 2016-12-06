@@ -60,7 +60,7 @@ export class ContentRowFormatter {
 
             compareStatusText = api.content.CompareStatusFormatter.formatStatus(compareStatus);
 
-            if (compareStatus == CompareStatus.EQUAL && PublishStatus[publishStatus] && publishStatus != PublishStatus.ONLINE) {
+            if (PublishStatus[publishStatus] && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
                 statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(CompareStatus[value]));
                 statusEl.getEl().setText(compareStatusText);
                 statusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));

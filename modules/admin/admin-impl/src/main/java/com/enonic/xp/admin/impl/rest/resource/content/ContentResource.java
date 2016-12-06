@@ -1240,7 +1240,7 @@ public final class ContentResource
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
         final GetPublishStatusesResult getPublishStatusesResult =
-            contentService.getPublishStatuses( new GetPublishStatusesParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+            contentService.getPublishStatuses( new GetPublishStatusesParams( contentIds, ContentConstants.BRANCH_DRAFT ) );
         return new CompareContentResultsJson( compareResults, getPublishStatusesResult );
     }
 
