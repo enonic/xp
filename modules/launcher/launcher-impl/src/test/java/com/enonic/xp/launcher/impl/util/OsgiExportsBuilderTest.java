@@ -13,6 +13,7 @@ public class OsgiExportsBuilderTest
 {
     private OsgiExportsBuilder builder;
 
+
     @Before
     public void setup()
     {
