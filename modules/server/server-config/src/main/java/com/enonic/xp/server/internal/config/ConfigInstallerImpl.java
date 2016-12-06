@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
@@ -55,7 +56,10 @@ public final class ConfigInstallerImpl
         final String fileName = file.getName();
         final Hashtable<String, Object> newMap = this.loader.load( file );
         final Configuration config = getConfiguration( fileName, pid );
+
         final Hashtable<String, Object> oldMap = toHashTable( config.getProperties() );
+        oldMap.remove( Constants.SERVICE_PID );
+        oldMap.remove( FILENAME_PROP );
 
         if ( newMap.equals( oldMap ) )
         {
