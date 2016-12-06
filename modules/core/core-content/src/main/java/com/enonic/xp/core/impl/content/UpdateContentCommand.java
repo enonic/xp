@@ -190,7 +190,7 @@ final class UpdateContentCommand
             if ( publishToInstant != null )
             {
                 final Instant publishFromInstant = publishInfo.getFrom();
-                Preconditions.checkNotNull( publishFromInstant, "'Publish from' must be set if 'Publish from' is set." );
+                Preconditions.checkArgument( publishFromInstant != null, "'Publish from' must be set if 'Publish from' is set." );
                 Preconditions.checkArgument( publishToInstant.compareTo( publishFromInstant ) >= 0,
                                              "'Publish to' must be set after 'Publish from'." );
             }
