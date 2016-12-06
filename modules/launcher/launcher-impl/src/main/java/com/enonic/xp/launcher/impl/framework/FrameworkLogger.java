@@ -10,7 +10,7 @@ final class FrameworkLogger
 {
     private final Logger logger;
 
-    public FrameworkLogger()
+    FrameworkLogger()
     {
         this.logger = LoggerFactory.getLogger( getClass() );
     }
