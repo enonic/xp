@@ -238,7 +238,6 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 build() ).
             build() );
 
-
         final PropertyTree data2 = new PropertyTree();
         data2.addString( "title", "fisk" );
 
@@ -251,7 +250,6 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
-
 
         refresh();
 
