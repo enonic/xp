@@ -181,7 +181,7 @@ module api.app.browse {
         }
 
         refreshFilter() {
-            if (this.filterPanel && this.treeGrid.isFiltered()) {
+            if (this.filterPanel && (this.treeGrid.isFiltered() || this.filterPanel.isVisible())) {
                 this.filterPanel.refresh();
             }
         }
