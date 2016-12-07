@@ -5,6 +5,9 @@ import DateTimePicker = api.ui.time.DateTimePicker;
 
 export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
+    private formView: api.form.FormView;
+    private propertySet: api.data.PropertySet;
+
     private confirmDeleteButton: api.ui.dialog.DialogButton;
 
     private confirmScheduleAction: api.ui.Action;
@@ -27,6 +30,8 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
         this.initConfirmScheduleAction();
 
         this.initScheduleInputs();
+
+        this.initFormView();
 
         this.addCancelButtonToBottom("Back");
     }
@@ -51,6 +56,38 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
     onSchedule(onScheduleCallback: () => void) {
         this.onScheduleCallback = onScheduleCallback;
+    }
+
+    private initFormView() {
+        var formBuilder = new api.form.FormBuilder().
+            addFormItem(new api.form.InputBuilder().
+                setName("publishFrom").
+                setInputType(api.content.form.inputtype.time.DateTime.getName()).
+                setLabel("Publish From--2").
+                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
+                setInputTypeConfig({}).
+                setMaximizeUIInputWidth(true).
+                build()).
+            addFormItem(new api.form.InputBuilder().
+                setName("publishTo").
+                setInputType(api.content.form.inputtype.time.DateTime.getName()).
+                setLabel("Publish To--").
+                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                setInputTypeConfig({}).
+                setMaximizeUIInputWidth(true).
+                build());
+
+        this.propertySet = new api.data.PropertyTree().getRoot();
+        this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
+        this.formView.addClass("display-validation-errors");
+        this.formView.layout().then(() => {
+            this.appendChildToContentPanel(this.formView);
+            this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                console.log('event: ' + event);
+                this.confirmScheduleAction.setEnabled(event.isValid());
+            });
+            this.confirmScheduleAction.setEnabled(this.formView.isValid());
+        });
     }
 
     private addSubtitle() {
@@ -133,6 +170,11 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     resetPublishDates() {
+        console.log('reset');
+        this.propertySet.reset();
+        this.propertySet.setLocalDateTime("publishFrom", 0, api.util.LocalDateTime.fromDate(new Date()));
+        this.formView.update(this.propertySet);
+
         this.resetFromDate();
         this.resetToDate();
     }
