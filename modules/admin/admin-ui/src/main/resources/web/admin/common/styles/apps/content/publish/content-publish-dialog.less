@@ -115,6 +115,12 @@
     color: @admin-white;
   }
 
+  .dialog-buttons {
+    button.confirm-schedule-action {
+      .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
+    }
+  }
+
   .dialog-content {
     .date-time-picker {
       margin: 5px 0px 10px 0px;

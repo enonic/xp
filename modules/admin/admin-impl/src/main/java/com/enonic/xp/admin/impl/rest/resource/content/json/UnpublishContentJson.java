@@ -8,6 +8,8 @@ public class UnpublishContentJson
 
     private boolean includeChildren;
 
+    private boolean clearPublishInfo;
+
     public Set<String> getIds()
     {
         return ids;
@@ -18,10 +20,21 @@ public class UnpublishContentJson
         return includeChildren;
     }
 
+    public boolean isClearPublishInfo()
+    {
+        return clearPublishInfo;
+    }
+
     @SuppressWarnings("unused")
     public void setIncludeChildren( final boolean includeChildren )
     {
         this.includeChildren = includeChildren;
+    }
+
+    @SuppressWarnings("unuser")
+    public void setClearPublishInfo( final boolean clearPublishInfo )
+    {
+        this.clearPublishInfo = clearPublishInfo;
     }
 
     @SuppressWarnings("unused")

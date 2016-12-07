@@ -12,6 +12,8 @@ public final class UnpublishContentParams
 
     private final boolean includeChildren;
 
+    private final boolean clearPublishInfo;
+
     private final Branch unpublishBranch;
 
     private final PushContentListener pushContentListener;
@@ -21,6 +23,7 @@ public final class UnpublishContentParams
         contentIds = builder.contentIds;
         unpublishBranch = builder.unpublishBranch;
         includeChildren = builder.includeChildren;
+        clearPublishInfo = builder.clearPublishInfo;
         pushContentListener = builder.pushContentListener;
     }
 
@@ -39,6 +42,11 @@ public final class UnpublishContentParams
         return includeChildren;
     }
 
+    public boolean isClearPublishInfo()
+    {
+        return clearPublishInfo;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -51,14 +59,15 @@ public final class UnpublishContentParams
             return false;
         }
         final UnpublishContentParams that = (UnpublishContentParams) o;
-        return includeChildren == that.includeChildren && Objects.equals( contentIds, that.contentIds ) &&
+        return includeChildren == that.includeChildren && clearPublishInfo == that.clearPublishInfo &&
+            Objects.equals( contentIds, that.contentIds ) &&
             Objects.equals( unpublishBranch, that.unpublishBranch );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentIds, includeChildren, unpublishBranch );
+        return Objects.hash( contentIds, includeChildren, clearPublishInfo, unpublishBranch );
     }
 
     public static Builder create()
@@ -78,6 +87,8 @@ public final class UnpublishContentParams
         private Branch unpublishBranch;
 
         private boolean includeChildren;
+
+        private boolean clearPublishInfo;
 
         private PushContentListener pushContentListener;
 
@@ -100,6 +111,12 @@ public final class UnpublishContentParams
         public Builder includeChildren( final boolean val )
         {
             includeChildren = val;
+            return this;
+        }
+
+        public Builder clearPublishInfo( final boolean val )
+        {
+            clearPublishInfo = val;
             return this;
         }
 

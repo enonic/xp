@@ -60,7 +60,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initConfirmScheduleAction() {
-        this.confirmScheduleAction = new api.ui.Action("Schedule");
+        this.confirmScheduleAction = new api.ui.Action("Publish");
 
         this.confirmScheduleAction.setIconClass("confirm-schedule-action");
         this.confirmScheduleAction.onExecuted(() => {
