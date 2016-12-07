@@ -14,16 +14,16 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     private publishAction: Action;
     private publishTreeAction: Action;
     private unpublishAction: Action;
-    private publishMobileAction:Action;
+    private publishMobileAction: Action;
     private contentStateSpan: SpanEl;
     private contentCanBePublished: boolean = false;
     private userCanPublish: boolean = true;
     private leafContent: boolean = true;
     private contentCompareStatus: CompareStatus;
     private publishStatus: PublishStatus;
-    private publishButtonForMobile:ActionButton;
+    private publishButtonForMobile: ActionButton;
 
-    constructor(publish:Action, publishTree:Action, unpublish:Action, publishMobile:Action) {
+    constructor(publish: Action, publishTree: Action, unpublish: Action, publishMobile: Action) {
         super("toolbar-publish-controls");
 
         this.publishAction = publish;
@@ -86,16 +86,16 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
         let canBeUnpublished = this.contentCompareStatus != CompareStatus.NEW && this.contentCompareStatus != CompareStatus.UNKNOWN &&
                                this.userCanPublish;
-        
+
         this.publishAction.setEnabled(canBePublished);
         this.publishTreeAction.setEnabled(canTreeBePublished);
         this.unpublishAction.setEnabled(canBeUnpublished);
         this.publishMobileAction.setEnabled(canBePublished);
         this.publishMobileAction.setVisible(canBePublished);
 
-        this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus), false);
+        this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus, this.publishStatus), false);
         this.publishButtonForMobile.setLabel("Publish " + api.content.CompareStatusFormatter.formatStatus(this.contentCompareStatus) +
-            " item");
+                                             " item");
     }
 
     public isOnline(): boolean {
@@ -114,22 +114,22 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         });
     }
 
-    private getContentStateValueForSpan(compareStatus: CompareStatus): string {
+    private getContentStateValueForSpan(compareStatus: CompareStatus, publishStatus: PublishStatus): string {
         var status = new api.dom.SpanEl();
         if (compareStatus === CompareStatus.EQUAL) {
             status.addClass("online");
         }
-        if (this.publishStatus && (this.publishStatus == PublishStatus.PENDING || this.publishStatus == PublishStatus.EXPIRED)) {
-            status.addClass(api.content.PublishStatusFormatter.formatStatus(this.publishStatus).toLowerCase())
+        if (publishStatus && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
+            status.addClass(api.content.PublishStatusFormatter.formatStatus(publishStatus).toLowerCase())
             status.setHtml(api.content.CompareStatusFormatter.formatStatus(compareStatus) + ' (' +
-                           api.content.PublishStatusFormatter.formatStatus(this.publishStatus) + ')');
+                           api.content.PublishStatusFormatter.formatStatus(publishStatus) + ')');
         } else {
             status.setHtml(api.content.CompareStatusFormatter.formatStatus(compareStatus));
         }
         return "Item is " + status.toString();
     }
 
-    public getPublishButtonForMobile():ActionButton {
+    public getPublishButtonForMobile(): ActionButton {
         return this.publishButtonForMobile;
     }
 }
