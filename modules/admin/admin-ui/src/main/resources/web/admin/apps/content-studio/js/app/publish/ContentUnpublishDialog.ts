@@ -13,6 +13,8 @@ import ListBox = api.ui.selector.list.ListBox;
 
 export class ContentUnpublishDialog extends ProgressBarDialog {
 
+    private clearPublishInfoCheckbox: api.ui.Checkbox;
+
 
     constructor() {
 
@@ -35,6 +37,8 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
         this.addCancelButtonToBottom();
 
+        this.initClearPublishInfoCheckbox();
+
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
             if (!this.isIgnoreItemsChanged()) {
                 this.reloadUnpublishDependencies().done();
@@ -48,6 +52,11 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
         super.open();
     }
 
+    close() {
+        super.close();
+        this.clearPublishInfoCheckbox.setChecked(false);
+    }
+
     private reloadUnpublishDependencies(): wemQ.Promise<void> {
         if (this.isProgressBarEnabled()) {
             return wemQ<void>(null);
@@ -56,14 +65,14 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
         this.getDependantList().clearItems();
         this.lockControls();
 
-        return this.loadDescendantIds([CompareStatus.EQUAL,CompareStatus.NEWER,CompareStatus.PENDING_DELETE]).then(() => {
+        return this.loadDescendantIds([CompareStatus.EQUAL, CompareStatus.NEWER, CompareStatus.PENDING_DELETE]).then(() => {
             this.loadDescendants(0, 20).
                 then((items: ContentSummaryAndCompareStatus[]) => {
                     this.setDependantItems(items);
 
                     // do not set requested contents as they are never going to change
 
-                this.unlockControls();
+                    this.unlockControls();
                 }).finally(() => {
                     this.loadMask.hide();
                 });
@@ -104,6 +113,13 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
         })
     }
 
+
+    private initClearPublishInfoCheckbox() {
+        this.clearPublishInfoCheckbox = api.ui.Checkbox.create().setLabelText('Clear all publish times').build();
+        this.clearPublishInfoCheckbox.addClass('clear-publish-info-check');
+        this.getButtonRow().appendChild(this.clearPublishInfoCheckbox);
+    }
+
     private doUnpublish() {
 
         this.lockControls();
@@ -111,20 +127,22 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
         this.setSubTitle(this.countTotal() + " items are being unpublished...");
 
         var selectedIds = this.getContentToUnpublishIds();
+        var clearPublishInfo = this.clearPublishInfoCheckbox.isChecked();
 
         new UnpublishContentRequest()
             .setIncludeChildren(true)
+            .setClearPublishInfo(clearPublishInfo)
             .setIds(selectedIds)
             .sendAndParse()
             .then((taskId: api.task.TaskId) => {
                 this.pollTask(taskId);
             }).catch((reason) => {
-            this.unlockControls();
-            this.close();
-            if (reason && reason.message) {
-                api.notify.showError(reason.message);
-            }
-        });
+                this.unlockControls();
+                this.close();
+                if (reason && reason.message) {
+                    api.notify.showError(reason.message);
+                }
+            });
     }
 }
 
