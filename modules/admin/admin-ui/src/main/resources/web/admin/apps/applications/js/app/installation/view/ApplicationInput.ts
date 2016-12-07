@@ -18,6 +18,8 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
     private mask: api.ui.mask.LoadMask;
     private cancelAction: Action;
 
+    private textValueChangedListeners: {(): void}[] = [];
+
     private errorPanel: api.form.ValidationRecordingViewer;
 
     private static APPLICATION_ADDRESS_MASK: string = "^(http|https)://\\S+";
@@ -37,7 +39,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             showCancel: false
         }));
 
-        this.LAST_KEY_PRESS_TIMEOUT = 1500;
+        this.LAST_KEY_PRESS_TIMEOUT = 750;
         this.cancelAction = cancelAction;
 
         this.applicationUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<Application>) => {
@@ -47,6 +49,14 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             this.textInput.setValue(names.join(', '));
         });
 
+        this.applicationUploaderEl.getUploadButton().getEl().setTabIndex(0);
+
+        this.applicationUploaderEl.getUploadButton().onKeyDown((event: KeyboardEvent) => {
+            if (api.ui.KeyHelper.isSpace(event)) {
+                this.applicationUploaderEl.showFileSelectionDialog();
+            }
+        });
+        
         this.errorPanel = new api.form.ValidationRecordingViewer();
         this.appendChild(this.errorPanel);
         this.errorPanel.hide();
@@ -59,6 +69,10 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         this.initUrlEnteredHandler();
     }
 
+    public getValue(): string {
+        return this.textInput.getValue();
+    }
+
     private initUrlEnteredHandler() {
         this.onKeyDown((event) => {
             clearTimeout(this.lastTimeKeyPressedTimer);
@@ -69,6 +83,8 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
                 this.startInstall();
                 break;
             case 27: //esc
+                break;
+            case 9: //tab
                 break;
             default :
                 this.lastTimeKeyPressedTimer = setTimeout(() => {
@@ -96,7 +112,11 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
                 this.installWithUrl(url);
                 console.log("url: " + url);
+            } else {
+                this.notifyTextValueChanged()
             }
+        } else {
+            this.notifyTextValueChanged()
         }
     }
 
@@ -142,8 +162,8 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         return this;
     }
 
-    getPlaceholder(): string {
-        return this.textInput.getPlaceholder();
+    public hasMatchInEntry(entry: string): boolean {
+        return entry.toLowerCase().indexOf(this.getValue().toLowerCase()) > -1
     }
 
     reset(): ApplicationInput {
@@ -183,5 +203,21 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
     unUploadCompleted(listener: (event: FileUploadCompleteEvent<Application>) => void) {
         this.applicationUploaderEl.unUploadCompleted(listener);
+    }
+
+    onTextValueChanged(listener: () => void) {
+        this.textValueChangedListeners.push(listener);
+    }
+
+    unTextValueChanged(listener: () => void) {
+        this.textValueChangedListeners = this.textValueChangedListeners.filter((curr) => {
+            return listener !== curr;
+        })
+    }
+
+    private notifyTextValueChanged() {
+        this.textValueChangedListeners.forEach((listener) => {
+            listener();
+        })
     }
 }
