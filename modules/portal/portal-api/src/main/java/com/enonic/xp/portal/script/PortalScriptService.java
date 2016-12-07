@@ -8,5 +8,7 @@ import com.enonic.xp.script.ScriptExports;
 @Beta
 public interface PortalScriptService
 {
+    boolean hasScript( ResourceKey script );
+
     ScriptExports execute( ResourceKey script );
 }
