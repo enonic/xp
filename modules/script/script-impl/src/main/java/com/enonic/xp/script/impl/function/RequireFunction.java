@@ -8,13 +8,13 @@ public final class RequireFunction
 {
     private final ScriptExecutor executor;
 
-    private final ResourceResolver resolver;
+    private final RequireResolver resolver;
 
     public RequireFunction( final ResourceKey script, final ScriptExecutor executor )
     {
         super( "require" );
         this.executor = executor;
-        this.resolver = new ResourceResolver( this.executor.getResourceService(), script );
+        this.resolver = new RequireResolver( this.executor.getResourceService(), script );
     }
 
     @Override
@@ -33,6 +33,6 @@ public final class RequireFunction
 
     private ResourceKey resolve( final String name )
     {
-        return this.resolver.resolveJs( name );
+        return this.resolver.resolve( name );
     }
 }
