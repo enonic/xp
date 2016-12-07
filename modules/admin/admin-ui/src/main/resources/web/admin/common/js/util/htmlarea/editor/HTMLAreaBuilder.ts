@@ -22,7 +22,7 @@ module api.util.htmlarea.editor {
         private convertUrls: boolean = false;
         private hasActiveDialog: boolean = false;
         private customToolConfig: any;
-        private canSeeCode: boolean;
+        private canSeeCode: boolean = true;
 
         private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
 
@@ -164,7 +164,7 @@ module api.util.htmlarea.editor {
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
             this.checkRequiredFieldsAreSet();
 
-            if (this.inline && !this.isToolExcluded("code")) {
+            if (this.inline && this.canSeeCode && !this.isToolExcluded("code")) {
                 this.includeTool("code");
             }
 
