@@ -54,8 +54,9 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     private addSubtitle() {
-        this.appendChildToHeader(new api.dom.H6El("schedule-publish-dialog-subtitle").setHtml(
-            "<b>Plan ahead!</b> Specify the exact time for to publish this batch of items, optionally specify when to archive items too - we'll keep you notified!",
+        this.appendChildToHeader(new api.dom.H6El("schedule-publish-dialog-subtitle").
+            setHtml("NB: Items with existing publish times will not be affected. " +
+                    "Changes to previously published items will be effective immediately.",
             false));
     }
 
@@ -98,28 +99,25 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
         var fromDate = this.fromDate.getSelectedDateTime(),
             toDate = this.toDate.getSelectedDateTime();
 
-        if (!fromDate) {
-            this.fromDate.addClass("invalid");
-        } else if (!this.fromDate.isValid()) {
+        if (!fromDate || !this.fromDate.isValid()) {
             this.fromDate.addClass("invalid");
         } else {
             this.fromDate.removeClass("invalid");
         }
 
-        if (!toDate) {
-            if (this.toDate.isValid()) {
-                this.toDate.removeClass("invalid");
-            } else {
-                this.toDate.addClass("invalid");
-            }
-        } else if (!this.toDate.isValid()) {
+        if (toDate && !this.toDate.isValid()) {
             this.toDate.addClass("invalid");
         } else {
             this.toDate.removeClass("invalid");
         }
 
         // check toDate is before fromDate
-        if (fromDate && this.fromDate.isValid() && toDate && this.toDate.isValid() && toDate < fromDate) {
+        if (fromDate && toDate && toDate < fromDate) {
+            this.toDate.addClass("invalid");
+        }
+
+        // check toDate is after now
+        if (toDate && toDate < new Date()) {
             this.toDate.addClass("invalid");
         }
 

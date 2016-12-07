@@ -16,7 +16,7 @@ var result = contextLib.run({
     },
     principals: ["role:system.admin"],
     attributes: {
-        'includeScheduledPublished': true
+        'ignorePublishTimes': true
     }
 }, callback);
 

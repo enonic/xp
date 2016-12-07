@@ -611,7 +611,7 @@ public class ContentServiceImpl
 
         final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
             branch( params.getTarget() ).
-            attribute( "includeScheduledPublished", Boolean.TRUE ).
+            attribute( "ignorePublishTimes", Boolean.TRUE ).
             build().
             callWith( () -> this.getByIds( getContentByIdsParams ) );
 

@@ -95,9 +95,9 @@ abstract class AbstractContentCommand
 
     protected boolean shouldFilterScheduledPublished()
     {
-        //Returns true if the command is executed on master and the flag includeScheduledPublished has not been set on the context
+        //Returns true if the command is executed on master and the flag ignorePublishTimes has not been set on the context
         final Context currentContext = ContextAccessor.current();
-        return !Boolean.TRUE.equals( currentContext.getAttribute( "includeScheduledPublished" ) ) &&
+        return !Boolean.TRUE.equals( currentContext.getAttribute( "ignorePublishTimes" ) ) &&
             ContentConstants.BRANCH_MASTER.equals( currentContext.getBranch() );
     }
 
