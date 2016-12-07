@@ -2,6 +2,7 @@ import "../../api.ts";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
+import PublishStatus = api.content.PublishStatus;
 import BrowseItem = api.app.browse.BrowseItem;
 
 export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSummaryAndCompareStatus> {
@@ -13,16 +14,20 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
-            var statusDiv = this.initStatusDiv(this.item.getModel().getCompareStatus());
+            var statusDiv = this.initStatusDiv(this.item.getModel().getCompareStatus(), this.item.getModel().getPublishStatus());
             this.appendChild(statusDiv);
 
             return rendered;
         });
     }
 
-    private initStatusDiv(status: CompareStatus) {
+    private initStatusDiv(compareStatus: CompareStatus, publishStatus: PublishStatus) {
         var statusDiv = new api.dom.DivEl("status");
-        statusDiv.setHtml(api.content.CompareStatusFormatter.formatStatus(status));
+        var status = api.content.CompareStatusFormatter.formatStatus(compareStatus);
+        if (publishStatus && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
+            status += ' (' + api.content.PublishStatusFormatter.formatStatus(publishStatus) + ')';
+        }
+        statusDiv.setHtml(status);
         var statusClass = "" + CompareStatus[status];
         statusDiv.addClass(statusClass.toLowerCase());
         return statusDiv;

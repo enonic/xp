@@ -51,8 +51,7 @@ export class ContentRowFormatter {
     public static statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
 
         var data = node.getData(),
-            compareStatusText,
-            statusEl;
+            compareStatusText;
 
         if (!!data.getContentSummary()) {   // default node
             var compareStatus: CompareStatus = CompareStatus[CompareStatus[value]],
@@ -61,7 +60,7 @@ export class ContentRowFormatter {
             compareStatusText = api.content.CompareStatusFormatter.formatStatus(compareStatus);
 
             if (PublishStatus[publishStatus] && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
-                statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(CompareStatus[value]));
+                var statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(CompareStatus[value]));
                 statusEl.getEl().setText(compareStatusText);
                 statusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));
 
@@ -74,11 +73,10 @@ export class ContentRowFormatter {
 
                 return statusEl.toString() + publishStatusEl.toString();
             } else {
-                statusEl = new api.dom.SpanEl()
+                var statusEl = new api.dom.SpanEl()
                 if (CompareStatus[value]) {
                     statusEl.addClass(ContentRowFormatter.makeClassName(CompareStatus[value]));
                 }
-
                 statusEl.getEl().setText(compareStatusText);
                 return statusEl.toString();
             }
