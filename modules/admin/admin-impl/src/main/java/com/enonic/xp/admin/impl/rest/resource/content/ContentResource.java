@@ -495,15 +495,15 @@ public final class ContentResource
                 final StringBuilder builder = new StringBuilder();
                 if ( deleted > 0 )
                 {
-                    builder.append( deleted ).append( " items are deleted. " );
+                    builder.append( deleted ).append( deleted > 1 ? " items are " : " item is " ).append( "deleted. " );
                 }
                 if ( pending > 0 )
                 {
-                    builder.append( pending ).append( " items are marked for deletion. " );
+                    builder.append( pending ).append( pending > 1 ? " items are " : " item is " ).append( "marked for deletion. " );
                 }
                 if ( failed > 0 )
                 {
-                    builder.append( failed ).append( " failed to be deleted. " );
+                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be deleted. " );
                 }
                 return builder.toString();
         }
@@ -731,16 +731,15 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content ->
-                     {
-                         //Creates a ContentPublishItem
-                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                         return ContentPublishItemJson.create().
-                             content( content ).
-                             compareStatus( compareContentResult.getCompareStatus().name() ).
-                             iconUrl( contentIconUrlResolver.resolve( content ) ).
-                             build();
-                     } ).
+                map( content -> {
+                //Creates a ContentPublishItem
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                return ContentPublishItemJson.create().
+                    content( content ).
+                    compareStatus( compareContentResult.getCompareStatus().name() ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).
+                    build();
+            } ).
                 collect( Collectors.toList() );
     }
 
@@ -988,13 +987,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }
