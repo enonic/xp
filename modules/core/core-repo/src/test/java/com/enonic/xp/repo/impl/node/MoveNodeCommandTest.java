@@ -1,10 +1,15 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Iterator;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -366,6 +371,49 @@ public class MoveNodeCommandTest
 
         assertEquals( createGrantedNewParent.path(), movedNode.parentPath() );
         assertEquals( "mynode2", movedNode.name().toString() );
+    }
+
+    @Test
+    public void move_to_manually_ordered_parent()
+        throws Exception
+    {
+        final Node originalRoot = createNode( NodePath.ROOT, "a1" );
+        final Node a1_1 = createNode( originalRoot.path(), "a1_1" );
+        final Node a1_2 = createNode( originalRoot.path(), "a1_2" );
+
+        final Node newParent = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "a2" ).
+            childOrder( ChildOrder.manualOrder() ).
+            build() );
+        final Node a2_1 = createNode( newParent.path(), "a2_1" );
+        final Node a2_2 = createNode( newParent.path(), "a2_2" );
+
+        doMoveNode( newParent.path(), a1_1.id() );
+        doMoveNode( newParent.path(), a1_2.id() );
+
+        final FindNodesByParentResult result = findByParent( FindNodesByParentParams.create().
+            parentId( newParent.id() ).
+            build() );
+
+        final Iterator<NodeId> iterator = result.getNodeIds().iterator();
+
+        assertEquals( a1_2.id(), iterator.next() );
+        assertEquals( a1_1.id(), iterator.next() );
+        assertEquals( a2_2.id(), iterator.next() );
+        assertEquals( a2_1.id(), iterator.next() );
+    }
+
+    private void doMoveNode( final NodePath newParent, final NodeId nodeId )
+    {
+        MoveNodeCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            id( nodeId ).
+            newParent( newParent ).
+            build().
+            execute();
     }
 
     private NodeVersionQueryResult getVersions( final Node node )
