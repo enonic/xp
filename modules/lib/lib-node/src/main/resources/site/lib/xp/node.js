@@ -111,11 +111,11 @@ RepoConnection.prototype.modify = function (params) {
  * @example-ref examples/node/get-1.js
  * @example-ref examples/node/get-2.js
  *
- * @param {...string|string[]} keys to fetch. Each argument could be an id, a path or an array of the two.
+ * @param {...(string|string[])} keys to fetch. Each argument could be an id, a path or an array of the two.
  *
  * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
-RepoConnection.prototype.get = function () {
+RepoConnection.prototype.get = function (keys) {
     return __.toNativeObject(this.native.get(argsToStringArray(arguments)));
 };
 
@@ -124,21 +124,13 @@ RepoConnection.prototype.get = function () {
  *
  * @example-ref examples/node/delete.js
  *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Path or id to the node.
- * @param {string[]} [params.keys] Array of ids or paths to the nodes
+ * @param {...(string|string[])} keys Keys to delete. Each argument could be an id, a path or an array of the two.
  *
  * @returns {boolean} True if deleted, false otherwise.
  */
-RepoConnection.prototype.delete = function (params) {
-    if (params.key === undefined && params.keys === undefined) {
-        throw "Parameter 'key' or 'keys' is required";
-    }
-    var key = params.key ? params.key : null;
-    var keys = params.keys ? params.keys : [];
-    return __.toNativeObject(this.native.delete(key, keys));
+RepoConnection.prototype.delete = function (keys) {
+    return __.toNativeObject(this.native.delete(argsToStringArray(arguments)));
 };
-
 
 /**
  * This function push a node to a given branch.

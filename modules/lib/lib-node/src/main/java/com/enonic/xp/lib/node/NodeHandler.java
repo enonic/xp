@@ -45,11 +45,10 @@ public class NodeHandler
             build() );
     }
 
-    public Object delete( final String key, String[] keys )
+    public Object delete( final String[] keys )
     {
         return execute( DeleteNodeHandler.create().
             nodeService( this.nodeService ).
-            key( NodeKey.from( key ) ).
             keys( NodeKeys.from( keys ) ).
             build() );
     }

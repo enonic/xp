@@ -13,14 +13,11 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class DeleteNodeHandler
     extends AbstractNodeHandler
 {
-    private NodeKey key;
-
     private NodeKeys keys;
 
     private DeleteNodeHandler( final Builder builder )
     {
         super( builder );
-        key = builder.key;
         keys = builder.keys;
     }
 
@@ -33,9 +30,9 @@ public final class DeleteNodeHandler
     {
         final ImmutableList.Builder<String> deletedNodeIds = ImmutableList.builder();
 
-        if ( key != null )
+        if ( keys.singleValue() )
         {
-            deleteByKey( key ).
+            deleteByKey( keys.first() ).
                 stream().
                 map( NodeId::toString ).
                 forEach( deletedNodeIds::add );
@@ -89,11 +86,6 @@ public final class DeleteNodeHandler
         }
     }
 
-    public void setKey( final String key )
-    {
-        this.key = NodeKey.from( key );
-    }
-
     public void setKeys( final String[] keys )
     {
         this.keys = NodeKeys.from( keys );
@@ -102,18 +94,10 @@ public final class DeleteNodeHandler
     public static final class Builder
         extends AbstractNodeHandler.Builder<Builder>
     {
-        private NodeKey key;
-
         private NodeKeys keys;
 
         private Builder()
         {
-        }
-
-        public Builder key( final NodeKey val )
-        {
-            key = val;
-            return this;
         }
 
         public Builder keys( final NodeKeys val )
