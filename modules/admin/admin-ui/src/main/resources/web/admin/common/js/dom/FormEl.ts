@@ -20,7 +20,7 @@ module api.dom {
             this.getEl().removeEventListener("submit", listener);
         }
 
-        static getNextFocusable(input: Element, focusableSelector?: string): Element {
+        static getNextFocusable(input: Element, focusableSelector?: string, ignoreTabIndex?: boolean): Element {
             var focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : "input, button, select");
 
             // find index of current input
@@ -33,7 +33,8 @@ module api.dom {
             // set focus to the next visible input
             for (var i = index + 1; i < focusableElements.length; i++) {
                 var nextFocusable = api.dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(i));
-                if (!nextFocusable.isVisible() || (nextFocusable.getEl().getTabIndex() && nextFocusable.getEl().getTabIndex() < 0 )) {
+                if (!nextFocusable.isVisible() ||
+                    (!ignoreTabIndex && nextFocusable.getEl().getTabIndex() && nextFocusable.getEl().getTabIndex() < 0 )) {
                     continue;
                 } else {
                     return nextFocusable;
