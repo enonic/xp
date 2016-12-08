@@ -2,9 +2,9 @@ module api.content.attachment {
 
     export class Attachments implements api.Equitable {
 
-        private attachmentByName: {[s:string] : Attachment;} = {};
+        private attachmentByName: {[s: string]: Attachment; } = {};
 
-        private attachmentByLabel: {[s:string] : Attachment;} = {};
+        private attachmentByLabel: {[s: string]: Attachment; } = {};
 
         private attachments: Attachment[] = [];
 
@@ -12,7 +12,7 @@ module api.content.attachment {
 
         constructor(builder: AttachmentsBuilder) {
 
-            var count: number = 0;
+            let count: number = 0;
             builder.attachments.forEach((attachment: Attachment) => {
                 this.attachmentByName[attachment.getName().toString()] = attachment;
                 this.attachmentByLabel[attachment.getLabel()] = attachment;
@@ -22,7 +22,7 @@ module api.content.attachment {
             this.size = count;
         }
 
-        forEach(callBack: {(attachment: Attachment, index: number): void;}) {
+        forEach(callBack: {(attachment: Attachment, index: number): void; }): void {
             this.attachments.forEach((attachment: Attachment, index: number) => {
                 callBack(attachment, index);
             });
@@ -49,13 +49,9 @@ module api.content.attachment {
                 return false;
             }
 
-            var other = <Attachments>o;
+            let other: Attachments = <Attachments>o;
 
-            if (!api.ObjectHelper.arrayEquals(this.attachments, other.attachments)) {
-                return false;
-            }
-
-            return true;
+            return api.ObjectHelper.arrayEquals(this.attachments, other.attachments);
         }
 
         public static create(): AttachmentsBuilder {

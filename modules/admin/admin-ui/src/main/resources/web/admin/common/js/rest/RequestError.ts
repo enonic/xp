@@ -7,8 +7,8 @@ module api.rest {
         private statusCode: number;
 
         constructor(statusCode: number, errorMsg: string) {
-            var notifyMsg = (statusCode > 0) ? errorMsg : "Unable to connect to server";
-            var type = (statusCode >= 400 && statusCode < 500) ? ExceptionType.WARNING : ExceptionType.ERROR;
+            let notifyMsg: string = (statusCode > 0) ? errorMsg : 'Unable to connect to server';
+            let type: ExceptionType = (statusCode >= 400 && statusCode < 500) ? ExceptionType.WARNING : ExceptionType.ERROR;
 
             super(notifyMsg, type);
 
@@ -19,7 +19,7 @@ module api.rest {
             return this.statusCode;
         }
 
-        isNotFound() {
+        isNotFound(): boolean {
             return this.statusCode === StatusCode.NOT_FOUND;
         }
     }

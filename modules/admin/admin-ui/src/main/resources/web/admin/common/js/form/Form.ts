@@ -18,7 +18,7 @@ module api.form {
 
         fromJson(json: json.FormJson): FormBuilder {
             json.formItems.forEach((formItemJson: api.form.json.FormItemJson) => {
-                var formItem = FormItemFactory.createFormItem(formItemJson);
+                let formItem: FormItem = FormItemFactory.createFormItem(formItemJson);
                 if (formItem) {
                     this.addFormItem(formItem);
                 }
@@ -43,10 +43,10 @@ module api.form {
 
         private formItems: FormItem[] = [];
 
-        private formItemByName: {[name:string] : FormItem; } = {};
+        private formItemByName: {[name: string]: FormItem; } = {};
 
-        static fromJson(json: json.FormJson) {
-            var builder = new FormBuilder();
+        static fromJson(json: json.FormJson): Form {
+            let builder: FormBuilder = new FormBuilder();
             builder.fromJson(json);
             return builder.build();
         }
@@ -57,10 +57,10 @@ module api.form {
             });
         }
 
-        addFormItem(formItem: FormItem) {
-            const name = formItem.getName();
+        addFormItem(formItem: FormItem): void {
+            const name: string = formItem.getName();
             if (this.formItemByName[name]) {
-                throw new Error("FormItem already added: " + name);
+                throw new Error('FormItem already added: ' + name);
             }
             this.formItemByName[formItem.getName()] = formItem;
             this.formItems.push(formItem);
@@ -82,7 +82,7 @@ module api.form {
 
             return <api.form.json.FormJson>{
                 formItems: FormItem.formItemsToJson(this.getFormItems())
-            }
+            };
         }
 
         equals(o: api.Equitable): boolean {
@@ -91,13 +91,13 @@ module api.form {
                 return false;
             }
 
-            var other = <Form>o;
+            let other: Form = <Form>o;
 
-            if (this.formItems.length != other.formItems.length) {
+            if (this.formItems.length !== other.formItems.length) {
                 return false;
             }
 
-            for (var i = 0; i < this.formItems.length; i++) {
+            for (let i: number = 0; i < this.formItems.length; i++) {
                 if (!this.formItems[i].equals(other.formItems[i])) {
                     return false;
                 }

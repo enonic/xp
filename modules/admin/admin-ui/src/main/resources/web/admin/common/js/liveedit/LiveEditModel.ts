@@ -1,6 +1,7 @@
 module api.liveedit {
 
     import PropertyTree = api.data.PropertyTree;
+    import Page = api.content.page.Page;
     import Content = api.content.Content;
     import Descriptor = api.content.page.Descriptor;
     import DescriptorKey = api.content.page.DescriptorKey;
@@ -38,18 +39,18 @@ module api.liveedit {
 
         init(defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor): wemQ.Promise<void> {
 
-            return LiveEditModelInitializer.initPageModel(this, this.content, defaultTemplate,
-                defaultTemplateDescriptor).then((pageModel: PageModel) => {
-                this.pageModel = pageModel;
-            });
+            return LiveEditModelInitializer.initPageModel(this, this.content, defaultTemplate, defaultTemplateDescriptor)
+                .then((pageModel: PageModel) => {
+                    this.pageModel = pageModel;
+                });
         }
 
         isPageRenderable(): boolean {
             return !!this.pageModel && (this.pageModel.hasController() ||
-                                        this.pageModel.getMode() != api.content.page.PageMode.NO_CONTROLLER);
+                                        this.pageModel.getMode() !== api.content.page.PageMode.NO_CONTROLLER);
         }
 
-        setContent(value: Content) {
+        setContent(value: Content): void {
             this.content = value;
         }
 
@@ -74,9 +75,9 @@ module api.liveedit {
         }
 
         isRenderableContent(): boolean {
-            var hasController = this.pageModel.hasController(),
-                hasDefaultPageTemplate = this.pageModel.hasDefaultPageTemplate(),
-                hasApplications = this.siteModel.getApplicationKeys().length > 0;
+            const hasController: boolean = this.pageModel.hasController();
+            const hasDefaultPageTemplate: boolean = this.pageModel.hasDefaultPageTemplate();
+            const hasApplications: boolean = this.siteModel.getApplicationKeys().length > 0;
 
             return hasApplications || hasController || hasDefaultPageTemplate;
         }
@@ -126,107 +127,104 @@ module api.liveedit {
         static initPageModel(liveEditModel: LiveEditModel, content: Content, defaultPageTemplate: PageTemplate,
                              defaultTemplateDescriptor: PageDescriptor): Q.Promise<PageModel> {
 
-            var promises: wemQ.Promise<any>[] = [],
-                pageMode = this.getPageMode(content, !!defaultPageTemplate),
-                pageModel = new PageModel(liveEditModel, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
+            const promises: wemQ.Promise<any>[] = [];
+            const pageMode: PageMode = this.getPageMode(content, !!defaultPageTemplate);
+            const pageModel: PageModel = new PageModel(liveEditModel, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
 
             if (content.isPageTemplate()) {
                 this.initPageTemplate(content, pageMode, pageModel, promises);
-            }
-            else {
+            } else {
                 this.initPage(content, pageMode, pageModel, promises);
             }
 
             return this.resolvePromises(pageModel, promises);
         }
 
-        private static initPageTemplate(content: Content, pageMode: PageMode, pageModel: PageModel, promises: wemQ.Promise<any>[]) {
-            var pageTemplate = <PageTemplate>content;
-            if (pageMode == PageMode.FORCED_CONTROLLER) {
+        private static initPageTemplate(content: Content, pageMode: PageMode, pageModel: PageModel, promises: wemQ.Promise<any>[]): void {
+            let pageTemplate: PageTemplate = <PageTemplate>content;
+            if (pageMode === PageMode.FORCED_CONTROLLER) {
                 this.initForcedControllerPageTemplate(pageTemplate, pageModel, promises);
-            }
-            else if (pageMode == PageMode.NO_CONTROLLER) {
+            } else if (pageMode === PageMode.NO_CONTROLLER) {
                 this.initNoControllerPageTemplate(pageTemplate, pageModel);
-            }
-            else {
-                throw new Error("Unsupported PageMode for a PageTemplate: " + pageMode);
+            } else {
+                throw new Error(`Unsupported PageMode for a PageTemplate: ${pageMode}`);
             }
         }
 
-        private static initPage(content: Content, pageMode: PageMode, pageModel: PageModel, promises: wemQ.Promise<any>[]) {
-            const page = content.getPage();
-            if (pageMode == PageMode.FORCED_TEMPLATE) {
+        private static initPage(content: Content, pageMode: PageMode, pageModel: PageModel, promises: wemQ.Promise<any>[]): void {
+            const page: Page = content.getPage();
+            if (pageMode === PageMode.FORCED_TEMPLATE) {
                 this.initForcedTemplatePage(content, page, pageModel, promises);
-            }
-            else if (pageMode == PageMode.FORCED_CONTROLLER) {
-                this.initForcedControllerPage(page, pageModel, promises)
-            }
-            else if (pageMode == PageMode.AUTOMATIC) {
+            } else if (pageMode === PageMode.FORCED_CONTROLLER) {
+                this.initForcedControllerPage(page, pageModel, promises);
+            } else if (pageMode === PageMode.AUTOMATIC) {
                 pageModel.setAutomaticTemplate(this);
-            }
-            else if (pageMode == PageMode.NO_CONTROLLER || pageMode == PageMode.FRAGMENT) {
+            } else if (pageMode === PageMode.NO_CONTROLLER || pageMode === PageMode.FRAGMENT) {
                 this.initNoControllerPage(pageModel);
-            }
-            else {
-                throw new Error("Unsupported PageMode for a Content: " + PageMode[<number>pageMode]);
+            } else {
+                throw new Error(`Unsupported PageMode for a Content: ${PageMode[<number>pageMode]}`);
             }
         }
 
-        private static initForcedControllerPageTemplate(pageTemplate: PageTemplate, pageModel: PageModel, promises: wemQ.Promise<any>[]) {
-            var pageDescriptorKey = pageTemplate.getController(),
-                pageDescriptorPromise: wemQ.Promise<PageDescriptor> = this.loadPageDescriptor(pageDescriptorKey);
+        private static initForcedControllerPageTemplate(pageTemplate: PageTemplate,
+                                                        pageModel: PageModel,
+                                                        promises: wemQ.Promise<any>[]): void {
+            const pageDescriptorKey: DescriptorKey = pageTemplate.getController();
+            const pageDescriptorPromise: wemQ.Promise<PageDescriptor> = this.loadPageDescriptor(pageDescriptorKey);
             pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
 
-                var config = pageTemplate.hasConfig() ?
-                             pageTemplate.getPage().getConfig().copy() :
-                             new PropertyTree();
+                const config: PropertyTree = pageTemplate.hasConfig() ?
+                                             pageTemplate.getPage().getConfig().copy() :
+                                             new PropertyTree();
 
-                var regions = pageTemplate.hasRegions() ?
-                              pageTemplate.getRegions().clone() :
-                              Regions.create().build();
+                const regions: Regions = pageTemplate.hasRegions() ?
+                                         pageTemplate.getRegions().clone() :
+                                         Regions.create().build();
 
-                var setController = new SetController(this).setDescriptor(pageDescriptor).setConfig(config).setRegions(regions);
+                const setController: SetController = new SetController(this)
+                    .setDescriptor(pageDescriptor).setConfig(config).setRegions(regions);
                 pageModel.initController(setController);
             });
 
             promises.push(pageDescriptorPromise);
         }
 
-        private static initNoControllerPageTemplate(pageTemplate: PageTemplate, pageModel: PageModel) {
-            var config = pageTemplate.hasConfig() ?
+        private static initNoControllerPageTemplate(pageTemplate: PageTemplate, pageModel: PageModel): void {
+            const config: PropertyTree = pageTemplate.hasConfig() ?
                          pageTemplate.getConfig().copy() :
                          new PropertyTree();
 
-            var regions = pageTemplate.hasRegions() ?
-                          pageTemplate.getRegions().clone() :
-                          Regions.create().build();
+            const regions: Regions = pageTemplate.hasRegions() ?
+                                     pageTemplate.getRegions().clone() :
+                                     Regions.create().build();
 
-            var setController = new SetController(this).setDescriptor(null).setConfig(config).setRegions(regions);
+            const setController: SetController = new SetController(this).setDescriptor(null).setConfig(config).setRegions(regions);
             pageModel.initController(setController);
         }
 
-        private static initForcedTemplatePage(content: Content, page: api.content.page.Page, pageModel: PageModel,
-                                              promises: wemQ.Promise<any>[]) {
-            var pageTemplateKey = page.getTemplate(),
-                pageTemplatePromise: wemQ.Promise<PageTemplate> = this.loadPageTemplate(pageTemplateKey),
-                pageDescriptorPromise: wemQ.Promise<PageDescriptor>;
+        private static initForcedTemplatePage(content: Content,
+                                              page: api.content.page.Page,
+                                              pageModel: PageModel,
+                                              promises: wemQ.Promise<any>[]): void {
+            const pageTemplateKey: PageTemplateKey = page.getTemplate();
+            const pageTemplatePromise: wemQ.Promise<PageTemplate> = this.loadPageTemplate(pageTemplateKey);
 
             pageTemplatePromise.then((pageTemplate: PageTemplate) => {
 
-                var pageDescriptorKey = pageTemplate.getController();
-                pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
+                const pageDescriptorKey: DescriptorKey = pageTemplate.getController();
+                const pageDescriptorPromise: wemQ.Promise<PageDescriptor> = LiveEditModelInitializer.loadPageDescriptor(pageDescriptorKey);
                 pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
 
-                    var config = content.getPage().hasConfig() ?
-                                 content.getPage().getConfig().copy() :
-                                 pageTemplate.getConfig().copy();
+                    const config: PropertyTree = content.getPage().hasConfig() ?
+                                                 content.getPage().getConfig().copy() :
+                                                 pageTemplate.getConfig().copy();
 
-                    var regions = content.getPage().hasRegions() ?
-                                  content.getPage().getRegions().clone() :
-                                  pageTemplate.getRegions().clone();
+                    const regions: Regions = content.getPage().hasRegions() ?
+                                             content.getPage().getRegions().clone() :
+                                             pageTemplate.getRegions().clone();
 
-
-                    var setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor).setRegions(regions).setConfig(config);
+                    let setTemplate: SetTemplate = new SetTemplate(this)
+                        .setTemplate(pageTemplate, pageDescriptor).setRegions(regions).setConfig(config);
                     pageModel.initTemplate(setTemplate);
                 });
                 promises.push(pageDescriptorPromise);
@@ -234,45 +232,44 @@ module api.liveedit {
             promises.push(pageTemplatePromise);
         }
 
-        private static initForcedControllerPage(page: api.content.page.Page, pageModel: PageModel, promises: wemQ.Promise<any>[]) {
-            var pageDescriptorKey = page.getController();
+        private static initForcedControllerPage(page: api.content.page.Page, pageModel: PageModel, promises: wemQ.Promise<any>[]): void {
+            const pageDescriptorKey: DescriptorKey = page.getController();
 
             if (pageDescriptorKey) {
-                var pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
+                const pageDescriptorPromise: wemQ.Promise<PageDescriptor> = this.loadPageDescriptor(pageDescriptorKey);
                 pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
                     this.initPageController(page, pageModel, pageDescriptor);
                 });
                 promises.push(pageDescriptorPromise);
-            }
-            else {
+            } else {
                 this.initPageController(page, pageModel, null);
             }
         }
 
-        private static initNoControllerPage(pageModel: PageModel) {
-            var config = new PropertyTree();
+        private static initNoControllerPage(pageModel: PageModel): void {
+            const config: PropertyTree = new PropertyTree();
 
-            var regions = Regions.create().build();
+            const regions: Regions = Regions.create().build();
 
-            var setController = new SetController(this).setDescriptor(null).setConfig(config).setRegions(regions);
+            const setController: SetController = new SetController(this).setDescriptor(null).setConfig(config).setRegions(regions);
             pageModel.initController(setController);
         }
 
-        private static initPageController(page: api.content.page.Page, pageModel: PageModel, pageDescriptor: PageDescriptor) {
+        private static initPageController(page: api.content.page.Page, pageModel: PageModel, pageDescriptor: PageDescriptor): void {
 
-            var config = page.hasConfig() ?
-                         page.getConfig().copy() :
-                         new PropertyTree();
+            const config: PropertyTree = page.hasConfig() ?
+                                         page.getConfig().copy() :
+                                         new PropertyTree();
 
-            var regions = page.hasRegions() ?
-                          page.getRegions().clone() :
-                          Regions.create().build();
+            const regions: Regions = page.hasRegions() ?
+                                     page.getRegions().clone() :
+                                     Regions.create().build();
 
-            var setController = new SetController(this).setDescriptor(pageDescriptor).setConfig(config).setRegions(regions);
+            const setController: SetController = new SetController(this)
+                .setDescriptor(pageDescriptor).setConfig(config).setRegions(regions);
 
             pageModel.initController(setController);
         }
-
 
         private static getPageMode(content: Content, defaultTemplatePresents: boolean): api.content.page.PageMode {
             if (content.getType().isFragment()) {
@@ -283,45 +280,41 @@ module api.liveedit {
                     //in case content's template was deleted or updated to not support content's type
                     if (defaultTemplatePresents) {
                         return api.content.page.PageMode.FORCED_TEMPLATE;
-                    }
-                    else {
+                    } else {
                         return api.content.page.PageMode.NO_CONTROLLER;
                     }
-                }
-                else {
+                } else {
                     return api.content.page.PageMode.FORCED_CONTROLLER;
                 }
-            }
-            else if (defaultTemplatePresents) {
+            } else if (defaultTemplatePresents) {
                 return api.content.page.PageMode.AUTOMATIC;
-            }
-            else {
+            } else {
                 return api.content.page.PageMode.NO_CONTROLLER;
             }
         }
 
         private static loadPageTemplate(key: PageTemplateKey): wemQ.Promise<PageTemplate> {
-            var deferred = wemQ.defer<PageTemplate>();
+            let deferred: wemQ.Deferred<PageTemplate> = wemQ.defer<PageTemplate>();
             new GetPageTemplateByKeyRequest(key).sendAndParse().then((pageTemplate: PageTemplate) => {
                 deferred.resolve(pageTemplate);
-            }).catch((reason) => {
-                deferred.reject(new api.Exception("Page template '" + key + "' not found.", api.ExceptionType.WARNING));
+            }).catch(() => {
+                deferred.reject(new api.Exception(`Page template "${key}" not found.`, api.ExceptionType.WARNING));
             }).done();
             return deferred.promise;
         }
 
         private static loadPageDescriptor(key: DescriptorKey): wemQ.Promise<PageDescriptor> {
-            var deferred = wemQ.defer<PageDescriptor>();
+            let deferred: wemQ.Deferred<PageDescriptor> = wemQ.defer<PageDescriptor>();
             new GetPageDescriptorByKeyRequest(key).sendAndParse().then((pageDescriptor: PageDescriptor) => {
                 deferred.resolve(pageDescriptor);
-            }).catch((reason) => {
-                deferred.reject(new api.Exception("Page descriptor '" + key + "' not found.", api.ExceptionType.WARNING));
+            }).catch(() => {
+                deferred.reject(new api.Exception(`Page descriptor "${key}" not found.`, api.ExceptionType.WARNING));
             }).done();
             return deferred.promise;
         }
 
         private static resolvePromises(pageModel: PageModel, promises: wemQ.Promise<any>[]): Q.Promise<PageModel> {
-            var deferred = wemQ.defer<PageModel>();
+            let deferred: wemQ.Deferred<PageModel> = wemQ.defer<PageModel>();
 
             if (promises.length > 0) {
                 wemQ.all(promises).then(() => {
@@ -329,8 +322,7 @@ module api.liveedit {
                 }).catch((reason: any) => {
                     deferred.reject(reason);
                 }).done();
-            }
-            else {
+            } else {
                 deferred.resolve(pageModel);
             }
 

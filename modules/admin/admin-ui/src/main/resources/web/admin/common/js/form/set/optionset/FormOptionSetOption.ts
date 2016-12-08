@@ -23,7 +23,7 @@ module api.form {
             this.helpText = optionJson.helpText;
             if (optionJson.items != null) {
                 optionJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
-                    var formItem = FormItemFactory.createFormItem(formItemJson);
+                    let formItem: FormItem = FormItemFactory.createFormItem(formItemJson);
                     if (formItem) {
                         this.addFormItem(formItem);
                     }
@@ -31,10 +31,10 @@ module api.form {
             }
         }
 
-        addFormItem(formItem: FormItem) {
-            const name = formItem.getName();
+        addFormItem(formItem: FormItem): void {
+            const name: string = formItem.getName();
             if (this.formItemByName[name]) {
-                throw new Error("FormItem already added: " + name);
+                throw new Error(`FormItem already added: ${name}`);
             }
             formItem.setParent(this);
             this.formItemByName[formItem.getName()] = formItem;
@@ -77,7 +77,7 @@ module api.form {
         }
 
         public static optionsToJson(options: FormOptionSetOption[]): api.form.json.FormOptionSetOptionJson[] {
-            var jsonArray: api.form.json.FormOptionSetOptionJson[] = [];
+            let jsonArray: api.form.json.FormOptionSetOptionJson[] = [];
             options.forEach((option: FormOptionSetOption) => {
                 jsonArray.push(option.toFormOptionSetOptionJson());
             });
@@ -94,7 +94,7 @@ module api.form {
                 return false;
             }
 
-            var other = <FormOptionSetOption>o;
+            const other: FormOptionSetOption = <FormOptionSetOption>o;
 
             if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
                 return false;
