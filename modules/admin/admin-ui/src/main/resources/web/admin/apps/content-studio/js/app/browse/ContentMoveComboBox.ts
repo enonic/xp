@@ -12,7 +12,6 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
 
     constructor() {
         this.contentLoader = new MoveContentSummaryLoader();
-        this.contentLoader.setSize(-1);
         var richComboBoxBuilder: api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary>();
         richComboBoxBuilder
             .setMaximumOccurrences(1)
@@ -36,6 +35,7 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
 
     clearCombobox() {
         super.clearCombobox();
+        this.getComboBox().getComboBoxDropdownGrid().removeAllOptions();
         this.contentLoader.resetSearchString();
     }
 }
