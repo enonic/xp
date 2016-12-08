@@ -9,7 +9,7 @@ module api.content.resource {
 
     export class MoveContentSummaryLoader extends ContentSummaryPreLoader {
 
-        protected request: ContentSummaryRequest;
+        protected request: MoveAllowedTargetsRequest;
 
         private filterContentPaths: ContentPath[];
 
@@ -19,11 +19,11 @@ module api.content.resource {
             super();
         }
 
-        protected createRequest(): ContentSummaryRequest {
-            return new ContentSummaryRequest();
+        protected createRequest(): MoveAllowedTargetsRequest {
+            return new MoveAllowedTargetsRequest();
         }
 
-        protected getRequest(): ContentSummaryRequest {
+        protected getRequest(): MoveAllowedTargetsRequest {
             return this.request;
         }
 
@@ -33,6 +33,7 @@ module api.content.resource {
 
         setFilterContentPaths(contentPaths: ContentPath[]) {
             this.filterContentPaths = contentPaths;
+            this.getRequest().setFilterContentPaths(contentPaths);
             const path = contentPaths.length === 1 ? contentPaths[0] : null;
             this.getRequest().setContentPath(path);
         }
