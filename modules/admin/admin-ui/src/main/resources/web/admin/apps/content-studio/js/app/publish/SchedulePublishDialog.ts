@@ -70,7 +70,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
                 build()).
             addFormItem(new api.form.InputBuilder().
                 setName("publishTo").
-                setInputType(api.content.form.inputtype.time.DateTime.getName()).
+                setInputType(api.content.form.inputtype.publish.PublishTo.getName()).
                 setLabel("Publish To--").
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 setInputTypeConfig({}).
@@ -84,7 +84,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
             this.appendChildToContentPanel(this.formView);
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
                 if (event.isValid()) {
-                    event.getRecording().set
+                    //event.getRecording().
                 }
                 console.log('event: ' + event);
                 this.confirmScheduleAction.setEnabled(event.isValid());

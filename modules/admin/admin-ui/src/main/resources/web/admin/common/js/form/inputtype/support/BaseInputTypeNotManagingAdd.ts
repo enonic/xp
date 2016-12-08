@@ -221,6 +221,7 @@ module api.form.inputtype.support {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
+            console.log('validate');
             var recording = this.validateOccurrences();
 
             if (!this.hasValidUserInput()) {
@@ -229,7 +230,7 @@ module api.form.inputtype.support {
                     setMessage("Incorrect value entered").
                     build());
             } else {
-                recording.setAdditionalValidationRecord()
+                this.additionalValidate(recording);
             }
 
             if (!silent && recording.validityChanged(this.previousValidationRecording)) {
@@ -240,6 +241,9 @@ module api.form.inputtype.support {
             return recording;
         }
 
+        protected additionalValidate(recording: api.form.inputtype.InputValidationRecording) {
+            //Do nothing
+        }
 
         private validateOccurrences(): api.form.inputtype.InputValidationRecording {
             var recording = new api.form.inputtype.InputValidationRecording();
