@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.node;
 
-public class GetChildrenHandlerParams
+public class FindChildrenHandlerParams
 {
     private String parentKey;
 

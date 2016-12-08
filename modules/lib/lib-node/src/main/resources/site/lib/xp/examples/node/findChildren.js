@@ -8,7 +8,7 @@ var repo = nodeLib.connect({
     branch: "master"
 });
 
-var result = repo.getChildren({
+var result = repo.findChildren({
     start: 0,
     count: 2,
     parentKey: "abc"

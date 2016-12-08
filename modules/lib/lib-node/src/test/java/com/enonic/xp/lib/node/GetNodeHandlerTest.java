@@ -24,7 +24,7 @@ public class GetNodeHandlerTest
     }
 
     @Test
-    public void testExample()
+    public void testExample1()
     {
         mockGetNode();
 
@@ -34,7 +34,22 @@ public class GetNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/get.js" );
+        runScript( "/site/lib/xp/examples/node/get-1.js" );
+    }
+
+    @Test
+    public void testExample2()
+    {
+        Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).
+            thenReturn( createNode() );
+
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+            thenReturn( Repository.create().
+                id( RepositoryId.from( "cms-repo" ) ).
+                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+                build() );
+
+        runScript( "/site/lib/xp/examples/node/get-2.js" );
     }
 
 }

@@ -5,7 +5,7 @@ import com.enonic.xp.lib.node.mapper.FindNodesByParentResultMapper;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 
-public class GetChildrenNodeHandler
+public class FindChildrenNodeHandler
     extends AbstractNodeHandler
 {
     private final NodeKey parentKey;
@@ -20,7 +20,7 @@ public class GetChildrenNodeHandler
 
     private final Integer start;
 
-    private GetChildrenNodeHandler( final Builder builder )
+    private FindChildrenNodeHandler( final Builder builder )
     {
         super( builder );
         this.parentKey = builder.parentKey;
@@ -57,13 +57,13 @@ public class GetChildrenNodeHandler
 
         private ChildOrder childOrder;
 
-        private boolean recursive;
+        private boolean recursive = false;
 
-        private boolean countOnly;
+        private boolean countOnly = false;
 
-        private Integer count;
+        private Integer count = 10;
 
-        private Integer start;
+        private Integer start = 0;
 
         private Builder()
         {
@@ -105,9 +105,9 @@ public class GetChildrenNodeHandler
             return this;
         }
 
-        public GetChildrenNodeHandler build()
+        public FindChildrenNodeHandler build()
         {
-            return new GetChildrenNodeHandler( this );
+            return new FindChildrenNodeHandler( this );
         }
     }
 }

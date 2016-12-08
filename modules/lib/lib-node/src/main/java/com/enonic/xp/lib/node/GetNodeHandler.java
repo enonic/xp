@@ -12,22 +12,19 @@ import com.enonic.xp.node.NodePath;
 public final class GetNodeHandler
     extends AbstractNodeHandler
 {
-    private NodeKey key;
-
     private NodeKeys keys;
 
     private GetNodeHandler( final Builder builder )
     {
         super( builder );
-        key = builder.key;
         keys = builder.keys;
     }
 
     public Object execute()
     {
-        if ( key != null )
+        if ( keys.singleValue() )
         {
-            return getByKey( key );
+            return getByKey( keys.first() );
         }
         else
         {
@@ -78,11 +75,6 @@ public final class GetNodeHandler
     private NodeMapper convert( final Node content )
     {
         return content == null ? null : new NodeMapper( content );
-    }
-
-    public void setKey( final String key )
-    {
-        this.key = NodeKey.from( key );
     }
 
     public void setKeys( final String[] keys )

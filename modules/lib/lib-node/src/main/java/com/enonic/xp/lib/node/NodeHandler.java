@@ -5,6 +5,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.script.ScriptValue;
 
 public class NodeHandler
@@ -36,11 +37,10 @@ public class NodeHandler
             build() );
     }
 
-    public Object get( final String key, String[] keys )
+    public Object get( final String[] keys )
     {
         return execute( GetNodeHandler.create().
             nodeService( this.nodeService ).
-            key( NodeKey.from( key ) ).
             keys( NodeKeys.from( keys ) ).
             build() );
     }
@@ -100,9 +100,9 @@ public class NodeHandler
             build() );
     }
 
-    public Object getChildren( final GetChildrenHandlerParams params )
+    public Object findChildren( final FindChildrenHandlerParams params )
     {
-        return execute( GetChildrenNodeHandler.create().
+        return execute( FindChildrenNodeHandler.create().
             parentKey( NodeKey.from( params.getParentKey() ) ).
             count( params.getCount() ).
             start( params.getStart() ).
@@ -121,6 +121,11 @@ public class NodeHandler
             nodeService( this.nodeService ).
             build().
             execute() );
+    }
+
+    public void refresh( final String mode )
+    {
+        this.context.runWith( () -> nodeService.refresh( RefreshMode.valueOf( mode ) ) );
     }
 
     private Object execute( final AbstractNodeHandler handler )

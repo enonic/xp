@@ -29,6 +29,21 @@ public class NodeKeys
         return new NodeKeys( Lists.newArrayList() );
     }
 
+    public int size()
+    {
+        return this.keys.size();
+    }
+
+    public boolean singleValue()
+    {
+        return this.keys.size() == 1;
+    }
+
+    public NodeKey first()
+    {
+        return keys.get( 0 );
+    }
+
     @Override
     public Iterator<NodeKey> iterator()
     {

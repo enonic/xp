@@ -32,6 +32,25 @@ function valueOrDefault(value, defaultValue) {
     return value;
 }
 
+function argsToStringArray(argsArray) {
+
+    var array = [];
+
+    for (var i = 0; i < argsArray.length; i++) {
+        var currArgument = argsArray[i];
+        if (Array.isArray(currArgument)) {
+            currArgument.forEach(function (v) {
+                array.push(v)
+                log.info("Pushing array element: %s", v);
+            }, this);
+        } else {
+            log.info("Pushing single element: %s", currArgument);
+            array.push(currArgument);
+        }
+    }
+    return array;
+}
+
 /**
  * Creates a new repo-connection.
  *
@@ -87,24 +106,17 @@ RepoConnection.prototype.modify = function (params) {
 };
 
 /**
- * This function fetches nodes. If key is defined, the fetched node will be returned as a JSON object or null if not found.
- * If keys is defined, the fetched nodes will be returned as a JSON array.
+ * This function fetches nodes.
  *
- * @example-ref examples/node/get.js
+ * @example-ref examples/node/get-1.js
+ * @example-ref examples/node/get-2.js
  *
- * @param {object} params JSON with the parameters.
- * @param {string} [params.key] Path or id to the node.
- * @param {string[]} [params.keys] Array of ids or paths to the nodes
+ * @param {...string|string[]} keys to fetch. Each argument could be an id, a path or an array of the two.
  *
  * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
-RepoConnection.prototype.get = function (params) {
-    if (params.key === undefined && params.keys === undefined) {
-        throw "Parameter 'key' or 'keys' is required";
-    }
-    var key = params.key ? params.key : null;
-    var keys = params.keys ? params.keys : [];
-    return __.toNativeObject(this.native.get(key, keys));
+RepoConnection.prototype.get = function () {
+    return __.toNativeObject(this.native.get(argsToStringArray(arguments)));
 };
 
 /**
@@ -244,7 +256,7 @@ RepoConnection.prototype.query = function (params) {
 /**
  * Get children for given node.
  *
- * @example-ref examples/node/getChildren.js
+ * @example-ref examples/node/findChildren.js
  *
  * @param {object} params JSON with the parameters.
  * @param {number} params.parentKey path or id of parent to get children of
@@ -255,15 +267,26 @@ RepoConnection.prototype.query = function (params) {
  * @param {boolean} [params.recursive=false] Do recursive fetching of all children of children
  * @returns {object} Result of getChildren.
  */
-RepoConnection.prototype.getChildren = function (params) {
-    var handlerParams = __.newBean('com.enonic.xp.lib.node.GetChildrenHandlerParams');
+RepoConnection.prototype.findChildren = function (params) {
+    var handlerParams = __.newBean('com.enonic.xp.lib.node.FindChildrenHandlerParams');
     handlerParams.parentKey = params.parentKey;
-    handlerParams.start = params.start;
-    handlerParams.count = params.count;
+    handlerParams.start = valueOrDefault(params.start, 0);
+    handlerParams.count = valueOrDefault(params.count, 10);
     handlerParams.childOrder = nullOrValue(params.childOrder);
     handlerParams.countOnly = valueOrDefault(params.countOnly, false);
     handlerParams.recursive = valueOrDefault(params.recursive, false);
-    return __.toNativeObject(this.native.getChildren(handlerParams));
+    return __.toNativeObject(this.native.findChildren(handlerParams));
+};
+
+/**
+ * Refresh the index for the current repoConnection
+ *
+ * @example-ref examples/node/refresh.js
+ *
+ * @param {string} [mode]=ALL Refresh all (ALL) data, or just the search-index (SEARCH) or the storage-index (STORAGE)
+ */
+RepoConnection.prototype.refresh = function (mode) {
+    this.native.refresh(valueOrDefault(mode, "ALL"));
 };
 
 /**

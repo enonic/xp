@@ -9,9 +9,7 @@ var repo = nodeLib.connect({
 
 // BEGIN
 // Fetches a node.
-var result1 = repo.get({
-    key: 'nodeId'
-});
+var result1 = repo.get('nodeId');
 
 if (result1) {
     log.info('Node "' + result1._id + '" found');
@@ -20,12 +18,10 @@ if (result1) {
 }
 // END
 
+
 // BEGIN
 // Fetches nodes.
-var result2 = repo.get({
-    keys: ['nodeId', '/node2-path', 'node3Id']
-});
-
+var result2 = repo.get('nodeId', '/node2-path', 'node3Id');
 log.info(result2.length + ' nodes found.');
 // END
 

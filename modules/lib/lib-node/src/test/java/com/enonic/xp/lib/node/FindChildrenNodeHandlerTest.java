@@ -7,7 +7,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeIds;
 
-public class GetChildrenNodeHandlerTest
+public class FindChildrenNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
@@ -19,7 +19,7 @@ public class GetChildrenNodeHandlerTest
                 nodeIds( NodeIds.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26", "350ba4a6-589c-498b-8af0-f183850e1120" ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/getChildren.js" );
+        runScript( "/site/lib/xp/examples/node/findChildren.js" );
     }
 
 
