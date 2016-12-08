@@ -220,8 +220,6 @@ module api.form.inputtype.support {
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-
-            console.log('validate');
             var recording = this.validateOccurrences();
 
             if (!this.hasValidUserInput()) {

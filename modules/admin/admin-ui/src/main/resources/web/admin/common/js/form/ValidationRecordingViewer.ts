@@ -32,7 +32,6 @@ module api.form {
         }
 
         appendValidationMessage(message: string, removeExisting: boolean = true) {
-            console.log('append: ' + message);
             if (removeExisting) {
                 this.list.removeChildren();
             }
@@ -40,7 +39,6 @@ module api.form {
         }
 
         setError(text: string) {
-            console.log('error: ' + text);
             this.list.removeChildren();
             if (text) {
                 this.list.appendChild(new api.dom.LiEl().setHtml(text));
