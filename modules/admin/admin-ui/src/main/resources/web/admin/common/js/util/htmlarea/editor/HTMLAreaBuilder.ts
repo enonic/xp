@@ -22,15 +22,15 @@ module api.util.htmlarea.editor {
         private convertUrls: boolean = false;
         private hasActiveDialog: boolean = false;
         private customToolConfig: any;
-        private canSeeCode: boolean;
+        private editableSourceCode: boolean;
 
         private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
 
         private plugins: string[] = ['directionality', 'hr', 'preview', 'searchreplace', 'textcolor', 'visualchars', 'visualblocks',
             'autoresize', 'table', 'fullscreen', 'charmap', 'paste'];
 
-        setCanSeeCode(value: boolean): HTMLAreaBuilder {
-            this.canSeeCode = value;
+        setEditableSourceCode(value: boolean): HTMLAreaBuilder {
+            this.editableSourceCode = value;
             return this;
         }
         
@@ -164,7 +164,7 @@ module api.util.htmlarea.editor {
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
             this.checkRequiredFieldsAreSet();
 
-            if (this.inline && !this.isToolExcluded("code")) {
+            if (this.inline && this.editableSourceCode && !this.isToolExcluded("code")) {
                 this.includeTool("code");
             }
 
@@ -223,7 +223,7 @@ module api.util.htmlarea.editor {
                 browser_spellcheck: true,
                 verify_html: false,
                 verify_css_classes: false,
-                plugins: this.canSeeCode ? this.plugins.concat('code') : this.plugins,
+                plugins: this.editableSourceCode ? this.plugins.concat('code') : this.plugins,
                 external_plugins: {
                     "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
                     "anchor": this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",

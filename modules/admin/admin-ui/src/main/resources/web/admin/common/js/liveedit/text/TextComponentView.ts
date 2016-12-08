@@ -1,5 +1,6 @@
 module api.liveedit.text {
 
+    import RoleKeys = api.security.RoleKeys;
     declare var CONFIG;
 
     import ComponentView = api.liveedit.ComponentView;
@@ -48,6 +49,8 @@ module api.liveedit.text {
         private modalDialog: ModalDialog;
         private currentDialogConfig;
 
+        private editableSourceCode: boolean;
+
         constructor(builder: TextComponentViewBuilder) {
             super(builder.
                 setPlaceholder(new TextPlaceholder()).
@@ -64,6 +67,12 @@ module api.liveedit.text {
             this.initializeRootElement();
 
             this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
+
+            new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                this.editableSourceCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
+                                                                                        RoleKeys.CMS_ADMIN.equals(principal) ||
+                                                                                        RoleKeys.CMS_EXPERT.equals(principal));
+            });
 
             this.onAdded(() => { // is triggered on item insert or move
                 if (api.BrowserHelper.isFirefox() && !!tinymce.activeEditor) {
@@ -332,7 +341,8 @@ module api.liveedit.text {
                     this.currentDialogConfig = event.getConfig();
             }).setFocusHandler(this.onFocusHandler.bind(this)).setBlurHandler(this.onBlurHandler.bind(this)).setKeydownHandler(
                 this.onKeydownHandler.bind(this)).setFixedToolbarContainer('.mce-toolbar-container').setContent(
-                this.getContent()).setContentPath(this.getContentPath()).setApplicationKeys(this.getApplicationKeys()).
+                this.getContent()).setEditableSourceCode(this.editableSourceCode).setContentPath(this.getContentPath()).setApplicationKeys(
+                this.getApplicationKeys()).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
