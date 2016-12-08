@@ -20,6 +20,8 @@ module api.content.resource {
 
         public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
+        public static PATH_ASC = new FieldOrderExpr(new FieldExpr("_path"), OrderDirection.ASC);
+        
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSummaryRequest.SCORE_DESC, ContentSummaryRequest.MODIFIED_TIME_DESC];
 
         constructor() {
@@ -27,7 +29,6 @@ module api.content.resource {
             this.request =
                 new ContentQueryRequest<json.ContentSummaryJson, ContentSummary>(new query.ContentQuery()).setExpand(api.rest.Expand.SUMMARY);
         }
-
 
         getSearchString(): string {
             return this.searchString;
@@ -93,9 +94,13 @@ module api.content.resource {
         }
 
         private buildSearchQueryExpr() {
-            this.request.getContentQuery().setQueryExpr(new QueryExpr(this.createSearchExpression(), ContentSummaryRequest.DEFAULT_ORDER));
+            this.request.getContentQuery().setQueryExpr(new QueryExpr(this.createSearchExpression(), this.getDefaultOrder()));
         }
 
+        protected getDefaultOrder(): OrderExpr[] {
+            return ContentSummaryRequest.DEFAULT_ORDER;
+        }
+        
         protected createSearchExpression(): ConstraintExpr {
             return new api.query.PathMatchExpressionBuilder()
                 .setSearchString(this.searchString)

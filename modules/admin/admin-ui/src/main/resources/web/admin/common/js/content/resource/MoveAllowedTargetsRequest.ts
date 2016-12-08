@@ -7,6 +7,8 @@ module api.content.resource {
     import CompareExpr = api.query.expr.CompareExpr;
     import FieldExpr = api.query.expr.FieldExpr;
     import ValueExpr = api.query.expr.ValueExpr;
+    import OrderDirection = api.query.expr.OrderDirection;
+    import OrderExpr = api.query.expr.OrderExpr;
 
     export class MoveAllowedTargetsRequest extends ContentSummaryRequest {
 
@@ -55,6 +57,10 @@ module api.content.resource {
 
         setFilterContentPaths(contentPaths: ContentPath[]) {
             this.filterContentPaths = contentPaths;
+        }
+
+        protected getDefaultOrder(): OrderExpr[] {
+            return [ContentSummaryRequest.SCORE_DESC, ContentSummaryRequest.PATH_ASC];
         }
     }
 }
