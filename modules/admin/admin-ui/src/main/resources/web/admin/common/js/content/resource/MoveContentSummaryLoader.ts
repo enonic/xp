@@ -27,7 +27,7 @@ module api.content.resource {
         setFilterContentPaths(contentPaths: ContentPath[]) {
             this.filterContentPaths = contentPaths;
             this.contentSummaryRequest.setFilterContentPaths(contentPaths);
-            const path = contentPaths.length === 1 ? contentPaths[0] : null;
+            const path = contentPaths.length === 1 ? contentPaths[0].getParentPath() : null;
             this.contentSummaryRequest.setContentPath(path);
         }
 
