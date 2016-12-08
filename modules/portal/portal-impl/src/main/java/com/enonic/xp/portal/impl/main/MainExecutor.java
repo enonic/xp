@@ -10,7 +10,6 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true)
 public final class MainExecutor
@@ -19,8 +18,6 @@ public final class MainExecutor
     private final static Logger LOG = LoggerFactory.getLogger( MainExecutor.class );
 
     private PortalScriptService scriptService;
-
-    private ResourceService resourceService;
 
     @Override
     public void onEvent( final Event event )
