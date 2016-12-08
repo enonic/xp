@@ -18,7 +18,7 @@ wemjq(document).ready(() => {
 
     // Notify parent frame if any modifier except shift is pressed
     // For the parent shortcuts to work if the inner iframe has focus
-    wemjq(document).on("keypress keydown keyup", (event: KeyboardEvent) => {
+    wemjq(document).on("keypress keydown keyup", (event) => {
 
         if (shouldBubbleEvent(event)) {
 
@@ -38,14 +38,14 @@ wemjq(document).ready(() => {
         }
     });
 
-    function shouldBubbleEvent(event: KeyboardEvent): boolean {
+    function shouldBubbleEvent(event): boolean {
         let shouldBubble: boolean;
         switch (event.keyCode) {
         case 113:  // F2 global help shortcut
             shouldBubble = true;
             break;
         default:
-            shouldBubble = (event.metaKey || event.ctrlKey || event.altKey) && event.keyCode;
+            shouldBubble = (event.metaKey || event.ctrlKey || event.altKey) && !!event.keyCode;
             break;
         }
         return shouldBubble;
