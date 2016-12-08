@@ -86,13 +86,10 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
                 if (event.isValid()) {
                     //event.getRecording().
                 }
-                console.log('event: ' + event);
                 this.confirmScheduleAction.setEnabled(event.isValid());
 
             });
-
-
-            console.log('sss');
+            
             var iv: api.form.InputView = this.formView.getFirstChild();
             iv.removeClass("valid").addClass("invalid");
 
@@ -180,7 +177,6 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     resetPublishDates() {
-        console.log('reset');
         this.propertySet.reset();
         this.propertySet.setLocalDateTime("publishFrom", 0, api.util.LocalDateTime.fromDate(new Date()));
         this.formView.update(this.propertySet);
