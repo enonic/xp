@@ -58,6 +58,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
                 setName("from").
                 setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).
                 setLabel("Publish From").
+                setHelpText("Time from which your contents will be available online").
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
                 setInputTypeConfig({}).
                 setMaximizeUIInputWidth(true).
@@ -66,6 +67,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
                 setName("to").
                 setInputType(api.content.form.inputtype.publish.PublishTo.getName()).
                 setLabel("Publish To").
+                setHelpText("Time until when your contents will be available online").
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 setInputTypeConfig({}).
                 setMaximizeUIInputWidth(true).
