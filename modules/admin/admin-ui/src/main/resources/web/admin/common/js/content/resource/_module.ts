@@ -1,4 +1,5 @@
 ///<reference path='ContentSummaryRequest.ts' />
+///<reference path='MoveAllowedTargetsRequest.ts' />
 ///<reference path='ContentSummaryPreLoader.ts' />
 ///<reference path='ContentSummaryLoader.ts' />
 ///<reference path='FragmentContentSummaryRequest.ts' />

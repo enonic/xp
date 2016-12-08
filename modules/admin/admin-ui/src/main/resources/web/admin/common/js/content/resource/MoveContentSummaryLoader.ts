@@ -9,14 +9,14 @@ module api.content.resource {
 
     export class MoveContentSummaryLoader extends ContentSummaryPreLoader {
 
-        private contentSummaryRequest: ContentSummaryRequest;
+        private contentSummaryRequest: MoveAllowedTargetsRequest;
 
         private filterContentPaths: ContentPath[];
 
         private filterContentTypes: ContentType[];
 
         constructor() {
-            this.contentSummaryRequest = new ContentSummaryRequest();
+            this.contentSummaryRequest = new MoveAllowedTargetsRequest();
             super(this.contentSummaryRequest);
         }
 
@@ -26,6 +26,7 @@ module api.content.resource {
 
         setFilterContentPaths(contentPaths: ContentPath[]) {
             this.filterContentPaths = contentPaths;
+            this.contentSummaryRequest.setFilterContentPaths(contentPaths);
             const path = contentPaths.length === 1 ? contentPaths[0] : null;
             this.contentSummaryRequest.setContentPath(path);
         }
