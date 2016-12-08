@@ -3,9 +3,7 @@ var assert = require('/lib/xp/assert');
 
 // BEGIN
 // Retrieves a repository
-var result = repoLib.get({
-    id: 'test-repo'
-});
+var result = repoLib.get('test-repo');
 
 if (result) {
     log.info('Repository found');

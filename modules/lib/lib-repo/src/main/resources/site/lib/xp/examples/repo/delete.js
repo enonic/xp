@@ -3,9 +3,7 @@ var assert = require('/lib/xp/assert');
 
 // BEGIN
 // Retrieves a repository
-var result = repoLib.delete({
-    id: 'test-repo'
-});
+var result = repoLib.delete('test-repo');
 
 if (result) {
     log.info('Repository deleted');

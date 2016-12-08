@@ -29,84 +29,7 @@ var result2 = repoLib.create({
             "deny": []
         }
     ],
-    rootChildOrder: "_timestamp DESC",
-    settings: {
-        definitions: {
-            version: {
-                settings: {
-                    "index": {
-                        "number_of_shards": 1,
-                        "number_of_replicas": 1
-                    },
-                    "analysis": {
-                        "analyzer": {
-                            "keywordlowercase": {
-                                "type": "custom",
-                                "tokenizer": "keyword",
-                                "filter": [
-                                    "lowercase"
-                                ]
-                            }
-                        }
-                    }
-                },
-                mapping: {
-                    "version": {
-                        "_all": {
-                            "enabled": false
-                        },
-                        "_source": {
-                            "enabled": true
-                        },
-                        "date_detection": false,
-                        "numeric_detection": false,
-                        "properties": {
-                            "nodeid": {
-                                "type": "string",
-                                "store": "true",
-                                "index": "not_analyzed"
-                            },
-                            "versionid": {
-                                "type": "string",
-                                "store": "true",
-                                "index": "not_analyzed"
-                            },
-                            "timestamp": {
-                                "type": "date",
-                                "store": "true",
-                                "index": "not_analyzed"
-                            },
-                            "nodepath": {
-                                "type": "string",
-                                "store": "true",
-                                "index": "analyzed",
-                                "analyzer": "keywordlowercase"
-                            }
-                        }
-                    }
-                }
-            },
-            branch: {
-                settings: {
-                    "index": {
-                        "number_of_shards": 1,
-                        "number_of_replicas": 1
-                    },
-                    "analysis": {
-                        "analyzer": {
-                            "keywordlowercase": {
-                                "type": "custom",
-                                "tokenizer": "keyword",
-                                "filter": [
-                                    "lowercase"
-                                ]
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    rootChildOrder: "_timestamp DESC"
 });
 
 log.info('Repository created with id ' + result2.id);
@@ -124,83 +47,12 @@ var expected1 = {
 // END
 assert.assertJsonEquals(expected1, result1);
 
-var expected2 = {
+var expected2 =
+{
     "id": "test-repo2",
     "branches": [
         "master"
     ],
-    settings: {
-        definitions: {
-            version: {
-                settings: {
-                    "index": {
-                        "number_of_shards": 1,
-                        "number_of_replicas": 1
-                    },
-                    "analysis": {
-                        "analyzer": {
-                            "keywordlowercase": {
-                                "type": "custom",
-                                "tokenizer": "keyword",
-                                "filter": "lowercase"
-                            }
-                        }
-                    }
-                },
-                mapping: {
-                    "version": {
-                        "_all": {
-                            "enabled": "false" //TODO Should be a boolean. JsonToPropertyTreeTranslator does not treat boolean values
-                        },
-                        "_source": {
-                            "enabled": "true"
-                        },
-                        "date_detection": "false",
-                        "numeric_detection": "false",
-                        "properties": {
-                            "nodeid": {
-                                "type": "string",
-                                "store": "true",
-                                "index": "not_analyzed"
-                            },
-                            "versionid": {
-                                "type": "string",
-                                "store": "true",
-                                "index": "not_analyzed"
-                            },
-                            "timestamp": {
-                                "type": "date",
-                                "store": "true",
-                                "index": "not_analyzed"
-                            },
-                            "nodepath": {
-                                "type": "string",
-                                "store": "true",
-                                "index": "analyzed",
-                                "analyzer": "keywordlowercase"
-                            }
-                        }
-                    }
-                }
-            },
-            branch: {
-                settings: {
-                    "index": {
-                        "number_of_shards": 1,
-                        "number_of_replicas": 1
-                    },
-                    "analysis": {
-                        "analyzer": {
-                            "keywordlowercase": {
-                                "type": "custom",
-                                "tokenizer": "keyword",
-                                "filter": "lowercase"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    "settings": {}
 };
 assert.assertJsonEquals(expected2, result2);

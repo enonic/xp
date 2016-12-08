@@ -54,7 +54,7 @@ function argsToStringArray(argsArray) {
 /**
  * Creates a new repo-connection.
  *
- * @param {*} native Native repo-connection object.
+ * @returns {*} native Native repo-connection object.
  * @constructor
  * @private
  */
@@ -286,27 +286,32 @@ RepoConnection.prototype.refresh = function (mode) {
  *
  * @example-ref examples/node/connect.js
  *
- * @param {object} context JSON with the parameters.
-
+ * @param {object} params JSON with the parameters.
+ * @param {object} params.repoId repository id
+ * @param {object} params.branch branch id
+ * @param {object} [params.user] User to execute the callback with. Default is the current user.
+ * @param {string} params.user.login Login of the user.
+ * @param {string} [params.user.userStore] User store containing the user. By default, all the user stores will be used.
+ * @param {string[]} [params.principals] Additional principals to execute the callback with.
  * @returns {RepoConnection} Returns a new repo-connection.
  */
-exports.connect = function (context) {
+exports.connect = function (params) {
 
     var nodeHandleContext = __.newBean('com.enonic.xp.lib.node.NodeHandleContext');
-    nodeHandleContext.repoId = required(context, 'repoId');
-    nodeHandleContext.branch = required(context, 'branch');
+    nodeHandleContext.repoId = required(params, 'repoId');
+    nodeHandleContext.branch = required(params, 'branch');
 
-    if (context.user) {
-        if (context.user.login) {
-            nodeHandleContext.username = context.user.login;
+    if (params.user) {
+        if (params.user.login) {
+            nodeHandleContext.username = params.user.login;
         }
-        if (context.user.userStore) {
-            nodeHandleContext.userStore = context.user.userStore;
+        if (params.user.userStore) {
+            nodeHandleContext.userStore = params.user.userStore;
         }
     }
 
-    if (context.principals) {
-        nodeHandleContext.principals = context.principals;
+    if (params.principals) {
+        nodeHandleContext.principals = params.principals;
     }
 
     return new RepoConnection(factory.create(nodeHandleContext));
