@@ -13,6 +13,6 @@ repo.refresh();
 // END
 
 // BEGIN
-// Refresh repository indices
+// Refresh repository search index
 repo.refresh('SEARCH');
 // END
