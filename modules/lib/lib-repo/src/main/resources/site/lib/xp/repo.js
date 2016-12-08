@@ -84,14 +84,16 @@ exports.create = function (params) {
  *
  * @example-ref examples/repo/delete.js
  *
- * @param {object} params JSON with the parameters.
- * @param {string} params.id Repository ID.
- * @param {boolean} True if deleted, false otherwise.
+ * @param {string} id Repository ID.
+ * @return {boolean} true if deleted, false otherwise.
  *
  */
-exports.delete = function (params) {
+exports.delete = function (id) {
+    if (!id) {
+        throw "Parameter '" + id + "' is required";
+    }
     var bean = __.newBean('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
-    bean.repositoryId = required(params, 'id');
+    bean.repositoryId = id;
     return bean.execute();
 };
 
@@ -113,14 +115,16 @@ exports.list = function () {
  *
  * @example-ref examples/repo/get.js
  *
- * @param {object} params JSON with the parameters.
- * @param {string} params.id Repository ID.
+ * @param {string} id Repository ID.
  * @return {object} The repository (as JSON).
  *
  */
-exports.get = function (params) {
+exports.get = function (id) {
+    if (!id) {
+        throw "Parameter '" + id + "' is required";
+    }
     var bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
-    bean.repositoryId = required(params, 'id');
+    bean.repositoryId = id;
     return __.toNativeObject(bean.execute());
 };
 
