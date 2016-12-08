@@ -63,7 +63,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
             addFormItem(new api.form.InputBuilder().
                 setName("publishFrom").
                 setInputType(api.content.form.inputtype.time.DateTime.getName()).
-                setLabel("Publish From--2").
+                setLabel("Publish From--3").
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
                 setInputTypeConfig({}).
                 setMaximizeUIInputWidth(true).
@@ -83,9 +83,19 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
         this.formView.layout().then(() => {
             this.appendChildToContentPanel(this.formView);
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                if (event.isValid()) {
+                    event.getRecording().set
+                }
                 console.log('event: ' + event);
                 this.confirmScheduleAction.setEnabled(event.isValid());
+
             });
+
+
+            console.log('sss');
+            var iv: api.form.InputView = this.formView.getFirstChild();
+            iv.removeClass("valid").addClass("invalid");
+
             this.confirmScheduleAction.setEnabled(this.formView.isValid());
         });
     }

@@ -228,6 +228,8 @@ module api.form.inputtype.support {
                     setOverwriteDefault(true).
                     setMessage("Incorrect value entered").
                     build());
+            } else {
+                recording.setAdditionalValidationRecord()
             }
 
             if (!silent && recording.validityChanged(this.previousValidationRecording)) {
