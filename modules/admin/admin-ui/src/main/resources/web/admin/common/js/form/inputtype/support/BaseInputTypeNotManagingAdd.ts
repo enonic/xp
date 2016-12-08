@@ -11,7 +11,7 @@ module api.form.inputtype.support {
 
         private input: api.form.Input;
 
-        private propertyArray: PropertyArray;
+        protected propertyArray: PropertyArray;
 
         private inputOccurrences: InputOccurrences;
 

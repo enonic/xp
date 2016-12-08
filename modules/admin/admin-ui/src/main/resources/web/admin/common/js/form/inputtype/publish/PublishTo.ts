@@ -13,6 +13,7 @@ module api.content.form.inputtype.publish {
                 var publishTo = publishInfoPropertySet.getDateTime("publishTo");
 
                 if (publishTo && (publishTo.toDate() < new Date())) {
+                    recording.setBreaksMinimumOccurrences(true);
                     recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
                         setOverwriteDefault(true).
                         setMessage("Publish to value cannot be set in the past").
