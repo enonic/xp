@@ -133,7 +133,7 @@
             padding: 3px 0px 0px 25px;
           }
 
-          &.expanded .option-items-container {
+          &.expanded > .option-items-container {
             padding: 10px 0;
           }
         }
@@ -146,7 +146,7 @@
             margin-right: -6px;
           }
 
-          .option-items-container {
+          > .option-items-container {
             border-bottom: 1px solid @admin-option-set-header-bg;
           }
 
@@ -165,7 +165,7 @@
           }
         }
 
-        .option-items-container {
+        > .option-items-container {
           opacity: 1;
         }
 
@@ -213,12 +213,12 @@
       &.expandable.expanded {
         padding-bottom: 10px;
 
-        .option-items-container {
+        > .option-items-container {
           padding: 10px 6px;
         }
       }
 
-      .option-items-container {
+      > .option-items-container {
         display: none;
         opacity: 0.5;
         padding: 0 6px;
@@ -317,10 +317,8 @@
         font-size: 12px;
       }
 
-      &.expanded {
-        .option-items-container {
-          display: block;
-        }
+      &.expanded > .option-items-container {
+        display: block;
       }
     }
   }
