@@ -3,7 +3,7 @@ apply plugin: 'com.moowork.gulp'
 
 node {
     download = true
-    version = '4.2.1'
+    version = '6.9.2'
 }
 
 bundle {
