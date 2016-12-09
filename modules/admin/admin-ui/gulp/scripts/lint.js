@@ -17,7 +17,7 @@ function log(fails) {
     }
 }
 
-const diff = () => git.diff('.ts').then(lint).then(log);
+const diff = () => git.mergeBase().then((hash) => git.diff(hash, '.ts')).then(lint).then(log);
 const status = () => git.status('.ts').then(lint).then(log);
 
 module.exports = {

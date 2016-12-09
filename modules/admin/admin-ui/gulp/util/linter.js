@@ -44,6 +44,9 @@ function lint(files) {
                     resolve(lintFile(tslint, name, linkString, tslintConfig));
                 }
             });
+        }).catch((error) => {
+            // Show files that can't be opened or not present in current branch
+            console.error(error.message);
         });
     });
 

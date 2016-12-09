@@ -28,10 +28,19 @@ function status(extension = '') {
     });
 }
 
+// git merge-base master HEAD
+function mergeBase() {
+    return new Promise((resolve) => {
+        git.raw(['merge-base', 'master', 'HEAD'], (err, commitHash) => {
+            resolve(commitHash.trim());
+        });
+    });
+}
+
 // git diff --name-only origin/master..HEAD
 //   Outputs modified files from all commits that are not in master yet
-function diff(extension = '') {
-    const options = ["--name-only", "origin/master..HEAD"];
+function diff(branch = 'origin/master', extension = '') {
+    const options = ['--name-only', `${branch}..HEAD`];
     return new Promise((resolve) => {
         git.diff(options, (err, result) => {
             const files = !result ? [] : result.trim().split('\n');
@@ -44,5 +53,6 @@ function diff(extension = '') {
 
 module.exports = {
     status,
-    diff
+    mergeBase,
+    diff,
 };
