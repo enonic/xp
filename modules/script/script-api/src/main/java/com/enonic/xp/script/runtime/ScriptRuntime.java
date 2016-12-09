@@ -6,7 +6,7 @@ import com.enonic.xp.script.ScriptExports;
 
 public interface ScriptRuntime
 {
-    boolean hasScript(ResourceKey script);
+    boolean hasScript( ResourceKey script );
     
     ScriptExports execute( ResourceKey script );
 

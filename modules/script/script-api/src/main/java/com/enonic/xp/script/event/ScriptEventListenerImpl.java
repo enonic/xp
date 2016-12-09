@@ -52,8 +52,7 @@ final class ScriptEventListenerImpl
 
     private static MapSerializable toJson( final Event event )
     {
-        return gen ->
-        {
+        return gen -> {
             gen.value( "type", event.getType() );
             gen.value( "timestamp", event.getTimestamp() );
             gen.value( "localOrigin", event.isLocalOrigin() );

@@ -268,6 +268,16 @@ public abstract class AbstractNodeTest
             execute();
     }
 
+    protected Node createNode( final NodePath parent, final String name )
+    {
+        return createNode( CreateNodeParams.create().
+            parent( parent ).
+            name( name ).
+            setNodeId( NodeId.from( name ) ).
+            build() );
+    }
+
+
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
         final CreateNodeParams createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams ).

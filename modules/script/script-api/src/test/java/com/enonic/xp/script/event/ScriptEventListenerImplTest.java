@@ -73,8 +73,7 @@ public class ScriptEventListenerImplTest
     @Test
     public void testException()
     {
-        final Consumer<Object> consumer = o ->
-        {
+        final Consumer<Object> consumer = o -> {
             throw new RuntimeException();
         };
 
