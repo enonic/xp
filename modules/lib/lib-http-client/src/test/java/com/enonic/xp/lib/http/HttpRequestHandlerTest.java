@@ -16,6 +16,8 @@ import okhttp3.mockwebserver.SocketPolicy;
 
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
+import static org.junit.Assert.*;
+
 public class HttpRequestHandlerTest
     extends ScriptTestSupport
 {
