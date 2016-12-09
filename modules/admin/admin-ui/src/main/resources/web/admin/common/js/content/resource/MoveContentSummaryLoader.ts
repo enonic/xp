@@ -67,9 +67,12 @@ module api.content.resource {
                         contents = this.filterContent(contents, contentTypes);
                     }
                     if (contents && contents.length > 0) {
-                        if (!this.getRequest().getSearchString() || this.getRequest().getSearchString().length == 0) {
-                            contents.sort(new api.content.util.ContentByPathComparator().compare);
-                        }
+                        /*
+                         We don't need sorting on the client - items must be sorted on the server before they are fed to the pager
+                         if (!this.contentSummaryRequest.getSearchString() || this.contentSummaryRequest.getSearchString().length == 0) {
+                         contents.sort(new api.content.util.ContentByPathComparator().compare);
+                         }
+                         */
                         this.notifyLoadedData(contents);
                     } else {
                         this.notifyLoadedData([]);
