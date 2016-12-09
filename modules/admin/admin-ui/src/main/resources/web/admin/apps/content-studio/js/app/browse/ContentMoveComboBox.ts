@@ -39,6 +39,7 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
 
     clearCombobox() {
         super.clearCombobox();
+        this.getComboBox().getComboBoxDropdownGrid().removeAllOptions();
         this.getLoader().resetSearchString();
     }
 }

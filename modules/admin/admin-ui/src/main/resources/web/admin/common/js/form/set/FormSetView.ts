@@ -341,9 +341,7 @@ module api.form {
         }
 
         toggleHelpText(show?: boolean) {
-            if (!!this.helpText) {
-                this.formItemOccurrences.toggleHelpText(show);
-            }
+            this.formItemOccurrences.toggleHelpText(show);
         }
 
         hasHelpText(): boolean {
