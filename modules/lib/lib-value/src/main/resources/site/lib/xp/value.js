@@ -61,7 +61,7 @@ exports.reference = function (value) {
 
 /**
  * Creates a LocalDateTime java-type.
- * @param {string} value A local date-time string (e.g '12:13:44')
+ * @param {string} value A local date-time string (e.g '2007-12-03T10:15:30')
  *
  * @returns {*} native Native repo-connection object.
  */
