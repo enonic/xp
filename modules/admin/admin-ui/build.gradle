@@ -8,6 +8,7 @@ node {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Admin'
+    instruction 'X-Bundle-Type', 'system'
 }
 
 dependencies {

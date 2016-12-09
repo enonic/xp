@@ -104,9 +104,7 @@ public final class ApplicationResource
         for ( final Application application : applications )
         {
             final ApplicationKey applicationKey = application.getKey();
-            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
-                !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
-                    applicationKey ) )//TODO Remove after 7.0.0 refactoring
+            if ( !application.isSystem() )
             {
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
                 final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
@@ -129,11 +127,8 @@ public final class ApplicationResource
         applications = this.filterApplications( applications, query );
         applications = this.sortApplications( applications );
 
-        return applications.getApplicationKeys().stream().filter(
-            applicationKey -> !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
-                !ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ).equals(
-                    applicationKey ) ) //TODO Remove after 7.0.0 refactoring
-            .map( applicationKey -> applicationKey.toString() ).collect( Collectors.toList() );
+        return applications.stream().filter( app -> !app.isSystem() ).map( app -> app.getKey().toString() ).
+            collect( Collectors.toList() );
     }
 
     @GET
