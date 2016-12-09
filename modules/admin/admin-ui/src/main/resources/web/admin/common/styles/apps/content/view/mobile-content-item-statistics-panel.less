@@ -22,67 +22,78 @@
   }
 
   .mobile-content-item-statistics-header {
+    .box-sizing(border-box);
+    height: @app-header-height;
     z-index: 2;
-    margin: 0px;
     width: 100%;
     position: absolute;
-    padding: 8px 0px 8px 0px;
-    overflow: hidden;
+    padding: 6px @app-header-height;
     display: block;
-    line-height: 20px !important;
-    background-color: @admin-bg-almost-white;
+    background-color: @admin-black;
     text-align: center;
     font-size: 14px;
+    color: @admin-white;
+
+    h6 {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-weight: bold;
+      .ellipsis();
+    }
+
+    span {
+      font-size: 11px;
+      opacity: 0.8;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+
+      &.online {
+        opacity: 1;
+        color: #7dce2f;
+      }
+    }
+  }
+
+  .mobile-details-panel-toggle-button,
+  .mobile-details-panel-back-button {
+    z-index: 3;
+    width: @app-header-height;
+    height: @app-header-height;
+    line-height: @app-header-height;;
+    position: absolute;
+    top: 0px;
+    cursor: pointer;
+
+    &:before {
+      color: @admin-white;
+    }
   }
 
   .mobile-details-panel-toggle-button {
-
-    z-index: 2;
-    margin: 0px;
-    right: 2px;
-    float: right;
-    width: 35px;
-    height: 20px;
-    position: absolute;
-    line-height: 20px;
-    top: 0px;
-    padding: 8px 0px 8px 0px;
+    right: 0px;
     font-size: 15px;
-    overflow: hidden;
-    display: block;
-    cursor: pointer;
 
+    .box-sizing(border-box);
     .icon-list();
 
     &.expanded {
       font-size: 25px;
-      padding-top: 5px;
+      padding: 10px 0;
       .icon-close2();
     }
   }
 
-  .back-button {
+  .mobile-details-panel-back-button {
 
-    z-index: 3;
-    margin: 0px 0px 0px 5px;
-    float: left;
-    width: 35px;
-    height: 20px;
-    position: absolute;
-    line-height: 20px;
-    top: 0px;
-    padding: 8px 0px 8px 0px;
+    left: 0px;
     font-size: 20px;
-    overflow: hidden;
-    display: block;
-    cursor: pointer;
     transform: rotate(180deg);
 
     .icon-trending_neutral();
   }
 
   .content-item-preview-panel {
-    padding-top: 36px;
+    padding-top: @app-header-height;
   }
 
   .details-panel {

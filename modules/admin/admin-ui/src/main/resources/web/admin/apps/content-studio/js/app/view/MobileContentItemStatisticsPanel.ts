@@ -15,7 +15,8 @@ import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
     private itemHeader: api.dom.DivEl = new api.dom.DivEl("mobile-content-item-statistics-header");
-    private headerLabel: api.dom.SpanEl = new api.dom.SpanEl();
+    private headerLabel: api.dom.H6El = new api.dom.H6El();
+    private subHeaderLabel: api.dom.SpanEl = new api.dom.SpanEl();
 
     private previewPanel: ContentItemPreviewPanel;
     private detailsPanel: MobileDetailsPanel;
@@ -63,7 +64,8 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
     private initHeader() {
         this.itemHeader.appendChild(this.headerLabel);
-        var backButton = new api.dom.DivEl("back-button");
+        this.itemHeader.appendChild(this.subHeaderLabel);
+        var backButton = new api.dom.DivEl("mobile-details-panel-back-button");
         backButton.onClicked((event) => {
             this.slideAllOut();
         });
@@ -97,6 +99,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
             this.detailsPanel.setItem(!!item ? item.getModel() : null);
             if (item) {
                 this.setName(this.makeDisplayName(item));
+                this.setStatus(this.makeCompareStatus(item));
             }
         }
     }
@@ -108,6 +111,11 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
             : item.getDisplayName();
     }
 
+    private makeCompareStatus(item: ViewItem<ContentSummaryAndCompareStatus>): string {
+        let compareStatus = item.getModel().getCompareStatus();
+        return api.content.CompareStatusFormatter.formatStatus(compareStatus);
+    }
+
     getDetailsPanel(): MobileDetailsPanel {
         return this.detailsPanel;
     }
@@ -116,8 +124,14 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         return this.previewPanel;
     }
 
-    setName(name: string) {
+    private setName(name: string) {
         this.headerLabel.setHtml(name);
+    }
+
+    private setStatus(status: string) {
+        this.subHeaderLabel.getHTMLElement().setAttribute("class", "");
+        this.subHeaderLabel.addClass(status.toLowerCase().replace(" ", "-"));
+        this.subHeaderLabel.setHtml(status);
     }
 
     slideAllOut() {
