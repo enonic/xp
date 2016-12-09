@@ -18,9 +18,11 @@ final class ScriptEventListenerImpl
 
     ApplicationKey application;
 
-    Pattern pattern;
+    Pattern typePattern;
 
     Consumer<Object> listener;
+
+    boolean localOnly;
 
     public ApplicationKey getApplication()
     {
@@ -30,12 +32,12 @@ final class ScriptEventListenerImpl
     @Override
     public void onEvent( final Event event )
     {
-        if ( !event.isLocalOrigin() )
+        if ( this.localOnly && !event.isLocalOrigin() )
         {
             return;
         }
 
-        if ( !this.pattern.matcher( event.getType() ).matches() )
+        if ( !this.typePattern.matcher( event.getType() ).matches() )
         {
             return;
         }
