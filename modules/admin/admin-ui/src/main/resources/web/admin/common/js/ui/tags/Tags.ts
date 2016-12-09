@@ -42,8 +42,6 @@ module api.ui.tags {
 
         private preservedValue: string;
 
-        private searchTimeout: number;
-
         private tagAddedListeners: {(event: TagAddedEvent) : void}[] = [];
 
         private tagRemovedListeners: {(event: TagRemovedEvent) : void}[] = [];
@@ -104,18 +102,17 @@ module api.ui.tags {
                 this.textInput.getEl().setWidth('');
             });
 
+            var searchSuggestionHandler = api.util.AppHelper.debounce((searchString: string) => {
+                this.searchSuggestions(searchString);
+            }, 300, false);
+            
             this.textInput.onValueChanged((event: api.ValueChangedEvent) => {
-                if (this.searchTimeout) {
-                    clearTimeout(this.searchTimeout);
-                    this.searchTimeout = undefined;
-                }
-
                 var searchString = event.getNewValue();
 
                 if (api.util.StringHelper.isBlank(searchString)) {
                     this.tagSuggestions.hide();
                 } else {
-                    this.searchTimeout = setTimeout(() => this.searchSuggestions(searchString), 100);
+                    searchSuggestionHandler(searchString);
                 }
             });
 

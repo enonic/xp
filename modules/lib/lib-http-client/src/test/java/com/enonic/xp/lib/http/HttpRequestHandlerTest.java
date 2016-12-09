@@ -8,10 +8,11 @@ import org.junit.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
-import com.squareup.okhttp.mockwebserver.MockResponse;
-import com.squareup.okhttp.mockwebserver.MockWebServer;
-import com.squareup.okhttp.mockwebserver.RecordedRequest;
-import com.squareup.okhttp.mockwebserver.SocketPolicy;
+
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+import okhttp3.mockwebserver.SocketPolicy;
 
 import com.enonic.xp.testing.script.ScriptTestSupport;
 

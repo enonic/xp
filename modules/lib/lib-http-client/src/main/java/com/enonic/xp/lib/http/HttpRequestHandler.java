@@ -8,17 +8,19 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteSource;
-import com.squareup.okhttp.Authenticator;
-import com.squareup.okhttp.Credentials;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.internal.http.HttpMethod;
+
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.Route;
+import okhttp3.internal.http.HttpMethod;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -70,12 +72,12 @@ public final class HttpRequestHandler
     private Response sendRequest( final Request request )
         throws IOException
     {
-        final OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout( this.readTimeout, TimeUnit.MILLISECONDS );
-        client.setConnectTimeout( this.connectionTimeout, TimeUnit.MILLISECONDS );
+        final OkHttpClient.Builder client = new OkHttpClient.Builder();
+        client.readTimeout( this.readTimeout, TimeUnit.MILLISECONDS );
+        client.connectTimeout( this.connectionTimeout, TimeUnit.MILLISECONDS );
         setupProxy( client );
         setupAuthentication( client );
-        return client.newCall( request ).execute();
+        return client.build().newCall( request ).execute();
     }
 
     private Request getRequest()
@@ -87,7 +89,7 @@ public final class HttpRequestHandler
         RequestBody requestBody = null;
         if ( this.params != null && !this.params.isEmpty() )
         {
-            final FormEncodingBuilder formBody = new FormEncodingBuilder();
+            final FormBody.Builder formBody = new FormBody.Builder();
             addParams( formBody, this.params );
             requestBody = formBody.build();
         }
@@ -138,7 +140,7 @@ public final class HttpRequestHandler
     private RequestBody getMultipartBody()
         throws IOException
     {
-        final MultipartBuilder multipartBuilder = new MultipartBuilder().type( MultipartBuilder.FORM );
+        final MultipartBody.Builder multipartBuilder = new MultipartBody.Builder().setType( MultipartBody.FORM );
 
         for ( Map<String, Object> multipartItem : this.multipart )
         {
@@ -187,7 +189,7 @@ public final class HttpRequestHandler
         return urlBuilder.build();
     }
 
-    private void addParams( final FormEncodingBuilder formBody, final Map<String, Object> params )
+    private void addParams( final FormBody.Builder formBody, final Map<String, Object> params )
     {
         for ( Map.Entry<String, Object> header : params.entrySet() )
         {
@@ -209,24 +211,24 @@ public final class HttpRequestHandler
         }
     }
 
-    private void setupProxy( final OkHttpClient client )
+    private void setupProxy( final OkHttpClient.Builder client )
     {
         if ( proxyHost == null || proxyHost.trim().isEmpty() )
         {
             return;
         }
         int proxyPort = this.proxyPort == null ? DEFAULT_PROXY_PORT : this.proxyPort;
-        client.setProxy( new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) ) );
+        client.proxy( new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) ) );
     }
 
-    private void setupAuthentication( final OkHttpClient client )
+    private void setupAuthentication( final OkHttpClient.Builder client )
     {
         final String authUser = this.authUser;
         final String authPassword = this.authPassword;
         final String proxyUser = this.proxyUser;
         final String proxyPassword = this.proxyPassword;
 
-        if ( proxyUser == null && authUser == null )
+        if ( ( proxyUser == null || proxyUser.isEmpty() ) && ( authUser == null || authUser.isEmpty() ) )
         {
             return;
         }
@@ -234,7 +236,7 @@ public final class HttpRequestHandler
         Authenticator authenticator = new Authenticator()
         {
             @Override
-            public Request authenticate( final Proxy proxy, final Response response )
+            public Request authenticate( final Route route, final Response response )
                 throws IOException
             {
                 if ( authUser == null || authUser.trim().isEmpty() )
@@ -248,9 +250,12 @@ public final class HttpRequestHandler
                 }
                 return response.request().newBuilder().header( "Authorization", credential ).build();
             }
+        };
 
+        Authenticator proxyAuthenticator = new Authenticator()
+        {
             @Override
-            public Request authenticateProxy( final Proxy proxy, final Response response )
+            public Request authenticate( final Route route, final Response response )
                 throws IOException
             {
                 if ( proxyUser == null || proxyUser.trim().isEmpty() )
@@ -261,7 +266,9 @@ public final class HttpRequestHandler
                 return response.request().newBuilder().header( "Proxy-Authorization", credential ).build();
             }
         };
-        client.setAuthenticator( authenticator );
+
+        client.authenticator( authenticator );
+        client.proxyAuthenticator( proxyAuthenticator );
     }
 
 

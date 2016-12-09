@@ -31,6 +31,7 @@ import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ContentPath = api.content.ContentPath;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -325,7 +326,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private selectContentInGridByPath(path: api.content.ContentPath) {
-        this.treeGrid.expandTillNodeWithGivenPath(path, this.treeGrid.getSelectedNodes()[0]);
+        this.treeGrid.selectNodeByPath(path);
     }
 
     private isGivenPathSelectedInGrid(path: api.content.ContentPath): boolean {
@@ -387,11 +388,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             console.debug("ContentBrowsePanel: updated", data);
         }
 
-        var changed = this.doHandleContentUpdate(data);
+        return this.doHandleContentUpdate(data).then((changed) => {
+            this.updateStatisticsPanel(data);
 
-        this.updateStatisticsPanel(data);
-
-        return this.treeGrid.placeContentNodes(changed);
+            return this.treeGrid.placeContentNodes(changed);
+        });
     }
 
     private handleContentDeleted(paths: ContentPath[]) {
@@ -516,7 +517,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private doHandleContentUpdate(data: ContentSummaryAndCompareStatus[]): TreeNode<ContentSummaryAndCompareStatus>[] {
+    private doHandleContentUpdate(data: ContentSummaryAndCompareStatus[]): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>[]> {
         var changed = this.updateNodes(data);
 
         this.updateDetailsPanel(data);
@@ -524,10 +525,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.treeGrid.invalidate();
 
         // Update since CompareStatus changed
-        let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
-        this.treeGrid.notifyDataChanged(changedEvent);
+        return ContentSummaryAndCompareStatusFetcher.updateReadOnly(changed.map(node => node.getData())).then(() => {
 
-        return changed;
+            let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
+            this.treeGrid.notifyDataChanged(changedEvent);
+
+            return changed;
+        })
     }
 
     private updateNodes(data: ContentSummaryAndCompareStatus[]): TreeNode<ContentSummaryAndCompareStatus>[] {

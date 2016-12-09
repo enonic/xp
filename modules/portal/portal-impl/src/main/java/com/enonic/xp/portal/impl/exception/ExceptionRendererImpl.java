@@ -74,6 +74,7 @@ public final class ExceptionRendererImpl
                 final PortalResponse statusCustomError = renderCustomError( portalRequest, cause, handlerMethod );
                 if ( statusCustomError != null )
                 {
+                    logIfNeeded( toErrorInfo( cause ) );
                     return statusCustomError;
                 }
             }
@@ -81,12 +82,14 @@ public final class ExceptionRendererImpl
             final PortalResponse idProviderError = renderIdProviderError( portalRequest, cause );
             if ( idProviderError != null )
             {
+                logIfNeeded( toErrorInfo( cause ) );
                 return idProviderError;
             }
 
             final PortalResponse defaultCustomError = renderCustomError( portalRequest, cause, DEFAULT_HANDLER );
             if ( defaultCustomError != null )
             {
+                logIfNeeded( toErrorInfo( cause ) );
                 return defaultCustomError;
             }
         }

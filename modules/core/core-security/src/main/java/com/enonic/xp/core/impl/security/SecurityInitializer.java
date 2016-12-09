@@ -174,6 +174,12 @@ final class SecurityInitializer
             build();
         addRole( createContentManagerAppRole );
 
+        final CreateRoleParams createContentManagerExpert = CreateRoleParams.create().
+            roleKey( RoleKeys.CONTENT_MANAGER_EXPERT ).
+            displayName( "Content Manager Expert" ).
+            build();
+        addRole( createContentManagerExpert );
+
         final CreateRoleParams createContentManager = CreateRoleParams.create().
             roleKey( RoleKeys.CONTENT_MANAGER_ADMIN ).
             displayName( "Content Manager Administrator" ).

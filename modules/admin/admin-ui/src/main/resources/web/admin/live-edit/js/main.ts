@@ -20,7 +20,7 @@ wemjq(document).ready(() => {
     // For the parent shortcuts to work if the inner iframe has focus
     wemjq(document).on("keypress keydown keyup", (event) => {
 
-        if ((event.metaKey || event.ctrlKey || event.altKey) && event.keyCode) {
+        if (shouldBubbleEvent(event)) {
 
             stopBrowserShortcuts(event);
 
@@ -37,6 +37,19 @@ wemjq(document).ready(() => {
             });
         }
     });
+
+    function shouldBubbleEvent(event): boolean {
+        let shouldBubble: boolean;
+        switch (event.keyCode) {
+        case 113:  // F2 global help shortcut
+            shouldBubble = true;
+            break;
+        default:
+            shouldBubble = (event.metaKey || event.ctrlKey || event.altKey) && !!event.keyCode;
+            break;
+        }
+        return shouldBubble;
+    }
 
     function stopBrowserShortcuts(event) {
         // get the parent's frame bindings

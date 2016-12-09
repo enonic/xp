@@ -9,7 +9,7 @@ module api.ui.button {
             super();
 
             this.action = action;
-            this.setLabel(this.createLabel(action));
+            this.setLabel(this.createLabel(action), false);
             this.addClass("action-button");
 
             this.setEnabled(this.action.isEnabled());
@@ -42,7 +42,7 @@ module api.ui.button {
             this.action.onPropertyChanged((action: api.ui.Action) => {
                 this.setEnabled(action.isEnabled());
                 this.setVisible(action.isVisible());
-                this.setLabel(this.createLabel(action));
+                this.setLabel(this.createLabel(action), false);
             });
         }
 

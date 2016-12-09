@@ -46,11 +46,11 @@
     border: none;
     overflow-y: hidden;
 
-    .wrapper {
+    .@{_COMMON_PREFIX}wrapper {
       display: none;
     }
 
-    .wrapper when (@displayIcon = true) {
+    .@{_COMMON_PREFIX}wrapper when (@displayIcon = true) {
       .flexbox()
     }
   }
@@ -59,7 +59,7 @@
     .flexbox();
   }
 
-  .names-and-icon-view .names-view {
+  .names-and-icon-view .@{_COMMON_PREFIX}names-view {
     margin-left: 0;
   }
 }

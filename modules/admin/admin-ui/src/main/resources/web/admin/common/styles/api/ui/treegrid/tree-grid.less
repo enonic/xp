@@ -136,18 +136,18 @@
         display: block;
         height: 100%;
         .names-and-icon-view {
-          .wrapper {
+          .@{_COMMON_PREFIX}wrapper {
             line-height: 36px;
           }
-          .names-view {
+          .@{_COMMON_PREFIX}names-view {
             margin-top: 1px;
-            .main-name {
+            .@{_COMMON_PREFIX}main-name {
               height: 18px;
               line-height: 18px;
             }
           }
         }
-        &.invalid .names-and-icon-view .wrapper:before {
+        &.invalid .names-and-icon-view .@{_COMMON_PREFIX}wrapper:before {
           top: 2px;
         }
       }

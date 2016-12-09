@@ -45,7 +45,7 @@ module api.content.site.inputtype.siteconfigurator {
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
                 this.application.getName() + "-" + this.application.getVersion());
-            
+
             if (this.application.getIconUrl()) {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());
             }
@@ -70,10 +70,12 @@ module api.content.site.inputtype.siteconfigurator {
 
             var removeButton = new api.dom.AEl("remove");
             removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveClicked();
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
+                if (this.isEditable()) {
+                    this.notifyRemoveClicked();
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                }
             });
             header.appendChild(removeButton);
 
@@ -88,11 +90,13 @@ module api.content.site.inputtype.siteconfigurator {
             var editButton = new api.dom.AEl('edit');
 
             editButton.onClicked((event: MouseEvent) => {
-                this.notifyEditClicked(event);
-                this.initAndOpenConfigureDialog();
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
+                if (this.isEditable()) {
+                    this.notifyEditClicked(event);
+                    this.initAndOpenConfigureDialog();
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                }
             });
 
             return editButton;

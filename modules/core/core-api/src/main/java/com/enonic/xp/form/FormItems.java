@@ -91,6 +91,16 @@ public final class FormItems
             FormItemSet formItemSet = (FormItemSet) foundFormItem;
             return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
         }
+        else if ( foundFormItem instanceof FormOptionSet )
+        {
+            FormOptionSet formOptionSet = (FormOptionSet) foundFormItem;
+            return formOptionSet.getFormItems().getFormItem( path.asNewWithoutFirstPathElement() );
+        }
+        else if ( foundFormItem instanceof FormOptionSetOption )
+        {
+            FormOptionSetOption formOptionSetOption = (FormOptionSetOption) foundFormItem;
+            return formOptionSetOption.getFormItems().getFormItem( path.asNewWithoutFirstPathElement() );
+        }
         else if ( foundFormItem instanceof InlineMixin )
         {
             throw new IllegalArgumentException( "Cannot get formItem [" + path + "] because it's past a InlineMixin [" + foundFormItem +
@@ -132,6 +142,16 @@ public final class FormItems
     public Layout getLayout( final FormItemPath path )
     {
         return typeCast( getFormItem( path ), Layout.class );
+    }
+
+    FormOptionSet getOptionSet( final FormItemPath path )
+    {
+        return typeCast( getFormItem( path ), FormOptionSet.class );
+    }
+
+    FormOptionSetOption getOptionSetOption( final FormItemPath path )
+    {
+        return typeCast( getFormItem( path ), FormOptionSetOption.class );
     }
 
     @Override

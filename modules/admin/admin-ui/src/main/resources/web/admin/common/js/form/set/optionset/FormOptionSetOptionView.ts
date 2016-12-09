@@ -300,8 +300,8 @@ module api.form {
             return (<FormOptionSet>this.formOptionSetOption.getParent()).isExpanded();
         }
 
-        private expand(condition?: boolean) {
-            this.toggleClass("expanded", condition == undefined ? true : condition);
+        private expand(condition: boolean = true) {
+            this.toggleClass("expanded", condition);
         }
 
         private enableFormItems() {

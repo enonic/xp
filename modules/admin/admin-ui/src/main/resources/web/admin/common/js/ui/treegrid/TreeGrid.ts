@@ -81,14 +81,7 @@ module api.ui.treegrid {
             this.gridData.setFilter((node: TreeNode<DATA>) => {
                 return node.isVisible();
             });
-            this.gridData.setItemMetadata((row) => {
-                const node = this.gridData.getItem(row);
-                if (this.isEmptyNode(node)) {
-                    return {cssClasses: 'empty-node'};
-                }
-
-                return null;
-            });
+            this.gridData.setItemMetadataHandler(this.handleItemMetadata.bind(this));
 
 
             this.columns = this.updateColumnsFormatter(builder.getColumns());
@@ -1027,7 +1020,9 @@ module api.ui.treegrid {
             this.grid.setSelectedRows(selection);
         }
 
-        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false) {
+        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false): wemQ.Promise<boolean> {
+            var deferred = wemQ.defer<boolean>();
+            
             node = node || this.root.getCurrentRoot();
 
             if (node) {
@@ -1041,6 +1036,7 @@ module api.ui.treegrid {
                             this.expandNode(child);
                         });
                     }
+                    deferred.resolve(true);
                 } else {
                     this.mask();
                     this.fetchData(node)
@@ -1053,12 +1049,16 @@ module api.ui.treegrid {
                                     this.expandNode(child);
                                 });
                             }
+                            deferred.resolve(true);
                         }).catch((reason: any) => {
                             this.handleError(reason);
+                        deferred.resolve(false);
                         }).finally(() => {
                         }).done(() => this.notifyLoaded());
                 }
             }
+
+            return deferred.promise;
         }
 
         protected updateExpanded() {
@@ -1193,6 +1193,15 @@ module api.ui.treegrid {
         }
 
         sortNodeChildren(node: TreeNode<DATA>) {
+        }
+
+        protected handleItemMetadata(row: number) {
+            const node = this.gridData.getItem(row);
+            if (this.isEmptyNode(node)) {
+                return {cssClasses: 'empty-node'};
+            }
+
+            return null;
         }
     }
 }

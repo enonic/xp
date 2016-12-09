@@ -170,6 +170,12 @@ public class FormOptionSetOption
             return this;
         }
 
+        public Builder clearFormItems()
+        {
+            formItemsList.clear();
+            return this;
+        }
+
         public Builder name( final String name )
         {
             this.name = name;

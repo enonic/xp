@@ -84,17 +84,14 @@ module api.dom {
             return this.getEl().hasAttribute('required');
         }
 
-        setReadOnly(readOnly: boolean): InputEl {
+        setReadOnly(readOnly: boolean) {
+            super.setReadOnly(readOnly);
+
             if (readOnly) {
                 this.getEl().setAttribute('readonly', 'readonly');
             } else {
                 this.getEl().removeAttribute('readonly');
             }
-            return this;
-        }
-
-        isReadOnly(): boolean {
-            return this.getEl().hasAttribute('readonly');
         }
     }
 }

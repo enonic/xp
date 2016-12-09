@@ -1,5 +1,6 @@
 module api.liveedit.text {
 
+    import RoleKeys = api.security.RoleKeys;
     declare var CONFIG;
 
     import ComponentView = api.liveedit.ComponentView;
@@ -48,6 +49,8 @@ module api.liveedit.text {
         private modalDialog: ModalDialog;
         private currentDialogConfig;
 
+        private editableSourceCode: boolean;
+
         constructor(builder: TextComponentViewBuilder) {
             super(builder.setPlaceholder(new TextPlaceholder()).setViewer(new TextComponentViewer()).setComponent(builder.component));
 
@@ -61,6 +64,12 @@ module api.liveedit.text {
             this.initializeRootElement();
 
             this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
+
+            new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                this.editableSourceCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
+                                                                                        RoleKeys.CMS_ADMIN.equals(principal) ||
+                                                                                        RoleKeys.CMS_EXPERT.equals(principal));
+            });
 
             this.onAdded(() => { // is triggered on item insert or move
                 if (api.BrowserHelper.isFirefox() && !!tinymce.activeEditor) {
@@ -222,7 +231,6 @@ module api.liveedit.text {
                     console.log('dblclick occured after ' + timeSinceLastClick + 'ms, notifying dbl click', this);
                     // end the group started by the first click first
                     console.groupEnd();
-                    console.groupEnd();
                 }
                 clearTimeout(this.singleClickTimer);
                 this.doHandleDbClick(event);
@@ -307,6 +315,15 @@ module api.liveedit.text {
             if (e.keyCode == 27 || saveShortcut) { // esc or Cmd-S
                 this.closePageTextEditMode();
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
+            } else if ((e.altKey) && e.keyCode === 9) { // alt+tab for OSX
+                var nextFocusable = api.dom.FormEl.getNextFocusable(this, ".xp-page-editor-text-view", true);
+                if (nextFocusable) {
+                    wemjq(nextFocusable.getHTMLElement()).simulate("click");
+                    nextFocusable.giveFocus();
+                }
+                else {
+                    this.htmlAreaEditor.fire("blur");
+                }
             }
         }
 
@@ -330,7 +347,8 @@ module api.liveedit.text {
                     this.currentDialogConfig = event.getConfig();
             }).setFocusHandler(this.onFocusHandler.bind(this)).setBlurHandler(this.onBlurHandler.bind(this)).setKeydownHandler(
                 this.onKeydownHandler.bind(this)).setFixedToolbarContainer('.mce-toolbar-container').setContent(
-                this.getContent()).setContentPath(this.getContentPath()).setApplicationKeys(this.getApplicationKeys()).
+                this.getContent()).setEditableSourceCode(this.editableSourceCode).setContentPath(this.getContentPath()).setApplicationKeys(
+                this.getApplicationKeys()).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
@@ -360,6 +378,7 @@ module api.liveedit.text {
                 this.htmlAreaEditor.focus();
                 wemjq(this.htmlAreaEditor.getElement()).simulate("click");
             }
+            this.startPageTextEditMode();
         }
 
         private collapseEditorMenuItems() {

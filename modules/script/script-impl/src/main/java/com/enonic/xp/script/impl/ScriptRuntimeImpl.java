@@ -22,6 +22,13 @@ final class ScriptRuntimeImpl
     }
 
     @Override
+    public boolean hasScript( final ResourceKey script )
+    {
+        final ResourceService service = this.executorManager.getExecutor( script.getApplicationKey() ).getResourceService();
+        return service.getResource( script ).exists();
+    }
+
+    @Override
     public ScriptExports execute( final ResourceKey script )
     {
         final ScriptExecutor executor = this.executorManager.getExecutor( script.getApplicationKey() );

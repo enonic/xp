@@ -46,7 +46,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         var publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this));
         this.actionButton = this.addAction(publishAction, true, true);
-        this.actionButton.setEnabled(false);
+        this.lockControls();
 
         this.addCancelButtonToBottom();
 
@@ -98,7 +98,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
     close() {
         super.close();
         this.childrenCheckbox.setChecked(false);
-        this.hideLoadingSpinner();
     }
 
 
@@ -130,12 +129,12 @@ export class ContentPublishDialog extends ProgressBarDialog {
             return this.reloadPublishDependencies(childrenNotLoadedYet);
         } else {
             // apply the stash to avoid extra heavy request
-            this.actionButton.setEnabled(false);
+            this.lockControls();
             this.loadMask.show();
             setTimeout(() => {
                 this.setDependantItems(stashedItems.slice());
                 this.centerMyself();
-                this.actionButton.setEnabled(true);
+                this.unlockControls();
                 this.loadMask.hide();
             }, 100);
             return wemQ<void>(null);
@@ -146,7 +145,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         if (this.isProgressBarEnabled()) {
             return wemQ<void>(null);
         }
-        this.actionButton.setEnabled(false);
+        this.lockControls();
         this.loadMask.show();
         this.disableCheckbox();
 
@@ -265,7 +264,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private doPublish() {
 
-        this.showLoadingSpinner();
+        this.lockControls();
 
         this.setSubTitle(this.countTotal() + " items are being published...");
 
@@ -279,7 +278,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             .then((taskId: api.task.TaskId) => {
                 this.pollTask(taskId);
             }).catch((reason) => {
-            this.hideLoadingSpinner();
+            this.unlockControls();
                 this.close();
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);
@@ -314,7 +313,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         let canPublish = count > 0 && this.areItemsAndDependantsValid();
 
-        this.actionButton.setEnabled(canPublish);
+        this.toggleControls(canPublish);
         if (canPublish) {
             this.getButtonRow().focusDefaultAction();
             this.updateTabbable();

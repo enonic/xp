@@ -5,6 +5,7 @@ module.exports = function (grunt) {
             dist: {
                 src: [
                     'src/jsdoc/global.js',
+                    '../lib/lib-*/src/main/resources/lib/xp/*.js',
                     '../lib/lib-*/src/main/resources/site/lib/xp/*.js'
                 ],
                 options: {

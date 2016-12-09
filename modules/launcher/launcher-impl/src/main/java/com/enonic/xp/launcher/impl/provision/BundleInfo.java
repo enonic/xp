@@ -10,28 +10,28 @@ final class BundleInfo
 
     private final int level;
 
-    public BundleInfo( final String location, final int level )
+    BundleInfo( final String location, final int level )
     {
         this.location = location;
         this.level = level;
     }
 
-    public String getLocation()
+    String getLocation()
     {
         return this.location;
     }
 
-    public int getLevel()
+    int getLevel()
     {
         return this.level;
     }
 
-    public URI getUri( final File baseDir )
+    URI getUri( final File baseDir )
     {
         final URI uri = URI.create( this.location );
         if ( uri.getScheme() == null )
         {
-            return URI.create( baseDir.toURI().toString() + this.location );
+            return URI.create( baseDir.toURI().toString() + "/" + this.location );
         }
 
         return uri;

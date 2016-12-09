@@ -12,7 +12,7 @@
 
     .slick-cell {
 
-      &.selected .names-view .main-name {
+      &.selected .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name {
         color: @admin-font-gray1;
       }
     }
@@ -35,12 +35,12 @@
       .names-and-icon-view {
         margin-right: 55px;
 
-        .main-name {
+        .@{_COMMON_PREFIX}main-name {
           font-weight: normal;
           color: @admin-dark-gray;
         }
 
-        .sub-name {
+        .@{_COMMON_PREFIX}sub-name {
           color: @admin-font-gray1;
         }
       }

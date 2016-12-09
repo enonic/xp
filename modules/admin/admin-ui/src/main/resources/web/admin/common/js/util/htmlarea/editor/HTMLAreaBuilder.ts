@@ -22,9 +22,18 @@ module api.util.htmlarea.editor {
         private convertUrls: boolean = false;
         private hasActiveDialog: boolean = false;
         private customToolConfig: any;
+        private editableSourceCode: boolean;
 
         private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
 
+        private plugins: string[] = ['directionality', 'hr', 'preview', 'searchreplace', 'textcolor', 'visualchars', 'visualblocks',
+            'autoresize', 'table', 'fullscreen', 'charmap', 'paste'];
+
+        setEditableSourceCode(value: boolean): HTMLAreaBuilder {
+            this.editableSourceCode = value;
+            return this;
+        }
+        
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
             return this;
@@ -155,7 +164,7 @@ module api.util.htmlarea.editor {
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
             this.checkRequiredFieldsAreSet();
 
-            if (this.inline && !this.isToolExcluded("code")) {
+            if (this.inline && this.editableSourceCode && !this.isToolExcluded("code")) {
                 this.includeTool("code");
             }
 
@@ -214,9 +223,7 @@ module api.util.htmlarea.editor {
                 browser_spellcheck: true,
                 verify_html: false,
                 verify_css_classes: false,
-
-                plugins: ['directionality', 'hr', 'preview', 'searchreplace', 'textcolor', 'visualchars', 'visualblocks', 
-                            'autoresize', 'table', 'fullscreen', 'charmap', 'code', 'paste'],
+                plugins: this.editableSourceCode ? this.plugins.concat('code') : this.plugins,
                 external_plugins: {
                     "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
                     "anchor": this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
@@ -230,7 +237,7 @@ module api.util.htmlarea.editor {
                 setup: (editor) => {
                     editor.addCommand("openLinkDialog", this.notifyLinkDialog, this);
                     editor.addCommand("openAnchorDialog", this.notifyAnchorDialog, this);
-                    editor.addCommand("openImageDialog", this.notifyImageDialog, this) ;
+                    editor.addCommand("openImageDialog", this.notifyImageDialog, this);
                     editor.addCommand("openMacroDialog", this.notifyMacroDialog, this);
                     editor.on('NodeChange', (e) => {
                         if (!!this.nodeChangeHandler) {
@@ -305,38 +312,28 @@ module api.util.htmlarea.editor {
         }
 
         private notifyLinkDialog(config) {
-            let event = CreateHtmlAreaDialogEvent.create().
-                setConfig(config).
-                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).
-                setContent(this.content).
-                build();
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+                api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).setContent(this.content).build();
             this.publishCreateDialogEvent(event);
         }
 
         private notifyImageDialog(config) {
-            let event = CreateHtmlAreaDialogEvent.create().
-                setConfig(config).setType(api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).setContent(this.content).
-                build();
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+                api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).setContent(this.content).build();
             this.publishCreateDialogEvent(event);
         }
 
         private notifyAnchorDialog(config) {
-            let event = CreateHtmlAreaDialogEvent.create().
-                setConfig(config).
-                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.ANCHOR).
-                build();
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+                api.util.htmlarea.dialog.HtmlAreaDialogType.ANCHOR).build();
             this.publishCreateDialogEvent(event);
         }
 
         private notifyMacroDialog(config) {
-            let event = CreateHtmlAreaDialogEvent.create().
-                setConfig(config).
-                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContentPath(this.contentPath).setApplicationKeys(
-                this.applicationKeys).
-                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).
-                setContent(this.content).
-                setApplicationKeys(this.applicationKeys).
-                build();
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+                api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContentPath(this.contentPath).setApplicationKeys(
+                this.applicationKeys).setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContent(
+                this.content).setApplicationKeys(this.applicationKeys).build();
             this.publishCreateDialogEvent(event);
         }
 

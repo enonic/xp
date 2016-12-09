@@ -143,11 +143,11 @@ module api.ui {
         private initializeHelpKey() {
             this.bindKey(new api.ui.KeyBinding("f2", (e: ExtendedKeyboardEvent) => {
                 this.notifyHelpKeyPressed(e);
-            }).setGlobal(false).setAction(KeyBindingAction.KEYDOWN));
+            }).setGlobal(true).setAction(KeyBindingAction.KEYDOWN));
 
             this.bindKey(new api.ui.KeyBinding("f2", (e: ExtendedKeyboardEvent) => {
                 this.notifyHelpKeyPressed(e);
-            }).setGlobal(false).setAction(KeyBindingAction.KEYUP));
+            }).setGlobal(true).setAction(KeyBindingAction.KEYUP));
         }
 
         onHelpKeyPressed(listener: (event: ExtendedKeyboardEvent) => void) {

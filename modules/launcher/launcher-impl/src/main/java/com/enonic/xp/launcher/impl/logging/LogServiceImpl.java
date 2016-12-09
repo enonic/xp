@@ -11,7 +11,7 @@ final class LogServiceImpl
 {
     private final Logger logger;
 
-    public LogServiceImpl( final Bundle bundle )
+    LogServiceImpl( final Bundle bundle )
     {
         this.logger = LoggerFactory.getLogger( bundle.getSymbolicName() );
     }

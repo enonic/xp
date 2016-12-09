@@ -89,6 +89,32 @@ final class BuiltinContentTypes
             build() ).
         build();
 
+    private static final Form MEDIA_VECTOR_FORM = Form.create().
+        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
+            label( "Media" ).
+            inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
+        addFormItem( Input.create().name( "caption" ).
+            inputType( InputTypeName.TEXT_AREA ).
+            label( "Caption" ).
+            occurrences( 0, 1 ).
+            build() ).
+        addFormItem( Input.create().name( "artist" ).
+            inputType( InputTypeName.TAG ).
+            label( "Artist" ).
+            occurrences( 0, 0 ).
+            build() ).
+        addFormItem( Input.create().name( "copyright" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            label( "Copyright" ).
+            occurrences( 0, 1 ).
+            build() ).
+        addFormItem( Input.create().name( "tags" ).
+            inputType( InputTypeName.TAG ).
+            label( "Tags" ).
+            occurrences( 0, 0 ).
+            build() ).
+        build();
+
     private static final Form MEDIA_DOCUMENT_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
@@ -187,7 +213,7 @@ final class BuiltinContentTypes
                                    MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_VECTOR_FORM ).build();
 
     private static final ContentType MEDIA_ARCHIVE =
         createSystemType( ContentTypeName.archiveMedia() ).superType( ContentTypeName.media() ).
