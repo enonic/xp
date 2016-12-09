@@ -62,7 +62,7 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 @Path(ResourceConstants.REST_ROOT + "application")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public final class ApplicationResource
     implements JaxRsComponent
 {

@@ -65,7 +65,7 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 @Path(ResourceConstants.REST_ROOT + "macro")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public final class MacroResource
     implements JaxRsComponent
 {

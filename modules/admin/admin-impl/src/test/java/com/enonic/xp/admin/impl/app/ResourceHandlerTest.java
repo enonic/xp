@@ -3,9 +3,6 @@ package com.enonic.xp.admin.impl.app;
 import java.io.File;
 import java.net.URL;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +11,8 @@ import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+
+import com.enonic.xp.web.WebResponse;
 
 import static org.junit.Assert.*;
 
@@ -49,16 +48,17 @@ public class ResourceHandlerTest
         final URL url = writeFile( "Hello World!" );
         Mockito.when( this.locator.findResource( "/web/test.txt" ) ).thenReturn( url );
 
-        final Response res = this.handler.handle( "/test.txt" );
-        assertEquals( 200, res.getStatus() );
-        assertEquals( "text/plain", res.getMediaType().toString() );
+        final WebResponse res = this.handler.handle( "/test.txt" );
+        assertEquals( 200, res.getStatus().value() );
+        assertEquals( "text/plain", res.getContentType().toString() );
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void handle_notFound()
         throws Exception
     {
-        this.handler.handle( "/test.txt" );
+        final WebResponse res = this.handler.handle( "/test.txt" );
+        assertEquals( 404, res.getStatus().value() );
     }
 
     @Test
@@ -69,9 +69,9 @@ public class ResourceHandlerTest
         Mockito.when( this.locator.findResource( "/web/test.txt" ) ).thenReturn( url );
         Mockito.when( this.locator.shouldCache() ).thenReturn( true );
 
-        final Response res = this.handler.handle( "/test.txt", true );
-        assertEquals( 200, res.getStatus() );
-        assertEquals( "text/plain", res.getMediaType().toString() );
-        assertEquals( "no-transform, max-age=31536000", res.getHeaderString( "Cache-Control" ) );
+        final WebResponse res = this.handler.handle( "/test.txt", true );
+        assertEquals( 200, res.getStatus().value() );
+        assertEquals( "text/plain", res.getContentType().toString() );
+        assertEquals( "public, no-transform, max-age=31536000", res.getHeaders().get( "Cache-Control" ) );
     }
 }

@@ -1,4 +1,4 @@
-package com.enonic.xp.web.impl.status;
+package com.enonic.xp.server.impl.status;
 
 import java.io.OutputStream;
 import java.util.Optional;
