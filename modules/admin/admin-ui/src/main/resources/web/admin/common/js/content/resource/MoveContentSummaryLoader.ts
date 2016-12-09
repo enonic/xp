@@ -15,10 +15,6 @@ module api.content.resource {
 
         private filterContentTypes: ContentType[];
 
-        constructor() {
-            super();
-        }
-
         protected createRequest(): MoveAllowedTargetsRequest {
             return new MoveAllowedTargetsRequest();
         }
