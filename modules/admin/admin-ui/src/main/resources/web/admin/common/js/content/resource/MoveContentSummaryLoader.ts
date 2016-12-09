@@ -44,9 +44,9 @@ module api.content.resource {
             this.contentSummaryRequest.setSearchString("");
         }
 
-        load(): wemQ.Promise<ContentSummary[]> {
+        load(postLoad: boolean = false): wemQ.Promise<ContentSummary[]> {
 
-            this.notifyLoadingData();
+            this.notifyLoadingData(postLoad);
 
             return this.sendRequest().then((contents: ContentSummary[]) => {
                 var deferred = wemQ.defer<ContentSummary[]>();
