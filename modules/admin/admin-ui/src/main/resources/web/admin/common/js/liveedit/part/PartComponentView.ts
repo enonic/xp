@@ -17,9 +17,7 @@ module api.liveedit.part {
         private contentViews: ContentView[];
 
         constructor(builder: PartComponentViewBuilder) {
-            super(builder.
-                setViewer(new PartComponentViewer()).
-                setInspectActionRequired(true));
+            super(builder.setViewer(new PartComponentViewer()).setInspectActionRequired(true));
 
             this.createPlaceholder();
 
@@ -44,7 +42,8 @@ module api.liveedit.part {
                 builder.element.getEl().setAttribute("href", "#");
             }
         }
-/*
+
+        /*
         setComponent(partComponent: PartComponent) {
             super.setComponent(partComponent);
 
@@ -53,7 +52,7 @@ module api.liveedit.part {
                 this.partPlaceholder.setDisplayName(partComponent.getName().toString());
             }
         }
-*/
+         */
         addContent(view: ContentView) {
             this.contentViews.push(view);
         }

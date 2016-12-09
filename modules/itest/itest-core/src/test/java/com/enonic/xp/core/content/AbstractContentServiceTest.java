@@ -22,7 +22,6 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -54,20 +53,21 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
-import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
-import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
-import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
+import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryServiceImpl;
+import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
+import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
-import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
+import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -95,11 +95,11 @@ public class AbstractContentServiceTest
         build();
 
     protected static final Branch WS_DEFAULT = Branch.create().
-        name( "draft" ).
+        value( "draft" ).
         build();
 
     protected static final Branch WS_OTHER = Branch.create().
-        name( "master" ).
+        value( "master" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
@@ -118,7 +118,7 @@ public class AbstractContentServiceTest
 
     protected NodeServiceImpl nodeService;
 
-    protected BlobStore blobStore;
+    protected BinaryServiceImpl binaryService;
 
     protected MixinService mixinService;
 
@@ -126,7 +126,7 @@ public class AbstractContentServiceTest
 
     protected ContentTypeServiceImpl contentTypeService;
 
-    private NodeVersionDaoImpl nodeDao;
+    private NodeVersionServiceImpl nodeDao;
 
     private VersionServiceImpl versionService;
 
@@ -134,11 +134,13 @@ public class AbstractContentServiceTest
 
     private IndexServiceInternalImpl indexService;
 
-    private StorageServiceImpl storageService;
+    private NodeStorageServiceImpl storageService;
 
-    private SearchServiceImpl searchService;
+    private NodeSearchServiceImpl searchService;
 
     private IndexDataServiceImpl indexedDataService;
+
+    private RepositoryServiceImpl repositoryService;
 
     private SearchDaoImpl searchDao;
 
@@ -148,11 +150,12 @@ public class AbstractContentServiceTest
     {
         super.setUp();
 
-        final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
-        this.blobStore = new MemoryBlobStore();
+        final MemoryBlobStore blobStore = new MemoryBlobStore();
+
+        this.binaryService = new BinaryServiceImpl();
+        this.binaryService.setBlobStore( blobStore );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
@@ -172,7 +175,7 @@ public class AbstractContentServiceTest
         this.indexService = new IndexServiceInternalImpl();
         this.indexService.setClient( client );
 
-        this.nodeDao = new NodeVersionDaoImpl();
+        this.nodeDao = new NodeVersionServiceImpl();
         this.nodeDao.setBlobStore( blobStore );
 
         this.contentService = new ContentServiceImpl();
@@ -180,23 +183,40 @@ public class AbstractContentServiceTest
         this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
-        this.storageService = new StorageServiceImpl();
+        this.storageService = new NodeStorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
-        this.storageService.setNodeVersionDao( this.nodeDao );
-        this.storageService.setIndexServiceInternal( this.indexService );
+        this.storageService.setNodeVersionService( this.nodeDao );
         this.storageService.setIndexDataService( this.indexedDataService );
 
-        this.searchService = new SearchServiceImpl();
+        this.searchService = new NodeSearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
+
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
+        nodeRepositoryService.setIndexServiceInternal( this.indexService );
+
+        final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
+        repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
+        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
+        repositoryEntryService.setNodeStorageService( this.storageService );
+        repositoryEntryService.setNodeSearchService( this.searchService );
+        repositoryEntryService.setEventPublisher( eventPublisher );
+        repositoryEntryService.setBinaryService( this.binaryService );
+
+        this.repositoryService = new RepositoryServiceImpl();
+        this.repositoryService.setRepositoryEntryService( repositoryEntryService );
+        this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
+        this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
+        this.repositoryService.setNodeStorageService( this.storageService );
+        this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
-        this.nodeService.setStorageService( storageService );
-        this.nodeService.setSearchService( searchService );
+        this.nodeService.setNodeStorageService( storageService );
+        this.nodeService.setNodeSearchService( searchService );
         this.nodeService.setEventPublisher( eventPublisher );
-        this.nodeService.setConfiguration( repoConfig );
-        this.nodeService.setBlobStore( blobStore );
+        this.nodeService.setBinaryService( this.binaryService );
+        this.nodeService.setRepositoryService( this.repositoryService );
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
@@ -235,30 +255,16 @@ public class AbstractContentServiceTest
         this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
 
-        createContentRepository();
+        initializeRepository();
+    }
+
+
+    private void initializeRepository()
+    {
+        new ContentInitializer( this.nodeService, this.repositoryService ).initialize();
         waitForClusterHealth();
-
-        final ContentInitializer contentInitializer = new ContentInitializer( this.nodeService );
-        contentInitializer.initialize();
     }
 
-    void createContentRepository()
-    {
-        createRepository( TEST_REPO );
-    }
-
-    void createRepository( final Repository repository )
-    {
-        NodeServiceImpl nodeService = new NodeServiceImpl();
-        nodeService.setIndexServiceInternal( indexService );
-        nodeService.setSearchService( searchService );
-        nodeService.setStorageService( storageService );
-
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
-        repositoryInitializer.initializeRepositories( repository.getId() );
-
-        refresh();
-    }
 
     protected ByteSource loadImage( final String name )
         throws IOException
@@ -289,13 +295,6 @@ public class AbstractContentServiceTest
         throws Exception
     {
         return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree() );
-    }
-
-    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
-        throws Exception
-    {
-
-        return doCreateContent( parentPath, displayName, data );
     }
 
     private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
@@ -332,7 +331,7 @@ public class AbstractContentServiceTest
         PropertyTree data = new PropertyTree();
         data.addString( "textLine", "textLine" );
         data.addDouble( "double", 1.4d );
-        data.addLong( "long", 2l );
+        data.addLong( "long", 2L );
         data.addString( "color", "FFFFFF" );
         data.addString( "comboBox", "value2" );
         data.addBoolean( "checkbox", false );
@@ -532,7 +531,7 @@ public class AbstractContentServiceTest
         final Content root = this.contentService.getById( rootId );
 
         final Branch branch = ContextAccessor.current().getBranch();
-        System.out.println( "** Content-tree in branch [" + branch.getName() + "], starting with path [" + root.getPath() + "]" );
+        System.out.println( "** Content-tree in branch [" + branch.getValue() + "], starting with path [" + root.getPath() + "]" );
 
         doPrintChildren( 0, root );
     }

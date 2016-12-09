@@ -39,10 +39,12 @@ public class CompareNodesCommand
 
         final NodeComparisons.Builder builder = NodeComparisons.create();
 
-        final NodeBranchEntries sourceVersions = storageService.getBranchNodeVersions( nodeIds, false, InternalContext.from( context ) );
-        final NodeBranchEntries targetVersions = storageService.getBranchNodeVersions( nodeIds, false, InternalContext.create( context ).
-            branch( this.target ).
-            build() );
+        final NodeBranchEntries sourceVersions =
+            nodeStorageService.getBranchNodeVersions( nodeIds, false, InternalContext.from( context ) );
+        final NodeBranchEntries targetVersions =
+            nodeStorageService.getBranchNodeVersions( nodeIds, false, InternalContext.create( context ).
+                branch( this.target ).
+                build() );
 
         allNodeIds.addAll( sourceVersions.getKeys() );
         allNodeIds.addAll( targetVersions.getKeys() );
@@ -52,7 +54,7 @@ public class CompareNodesCommand
             final CompareStatus compareStatus = CompareStatusResolver.create().
                 source( sourceVersions.get( id ) ).
                 target( targetVersions.get( id ) ).
-                storageService( this.storageService ).
+                storageService( this.nodeStorageService ).
                 build().
                 resolve();
 

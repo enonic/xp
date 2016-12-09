@@ -19,11 +19,11 @@ module api.content.page {
         protected createRequest(): GetPageDescriptorsByApplicationsRequest {
             return new GetPageDescriptorsByApplicationsRequest();
         }
-        
+
         setApplicationKeys(applicationKeys: ApplicationKey[]) {
             this.request.setApplicationKeys(applicationKeys);
         }
-    
+
 
     }
 }

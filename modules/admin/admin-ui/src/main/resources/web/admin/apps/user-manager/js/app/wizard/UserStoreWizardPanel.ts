@@ -28,7 +28,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     private userStoreWizardStepForm: UserStoreWizardStepForm;
 
     private permissionsWizardStepForm: SecurityWizardStepForm;
-    
+
     //private userStoreParams: UserStoreWizardPanelParams;
 
     isUserStoreFormValid: boolean;

@@ -14,6 +14,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
@@ -31,6 +32,7 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -38,14 +40,19 @@ import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
-import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
-import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryServiceImpl;
+import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
+import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
-import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
+import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
+import com.enonic.xp.repository.CreateBranchParams;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -71,11 +78,11 @@ public abstract class AbstractNodeTest
         build();
 
     protected static final Branch WS_DEFAULT = Branch.create().
-        name( "draft" ).
+        value( "draft" ).
         build();
 
     protected static final Branch WS_OTHER = Branch.create().
-        name( "master" ).
+        value( "master" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
@@ -90,9 +97,9 @@ public abstract class AbstractNodeTest
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
-    public BlobStore blobStore;
+    public BinaryServiceImpl binaryService;
 
-    protected NodeVersionDaoImpl nodeDao;
+    protected NodeVersionServiceImpl nodeDao;
 
     protected VersionServiceImpl versionService;
 
@@ -102,13 +109,17 @@ public abstract class AbstractNodeTest
 
     protected SnapshotServiceImpl snapshotService;
 
-    protected StorageServiceImpl storageService;
+    protected NodeStorageServiceImpl storageService;
 
-    protected SearchServiceImpl searchService;
+    protected NodeSearchServiceImpl searchService;
 
     protected SearchDaoImpl searchDao;
 
     protected IndexDataServiceImpl indexedDataService;
+
+    protected RepositoryServiceImpl repositoryService;
+
+    private BlobStore blobStore;
 
     @Before
     public void setUp()
@@ -124,6 +135,9 @@ public abstract class AbstractNodeTest
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
         this.blobStore = new MemoryBlobStore();
+
+        this.binaryService = new BinaryServiceImpl();
+        this.binaryService.setBlobStore( blobStore );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
@@ -144,44 +158,86 @@ public abstract class AbstractNodeTest
         this.versionService.setStorageDao( storageDao );
 
         // Storage-service
-        this.nodeDao = new NodeVersionDaoImpl();
+        this.nodeDao = new NodeVersionServiceImpl();
         this.nodeDao.setBlobStore( blobStore );
 
         this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
-        this.storageService = new StorageServiceImpl();
+        this.storageService = new NodeStorageServiceImpl();
         this.storageService.setVersionService( this.versionService );
         this.storageService.setBranchService( this.branchService );
-        this.storageService.setIndexServiceInternal( this.indexServiceInternal );
-        this.storageService.setNodeVersionDao( this.nodeDao );
+        this.storageService.setNodeVersionService( this.nodeDao );
         this.storageService.setIndexDataService( this.indexedDataService );
 
         // Search-service
 
-        this.searchService = new SearchServiceImpl();
+        this.searchService = new NodeSearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
 
         this.snapshotService = new SnapshotServiceImpl();
         this.snapshotService.setClient( this.client );
         this.snapshotService.setConfiguration( repoConfig );
 
-        createRepository( TEST_REPO );
+        setUpRepositoryServices();
+
         createRepository( SystemConstants.SYSTEM_REPO );
+        createRepository( TEST_REPO );
         waitForClusterHealth();
     }
 
-    void createRepository( final Repository repository )
+    private void setUpRepositoryServices()
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexServiceInternal );
         nodeService.setSnapshotService( this.snapshotService );
-        nodeService.setStorageService( this.storageService );
+        nodeService.setNodeStorageService( this.storageService );
+        nodeService.setNodeSearchService( this.searchService );
+        nodeService.setBinaryService( this.binaryService );
+        nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
-        repositoryInitializer.initializeRepositories( repository.getId() );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
+        nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
-        refresh();
+        final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
+        repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
+        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
+        repositoryEntryService.setNodeStorageService( this.storageService );
+        repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
+        repositoryEntryService.setNodeSearchService( this.searchService );
+        repositoryEntryService.setBinaryService( this.binaryService );
+
+        this.repositoryService = new RepositoryServiceImpl();
+        this.repositoryService.setRepositoryEntryService( repositoryEntryService );
+        this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
+        this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
+        this.repositoryService.setNodeStorageService( this.storageService );
+    }
+
+    void createRepository( final Repository repository )
+    {
+        ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.create().
+                principals( RoleKeys.ADMIN ).
+                user( User.ANONYMOUS ).
+                build() ).
+            build().
+            callWith( () -> {
+                this.repositoryService.createRepository( CreateRepositoryParams.create().
+                    repositoryId( repository.getId() ).
+                    build() );
+
+                repository.getBranches().
+                    stream().
+                    filter( branch -> !RepositoryConstants.MASTER_BRANCH.equals( branch ) ).
+                    forEach( branch -> {
+                        final CreateBranchParams createBranchParams = CreateBranchParams.from( branch.toString() );
+                        this.repositoryService.createBranch( createBranchParams );
+                    } );
+
+                refresh();
+                return null;
+            } );
     }
 
     protected Node createDefaultRootNode()
@@ -205,16 +261,11 @@ public abstract class AbstractNodeTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
+            binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
-    }
-
-    void createContentRepository()
-    {
-        createRepository( TEST_REPO );
     }
 
     protected Node createNode( final NodePath parent, final String name )
@@ -226,6 +277,7 @@ public abstract class AbstractNodeTest
             build() );
     }
 
+
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
         final CreateNodeParams createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams ).
@@ -236,7 +288,7 @@ public abstract class AbstractNodeTest
 
         final Node createdNode = CreateNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
+            binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             params( createParamsWithAnalyzer ).
@@ -304,12 +356,12 @@ public abstract class AbstractNodeTest
 
     protected void printContentRepoIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getValue() );
     }
 
     protected void printContentRepoIndex( final RepositoryId repositoryId, final Branch branch )
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getName() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getValue() );
     }
 
     protected void printBranchIndex()

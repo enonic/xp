@@ -23,7 +23,7 @@ public class GetNodeByPathCommand
     {
         final Context context = ContextAccessor.current();
 
-        return this.storageService.get( path, InternalContext.from( context ) );
+        return this.nodeStorageService.get( path, InternalContext.from( context ) );
     }
 
     public static Builder create()

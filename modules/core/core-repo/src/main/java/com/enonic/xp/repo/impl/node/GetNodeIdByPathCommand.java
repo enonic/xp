@@ -30,7 +30,7 @@ public class GetNodeIdByPathCommand
 
     public NodeId execute()
     {
-        final NodeId idForPath = this.storageService.getIdForPath( nodePath, InternalContext.from( ContextAccessor.current() ) );
+        final NodeId idForPath = this.nodeStorageService.getIdForPath( nodePath, InternalContext.from( ContextAccessor.current() ) );
 
         return idForPath;
     }

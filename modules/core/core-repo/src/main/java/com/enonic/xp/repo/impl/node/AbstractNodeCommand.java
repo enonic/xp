@@ -9,8 +9,8 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.search.SearchService;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -19,15 +19,15 @@ abstract class AbstractNodeCommand
 {
     final IndexServiceInternal indexServiceInternal;
 
-    final StorageService storageService;
+    final NodeStorageService nodeStorageService;
 
-    final SearchService searchService;
+    final NodeSearchService nodeSearchService;
 
     AbstractNodeCommand( final Builder builder )
     {
         this.indexServiceInternal = builder.indexServiceInternal;
-        this.storageService = builder.storageService;
-        this.searchService = builder.searchService;
+        this.nodeStorageService = builder.nodeStorageService;
+        this.nodeSearchService = builder.nodeSearchService;
     }
 
     Node doGetById( final NodeId id )
@@ -42,7 +42,7 @@ abstract class AbstractNodeCommand
     {
         return FindNodesByParentCommand.create( this ).
             params( params ).
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -80,9 +80,9 @@ abstract class AbstractNodeCommand
     {
         IndexServiceInternal indexServiceInternal;
 
-        StorageService storageService;
+        NodeStorageService nodeStorageService;
 
-        SearchService searchService;
+        NodeSearchService nodeSearchService;
 
         Builder()
         {
@@ -91,8 +91,8 @@ abstract class AbstractNodeCommand
         Builder( final AbstractNodeCommand source )
         {
             this.indexServiceInternal = source.indexServiceInternal;
-            this.storageService = source.storageService;
-            this.searchService = source.searchService;
+            this.nodeStorageService = source.nodeStorageService;
+            this.nodeSearchService = source.nodeSearchService;
         }
 
         @SuppressWarnings("unchecked")
@@ -103,24 +103,24 @@ abstract class AbstractNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B storageService( final StorageService storageService )
+        public B storageService( final NodeStorageService nodeStorageService )
         {
-            this.storageService = storageService;
+            this.nodeStorageService = nodeStorageService;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B searchService( final SearchService searchService )
+        public B searchService( final NodeSearchService nodeSearchService )
         {
-            this.searchService = searchService;
+            this.nodeSearchService = nodeSearchService;
             return (B) this;
         }
 
         void validate()
         {
             Preconditions.checkNotNull( indexServiceInternal, "indexService not set" );
-            Preconditions.checkNotNull( storageService, "storageService not set" );
-            Preconditions.checkNotNull( searchService, "searchService not set" );
+            Preconditions.checkNotNull( nodeStorageService, "storageService not set" );
+            Preconditions.checkNotNull( nodeSearchService, "searchService not set" );
         }
     }
 }

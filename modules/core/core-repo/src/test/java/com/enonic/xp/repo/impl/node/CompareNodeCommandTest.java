@@ -196,13 +196,13 @@ public class CompareNodeCommandTest
     {
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( createdNode.id() ).
-            editor( editableNode -> editableNode.manualOrderValue = 10l ).
+            editor( editableNode -> editableNode.manualOrderValue = 10L ).
             build();
 
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
+            binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

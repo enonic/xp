@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -20,7 +18,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.util.Reference;
 
 public final class DuplicateNodeCommand
@@ -28,7 +27,7 @@ public final class DuplicateNodeCommand
 {
     private final NodeId nodeId;
 
-    private final BlobStore binaryBlobStore;
+    private final BinaryService binaryService;
 
     private final DuplicateNodeProcessor processor;
 
@@ -36,7 +35,7 @@ public final class DuplicateNodeCommand
     {
         super( builder );
         this.nodeId = builder.id;
-        this.binaryBlobStore = builder.binaryBlobStore;
+        this.binaryService = builder.binaryService;
         this.processor = builder.processor;
     }
 
@@ -65,7 +64,7 @@ public final class DuplicateNodeCommand
 
         final Node duplicatedNode = CreateNodeCommand.create( this ).
             params( processedParams ).
-            binaryBlobStore( binaryBlobStore ).
+            binaryService( binaryService ).
             build().
             execute();
 
@@ -103,7 +102,7 @@ public final class DuplicateNodeCommand
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( originalParent.path() ).
             from( 0 ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
         final Nodes children = GetNodesByIdsCommand.create( this ).
@@ -126,7 +125,7 @@ public final class DuplicateNodeCommand
 
             final Node newChildNode = CreateNodeCommand.create( this ).
                 params( processedParams ).
-                binaryBlobStore( binaryBlobStore ).
+                binaryService( this.binaryService ).
                 build().
                 execute();
 
@@ -149,9 +148,7 @@ public final class DuplicateNodeCommand
     {
         for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
         {
-            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), binaryBlobStore.getRecord( NodeConstants.BINARY_SEGMENT,
-                                                                                                        new BlobKey(
-                                                                                                            attachedBinary.getBlobKey() ) ).getBytes() );
+            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), this.binaryService.get( attachedBinary ) );
         }
     }
 
@@ -160,7 +157,7 @@ public final class DuplicateNodeCommand
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( duplicatedParent.path() ).
             from( 0 ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
         final Nodes children = GetNodesByIdsCommand.create( this ).
@@ -198,7 +195,7 @@ public final class DuplicateNodeCommand
                     id( node.id() ).
                     editor( toBeEdited -> toBeEdited.data = data ).
                     build() ).
-                binaryBlobStore( binaryBlobStore ).
+                binaryService( this.binaryService ).
                 build().
                 execute();
         }
@@ -238,7 +235,7 @@ public final class DuplicateNodeCommand
     {
         private NodeId id;
 
-        private BlobStore binaryBlobStore;
+        private BinaryService binaryService;
 
         private DuplicateNodeProcessor processor;
 
@@ -259,9 +256,9 @@ public final class DuplicateNodeCommand
             return new DuplicateNodeCommand( this );
         }
 
-        public Builder binaryBlobStore( final BlobStore blobStore )
+        public Builder binaryService( final BinaryService binaryService )
         {
-            this.binaryBlobStore = blobStore;
+            this.binaryService = binaryService;
             return this;
         }
 
@@ -277,7 +274,7 @@ public final class DuplicateNodeCommand
         {
             super.validate();
             Preconditions.checkNotNull( this.id );
-            Preconditions.checkNotNull( this.binaryBlobStore );
+            Preconditions.checkNotNull( this.binaryService );
         }
     }
 

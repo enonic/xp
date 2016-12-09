@@ -1,0 +1,7 @@
+dependencies {
+    provided project( ':core:core-api' )
+    provided project( ':script:script-api' )
+    provided project( ':portal:portal-api' )
+    compile project( ':lib:lib-value' )
+    testCompile project( ':tools:testing' )
+}

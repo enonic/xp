@@ -32,8 +32,9 @@ public class ApplicationRepoServiceImpl
 
     private IndexService indexService;
 
+    @SuppressWarnings("unused")
     @Activate
-    public void activate( final BundleContext context )
+    public void initialize( final BundleContext context )
     {
         if ( indexService.isMaster() )
         {
@@ -125,6 +126,4 @@ public class ApplicationRepoServiceImpl
     {
         this.indexService = indexService;
     }
-
-
 }

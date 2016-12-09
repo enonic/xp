@@ -8,7 +8,7 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
 
@@ -22,14 +22,14 @@ public class GetNodeVersionsCommand
 
     private final int size;
 
-    private final SearchService searchService;
+    private final NodeSearchService nodeSearchService;
 
     private GetNodeVersionsCommand( Builder builder )
     {
         nodeId = builder.nodeId;
         from = builder.from;
         size = builder.size;
-        searchService = builder.searchService;
+        nodeSearchService = builder.nodeSearchService;
     }
 
     public NodeVersionQueryResult execute()
@@ -41,7 +41,7 @@ public class GetNodeVersionsCommand
             addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
             build();
 
-        return this.searchService.query( query, InternalContext.from( ContextAccessor.current() ) );
+        return this.nodeSearchService.query( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()
@@ -57,7 +57,7 @@ public class GetNodeVersionsCommand
 
         private int size = DEFAULT_SIZE;
 
-        private SearchService searchService;
+        private NodeSearchService nodeSearchService;
 
         private Builder()
         {
@@ -81,15 +81,15 @@ public class GetNodeVersionsCommand
             return this;
         }
 
-        public Builder searchService( final SearchService searchService )
+        public Builder searchService( final NodeSearchService nodeSearchService )
         {
-            this.searchService = searchService;
+            this.nodeSearchService = nodeSearchService;
             return this;
         }
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.searchService, "SearchService must be set" );
+            Preconditions.checkNotNull( this.nodeSearchService, "SearchService must be set" );
             Preconditions.checkNotNull( this.nodeId, "NodeId must be set" );
         }
 

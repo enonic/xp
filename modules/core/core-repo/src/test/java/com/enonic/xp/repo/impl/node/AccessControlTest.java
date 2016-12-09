@@ -32,8 +32,9 @@ public class AccessControlTest
         super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
-        this.nodeService.setStorageService( storageService );
-        this.nodeService.setSearchService( searchService );
+        this.nodeService.setNodeStorageService( storageService );
+        this.nodeService.setNodeSearchService( searchService );
+        this.nodeService.setRepositoryService( repositoryService );
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         this.createDefaultRootNode();

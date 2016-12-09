@@ -17,12 +17,11 @@ module api.ui.security.acl {
 
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<UserStoreAccessControlEntry>().
                 setMaximumOccurrences(0).
-                setComboBoxName("principalSelector").
-                setLoader(new UserStoreAccessControlEntryLoader()).
-                setSelectedOptionsView(aceSelectedOptionsView).
+                setComboBoxName("principalSelector").setLoader(new UserStoreAccessControlEntryLoader()).setSelectedOptionsView(
+                aceSelectedOptionsView).
                 setOptionDisplayValueViewer(new UserStoreAccessControlEntryViewer()).
                 setDelayedInputValueChangedHandling(500);
-            
+
             super(builder);
 
             this.aceSelectedOptionsView = aceSelectedOptionsView;

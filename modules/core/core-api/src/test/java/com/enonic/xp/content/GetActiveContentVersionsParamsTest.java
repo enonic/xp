@@ -15,7 +15,7 @@ public class GetActiveContentVersionsParamsTest
     @Test
     public void testEquals()
     {
-        Branch branch = Branch.create().name( "branchName" ).build();
+        Branch branch = Branch.create().value( "branchName" ).build();
         Branches branches = Branches.from( branch );
 
         GetActiveContentVersionsParams params = GetActiveContentVersionsParams.create().

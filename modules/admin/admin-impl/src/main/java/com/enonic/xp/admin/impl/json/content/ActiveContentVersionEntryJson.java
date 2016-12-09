@@ -12,7 +12,7 @@ public class ActiveContentVersionEntryJson
     public ActiveContentVersionEntryJson( final ActiveContentVersionEntry activeContentVersion,
                                           final ContentPrincipalsResolver principalsResolver )
     {
-        this.branch = activeContentVersion.getBranch().getName();
+        this.branch = activeContentVersion.getBranch().getValue();
         this.contentVersion = new ContentVersionJson( activeContentVersion.getContentVersion(), principalsResolver.findPrincipal(
             activeContentVersion.getContentVersion().getModifier() ) );
     }

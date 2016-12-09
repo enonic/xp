@@ -9,7 +9,8 @@ function callback() {
 
 // Executes a function using different context.
 var result = contextLib.run({
-    branch: 'draft',
+    repository: 'system-repo',
+    branch: 'master',
     user: {
         login: 'su',
         userStore: 'system'

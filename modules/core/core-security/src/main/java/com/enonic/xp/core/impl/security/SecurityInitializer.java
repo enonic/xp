@@ -22,14 +22,12 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.system.SystemRepoInitializer;
 
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 final class SecurityInitializer
 {
-
     static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
 
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
@@ -51,9 +49,6 @@ final class SecurityInitializer
     public final void initialize()
     {
         runAsAdmin( () -> {
-
-            new SystemRepoInitializer( this.nodeService ).initialize();
-
             if ( isInitialized() )
             {
                 LOG.info( "System-repo [security] layout already initialized" );

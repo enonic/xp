@@ -67,7 +67,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.lastModifiedAggregation = new AggregationGroupView(
             ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME,
             ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_DISPLAY_NAME);
-        
+
         return [this.contentTypeAggregation, this.lastModifiedAggregation];
     }
     

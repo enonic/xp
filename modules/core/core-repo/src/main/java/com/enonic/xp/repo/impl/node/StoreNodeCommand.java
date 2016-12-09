@@ -37,10 +37,10 @@ public class StoreNodeCommand
 
         if ( updateMetadataOnly )
         {
-            return this.storageService.updateMetadata( this.node, InternalContext.from( context ) );
+            return this.nodeStorageService.updateMetadata( this.node, InternalContext.from( context ) );
         }
 
-        return this.storageService.store( this.node, InternalContext.from( context ) );
+        return this.nodeStorageService.store( this.node, InternalContext.from( context ) );
     }
 
     public static final class Builder

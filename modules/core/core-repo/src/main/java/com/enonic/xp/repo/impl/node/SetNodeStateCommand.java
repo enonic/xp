@@ -8,7 +8,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 
 public class SetNodeStateCommand
     extends AbstractNodeCommand
@@ -72,7 +72,7 @@ public class SetNodeStateCommand
 
         final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( node.path() ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
         final Nodes children = GetNodesByIdsCommand.create( this ).

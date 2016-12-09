@@ -14,13 +14,13 @@ module api.dom {
             }
             this.additionalElements = [];
         }
-        
+
         setAdditionalElements(...additionalElements: api.dom.Element[]) {
             additionalElements.forEach((element: api.dom.Element) => {
                 this.addAdditionalElement(element);
             });
         }
-        
+
         setWrappedInput(wrappedInput: api.dom.FormInputEl) {
             this.wrappedInput = wrappedInput;
             this.appendChild(this.wrappedInput);

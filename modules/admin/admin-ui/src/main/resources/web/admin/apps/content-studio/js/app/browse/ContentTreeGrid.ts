@@ -52,35 +52,32 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     constructor() {
         let builder: TreeGridBuilder<ContentSummaryAndCompareStatus> =
-                    new TreeGridBuilder<ContentSummaryAndCompareStatus>().
-                            setColumnConfig([{
-                                name: "Name",
-                                id: "displayName",
-                                field:  "contentSummary.displayName",
-                                formatter: ContentRowFormatter.nameFormatter,
-                                style: {minWidth: 130}
-                            }, {
-                                name: "CompareStatus",
-                                id: "compareStatus",
-                                field:  "compareStatus",
-                                formatter: ContentRowFormatter.statusFormatter,
-                                style: {cssClass: "status", minWidth: 75, maxWidth: 75}
-                            }, {
-                                name: "Order",
-                                id: "order",
-                                field:  "contentSummary.order",
-                                formatter: ContentRowFormatter.orderFormatter,
-                                style: {cssClass: "order", minWidth: 25, maxWidth: 40}
-                            }, {
-                                name: "ModifiedTime",
-                                id: "modifiedTime",
-                                field:  "contentSummary.modifiedTime",
-                                formatter: DateTimeFormatter.format,
-                                style: {cssClass: "modified", minWidth: 135, maxWidth: 135}
-                            }]).
-                            setPartialLoadEnabled(true).
-                            setLoadBufferSize(20).// rows count
-                            prependClasses("content-tree-grid");
+            new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumnConfig([{
+                name: "Name",
+                id: "displayName",
+                field: "contentSummary.displayName",
+                formatter: ContentRowFormatter.nameFormatter,
+                style: {minWidth: 130}
+            }, {
+                name: "CompareStatus",
+                id: "compareStatus",
+                field: "compareStatus",
+                formatter: ContentRowFormatter.statusFormatter,
+                style: {cssClass: "status", minWidth: 75, maxWidth: 75}
+            }, {
+                name: "Order",
+                id: "order",
+                field: "contentSummary.order",
+                formatter: ContentRowFormatter.orderFormatter,
+                style: {cssClass: "order", minWidth: 25, maxWidth: 40}
+            }, {
+                name: "ModifiedTime",
+                id: "modifiedTime",
+                field: "contentSummary.modifiedTime",
+                formatter: DateTimeFormatter.format,
+                style: {cssClass: "modified", minWidth: 135, maxWidth: 135}
+            }]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
+            prependClasses("content-tree-grid");
 
         super(builder);
 
@@ -99,10 +96,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
                 let curClass = nameColumn.getCssClass();
 
-                if(checkSelIsMoved) {
+                if (checkSelIsMoved) {
                     nameColumn.setCssClass(curClass ? curClass : "" + "shifted");
                 } else {
-                    if(curClass && curClass.indexOf("shifted") >= 0) {
+                    if (curClass && curClass.indexOf("shifted") >= 0) {
                         nameColumn.setCssClass(curClass.replace("shifted", ""));
                     }
                 }

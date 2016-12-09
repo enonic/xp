@@ -34,7 +34,7 @@ public final class ReindexResultJson
         json.branches = Lists.newArrayList();
         for ( final Branch branch : result.getBranches() )
         {
-            json.branches.add( branch.getName() );
+            json.branches.add( branch.getValue() );
         }
 
         return json;

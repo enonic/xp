@@ -97,7 +97,7 @@ module api.liveedit {
                 .setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
 
             this.setPlaceholder(new PagePlaceholder(this));
-            
+
             this.addPageContextMenuActions();
 
             this.pageModel = builder.liveEditModel.getPageModel();
@@ -115,7 +115,7 @@ module api.liveedit {
             this.nextClickDisabled = false;
 
             this.addClassEx('page-view');
-            
+
             this.initListeners();
 
             this.parseItemViews();
@@ -135,7 +135,7 @@ module api.liveedit {
 
 
         }
-        
+
         private registerPageModel() {
             if (PageView.debug) {
                 console.log('PageView.registerPageModel', this.pageModel);
@@ -182,7 +182,7 @@ module api.liveedit {
                 pageModel.reset(this);
                 this.setIgnorePropertyChanges(false);
             });
-            
+
             if (pageModel.getMode() == PageMode.AUTOMATIC || pageModel.getMode() == PageMode.NO_CONTROLLER) {
                 this.resetAction.setEnabled(false);
             }
@@ -238,7 +238,7 @@ module api.liveedit {
                 }
             });
         }
-        
+
         private createCloseTextEditModeEl(): api.dom.Element {
             var closeButton = new api.dom.AEl("close-edit-mode-button icon-close2");
             closeButton.onClicked((event: MouseEvent) => {

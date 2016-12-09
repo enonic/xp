@@ -142,7 +142,7 @@ public class DiffQueryFactory
     {
         return new HasChildFilterBuilder( childStorageType.getName(), new BoolFilterBuilder().
             must( isDeleted() ).
-            must( new TermFilterBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranch.getName() ) ) );
+            must( new TermFilterBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranch.getValue() ) ) );
     }
 
     private TermFilterBuilder isDeleted()

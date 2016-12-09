@@ -96,7 +96,7 @@ public class ReorderChildNodeCommand
     {
         final NodeQuery query = createFirstNodeBeforeInsertQuery( nodeAfterOrderValue );
 
-        return searchService.query( query, InternalContext.from( ContextAccessor.current() ) );
+        return nodeSearchService.query( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     private Node doUpdateNodeOrderValue( final Long newOrderValue )

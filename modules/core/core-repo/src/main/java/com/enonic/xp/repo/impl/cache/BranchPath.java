@@ -25,7 +25,7 @@ public class BranchPath
     @Override
     public String toString()
     {
-        return branch != null ? branch.getName() + ":" + path : null;
+        return branch != null ? branch.getValue() + ":" + path : null;
     }
 
     @Override

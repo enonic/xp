@@ -8,15 +8,15 @@ import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 
 public class NodeHasChildResolver
 {
-    private final SearchService searchService;
+    private final NodeSearchService nodeSearchService;
 
     private NodeHasChildResolver( Builder builder )
     {
-        this.searchService = builder.searchService;
+        this.nodeSearchService = builder.nodeSearchService;
     }
 
     public NodesHasChildrenResult resolve( final Nodes nodes )
@@ -39,7 +39,7 @@ public class NodeHasChildResolver
 
     private boolean doResolve( final Node node )
     {
-        final NodeQueryResult nodeQueryResult = this.searchService.query( NodeQuery.create().
+        final NodeQueryResult nodeQueryResult = this.nodeSearchService.query( NodeQuery.create().
             parent( node.path() ).
             searchMode( SearchMode.COUNT ).
             build(), InternalContext.from( ContextAccessor.current() ) );
@@ -55,15 +55,15 @@ public class NodeHasChildResolver
 
     public static final class Builder
     {
-        private SearchService searchService;
+        private NodeSearchService nodeSearchService;
 
         private Builder()
         {
         }
 
-        public Builder searchService( final SearchService searchService )
+        public Builder searchService( final NodeSearchService nodeSearchService )
         {
-            this.searchService = searchService;
+            this.nodeSearchService = nodeSearchService;
             return this;
         }
 

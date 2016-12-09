@@ -32,7 +32,7 @@ module api.liveedit {
                 contextMenuConfig: ['parent', 'clearRegion']
             });
         }
-        
+
         createView(config: CreateItemViewConfig<ItemView,Region>): RegionView {
             return new RegionView(new RegionViewBuilder().
                 setParentView(config.parentView).

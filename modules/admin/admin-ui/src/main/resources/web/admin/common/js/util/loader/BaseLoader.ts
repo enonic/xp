@@ -13,7 +13,7 @@ module api.util.loader {
     }
 
     export class BaseLoader<JSON, OBJECT> {
-        
+
         protected request: api.rest.ResourceRequest<JSON, OBJECT[]>;
 
         private status: LoaderStatus = LoaderStatus.NOT_STARTED;

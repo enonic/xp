@@ -19,7 +19,7 @@ class BranchStorageRequestFactory
 
         final StorageData data = StorageData.create().
             add( BranchIndexPath.VERSION_ID.getPath(), nodeBranchEntry.getVersionId().toString() ).
-            add( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
+            add( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getValue() ).
             add( BranchIndexPath.NODE_ID.getPath(), nodeBranchEntry.getNodeId().toString() ).
             add( BranchIndexPath.STATE.getPath(), nodeBranchEntry.getNodeState().value() ).
             add( BranchIndexPath.PATH.getPath(), nodeBranchEntry.getNodePath().toString() ).

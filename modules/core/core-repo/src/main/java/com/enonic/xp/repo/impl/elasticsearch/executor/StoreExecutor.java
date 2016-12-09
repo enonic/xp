@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
-import com.enonic.xp.repo.impl.index.IndexException;
+import com.enonic.xp.repository.IndexException;
 
 public class StoreExecutor
     extends AbstractExecutor

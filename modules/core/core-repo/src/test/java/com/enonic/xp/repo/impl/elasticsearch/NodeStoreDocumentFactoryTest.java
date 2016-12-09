@@ -38,7 +38,7 @@ public class NodeStoreDocumentFactoryTest
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             branch( Branch.from( "myBranch" ) ).
-            repositoryId( RepositoryId.from( "myRepo" ) ).
+            repositoryId( RepositoryId.from( "my-repo" ) ).
             build().
             create();
 

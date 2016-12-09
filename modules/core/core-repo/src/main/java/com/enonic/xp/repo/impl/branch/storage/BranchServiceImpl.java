@@ -294,7 +294,7 @@ public class BranchServiceImpl
             query( NodeBranchQuery.create().
                 addQueryFilter( ValueFilter.create().
                     fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
-                    addValue( ValueFactory.newString( context.getBranch().getName() ) ).
+                    addValue( ValueFactory.newString( context.getBranch().getValue() ) ).
                     build() ).
                 addQueryFilter( ValueFilter.create().
                     fieldName( BranchIndexPath.NODE_ID.getPath() ).

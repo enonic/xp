@@ -12,7 +12,7 @@ public class BranchTest
     public void fromString()
     {
         Branch branch = Branch.from( "aaa" );
-        assertEquals( "aaa", branch.getName() );
+        assertEquals( "aaa", branch.getValue() );
         assertEquals( "aaa", branch.toString() );
         assertEquals( 96321, branch.hashCode() );
     }
@@ -21,9 +21,9 @@ public class BranchTest
     public void fromBuilder()
     {
         Branch.Builder builder = Branch.create();
-        builder.name( "bbb" );
+        builder.value( "bbb" );
         Branch branch = builder.build();
-        assertEquals( "bbb", branch.getName() );
+        assertEquals( "bbb", branch.getValue() );
         assertEquals( "bbb", branch.toString() );
     }
 

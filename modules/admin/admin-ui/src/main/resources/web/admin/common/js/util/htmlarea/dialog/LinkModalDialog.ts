@@ -165,7 +165,8 @@ module api.util.htmlarea.dialog {
         }
 
         private createEmailPanel(): Panel {
-            var emailFormItem: FormItem = this.createFormItemWithPostponedValue("email", "Email", this.getEmail, LinkModalDialog.validationRequiredEmail);
+            var emailFormItem: FormItem = this.createFormItemWithPostponedValue("email", "Email", this.getEmail,
+                LinkModalDialog.validationRequiredEmail);
 
             emailFormItem.getLabel().addClass("required");
 
@@ -193,7 +194,7 @@ module api.util.htmlarea.dialog {
             var checkbox = api.ui.Checkbox.create().setLabelText("Open in new tab").setInputAlignment(InputAlignment.RIGHT).build();
 
             this.onAdded(() => {
-               checkbox.setChecked(this.getTarget(isTabSelectedFn.call(this)));
+                checkbox.setChecked(this.getTarget(isTabSelectedFn.call(this)));
             });
 
             return this.createFormItem(id, null, null, null, checkbox);
@@ -214,7 +215,8 @@ module api.util.htmlarea.dialog {
 
             this.onAdded(() => {
                 dockedPanel.getDeck().getPanels().forEach((panel, index) => {
-                    if ((index == 1 && this.isUrl()) || (index == 2 && this.isDownloadLink()) || (index == 3 && this.isEmail()) || (index == 4 && this.isAnchor())) {
+                    if ((index == 1 && this.isUrl()) || (index == 2 && this.isDownloadLink()) || (index == 3 && this.isEmail()) ||
+                        (index == 4 && this.isAnchor())) {
                         dockedPanel.selectPanel(panel);
                         return false;
                     }
@@ -403,7 +405,8 @@ module api.util.htmlarea.dialog {
             }
         }
 
-        protected createFormItemWithPostponedValue(id: string, label: string, getValueFn: Function, validator?: (input: api.dom.FormInputEl) => string): FormItem {
+        protected createFormItemWithPostponedValue(id: string, label: string, getValueFn: Function,
+                                                   validator?: (input: api.dom.FormInputEl) => string): FormItem {
 
             let formItem = super.createFormItem(id, label, validator);
 

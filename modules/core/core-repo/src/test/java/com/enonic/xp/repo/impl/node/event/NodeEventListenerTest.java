@@ -17,13 +17,13 @@ import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 public class NodeEventListenerTest
 {
     private NodeEventListener nodeEventListener;
 
-    private StorageService storageService;
+    private NodeStorageService nodeStorageService;
 
     @Before
     public void setUp()
@@ -31,8 +31,8 @@ public class NodeEventListenerTest
     {
 
         nodeEventListener = new NodeEventListener();
-        storageService = Mockito.mock( StorageService.class );
-        nodeEventListener.setStorageService( storageService );
+        nodeStorageService = Mockito.mock( NodeStorageService.class );
+        nodeEventListener.setNodeStorageService( nodeStorageService );
 
     }
 
@@ -45,7 +45,7 @@ public class NodeEventListenerTest
             localOrigin( false ).
             build() );
 
-        Mockito.verify( storageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
+        Mockito.verify( nodeStorageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
     }
 
     @Test
@@ -57,7 +57,7 @@ public class NodeEventListenerTest
             localOrigin( false ).
             build() );
 
-        Mockito.verify( storageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
+        Mockito.verify( nodeStorageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
     }
 
     @Test
@@ -75,8 +75,8 @@ public class NodeEventListenerTest
 
         nodeEventListener.onEvent( localEvent );
 
-        Mockito.verify( storageService, Mockito.never() ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
-                                                                             Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.never() ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                                 Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -96,8 +96,8 @@ public class NodeEventListenerTest
             localOrigin( false ).
             build() );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
-                                                                                Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                                    Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -116,8 +116,8 @@ public class NodeEventListenerTest
             localOrigin( false ).
             build() );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeDeleted( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
-                                                                                Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeDeleted( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                                    Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -145,8 +145,8 @@ public class NodeEventListenerTest
 
         final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
-                                                                              Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
+                                                                                  Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -174,8 +174,8 @@ public class NodeEventListenerTest
 
         final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
-                                                                              Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
+                                                                                  Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -201,8 +201,8 @@ public class NodeEventListenerTest
             localOrigin( false ).
             build() );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
-                                                                                Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                                    Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -235,8 +235,8 @@ public class NodeEventListenerTest
             localOrigin( false ).
             build() );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodePushed( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
-                                                                               Mockito.eq( previousNodePath ),
-                                                                               Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodePushed( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                                   Mockito.eq( previousNodePath ),
+                                                                                   Mockito.isA( InternalContext.class ) );
     }
 }

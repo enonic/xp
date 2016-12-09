@@ -1,0 +1,16 @@
+{
+  "diff": [
+    {
+      "id": "a",
+      "status": "NEW"
+    },
+    {
+      "id": "b",
+      "status": "MOVED"
+    },
+    {
+      "id": "c",
+      "status": "NEWER"
+    }
+  ]
+}

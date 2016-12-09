@@ -50,7 +50,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
 
         serverEvents.onContentPublished(layoutOnPublishStateChange);
-        
+
         //Uncomment the line below if we need to redo the layout on unpublish
         //serverEvents.onContentUnpublished(layoutOnPublishStateChange);
     }
@@ -102,7 +102,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
                 DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
 
             new FieldString().setName("Published from").setValue(this.content.getPublishFromTime() ?
-                                                                DateTimeFormatter.createHtml(this.content.getPublishFromTime()) : " "),
+                                                                 DateTimeFormatter.createHtml(this.content.getPublishFromTime()) : " "),
 
             new FieldString().setName("Id").setValue(this.content.getId())
         ];

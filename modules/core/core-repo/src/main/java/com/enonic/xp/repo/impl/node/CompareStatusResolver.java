@@ -9,7 +9,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 class CompareStatusResolver
@@ -18,13 +18,13 @@ class CompareStatusResolver
 
     private final NodeBranchEntry target;
 
-    private final StorageService storageService;
+    private final NodeStorageService nodeStorageService;
 
     private CompareStatusResolver( Builder builder )
     {
         this.source = builder.source;
         this.target = builder.target;
-        this.storageService = builder.storageService;
+        this.nodeStorageService = builder.nodeStorageService;
     }
 
     public static Builder create()
@@ -100,8 +100,8 @@ class CompareStatusResolver
         }
 
         final NodeVersionMetadata version =
-            storageService.getVersion( new NodeVersionDocumentId( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId() ),
-                                       InternalContext.from( ContextAccessor.current() ) );
+            nodeStorageService.getVersion( new NodeVersionDocumentId( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId() ),
+                                           InternalContext.from( ContextAccessor.current() ) );
 
         if ( version == null )
         {
@@ -119,7 +119,7 @@ class CompareStatusResolver
 
         private NodeBranchEntry target;
 
-        private StorageService storageService;
+        private NodeStorageService nodeStorageService;
 
         private Builder()
         {
@@ -137,15 +137,15 @@ class CompareStatusResolver
             return this;
         }
 
-        public Builder storageService( StorageService storageService )
+        public Builder storageService( NodeStorageService nodeStorageService )
         {
-            this.storageService = storageService;
+            this.nodeStorageService = nodeStorageService;
             return this;
         }
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.storageService, "StorageService must be set" );
+            Preconditions.checkNotNull( this.nodeStorageService, "StorageService must be set" );
         }
 
         public CompareStatusResolver build()

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class SearchExecutor
@@ -41,7 +41,7 @@ public class SearchExecutor
                 execute( query );
         }
 
-        if ( size == SearchService.GET_ALL_SIZE_FLAG || size > SCROLL_THRESHOLD )
+        if ( size == NodeSearchService.GET_ALL_SIZE_FLAG || size > SCROLL_THRESHOLD )
         {
             if ( anyAggregations )
             {
@@ -70,7 +70,7 @@ public class SearchExecutor
 
     private int resolveSize( final ElasticsearchQuery query )
     {
-        if ( query.getSize() == SearchService.GET_ALL_SIZE_FLAG )
+        if ( query.getSize() == NodeSearchService.GET_ALL_SIZE_FLAG )
         {
             final SearchResult countResult = CountExecutor.create( this.client ).
                 build().

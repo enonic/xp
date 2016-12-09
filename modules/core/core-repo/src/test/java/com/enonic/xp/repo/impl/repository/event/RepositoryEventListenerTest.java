@@ -6,13 +6,13 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.RepositoryEvents;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 public class RepositoryEventListenerTest
 {
     private RepositoryEventListener repositoryEventListener;
 
-    private StorageService storageService;
+    private NodeStorageService storageService;
 
     @Before
     public void setUp()
@@ -20,7 +20,7 @@ public class RepositoryEventListenerTest
     {
 
         repositoryEventListener = new RepositoryEventListener();
-        storageService = Mockito.mock( StorageService.class );
+        storageService = Mockito.mock( NodeStorageService.class );
         repositoryEventListener.setStorageService( storageService );
 
     }
