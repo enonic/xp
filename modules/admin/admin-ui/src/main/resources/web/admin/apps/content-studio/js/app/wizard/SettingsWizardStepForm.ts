@@ -90,6 +90,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
         this.model.setOwner(content.getOwner(), true).setLanguage(content.getLanguage(), true);
 
+        this.propertySet.reset();
         this.initPropertySet(content);
         this.formView.update(this.propertySet, unchangedOnly);
     }
@@ -100,7 +101,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     private initFormView(content: api.content.Content) {
-        this.initPropertySet(content);
         var formBuilder = new api.form.FormBuilder().
             addFormItem(new api.form.InputBuilder().
                 setName("from").
@@ -121,6 +121,8 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 setMaximizeUIInputWidth(true).
                 build());
 
+        this.propertySet = new api.data.PropertyTree().getRoot();
+        this.initPropertySet(content);
         this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
         this.formView.addClass("display-validation-errors");
         this.formView.layout().then(() => {
@@ -137,11 +139,14 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 this.previousValidation = event.getRecording();
                 this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
             });
+
+            this.propertySet.onChanged(() => {
+                this.formView.validate();
+            });
         });
     }
 
     private initPropertySet(content: api.content.Content) {
-        this.propertySet = new api.data.PropertyTree().getRoot();
         var publishFromDate = content.getPublishFromTime();
         if (publishFromDate) {
             this.propertySet.setLocalDateTime("from", 0, api.util.LocalDateTime.fromDate(publishFromDate));
@@ -150,10 +155,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         if (publishToDate) {
             this.propertySet.setLocalDateTime("to", 0, api.util.LocalDateTime.fromDate(publishToDate));
         }
-
-        this.propertySet.onChanged(() => {
-            this.formView.validate();
-        });
     }
 
     private setModel(model: ContentSettingsModel) {
