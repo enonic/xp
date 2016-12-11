@@ -137,10 +137,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 this.previousValidation = event.getRecording();
                 this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
             });
-
-            this.propertySet.onChanged((event: api.data.PropertyEvent) => {
-                this.formView.validate();
-            });
         });
     }
 
@@ -154,6 +150,11 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         if (publishToDate) {
             this.propertySet.setLocalDateTime("to", 0, api.util.LocalDateTime.fromDate(publishToDate));
         }
+
+        this.propertySet.onChanged((event: api.data.PropertyEvent) => {
+            console.log('propertysetchanged');
+            this.formView.validate();
+        });
     }
 
     private setModel(model: ContentSettingsModel) {
