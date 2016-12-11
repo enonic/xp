@@ -151,8 +151,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
             this.propertySet.setLocalDateTime("to", 0, api.util.LocalDateTime.fromDate(publishToDate));
         }
 
-        this.propertySet.onChanged((event: api.data.PropertyEvent) => {
-            console.log('propertysetchanged');
+        this.propertySet.onChanged(() => {
             this.formView.validate();
         });
     }

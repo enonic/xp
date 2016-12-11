@@ -81,6 +81,10 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
                 this.confirmScheduleAction.setEnabled(event.isValid());
             });
+            this.propertySet.onChanged(() => {
+                this.formView.validate();
+
+            });
             this.confirmScheduleAction.setEnabled(this.formView.isValid());
         });
     }
