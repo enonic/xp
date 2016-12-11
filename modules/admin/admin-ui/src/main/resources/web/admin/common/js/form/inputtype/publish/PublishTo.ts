@@ -11,21 +11,13 @@ module api.content.form.inputtype.publish {
                 var publishInfoPropertySet: api.data.PropertySet = this.propertyArray.getParent();
                 var publishFrom = publishInfoPropertySet.getDateTime("from");
                 var publishTo = publishInfoPropertySet.getDateTime("to");
+                if (publishTo && publishFrom && (publishTo.toDate() < publishFrom.toDate())) {
+                    recording.setBreaksMinimumOccurrences(true);
+                    recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
+                        setOverwriteDefault(true).
+                        setMessage("[Publish to] value must be set after [Publish from]").
+                        build());
 
-                if (publishTo) {
-                    if (publishTo.toDate() < new Date()) {
-                        recording.setBreaksMinimumOccurrences(true);
-                        recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
-                            setOverwriteDefault(true).
-                            setMessage("[Publish to] value cannot be set in the past").
-                            build());
-                    } else if (publishFrom && (publishTo.toDate() < publishFrom.toDate())) {
-                        recording.setBreaksMinimumOccurrences(true);
-                        recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
-                            setOverwriteDefault(true).
-                            setMessage("[Publish to] value must be set after [Publish from]").
-                            build());
-                    }
                 }
             }
         }

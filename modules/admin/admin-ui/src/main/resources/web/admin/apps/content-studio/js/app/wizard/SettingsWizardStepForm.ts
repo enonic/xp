@@ -104,7 +104,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).
                 setLabel("Publish From").
                 setHelpText("Time from which your contents will be available online").
-                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
+                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 setInputTypeConfig({}).
                 setMaximizeUIInputWidth(true).
                 build()).
@@ -112,7 +112,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 setName("to").
                 setInputType(api.content.form.inputtype.publish.PublishTo.getName()).
                 setLabel("Publish To").
-                setHelpText("Time until when your contents will be available online").
+                setHelpText("Time until which your contents will be available online").
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 setInputTypeConfig({}).
                 setMaximizeUIInputWidth(true).

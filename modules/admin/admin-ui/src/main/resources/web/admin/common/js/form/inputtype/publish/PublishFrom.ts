@@ -12,7 +12,13 @@ module api.content.form.inputtype.publish {
                 var publishFrom = publishInfoPropertySet.getDateTime("from");
                 var publishTo = publishInfoPropertySet.getDateTime("to");
 
-                if (publishFrom && publishTo && (publishTo.toDate() < publishFrom.toDate())) {
+                if (!publishFrom && publishTo) {
+                    recording.setBreaksMinimumOccurrences(true);
+                    recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
+                        setOverwriteDefault(true).
+                        setMessage("[Publish to] cannot be set without [Publish from]").
+                        build());
+                } else if (publishFrom && publishTo && (publishTo.toDate() < publishFrom.toDate())) {
                     recording.setBreaksMinimumOccurrences(true);
                     recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
                         setOverwriteDefault(true).
