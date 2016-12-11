@@ -87,6 +87,9 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         this.updateUnchangedOnly = unchangedOnly;
 
         this.model.setOwner(content.getOwner(), true).setLanguage(content.getLanguage(), true);
+
+        this.initPropertySet(content);
+        this.formView.update(this.propertySet, unchangedOnly);
     }
 
     reset() {
@@ -94,6 +97,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     private initFormView(content: api.content.Content) {
+        this.initPropertySet(content);
         var formBuilder = new api.form.FormBuilder().
             addFormItem(new api.form.InputBuilder().
                 setName("from").
@@ -114,17 +118,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 setMaximizeUIInputWidth(true).
                 build());
 
-
-        this.propertySet = new api.data.PropertyTree().getRoot();
-        var publishFromDate = content.getPublishFromTime();
-        if (publishFromDate) {
-            this.propertySet.setLocalDateTime("from", 0, api.util.LocalDateTime.fromDate(publishFromDate));
-        }
-        var publishToDate = content.getPublishToTime();
-        if (publishToDate) {
-            this.propertySet.setLocalDateTime("to", 0, api.util.LocalDateTime.fromDate(publishToDate));
-        }
-
         this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
         this.formView.addClass("display-validation-errors");
         this.formView.layout().then(() => {
@@ -142,6 +135,18 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
             });
         });
+    }
+
+    private initPropertySet(content: api.content.Content) {
+        this.propertySet = new api.data.PropertyTree().getRoot();
+        var publishFromDate = content.getPublishFromTime();
+        if (publishFromDate) {
+            this.propertySet.setLocalDateTime("from", 0, api.util.LocalDateTime.fromDate(publishFromDate));
+        }
+        var publishToDate = content.getPublishToTime();
+        if (publishToDate) {
+            this.propertySet.setLocalDateTime("to", 0, api.util.LocalDateTime.fromDate(publishToDate));
+        }
     }
 
     private setModel(model: ContentSettingsModel) {
@@ -172,6 +177,15 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         model.onPropertyChanged(this.modelChangeListener);
 
         this.model = model;
+    }
+
+    apply(builder: api.content.ContentBuilder) {
+        this.model.apply(builder);
+
+        var publishFrom = this.propertySet.getDateTime("from");
+        builder.setPublishFromTime(publishFrom && publishFrom.toDate());
+        var publishTo = this.propertySet.getDateTime("to");
+        builder.setPublishToTime(publishTo && publishTo.toDate());
     }
 
     getModel(): ContentSettingsModel {
