@@ -137,6 +137,10 @@ module api.content.form.inputtype.time {
             });
             return dateTimePicker;
         }
+
+        static getName(): api.form.InputTypeName {
+            return new api.form.InputTypeName("DateTime", false);
+        }
     }
     api.form.inputtype.InputTypeManager.register(new api.Class("DateTime", DateTime));
 

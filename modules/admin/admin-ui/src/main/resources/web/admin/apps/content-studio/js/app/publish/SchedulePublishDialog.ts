@@ -5,13 +5,12 @@ import DateTimePicker = api.ui.time.DateTimePicker;
 
 export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
+    private formView: api.form.FormView;
+    private propertySet: api.data.PropertySet;
+
     private confirmDeleteButton: api.ui.dialog.DialogButton;
 
     private confirmScheduleAction: api.ui.Action;
-
-    private fromDate: DateTimePicker;
-
-    private toDate: DateTimePicker;
 
     private onCloseCallback: () => void;
 
@@ -26,7 +25,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
         this.initConfirmScheduleAction();
 
-        this.initScheduleInputs();
+        this.initFormView();
 
         this.addCancelButtonToBottom("Back");
     }
@@ -53,6 +52,39 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
         this.onScheduleCallback = onScheduleCallback;
     }
 
+    private initFormView() {
+        var formBuilder = new api.form.FormBuilder().
+            addFormItem(new api.form.InputBuilder().
+                setName("from").
+                setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).
+                setLabel("Publish From").
+                setHelpText("Time from which your contents will be available online").
+                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
+                setInputTypeConfig({}).
+                setMaximizeUIInputWidth(true).
+                build()).
+            addFormItem(new api.form.InputBuilder().
+                setName("to").
+                setInputType(api.content.form.inputtype.publish.PublishTo.getName()).
+                setLabel("Publish To").
+                setHelpText("Time until when your contents will be available online").
+                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                setInputTypeConfig({}).
+                setMaximizeUIInputWidth(true).
+                build());
+
+        this.propertySet = new api.data.PropertyTree().getRoot();
+        this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
+        this.formView.addClass("display-validation-errors");
+        this.formView.layout().then(() => {
+            this.appendChildToContentPanel(this.formView);
+            this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                this.confirmScheduleAction.setEnabled(event.isValid());
+            });
+            this.confirmScheduleAction.setEnabled(this.formView.isValid());
+        });
+    }
+
     private addSubtitle() {
         this.appendChildToHeader(new api.dom.H6El("schedule-publish-dialog-subtitle").
             setHtml("NB: Items with existing publish times will not be affected. " +
@@ -74,77 +106,20 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
         this.confirmDeleteButton = this.addAction(this.confirmScheduleAction, true, true);
     }
 
-    private initScheduleInputs() {
-
-        this.fromDate = new DateTimePickerBuilder().build();
-        this.fromDate.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-            this.validate();
-        });
-
-        this.toDate = new DateTimePickerBuilder().build();
-        this.toDate.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-            this.validate();
-        });
-
-        var publishFromLabel = new api.dom.LabelEl("Publish From", this.fromDate, "publish-from-label"),
-            publishToLabel = new api.dom.LabelEl("Publish To", this.toDate, "publish-to-label");
-
-        this.appendChildToContentPanel(publishFromLabel);
-        this.appendChildToContentPanel(this.fromDate);
-        this.appendChildToContentPanel(publishToLabel);
-        this.appendChildToContentPanel(this.toDate);
-    }
-
-    private validate() {
-        var fromDate = this.fromDate.getSelectedDateTime(),
-            toDate = this.toDate.getSelectedDateTime();
-
-        if (!fromDate || !this.fromDate.isValid()) {
-            this.fromDate.addClass("invalid");
-        } else {
-            this.fromDate.removeClass("invalid");
-        }
-
-        if (toDate && !this.toDate.isValid()) {
-            this.toDate.addClass("invalid");
-        } else {
-            this.toDate.removeClass("invalid");
-        }
-
-        // check toDate is before fromDate
-        if (fromDate && toDate && toDate < fromDate) {
-            this.toDate.addClass("invalid");
-        }
-
-        // check toDate is after now
-        if (toDate && toDate < new Date()) {
-            this.toDate.addClass("invalid");
-        }
-
-        this.confirmScheduleAction.setEnabled(!this.fromDate.hasClass("invalid") && !this.toDate.hasClass("invalid"));
-    }
-
     getFromDate(): Date {
-        return this.fromDate.getSelectedDateTime();
+        var publishFrom = this.propertySet.getDateTime("from");
+        return publishFrom && publishFrom.toDate();
     }
 
     getToDate(): Date {
-        return this.toDate.getSelectedDateTime();
+        var publishTo = this.propertySet.getDateTime("to");
+        return publishTo && publishTo.toDate();
     }
 
     resetPublishDates() {
-        this.resetFromDate();
-        this.resetToDate();
-    }
-
-    private resetFromDate() {
-        this.fromDate.setSelectedDateTime(new Date());
-        this.fromDate.removeClass("invalid");
-    }
-
-    private resetToDate() {
-        this.toDate.setSelectedDateTime(null);
-        this.toDate.removeClass("invalid");
+        this.propertySet.reset();
+        this.propertySet.setLocalDateTime("from", 0, api.util.LocalDateTime.fromDate(new Date()));
+        this.formView.update(this.propertySet);
     }
 
     protected hasSubDialog(): boolean {
