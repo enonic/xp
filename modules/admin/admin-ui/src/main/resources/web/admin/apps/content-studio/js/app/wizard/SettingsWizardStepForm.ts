@@ -6,6 +6,8 @@ import PrincipalType = api.security.PrincipalType;
 import PrincipalLoader = api.security.PrincipalLoader;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import FormItem = api.ui.form.FormItem;
+import FormView = api.form.FormView;
+import PropertySet = api.data.PropertySet;
 import Validators = api.ui.form.Validators;
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import LocaleComboBox = api.ui.locale.LocaleComboBox;
@@ -93,7 +95,8 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     reset() {
-        return this.localeCombo.resetBaseValues();
+        this.localeCombo.resetBaseValues();
+        this.formView.reset();
     }
 
     private initFormView(content: api.content.Content) {
@@ -133,6 +136,10 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
                 this.previousValidation = event.getRecording();
                 this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
+            });
+
+            this.propertySet.onChanged((event: api.data.PropertyEvent) => {
+                this.formView.validate();
             });
         });
     }
