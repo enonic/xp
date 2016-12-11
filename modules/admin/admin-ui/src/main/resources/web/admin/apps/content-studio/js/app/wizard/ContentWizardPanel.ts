@@ -157,9 +157,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
 
         this.contentParams = params;
-        
+
         this.loadData();
-        
+
         this.isContentFormValid = false;
         this.isSecurityWizardStepFormAllowed = false;
 
@@ -171,7 +171,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
 
         this.metadataStepFormByName = {};
-        
+
         this.initListeners();
         this.listenToContentEvents();
         this.handleSiteConfigApply();
@@ -199,7 +199,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     .selectActiveAction(wizardActions.getShowLiveEditAction());
             }
         });
-        
+
         return wizardActions;
     }
 
@@ -249,11 +249,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     let shownHandler = () => {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
-                                (application: Application) => {
-                                    if (application.getState() == "stopped") {
-                                        api.notify.showWarning(message);
-                                    }
-                                })
+                            (application: Application) => {
+                                if (application.getState() == "stopped") {
+                                    api.notify.showWarning(message);
+                                }
+                            })
                             .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
@@ -931,7 +931,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         ConfirmationDialog.get().setQuestion(
                             "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
                             () => this.doLayoutPersistedItem(persistedContent.clone())).setNoCallback(() => {/* Do nothing... */
-                        }).show();
+                            }).show();
                     }
                 }
 
@@ -971,7 +971,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             console.debug("ContentWizardPanel.initLiveEditor at " + new Date().toISOString());
         }
         var deferred = wemQ.defer<void>();
-        
+
         this.wizardActions.getShowLiveEditAction().setEnabled(false);
         this.wizardActions.getPreviewAction().setVisible(false);
         this.wizardActions.getPreviewAction().setEnabled(false);
@@ -1334,7 +1334,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         viewedContentBuilder.setExtraData(extraData);
 
-        this.settingsWizardStepForm.getModel().apply(viewedContentBuilder);
+        this.settingsWizardStepForm.apply(viewedContentBuilder);
 
         viewedContentBuilder.setPage(this.assembleViewedPage());
         return viewedContentBuilder;

@@ -6,10 +6,12 @@ import PrincipalType = api.security.PrincipalType;
 import PrincipalLoader = api.security.PrincipalLoader;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import FormItem = api.ui.form.FormItem;
+import FormView = api.form.FormView;
+import PropertySet = api.data.PropertySet;
+import Validators = api.ui.form.Validators;
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import LocaleComboBox = api.ui.locale.LocaleComboBox;
-import LocalDateTimeFormInput = api.form.LocalDateTimeFormInput;
-import ValidationRecording = api.form.ValidationRecording;
+import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 
 export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -22,13 +24,8 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     private localeCombo: LocaleComboBox;
     private ownerCombo: PrincipalComboBox;
 
-    private publishFromInput: LocalDateTimeFormInput;
-    private publishToInput: LocalDateTimeFormInput;
-
-    private publishFromInputFormItem: FormItem;
-    private publishToInputFormItem: FormItem;
-
-    private formValid: boolean = true;
+    private formView: FormView;
+    private propertySet: PropertySet;
 
     constructor() {
         super("settings-wizard-step-form");
@@ -47,16 +44,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                         this.ownerCombo.setValue(value ? value.toString() : "");
                     }
                     break;
-                case ContentSettingsModel.PROPERTY_PUBLISH_FROM:
-                    if (!this.updateUnchangedOnly || !this.publishFromInput.isDirty()) {
-                        this.publishFromInput.getPicker().setSelectedDateTime(value);
-                    }
-                    break;
-                case ContentSettingsModel.PROPERTY_PUBLISH_TO:
-                    if (!this.updateUnchangedOnly || !this.publishToInput.isDirty()) {
-                        this.publishToInput.getPicker().setSelectedDateTime(value);
-                    }
-                    break;
                 }
             }
         }
@@ -69,36 +56,24 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         var localeFormItem = new FormItemBuilder(this.localeCombo).setLabel('Language').build();
 
         var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
-        this.ownerCombo = PrincipalComboBox.create().setLoader(loader).setMaxOccurences(1).setValue(
-            content.getOwner() ? content.getOwner().toString() : undefined).setDisplayMissing(true).build();
+
+        this.ownerCombo = PrincipalComboBox.create().
+            setLoader(loader).
+            setMaxOccurences(1).
+            setValue(content.getOwner() ? content.getOwner().toString() : undefined).
+            setDisplayMissing(true).
+            build();
+
         var ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
-
-        this.publishFromInput = new LocalDateTimeFormInput(this.content.getPublishFromTime());
-        this.publishFromInputFormItem = new FormItemBuilder(this.publishFromInput).setLabel('Publish From').build();
-        this.publishFromInputFormItem.addClass('highlight-validity-change');
-
-        this.publishFromInput.getPicker().onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-            this.checkValidityAndNotify();
-        });
-
-        this.publishToInput = new LocalDateTimeFormInput(this.content.getPublishToTime());
-        this.publishToInputFormItem = new FormItemBuilder(this.publishToInput).setLabel('Publish To').build();
-        this.publishToInputFormItem.addClass('highlight-validity-change');
-
-        this.publishToInput.getPicker().onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-            this.checkValidityAndNotify();
-        });
-
 
         var fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(localeFormItem);
         fieldSet.add(ownerFormItem);
-        fieldSet.add(this.publishFromInputFormItem);
-        fieldSet.add(this.publishToInputFormItem);
 
-        var form = new api.ui.form.Form(api.form.FormView.VALIDATION_CLASS).add(fieldSet);
+        var form = new api.ui.form.Form().add(fieldSet);
 
         this.appendChild(form);
+        this.initFormView(content);
 
         form.onFocus((event) => {
             this.notifyFocused(event);
@@ -106,61 +81,80 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         form.onBlur((event) => {
             this.notifyBlurred(event);
         });
-        form.onValidityChanged((event: api.ValidityChangedEvent) => {
-            this.checkValidityAndNotify();
-        });
 
         this.setModel(new ContentSettingsModel(content));
-    }
-
-    isValid(): boolean {
-        return this.checkValidity();
-    }
-
-    private checkValidityAndNotify() {
-        var prevValidityState = this.formValid,
-            currentValidityState = this.checkValidity();
-
-        if (prevValidityState != currentValidityState) {
-            this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(currentValidityState));
-        }
-    }
-
-    private checkValidity(): boolean {
-        var fromDate = this.publishFromInput.getPicker().getSelectedDateTime(),
-            toDate = this.publishToInput.getPicker().getSelectedDateTime(),
-            isValid = this.publishFromInput.getPicker().isValid() && this.publishToInput.getPicker().isValid();
-
-        // check toDate is before fromDate
-        if (fromDate && this.publishFromInput.getPicker().isValid() && toDate && this.publishToInput.getPicker().isValid() &&
-            toDate < fromDate) {
-            isValid = false;
-            this.publishToInputFormItem.addClass("invalid");
-        } else {
-            this.publishToInputFormItem.removeClass("invalid");
-        }
-
-        if (!fromDate && toDate) { // only toDate is set
-            isValid = false;
-            this.publishFromInputFormItem.addClass("invalid");
-        } else {
-            this.publishFromInputFormItem.removeClass("invalid");
-        }
-
-        return this.formValid = isValid;
     }
 
     update(content: api.content.Content, unchangedOnly: boolean = true) {
         this.updateUnchangedOnly = unchangedOnly;
 
-        this.model.setOwner(content.getOwner()).
-            setLanguage(content.getLanguage()).
-            setPublishFrom(content.getPublishFromTime()).
-            setPublishTo(content.getPublishToTime());
+        this.model.setOwner(content.getOwner(), true).setLanguage(content.getLanguage(), true);
+
+        this.propertySet.reset();
+        this.initPropertySet(content);
+        this.formView.update(this.propertySet, unchangedOnly);
     }
 
     reset() {
-        return this.localeCombo.resetBaseValues();
+        this.localeCombo.resetBaseValues();
+        this.formView.reset();
+    }
+
+    private initFormView(content: api.content.Content) {
+        var formBuilder = new api.form.FormBuilder().
+            addFormItem(new api.form.InputBuilder().
+                setName("from").
+                setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).
+                setLabel("Publish From").
+                setHelpText("Time from which your contents will be available online").
+                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                setInputTypeConfig({}).
+                setMaximizeUIInputWidth(true).
+                build()).
+            addFormItem(new api.form.InputBuilder().
+                setName("to").
+                setInputType(api.content.form.inputtype.publish.PublishTo.getName()).
+                setLabel("Publish To").
+                setHelpText("Time until which your contents will be available online").
+                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                setInputTypeConfig({}).
+                setMaximizeUIInputWidth(true).
+                build());
+
+        this.propertySet = new api.data.PropertyTree().getRoot();
+        this.initPropertySet(content);
+        this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
+        this.formView.addClass("display-validation-errors");
+        this.formView.layout().then(() => {
+            this.formView.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            this.formView.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
+
+            this.appendChild(this.formView);
+
+            this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                this.previousValidation = event.getRecording();
+                this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
+            });
+
+            this.propertySet.onChanged(() => {
+                this.formView.validate();
+            });
+        });
+    }
+
+    private initPropertySet(content: api.content.Content) {
+        var publishFromDate = content.getPublishFromTime();
+        if (publishFromDate) {
+            this.propertySet.setLocalDateTime("from", 0, api.util.LocalDateTime.fromDate(publishFromDate));
+        }
+        var publishToDate = content.getPublishToTime();
+        if (publishToDate) {
+            this.propertySet.setLocalDateTime("to", 0, api.util.LocalDateTime.fromDate(publishToDate));
+        }
     }
 
     private setModel(model: ContentSettingsModel) {
@@ -188,23 +182,18 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         this.localeCombo.onOptionSelected((event) => localeListener());
         this.localeCombo.onOptionDeselected((option) => localeListener());
 
-        this.publishFromInput.getPicker().
-            onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                this.ignorePropertyChange = true;
-                model.setPublishFrom(event.getDate());
-                this.ignorePropertyChange = false;
-            });
-
-        this.publishToInput.getPicker().
-            onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                this.ignorePropertyChange = true;
-                model.setPublishTo(event.getDate());
-                this.ignorePropertyChange = false;
-            });
-
         model.onPropertyChanged(this.modelChangeListener);
 
         this.model = model;
+    }
+
+    apply(builder: api.content.ContentBuilder) {
+        this.model.apply(builder);
+
+        var publishFrom = this.propertySet.getDateTime("from");
+        builder.setPublishFromTime(publishFrom && publishFrom.toDate());
+        var publishTo = this.propertySet.getDateTime("to");
+        builder.setPublishToTime(publishTo && publishTo.toDate());
     }
 
     getModel(): ContentSettingsModel {

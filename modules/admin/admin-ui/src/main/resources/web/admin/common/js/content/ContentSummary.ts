@@ -456,6 +456,16 @@ module api.content {
             return this;
         }
 
+        setPublishFromTime(value: Date): ContentSummaryBuilder {
+            this.publishFromTime = value;
+            return this;
+        }
+
+        setPublishToTime(value: Date): ContentSummaryBuilder {
+            this.publishToTime = value;
+            return this;
+        }
+
         build(): ContentSummary {
             return new ContentSummary(this);
         }

@@ -65,7 +65,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
                 build()).
             addFormItem(new api.form.InputBuilder().
                 setName("to").
-                setInputType(api.content.form.inputtype.publish.PublishTo.getName()).
+                setInputType(api.content.form.inputtype.publish.PublishToFuture.getName()).
                 setLabel("Publish To").
                 setHelpText("Time until when your contents will be available online").
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
@@ -80,6 +80,10 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
             this.appendChildToContentPanel(this.formView);
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
                 this.confirmScheduleAction.setEnabled(event.isValid());
+            });
+            this.propertySet.onChanged(() => {
+                this.formView.validate();
+
             });
             this.confirmScheduleAction.setEnabled(this.formView.isValid());
         });
