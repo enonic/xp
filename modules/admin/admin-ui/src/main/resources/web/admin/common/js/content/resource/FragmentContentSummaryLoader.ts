@@ -1,7 +1,7 @@
 module api.content.resource {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
-    
+
     export class FragmentContentSummaryLoader extends ContentSummaryLoader {
 
         protected request: FragmentContentSummaryRequest;

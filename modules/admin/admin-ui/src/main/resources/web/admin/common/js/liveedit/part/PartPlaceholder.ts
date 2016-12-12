@@ -23,7 +23,7 @@ module api.liveedit.part {
             this.addClassEx("part-placeholder").addClass(api.StyleHelper.getCommonIconCls("part"));
 
             this.partComponentView = partView;
-            
+
             this.comboBox = new PartDescriptorComboBox();
             this.comboBox.loadDescriptors(partView.getLiveEditModel().getSiteModel().getApplicationKeys());
 
@@ -55,7 +55,7 @@ module api.liveedit.part {
                 this.setDisplayName(partComponent.getName().toString());
             }
         }
-        
+
         private reloadDescriptorsOnApplicationChange(siteModel: SiteModel) {
             this.comboBox.loadDescriptors(siteModel.getApplicationKeys());
         }

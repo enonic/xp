@@ -29,7 +29,7 @@ module api.app.wizard {
                 this.doCloseWithoutSaveCheck();
             });
             this.addAction(this.noAction);
-            
+
             this.getCancelAction().setMnemonic("c");
         }
 

@@ -108,16 +108,19 @@
           cursor: pointer;
         }
 
-        .icon-label {
-          left: 23px;
-          padding: 0 5px;
-          line-height: 16px;
-          border-radius: 10px;
-          background: @admin-blue;
-          color: white;
-          font-size: 14px;
-          font-family: @admin-font-family;
+        .names-and-icon-view {
 
+          .@{_COMMON_PREFIX}icon-label {
+            left: 23px;
+            padding: 0 5px;
+            line-height: 16px;
+            border-radius: 10px;
+            background: @admin-blue;
+            color: white;
+            font-size: 14px;
+            font-family: @admin-font-family;
+
+          }
         }
 
         &:hover {
@@ -185,9 +188,9 @@
 
   &.no-uploader-el {
     .dialog-buttons {
-       &:before {
-          content: '';
-       }
+      &:before {
+        content: '';
+      }
     }
 
     .file-input {

@@ -46,9 +46,9 @@ module api.ui.selector.combobox {
                 removeMissingSelectedOptions: builder.removeMissingSelectedOptions,
                 skipAutoDropShowOnValueChange: true
             };
-            
+
             var comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(builder.comboBoxName, comboBoxConfig);
-            
+
             super(comboBox);
 
             this.comboBox = comboBox;
@@ -57,7 +57,7 @@ module api.ui.selector.combobox {
             this.setupLoader();
 
             this.comboBox.setLoader(this.loader);
-            
+
             this.loadedListeners = [];
             this.loadingListeners = [];
 
@@ -69,7 +69,7 @@ module api.ui.selector.combobox {
             });
 
             this.errorContainer = new api.dom.DivEl('error-container');
-            
+
             this.setWrappedInput(this.comboBox);
             this.setAdditionalElements(this.errorContainer, this.selectedOptionsView);
 
@@ -83,8 +83,8 @@ module api.ui.selector.combobox {
 
             this.addClass('rich-combobox');
 
-            if (api.ObjectHelper.iFrameSafeInstanceOf(builder.loader, PostLoader)) {
-                this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>builder.loader).postLoad.bind(builder.loader));
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this.loader, PostLoader)) {
+                this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>this.loader).postLoad.bind(this.loader));
             }
         }
 
@@ -402,7 +402,7 @@ module api.ui.selector.combobox {
         public setLoader(loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>) {
             this.loader = loader;
         }
-        
+
         protected doSetValue(value: string, silent?: boolean) {
             if (!this.loader.isLoaded()) {
                 if (RichComboBox.debug) {

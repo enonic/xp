@@ -45,7 +45,7 @@ public class GetBinaryCommandTest
             nodeId( node.id() ).
             binaryReference( imageRef ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
+            binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -74,7 +74,7 @@ public class GetBinaryCommandTest
             nodeId( node.id() ).
             propertyPath( PropertyPath.from( "myBinary" ) ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
+            binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

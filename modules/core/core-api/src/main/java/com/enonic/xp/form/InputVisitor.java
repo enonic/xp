@@ -24,6 +24,18 @@ public abstract class InputVisitor
         {
             doTraverse( (FieldSet) item );
         }
+        else if ( item instanceof FormOptionSet )
+        {
+            for ( FormOptionSetOption option : (FormOptionSet) item )
+            {
+                doTraverse( option.getFormItems() );
+            }
+        }
+    }
+
+    private void doTraverse( final FormItems formItems )
+    {
+        traverse( formItems );
     }
 
     private void doTraverse( final FormItemSet set )

@@ -51,7 +51,7 @@ module api.app {
             }
 
             if (builder.appendIcon) {
-                this.wrapperDivEl = new api.dom.DivEl("wrapper");
+                this.wrapperDivEl = new api.dom.DivEl("wrapper", api.StyleHelper.COMMON_PREFIX);
                 this.appendChild(this.wrapperDivEl);
 
                 this.iconImageEl = new api.dom.ImgEl(null, "font-icon-default");
@@ -65,7 +65,7 @@ module api.app {
             this.namesView = new api.app.NamesView(builder.addTitleAttribute);
             this.appendChild(this.namesView);
 
-            this.iconLabelEl = new api.dom.SpanEl("icon-label");
+            this.iconLabelEl = new api.dom.SpanEl("icon-label", api.StyleHelper.COMMON_PREFIX);
             this.iconLabelEl.hide();
             this.appendChild(this.iconLabelEl);
         }

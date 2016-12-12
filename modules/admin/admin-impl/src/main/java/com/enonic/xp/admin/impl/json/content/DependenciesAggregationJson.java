@@ -12,7 +12,8 @@ public class DependenciesAggregationJson
 
     private String iconUrl;
 
-    public DependenciesAggregationJson(final ContentDependenciesAggregation aggregation, final ContentTypeIconUrlResolver contentTypeIconUrlResolver )
+    public DependenciesAggregationJson( final ContentDependenciesAggregation aggregation,
+                                        final ContentTypeIconUrlResolver contentTypeIconUrlResolver )
     {
         this.type = aggregation.getType().toString();
         this.count = aggregation.getCount();

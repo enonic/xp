@@ -28,7 +28,7 @@ module api.liveedit {
                 contextMenuConfig: ['parent', 'opencontent', 'view']
             });
         }
-        
+
         createView(config: CreateItemViewConfig<PartComponentView,any>): ContentView {
             return new ContentView(new ContentViewBuilder().
                 setParentPartComponentView(config.parentView).

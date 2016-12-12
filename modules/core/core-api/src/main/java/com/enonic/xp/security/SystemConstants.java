@@ -3,6 +3,7 @@ package com.enonic.xp.security;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -13,11 +14,12 @@ import com.enonic.xp.security.acl.Permission;
 public final class SystemConstants
 {
     public static final Branch BRANCH_SYSTEM = Branch.create().
-        name( "master" ).
+        value( "master" ).
         build();
 
     public static final Repository SYSTEM_REPO = Repository.create().
         id( RepositoryId.from( "system-repo" ) ).
+        branches( Branches.from( BRANCH_SYSTEM ) ).
         build();
 
     private static final AccessControlEntry authenticatedRead = AccessControlEntry.create().

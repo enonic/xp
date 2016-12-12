@@ -15,6 +15,9 @@ import {EditPermissionsDialog} from "./app/wizard/EditPermissionsDialog";
 import {ContentWizardPanelParams} from "./app/wizard/ContentWizardPanelParams";
 import {ContentWizardPanel} from "./app/wizard/ContentWizardPanel";
 import {ContentEventsListener} from "./app/ContentEventsListener";
+import {ContentEventsProcessor} from "./app/ContentEventsProcessor";
+import {ContentBrowsePanel} from "./app/browse/ContentBrowsePanel";
+import {NewContentEvent} from "./app/create/NewContentEvent";
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -23,6 +26,8 @@ import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import Content = api.content.Content;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 
 declare var CONFIG;
 
@@ -131,7 +136,7 @@ function startApplication() {
     serverEventsListener.start();
 
     startLostConnectionDetector();
-    
+
     let wizardParams = ContentWizardPanelParams.fromApp(application);
     if (wizardParams) {
         startContentWizard(wizardParams);
@@ -214,6 +219,8 @@ function startContentWizard(wizardParams: ContentWizardPanelParams) {
         }
     });
 
+    api.content.event.EditContentEvent.on(ContentEventsProcessor.handleEdit);
+
     api.dom.Body.get().addClass('wizard-page').appendChild(wizard);
 }
 
@@ -222,9 +229,26 @@ function startContentApplication(application: api.app.Application) {
         appBar = new api.app.bar.AppBar(application),
         appPanel = new ContentAppPanel(appBar, application.getPath());
 
-    let clientEventsListener = new ContentEventsListener([application]);
-    clientEventsListener.setContentApp(appPanel);
+    let clientEventsListener = new ContentEventsListener();
     clientEventsListener.start();
+
+    ShowBrowsePanelEvent.on((event) => {
+        var browsePanel: api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> = appPanel.getBrowsePanel();
+        if (!browsePanel) {
+            appPanel.addBrowsePanel(new ContentBrowsePanel());
+        } else {
+            appPanel.selectPanelByIndex(appPanel.getPanelIndex(browsePanel));
+        }
+    });
+
+    NewContentEvent.on((newContentEvent) => {
+        if (newContentEvent.getContentType().isSite() && appPanel.getBrowsePanel()) {
+            var content: Content = newContentEvent.getParentContent();
+            if (!!content) { // refresh site's node
+                appPanel.getBrowsePanel().getTreeGrid().refreshNodeById(content.getId());
+            }
+        }
+    });
 
     body.appendChild(appBar);
     body.appendChild(appPanel);

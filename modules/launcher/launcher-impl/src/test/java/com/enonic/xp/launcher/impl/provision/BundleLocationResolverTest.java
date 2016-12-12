@@ -74,5 +74,11 @@ public class BundleLocationResolverTest
 
         final String location3 = this.resolver.resolve( "com.enonic.xp:other:1.0.0" );
         assertEquals( "project/modules/other/target/libs/other-1.0.0.jar", getRelativeLocation( location3 ) );
+
+        this.props.remove( SharedConstants.DEV_PROJECT_DIR );
+        newResolver( true );
+
+        final String location4 = this.resolver.resolve( "com.enonic.xp:other:1.0.0" );
+        assertEquals( "system/com/enonic/xp/other/1.0.0/other-1.0.0.jar", getRelativeLocation( location4 ) );
     }
 }

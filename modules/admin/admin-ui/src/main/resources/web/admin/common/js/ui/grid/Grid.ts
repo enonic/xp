@@ -4,7 +4,7 @@ module api.ui.grid {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
     export class Grid<T extends Slick.SlickData> extends api.dom.DivEl {
-        
+
         private defaultHeight = 400;
 
         private defaultWidth = 800;

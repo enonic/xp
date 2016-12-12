@@ -38,9 +38,7 @@ module api.liveedit {
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.parentPartComponentView.getItemViewIdProducer()).
                 setType(ContentItemType.get()).
-                setElement(builder.element).
-                setParentElement(builder.parentElement).
-                setParentView(builder.parentPartComponentView));
+                setElement(builder.element).setParentElement(builder.parentElement).setParentView(builder.parentPartComponentView));
 
             this.parentPartComponentView = builder.parentPartComponentView;
 

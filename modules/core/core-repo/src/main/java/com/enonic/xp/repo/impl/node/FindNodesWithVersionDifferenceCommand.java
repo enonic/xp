@@ -8,8 +8,8 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.search.SearchService;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
@@ -26,9 +26,9 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final NodeIds excludes;
 
-    private final SearchService searchService;
+    private final NodeSearchService nodeSearchService;
 
-    private final StorageService storageService;
+    private final NodeStorageService nodeStorageService;
 
     private final int batchSize = 20_000;
 
@@ -38,8 +38,8 @@ public class FindNodesWithVersionDifferenceCommand
         source = builder.source;
         target = builder.target;
         size = builder.size;
-        searchService = builder.searchService;
-        this.storageService = builder.storageService;
+        nodeSearchService = builder.nodeSearchService;
+        this.nodeStorageService = builder.nodeStorageService;
         this.excludes = builder.excludes;
     }
 
@@ -54,7 +54,7 @@ public class FindNodesWithVersionDifferenceCommand
 
         final ExcludeEntries excludeEntries = getExcludePaths( context );
 
-        return this.searchService.query( NodeVersionDiffQuery.create().
+        return this.nodeSearchService.query( NodeVersionDiffQuery.create().
             source( source ).
             target( target ).
             nodePath( nodePath ).
@@ -73,7 +73,7 @@ public class FindNodesWithVersionDifferenceCommand
 
         final ExcludeEntries.Builder builder = ExcludeEntries.create();
 
-        final NodeBranchEntries result = this.storageService.getBranchNodeVersions( excludes, false, context );
+        final NodeBranchEntries result = this.nodeStorageService.getBranchNodeVersions( excludes, false, context );
 
         for ( final NodeBranchEntry entry : result )
         {
@@ -85,9 +85,9 @@ public class FindNodesWithVersionDifferenceCommand
 
     public static final class Builder
     {
-        private SearchService searchService;
+        private NodeSearchService nodeSearchService;
 
-        private StorageService storageService;
+        private NodeStorageService nodeStorageService;
 
         private NodePath nodePath;
 
@@ -97,22 +97,22 @@ public class FindNodesWithVersionDifferenceCommand
 
         private NodeIds excludes = NodeIds.empty();
 
-        private int size = SearchService.GET_ALL_SIZE_FLAG;
+        private int size = NodeSearchService.GET_ALL_SIZE_FLAG;
 
         private Builder()
         {
         }
 
 
-        public Builder searchService( final SearchService searchService )
+        public Builder searchService( final NodeSearchService nodeSearchService )
         {
-            this.searchService = searchService;
+            this.nodeSearchService = nodeSearchService;
             return this;
         }
 
-        public Builder storageService( final StorageService storageService )
+        public Builder storageService( final NodeStorageService nodeStorageService )
         {
-            this.storageService = storageService;
+            this.nodeStorageService = nodeStorageService;
             return this;
         }
 

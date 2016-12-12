@@ -267,19 +267,12 @@ module api.ui.treegrid {
         getQuietErrorHandling(): boolean {
             return this.quietErrorHandling;
         }
-        
+
         private buildColumn(columnConfig: GridColumnConfig) {
 
-            return new GridColumnBuilder<TreeNode<NODE>>().
-                        setName(columnConfig.name).
-                        setId(columnConfig.id).
-                        setField(columnConfig.field).
-                        setFormatter(columnConfig.formatter).
-                        setCssClass(columnConfig.style.cssClass).
-                        setMinWidth(columnConfig.style.minWidth).
-                        setMaxWidth(columnConfig.style.maxWidth).
-                        setBehavior(columnConfig.behavior).
-                        build();
+            return new GridColumnBuilder<TreeNode<NODE>>().setName(columnConfig.name).setId(columnConfig.id).setField(
+                columnConfig.field).setFormatter(columnConfig.formatter).setCssClass(columnConfig.style.cssClass).setMinWidth(
+                columnConfig.style.minWidth).setMaxWidth(columnConfig.style.maxWidth).setBehavior(columnConfig.behavior).build();
         }
 
         /**

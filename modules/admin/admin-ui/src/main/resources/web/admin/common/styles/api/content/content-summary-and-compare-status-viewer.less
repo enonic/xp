@@ -1,12 +1,12 @@
 .content-summary-and-compare-status-viewer {
-  &.invalid .names-and-icon-view .wrapper:before {
+  &.invalid .names-and-icon-view .@{_COMMON_PREFIX}wrapper:before {
     content: "!";
     background: @admin-red;
     color: @admin-white;
   }
 
-  &.pending-delete .names-and-icon-view .names-view {
-    .main-name, .sub-name {
+  &.pending-delete .names-and-icon-view .@{_COMMON_PREFIX}names-view {
+    .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
       text-decoration: line-through;
     }
   }

@@ -8,9 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
@@ -64,49 +62,52 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.RepositoryEvents;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
-import com.enonic.xp.repo.impl.storage.StorageService;
-import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.BranchNotFoundException;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
 public class NodeServiceImpl
     implements NodeService
 {
-    private RepoConfiguration configuration;
-
     private IndexServiceInternal indexServiceInternal;
 
     private SnapshotService snapshotService;
 
-    private StorageService storageService;
+    private NodeStorageService nodeStorageService;
 
-    private SearchService searchService;
+    private NodeSearchService nodeSearchService;
 
     private EventPublisher eventPublisher;
 
-    private BlobStore blobStore;
+    private BinaryService binaryService;
 
+    private RepositoryService repositoryService;
+
+    @SuppressWarnings("unused")
     @Activate
     public void initialize()
     {
-        final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal );
-        repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
     }
 
     @Override
     public Node getById( final NodeId id )
     {
+        verifyContext();
         final Node node = doGetById( id );
 
         if ( node == null )
         {
             throw new NodeNotFoundException(
-                "Node with id " + id + " not found in branch " + ContextAccessor.current().getBranch().getName() );
+                "Node with id " + id + " not found in branch " + ContextAccessor.current().getBranch().getValue() );
         }
 
         return node;
@@ -117,8 +118,8 @@ public class NodeServiceImpl
         return GetNodeByIdCommand.create().
             id( id ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -126,6 +127,7 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path )
     {
+        verifyContext();
         return doGetByPath( path );
     }
 
@@ -134,8 +136,8 @@ public class NodeServiceImpl
         return GetNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -143,11 +145,12 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final NodeIds ids )
     {
+        verifyContext();
         return GetNodesByIdsCommand.create().
             ids( ids ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -155,11 +158,12 @@ public class NodeServiceImpl
     @Override
     public Nodes getByPaths( final NodePaths paths )
     {
+        verifyContext();
         return GetNodesByPathsCommand.create().
             paths( paths ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -167,6 +171,7 @@ public class NodeServiceImpl
     @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
+        verifyContext();
         if ( params.isRecursive() )
         {
             return FindNodeIdsByParentCommand.create().
@@ -179,8 +184,8 @@ public class NodeServiceImpl
                 countOnly( params.isCountOnly() ).
                 childOrder( params.getChildOrder() ).
                 indexServiceInternal( this.indexServiceInternal ).
-                searchService( this.searchService ).
-                storageService( this.storageService ).
+                searchService( this.nodeSearchService ).
+                storageService( this.nodeStorageService ).
                 build().
                 execute();
         }
@@ -188,8 +193,8 @@ public class NodeServiceImpl
         return FindNodesByParentCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -197,11 +202,12 @@ public class NodeServiceImpl
     @Override
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
+        verifyContext();
         return FindNodesByQueryCommand.create().
             query( nodeQuery ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -209,6 +215,7 @@ public class NodeServiceImpl
     @Override
     public Node create( final CreateNodeParams params )
     {
+        verifyContext();
         return doCreate( params );
     }
 
@@ -217,9 +224,9 @@ public class NodeServiceImpl
         final Node createdNode = CreateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -233,12 +240,13 @@ public class NodeServiceImpl
     @Override
     public Node update( final UpdateNodeParams params )
     {
+        verifyContext();
         final Node updatedNode = UpdateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -252,11 +260,12 @@ public class NodeServiceImpl
     @Override
     public Node rename( final RenameNodeParams params )
     {
+        verifyContext();
         final MoveNodeResult moveNodeResult = RenameNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -274,11 +283,12 @@ public class NodeServiceImpl
     @Override
     public NodeIds deleteById( final NodeId id )
     {
+        verifyContext();
         final NodeBranchEntries deletedNodes = DeleteNodeByIdCommand.create().
             nodeId( id ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -293,11 +303,12 @@ public class NodeServiceImpl
     @Override
     public NodeIds deleteByPath( final NodePath path )
     {
+        verifyContext();
         final NodeBranchEntries deletedNodes = DeleteNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -311,16 +322,21 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target )
     {
+        verifyContext();
+        verifyBranchExists( target );
         return push( ids, target, null );
     }
 
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target, final PushNodesListener pushListener )
     {
+        verifyContext();
+        verifyBranchExists( target );
+
         final InternalPushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             ids( ids ).
             target( target ).
             pushListener( pushListener ).
@@ -338,13 +354,14 @@ public class NodeServiceImpl
     @Override
     public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor )
     {
+        verifyContext();
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( nodeId ).
             processor( processor ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -358,12 +375,13 @@ public class NodeServiceImpl
     @Override
     public Node move( final NodeId nodeId, final NodePath parentNodePath )
     {
+        verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
             id( nodeId ).
             newParent( parentNodePath ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -381,6 +399,7 @@ public class NodeServiceImpl
     @Override
     public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
     {
+        verifyContext();
         return Nodes.from( nodeIds.
             stream().
             map( nodeId -> this.move( nodeId, parentNodePath ) ).collect( Collectors.toList() ) );
@@ -390,10 +409,11 @@ public class NodeServiceImpl
     @Override
     public NodeComparison compare( final NodeId nodeId, final Branch target )
     {
+        verifyContext();
         return CompareNodeCommand.create().
             nodeId( nodeId ).
             target( target ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             build().
             execute();
     }
@@ -401,10 +421,11 @@ public class NodeServiceImpl
     @Override
     public NodeComparisons compare( final NodeIds nodeIds, final Branch target )
     {
+        verifyContext();
         return CompareNodesCommand.create().
             nodeIds( nodeIds ).
             target( target ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             build().
             execute();
     }
@@ -412,11 +433,12 @@ public class NodeServiceImpl
     @Override
     public NodeVersionQueryResult findVersions( final GetNodeVersionsParams params )
     {
+        verifyContext();
         return GetNodeVersionsCommand.create().
             nodeId( params.getNodeId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -424,12 +446,13 @@ public class NodeServiceImpl
     @Override
     public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params )
     {
+        verifyContext();
         return GetActiveNodeVersionsCommand.create().
             nodeId( params.getNodeId() ).
             branches( params.getBranches() ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -438,12 +461,13 @@ public class NodeServiceImpl
     @Override
     public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
+        verifyContext();
         final NodeVersionId result = SetActiveVersionCommand.create().
             nodeVersionId( nodeVersionId ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -460,12 +484,14 @@ public class NodeServiceImpl
     @Override
     public NodeVersion getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return this.storageService.get( nodeVersionMetadata );
+        verifyContext();
+        return this.nodeStorageService.get( nodeVersionMetadata );
     }
 
     @Override
     public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
+        verifyContext();
         return ResolveSyncWorkCommand.create().
             target( params.getBranch() ).
             nodeId( params.getNodeId() ).
@@ -473,8 +499,8 @@ public class NodeServiceImpl
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
             indexServiceInternal( indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -482,10 +508,11 @@ public class NodeServiceImpl
     @Override
     public Node setChildOrder( final SetNodeChildOrderParams params )
     {
+        verifyContext();
         final Node sortedNode = SetNodeChildOrderCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
             build().
@@ -501,11 +528,12 @@ public class NodeServiceImpl
     @Override
     public ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params )
     {
+        verifyContext();
         final ReorderChildNodesResult reorderChildNodesResult = ReorderChildNodesCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -520,14 +548,16 @@ public class NodeServiceImpl
     @Override
     public SnapshotResult snapshot( final SnapshotParams params )
     {
+        verifyContext();
         return this.snapshotService.snapshot( params );
     }
 
     @Override
     public RestoreResult restore( final RestoreParams params )
     {
+        verifyContext();
         final RestoreResult restoreResult = this.snapshotService.restore( params );
-        this.storageService.invalidate();
+        this.nodeStorageService.invalidate();
         this.eventPublisher.publish( RepositoryEvents.restored() );
         return restoreResult;
     }
@@ -535,18 +565,21 @@ public class NodeServiceImpl
     @Override
     public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams params )
     {
+        verifyContext();
         return this.snapshotService.delete( params );
     }
 
     @Override
     public SnapshotResults listSnapshots()
     {
+        verifyContext();
         return this.snapshotService.list();
     }
 
     @Override
     public void refresh( final RefreshMode refreshMode )
     {
+        verifyContext();
         RefreshCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             refreshMode( refreshMode ).
@@ -557,12 +590,13 @@ public class NodeServiceImpl
     @Override
     public int applyPermissions( final ApplyNodePermissionsParams params )
     {
+        verifyContext();
         final Nodes updatedNodes = ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -577,13 +611,14 @@ public class NodeServiceImpl
     @Override
     public ByteSource getBinary( final NodeId nodeId, final BinaryReference reference )
     {
+        verifyContext();
         return GetBinaryCommand.create().
             binaryReference( reference ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -591,12 +626,13 @@ public class NodeServiceImpl
     @Override
     public String getBinaryKey( final NodeId nodeId, final BinaryReference reference )
     {
+        verifyContext();
         return GetBinaryKeyCommand.create().
             binaryReference( reference ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }
@@ -604,11 +640,12 @@ public class NodeServiceImpl
     @Override
     public Node createRootNode( final CreateRootNodeParams params )
     {
+        verifyContext();
         final Node createdNode = CreateRootNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -622,11 +659,12 @@ public class NodeServiceImpl
     @Override
     public SetNodeStateResult setNodeState( final SetNodeStateParams params )
     {
+        verifyContext();
         final SetNodeStateResult setNodeStateResult = SetNodeStateCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -641,6 +679,7 @@ public class NodeServiceImpl
     @Override
     public Node getRoot()
     {
+        verifyContext();
         final Node node = doGetByPath( NodePath.ROOT );
 
         if ( node == null || node.isRoot() )
@@ -654,16 +693,17 @@ public class NodeServiceImpl
     @Override
     public ImportNodeResult importNode( final ImportNodeParams params )
     {
+        verifyContext();
         final ImportNodeResult importNodeResult = ImportNodeCommand.create().
             binaryAttachments( params.getBinaryAttachments() ).
             importNode( params.getNode() ).
             insertManualStrategy( params.getInsertManualStrategy() ).
             dryRun( params.isDryRun() ).
             importPermissions( params.isImportPermissions() ).
-            binaryBlobStore( this.blobStore ).
+            binaryBlobStore( this.binaryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
 
@@ -682,20 +722,23 @@ public class NodeServiceImpl
     @Override
     public boolean nodeExists( final NodeId nodeId )
     {
+        verifyContext();
         return NodeHelper.runAsAdmin( () -> this.doGetById( nodeId ) ) != null;
     }
 
     @Override
     public boolean nodeExists( final NodePath nodePath )
     {
+        verifyContext();
         return NodeHelper.runAsAdmin( () -> this.doGetByPath( nodePath ) ) != null;
     }
 
     @Override
     public NodesHasChildrenResult hasChildren( final Nodes nodes )
     {
+        verifyContext();
         return NodeHasChildResolver.create().
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
             build().
             resolve( nodes );
     }
@@ -703,10 +746,34 @@ public class NodeServiceImpl
     @Override
     public boolean hasChildren( final Node node )
     {
+        verifyContext();
         return NodeHasChildResolver.create().
-            searchService( this.searchService ).
+            searchService( this.nodeSearchService ).
             build().
             resolve( node );
+    }
+
+    private void verifyContext()
+    {
+        verifyBranchExists( ContextAccessor.current().getBranch() );
+    }
+
+    private void verifyBranchExists( Branch branch )
+    {
+        NodeHelper.runAsAdmin( () -> {
+            final RepositoryId repoId = ContextAccessor.current().
+                getRepositoryId();
+            final Repository repository = this.repositoryService.get( repoId );
+            if ( repository == null )
+            {
+                throw new RepositoryNotFoundException( "Repository with id [" + repoId + "] not found" );
+            }
+
+            if ( !repository.getBranches().contains( branch ) )
+            {
+                throw new BranchNotFoundException( "Branch with id [" + branch + "] not found" );
+            }
+        } );
     }
 
     @Reference
@@ -722,15 +789,15 @@ public class NodeServiceImpl
     }
 
     @Reference
-    public void setStorageService( final StorageService storageService )
+    public void setNodeStorageService( final NodeStorageService nodeStorageService )
     {
-        this.storageService = storageService;
+        this.nodeStorageService = nodeStorageService;
     }
 
     @Reference
-    public void setSearchService( final SearchService searchService )
+    public void setNodeSearchService( final NodeSearchService nodeSearchService )
     {
-        this.searchService = searchService;
+        this.nodeSearchService = nodeSearchService;
     }
 
     @Reference
@@ -740,14 +807,14 @@ public class NodeServiceImpl
     }
 
     @Reference
-    public void setConfiguration( final RepoConfiguration configuration )
+    public void setBinaryService( final BinaryService binaryService )
     {
-        this.configuration = configuration;
+        this.binaryService = binaryService;
     }
 
     @Reference
-    public void setBlobStore( final BlobStore blobStore )
+    public void setRepositoryService( final RepositoryService repositoryService )
     {
-        this.blobStore = blobStore;
+        this.repositoryService = repositoryService;
     }
 }

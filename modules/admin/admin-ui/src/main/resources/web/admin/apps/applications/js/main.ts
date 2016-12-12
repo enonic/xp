@@ -50,7 +50,7 @@ function startApplication() {
 
     var serverEventsListener = new api.app.ServerEventsListener([application]);
     serverEventsListener.start();
-    
+
     startLostConnectionDetector();
 
     window.onmessage = (e: MessageEvent) => {

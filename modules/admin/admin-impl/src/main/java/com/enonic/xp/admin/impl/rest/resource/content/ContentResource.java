@@ -188,7 +188,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Path(ResourceConstants.REST_ROOT + "content")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public final class ContentResource
     implements JaxRsComponent
 {
@@ -498,15 +498,15 @@ public final class ContentResource
                 final StringBuilder builder = new StringBuilder();
                 if ( deleted > 0 )
                 {
-                    builder.append( deleted ).append( " items are deleted. " );
+                    builder.append( deleted ).append( deleted > 1 ? " items are " : " item is " ).append( "deleted. " );
                 }
                 if ( pending > 0 )
                 {
-                    builder.append( pending ).append( " items are marked for deletion. " );
+                    builder.append( pending ).append( pending > 1 ? " items are " : " item is " ).append( "marked for deletion. " );
                 }
                 if ( failed > 0 )
                 {
-                    builder.append( failed ).append( " failed to be deleted. " );
+                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be deleted. " );
                 }
                 return builder.toString();
         }

@@ -23,8 +23,8 @@ module api.ui.button {
             return !this.getEl().isDisabled();
         }
 
-        setLabel(label: string): Button {
-            this.labelEl.getEl().setInnerHtml(label);
+        setLabel(label: string, escapeHtml: boolean = true): Button {
+            this.labelEl.getEl().setInnerHtml(label, escapeHtml);
             return this;
         }
 

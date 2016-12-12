@@ -11,7 +11,7 @@ public final class LogActivator
     public void start( final BundleContext context )
         throws Exception
     {
-        context.registerService( LogService.class.getName(), new LogServiceFactory(), null );
+        context.registerService( LogService.class.getName(), LogServiceFactory.INSTANCE, null );
     }
 
     @Override

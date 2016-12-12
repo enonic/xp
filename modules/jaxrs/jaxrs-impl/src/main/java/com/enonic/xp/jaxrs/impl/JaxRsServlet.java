@@ -3,7 +3,6 @@ package com.enonic.xp.jaxrs.impl;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,21 +12,13 @@ import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.UnhandledException;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsService;
 
-@Component(immediate = true, service = {Servlet.class, JaxRsService.class},
-    property = {"osgi.http.whiteboard.servlet.pattern=/"})
-public final class JaxRsServlet
+final class JaxRsServlet
     extends HttpServlet
-    implements JaxRsService
 {
     private JaxRsDispatcher dispatcher;
 
@@ -35,7 +26,7 @@ public final class JaxRsServlet
 
     private boolean needsRefresh;
 
-    public JaxRsServlet()
+    JaxRsServlet()
     {
         RuntimeDelegate.setInstance( new ResteasyProviderFactory() );
 
@@ -44,10 +35,11 @@ public final class JaxRsServlet
     }
 
     @Override
-    protected void service( final HttpServletRequest req, final HttpServletResponse res )
+    public void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
         req.setAttribute( "error.handled", true );
+
         try
         {
             refreshIfNeeded( req.getServletContext() );
@@ -98,21 +90,19 @@ public final class JaxRsServlet
         }
     }
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addComponent( final JaxRsComponent resource )
+    void addComponent( final JaxRsComponent component )
     {
-        this.app.addSingleton( resource );
+        this.app.addSingleton( component );
         this.needsRefresh = true;
     }
 
-    public void removeComponent( final JaxRsComponent resource )
+    void removeComponent( final JaxRsComponent component )
     {
-        this.app.removeSingleton( resource );
+        this.app.removeSingleton( component );
         this.needsRefresh = true;
     }
 
-    @Override
-    public List<JaxRsComponent> getComponents()
+    List<JaxRsComponent> getComponents()
     {
         return ImmutableList.copyOf( this.app.getComponents() );
     }

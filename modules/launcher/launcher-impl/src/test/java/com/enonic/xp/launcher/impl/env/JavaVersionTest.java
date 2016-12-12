@@ -23,6 +23,8 @@ public class JavaVersionTest
     @Test
     public void testUpdates()
     {
+        assertEquals( 0, newVersion( "1.8.0" ).getUpdate() );
+        assertEquals( 0, newVersion( "1.8.0_unknown" ).getUpdate() );
         assertEquals( 40, newVersion( "1.8.0_40" ).getUpdate() );
         assertEquals( 45, newVersion( "1.8.0_45" ).getUpdate() );
         assertEquals( 45, newVersion( "1.8.0_45-internal" ).getUpdate() );

@@ -50,7 +50,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
 
         serverEvents.onContentPublished(layoutOnPublishStateChange);
-        
+
         //Uncomment the line below if we need to redo the layout on unpublish
         //serverEvents.onContentUnpublished(layoutOnPublishStateChange);
     }

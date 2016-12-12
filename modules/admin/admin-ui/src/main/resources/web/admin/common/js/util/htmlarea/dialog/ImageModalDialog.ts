@@ -85,7 +85,7 @@ module api.util.htmlarea.dialog {
                 loader.unLoadedData(singleLoadListener);
             };
             loader.onLoadedData(singleLoadListener);
-            
+
             loader.load();
         }
 

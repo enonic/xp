@@ -271,7 +271,8 @@ module api.form {
             let thisElSelector = "div[id='" + this.getEl().getId() + "']";
             this.expand();
             this.enableFormItems();
-            api.dom.FormEl.moveFocusToNextFocusable(input, thisElSelector + " input, " + thisElSelector + " select, " + thisElSelector + " textarea");
+            api.dom.FormEl.moveFocusToNextFocusable(input,
+                thisElSelector + " input, " + thisElSelector + " select, " + thisElSelector + " textarea");
             this.addClass("selected");
         }
 
@@ -299,8 +300,8 @@ module api.form {
             return (<FormOptionSet>this.formOptionSetOption.getParent()).isExpanded();
         }
 
-        private expand(condition?: boolean) {
-            this.toggleClass("expanded", condition == undefined ? true : condition);
+        private expand(condition: boolean = true) {
+            this.toggleClass("expanded", condition);
         }
 
         private enableFormItems() {

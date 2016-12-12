@@ -6,14 +6,14 @@ import java.util.Map;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 public class NodePushedHandler
     extends AbstractNodeEventHandler
 {
 
     @Override
-    public void handleEvent( StorageService storageService, final Event event, final InternalContext context )
+    public void handleEvent( NodeStorageService storageService, final Event event, final InternalContext context )
     {
         final List<Map<Object, Object>> valueMapList = getValueMapList( event );
 

@@ -42,6 +42,7 @@ import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentIds = api.content.ContentIds;
 import ContentId = api.content.ContentId;
+import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 
 export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
@@ -51,35 +52,32 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     constructor() {
         let builder: TreeGridBuilder<ContentSummaryAndCompareStatus> =
-                    new TreeGridBuilder<ContentSummaryAndCompareStatus>().
-                            setColumnConfig([{
-                                name: "Name",
-                                id: "displayName",
-                                field:  "contentSummary.displayName",
-                                formatter: ContentRowFormatter.nameFormatter,
-                                style: {minWidth: 130}
-                            }, {
-                                name: "CompareStatus",
-                                id: "compareStatus",
-                                field:  "compareStatus",
-                                formatter: ContentRowFormatter.statusFormatter,
-                                style: {cssClass: "status", minWidth: 75, maxWidth: 75}
-                            }, {
-                                name: "Order",
-                                id: "order",
-                                field:  "contentSummary.order",
-                                formatter: ContentRowFormatter.orderFormatter,
-                                style: {cssClass: "order", minWidth: 25, maxWidth: 40}
-                            }, {
-                                name: "ModifiedTime",
-                                id: "modifiedTime",
-                                field:  "contentSummary.modifiedTime",
-                                formatter: DateTimeFormatter.format,
-                                style: {cssClass: "modified", minWidth: 135, maxWidth: 135}
-                            }]).
-                            setPartialLoadEnabled(true).
-                            setLoadBufferSize(20).// rows count
-                            prependClasses("content-tree-grid");
+            new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumnConfig([{
+                name: "Name",
+                id: "displayName",
+                field: "contentSummary.displayName",
+                formatter: ContentRowFormatter.nameFormatter,
+                style: {minWidth: 130}
+            }, {
+                name: "CompareStatus",
+                id: "compareStatus",
+                field: "compareStatus",
+                formatter: ContentRowFormatter.statusFormatter,
+                style: {cssClass: "status", minWidth: 75, maxWidth: 75}
+            }, {
+                name: "Order",
+                id: "order",
+                field: "contentSummary.order",
+                formatter: ContentRowFormatter.orderFormatter,
+                style: {cssClass: "order", minWidth: 25, maxWidth: 40}
+            }, {
+                name: "ModifiedTime",
+                id: "modifiedTime",
+                field: "contentSummary.modifiedTime",
+                formatter: DateTimeFormatter.format,
+                style: {cssClass: "modified", minWidth: 135, maxWidth: 135}
+            }]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
+            prependClasses("content-tree-grid");
 
         super(builder);
 
@@ -98,10 +96,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
                 let curClass = nameColumn.getCssClass();
 
-                if(checkSelIsMoved) {
+                if (checkSelIsMoved) {
                     nameColumn.setCssClass(curClass ? curClass : "" + "shifted");
                 } else {
-                    if(curClass && curClass.indexOf("shifted") >= 0) {
+                    if (curClass && curClass.indexOf("shifted") >= 0) {
                         nameColumn.setCssClass(curClass.replace("shifted", ""));
                     }
                 }
@@ -438,64 +436,97 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         return result;
     }
 
-    expandTillNodeWithGivenPath(path: ContentPath, startExpandingFromNode?: TreeNode<ContentSummaryAndCompareStatus>) {
-        var node: TreeNode<ContentSummaryAndCompareStatus>;
-        if (startExpandingFromNode && path.isDescendantOf(startExpandingFromNode.getData().getPath())) {
-            node = startExpandingFromNode;
+    selectNodeByPath(targetPath: ContentPath) {
+        var currentSelectedNode: TreeNode<ContentSummaryAndCompareStatus> = this.getSelectedNodes()[0];
+        var nodeToSearchTargetIn: TreeNode<ContentSummaryAndCompareStatus>;
+
+        if (currentSelectedNode && targetPath.isDescendantOf(currentSelectedNode.getData().getPath())) {
+            nodeToSearchTargetIn = currentSelectedNode;
         } else {
-            node = this.getRoot().getCurrentRoot();
+            nodeToSearchTargetIn = this.getRoot().getCurrentRoot();
         }
 
         // go down and expand path's parents level by level until we reach the desired element within the list of fetched children
-        this.expandNodeAndCheckTargetReached(node, path);
+        this.doSelectNodeByPath(nodeToSearchTargetIn, targetPath);
     }
 
-    private expandNodeAndCheckTargetReached(nodeToExpand: TreeNode<ContentSummaryAndCompareStatus>, targetPathToExpand: ContentPath) {
-
-        if (nodeToExpand.getData() && targetPathToExpand.equals(nodeToExpand.getData().getPath())) {
-            return;
-        }
-
-        if (nodeToExpand) {
-            nodeToExpand.setExpanded(true);
-
-            if (nodeToExpand.hasChildren()) {
-                this.initData(this.getRoot().getCurrentRoot().treeToList());
-                this.updateExpanded();
-                this.expandMoreOrSelectTargetIfReached(nodeToExpand, targetPathToExpand);
-            } else {
-                this.mask();
-                this.fetchChildrenData(nodeToExpand)
-                    .then((dataList: ContentSummaryAndCompareStatus[]) => {
-                        nodeToExpand.setChildren(this.dataToTreeNodes(dataList, nodeToExpand));
-                        this.initData(this.getRoot().getCurrentRoot().treeToList());
-                        this.updateExpanded();
-                        this.expandMoreOrSelectTargetIfReached(nodeToExpand, targetPathToExpand);
-                    }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).finally(() => {
-                }).done(() => this.notifyLoaded());
+    private doSelectNodeByPath(nodeToSearchTargetIn: TreeNode<ContentSummaryAndCompareStatus>, targetPath: ContentPath) {
+        this.expandNode(nodeToSearchTargetIn).then(() => {
+            if (this.isTargetNodeLevelReached(nodeToSearchTargetIn, targetPath)) { // if true means one of direct children of node is searched target node
+                this.findChildNodeByPath(nodeToSearchTargetIn, targetPath).then((targetNode) => {
+                    this.selectNode(targetNode.getDataId());
+                    this.scrollToRow(this.getGrid().getDataView().getRowById(targetNode.getId()));
+                });
             }
-        }
+            else {
+                let nextLevelChildPath = targetPath.getPathAtLevel(!!nodeToSearchTargetIn.getData()
+                    ? nodeToSearchTargetIn.getData().getPath().getLevel() + 1
+                    : 1);
+                this.findChildNodeByPath(nodeToSearchTargetIn, nextLevelChildPath).then((targetNode) => {
+                    this.doSelectNodeByPath(targetNode, targetPath);
+                });
+            }
+        }).catch((reason: any) => {
+            this.handleError(reason);
+        }).done();
     }
 
-    private expandMoreOrSelectTargetIfReached(nodeToExpand: TreeNode<ContentSummaryAndCompareStatus>, targetPathToExpand: ContentPath) {
-        var nextChildPath = targetPathToExpand.getPathAtLevel(!!nodeToExpand.getData()
-            ? nodeToExpand.getData().getPath().getLevel() + 1
-            : 1);
+    private isTargetNodeLevelReached(nodeToSearchTargetIn: TreeNode<ContentSummaryAndCompareStatus>, targetPath: ContentPath): boolean {
+        var nodeToExpandLevel = !!nodeToSearchTargetIn.getData() ? nodeToSearchTargetIn.getData().getPath().getLevel() : 0;
+        var targetNodeLevelReached = (targetPath.getLevel() - 1) == nodeToExpandLevel;
 
-        var children = nodeToExpand.getChildren();
+        return targetNodeLevelReached;
+    }
+
+    private findChildNodeByPath(node: TreeNode<ContentSummaryAndCompareStatus>,
+                                childNodePath: ContentPath): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
+        var childNode = this.doFindChildNodeByPath(node, childNodePath);
+
+        if (childNode) {
+            return wemQ.resolve(childNode);
+        }
+
+        return this.waitChildrenLoadedAndFindChildNodeByPath(node, childNodePath);
+    }
+
+    private doFindChildNodeByPath(node: TreeNode<ContentSummaryAndCompareStatus>,
+                                  childNodePath: ContentPath): TreeNode<ContentSummaryAndCompareStatus> {
+        var children = node.getChildren();
         for (var i = 0; i < children.length; i++) {
             var child: TreeNode<ContentSummaryAndCompareStatus> = children[i],
                 childPath = child.getData().getPath();
-            if (childPath && childPath.equals(targetPathToExpand)) {
-                this.selectNode(child.getDataId());
-                this.scrollToRow(this.getGrid().getDataView().getRowById(child.getId()));
-                break;
-            } else if (childPath && childPath.equals(nextChildPath)) {
-                this.expandNodeAndCheckTargetReached(child, targetPathToExpand);
+
+            if (childPath && childPath.equals(childNodePath)) {
+                return child
             }
         }
+
+        this.scrollToRow(this.getGrid().getDataView().getRowById(child.getId())); // scrolling to last child of node to make node load the rest
+
+        return null;
+    }
+
+    private waitChildrenLoadedAndFindChildNodeByPath(node: TreeNode<ContentSummaryAndCompareStatus>,
+                                                     childNodePath: ContentPath): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
+        var deferred = wemQ.defer<TreeNode<ContentSummaryAndCompareStatus>>();
+
+        var dateChangedHandler = (event: DataChangedEvent<ContentSummaryAndCompareStatus>) => {
+            let childNode = this.doFindChildNodeByPath(node, childNodePath);
+            if (childNode) {
+                this.unDataChanged(dateChangedHandler);
+                deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));
+            }
+        };
+
+        this.onDataChanged(dateChangedHandler);
+
+        let childNode = this.doFindChildNodeByPath(node, childNodePath); // check in case child was loaded between this method call and listener set
+        if (childNode) {
+            this.unDataChanged(dateChangedHandler);
+            deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));
+        }
+
+        return deferred.promise;
     }
 
     updateContentNode(contentId: api.content.ContentId) {

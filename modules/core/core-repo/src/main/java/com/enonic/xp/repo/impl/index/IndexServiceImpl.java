@@ -32,12 +32,14 @@ import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
-import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
+import com.enonic.xp.repo.impl.repository.DefaultIndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.repository.RepositoryIndexMappingProvider;
-import com.enonic.xp.repo.impl.repository.RepositorySearchIndexSettingsProvider;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.repository.IndexResourceProvider;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
+import com.enonic.xp.repository.IndexMapping;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
@@ -53,11 +55,13 @@ public class IndexServiceImpl
 
     private IndexDataService indexDataService;
 
-    private SearchService searchService;
+    private NodeSearchService nodeSearchService;
 
-    private NodeVersionDao nodeVersionDao;
+    private NodeVersionService nodeVersionService;
 
     private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
+
+    private final static String INDEX_RESOURCE_BASE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
     @Override
     public ReindexResult reindex( final ReindexParams params )
@@ -78,17 +82,17 @@ public class IndexServiceImpl
         {
             final CompareExpr compareExpr =
                 CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
-                                    ValueExpr.string( branch.getName() ) );
+                                    ValueExpr.string( branch.getValue() ) );
 
             final Context reindexContext = ContextBuilder.from( ContextAccessor.current() ).
                 repositoryId( params.getRepositoryId() ).
                 branch( branch ).
                 build();
 
-            final NodeBranchQueryResult results = this.searchService.query( NodeBranchQuery.create().
+            final NodeBranchQueryResult results = this.nodeSearchService.query( NodeBranchQuery.create().
                 query( QueryExpr.from( compareExpr ) ).
                 batchSize( BATCH_SIZE ).
-                size( SearchService.GET_ALL_SIZE_FLAG ).
+                size( NodeSearchService.GET_ALL_SIZE_FLAG ).
                 build(), InternalContext.from( reindexContext ) );
 
             long nodeIndex = 1;
@@ -102,12 +106,12 @@ public class IndexServiceImpl
             {
                 if ( nodeIndex % logStep == 0 )
                 {
-                    LOG.info(
-                        "Reindexing '" + branch + "' in '" + params.getRepositoryId() + "'" + ": processed " + nodeIndex + " of " + total +
-                            "..." );
+                    LOG.info( "Reindexing '" + branch + "' in '" + params.getRepositoryId() + "'" + ": processed " + nodeIndex + " of " +
+                                  total +
+                                  "..." );
                 }
 
-                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchEntry.getVersionId() );
+                final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getVersionId() );
 
                 final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
@@ -138,34 +142,34 @@ public class IndexServiceImpl
         final UpdateIndexSettingsResult.Builder result = UpdateIndexSettingsResult.create();
 
         final String indexName = params.getIndexName();
-        final IndexSettings indexSettings = IndexSettings.from( params.getSettings() );
+        final UpdateIndexSettings updateIndexSettings = UpdateIndexSettings.from( params.getSettings() );
 
         if ( indexName != null )
         {
-            updateIndexSettings( indexName, indexSettings, result );
+            updateIndexSettings( indexName, updateIndexSettings, result );
         }
         else
         {
-            updateIndexSettings( ContentConstants.CONTENT_REPO.getId(), indexSettings, result );
-            updateIndexSettings( SystemConstants.SYSTEM_REPO.getId(), indexSettings, result );
+            updateIndexSettings( ContentConstants.CONTENT_REPO.getId(), updateIndexSettings, result );
+            updateIndexSettings( SystemConstants.SYSTEM_REPO.getId(), updateIndexSettings, result );
         }
 
         return result.build();
     }
 
-    private void updateIndexSettings( final RepositoryId repositoryId, final IndexSettings indexSettings,
+    private void updateIndexSettings( final RepositoryId repositoryId, final UpdateIndexSettings updateIndexSettings,
                                       final UpdateIndexSettingsResult.Builder result )
     {
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
         final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        updateIndexSettings( searchIndexName, indexSettings, result );
-        updateIndexSettings( storageIndexName, indexSettings, result );
+        updateIndexSettings( searchIndexName, updateIndexSettings, result );
+        updateIndexSettings( storageIndexName, updateIndexSettings, result );
     }
 
-    private void updateIndexSettings( final String indexName, final IndexSettings indexSettings,
+    private void updateIndexSettings( final String indexName, final UpdateIndexSettings updateIndexSettings,
                                       final UpdateIndexSettingsResult.Builder result )
     {
-        indexServiceInternal.updateIndex( indexName, indexSettings );
+        indexServiceInternal.updateIndex( indexName, updateIndexSettings );
         result.addUpdatedIndex( indexName );
     }
 
@@ -189,14 +193,22 @@ public class IndexServiceImpl
         indexServiceInternal.deleteIndices( searchIndexName );
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        final IndexSettings searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
+        final IndexResourceProvider indexResourceProvider = new DefaultIndexResourceProvider( INDEX_RESOURCE_BASE_FOLDER );
 
-        indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
+        final IndexSettings indexSettings = indexResourceProvider.getSettings( repositoryId, IndexType.SEARCH );
+        indexServiceInternal.createIndex( CreateIndexRequest.create().
+            indexName( searchIndexName ).
+            indexSettings( indexSettings ).
+            build() );
 
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        indexServiceInternal.applyMapping( searchIndexName, IndexType.SEARCH,
-                                           RepositoryIndexMappingProvider.getSearchMappings( repositoryId ) );
+        final IndexMapping indexMapping = indexResourceProvider.getMapping( repositoryId, IndexType.SEARCH );
+        indexServiceInternal.applyMapping( ApplyMappingRequest.create().
+            indexName( searchIndexName ).
+            indexType( IndexType.SEARCH ).
+            mapping( indexMapping ).
+            build() );
 
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
     }
@@ -208,15 +220,15 @@ public class IndexServiceImpl
     }
 
     @Reference
-    public void setSearchService( final SearchService searchService )
+    public void setNodeSearchService( final NodeSearchService nodeSearchService )
     {
-        this.searchService = searchService;
+        this.nodeSearchService = nodeSearchService;
     }
 
     @Reference
-    public void setNodeVersionDao( final NodeVersionDao nodeVersionDao )
+    public void setNodeVersionService( final NodeVersionService nodeVersionService )
     {
-        this.nodeVersionDao = nodeVersionDao;
+        this.nodeVersionService = nodeVersionService;
     }
 
     @Reference

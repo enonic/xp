@@ -8,6 +8,8 @@ import org.osgi.service.log.LogService;
 final class LogServiceFactory
     implements ServiceFactory<LogService>
 {
+    public final static LogServiceFactory INSTANCE = new LogServiceFactory();
+
     @Override
     public LogService getService( final Bundle bundle, final ServiceRegistration<LogService> reg )
     {

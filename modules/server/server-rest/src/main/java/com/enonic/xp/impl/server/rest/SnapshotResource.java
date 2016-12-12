@@ -37,7 +37,7 @@ import com.enonic.xp.util.DateTimeHelper;
 @Path("/api/repo/snapshot")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=api")
 public final class SnapshotResource
     implements JaxRsComponent
 {

@@ -33,7 +33,7 @@ import com.enonic.xp.security.RoleKeys;
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public final class ContentTypeResource
     implements JaxRsComponent
 {

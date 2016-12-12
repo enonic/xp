@@ -101,9 +101,9 @@ module api.liveedit {
 
         private moving: boolean = false;
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[] = [];
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent): void}[] = [];
 
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[] = [];
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent): void}[] = [];
 
         private propertyChangedListener: (event: ComponentPropertyChangedEvent) => void;
 

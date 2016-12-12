@@ -85,7 +85,7 @@ public class GetActiveNodeVersionsCommandTest
         context.runWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
+            binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

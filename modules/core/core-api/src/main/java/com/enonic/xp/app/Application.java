@@ -45,4 +45,6 @@ public interface Application
     URL resolveFile( String path );
 
     Configuration getConfig();
+
+    boolean isSystem();
 }

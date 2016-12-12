@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
@@ -19,7 +20,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
@@ -145,15 +146,15 @@ public class MoveNodeCommand
     {
         final Node persistedNode = doGetById( id );
 
-        final NodeQueryResult nodeQueryResult = this.searchService.query( NodeQuery.create().
+        final NodeQueryResult nodeQueryResult = this.nodeSearchService.query( NodeQuery.create().
             parent( persistedNode.path() ).
             from( 0 ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final NodeBranchEntries nodeBranchEntries = this.storageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), false,
-                                                                                               InternalContext.from(
-                                                                                                   ContextAccessor.current() ) );
+        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), false,
+                                                                                                   InternalContext.from(
+                                                                                                       ContextAccessor.current() ) );
 
         final NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
 
@@ -167,15 +168,14 @@ public class MoveNodeCommand
 
         final Node movedNode;
 
-        // The node that is moved must be updated
-        if ( persistedNode.id().equals( this.nodeId ) )
+        final boolean isTheOriginalMovedNode = persistedNode.id().equals( this.nodeId );
+        if ( isTheOriginalMovedNode )
         {
             final boolean isRenaming = newParentPath.equals( persistedNode.parentPath() );
 
             if ( !isRenaming )
             {
-                // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
-                nodeToMoveBuilder.inheritPermissions( false );
+                updateStoredNodeProperties( newParentPath, nodeToMoveBuilder );
             }
 
             movedNode = doStore( nodeToMoveBuilder.build(), false );
@@ -193,9 +193,45 @@ public class MoveNodeCommand
         return movedNode;
     }
 
+    private void updateStoredNodeProperties( final NodePath newParentPath, final Node.Builder nodeToMoveBuilder )
+    {
+        // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
+        nodeToMoveBuilder.inheritPermissions( false );
+
+        if ( shouldUpdateManualOrderValue( newParentPath ) )
+        {
+            final Long newOrderValue = ResolveInsertOrderValueCommand.create( this ).
+                parentPath( newParentPath ).
+                insertManualStrategy( InsertManualStrategy.FIRST ).
+                build().
+                execute();
+
+            nodeToMoveBuilder.manualOrderValue( newOrderValue );
+        }
+    }
+
+    private boolean shouldUpdateManualOrderValue( final NodePath newParentPath )
+    {
+        boolean updateManualOrderValue = false;
+
+        if ( newParentPath.equals( this.newParentPath ) )
+        {
+            final Node parent = GetNodeByPathCommand.create( this ).
+                nodePath( newParentPath ).
+                build().
+                execute();
+
+            if ( parent.getChildOrder().isManualOrder() )
+            {
+                updateManualOrderValue = true;
+            }
+        }
+        return updateManualOrderValue;
+    }
+
     private Node doStore( final Node movedNode, final boolean metadataOnly )
     {
-        return this.storageService.move( MoveNodeParams.create().
+        return this.nodeStorageService.move( MoveNodeParams.create().
             node( movedNode ).
             updateMetadataOnly( metadataOnly ).
             build(), InternalContext.from( ContextAccessor.current() ) );

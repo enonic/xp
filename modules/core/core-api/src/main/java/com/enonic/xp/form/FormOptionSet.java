@@ -259,6 +259,12 @@ public class FormOptionSet
             return this;
         }
 
+        public Builder clearOptions()
+        {
+            setOptionsList.clear();
+            return this;
+        }
+
         public FormOptionSet build()
         {
             return new FormOptionSet( this );

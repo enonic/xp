@@ -9,23 +9,23 @@ import com.enonic.xp.util.CharacterChecker;
 @Beta
 public final class Branch
 {
-    private final String name;
+    private final String value;
 
     private Branch( final Builder builder )
     {
-        this.name = CharacterChecker.check( builder.name, "Not a valid name for Branch [" + builder.name + "]" );
+        this.value = CharacterChecker.check( builder.value, "Not a valid value for BranchId [" + builder.value + "]" );
     }
 
     public static Branch from( final String name )
     {
         return Branch.create().
-            name( name ).
+            value( name ).
             build();
     }
 
-    public String getName()
+    public String getValue()
     {
-        return name;
+        return value;
     }
 
 
@@ -37,7 +37,7 @@ public final class Branch
     @Override
     public String toString()
     {
-        return name;
+        return value;
     }
 
     @Override
@@ -53,32 +53,32 @@ public final class Branch
         }
 
         final Branch branch = (Branch) o;
-        return name.equals( branch.name );
+        return value.equals( branch.value );
     }
 
     @Override
     public int hashCode()
     {
-        return name.hashCode();
+        return value.hashCode();
     }
 
     public static final class Builder
     {
-        private String name;
+        private String value;
 
         private Builder()
         {
         }
 
-        public Builder name( String name )
+        public Builder value( String value )
         {
-            this.name = name;
+            this.value = value;
             return this;
         }
 
         private void validate()
         {
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( this.name ) );
+            Preconditions.checkArgument( !Strings.isNullOrEmpty( this.value ) );
         }
 
         public Branch build()

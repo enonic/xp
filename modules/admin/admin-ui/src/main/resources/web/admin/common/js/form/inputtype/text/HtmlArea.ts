@@ -37,7 +37,7 @@ module api.form.inputtype.text {
         };
 
         private authRequest: Promise<void>;
-        private canSeeCode: boolean;
+        private editableSourceCode: boolean;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
@@ -53,9 +53,9 @@ module api.form.inputtype.text {
 
             this.authRequest =
                 new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-                    this.canSeeCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
-                                                                                    RoleKeys.CMS_ADMIN.equals(principal) ||
-                                                                                    RoleKeys.CMS_EXPERT.equals(principal));
+                    this.editableSourceCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
+                                                                                            RoleKeys.CMS_ADMIN.equals(principal) ||
+                                                                                            RoleKeys.CMS_EXPERT.equals(principal));
                 });
         }
 
@@ -201,12 +201,13 @@ module api.form.inputtype.text {
                 createDialogHandler).setFocusHandler(focusHandler.bind(this)).setBlurHandler(blurHandler.bind(this)).setKeydownHandler(
                 keydownHandler).setKeyupHandler(notifyValueChanged).setNodeChangeHandler(
                 notifyValueChanged).setContentPath(this.contentPath).setContent(this.content).setApplicationKeys(
-                this.applicationKeys).setTools(this.tools).setCanSeeCode(this.canSeeCode).createEditor().then((editor: HtmlAreaEditor) => {
-                this.setEditorContent(id, property);
-                if (this.notInLiveEdit()) {
-                    this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
-                }
-                this.removeTooltipFromEditorArea(textAreaWrapper);
+                this.applicationKeys).setTools(this.tools).setEditableSourceCode(this.editableSourceCode).createEditor().then(
+                (editor: HtmlAreaEditor) => {
+                    this.setEditorContent(id, property);
+                    if (this.notInLiveEdit()) {
+                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
+                    }
+                    this.removeTooltipFromEditorArea(textAreaWrapper);
 
                 var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
                     ".remove-button")[0];
@@ -217,13 +218,13 @@ module api.form.inputtype.text {
                     isMouseOverRemoveOccurenceButton = false;
                 });
 
-                this.onShown((event) => {
-                    // invoke auto resize on shown in case contents have been updated while inactive
-                    if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
-                        editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
-                    }
+                    this.onShown((event) => {
+                        // invoke auto resize on shown in case contents have been updated while inactive
+                        if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
+                            editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
+                        }
                 });
-            });
+                });
         }
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {

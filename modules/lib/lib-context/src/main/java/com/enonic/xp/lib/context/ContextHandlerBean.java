@@ -27,6 +27,7 @@ public final class ContextHandlerBean
     public Object run( final ContextRunParams params )
     {
         final ContextBuilder builder = ContextBuilder.from( this.context.get() );
+        applyRepository( builder, params.repository );
         applyAuthInfo( builder, params.username, params.userStore, params.principals );
         applyBranch( builder, params.branch );
         addAttributes( builder, params.attributes );
@@ -43,6 +44,15 @@ public final class ContextHandlerBean
     public ContextRunParams newRunParams()
     {
         return new ContextRunParams();
+    }
+
+    private void applyRepository( final ContextBuilder builder, final String repository )
+    {
+        if ( repository == null )
+        {
+            return;
+        }
+        builder.repositoryId( repository );
     }
 
     private void applyAuthInfo( final ContextBuilder builder, final String username, final String userStore,

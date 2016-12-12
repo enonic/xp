@@ -5,9 +5,9 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
+import com.enonic.xp.repository.IndexException;
 
 class XContentBuilderFactory
 

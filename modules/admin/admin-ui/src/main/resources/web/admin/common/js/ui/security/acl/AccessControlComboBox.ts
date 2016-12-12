@@ -17,12 +17,11 @@ module api.ui.security.acl {
                 setMaximumOccurrences(0).
                 setComboBoxName("principalSelector").
                 setIdentifierMethod("getPrincipalKey").
-                setLoader(new AccessControlEntryLoader()).
-                setHideComboBoxWhenMaxReached(false).
-                setSelectedOptionsView(new ACESelectedOptionsView()).
+                setLoader(new AccessControlEntryLoader()).setHideComboBoxWhenMaxReached(false).setSelectedOptionsView(
+                new ACESelectedOptionsView()).
                 setOptionDisplayValueViewer(new AccessControlEntryViewer()).
                 setDelayedInputValueChangedHandling(500);
-            
+
             super(builder);
 
             this.aceSelectedOptionsView = <ACESelectedOptionsView>builder.getSelectedOptionsView();

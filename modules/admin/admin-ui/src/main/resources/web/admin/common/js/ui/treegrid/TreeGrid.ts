@@ -83,7 +83,7 @@ module api.ui.treegrid {
             });
             this.gridData.setItemMetadataHandler(this.handleItemMetadata.bind(this));
 
-            
+
             this.columns = this.updateColumnsFormatter(builder.getColumns());
 
             this.gridOptions = builder.getOptions();
@@ -152,7 +152,7 @@ module api.ui.treegrid {
                     interval = setInterval(this.postLoad.bind(this), 200);
                 });
             }
-            
+
             this.grid.subscribeOnClick((event, data) => {
                 if (this.isActive()) {
                     this.setActive(false);
@@ -168,7 +168,7 @@ module api.ui.treegrid {
                         var node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
 
-                        } else if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
+                    } else if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
                         this.setActive(true);
                         if (elem.getAttribute("type") === "checkbox") {
                             this.grid.toggleRow(data.row);
@@ -1020,7 +1020,9 @@ module api.ui.treegrid {
             this.grid.setSelectedRows(selection);
         }
 
-        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false) {
+        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false): wemQ.Promise<boolean> {
+            var deferred = wemQ.defer<boolean>();
+            
             node = node || this.root.getCurrentRoot();
 
             if (node) {
@@ -1034,6 +1036,7 @@ module api.ui.treegrid {
                             this.expandNode(child);
                         });
                     }
+                    deferred.resolve(true);
                 } else {
                     this.mask();
                     this.fetchData(node)
@@ -1046,12 +1049,16 @@ module api.ui.treegrid {
                                     this.expandNode(child);
                                 });
                             }
+                            deferred.resolve(true);
                         }).catch((reason: any) => {
                             this.handleError(reason);
+                        deferred.resolve(false);
                         }).finally(() => {
                         }).done(() => this.notifyLoaded());
                 }
             }
+
+            return deferred.promise;
         }
 
         protected updateExpanded() {

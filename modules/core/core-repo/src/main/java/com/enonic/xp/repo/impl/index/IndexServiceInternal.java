@@ -1,22 +1,21 @@
 package com.enonic.xp.repo.impl.index;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
 import com.enonic.xp.repository.RepositoryId;
 
 public interface IndexServiceInternal
 {
-    void createIndex( final String indexName, final IndexSettings settings );
+    void createIndex( final CreateIndexRequest request );
 
-    void updateIndex( final String indexName, final IndexSettings settings );
+    void updateIndex( final String indexName, final UpdateIndexSettings settings );
 
     void deleteIndices( final String... indexNames );
 
     boolean indicesExists( final String... indices );
 
-    void applyMapping( final String indexName, final IndexType indexType, final String mapping );
+    void applyMapping( final ApplyMappingRequest request );
 
     ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames );
 

@@ -60,7 +60,7 @@ public class FindNodesByParentCommand
             build().
             resolve();
 
-        final NodeQueryResult nodeQueryResult = this.searchService.query( NodeQuery.create().
+        final NodeQueryResult nodeQueryResult = this.nodeSearchService.query( NodeQuery.create().
             parent( parentPath ).
             addQueryFilters( params.getQueryFilters() ).
             from( params.getFrom() ).

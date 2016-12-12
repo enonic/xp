@@ -30,9 +30,7 @@ module api.liveedit.layout {
         public static debug: boolean = false;
 
         constructor(builder: LayoutComponentViewBuilder) {
-            super(builder.
-                setViewer(new LayoutComponentViewer()).
-                setInspectActionRequired(true));
+            super(builder.setViewer(new LayoutComponentViewer()).setInspectActionRequired(true));
 
             this.setPlaceholder(new LayoutPlaceholder(this));
             this.regionViews = [];
@@ -79,7 +77,7 @@ module api.liveedit.layout {
 
         setComponent(layoutComponent: LayoutComponent) {
             super.setComponent(layoutComponent);
-            
+
             if (!this.regionViews) {
                 return;
             }

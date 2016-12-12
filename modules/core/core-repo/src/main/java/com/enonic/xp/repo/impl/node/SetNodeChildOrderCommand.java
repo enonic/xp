@@ -14,7 +14,7 @@ import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.Permission;
 
 public class SetNodeChildOrderCommand
@@ -74,10 +74,10 @@ public class SetNodeChildOrderCommand
 
     private void orderChildNodes( final Node parentNode )
     {
-        final NodeQueryResult childNodeResult = searchService.query( NodeQuery.create().
+        final NodeQueryResult childNodeResult = nodeSearchService.query( NodeQuery.create().
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             batchSize( BATCH_SIZE ).
             searchMode( SearchMode.SEARCH ).
             build(), InternalContext.from( ContextAccessor.current() ) );

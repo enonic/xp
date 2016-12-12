@@ -84,7 +84,7 @@ public class FindNodesDependenciesCommand
 
     private NodeQueryResult getReferences( final Set<NodeId> nonProcessedNodes )
     {
-        return this.searchService.query( NodeQuery.create().
+        return this.nodeSearchService.query( NodeQuery.create().
             addQueryFilter( ExistsFilter.create().
                 fieldName( NodeIndexPath.REFERENCE.getPath() ).
                 build() ).

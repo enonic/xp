@@ -8,6 +8,7 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Standard ID Provider'
+    instruction 'X-Bundle-Type', 'system'
 }
 
 task copyAdminUiCommon( type: Copy ) {

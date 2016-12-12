@@ -81,18 +81,10 @@ module api.ui.selector {
 
         protected createOptions(): api.ui.grid.GridOptions<any> {
 
-            return new api.ui.grid.GridOptionsBuilder().
-                setWidth(this.width).
-                setHeight(this.maxHeight).
-                setHideColumnHeaders(true).
-                setEnableColumnReorder(false).
-                setFullWidthRows(true).
-                setForceFitColumns(true).
-                setRowHeight(this.optionDisplayValueViewer.getPreferredHeight()).
-                setCheckableRows(this.multipleSelections).
-                setMultiSelect(this.multipleSelections).
-                setDataIdProperty(this.dataIdProperty).
-                build();
+            return new api.ui.grid.GridOptionsBuilder().setWidth(this.width).setHeight(this.maxHeight).setHideColumnHeaders(
+                true).setEnableColumnReorder(false).setFullWidthRows(true).setForceFitColumns(true).setRowHeight(
+                this.optionDisplayValueViewer.getPreferredHeight()).setCheckableRows(this.multipleSelections).setMultiSelect(
+                this.multipleSelections).setDataIdProperty(this.dataIdProperty).build();
         }
 
         protected createColumns(): api.ui.grid.GridColumn<any>[] {
@@ -101,14 +93,10 @@ module api.ui.selector {
                     this.optionDisplayValueViewer.setObject(value);
                     return this.optionDisplayValueViewer.toString();
                 };
-            
+
             return [
-                new api.ui.grid.GridColumnBuilder().
-                setId("option").
-                setName("Options").
-                setField("displayValue").
-                setFormatter(columnFormatter).
-                build()
+                new api.ui.grid.GridColumnBuilder().setId("option").setName("Options").setField("displayValue").setFormatter(
+                    columnFormatter).build()
             ];
         }
         

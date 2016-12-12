@@ -16,7 +16,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 
 public class FindNodeIdsByParentCommand
     extends AbstractNodeCommand
@@ -76,7 +76,7 @@ public class FindNodeIdsByParentCommand
             resolve();
 
         final NodeQueryResult nodeQueryResult =
-            this.searchService.query( createFindChildrenQuery( parentPath, order ), InternalContext.from( ContextAccessor.current() ) );
+            this.nodeSearchService.query( createFindChildrenQuery( parentPath, order ), InternalContext.from( ContextAccessor.current() ) );
 
         if ( nodeQueryResult.getHits() == 0 )
         {
@@ -146,7 +146,7 @@ public class FindNodeIdsByParentCommand
 
         private Filters queryFilters;
 
-        private Integer size = SearchService.GET_ALL_SIZE_FLAG;
+        private Integer size = NodeSearchService.GET_ALL_SIZE_FLAG;
 
         private Integer from = 0;
 

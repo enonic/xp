@@ -5,8 +5,6 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -15,8 +13,6 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -27,7 +23,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -39,16 +35,16 @@ public final class CreateNodeCommand
 {
     private final CreateNodeParams params;
 
-    private final BlobStore binaryBlobStore;
-
     private final Instant timestamp;
+
+    private final BinaryService binaryService;
 
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.binaryBlobStore = builder.binaryBlobStore;
         this.timestamp = builder.timestamp;
+        this.binaryService = builder.binaryService;
     }
 
     public static Builder create()
@@ -112,9 +108,9 @@ public final class CreateNodeCommand
     {
         final PropertyTree data = params.getData();
 
-        final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
-
         final AttachedBinaries.Builder builder = AttachedBinaries.create();
+
+        final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
 
         for ( final Property binaryRef : binaryReferences )
         {
@@ -125,8 +121,8 @@ public final class CreateNodeCommand
                 throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " attached in createNodeParams" );
             }
 
-            final BlobRecord blob = this.binaryBlobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryAttachment.getByteSource() );
-            builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
+            final AttachedBinary attachedBinary = this.binaryService.store( binaryAttachment );
+            builder.add( attachedBinary );
         }
 
         return builder.build();
@@ -182,6 +178,7 @@ public final class CreateNodeCommand
         return null;
     }
 
+
     private Long doResolveManualOrderValue( final Node parentNode )
     {
         final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
@@ -192,74 +189,12 @@ public final class CreateNodeCommand
         }
         else
         {
-            return resolveFromQuery( parentNode, insertManualStrategy );
+            return ResolveInsertOrderValueCommand.create( this ).
+                parentPath( parentNode.path() ).
+                insertManualStrategy( insertManualStrategy ).
+                build().
+                execute();
         }
-    }
-
-    private Long resolveFromQuery( final Node parentNode, final InsertManualStrategy insertManualStrategy )
-    {
-        RefreshCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            refreshMode( RefreshMode.SEARCH ).
-            build().
-            execute();
-
-        final ChildOrder childOrder =
-            insertManualStrategy.equals( InsertManualStrategy.LAST ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
-
-        final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
-            parentPath( parentNode.path() ).
-            childOrder( childOrder ).
-            size( 1 ).
-            build() );
-
-        if ( findNodesByParentResult.isEmpty() )
-        {
-            return NodeManualOrderValueResolver.START_ORDER_VALUE;
-        }
-        else
-        {
-            if ( InsertManualStrategy.LAST.equals( insertManualStrategy ) )
-            {
-                return insertAsLast( findNodesByParentResult );
-            }
-            else
-            {
-                return insertAsFirst( findNodesByParentResult );
-            }
-        }
-    }
-
-    private Long insertAsFirst( final FindNodesByParentResult findNodesByParentResult )
-    {
-        final Node first = GetNodeByIdCommand.create( this ).
-            id( findNodesByParentResult.getNodeIds().first() ).
-            build().
-            execute();
-
-        if ( first.getManualOrderValue() == null )
-        {
-            throw new IllegalArgumentException( "Expected that node " + first +
-                                                    " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
-        }
-
-        return first.getManualOrderValue() + NodeManualOrderValueResolver.ORDER_SPACE;
-    }
-
-    private Long insertAsLast( final FindNodesByParentResult findNodesByParentResult )
-    {
-        final Node first = GetNodeByIdCommand.create( this ).
-            id( findNodesByParentResult.getNodeIds().first() ).
-            build().
-            execute();
-
-        if ( first.getManualOrderValue() == null )
-        {
-            throw new IllegalArgumentException( "Expected that node " + first +
-                                                    " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
-        }
-
-        return first.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
     }
 
     private void verifyNotExistsAlready()
@@ -292,9 +227,9 @@ public final class CreateNodeCommand
     {
         private CreateNodeParams params;
 
-        private BlobStore binaryBlobStore;
-
         private Instant timestamp;
+
+        private BinaryService binaryService;
 
         private Builder()
         {
@@ -312,9 +247,9 @@ public final class CreateNodeCommand
             return this;
         }
 
-        public Builder binaryBlobStore( final BlobStore blobStore )
+        public Builder binaryService( final BinaryService binaryService )
         {
-            this.binaryBlobStore = blobStore;
+            this.binaryService = binaryService;
             return this;
         }
 

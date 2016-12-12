@@ -97,7 +97,7 @@ public class UpdateNodeCommandTest
             nodeId( updatedNode.id() ).
             binaryReference( binaryRef ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.blobStore ).
+            binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

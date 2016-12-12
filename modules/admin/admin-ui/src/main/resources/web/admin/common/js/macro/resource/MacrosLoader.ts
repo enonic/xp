@@ -13,7 +13,7 @@ module api.macro.resource {
             super();
             
             this.hasRelevantData = false;
-            
+
             ApplicationEvent.on((event: ApplicationEvent) => {
                 if (event.getEventType() == ApplicationEventType.STARTED || event.getEventType() == ApplicationEventType.STOPPED ||
                     event.getEventType() == ApplicationEventType.UPDATED) {
@@ -24,8 +24,8 @@ module api.macro.resource {
 
         setApplicationKeys(applicationKeys: ApplicationKey[]) {
             this.getRequest().setApplicationKeys(applicationKeys);
-        }        
-        
+        }
+
         protected createRequest(): GetMacrosRequest {
             return new GetMacrosRequest();
         }

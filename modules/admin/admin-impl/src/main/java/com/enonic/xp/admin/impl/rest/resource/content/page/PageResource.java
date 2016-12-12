@@ -29,7 +29,7 @@ import com.enonic.xp.security.SecurityService;
 @Path(ResourceConstants.REST_ROOT + "content/page")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public final class PageResource
     implements JaxRsComponent
 {

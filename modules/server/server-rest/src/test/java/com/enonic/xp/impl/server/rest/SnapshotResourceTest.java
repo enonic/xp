@@ -52,7 +52,7 @@ public class SnapshotResourceTest
         throws Exception
     {
         final RestoreResult restoreResult = RestoreResult.create().
-            repositoryId( RepositoryId.from( "repoId" ) ).
+            repositoryId( RepositoryId.from( "repo-id" ) ).
             name( "name" ).
             message( "He's dead, Jim." ).
             indices( Arrays.asList( "bc02aa" ) ).

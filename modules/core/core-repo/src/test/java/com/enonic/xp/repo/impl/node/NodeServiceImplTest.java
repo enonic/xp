@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -29,8 +30,9 @@ import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotException;
+import com.enonic.xp.repository.BranchNotFoundException;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -52,20 +54,17 @@ public class NodeServiceImplTest
     public void setUp()
         throws Exception
     {
+
         super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setSnapshotService( this.snapshotService );
-        this.nodeService.setStorageService( this.storageService );
-        this.nodeService.setSearchService( this.searchService );
-        this.nodeService.setBlobStore( new MemoryBlobStore() );
+        this.nodeService.setNodeStorageService( this.storageService );
+        this.nodeService.setNodeSearchService( this.searchService );
+        this.nodeService.setRepositoryService( this.repositoryService );
+        this.nodeService.setBinaryService( this.binaryService );
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
-        final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( config.getSnapshotsDir() ).thenReturn( xpHome.newFolder() );
-        this.nodeService.setConfiguration( config );
-
-        this.nodeService.initialize();
         this.createDefaultRootNode();
     }
 
@@ -88,6 +87,26 @@ public class NodeServiceImplTest
         throws Exception
     {
         this.nodeService.getById( NodeId.from( "a" ) );
+    }
+
+    @Test(expected = RepositoryNotFoundException.class)
+    public void get_by_id_repo_non_existing()
+        throws Exception
+    {
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( "missing-repo" ).
+            build().
+            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) );
+    }
+
+    @Test(expected = BranchNotFoundException.class)
+    public void get_by_id_branch_non_existing()
+        throws Exception
+    {
+        ContextBuilder.from( ContextAccessor.current() ).
+            branch( "missing-branch" ).
+            build().
+            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) );
     }
 
     @Test

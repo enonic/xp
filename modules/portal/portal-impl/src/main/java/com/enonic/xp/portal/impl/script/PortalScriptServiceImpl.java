@@ -42,6 +42,12 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
+    public boolean hasScript( final ResourceKey script )
+    {
+        return this.scriptRuntime.hasScript( script );
+    }
+
+    @Override
     public ScriptExports execute( final ResourceKey script )
     {
         return this.scriptRuntime.execute( script );

@@ -42,7 +42,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private mobileContentItemStatisticsPanel: MobileContentItemStatisticsPanel;
 
     constructor() {
-        
+
         super();
 
         this.onShown(() => {
@@ -96,7 +96,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         filterPanel.onSearchStarted(showMask);
         filterPanel.onReset(showMask);
         filterPanel.onRefreshStarted(showMask);
-        
+
         return filterPanel;
     }
     
@@ -326,7 +326,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private selectContentInGridByPath(path: api.content.ContentPath) {
-        this.treeGrid.expandTillNodeWithGivenPath(path, this.treeGrid.getSelectedNodes()[0]);
+        this.treeGrid.selectNodeByPath(path);
     }
 
     private isGivenPathSelectedInGrid(path: api.content.ContentPath): boolean {

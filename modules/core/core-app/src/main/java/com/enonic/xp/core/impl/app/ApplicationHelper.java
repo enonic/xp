@@ -20,36 +20,38 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class ApplicationHelper
 {
-    public final static String X_APPLICATION_URL = "X-Application-Url";
+    final static String X_APPLICATION_URL = "X-Application-Url";
 
-    public final static String X_VENDOR_NAME = "X-Vendor-Name";
+    final static String X_VENDOR_NAME = "X-Vendor-Name";
 
-    public final static String X_VENDOR_URL = "X-Vendor-Url";
+    final static String X_VENDOR_URL = "X-Vendor-Url";
 
-    public final static String X_SYSTEM_VERSION = "X-System-Version";
+    final static String X_SYSTEM_VERSION = "X-System-Version";
 
-    public final static String X_SOURCE_PATHS = "X-Source-Paths";
+    final static String X_SOURCE_PATHS = "X-Source-Paths";
 
-    public static final String SITE_XML = "site/site.xml";
+    static final String X_BUNDLE_TYPE = "X-Bundle-Type";
 
-    public static final String APPLICATION_XML = "application.xml";
+    private static final String APPLICATION_BUNDLE_TYPE = "application";
 
-    public static final String BUNDLE_TYPE_HEADER = "X-Bundle-Type";
-
-    public static final String APPLICATION_BUNDLE_TYPE = "application";
+    private static final String SYSTEM_BUNDLE_TYPE = "system";
 
     public static boolean isApplication( final Bundle bundle )
     {
-        return ( getHeader( bundle, BUNDLE_TYPE_HEADER, "default" ).equals( APPLICATION_BUNDLE_TYPE ) ||
-            bundle.getEntry( APPLICATION_XML ) != null || bundle.getEntry( SITE_XML ) != null );
+        return getHeader( bundle, X_BUNDLE_TYPE, "" ).equals( APPLICATION_BUNDLE_TYPE ) || isSystemApplication( bundle );
     }
 
-    public static boolean isApplication( final JarFile jarFile )
+    static boolean isApplication( final JarFile jarFile )
     {
-        return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_XML ) != null || jarFile.getEntry( SITE_XML ) != null;
+        return hasApplicationHeader( jarFile );
     }
 
-    private static final boolean hasApplicationHeader( final JarFile jarFile )
+    static boolean isSystemApplication( final Bundle bundle )
+    {
+        return getHeader( bundle, X_BUNDLE_TYPE, "" ).equals( SYSTEM_BUNDLE_TYPE );
+    }
+
+    private static boolean hasApplicationHeader( final JarFile jarFile )
     {
         final Manifest manifest;
         try
@@ -61,7 +63,7 @@ public final class ApplicationHelper
             return false;
         }
 
-        return getAttribute( manifest, BUNDLE_TYPE_HEADER, "default" ).equals( APPLICATION_BUNDLE_TYPE );
+        return getAttribute( manifest, X_BUNDLE_TYPE, "" ).equals( APPLICATION_BUNDLE_TYPE );
     }
 
     public static String getAttribute( final Manifest manifest, final String name, final String defValue )

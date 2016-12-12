@@ -1,9 +1,11 @@
 package com.enonic.xp.repo.impl;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 
 public class TestContext
@@ -12,6 +14,7 @@ public class TestContext
 
     public static final Repository TEST_REPOSITORY = Repository.create().
         id( RepositoryId.from( "test" ) ).
+        branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
         build();
 
     public static final Context TEST_CONTEXT = ContextBuilder.create().

@@ -15,6 +15,7 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
  * @example-ref examples/context/run.js
  *
  * @param {object} context JSON parameters.
+ * @param {string} [context.repository] Repository to execute the callback in. Default is the current repository set in portal.
  * @param {string} [context.branch] Name of the branch to execute the callback in. Default is the current branch set in portal.
  * @param {object} [context.user] User to execute the callback with. Default is the current user.
  * @param {string} context.user.login Login of the user.
@@ -27,6 +28,10 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
 exports.run = function (context, callback) {
     var params = bean.newRunParams();
     params.callback = callback;
+
+    if (context.repository) {
+        params.repository = context.repository;
+    }
 
     if (context.branch) {
         params.branch = context.branch;

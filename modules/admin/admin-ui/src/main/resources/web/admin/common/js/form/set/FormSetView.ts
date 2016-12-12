@@ -2,6 +2,7 @@ module api.form {
 
     import PropertySet = api.data.PropertySet;
     import PropertyArray = api.data.PropertyArray;
+    import DragHelper = api.ui.DragHelper;
 
     export class FormSetView<V extends FormSetOccurrenceView> extends FormItemView {
 
@@ -322,6 +323,7 @@ module api.form {
             api.util.assert(draggedElement.hasClass(this.classPrefix + "-occurrence-view"));
             this.draggingIndex = draggedElement.getSiblingIndex();
 
+            DragHelper.get().setDropAllowed(true);
             ui.placeholder.html("Drop form item set here");
         }
 
@@ -339,9 +341,7 @@ module api.form {
         }
 
         toggleHelpText(show?: boolean) {
-            if (!!this.helpText) {
-                this.formItemOccurrences.toggleHelpText(show);
-            }
+            this.formItemOccurrences.toggleHelpText(show);
         }
 
         hasHelpText(): boolean {

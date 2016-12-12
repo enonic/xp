@@ -6,6 +6,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -207,5 +209,37 @@ public class MixinServiceImplTest
         {
             assertEquals( "Cycle detected in mixin [myapp2:inline1]. It contains an inline mixin that references itself.", e.getMessage() );
         }
+    }
+
+    @Test
+    public void testInlineFormItems_formOptionSet()
+    {
+        initializeApps();
+
+        final FormOptionSet optionSet = FormOptionSet.create().
+            name( "myOptionSet" ).
+            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).
+                addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).build() ).
+            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).
+                defaultOption( true ).addFormItem(
+                Input.create().name( "myTextLine2" ).label( "My text line 2" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
+            build();
+
+        final Form form = Form.create().
+            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+            addFormItem( optionSet ).
+            build();
+
+        final Form transformedForm = service.inlineFormItems( form );
+
+        assertNotNull( transformedForm.getInput( "title" ) );
+        assertNotNull( transformedForm.getOptionSet( "myOptionSet" ) );
+        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption1" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.label" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.street" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.postalNo" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.country" ) );
+        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption2" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption2.myTextLine2" ) );
     }
 }

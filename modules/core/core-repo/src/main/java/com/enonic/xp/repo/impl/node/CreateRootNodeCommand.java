@@ -35,8 +35,8 @@ public class CreateRootNodeCommand
         return StoreNodeCommand.create().
             node( rootNode ).
             indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
             build().
             execute();
     }

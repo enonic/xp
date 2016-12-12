@@ -165,6 +165,11 @@ public final class NodePath
         return elements.get( elements.size() - 1 );
     }
 
+    public final String getName()
+    {
+        return isEmpty() ? null : getLastElement().toString();
+    }
+
     public Iterable<String> resolvePathElementNames()
     {
         return elements.stream().map( Element::toString ).collect( Collectors.toList() );

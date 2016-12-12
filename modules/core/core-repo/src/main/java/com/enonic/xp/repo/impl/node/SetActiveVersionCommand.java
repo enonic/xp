@@ -33,12 +33,12 @@ public class SetActiveVersionCommand
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
-        final Node node = this.storageService.get( nodeVersionId, context );
+        final Node node = this.nodeStorageService.get( nodeVersionId, context );
 
         if ( node == null )
         {
             throw new NodeNotFoundException(
-                "Cannot find nodeVersion [" + this.nodeVersionId + "] in branch " + context.getBranch().getName() );
+                "Cannot find nodeVersion [" + this.nodeVersionId + "] in branch " + context.getBranch().getValue() );
         }
 
         if ( !node.id().equals( nodeId ) )
@@ -48,7 +48,7 @@ public class SetActiveVersionCommand
 
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( REQUIRED_PERMISSION, node );
 
-        this.storageService.updateVersion( node, nodeVersionId, context );
+        this.nodeStorageService.updateVersion( node, nodeVersionId, context );
 
         return nodeVersionId;
     }

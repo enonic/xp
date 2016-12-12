@@ -35,7 +35,7 @@ public class GetNodesByIdsCommand
             return Nodes.empty();
         }
 
-        return this.storageService.get( ids, true, InternalContext.from( ContextAccessor.current() ) );
+        return this.nodeStorageService.get( ids, true, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static final class Builder

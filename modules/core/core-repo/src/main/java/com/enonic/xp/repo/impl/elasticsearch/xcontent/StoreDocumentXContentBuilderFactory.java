@@ -10,7 +10,7 @@ import com.enonic.xp.repo.impl.elasticsearch.IndexConstants;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValue;
-import com.enonic.xp.repo.impl.index.IndexException;
+import com.enonic.xp.repository.IndexException;
 
 public class StoreDocumentXContentBuilderFactory
     extends AbstractXContentBuilderFactory

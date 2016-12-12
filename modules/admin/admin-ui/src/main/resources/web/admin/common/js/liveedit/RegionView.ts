@@ -77,16 +77,11 @@ module api.liveedit {
         public static debug: boolean = false;
 
         constructor(builder: RegionViewBuilder) {
-            super(new ItemViewBuilder().
-                setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).
-                setType(RegionItemType.get()).
-                setElement(builder.element).
-                setPlaceholder(new RegionPlaceholder(builder.region)).
-                setViewer(new RegionComponentViewer()).
-                setParentElement(builder.parentElement).
-                setParentView(builder.parentView).
-                setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
-            
+            super(new ItemViewBuilder().setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).setType(
+                RegionItemType.get()).setElement(builder.element).setPlaceholder(new RegionPlaceholder(builder.region)).setViewer(
+                new RegionComponentViewer()).setParentElement(builder.parentElement).setParentView(builder.parentView).setContextMenuTitle(
+                new RegionViewContextMenuTitle(builder.region)));
+
             this.addRegionContextMenuActions();
             this.addClassEx("region-view");
 
@@ -97,7 +92,7 @@ module api.liveedit {
             this.parentView = builder.parentView;
 
             this.initListeners();
-            
+
             this.setRegion(builder.region);
 
             this.parseComponentViews();
@@ -176,7 +171,7 @@ module api.liveedit {
                 this.deselect();
                 this.empty();
             }));
-            
+
             this.addContextMenuActions(actions);
         }
 

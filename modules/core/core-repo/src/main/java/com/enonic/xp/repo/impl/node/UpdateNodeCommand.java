@@ -5,13 +5,13 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.Exceptions;
@@ -23,13 +23,13 @@ public final class UpdateNodeCommand
 {
     private final UpdateNodeParams params;
 
-    private final BlobStore binaryBlobStore;
+    private final BinaryService binaryService;
 
     private UpdateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.binaryBlobStore = builder.binaryBlobStore;
+        this.binaryService = builder.binaryService;
     }
 
     public Node execute()
@@ -67,7 +67,7 @@ public final class UpdateNodeCommand
             editableNode( editableNode ).
             persistedNode( persistedNode ).
             binaryAttachments( this.params.getBinaryAttachments() ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryService( this.binaryService ).
             build().
             resolve();
 
@@ -121,7 +121,7 @@ public final class UpdateNodeCommand
     {
         private UpdateNodeParams params;
 
-        private BlobStore binaryBlobStore;
+        private BinaryService binaryService;
 
         private Builder()
         {
@@ -139,9 +139,9 @@ public final class UpdateNodeCommand
             return this;
         }
 
-        public Builder binaryBlobStore( final BlobStore blobStore )
+        public Builder binaryService( final BinaryService binaryService )
         {
-            this.binaryBlobStore = blobStore;
+            this.binaryService = binaryService;
             return this;
         }
 
@@ -150,7 +150,7 @@ public final class UpdateNodeCommand
         {
             super.validate();
             Preconditions.checkNotNull( this.params );
-            Preconditions.checkNotNull( this.binaryBlobStore );
+            Preconditions.checkNotNull( this.binaryService );
         }
 
         public UpdateNodeCommand build()

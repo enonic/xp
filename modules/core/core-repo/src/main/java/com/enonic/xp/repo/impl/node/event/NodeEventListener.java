@@ -10,13 +10,13 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 @Component(immediate = true)
 public class NodeEventListener
     implements EventListener
 {
-    private StorageService storageService;
+    private NodeStorageService nodeStorageService;
 
     private final static Logger LOG = LoggerFactory.getLogger( NodeEventListener.class );
 
@@ -80,7 +80,7 @@ public class NodeEventListener
     {
         try
         {
-            nodeEventHandler.handleEvent( this.storageService, event, InternalContext.from( ContextAccessor.current() ) );
+            nodeEventHandler.handleEvent( this.nodeStorageService, event, InternalContext.from( ContextAccessor.current() ) );
         }
         catch ( Exception e )
         {
@@ -89,8 +89,8 @@ public class NodeEventListener
     }
 
     @Reference
-    public void setStorageService( final StorageService storageService )
+    public void setNodeStorageService( final NodeStorageService nodeStorageService )
     {
-        this.storageService = storageService;
+        this.nodeStorageService = nodeStorageService;
     }
 }

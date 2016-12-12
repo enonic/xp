@@ -104,12 +104,12 @@ var CONFIG = {
         ],
 
         coverageReporter: {
-            type : 'json',
-            subdir : '.',
-            dir : 'src/main/resources/web/spec/coverage/',
-            file : 'coverage.json'
+            type: 'json',
+            subdir: '.',
+            dir: 'src/main/resources/web/spec/coverage/',
+            file: 'coverage.json'
         },
-        
+
         preprocessors: {
             // source files, that you wanna generate coverage for
             // do not include tests or libraries

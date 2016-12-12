@@ -103,7 +103,7 @@ module api.app.browse {
                 }
             });
         }
-        
+
         protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel {
             return null;
         }
@@ -181,7 +181,7 @@ module api.app.browse {
         }
 
         refreshFilter() {
-            if (this.filterPanel && this.treeGrid.isFiltered()) {
+            if (this.filterPanel && (this.filterPanel.isVisible() || this.treeGrid.isFiltered())) {
                 this.filterPanel.refresh();
             }
         }
