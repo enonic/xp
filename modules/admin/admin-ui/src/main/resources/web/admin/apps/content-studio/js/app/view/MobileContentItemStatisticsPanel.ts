@@ -2,9 +2,9 @@ import "../../api.ts";
 import {MobileDetailsPanel} from "./detail/MobileDetailsSlidablePanel";
 import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
 import {MobileDetailsPanelToggleButton} from "./detail/button/MobileDetailsPanelToggleButton";
-import {MobileContentBrowseToolbar} from "../browse/MobileContentBrowseToolbar";
 import {ContentTreeGridActions} from "../browse/action/ContentTreeGridActions";
 import {DetailsView} from "./detail/DetailsView";
+import {MobilePreviewFoldButton} from "./MobilePreviewFoldButton";
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -12,22 +12,26 @@ import StringHelper = api.util.StringHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
+import FoldButton = api.ui.toolbar.FoldButton;
+
 export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
     private itemHeader: api.dom.DivEl = new api.dom.DivEl("mobile-content-item-statistics-header");
-    private headerLabel: api.dom.H6El = new api.dom.H6El();
+    private headerLabel: api.dom.H6El = new api.dom.H6El("mobile-header-title");
     private subHeaderLabel: api.dom.SpanEl = new api.dom.SpanEl();
 
     private previewPanel: ContentItemPreviewPanel;
     private detailsPanel: MobileDetailsPanel;
     private detailsToggleButton: MobileDetailsPanelToggleButton;
 
-    private toolbar: MobileContentBrowseToolbar;
-
+    private foldButton: MobilePreviewFoldButton;
+    
     constructor(browseActions: ContentTreeGridActions, detailsView: DetailsView) {
         super("mobile-content-item-statistics-panel");
 
         this.setDoOffset(false);
+
+        this.createFoldButton(browseActions);
 
         this.initHeader();
 
@@ -36,8 +40,6 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         this.initDetailsPanel(detailsView);
 
         this.initDetailsPanelToggleButton();
-
-        this.initToolbar(browseActions);
 
         this.onRendered(() => {
             this.slideAllOut();
@@ -48,25 +50,37 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         });
     }
 
-    private initToolbar(browseActions: ContentTreeGridActions) {
-        this.toolbar = new MobileContentBrowseToolbar({
-            newContentAction: browseActions.SHOW_NEW_CONTENT_DIALOG_ACTION,
-            editContentAction: browseActions.EDIT_CONTENT,
-            publishAction: browseActions.PUBLISH_CONTENT,
-            unpublishAction: browseActions.UNPUBLISH_CONTENT,
-            duplicateAction: browseActions.DUPLICATE_CONTENT,
-            deleteAction: browseActions.DELETE_CONTENT,
-            sortAction: browseActions.SORT_CONTENT,
-            moveAction: browseActions.MOVE_CONTENT
-        });
-        this.appendChild(this.toolbar);
+    private createFoldButton(browseActions: ContentTreeGridActions) {
+        this.foldButton = new MobilePreviewFoldButton([
+            browseActions.DELETE_CONTENT,
+            browseActions.MOVE_CONTENT,
+            browseActions.DUPLICATE_CONTENT,
+            browseActions.SORT_CONTENT,
+            browseActions.SHOW_NEW_CONTENT_DIALOG_ACTION,
+            browseActions.PUBLISH_CONTENT,
+            browseActions.UNPUBLISH_CONTENT,
+            browseActions.EDIT_CONTENT
+        ]);
     }
-
+    
+    private toggleFoldButton(forceHide: boolean = false) {
+        this.foldButton.isVisible() || forceHide ? this.foldButton.hide() : this.foldButton.show();
+        this.itemHeader.toggleClass("context-menu", this.foldButton.isVisible());
+    }
+    
     private initHeader() {
         this.itemHeader.appendChild(this.headerLabel);
         this.itemHeader.appendChild(this.subHeaderLabel);
-        var backButton = new api.dom.DivEl("mobile-details-panel-back-button");
+
+        this.itemHeader.appendChild(this.foldButton);
+
+        this.headerLabel.onClicked((event) => {
+            this.toggleFoldButton();
+        });
+
+        let backButton = new api.dom.DivEl("mobile-details-panel-back-button");
         backButton.onClicked((event) => {
+            this.toggleFoldButton(true);
             this.slideAllOut();
         });
         this.itemHeader.appendChild(backButton);
@@ -82,6 +96,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
     private initDetailsPanelToggleButton() {
         this.detailsToggleButton = new MobileDetailsPanelToggleButton(this.detailsPanel, () => {
+            this.toggleFoldButton(true);
             this.calcAndSetDetailsPanelTopOffset();
         });
         this.itemHeader.appendChild(this.detailsToggleButton);
@@ -96,6 +111,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
         if (!this.getItem() || !this.getItem().equals(item)) {
             super.setItem(item);
+            this.toggleFoldButton(true);
             this.detailsPanel.setItem(!!item ? item.getModel() : null);
             if (item) {
                 this.setName(this.makeDisplayName(item));
