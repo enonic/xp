@@ -25,7 +25,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     private ownerCombo: PrincipalComboBox;
 
     private formView: FormView;
-    private propertySet: PropertySet;
+    private propertySet: PropertySet = new api.data.PropertyTree().getRoot();
 
     constructor() {
         super("settings-wizard-step-form");
@@ -100,6 +100,16 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         this.formView.reset();
     }
 
+    onPropertyChanged(listener: {(): void;}) {
+        this.propertySet.onChanged(listener);
+        this.model.onPropertyChanged(listener);
+    }
+
+    unPropertyChanged(listener: {(): void;}) {
+        this.propertySet.unChanged(listener);
+        this.model.unPropertyChanged(listener);
+    }
+
     private initFormView(content: api.content.Content) {
         var formBuilder = new api.form.FormBuilder().
             addFormItem(new api.form.InputBuilder().
@@ -121,7 +131,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 setMaximizeUIInputWidth(true).
                 build());
 
-        this.propertySet = new api.data.PropertyTree().getRoot();
         this.initPropertySet(content);
         this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
         this.formView.addClass("display-validation-errors");
