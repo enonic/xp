@@ -3,6 +3,14 @@
   padding-left: 95px;
   background-color: @admin-bg-light-gray;
 
+  > * {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    vertical-align: middle;
+  }
+
   &.no-dropdown-hover {
     .fold-button .@{_COMMON_PREFIX}dropdown {
       display: none;
@@ -11,7 +19,7 @@
 
   &.minimized {
     .fold-button {
-      display: inline-block;
+      display: inline-flex;
     }
   }
 
@@ -36,11 +44,15 @@
     display: none;
     position: relative;
     height: 100%;
-    padding-top: 8px;
-    padding-right: 27px;
-    float: left;
+    width: calc(~'100% - 45px');
+    padding: 0 0 0 22px;  // Same as width of the help button on the right
     border: none;
     background-color: @admin-bg-light-gray;
+    vertical-align: middle;
+
+    &:after {
+      display: none;
+    }
 
     &:hover:not(:disabled) {
       background-color: @admin-bg-light-gray;
@@ -55,12 +67,13 @@
     }
 
     .fold-label {
-      color: @admin-font-gray1;
+      margin: 0 auto;
     }
 
     .@{_COMMON_PREFIX}dropdown {
-      margin-top: 32px;
-      max-width: 180px;
+      top: 40px;
+      width: calc(~'100% + 45px');
+      box-sizing: border-box;
 
       .wizard-step-navigator {
         width: initial;
@@ -115,16 +128,7 @@
   }
 
   .help-text-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 40px;
-    // margin left 34px is needed for calculations in js
-    // total width with margin should always be the same
-    margin: 0 7px 0 34px;
-    float: right;
-    vertical-align: top;
+    margin: 0 10px;
     overflow: hidden;
     z-index: @z-index-mask - 1;
     cursor: pointer;
