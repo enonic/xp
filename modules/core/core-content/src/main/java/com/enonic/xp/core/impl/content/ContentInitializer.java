@@ -36,7 +36,7 @@ public final class ContentInitializer
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
 
-    private static final User SUPER_USER = User.create().
+    public static final User SUPER_USER = User.create().
         key( PrincipalKey.ofUser( UserStoreKey.system(), "su" ) ).
         login( "su" ).
         build();
