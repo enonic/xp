@@ -1,4 +1,5 @@
 apply from: "$rootDir/gradle/osgi.gradle"
+apply plugin: 'com.moowork.node'
 apply plugin: 'com.moowork.gulp'
 
 node {
@@ -35,6 +36,10 @@ task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
 task copyAll( type: Copy, dependsOn: gulpAll ) {
     from 'src/main/resources'
     into "$buildDir/resources/main"
+}
+
+task lint( type: NpmTask ) {
+    args = ['run', 'lint']
 }
 
 jar.dependsOn += copyAll
