@@ -26,7 +26,11 @@ task cleanSourceFiles( type: Delete ) {
     delete fileTree( dir: '.', includes: ['*.tmp.txt'] )
 }
 
-task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
+task ciLint( type: NpmTask, dependsOn: npmInstall ) {
+    args = ['run', 'ci-lint']
+}
+
+task gulpAll( type: GulpTask, dependsOn: ciLint ) {
     description = 'Build admin UI resources (ts, css, etc).'
     inputs.files fileTree( dir: 'src/main/resources', exclude: '**/_all.*' )
     outputs.files fileTree( dir: 'src/main/resources', include: '**/_all.*' )

@@ -3,9 +3,8 @@
   "version": "2.1.0",
   "description": "Enonix XP - Admin UI module",
   "scripts": {
-    "postinstall": "npm run resources && (npm run is-ci || npm run lint)",
-    "resources": "gulp resources",
-    "is-ci": "runwith gulp/scripts/ci.js",
+    "postinstall": "gulp resources",
+    "ci-lint": "runwith gulp/scripts/ci.js || tslint src/main/resources/web/admin/**/*.ts --exclude **/*.d.ts",
     "lint": "tslint src/main/resources/web/admin/**/*.ts --exclude **/*.d.ts",
     "fix": "tslint src/main/resources/web/admin/**/*.ts --fix --exclude **/*.d.ts || exit 0",
     "quicklint": "runwith gulp/scripts/lint.js --prop=diff"
