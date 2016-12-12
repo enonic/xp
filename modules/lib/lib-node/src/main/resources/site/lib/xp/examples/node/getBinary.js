@@ -5,7 +5,7 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Fetches a node.
 var myRepo = nodeLib.connect({
-    repoId: 'myRepo',
+    repoId: 'my-repo',
     branch: 'master'
 });
 
