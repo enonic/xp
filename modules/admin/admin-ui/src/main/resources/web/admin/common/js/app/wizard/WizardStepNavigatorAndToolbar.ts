@@ -104,6 +104,22 @@ module api.app.wizard {
             return width > fittingWidth;
         }
 
+        private updateStepLabels(numberTabs: boolean) {
+            let selectedTabIndex = this.stepNavigator.getSelectedIndex();
+            this.stepNavigator.getNavigationItems().forEach((tab: api.ui.tab.TabBarItem, index) => {
+                let strIndex = (index + 1) + " - ";
+                if (numberTabs && tab.getLabel().indexOf(strIndex) !== 0) {
+                    tab.setLabel(strIndex + tab.getLabel());
+                    if (index == selectedTabIndex) {
+                        this.foldButton.setLabel(tab.getLabel());
+                    }
+                }
+                else {
+                    tab.setLabel(tab.getLabel().replace(strIndex, ""));
+                }
+            })
+        }
+
         checkAndMinimize() {
             const needUpdate = () => this.isStepNavigatorFit() == this.hasClass('minimized');
 
@@ -117,7 +133,7 @@ module api.app.wizard {
                     this.foldButton.pop();
                     this.stepNavigator.insertAfterEl(this.foldButton);
                 }
-
+                this.updateStepLabels(needMinimize);
             }
         }
     }
