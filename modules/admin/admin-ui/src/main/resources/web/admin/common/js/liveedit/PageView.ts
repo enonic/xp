@@ -13,6 +13,7 @@ module api.liveedit {
     import ComponentPath = api.content.page.region.ComponentPath;
     import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
+    import SetController = api.content.page.SetController;
 
     export class PageViewBuilder {
 
@@ -459,8 +460,9 @@ module api.liveedit {
             } else {
                 this.unshade();
 
-                if (!this.pageModel.isPageTemplate() || this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                    this.pageModel.initializePageFromDefault(this);
+                if (!this.pageModel.isPageTemplate()) {
+                    var setController = new SetController(this).setDescriptor(this.pageModel.getDefaultPageDescriptor());
+                    this.pageModel.setController(setController);
                 }
 
                 new PageUnlockedEvent(this).fire();

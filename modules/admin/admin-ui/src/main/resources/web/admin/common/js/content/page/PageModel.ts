@@ -224,13 +224,13 @@ module api.content.page {
                 this.setCustomized(true);
             }
 
+            this.template = null;
+
             if (controllerChanged) {
                 this.setIgnorePropertyChanges(true);
                 this.notifyPropertyChanged(PageModel.PROPERTY_CONTROLLER, oldControllerKey, newControllerKey, setController.eventSource);
                 this.setIgnorePropertyChanges(false);
             }
-
-            this.template = null;
 
             return this;
         }
@@ -431,6 +431,10 @@ module api.content.page {
 
         getDefaultPageTemplate(): PageTemplate {
             return this.defaultTemplate;
+        }
+
+        getDefaultPageDescriptor(): PageDescriptor {
+            return this.defaultTemplateDescriptor;
         }
 
         getMode(): PageMode {
