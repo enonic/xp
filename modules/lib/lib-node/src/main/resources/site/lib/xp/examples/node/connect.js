@@ -5,7 +5,7 @@ var assert = require('/lib/xp/assert');
 // BEGIN
 // Connect to repo 'myRepo', branch 'master'.
 var myRepo = nodeLib.connect({
-    repoId: 'myRepo',
+    repoId: 'my-repo',
     branch: 'master',
     principals: ["role:system.admin"]
 });
