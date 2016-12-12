@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
 @Beta
@@ -80,6 +81,8 @@ public interface NodeService
     SetNodeStateResult setNodeState( SetNodeStateParams params );
 
     Node getRoot();
+
+    Node updateRootPermissions( AccessControlList accessControlList );
 
     ImportNodeResult importNode( ImportNodeParams params );
 

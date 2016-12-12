@@ -216,6 +216,11 @@ public abstract class AbstractNodeTest
 
     void createRepository( final Repository repository )
     {
+        final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
+            principal( TEST_DEFAULT_USER.getKey() ).
+            allowAll().
+            build() );
+
         ContextBuilder.from( ContextAccessor.current() ).
             authInfo( AuthenticationInfo.create().
                 principals( RoleKeys.ADMIN ).
@@ -225,6 +230,7 @@ public abstract class AbstractNodeTest
             callWith( () -> {
                 this.repositoryService.createRepository( CreateRepositoryParams.create().
                     repositoryId( repository.getId() ).
+                    rootPermissions( rootPermissions ).
                     build() );
 
                 repository.getBranches().
