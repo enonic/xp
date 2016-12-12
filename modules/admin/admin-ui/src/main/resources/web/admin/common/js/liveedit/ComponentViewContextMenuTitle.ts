@@ -11,11 +11,11 @@ module api.liveedit {
                 if (event.getPropertyName() == Component.PROPERTY_NAME) {
                     this.setMainName(createMainName(component));
                 }
-            },
+                },
                 createMainName = (component: COMPONENT): string => {
                     return component.getName() ? component.getName().toString() : "";
                 };
-            
+
             super(createMainName(component), type.getConfig().getIconCls());
 
             component.onPropertyChanged(handler);

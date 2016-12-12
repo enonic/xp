@@ -7,7 +7,7 @@ module api.liveedit {
         createView(config: CreateItemViewConfig<RegionView,Component>): ComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
         }
-        
+
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {
             return new ItemTypeConfig(<ItemTypeConfigJson>{
                 cssSelector: '[data-portal-component-type=' + itemType + ']',

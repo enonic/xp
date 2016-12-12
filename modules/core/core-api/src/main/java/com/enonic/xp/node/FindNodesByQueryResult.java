@@ -1,16 +1,13 @@
 package com.enonic.xp.node;
 
-import java.util.Set;
-
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.aggregation.Aggregations;
 
 @Beta
 public class FindNodesByQueryResult
 {
-    private final NodeIds nodeIds;
+    private final NodeHits nodeHits;
 
     private final Aggregations aggregations;
 
@@ -20,7 +17,7 @@ public class FindNodesByQueryResult
 
     private FindNodesByQueryResult( final Builder builder )
     {
-        this.nodeIds = NodeIds.from( builder.nodeIds );
+        this.nodeHits = builder.nodeHits.build();
         this.totalHits = builder.totalHits;
         this.hits = builder.hits;
         this.aggregations = builder.aggregations;
@@ -33,7 +30,12 @@ public class FindNodesByQueryResult
 
     public NodeIds getNodeIds()
     {
-        return this.nodeIds;
+        return this.nodeHits.getNodeIds();
+    }
+
+    public NodeHits getNodeHits()
+    {
+        return nodeHits;
     }
 
     public Aggregations getAggregations()
@@ -53,7 +55,7 @@ public class FindNodesByQueryResult
 
     public static final class Builder
     {
-        private final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
+        private final NodeHits.Builder nodeHits = NodeHits.create();
 
         private long totalHits;
 
@@ -71,9 +73,9 @@ public class FindNodesByQueryResult
             return this;
         }
 
-        public Builder addNodeId( final NodeId nodeId )
+        public Builder addNodeHit( final NodeHit nodeHit )
         {
-            this.nodeIds.add( nodeId );
+            this.nodeHits.add( nodeHit );
             return this;
         }
 

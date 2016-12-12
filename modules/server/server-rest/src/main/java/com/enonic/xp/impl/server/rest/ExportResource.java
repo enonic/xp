@@ -33,7 +33,7 @@ import com.enonic.xp.vfs.VirtualFiles;
 @Path("/api/repo")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=api")
 public final class ExportResource
     implements JaxRsComponent
 {

@@ -25,11 +25,11 @@ module api.ui.text {
 
             this.focusListeners = [];
             this.blurListeners = [];
-            
+
             this.input = this.createInput();
-            
+
             this.setWrappedInput(this.input);
-            
+
             this.addClass("email-input just-shown");
             this.updateStatus('available');
         }
@@ -55,10 +55,10 @@ module api.ui.text {
                 this.checkTimeout = setTimeout((email) => this.checkAvailability(email), 500, this.input.getValue());
 
             });
-            
+
             return input;
         }
-        
+
         getInput(): InputEl {
             return this.input;
         }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -14,9 +15,9 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class PushNodeEntries
     extends AbstractImmutableEntitySet<PushNodeEntry>
 {
-    private Branch targetBranch;
+    private final Branch targetBranch;
 
-    private RepositoryId targetRepo;
+    private final RepositoryId targetRepo;
 
     private PushNodeEntries( final Builder builder )
     {
@@ -71,9 +72,14 @@ public class PushNodeEntries
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.targetBranch, "target-branch must be set in PushNodeEntries" );
+        }
 
         public PushNodeEntries build()
         {
+            this.validate();
             return new PushNodeEntries( this );
         }
 

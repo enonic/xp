@@ -145,4 +145,10 @@ final class ApplicationImpl
     {
         return this.config;
     }
+
+    @Override
+    public boolean isSystem()
+    {
+        return ApplicationHelper.isSystemApplication( this.bundle );
+    }
 }

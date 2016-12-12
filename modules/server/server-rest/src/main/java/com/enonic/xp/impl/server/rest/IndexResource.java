@@ -34,7 +34,7 @@ import com.enonic.xp.security.RoleKeys;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=api")
 public final class IndexResource
     implements JaxRsComponent
 {

@@ -12,6 +12,8 @@ import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -20,6 +22,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 {
     protected static final Repository TEST_REPO = Repository.create().
         id( RepositoryId.from( "cms-repo" ) ).
+        branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
         build();
 
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );

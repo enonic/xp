@@ -85,6 +85,12 @@ public class ApplicationFactoryTest
     {
         final TinyBundle tinyBundle = newBundle( name, isApp );
         tinyBundle.set( ApplicationHelper.X_SOURCE_PATHS, "my/source/path" );
+
+        if ( isApp )
+        {
+            tinyBundle.set( ApplicationHelper.X_BUNDLE_TYPE, "application" );
+        }
+
         return tinyBundle;
     }
 }

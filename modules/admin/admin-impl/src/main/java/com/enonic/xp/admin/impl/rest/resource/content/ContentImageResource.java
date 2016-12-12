@@ -46,7 +46,7 @@ import com.enonic.xp.util.Exceptions;
 @Path(ResourceConstants.REST_ROOT + "content/image")
 @Produces("image/*")
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public final class ContentImageResource
     implements JaxRsComponent
 {

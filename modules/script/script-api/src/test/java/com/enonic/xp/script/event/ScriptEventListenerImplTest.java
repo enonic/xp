@@ -25,9 +25,10 @@ public class ScriptEventListenerImplTest
         final Consumer<Object> consumer = o -> event = o;
 
         this.listener = new ScriptEventListenerBuilder().
-            pattern( "app*" ).
+            typePattern( "app*" ).
             listener( consumer ).
             application( ApplicationKey.from( "foo.bar" ) ).
+            localOnly( true ).
             build();
     }
 
@@ -73,13 +74,12 @@ public class ScriptEventListenerImplTest
     @Test
     public void testException()
     {
-        final Consumer<Object> consumer = o ->
-        {
+        final Consumer<Object> consumer = o -> {
             throw new RuntimeException();
         };
 
         this.listener = new ScriptEventListenerBuilder().
-            pattern( "app*" ).
+            typePattern( "app*" ).
             listener( consumer ).
             application( ApplicationKey.from( "foo.bar" ) ).
             build();

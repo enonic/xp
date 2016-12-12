@@ -220,6 +220,53 @@ public class FindNodesByQueryCommandTest_func_fulltext
         assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
+
+    @Test
+    public void fulltext_fuzzy_2()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", "Levenshtein" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        final PropertyTree data2 = new PropertyTree();
+        data2.addString( "title", "fisk" );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            name( "my-node-2" ).
+            parent( NodePath.ROOT ).
+            data( data2 ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        refresh();
+
+        final NodeQuery query = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( "title" ), ValueExpr.string( "levvenstein~2 fsik~2" ),
+                                   ValueExpr.string( "OR" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 2, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
+        assertTrue( result.getNodeIds().contains( node2.id() ) );
+    }
+
+
     @Test
     public void negate()
         throws Exception

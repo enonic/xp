@@ -23,9 +23,7 @@ public class GetNodeByIdCommand
     {
         final Context context = ContextAccessor.current();
 
-        final Node node = this.storageService.get( id, InternalContext.from( context ) );
-
-        return node;
+        return this.nodeStorageService.get( id, InternalContext.from( context ) );
     }
 
     public static Builder create()

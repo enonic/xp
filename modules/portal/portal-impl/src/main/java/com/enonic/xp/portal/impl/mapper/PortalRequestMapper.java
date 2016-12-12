@@ -36,7 +36,7 @@ public final class PortalRequestMapper
 
         if ( this.request.getBranch() != null )
         {
-            gen.value( "branch", this.request.getBranch().getName() );
+            gen.value( "branch", this.request.getBranch().getValue() );
         }
 
         serializeBody( gen );

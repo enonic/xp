@@ -15,7 +15,7 @@ public class StoreBranchDocumentIdTest
         final BranchDocumentId id = BranchDocumentId.from( "myBlobKey_myBranch" );
         assertEquals( "myBlobKey_myBranch", id.getValue() );
         assertEquals( "myBlobKey", id.getNodeId().toString() );
-        assertEquals( "myBranch", id.getBranch().getName() );
+        assertEquals( "myBranch", id.getBranch().getValue() );
     }
 
     @Test
@@ -25,7 +25,7 @@ public class StoreBranchDocumentIdTest
         final BranchDocumentId branchDocumentId = BranchDocumentId.from( "_a_myBranch" );
 
         assertEquals( "_a", branchDocumentId.getNodeId().toString() );
-        assertEquals( "myBranch", branchDocumentId.getBranch().getName() );
+        assertEquals( "myBranch", branchDocumentId.getBranch().getValue() );
     }
 
     @Test(expected = IllegalArgumentException.class)

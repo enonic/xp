@@ -25,7 +25,7 @@ module api.content.form.inputtype.contentselector {
             request.setAllowedContentPaths(builder.allowedContentPaths);
             request.setRelationshipType(builder.relationshipType);
         }
-        
+
         protected getRequest(): ContentSelectorQueryRequest {
             return this.request;
         }

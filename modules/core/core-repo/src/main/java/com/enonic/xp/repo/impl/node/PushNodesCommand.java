@@ -139,7 +139,7 @@ public class PushNodesCommand
 
         final PushNodeEntries pushNodeEntries = publishBuilder.build();
         builder.setPushNodeEntries( pushNodeEntries );
-        this.storageService.push( pushNodeEntries, pushListener, InternalContext.from( context ) );
+        this.nodeStorageService.push( pushNodeEntries, pushListener, InternalContext.from( context ) );
 
         return builder;
     }
@@ -156,7 +156,7 @@ public class PushNodesCommand
     {
         return CompareNodesCommand.create().
             nodeIds( NodeIds.from( nodeBranchEntries.getKeys() ) ).
-            storageService( this.storageService ).
+            storageService( this.nodeStorageService ).
             target( this.target ).
             build().
             execute();
@@ -189,12 +189,12 @@ public class PushNodesCommand
             execute();
 
         final NodeBranchEntries childEntries =
-            this.storageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
+            this.nodeStorageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
 
         for ( final NodeBranchEntry child : childEntries )
         {
             final NodeBranchEntry targetNodeEntry =
-                this.storageService.getBranchNodeVersion( child.getNodeId(), InternalContext.from( targetContext ) );
+                this.nodeStorageService.getBranchNodeVersion( child.getNodeId(), InternalContext.from( targetContext ) );
 
             if ( targetNodeEntry != null )
             {
@@ -203,7 +203,7 @@ public class PushNodesCommand
                     build().
                     execute();
 
-                this.storageService.move( MoveNodeParams.create().
+                this.nodeStorageService.move( MoveNodeParams.create().
                     updateMetadataOnly( true ).
                     node( childNode ).
                     build(), InternalContext.from( targetContext ) );
@@ -217,7 +217,7 @@ public class PushNodesCommand
 
     private boolean targetAlreadyExists( final NodePath nodePath, final NodeComparisons comparisons, final Context currentContext )
     {
-        //Checks if a node exist 
+        //Checks if a node exist
         final Context targetContext = createTargetContext( currentContext );
         final NodeId nodeId = targetContext.callWith( () -> GetNodeIdByPathCommand.create( this ).
             nodePath( nodePath ).

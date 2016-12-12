@@ -15,7 +15,7 @@ public class SearchStorageType
 
     public static StorageType from( final Branch branch )
     {
-        return new SearchStorageType( branch.getName() );
+        return new SearchStorageType( branch.getValue() );
     }
 
     @Override

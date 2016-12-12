@@ -28,7 +28,7 @@ import com.enonic.xp.security.RoleKeys;
 @Path(ResourceConstants.REST_ROOT + "tool")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public class AdminToolResource
     implements JaxRsComponent
 {

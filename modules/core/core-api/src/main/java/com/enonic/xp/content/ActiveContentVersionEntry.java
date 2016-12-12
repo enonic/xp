@@ -38,7 +38,7 @@ public class ActiveContentVersionEntry
     {
         if ( this.contentVersion.equals( o.contentVersion ) )
         {
-            return this.branch.getName().compareTo( o.branch.getName() );
+            return this.branch.getValue().compareTo( o.branch.getValue() );
         }
 
         return this.contentVersion.compareTo( o.contentVersion );

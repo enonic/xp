@@ -19,7 +19,7 @@ module api.content.page.region {
         protected createRequest(): GetPartDescriptorsByApplicationsRequest {
             return new GetPartDescriptorsByApplicationsRequest();
         }
-        
+
         setApplicationKeys(applicationKeys: ApplicationKey[]) {
             this.request.setApplicationKeys(applicationKeys);
         }

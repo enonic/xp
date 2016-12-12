@@ -132,6 +132,7 @@ public final class SecurityServiceImpl
     public void initialize()
     {
         initializeSuPassword();
+
         if ( indexService.isMaster() )
         {
             new SecurityInitializer( this, this.nodeService ).initialize();

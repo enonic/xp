@@ -7,7 +7,7 @@ module api.form {
 
         protected formItemViews: FormItemView[] = [];
 
-        protected validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
+        protected validityChangedListeners: {(event: RecordingValidityChangedEvent): void}[] = [];
 
         protected removeButton: api.dom.AEl;
 

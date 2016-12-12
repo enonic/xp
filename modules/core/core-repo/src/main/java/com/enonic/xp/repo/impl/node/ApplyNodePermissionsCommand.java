@@ -12,7 +12,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.repo.impl.search.SearchService;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -61,7 +61,7 @@ final class ApplyNodePermissionsCommand
 
         final FindNodesByParentParams findByParentParams = FindNodesByParentParams.create().
             parentPath( parent.path() ).
-            size( SearchService.GET_ALL_SIZE_FLAG ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             build();
 
         final FindNodesByParentResult result = doFindNodesByParent( findByParentParams );

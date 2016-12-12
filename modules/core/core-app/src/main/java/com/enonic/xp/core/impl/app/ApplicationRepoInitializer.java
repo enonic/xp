@@ -12,7 +12,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.system.SystemRepoInitializer;
 
 class ApplicationRepoInitializer
 {
@@ -30,9 +29,6 @@ class ApplicationRepoInitializer
     public final void initialize()
     {
         runAsAdmin( () -> {
-
-            new SystemRepoInitializer( this.nodeService ).initialize();
-
             if ( isInitialized() )
             {
                 LOG.info( "System-repo [applications] layout already initialized" );

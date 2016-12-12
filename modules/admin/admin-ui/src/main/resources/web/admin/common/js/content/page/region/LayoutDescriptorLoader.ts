@@ -10,7 +10,7 @@ module api.content.page.region {
             this.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
         }
 
-        filterFn(descriptor:LayoutDescriptor) {
+        filterFn(descriptor: LayoutDescriptor) {
             return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
         }
 

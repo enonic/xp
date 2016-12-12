@@ -21,7 +21,7 @@ public class BranchDocumentId
         Preconditions.checkNotNull( nodeId );
         Preconditions.checkNotNull( branch );
 
-        this.value = nodeId + SEPARATOR + branch.getName();
+        this.value = nodeId + SEPARATOR + branch.getValue();
         this.nodeId = nodeId;
         this.branch = branch;
     }

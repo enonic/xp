@@ -14,13 +14,9 @@ module api.content.page.region {
         protected loader: LayoutDescriptorLoader;
 
         constructor() {
-            super(new RichComboBoxBuilder<LayoutDescriptor>().
-                        setIdentifierMethod("getKey").
-                        setOptionDisplayValueViewer(new LayoutDescriptorViewer()).
-                        setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
-                        setMaximumOccurrences(1).
-                        setNextInputFocusWhenMaxReached(false).
-                        setNoOptionsText("No layouts available"));
+            super(new RichComboBoxBuilder<LayoutDescriptor>().setIdentifierMethod("getKey").setOptionDisplayValueViewer(
+                new LayoutDescriptorViewer()).setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).setMaximumOccurrences(
+                1).setNextInputFocusWhenMaxReached(false).setNoOptionsText("No layouts available"));
         }
 
         protected createLoader(): LayoutDescriptorLoader {

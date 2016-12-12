@@ -80,6 +80,7 @@ public abstract class BundleBasedTest
 
         if ( isApp )
         {
+            bundle.set( ApplicationHelper.X_BUNDLE_TYPE, "application" );
             bundle.add( "site/site.xml", getClass().getResource( "/myapp/site/site.xml" ) );
         }
 

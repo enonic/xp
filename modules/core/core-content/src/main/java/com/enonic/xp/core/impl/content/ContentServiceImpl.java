@@ -93,6 +93,7 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -125,6 +126,8 @@ public class ContentServiceImpl
 
     private NodeService nodeService;
 
+    private RepositoryService repositoryService;
+
     private EventPublisher eventPublisher;
 
     private MediaInfoService mediaInfoService;
@@ -156,7 +159,7 @@ public class ContentServiceImpl
     {
         if ( this.indexService.isMaster() )
         {
-            new ContentInitializer( this.nodeService ).initialize();
+            new ContentInitializer( this.nodeService, this.repositoryService ).initialize();
         }
     }
 
@@ -809,6 +812,12 @@ public class ContentServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
     }
 
     @Reference

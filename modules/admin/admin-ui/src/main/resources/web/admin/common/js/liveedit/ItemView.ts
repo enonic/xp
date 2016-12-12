@@ -147,9 +147,9 @@ module api.liveedit {
             this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
             this.itemViewIdProducer = builder.itemViewIdProducer;
             this.contextMenuTitle = builder.contextMenuTitle;
-            
+
             this.addClassEx("item-view");
-            
+
             this.contextMenuActions = [];
             
             this.setDraggable(true);
@@ -188,7 +188,7 @@ module api.liveedit {
         protected addContextMenuActions(actions: api.ui.Action[]) {
             this.contextMenuActions = this.contextMenuActions.concat(actions);
         }
-        
+
         protected setPlaceholder(placeholder: ItemViewPlaceholder) {
             this.placeholder = placeholder;
             this.appendChild(placeholder);
@@ -197,7 +197,7 @@ module api.liveedit {
         public setContextMenuTitle(title: ItemViewContextMenuTitle) {
             this.contextMenuTitle = title;
         }
-        
+
         private bindMouseListeners() {
             this.mouseEnterListener = this.handleMouseEnter.bind(this);
             this.onMouseEnter(this.mouseEnterListener);
@@ -265,7 +265,7 @@ module api.liveedit {
                 }
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
-/*
+            /*
             this.pageItemViewAddedListener = (event) => {
                 if (this.isSelected()) {
                     this.deselect();
@@ -276,7 +276,7 @@ module api.liveedit {
             this.onRemoved(() => {
                 pageView.unItemViewAdded(this.pageItemViewAddedListener);
             });
-            */
+             */
         }
 
         protected unbindMouseListeners() {

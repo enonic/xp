@@ -5,21 +5,21 @@ import java.util.Map;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.storage.StorageService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 public class NodeDeletedHandler
     extends AbstractNodeEventHandler
 {
 
     @Override
-    public void handleEvent( final StorageService storageService, final Event event, final InternalContext context )
+    public void handleEvent( final NodeStorageService nodeStorageService, final Event event, final InternalContext context )
     {
         final List<Map<Object, Object>> valueMapList = getValueMapList( event );
 
         for ( final Map<Object, Object> map : valueMapList )
         {
             final InternalContext nodeContext = createNodeContext( map, context );
-            storageService.handleNodeDeleted( getId( map ), getPath( map ), nodeContext );
+            nodeStorageService.handleNodeDeleted( getId( map ), getPath( map ), nodeContext );
         }
     }
 }

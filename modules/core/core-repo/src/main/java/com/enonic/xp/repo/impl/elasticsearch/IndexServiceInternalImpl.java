@@ -14,6 +14,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -30,12 +31,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.index.IndexException;
+import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.index.IndexSettings;
+import com.enonic.xp.repo.impl.index.UpdateIndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.IndexException;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
 
@@ -95,7 +97,7 @@ public class IndexServiceInternalImpl
     {
         final GetRequest request = new GetRequestBuilder( this.client ).setId( nodeId.toString() ).
             setIndex( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
-            setType( source.getName() ).
+            setType( source.getValue() ).
             request();
 
         final GetResponse response = this.client.get( request ).actionGet();
@@ -110,7 +112,7 @@ public class IndexServiceInternalImpl
         final IndexRequest req = Requests.indexRequest().
             id( nodeId.toString() ).
             index( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
-            type( target.getName() ).
+            type( target.getValue() ).
             source( sourceValues ).
             refresh( false ); //TODO Temporary fix. Should be corrected by XP-1986
 
@@ -119,12 +121,14 @@ public class IndexServiceInternalImpl
     }
 
     @Override
-    public void createIndex( final String indexName, final IndexSettings settings )
+    public void createIndex( final com.enonic.xp.repo.impl.index.CreateIndexRequest request )
     {
+        final String indexName = request.getIndexName();
+        final IndexSettings indexSettings = request.getIndexSettings();
         LOG.info( "creating index {}", indexName );
 
         CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
-        createIndexRequest.settings( settings.getSettingsAsString() );
+        createIndexRequest.settings( indexSettings.getAsString() );
 
         try
         {
@@ -133,7 +137,8 @@ public class IndexServiceInternalImpl
                 create( createIndexRequest ).
                 actionGet( CREATE_INDEX_TIMEOUT );
 
-            LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
+            LOG.info( "Index {} created with status {}, settings {}", indexName, createIndexResponse.isAcknowledged(),
+                      indexSettings.getAsString() );
         }
         catch ( ElasticsearchException e )
         {
@@ -141,8 +146,9 @@ public class IndexServiceInternalImpl
         }
     }
 
+
     @Override
-    public void updateIndex( final String indexName, final IndexSettings settings )
+    public void updateIndex( final String indexName, final UpdateIndexSettings settings )
     {
         LOG.info( "updating index {}", indexName );
 
@@ -165,17 +171,18 @@ public class IndexServiceInternalImpl
     }
 
     @Override
-    public void applyMapping( final String indexName, final IndexType indexType, final String mapping )
+    public void applyMapping( final ApplyMappingRequest request )
     {
+        final String indexName = request.getIndexName();
         LOG.info( "Apply mapping for index {}", indexName );
 
         PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).
-            type( indexType.equals( IndexType.SEARCH ) ? ES_DEFAULT_INDEX_TYPE_NAME : indexType.getName() ).
-            source( mapping );
+            type( request.getIndexType().isDynamicTypes() ? ES_DEFAULT_INDEX_TYPE_NAME : request.getIndexType().getName() ).
+            source( request.getMapping().getAsString() );
 
         try
         {
-            this.client.admin().
+            final PutMappingResponse response = this.client.admin().
                 indices().
                 putMapping( mappingRequest ).
                 actionGet( APPLY_MAPPING_TIMEOUT );
@@ -209,8 +216,6 @@ public class IndexServiceInternalImpl
 
     private ClusterHealthStatus doGetClusterHealth( final String timeout, final String... indexNames )
     {
-        LOG.info( "Executing ClusterHealtRequest" );
-
         ClusterHealthRequest request = indexNames != null ? new ClusterHealthRequest( indexNames ) : new ClusterHealthRequest();
 
         request.waitForYellowStatus().timeout( timeout );
@@ -219,7 +224,7 @@ public class IndexServiceInternalImpl
         final ClusterHealthResponse response = this.client.admin().cluster().health( request ).actionGet();
         timer.stop();
 
-        LOG.info(
+        LOG.debug(
             "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
             response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
             response.getActiveShards(), response.getIndices().keySet() );

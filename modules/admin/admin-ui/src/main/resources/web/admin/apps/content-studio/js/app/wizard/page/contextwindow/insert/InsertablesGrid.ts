@@ -26,26 +26,15 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
 
 
     protected createOptions(): api.ui.grid.GridOptions<any> {
-        return new api.ui.grid.GridOptionsBuilder().
-                    setHideColumnHeaders(true).
-                    setRowHeight(50).
-                    setHeight(400).
-                    setWidth(320).
-                    build();
+        return new api.ui.grid.GridOptionsBuilder().setHideColumnHeaders(true).setRowHeight(50).setHeight(400).setWidth(320).build();
     }
 
     protected createColumns(): api.ui.grid.GridColumn<Insertable>[] {
         return [
-            new api.ui.grid.GridColumnBuilder().
-                setName("component").
-                setField("component").
-                setId("component").
-                setWidth(320).
-                setCssClass("grid-row").
-                setFormatter((row, cell, value, columnDef, dataContext) => {
-                    return this.buildRow(row, cell, value, columnDef, <Insertable>dataContext).toString();
-                }).
-                build()
+            new api.ui.grid.GridColumnBuilder().setName("component").setField("component").setId("component").setWidth(320).setCssClass(
+                "grid-row").setFormatter((row, cell, value, columnDef, dataContext) => {
+                return this.buildRow(row, cell, value, columnDef, <Insertable>dataContext).toString();
+            }).build()
         ];
     }
 

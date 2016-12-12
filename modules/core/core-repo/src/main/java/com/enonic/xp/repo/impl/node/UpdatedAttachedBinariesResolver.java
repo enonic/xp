@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
@@ -23,6 +21,7 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBinaryReferenceException;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
 
@@ -32,7 +31,7 @@ class UpdatedAttachedBinariesResolver
 
     private final EditableNode editableNode;
 
-    private final BlobStore blobStore;
+    private final BinaryService binaryService;
 
     private final BinaryAttachments binaryAttachments;
 
@@ -44,7 +43,7 @@ class UpdatedAttachedBinariesResolver
     {
         persistedNode = builder.persistedNode;
         editableNode = builder.editableNode;
-        blobStore = builder.blobStore;
+        binaryService = builder.binaryService;
         binaryAttachments = builder.binaryAttachments;
 
         final Set<BinaryReference> referencesInEditedNode = new ReferenceResolver().resolve( this.editableNode.data );
@@ -125,9 +124,8 @@ class UpdatedAttachedBinariesResolver
 
     private void storeAndAttachBinary( final Map<BinaryReference, AttachedBinary> resolved, final BinaryAttachment newBinaryAttachment )
     {
-        final BlobRecord blob = this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, newBinaryAttachment.getByteSource() );
-        resolved.put( newBinaryAttachment.getReference(),
-                      new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey().toString() ) );
+        final AttachedBinary attachedBinary = binaryService.store( newBinaryAttachment );
+        resolved.put( newBinaryAttachment.getReference(), attachedBinary );
     }
 
     static Builder create()
@@ -141,7 +139,7 @@ class UpdatedAttachedBinariesResolver
 
         private EditableNode editableNode;
 
-        private BlobStore blobStore;
+        private BinaryService binaryService;
 
         private BinaryAttachments binaryAttachments;
 
@@ -161,9 +159,9 @@ class UpdatedAttachedBinariesResolver
             return this;
         }
 
-        Builder binaryBlobStore( BlobStore blobStore )
+        Builder binaryService( final BinaryService binaryService )
         {
-            this.blobStore = blobStore;
+            this.binaryService = binaryService;
             return this;
         }
 

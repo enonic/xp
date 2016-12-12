@@ -28,7 +28,7 @@ public class BranchStorageRequestFactoryTest
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             build(), InternalContext.create().
             branch( Branch.from( "myBranch" ) ).
-            repositoryId( RepositoryId.from( "myRepoId" ) ).
+            repositoryId( RepositoryId.from( "my-repo-id" ) ).
             build() );
 
         assertEquals( storeRequest.getId(), "nodeId_myBranch" );

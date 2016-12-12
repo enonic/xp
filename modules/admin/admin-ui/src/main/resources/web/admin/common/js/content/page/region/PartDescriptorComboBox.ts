@@ -15,13 +15,9 @@ module api.content.page.region {
         protected loader: PartDescriptorLoader;
 
         constructor() {
-            super(new RichComboBoxBuilder<PartDescriptor>().
-                    setIdentifierMethod("getKey").
-                    setOptionDisplayValueViewer(new PartDescriptorViewer()).
-                    setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
-                    setMaximumOccurrences(1).
-                    setNextInputFocusWhenMaxReached(false).
-                    setNoOptionsText("No parts available"));
+            super(new RichComboBoxBuilder<PartDescriptor>().setIdentifierMethod("getKey").setOptionDisplayValueViewer(
+                new PartDescriptorViewer()).setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).setMaximumOccurrences(
+                1).setNextInputFocusWhenMaxReached(false).setNoOptionsText("No parts available"));
         }
 
         loadDescriptors(applicationKeys: ApplicationKey[]) {
@@ -29,7 +25,7 @@ module api.content.page.region {
 
             super.load();
         }
-        
+
         protected createLoader(): PartDescriptorLoader {
             return new PartDescriptorLoader();
         }

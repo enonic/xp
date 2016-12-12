@@ -1,15 +1,13 @@
 package com.enonic.xp.admin.impl.app;
 
-import java.io.InputStream;
 import java.net.URL;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Response;
-
+import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebResponse;
 
 final class ResourceHandler
 {
@@ -17,49 +15,51 @@ final class ResourceHandler
 
     private ResourceLocator resourceLocator;
 
-    Response handle( final String path )
+    WebResponse handle( final String path )
         throws Exception
     {
         return handle( path, false );
     }
 
-    Response handle( final String path, final boolean caching )
+    WebResponse handle( final String path, final boolean caching )
         throws Exception
     {
-        final Response.ResponseBuilder builder = doHandle( path );
+        final WebResponse.Builder builder = doHandle( path );
+        if ( builder == null )
+        {
+            return WebResponse.create().status( HttpStatus.NOT_FOUND ).build();
+        }
 
         if ( caching && this.resourceLocator.shouldCache() )
         {
-            final CacheControl control = new CacheControl();
-            control.setMaxAge( MAX_CACHE_AGE );
-            builder.cacheControl( control );
+            builder.header( "Cache-Control", "public, no-transform, max-age=" + MAX_CACHE_AGE );
         }
 
         return builder.build();
     }
 
-    private Response.ResponseBuilder doHandle( final String path )
+    private WebResponse.Builder doHandle( final String path )
         throws Exception
     {
-        final InputStream in = findResource( path );
-        if ( in != null )
+        final byte[] bytes = findResource( path );
+        if ( bytes != null )
         {
-            return serveResource( path, in );
+            return serveResource( path, bytes );
         }
         else
         {
-            throw new NotFoundException();
+            return null;
         }
     }
 
-    private Response.ResponseBuilder serveResource( final String path, final InputStream in )
+    private WebResponse.Builder serveResource( final String path, final byte[] bytes )
         throws Exception
     {
         final MediaType mediaType = MediaTypes.instance().fromFile( path );
-        return Response.ok( in ).type( mediaType.toString() );
+        return WebResponse.create().status( HttpStatus.OK ).contentType( mediaType ).body( bytes );
     }
 
-    private InputStream findResource( final String path )
+    private byte[] findResource( final String path )
         throws Exception
     {
         final String resourcePath = "/web" + ( path.startsWith( "/" ) ? path : ( "/" + path ) );
@@ -70,7 +70,7 @@ final class ResourceHandler
             return null;
         }
 
-        return url.openStream();
+        return Resources.toByteArray( url );
     }
 
     void setResourceLocator( final ResourceLocator resourceLocator )

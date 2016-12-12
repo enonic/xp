@@ -2,7 +2,7 @@ module api.ui.menu {
 
     export class TreeMenuItem extends api.dom.DdDtEl {
         private action: api.ui.Action;
-        
+
         constructor(action: api.ui.Action, cls: string = "", expanded: boolean = false) {
             super(action.hasParentAction() ? "dd" : "dt");
             

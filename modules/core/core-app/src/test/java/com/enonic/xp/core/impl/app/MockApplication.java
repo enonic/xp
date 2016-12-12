@@ -154,4 +154,10 @@ public class MockApplication
     {
         this.config = config;
     }
+
+    @Override
+    public boolean isSystem()
+    {
+        return false;
+    }
 }

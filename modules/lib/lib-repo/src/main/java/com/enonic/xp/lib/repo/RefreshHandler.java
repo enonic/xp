@@ -7,7 +7,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -20,6 +19,8 @@ public final class RefreshHandler
 
     private String repoId;
 
+    private String branch;
+
     public void setMode( final String mode )
     {
         this.mode = mode;
@@ -30,17 +31,31 @@ public final class RefreshHandler
         this.repoId = repoId;
     }
 
+    public void setBranch( final String branch )
+    {
+        this.branch = branch;
+    }
+
     public void refresh()
     {
-        if ( repoId != null && !repoId.trim().isEmpty() )
+        createContext().runWith( this::doRefresh );
+    }
+
+    private Context createContext()
+    {
+        final ContextBuilder builder = ContextBuilder.from( ContextAccessor.current() );
+
+        if ( this.branch != null )
         {
-            Context context = ContextBuilder.from( ContextAccessor.current() ).repositoryId( RepositoryId.from( repoId ) ).build();
-            context.runWith( this::doRefresh );
+            builder.branch( branch );
         }
-        else
+
+        if ( this.repoId != null )
         {
-            doRefresh();
+            builder.repositoryId( repoId );
         }
+
+        return builder.build();
     }
 
     private void doRefresh()

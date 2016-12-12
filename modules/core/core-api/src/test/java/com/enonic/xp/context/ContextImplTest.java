@@ -113,7 +113,7 @@ public class ContextImplTest
         final ContextImpl context = createContext();
         assertNull( context.getRepositoryId() );
 
-        final RepositoryId value = RepositoryId.from( "repoId" );
+        final RepositoryId value = RepositoryId.from( "repo-id" );
         context.getLocalScope().setAttribute( value );
         assertSame( value, context.getRepositoryId() );
     }

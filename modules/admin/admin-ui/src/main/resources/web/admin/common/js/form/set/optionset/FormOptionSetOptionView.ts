@@ -271,7 +271,8 @@ module api.form {
             let thisElSelector = "div[id='" + this.getEl().getId() + "']";
             this.expand();
             this.enableFormItems();
-            api.dom.FormEl.moveFocusToNextFocusable(input, thisElSelector + " input, " + thisElSelector + " select, " + thisElSelector + " textarea");
+            api.dom.FormEl.moveFocusToNextFocusable(input,
+                thisElSelector + " input, " + thisElSelector + " select, " + thisElSelector + " textarea");
             this.addClass("selected");
         }
 

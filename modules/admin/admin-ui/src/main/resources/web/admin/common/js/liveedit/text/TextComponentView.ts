@@ -52,10 +52,7 @@ module api.liveedit.text {
         private editableSourceCode: boolean;
 
         constructor(builder: TextComponentViewBuilder) {
-            super(builder.
-                setPlaceholder(new TextPlaceholder()).
-                setViewer(new TextComponentViewer()).
-                setComponent(builder.component));
+            super(builder.setPlaceholder(new TextPlaceholder()).setViewer(new TextComponentViewer()).setComponent(builder.component));
 
             this.addTextContextMenuActions();
             this.lastClicked = 0;
@@ -355,8 +352,8 @@ module api.liveedit.text {
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
-                    if (!!this.component.getText()) {
-                        this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.component.getText()));
+                if (!!this.component.getText()) {
+                    this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.component.getText()));
                     } else {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                         this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
@@ -467,7 +464,7 @@ module api.liveedit.text {
             }
             return this.rootElement.giveFocus();
         }
-        
+
         private addTextContextMenuActions() {
             this.addContextMenuActions([
                 new api.ui.Action('Edit').onExecuted(() => {
