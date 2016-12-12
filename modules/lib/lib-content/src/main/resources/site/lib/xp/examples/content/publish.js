@@ -7,6 +7,10 @@ var result = contentLib.publish({
     keys: ['/mysite/somepage', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
     sourceBranch: 'draft',
     targetBranch: 'master',
+    schedule: {
+        from: new Date().toISOString(),
+        to: '2018-01-01T13:37:00.000Z'
+    },
     includeChildren: true,
     includeDependencies: false
 });
