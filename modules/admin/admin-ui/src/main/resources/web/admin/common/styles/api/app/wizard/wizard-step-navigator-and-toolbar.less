@@ -1,19 +1,7 @@
 .wizard-step-navigator-and-toolbar {
   height: 40px;
-  padding-left: 95px;
   background-color: @admin-bg-light-gray;
-/*
-  &:hover {
-    box-shadow: 0px -5px 10px -3px rgba(0, 0, 0, 0.3);
-  }
-*/
-  > * {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    vertical-align: middle;
-  }
+  position: relative;
 
   &.no-dropdown-hover {
     .fold-button .@{_COMMON_PREFIX}dropdown {
@@ -24,6 +12,12 @@
   &.minimized {
     .fold-button {
       display: inline-flex;
+    }
+  }
+
+  &.has-help-text-button {
+    .fold-button, .wizard-step-navigator {
+      padding-right: 46px;
     }
   }
 
@@ -48,11 +42,14 @@
     display: none;
     position: relative;
     height: 100%;
-    width: calc(~'100% - 42px');
-    padding: 0 0 0 22px;  // Same as width of the help button on the right
+    width: 100%;
+    padding: 0;
+    padding-left: 22px;  // Same as width of the help button on the right
     border: none;
     background-color: @admin-bg-light-gray;
     vertical-align: middle;
+    align-items: center;
+    justify-content: center;
 
     &:after {
       display: none;
@@ -73,11 +70,12 @@
 
     .fold-label {
       margin: 0 auto;
+      .ellipsis();
     }
 
     .@{_COMMON_PREFIX}dropdown {
       top: 40px;
-      width: calc(~'100% + 42px');
+      width: 100%;
       box-sizing: border-box;
       box-shadow: 0px 5px 10px -3px rgba(0, 0, 0, 0.3);
       border-top: 1px solid lightgray;
@@ -133,30 +131,23 @@
     border-top: 1px solid @admin-medium-gray-border;
 
     .box-shadow(-3px 3px 6px 0 @admin-toolbar-shadow);
+
+    .help-text-button {
+      padding-right: 38px;
+    }
   }
 
   &:not(.scroll-stick) {
     .fold-button:hover:not(:disabled) {
       box-shadow: -2px -5px 10px -3px rgba(0, 0, 0, 0.3);
-
-      + .help-text-button {
-        box-shadow: -6px -5px 10px -3px rgba(0, 0, 0, 0.3);
-      }
-    }
-  }
-
-  &.pre-scroll-stick {
-    .wizard-step-navigator, .fold-button {
-      width: calc(~'100% - 72px');
-    }
-
-    .fold-button .@{_COMMON_PREFIX}dropdown {
-      width: calc(~'100% + 72px');
     }
   }
 
   .help-text-button {
-    padding: 0 10px;
+    position: absolute;
+    right: 0px;
+    top: 9px;
+    padding: 0 14px 0 10px;
     overflow: hidden;
     z-index: @z-index-mask - 1;
     cursor: pointer;

@@ -37,6 +37,7 @@ module api.app.wizard {
         setupHelpTextToggleButton(): api.dom.DivEl {
             this.helpTextToggleButton = new api.dom.DivEl("help-text-button");
 
+            this.addClass("has-help-text-button");
             this.appendChild(this.helpTextToggleButton);
             this.checkAndMinimize();
 
