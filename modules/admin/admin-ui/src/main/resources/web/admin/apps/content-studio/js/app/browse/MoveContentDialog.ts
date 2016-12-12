@@ -74,6 +74,9 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
                 this.getCancelAction().execute();
             }
         });
+        this.destinationSearchInput.onOptionSelected(() => {
+            this.getButtonRow().focusDefaultAction();
+        });
     }
 
     private initMoveAction() {
@@ -84,7 +87,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             var parentContent = this.getParentContent();
             this.moveContent(parentContent);
-        }));
+        }), true);
     }
 
     private moveContent(parentContent: api.content.ContentSummary) {
