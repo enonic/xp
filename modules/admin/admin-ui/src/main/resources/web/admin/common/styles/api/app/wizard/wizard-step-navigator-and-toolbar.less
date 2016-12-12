@@ -60,11 +60,9 @@
 
     &:hover:not(:disabled) {
       background-color: @admin-white;
-      box-shadow: -2px -5px 10px -3px rgba(0, 0, 0, 0.3);
 
       + .help-text-button {
         background-color: @admin-white;
-        box-shadow: -6px -5px 10px -3px rgba(0, 0, 0, 0.3);
       }
     }
 
@@ -96,6 +94,7 @@
             color: @admin-font-gray2;
             .transition(none);
             line-height: 1em;
+            padding-left: 15px;
           }
 
           &.active {
@@ -134,6 +133,26 @@
     border-top: 1px solid @admin-medium-gray-border;
 
     .box-shadow(-3px 3px 6px 0 @admin-toolbar-shadow);
+  }
+
+  &:not(.scroll-stick) {
+    .fold-button:hover:not(:disabled) {
+      box-shadow: -2px -5px 10px -3px rgba(0, 0, 0, 0.3);
+
+      + .help-text-button {
+        box-shadow: -6px -5px 10px -3px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+
+  &.pre-scroll-stick {
+    .wizard-step-navigator, .fold-button {
+      width: calc(~'100% - 72px');
+    }
+
+    .fold-button .@{_COMMON_PREFIX}dropdown {
+      width: calc(~'100% + 72px');
+    }
   }
 
   .help-text-button {
