@@ -6,7 +6,9 @@ import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RenameNodeParams;
 
 public final class RenameNodeCommand
@@ -26,6 +28,16 @@ public final class RenameNodeCommand
         final NodeId nodeId = params.getNodeId();
 
         final Node nodeToBeRenamed = doGetById( nodeId );
+
+        if ( nodeToBeRenamed == null )
+        {
+            throw new NodeNotFoundException( "cannot rename node with id [" + nodeId + "]" );
+        }
+
+        if ( nodeToBeRenamed.isRoot() )
+        {
+            throw new OperationNotPermittedException( "Not allowed to rename root-node" );
+        }
 
         final NodePath parentPath = verifyNodeNotExistAtNewPath( nodeToBeRenamed );
 

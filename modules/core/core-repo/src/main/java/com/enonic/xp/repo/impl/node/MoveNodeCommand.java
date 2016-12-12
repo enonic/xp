@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
@@ -54,6 +55,16 @@ public class MoveNodeCommand
     public MoveNodeResult execute()
     {
         final Node existingNode = doGetById( nodeId );
+
+        if ( existingNode == null )
+        {
+            throw new NodeNotFoundException( "cannot move node with id [" + nodeId + "]" );
+        }
+
+        if ( existingNode.isRoot() )
+        {
+            throw new OperationNotPermittedException( "Not allowed to move root-node" );
+        }
 
         final NodeName newNodeName = resolveNodeName( existingNode );
 

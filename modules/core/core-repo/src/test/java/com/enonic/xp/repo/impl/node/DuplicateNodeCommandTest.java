@@ -16,6 +16,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
@@ -326,6 +327,14 @@ public class DuplicateNodeCommandTest
         assertTrue( duplicateParent.getChildOrder().isManualOrder() );
 
         assertOrder( duplicateParent, "child1", "child3", "child2" );
+    }
+
+
+    @Test(expected = OperationNotPermittedException.class)
+    public void cannot_duplicate_root_node()
+        throws Exception
+    {
+        duplicateNode( getNode( Node.ROOT_UUID ) );
     }
 
     private void assertOrder( final Node parentNode, final String first, final String second, final String third )
