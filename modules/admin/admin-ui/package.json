@@ -5,9 +5,9 @@
   "scripts": {
     "postinstall": "gulp resources",
     "prepush": "runwith gulp/scripts/lint.js --prop=diff",
-    "lint": "tslint src/main/resources/web/admin//**/*.ts || exit 0",
-    "fix": "tslint --fix src/main/resources/web/admin//**/*.ts || exit 0",
-    "prelint": "runwith gulp/scripts/lint.js --prop=diff"
+    "lint": "tslint src/main/resources/web/admin/**/*.ts --exclude **/*.d.ts || exit 0",
+    "fix": "tslint src/main/resources/web/admin/**/*.ts --fix --exclude **/*.d.ts || exit 0",
+    "quicklint": "runwith gulp/scripts/lint.js --prop=diff"
   },
   "devDependencies": {
     "deep-assign": "^2.0.0",
