@@ -30,7 +30,7 @@ task ciLint( type: NpmTask, dependsOn: npmInstall ) {
     args = ['run', 'ci-lint']
 }
 
-task gulpAll( type: GulpTask, dependsOn: ciLint ) {
+task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
     description = 'Build admin UI resources (ts, css, etc).'
     inputs.files fileTree( dir: 'src/main/resources', exclude: '**/_all.*' )
     outputs.files fileTree( dir: 'src/main/resources', include: '**/_all.*' )
@@ -43,4 +43,5 @@ task copyAll( type: Copy, dependsOn: gulpAll ) {
 }
 
 jar.dependsOn += copyAll
+jar.dependsOn += ciLint
 clean.dependsOn += cleanSourceFiles
