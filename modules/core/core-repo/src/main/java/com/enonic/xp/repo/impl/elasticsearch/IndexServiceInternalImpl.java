@@ -114,7 +114,7 @@ public class IndexServiceInternalImpl
             index( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
             type( target.getValue() ).
             source( sourceValues ).
-            refresh( false ); //TODO Temporary fix. Should be corrected by XP-1986
+            refresh( false );
 
         this.client.index( req ).actionGet();
 
