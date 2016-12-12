@@ -34,6 +34,6 @@ module api.content.form.inputtype.publish {
             return new api.form.InputTypeName("PublishToFuture", false);
         }
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("PublishToFuture", PublishTo));
+    api.form.inputtype.InputTypeManager.register(new api.Class("PublishToFuture", PublishToFuture));
 
 }
