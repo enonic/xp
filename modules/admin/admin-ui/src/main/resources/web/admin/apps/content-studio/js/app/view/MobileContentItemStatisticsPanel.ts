@@ -11,7 +11,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import StringHelper = api.util.StringHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-
 import FoldButton = api.ui.toolbar.FoldButton;
 
 export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
@@ -41,6 +40,28 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
         this.initDetailsPanelToggleButton();
 
+        this.initListeners();
+    }
+
+    private initListeners() {
+
+        let reloadItemPublishStateChange = (contents: ContentSummaryAndCompareStatus[]) => {
+            let thisContentId = this.getItem().getModel().getId();
+
+            let content: ContentSummaryAndCompareStatus = contents.filter((content) => {
+                return thisContentId == content.getId();
+            })[0];
+
+            if (!!content) {
+                this.setItem(ViewItem.fromContentSummaryAndCompareStatus(content));
+            }
+        };
+
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+
+        serverEvents.onContentPublished(reloadItemPublishStateChange);
+        serverEvents.onContentUnpublished(reloadItemPublishStateChange);
+
         this.onRendered(() => {
             this.slideAllOut();
         });
@@ -49,7 +70,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
             this.slideAllOut();
         });
     }
-
+    
     private createFoldButton(browseActions: ContentTreeGridActions) {
         this.foldButton = new MobilePreviewFoldButton([
             browseActions.DELETE_CONTENT,

@@ -132,8 +132,9 @@
   .mobile-preview-fold-button {
     position: absolute;
     top: @app-header-height;
-    left: 44px;
-    width: calc(~'100% - 88px');
+    left: 0px;
+    width: 100%;
+    border: none;
 
     &:after {
       display: none;
@@ -141,6 +142,7 @@
 
     .@{_COMMON_PREFIX}dropdown {
       width: 100%;
+      .box-sizing(border-box);
 
       .action-button.publish span {
         color: @admin-green;
