@@ -38,9 +38,5 @@ task copyAll( type: Copy, dependsOn: gulpAll ) {
     into "$buildDir/resources/main"
 }
 
-task lint( type: NpmTask ) {
-    args = ['run', 'lint']
-}
-
 jar.dependsOn += copyAll
 clean.dependsOn += cleanSourceFiles
