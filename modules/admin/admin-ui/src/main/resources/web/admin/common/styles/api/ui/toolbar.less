@@ -3,7 +3,7 @@
 
   background-color: @admin-white;
   height: @toolbar-height;
-  line-height: 41px;
+  line-height: @toolbar-height;
   overflow: visible; // for the button glow
   .box-sizing(border-box);
   border-bottom: 1px solid @admin-bg-light-gray;
@@ -17,7 +17,7 @@
     }
   }
 
-  .@{_COMMON_PREFIX}button {
+  > .@{_COMMON_PREFIX}button {
     .menu-action-button();
 
     &:focus:not(:disabled) {
