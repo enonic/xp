@@ -22,7 +22,7 @@ var BinaryAttachmentType = Java.type("com.enonic.xp.node.BinaryAttachment");
  * @param {number} lat Latitude
  * @param {number} lon Longitude
  *
- * @returns {*} native Native repo-connection object.
+ * @returns {*} GeoPoint java-type
  */
 exports.geoPoint = function (lat, lon) {
     return new GeoPointType(lat, lon);
@@ -33,7 +33,7 @@ exports.geoPoint = function (lat, lon) {
  * Creates a GeoPoint java-type.
  * @param {string} value comma-separated lat and lon
  *
- * @returns {*} native Native repo-connection object.
+ * @returns {*} GeoPoint java-type
  */
 exports.geoPointString = function (value) {
     return GeoPointType.from(value);
@@ -43,7 +43,7 @@ exports.geoPointString = function (value) {
  * Creates a Instant java-type.
  * @param {string} value An ISO-8601-formatted instant (e.g '2011-12-03T10:15:30Z')
  *
- * @returns {*} native Native repo-connection object.
+ * @returns {*} Instant java-type
  */
 exports.instant = function (value) {
     return InstantType.parse(value);
@@ -53,7 +53,7 @@ exports.instant = function (value) {
  * Creates a Reference java-type.
  * @param {string} value A nodeId as string (e.g '1234-5678-91011')
  *
- * @returns {*} native Native repo-connection object.
+ * @returns {*} Reference java-type
  */
 exports.reference = function (value) {
     return ReferenceType.from(value);
@@ -63,7 +63,7 @@ exports.reference = function (value) {
  * Creates a LocalDateTime java-type.
  * @param {string} value A local date-time string (e.g '2007-12-03T10:15:30')
  *
- * @returns {*} native Native repo-connection object.
+ * @returns {*} LocalDateTime java-type
  */
 exports.localDateTime = function (value) {
     return LocalDateTimeType.parse(value);
@@ -73,7 +73,7 @@ exports.localDateTime = function (value) {
  * Creates a LocalDate java-type.
  * @param {string} value A ISO local date-time string (e.g '2011-12-03')
  *
- * @returns {*} native Native repo-connection object.
+ * @returns {*} LocalDate java-type
  */
 exports.localDate = function (value) {
     return LocalDateType.parse(value);
@@ -83,7 +83,7 @@ exports.localDate = function (value) {
  * Creates a LocalTime java-type.
  * @param {string} value A ISO local date-time string (e.g '10:15:30')
  *
- * @returns {*} native Native repo-connection object.
+ * @returns {*} LocalTime java-type
  */
 exports.localTime = function (value) {
     return LocalTimeType.parse(value);
@@ -94,7 +94,7 @@ exports.localTime = function (value) {
  * @param {string} name The binary name
  * @param stream The binary stream
  *
- * @returns {*} native Native repo-connection object.
+ * @returns {*} BinaryAttachment java-type
  */
 exports.binary = function (name, stream) {
     return new BinaryAttachmentType(BinaryReferenceType.from(name), stream);
