@@ -3,7 +3,8 @@ module api.app.wizard {
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import Toolbar = api.ui.toolbar.Toolbar;
-
+    import TabBarItem = api.ui.tab.TabBarItem;
+    import ActivatedEvent = api.ui.ActivatedEvent;
 
     export class WizardStepNavigatorAndToolbar extends api.dom.DivEl {
 
@@ -22,7 +23,6 @@ module api.app.wizard {
         constructor(className?: string) {
             super(className);
             this.foldButton = new api.ui.toolbar.FoldButton();
-            this.foldButton.setLabel("Navigate to");
             this.appendChild(this.foldButton);
             this.fittingWidth = 0;
 
@@ -54,12 +54,25 @@ module api.app.wizard {
         }
 
         setStepNavigator(stepNavigator: WizardStepNavigator) {
+            let onStepChanged = (event: ActivatedEvent) => {
+                this.onStepChanged(event.getIndex());
+            };
             if (this.stepNavigator) {
+                this.stepNavigator.unNavigationItemActivated(onStepChanged);
                 this.removeChild(this.stepNavigator);
             }
             this.stepNavigator = stepNavigator;
 
             this.appendChild(this.stepNavigator);
+
+            this.stepNavigator.onNavigationItemActivated(onStepChanged);
+        }
+
+        private onStepChanged(index: number): void {
+            let tabBarItem: TabBarItem = this.stepNavigator.getNavigationItem(index);
+            if (tabBarItem) {
+                this.foldButton.setLabel(tabBarItem.getLabel());
+            }
         }
 
         private isStepNavigatorFit(): boolean {
