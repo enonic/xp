@@ -1,0 +1,48 @@
+{
+  "attachments": [],
+  "childOrder": null,
+  "contentState": "DEFAULT",
+  "createdTime": "2013-08-23T12:55:09.162Z",
+  "creator": "user:system:admin",
+  "data": [],
+  "deletable": true,
+  "displayName": "My Content",
+  "editable": true,
+  "hasChildren": false,
+  "iconUrl": "/admin/rest/schema/content/icon/myapplication:content-type?hash=f95b70fdc3088560732a5ac135644506",
+  "id": "content-id",
+  "inheritPermissions": true,
+  "isPage": false,
+  "isRoot": true,
+  "isValid": true,
+  "language": "en",
+  "meta": [
+    {
+      "data": [
+        {
+          "name": "myProperty",
+          "type": "Long",
+          "values": [
+            {
+              "v": 1
+            }
+          ]
+        }
+      ],
+      "name": "myApplication:myField"
+    }
+  ],
+  "modifiedTime": "2013-08-23T12:55:09.162Z",
+  "modifier": "user:system:admin",
+  "name": "content-name",
+  "owner": "user:myStore:me",
+  "page": null,
+  "path": "/content-name",
+  "permissions": [],
+  "publish": {
+    "from": "2018-11-03T10:43:00Z",
+    "to": "2018-11-23T10:20:01Z"
+  },
+  "thumbnail": null,
+  "type": "myapplication:content-type"
+}

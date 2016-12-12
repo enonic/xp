@@ -178,6 +178,7 @@ public class NodeServiceImpl
                 parentId( params.getParentId() ).
                 parentPath( params.getParentPath() ).
                 recursive( true ).
+                queryFilters( params.getQueryFilters() ).
                 from( params.getFrom() ).
                 size( params.getSize() ).
                 countOnly( params.isCountOnly() ).

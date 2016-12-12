@@ -14,6 +14,9 @@ public class ContentIndexPath
 
     public static final IndexPath CREATED_TIME = IndexPath.from( ContentPropertyNames.CREATED_TIME );
 
-    public static final IndexPath PUBLISHED_TIME =
+    public static final IndexPath PUBLISH_FROM =
         IndexPath.from( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ).toString() );
+
+    public static final IndexPath PUBLISH_TO =
+        IndexPath.from( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_TO ).toString() );
 }

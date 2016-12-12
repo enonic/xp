@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.query.filter.Filters;
 
 @Beta
 public class FindNodesByParentParams
@@ -11,6 +12,8 @@ public class FindNodesByParentParams
     private final NodePath parentPath;
 
     private final NodeId parentId;
+
+    private final Filters queryFilters;
 
     private final Integer size;
 
@@ -28,6 +31,7 @@ public class FindNodesByParentParams
                                      "expected either parentPath or parentId, but not both" );
         parentPath = builder.parentPath;
         parentId = builder.parentId;
+        queryFilters = builder.queryFilters == null ? Filters.from() : builder.queryFilters;
         size = builder.size;
         from = builder.from;
         childOrder = builder.childOrder;
@@ -43,6 +47,11 @@ public class FindNodesByParentParams
     public NodeId getParentId()
     {
         return parentId;
+    }
+
+    public Filters getQueryFilters()
+    {
+        return queryFilters;
     }
 
     public Integer getSize()
@@ -81,6 +90,8 @@ public class FindNodesByParentParams
 
         private NodeId parentId;
 
+        private Filters queryFilters;
+
         private Integer size = -1;
 
         private Integer from = 0;
@@ -104,6 +115,13 @@ public class FindNodesByParentParams
         public Builder parentId( NodeId parentId )
         {
             this.parentId = parentId;
+            return this;
+        }
+
+
+        public Builder queryFilters( Filters queryFilters )
+        {
+            this.queryFilters = queryFilters;
             return this;
         }
 

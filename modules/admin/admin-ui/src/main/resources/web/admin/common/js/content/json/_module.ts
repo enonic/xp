@@ -34,3 +34,5 @@
 ///<reference path='ContentsExistJson.ts' />
 ///<reference path='MoveContentResultJson.ts' />///<reference path='UnpublishContentJson.ts' />
 ///<reference path='ContentPublishTimeRangeJson.ts' />
+///<reference path='GetPublishStatusResultJson.ts' />
+///<reference path='GetPublishStatusesResultJson.ts' />

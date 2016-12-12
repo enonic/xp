@@ -475,7 +475,8 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 type: "portal:site",
                 requireValid: false,
                 publish: {
-                    from: "2016-10-24T15:03:47.914Z"
+                    from: "2016-10-24T15:03:47.914Z",
+                    to: "2017-10-24T15:03:47.914Z"
                 }
             }
         )

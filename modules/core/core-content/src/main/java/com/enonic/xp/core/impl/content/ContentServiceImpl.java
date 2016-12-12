@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -33,6 +34,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentVersionId;
@@ -53,9 +55,13 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetPublishStatusResult;
+import com.enonic.xp.content.GetPublishStatusesParams;
+import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.RenameContentParams;
@@ -349,6 +355,7 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
+            contentPublishInfo( params.getContentPublishInfo() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPushContentListener() ).
@@ -600,6 +607,43 @@ public class ContentServiceImpl
     }
 
     @Override
+    public GetPublishStatusesResult getPublishStatuses( final GetPublishStatusesParams params )
+    {
+        final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( params.getContentIds() );
+        final Instant now = Instant.now();
+
+        final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
+            branch( params.getTarget() ).
+            attribute( "ignorePublishTimes", Boolean.TRUE ).
+            build().
+            callWith( () -> this.getByIds( getContentByIdsParams ) );
+
+        final GetPublishStatusesResult.Builder getPublishStatusesResult = GetPublishStatusesResult.create();
+
+        contents.stream().
+            map( content -> {
+
+                final ContentPublishInfo publishInfo = content.getPublishInfo();
+                if ( publishInfo != null )
+                {
+                    if ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 )
+                    {
+                        return new GetPublishStatusResult( content.getId(), PublishStatus.EXPIRED );
+                    }
+
+                    if ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 )
+                    {
+                        return new GetPublishStatusResult( content.getId(), PublishStatus.PENDING );
+                    }
+                }
+                return new GetPublishStatusResult( content.getId(), PublishStatus.ONLINE );
+            } ).
+            forEach( getPublishStatusesResult::add );
+
+        return getPublishStatusesResult.build();
+    }
+
+    @Override
     public FindContentVersionsResult getVersions( final FindContentVersionsParams params )
     {
         return FindContentVersionsCommand.create().
@@ -724,27 +768,25 @@ public class ContentServiceImpl
     @Override
     public boolean contentExists( final ContentId contentId )
     {
-        try
-        {
-            return this.nodeService.nodeExists( NodeId.from( contentId ) );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return false;
-        }
+        return ContentExistsCommand.create( contentId ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     @Override
     public boolean contentExists( final ContentPath contentPath )
     {
-        try
-        {
-            return this.nodeService.nodeExists( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return false;
-        }
+        return ContentExistsCommand.create( contentPath ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     private <T> T runAsContentAdmin( final Callable<T> callable )
@@ -765,13 +807,25 @@ public class ContentServiceImpl
     @Override
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference );
+        return GetBinaryCommand.create( contentId, binaryReference ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     @Override
     public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return nodeService.getBinaryKey( NodeId.from( contentId.toString() ), binaryReference );
+        return GetBinaryKeyCommand.create( contentId, binaryReference ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     @Override

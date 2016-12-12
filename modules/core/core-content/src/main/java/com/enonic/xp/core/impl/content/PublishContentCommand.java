@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -10,6 +11,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.context.Context;
@@ -31,6 +33,8 @@ public class PublishContentCommand
 
     private final Branch target;
 
+    private final ContentPublishInfo contentPublishInfo;
+
     private final boolean includeDependencies;
 
     private final boolean resolveSyncWork = true;
@@ -47,6 +51,7 @@ public class PublishContentCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
+        this.contentPublishInfo = builder.contentPublishInfo;
         this.includeDependencies = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PublishContentResult.create();
@@ -154,8 +159,9 @@ public class PublishContentCommand
             return;
         }
 
-        SetFirstTimePublishedCommand.create( this ).
+        SetPublishInfoCommand.create( this ).
             nodeIds( nodesToPush ).
+            contentPublishInfo( contentPublishInfo ).
             build().
             execute();
 
@@ -210,6 +216,8 @@ public class PublishContentCommand
 
         private Branch target;
 
+        private ContentPublishInfo contentPublishInfo;
+
         private boolean includeDependencies = true;
 
         private boolean includeChildren = true;
@@ -231,6 +239,22 @@ public class PublishContentCommand
         public Builder target( final Branch target )
         {
             this.target = target;
+            return this;
+        }
+
+        public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
+        {
+            if ( contentPublishInfo != null && contentPublishInfo.getFrom() == null )
+            {
+                this.contentPublishInfo = ContentPublishInfo.create().
+                    from( Instant.now() ).
+                    to( contentPublishInfo.getFrom() ).
+                    build();
+            }
+            else
+            {
+                this.contentPublishInfo = contentPublishInfo;
+            }
             return this;
         }
 
@@ -258,6 +282,16 @@ public class PublishContentCommand
             super.validate();
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( contentIds );
+            if ( contentPublishInfo != null )
+            {
+                final Instant publishToInstant = contentPublishInfo.getTo();
+                if ( publishToInstant != null )
+                {
+                    final Instant publishFromInstant = contentPublishInfo.getFrom();
+                    Preconditions.checkArgument( publishToInstant.compareTo( publishFromInstant ) >= 0,
+                                                 "'Publish to' must be set after 'Publish from'." );
+                }
+            }
         }
 
         public PublishContentCommand build()

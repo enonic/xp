@@ -15,7 +15,10 @@ var result = contextLib.run({
         login: 'su',
         userStore: 'system'
     },
-    principals: ["role:system.admin"]
+    principals: ["role:system.admin"],
+    attributes: {
+        'ignorePublishTimes': true
+    }
 }, callback);
 
 log.info('Callback says "%s"', result);

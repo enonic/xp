@@ -111,6 +111,10 @@ module api.ui.time {
             this.popup.setVisible(!this.popup.isVisible());
         }
 
+        getTextInput(): api.ui.text.TextInput {
+            return this.input;
+        }
+
         isDirty(): boolean {
             return this.input.isDirty();
         }

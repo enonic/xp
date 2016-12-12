@@ -21,7 +21,8 @@
             "owner": "user:myStore:me",
             "path": "/my_a_content",
             "publish": {
-                "from": "2016-11-02T10:36:00Z"
+                "from": "2016-11-02T10:36:00Z",
+                "to": "2016-11-22T10:36:00Z"
             },
             "thumbnail": null,
             "type": "myapplication:my_type"
@@ -47,7 +48,8 @@
             "owner": "user:myStore:me",
             "path": "/my_b_content",
             "publish": {
-                "from": "2016-11-02T10:36:00Z"
+                "from": "2016-11-02T10:36:00Z",
+                "to": "2016-11-22T10:36:00Z"
             },
             "thumbnail": null,
             "type": "myapplication:my_type"

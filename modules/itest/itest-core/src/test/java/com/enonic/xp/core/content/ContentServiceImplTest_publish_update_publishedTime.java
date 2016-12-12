@@ -113,7 +113,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         final Content duplicateContent = doDuplicateContent( rootContent );
 
-        assertTrue( duplicateContent.getPublishInfo().getFrom() == null );
+        assertNull( duplicateContent.getPublishInfo() );
     }
 
     private Content doDuplicateContent( final Content rootContent )

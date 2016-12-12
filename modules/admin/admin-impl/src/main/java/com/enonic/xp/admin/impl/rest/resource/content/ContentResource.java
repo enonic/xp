@@ -110,6 +110,7 @@ import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
@@ -126,6 +127,8 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetPublishStatusesParams;
+import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
@@ -540,6 +543,10 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
+        final ContentPublishInfo contentPublishInfo = params.getSchedule() == null ? null : ContentPublishInfo.create().
+            from( params.getSchedule().getPublishFrom() ).
+            to( params.getSchedule().getPublishTo() ).
+            build();
         final Context ctx = ContextAccessor.current();
         progressReporter.info( "Publishing content" );
 
@@ -547,6 +554,7 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             excludedContentIds( excludeContentIds ).
+            contentPublishInfo( contentPublishInfo ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
             pushListener( new PublishContentProgressListener( progressReporter ) ).
@@ -647,6 +655,7 @@ public final class ContentResource
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             includeChildren( params.isIncludeChildren() ).
+            clearPublishInfo( params.isClearPublishInfo() ).
             pushListener( listener ).
             build() );
 
@@ -740,7 +749,7 @@ public final class ContentResource
                     iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
-                collect( Collectors.toList() );
+            collect( Collectors.toList() );
     }
 
     @POST
@@ -1231,8 +1240,9 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
-
-        return new CompareContentResultsJson( compareResults );
+        final GetPublishStatusesResult getPublishStatusesResult =
+            contentService.getPublishStatuses( new GetPublishStatusesParams( contentIds, ContentConstants.BRANCH_DRAFT ) );
+        return new CompareContentResultsJson( compareResults, getPublishStatusesResult );
     }
 
     @POST

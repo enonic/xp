@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -16,20 +17,23 @@ import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
-public class SetFirstTimePublishedCommand
+public class SetPublishInfoCommand
     extends AbstractContentCommand
 {
     private final NodeIds nodeIds;
 
-    private SetFirstTimePublishedCommand( final Builder builder )
+    private final ContentPublishInfo contentPublishInfo;
+
+    private SetPublishInfoCommand( final Builder builder )
     {
         super( builder );
         this.nodeIds = builder.nodeIds;
+        this.contentPublishInfo = builder.contentPublishInfo == null ? ContentPublishInfo.create().build() : builder.contentPublishInfo;
     }
 
     public void execute()
     {
-        final NodeIds firstTimePublished = findFirstTimePublished( nodeIds );
+        final NodeIds firstTimePublished = findNodesWithoutPublishInfo( nodeIds );
 
         if ( firstTimePublished.getSize() == 0 )
         {
@@ -37,6 +41,8 @@ public class SetFirstTimePublishedCommand
         }
 
         final Instant now = Instant.now();
+        final Instant publishFrom = contentPublishInfo.getFrom() == null ? now : contentPublishInfo.getFrom();
+        final Instant publishTo = contentPublishInfo.getTo();
 
         for ( final NodeId id : firstTimePublished )
         {
@@ -52,7 +58,15 @@ public class SetFirstTimePublishedCommand
                     {
                         publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
                     }
-                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, now );
+                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
+                    if ( publishTo == null )
+                    {
+                        publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
+                    }
+                    else
+                    {
+                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
+                    }
                 } ).
                 id( id ).
                 build() );
@@ -61,12 +75,12 @@ public class SetFirstTimePublishedCommand
         this.nodeService.refresh( RefreshMode.ALL );
     }
 
-    private NodeIds findFirstTimePublished( final NodeIds nodesToPush )
+    private NodeIds findNodesWithoutPublishInfo( final NodeIds nodesToPush )
     {
         final NodeQuery query = NodeQuery.create().
             addQueryFilter( BooleanFilter.create().
                 mustNot( ExistsFilter.create().
-                    fieldName( ContentIndexPath.PUBLISHED_TIME.getPath() ).
+                    fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).
                     build() ).
                 must( ValueFilter.create().
                     fieldName( ContentPropertyNames.ID ).
@@ -81,12 +95,12 @@ public class SetFirstTimePublishedCommand
         return result.getNodeIds();
     }
 
-    public static SetFirstTimePublishedCommand.Builder create()
+    public static SetPublishInfoCommand.Builder create()
     {
         return new Builder();
     }
 
-    public static SetFirstTimePublishedCommand.Builder create( final AbstractContentCommand source )
+    public static SetPublishInfoCommand.Builder create( final AbstractContentCommand source )
     {
         return new Builder( source );
     }
@@ -95,6 +109,8 @@ public class SetFirstTimePublishedCommand
         extends AbstractContentCommand.Builder<Builder>
     {
         private NodeIds nodeIds;
+
+        private ContentPublishInfo contentPublishInfo;
 
         public Builder()
         {
@@ -111,9 +127,15 @@ public class SetFirstTimePublishedCommand
             return this;
         }
 
-        public SetFirstTimePublishedCommand build()
+        public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
         {
-            return new SetFirstTimePublishedCommand( this );
+            this.contentPublishInfo = contentPublishInfo;
+            return this;
+        }
+
+        public SetPublishInfoCommand build()
+        {
+            return new SetPublishInfoCommand( this );
         }
 
     }
