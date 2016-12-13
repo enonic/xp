@@ -4,7 +4,8 @@ sudo: false
 jdk:
 - oraclejdk8
 
-script: ./gradlew clean ci
+install: ./gradlew assemble --stacktrace
+script: ./gradlew ci
 
 cache:
   directories:
