@@ -13,6 +13,7 @@ module api.liveedit.text {
     import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
+    import Promise = Q.Promise;
 
     export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {
         constructor() {
@@ -49,6 +50,7 @@ module api.liveedit.text {
         private modalDialog: ModalDialog;
         private currentDialogConfig;
 
+        private authRequest: Promise<void>;
         private editableSourceCode: boolean;
 
         constructor(builder: TextComponentViewBuilder) {
@@ -65,11 +67,12 @@ module api.liveedit.text {
 
             this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
 
-            new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-                this.editableSourceCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
-                                                                                        RoleKeys.CMS_ADMIN.equals(principal) ||
-                                                                                        RoleKeys.CMS_EXPERT.equals(principal));
-            });
+            this.authRequest =
+                new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                    this.editableSourceCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
+                                                                                            RoleKeys.CMS_ADMIN.equals(principal) ||
+                                                                                            RoleKeys.CMS_EXPERT.equals(principal));
+                });
 
             this.onAdded(() => { // is triggered on item insert or move
                 if (api.BrowserHelper.isFirefox() && !!tinymce.activeEditor) {
@@ -77,7 +80,7 @@ module api.liveedit.text {
                 }
                 this.focusOnInit = true;
                 this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
-                if (!this.htmlAreaEditor && !this.isInitializingEditor) {
+                if (!this.isEditorReady()) {
                     this.initEditor();
                 } else if (!!this.htmlAreaEditor) {
                     this.reInitEditor(); // on added, inline editor losses its root element of the editable area
@@ -259,7 +262,7 @@ module api.liveedit.text {
             this.setDraggable(!flag);
 
             if (flag) {
-                if (!this.htmlAreaEditor && !this.isInitializingEditor) {
+                if (!this.isEditorReady()) {
                     this.initEditor();
                 }
 
@@ -328,6 +331,18 @@ module api.liveedit.text {
         }
 
         private initEditor(): void {
+            if (this.authRequest.isFulfilled()) {
+                this.doInitEditor();
+            } else {
+                this.authRequest.then(() => {
+                    if (!this.isEditorReady()) {
+                        this.doInitEditor();
+                    }
+                })
+            }
+        }
+
+        private doInitEditor() {
             this.isInitializingEditor = true;
             var assetsUri = CONFIG.assetsUri,
                 id = this.getId().replace(/\./g, '_');
@@ -339,38 +354,33 @@ module api.liveedit.text {
                 this.appendChild(this.editorContainer);
             }
 
-            new HTMLAreaBuilder().
-                setSelector('div.' + id + ' .tiny-mce-here').
-                setAssetsUri(assetsUri).
-                setInline(true).
-                onCreateDialog(event => {
+            new HTMLAreaBuilder().setSelector('div.' + id + ' .tiny-mce-here').setAssetsUri(assetsUri).setInline(true).onCreateDialog(
+                event => {
                     this.currentDialogConfig = event.getConfig();
             }).setFocusHandler(this.onFocusHandler.bind(this)).setBlurHandler(this.onBlurHandler.bind(this)).setKeydownHandler(
                 this.onKeydownHandler.bind(this)).setFixedToolbarContainer('.mce-toolbar-container').setContent(
                 this.getContent()).setEditableSourceCode(this.editableSourceCode).setContentPath(this.getContentPath()).setApplicationKeys(
-                this.getApplicationKeys()).
-                createEditor().
-                then((editor: HtmlAreaEditor) => {
-                    this.htmlAreaEditor = editor;
+                this.getApplicationKeys()).createEditor().then((editor: HtmlAreaEditor) => {
+                this.htmlAreaEditor = editor;
                 if (!!this.component.getText()) {
                     this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.component.getText()));
-                    } else {
-                        this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
-                        this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
-                    }
-                    if (this.focusOnInit) {
-                        if (api.BrowserHelper.isFirefox()) {
-                            setTimeout(() => {
-                                this.forceEditorFocus();
-                            }, 100);
-                        } else {
+                } else {
+                    this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
+                    this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
+                }
+                if (this.focusOnInit) {
+                    if (api.BrowserHelper.isFirefox()) {
+                        setTimeout(() => {
                             this.forceEditorFocus();
-                        }
+                        }, 100);
+                    } else {
+                        this.forceEditorFocus();
                     }
-                    this.focusOnInit = false;
-                    this.isInitializingEditor = false;
-                    HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
-                });
+                }
+                this.focusOnInit = false;
+                this.isInitializingEditor = false;
+                HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
+            });
         }
 
         private forceEditorFocus() {
@@ -473,6 +483,10 @@ module api.liveedit.text {
                     this.forceEditorFocus();
                 })
             ]);
+        }
+
+        private isEditorReady(): boolean {
+            return !!this.htmlAreaEditor || this.isInitializingEditor;
         }
     }
 }
