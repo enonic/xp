@@ -6,6 +6,8 @@ import org.junit.Test;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.security.RoleKeys;
@@ -156,6 +158,28 @@ public class DeleteNodeByIdCommandTest
         refresh();
 
         doDeleteNode( parentNode.id() );
+    }
+
+    @Test
+    public void delete_with_capital_letter_in_id()
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "myNodeId" ) ).
+            name( "myNode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node childNode = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "myChildNodeId" ) ).
+            name( "myChildNode" ).
+            parent( node.path() ).
+            build() );
+
+        final NodeIds nodeIds = doDeleteNode( node.id() );
+
+        assertEquals( 2, nodeIds.getSize() );
+        assertNull( getNode( node.id() ) );
+        assertNull( getNode( childNode.id() ) );
     }
 
     @Test(expected = OperationNotPermittedException.class)

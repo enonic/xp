@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -51,9 +52,9 @@ public class NodesHasPermissionResolver
         }
 
         final NodeQuery query = NodeQuery.create().
-            addQueryFilter( ValueFilter.create().
+            addQueryFilter( IdFilter.create().
                 fieldName( NodeIndexPath.ID.getPath() ).
-                addValues( nodeIds.getAsStrings() ).
+                values( nodeIds ).
                 build() ).
             addQueryFilter( ValueFilter.create().
                 fieldName( getPermissionFieldName().getPath() ).
