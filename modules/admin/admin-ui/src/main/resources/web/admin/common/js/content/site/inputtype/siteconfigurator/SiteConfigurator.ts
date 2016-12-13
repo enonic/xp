@@ -15,12 +15,14 @@ module api.content.site.inputtype.siteconfigurator {
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Application = api.application.Application;
-    import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
     import Promise = Q.Promise;
+    import ApplicationKey = api.application.ApplicationKey;
+    import ApplicationEvent = api.application.ApplicationEvent;
+    import ApplicationEventType = api.application.ApplicationEventType;
 
     export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<Application> {
 
@@ -182,7 +184,39 @@ module api.content.site.inputtype.siteconfigurator {
                 this.validate(false);
             });
 
+            var handleAppEvent = (view: SiteConfiguratorSelectedOptionView, hasUninstalledClass: boolean, hasStoppedClass) => {
+                if (view) {
+                    view.toggleClass("stopped", hasStoppedClass);
+                    view.toggleClass("uninstalled", hasUninstalledClass);
+                }
+            };
+
+            ApplicationEvent.on((event: ApplicationEvent) => {
+                if (ApplicationEventType.STOPPED == event.getEventType()) {
+                    handleAppEvent(this.getMatchedOption(comboBox, event), false, true);
+                } else if (ApplicationEventType.STARTED == event.getEventType()) {
+                    var view = this.getMatchedOption(comboBox, event);
+                    handleAppEvent(view, false, false);
+                    if (view && !!view.getOption().empty) {
+                        view.removeClass("empty");
+                    }
+                } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
+                    handleAppEvent(this.getMatchedOption(comboBox, event), true, false);
+                }
+            });
+
             return comboBox;
+        }
+
+        private getMatchedOption(combobox: SiteConfiguratorComboBox, event: ApplicationEvent): SiteConfiguratorSelectedOptionView {
+            var result;
+            combobox.getSelectedOptionViews().some((view: SiteConfiguratorSelectedOptionView) => {
+                if (view.getApplication() && view.getApplication().getApplicationKey().equals(event.getApplicationKey())) {
+                    result = view;
+                    return true;
+                }
+            });
+            return result;
         }
 
         displayValidationErrors(value: boolean) {

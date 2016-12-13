@@ -30,11 +30,38 @@
           background-color: @admin-bg-light-gray;
         }
 
-        &.invalid {
-          background-color: @admin-input-red;
+        &.invalid, &.uninstalled {
+          .highlight-option(@admin-input-red);
+        }
 
-          .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}sub-name {
-            color: @admin-dark-gray;
+        &.uninstalled {
+          a.edit {
+            display: none;
+          }
+        }
+
+        &.empty {
+          .highlight-option(@admin-input-red);
+
+          .@{_COMMON_PREFIX}wrapper:before {
+            content: "!";
+            background: #cb0300;
+            color: #fff;
+            display: block;
+            position: relative;
+            left: 6px;
+            top: 6px;
+          }
+
+          a.edit {
+            display: none;
+          }
+        }
+
+        &.stopped {
+          .highlight-option(orange);
+          a.edit {
+            display: none;
           }
         }
       }
@@ -77,6 +104,14 @@
     .selected-option:last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+.highlight-option(@color) {
+  background-color: @color;
+
+  .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}sub-name {
+    color: @admin-dark-gray;
   }
 }
 
