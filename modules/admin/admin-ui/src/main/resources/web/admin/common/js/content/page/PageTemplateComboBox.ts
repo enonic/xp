@@ -5,7 +5,7 @@ module api.content.page {
         constructor() {
             super(new api.ui.selector.combobox.RichComboBoxBuilder<PageTemplate>().setSelectedOptionsView(
                 new PageTemplateSelectedOptionsView()).setIdentifierMethod("getKey").setMaximumOccurrences(1).setOptionDisplayValueViewer(
-                new PageTemplateViewer));
+                new PageTemplateViewer()));
         }
     }
 

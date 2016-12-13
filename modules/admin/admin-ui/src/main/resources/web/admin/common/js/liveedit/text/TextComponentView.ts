@@ -126,11 +126,10 @@ module api.liveedit.text {
         }
 
         private isAllTextSelected(): boolean {
-            this.htmlAreaEditor.selection.getContent() == this.htmlAreaEditor.getContent();
             return this.rootElement.getHTMLElement().innerText.trim() == window['getSelection']().toString();
         }
 
-        private handlePasteEvent(event) {
+        private handlePasteEvent() {
             if (this.isAllTextSelected()) {
                 this.rootElement.getHTMLElement().innerHTML = "";
             }

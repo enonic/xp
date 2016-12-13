@@ -131,7 +131,7 @@ module api.content.resource {
         }
 
         static updateReadOnly(contents: ContentSummaryAndCompareStatus[]): wemQ.Promise<any> {
-            return new isContentReadOnlyRequest(contents.map(content => content.getContentId())).sendAndParse().then(
+            return new IsContentReadOnlyRequest(contents.map(content => content.getContentId())).sendAndParse().then(
                 (readOnlyContentIds: string[]) => {
                     readOnlyContentIds.forEach((id: string) => {
                         contents.some(content => {

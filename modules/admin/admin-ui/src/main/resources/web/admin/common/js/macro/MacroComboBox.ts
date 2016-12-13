@@ -17,8 +17,7 @@ module api.macro {
                 setLoader(builder.loader).
                 setSelectedOptionsView(new MacroSelectedOptionsView()).
                 setMaximumOccurrences(builder.maximumOccurrences).
-                setDelayedInputValueChangedHandling(750).
-                setOptionDisplayValueViewer(new MacroViewer).
+                setDelayedInputValueChangedHandling(750).setOptionDisplayValueViewer(new MacroViewer()).
                 setValue(builder.value).
                 setMaxHeight(250);
 
