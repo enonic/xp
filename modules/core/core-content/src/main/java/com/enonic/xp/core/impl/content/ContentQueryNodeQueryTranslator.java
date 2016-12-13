@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.ValueFactory;
@@ -62,7 +63,7 @@ class ContentQueryNodeQueryTranslator
         if ( contentIds != null && contentIds.isNotEmpty() )
         {
             final IdFilter.Builder contentTypeFilterBuilder = IdFilter.create().
-                fieldName( ContentPropertyNames.ID ).
+                fieldName( ContentIndexPath.ID ).
                 values( contentIds.asStrings() ).
                 setCache( true );
 

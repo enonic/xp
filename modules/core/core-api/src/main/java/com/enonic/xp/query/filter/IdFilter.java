@@ -49,6 +49,12 @@ public class IdFilter
             return this;
         }
 
+        public Builder value( final String value )
+        {
+            values.add( value );
+            return this;
+        }
+
         public IdFilter build()
         {
             return new IdFilter( this );

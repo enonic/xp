@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByQueryParams;
@@ -29,7 +30,7 @@ public class CheckContentsValidCommand
                 addValue( ValueFactory.newBoolean( false ) ).
                 build() ).
             queryFilter( IdFilter.create().
-                fieldName( ContentPropertyNames.ID ).
+                fieldName( ContentIndexPath.ID ).
                 values( contentIds.asStrings() ).
                 build() ).
             size( 0 ).

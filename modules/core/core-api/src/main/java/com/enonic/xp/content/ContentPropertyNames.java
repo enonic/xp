@@ -21,8 +21,6 @@ public class ContentPropertyNames
 
     public static final String TYPE = "type";
 
-    public static final String ID = "_id";
-
     public static final String DISPLAY_NAME = "displayName";
 
     public static final String VALID = "valid";

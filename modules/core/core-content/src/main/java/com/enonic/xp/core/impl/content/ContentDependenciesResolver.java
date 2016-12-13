@@ -9,13 +9,15 @@ import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentDependenciesAggregation;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
-import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static java.util.stream.Collectors.toList;
@@ -41,7 +43,16 @@ public class ContentDependenciesResolver
     private Collection<ContentDependenciesAggregation> resolveInboundDependenciesAggregation( final ContentId contentId )
     {
         final FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create().
-            queryExpr( QueryParser.parse( "_references = '" + contentId.toString() + "' AND _id != '" + contentId.toString() + "'" ) ).
+            queryFilter( BooleanFilter.create().
+                must( IdFilter.create().
+                    fieldName( ContentIndexPath.REFERENCES.getPath() ).
+                    value( contentId.toString() ).
+                    build() ).
+                mustNot( IdFilter.create().
+                    fieldName( ContentIndexPath.ID ).
+                    value( contentId.toString() ).
+                    build() ).
+                build() ).
             aggregationQuery( TermsAggregationQuery.create( "type" ).
                 fieldName( "type" ).
                 orderDirection( TermsAggregationQuery.Direction.DESC ).

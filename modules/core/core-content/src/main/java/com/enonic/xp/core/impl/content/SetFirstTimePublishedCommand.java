@@ -69,7 +69,7 @@ public class SetFirstTimePublishedCommand
                     fieldName( ContentIndexPath.PUBLISHED_TIME.getPath() ).
                     build() ).
                 must( IdFilter.create().
-                    fieldName( ContentPropertyNames.ID ).
+                    fieldName( ContentIndexPath.ID ).
                     values( nodesToPush ).
                     build() ).
                 build() ).

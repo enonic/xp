@@ -16,4 +16,8 @@ public class ContentIndexPath
 
     public static final IndexPath PUBLISHED_TIME =
         IndexPath.from( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ).toString() );
+
+    public static final IndexPath REFERENCES = IndexPath.from( "_references" );
+
+    public static final String ID = "_id";
 }
