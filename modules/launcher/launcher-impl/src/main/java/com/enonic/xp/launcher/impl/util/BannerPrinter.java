@@ -1,6 +1,12 @@
 package com.enonic.xp.launcher.impl.util;
 
+import java.net.URL;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+
 import com.enonic.xp.launcher.VersionInfo;
+import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.env.Environment;
 
 import static com.google.common.base.StandardSystemProperty.JAVA_VERSION;
@@ -12,14 +18,6 @@ import static com.google.common.base.StandardSystemProperty.OS_VERSION;
 
 public final class BannerPrinter
 {
-    private final static String BANNER = "" +
-        "                        _                   \n" +
-        "  ___ _ __   ___  _ __ (_) ___  __  ___ __  \n" +
-        " / _ \\ '_ \\ / _ \\| '_ \\| |/ __| \\ \\/ / '_ \\ \n" +
-        "|  __/ | | | (_) | | | | | (__   >  <| |_) |\n" +
-        " \\___|_| |_|\\___/|_| |_|_|\\___| /_/\\_\\ .__/ \n" +
-        "                                     |_|    \n";
-
     private final static String PRODUCT = "Enonic XP";
 
     private final Environment env;
@@ -34,7 +32,7 @@ public final class BannerPrinter
 
     public void printBanner()
     {
-        System.out.println( BANNER );
+        System.out.println( loadBanner() );
         System.out.println( "# " + PRODUCT + " " + this.version.getVersion() );
         System.out.println( "# " + getFormattedBuildInfo() );
         System.out.println( "# " + getFormattedJvmInfo() );
@@ -63,7 +61,7 @@ public final class BannerPrinter
 
     private void printWarnings()
     {
-        final boolean devMode = "dev".equalsIgnoreCase( System.getProperty( "xp.runMode" ) );
+        final boolean devMode = "dev".equalsIgnoreCase( System.getProperty( SharedConstants.XP_RUN_MODE ) );
         if ( devMode )
         {
             printDevModeWarning();
@@ -76,5 +74,18 @@ public final class BannerPrinter
         System.out.println( "* DEV mode is ON. This will slow down the system and should NOT BE used in production." );
         System.out.println( "*" );
         System.out.println();
+    }
+
+    private String loadBanner()
+    {
+        try
+        {
+            final URL url = getClass().getResource( "banner.txt" );
+            return Resources.toString( url, Charsets.UTF_8 );
+        }
+        catch ( final Exception e )
+        {
+            return "<<-- ERROR: No Banner! -->>";
+        }
     }
 }

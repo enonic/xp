@@ -17,7 +17,6 @@ import com.enonic.xp.launcher.impl.logging.LogActivator;
 import com.enonic.xp.launcher.impl.logging.LogConfigurator;
 import com.enonic.xp.launcher.impl.provision.ProvisionActivator;
 import com.enonic.xp.launcher.impl.util.BannerPrinter;
-import com.enonic.xp.launcher.impl.watch.WatchActivator;
 
 public final class LauncherImpl
     implements SharedConstants, Launcher
@@ -96,19 +95,12 @@ public final class LauncherImpl
         this.framework.config( this.config );
 
         addLogActivator();
-        addWatchActivator();
         addProvisionActivator();
     }
 
     private void addLogActivator()
     {
         final LogActivator activator = new LogActivator();
-        this.framework.activator( activator );
-    }
-
-    private void addWatchActivator()
-    {
-        final WatchActivator activator = new WatchActivator();
         this.framework.activator( activator );
     }
 
@@ -165,7 +157,7 @@ public final class LauncherImpl
 
     private void setRunMode( final String mode )
     {
-        System.setProperty( "xp.runMode", mode );
+        System.setProperty( XP_RUN_MODE, mode );
     }
 
     @Override
