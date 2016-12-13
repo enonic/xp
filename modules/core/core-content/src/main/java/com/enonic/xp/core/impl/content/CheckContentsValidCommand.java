@@ -30,7 +30,7 @@ public class CheckContentsValidCommand
                 addValue( ValueFactory.newBoolean( false ) ).
                 build() ).
             queryFilter( IdFilter.create().
-                fieldName( ContentIndexPath.ID ).
+                fieldName( ContentIndexPath.ID.getPath() ).
                 values( contentIds.asStrings() ).
                 build() ).
             size( 0 ).

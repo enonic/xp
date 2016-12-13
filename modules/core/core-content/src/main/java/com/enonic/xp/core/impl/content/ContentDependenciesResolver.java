@@ -49,7 +49,7 @@ public class ContentDependenciesResolver
                     value( contentId.toString() ).
                     build() ).
                 mustNot( IdFilter.create().
-                    fieldName( ContentIndexPath.ID ).
+                    fieldName( ContentIndexPath.ID.getPath() ).
                     value( contentId.toString() ).
                     build() ).
                 build() ).

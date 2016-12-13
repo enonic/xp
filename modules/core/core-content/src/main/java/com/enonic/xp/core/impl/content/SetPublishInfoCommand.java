@@ -83,7 +83,7 @@ public class SetPublishInfoCommand
                     fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).
                     build() ).
                 must( IdFilter.create().
-                    fieldName( ContentIndexPath.ID ).
+                    fieldName( ContentIndexPath.ID.getPath() ).
                     values( nodesToPush ).
                     build() ).
                 build() ).
