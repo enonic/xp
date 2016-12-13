@@ -3,18 +3,11 @@
   .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
 
   position: relative;
-  margin-right: 18px;
-  //padding: 7px 27px 7px 17px;
   padding: 0 27px 0 17px;
   text-align: center;
   overflow: visible;
   display: inline-block;
   position: relative; // for the dropdown to position itself
-
-
-  .@{_COMMON_PREFIX}button {
-    .menu-action-button();
-  }
 
   &:after {
     content: "";
@@ -38,10 +31,10 @@
     .material-layer-shadow();
 
     .@{_COMMON_PREFIX}button {
+      .menu-action-button();
+
       width: 100%;
       padding: 5px;
-      line-height: 18px;
-
     }
 
     & > * {

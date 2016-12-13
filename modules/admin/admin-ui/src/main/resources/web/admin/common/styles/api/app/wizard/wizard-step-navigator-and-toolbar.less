@@ -1,7 +1,7 @@
 .wizard-step-navigator-and-toolbar {
   height: 40px;
-  padding-left: 95px;
   background-color: @admin-bg-light-gray;
+  position: relative;
 
   &.no-dropdown-hover {
     .fold-button .@{_COMMON_PREFIX}dropdown {
@@ -11,7 +11,13 @@
 
   &.minimized {
     .fold-button {
-      display: inline-block;
+      display: inline-flex;
+    }
+  }
+
+  &.has-help-text-button {
+    .fold-button, .wizard-step-navigator {
+      padding-right: 46px;
     }
   }
 
@@ -36,16 +42,24 @@
     display: none;
     position: relative;
     height: 100%;
-    padding-top: 8px;
-    padding-right: 27px;
-    float: left;
+    width: 100%;
+    padding: 0;
+    padding-left: 22px;  // Same as width of the help button on the right
     border: none;
     background-color: @admin-bg-light-gray;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+
+    &:after {
+      display: none;
+    }
 
     &:hover:not(:disabled) {
-      background-color: @admin-bg-light-gray;
-      .fold-label {
-        color: @admin-font-gray1;
+      background-color: @admin-white;
+
+      + .help-text-button {
+        background-color: @admin-white;
       }
     }
 
@@ -55,12 +69,16 @@
     }
 
     .fold-label {
-      color: @admin-font-gray1;
+      margin: 0 auto;
+      .ellipsis();
     }
 
     .@{_COMMON_PREFIX}dropdown {
-      margin-top: 32px;
-      max-width: 180px;
+      top: 40px;
+      width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0px 5px 10px -3px rgba(0, 0, 0, 0.3);
+      border-top: 1px solid lightgray;
 
       .wizard-step-navigator {
         width: initial;
@@ -74,6 +92,7 @@
             color: @admin-font-gray2;
             .transition(none);
             line-height: 1em;
+            padding-left: 15px;
           }
 
           &.active {
@@ -114,21 +133,20 @@
     .box-shadow(-3px 3px 6px 0 @admin-toolbar-shadow);
   }
 
+  &:not(.scroll-stick) {
+    .fold-button:hover:not(:disabled) {
+      box-shadow: -2px -5px 10px -3px rgba(0, 0, 0, 0.3);
+    }
+  }
+
   .help-text-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 40px;
-    // margin left 34px is needed for calculations in js
-    // total width with margin should always be the same
-    margin: 0 7px 0 34px;
-    float: right;
-    vertical-align: top;
+    position: absolute;
+    right: 0px;
+    top: 9px;
+    padding: 0 14px 0 10px;
     overflow: hidden;
     z-index: @z-index-mask - 1;
     cursor: pointer;
-    transition: all .3s 0s cubic-bezier(0, 0.25, 0.25, 1);
 
     &:after {
       display: block;

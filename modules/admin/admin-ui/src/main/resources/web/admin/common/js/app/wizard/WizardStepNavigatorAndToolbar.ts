@@ -3,7 +3,8 @@ module api.app.wizard {
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import Toolbar = api.ui.toolbar.Toolbar;
-
+    import TabBarItem = api.ui.tab.TabBarItem;
+    import ActivatedEvent = api.ui.ActivatedEvent;
 
     export class WizardStepNavigatorAndToolbar extends api.dom.DivEl {
 
@@ -22,7 +23,6 @@ module api.app.wizard {
         constructor(className?: string) {
             super(className);
             this.foldButton = new api.ui.toolbar.FoldButton();
-            this.foldButton.setLabel("Navigate to");
             this.appendChild(this.foldButton);
             this.fittingWidth = 0;
 
@@ -37,6 +37,7 @@ module api.app.wizard {
         setupHelpTextToggleButton(): api.dom.DivEl {
             this.helpTextToggleButton = new api.dom.DivEl("help-text-button");
 
+            this.addClass("has-help-text-button");
             this.appendChild(this.helpTextToggleButton);
             this.checkAndMinimize();
 
@@ -54,12 +55,25 @@ module api.app.wizard {
         }
 
         setStepNavigator(stepNavigator: WizardStepNavigator) {
+            let onStepChanged = (event: ActivatedEvent) => {
+                this.onStepChanged(event.getIndex());
+            };
             if (this.stepNavigator) {
+                this.stepNavigator.unNavigationItemActivated(onStepChanged);
                 this.removeChild(this.stepNavigator);
             }
             this.stepNavigator = stepNavigator;
 
             this.appendChild(this.stepNavigator);
+
+            this.stepNavigator.onNavigationItemActivated(onStepChanged);
+        }
+
+        private onStepChanged(index: number): void {
+            let tabBarItem: TabBarItem = this.stepNavigator.getNavigationItem(index);
+            if (tabBarItem) {
+                this.foldButton.setLabel(tabBarItem.getLabel());
+            }
         }
 
         private isStepNavigatorFit(): boolean {
@@ -91,6 +105,22 @@ module api.app.wizard {
             return width > fittingWidth;
         }
 
+        private updateStepLabels(numberTabs: boolean) {
+            let selectedTabIndex = this.stepNavigator.getSelectedIndex();
+            this.stepNavigator.getNavigationItems().forEach((tab: api.ui.tab.TabBarItem, index) => {
+                let strIndex = (index + 1) + " - ";
+                if (numberTabs && tab.getLabel().indexOf(strIndex) !== 0) {
+                    tab.setLabel(strIndex + tab.getLabel());
+                    if (index == selectedTabIndex) {
+                        this.foldButton.setLabel(tab.getLabel());
+                    }
+                }
+                else {
+                    tab.setLabel(tab.getLabel().replace(strIndex, ""));
+                }
+            })
+        }
+
         checkAndMinimize() {
             const needUpdate = () => this.isStepNavigatorFit() == this.hasClass('minimized');
 
@@ -104,7 +134,7 @@ module api.app.wizard {
                     this.foldButton.pop();
                     this.stepNavigator.insertAfterEl(this.foldButton);
                 }
-
+                this.updateStepLabels(needMinimize);
             }
         }
     }
