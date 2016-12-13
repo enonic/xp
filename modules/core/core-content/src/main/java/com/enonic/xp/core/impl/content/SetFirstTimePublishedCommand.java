@@ -14,7 +14,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
-import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.query.filter.IdFilter;
 
 public class SetFirstTimePublishedCommand
     extends AbstractContentCommand
@@ -68,9 +68,9 @@ public class SetFirstTimePublishedCommand
                 mustNot( ExistsFilter.create().
                     fieldName( ContentIndexPath.PUBLISHED_TIME.getPath() ).
                     build() ).
-                must( ValueFilter.create().
+                must( IdFilter.create().
                     fieldName( ContentPropertyNames.ID ).
-                    addValues( nodesToPush.getAsStrings() ).
+                    values( nodesToPush ).
                     build() ).
                 build() ).
             size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).
