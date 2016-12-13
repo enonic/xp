@@ -10,6 +10,8 @@ public class PublishContentJson
 
     private boolean includeChildren;
 
+    private PublishScheduleJson schedule;
+
     public boolean isIncludeChildren()
     {
         return includeChildren;
@@ -25,6 +27,11 @@ public class PublishContentJson
         return ids;
     }
 
+    public PublishScheduleJson getSchedule()
+    {
+        return schedule;
+    }
+
     public void setIds( final Set<String> ids )
     {
         this.ids = ids;
@@ -38,5 +45,10 @@ public class PublishContentJson
     public void setExcludedIds( final Set<String> excludedIds )
     {
         this.excludedIds = excludedIds;
+    }
+
+    public void setSchedule( final PublishScheduleJson schedule )
+    {
+        this.schedule = schedule;
     }
 }

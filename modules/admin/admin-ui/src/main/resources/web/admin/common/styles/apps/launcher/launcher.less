@@ -3,6 +3,7 @@
 @import "../../variables/font";
 @import "../../variables/mixins";
 @import "../../variables/z-index";
+@import "../../variables/common";
 
 @font-face {
   font-family: 'Open Sans';
@@ -17,7 +18,6 @@
 
 @panel-outer-width: 320px;
 @panel-inner-width: 280px;
-@header-height: 44px;
 @panel-indent: 30px;
 
 .body-mask.launcher {
@@ -134,7 +134,7 @@ body.mobile-statistics-panel {
   .launcher-title {
     position: absolute;
     top: 0;
-    height: @header-height;
+    height: @app-header-height;
     background-color: rgba(0, 0, 0, 1);
     color: @admin-white;
     font-size: 25px;
@@ -163,7 +163,7 @@ body.mobile-statistics-panel {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding: calc(@header-height + 10) 0 @header-height 0;
+    padding: calc(@app-header-height + 10) 0 @app-header-height 0;
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.9);
 
@@ -231,7 +231,7 @@ body.mobile-statistics-panel {
     position: absolute;
     bottom: 0;
     display: table;
-    height: @header-height;
+    height: @app-header-height;
     background-color: rgba(255, 255, 255, 0.1);
     color: @admin-white;
     font-size: 14px;

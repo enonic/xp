@@ -25,12 +25,12 @@ final class JaxRsDispatcher
 
     private final JaxRsApplication app;
 
-    public JaxRsDispatcher( final JaxRsApplication app )
+    JaxRsDispatcher( final JaxRsApplication app )
     {
         this.app = app;
     }
 
-    public void init( final ServletContext context )
+    void init( final ServletContext context )
         throws ServletException
     {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();

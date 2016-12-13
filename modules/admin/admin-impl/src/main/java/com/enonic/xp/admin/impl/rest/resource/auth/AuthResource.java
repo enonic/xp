@@ -21,7 +21,7 @@ import com.enonic.xp.session.Session;
 
 @Path(ResourceConstants.REST_ROOT + "auth")
 @Produces(MediaType.APPLICATION_JSON)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public final class AuthResource
     implements JaxRsComponent
 {

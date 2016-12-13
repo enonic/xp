@@ -168,7 +168,11 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                     this.setPreviewType(PREVIEW_TYPE.PAGE);
                     var src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW, api.content.Branch.DRAFT);
                     // test if it returns no error( like because of used app was deleted ) first and show no preview otherwise
-                    wemjq.get(src).done(() => this.frame.setSrc(src)).fail(() => this.setPreviewType(PREVIEW_TYPE.FAILED));
+                    wemjq.ajax({
+                        type: "HEAD",
+                        async: true,
+                        url: src
+                    }).done(() => this.frame.setSrc(src)).fail(() => this.setPreviewType(PREVIEW_TYPE.FAILED));
                 } else {
                     this.setPreviewType(PREVIEW_TYPE.EMPTY);
                 }

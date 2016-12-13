@@ -122,7 +122,8 @@ module api.content.resource {
             var list: ContentSummaryAndCompareStatus[] = [];
             contentSummaries.forEach((contentSummary: ContentSummary) => {
                 var compareResult: api.content.resource.result.CompareContentResult = compareResults.get(contentSummary.getId());
-                var newEntry = ContentSummaryAndCompareStatus.fromContentAndCompareStatus(contentSummary, compareResult.getCompareStatus());
+                var newEntry = ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(
+                    contentSummary, compareResult.getCompareStatus(), compareResult.getPublishStatus());
                 list.push(newEntry)
             });
 

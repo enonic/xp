@@ -61,6 +61,8 @@ public class ContentPropertyNames
 
     public static final String PUBLISH_FROM = "from";
 
+    public static final String PUBLISH_TO = "to";
+
     public static final String ATTACHMENT_MIMETYPE = "mimeType";
 
     public static final String ATTACHMENT_BINARY_REF = "binary";

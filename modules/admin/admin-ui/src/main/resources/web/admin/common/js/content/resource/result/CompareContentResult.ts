@@ -1,16 +1,18 @@
 module api.content.resource.result {
 
-
     export class CompareContentResult implements api.Equitable {
 
-        compareStatus: api.content.CompareStatus;
+        compareStatus: CompareStatus;
 
         id: string;
 
-        constructor(id: string, compareStatus: CompareStatus) {
+        publishStatus: PublishStatus;
+
+        constructor(id: string, compareStatus: CompareStatus, publishStatus: PublishStatus) {
 
             this.compareStatus = compareStatus;
             this.id = id;
+            this.publishStatus = publishStatus;
         }
 
         getId(): string {
@@ -19,6 +21,10 @@ module api.content.resource.result {
 
         getCompareStatus(): CompareStatus {
             return this.compareStatus;
+        }
+
+        getPublishStatus(): PublishStatus {
+            return this.publishStatus;
         }
 
         equals(o: api.Equitable): boolean {
@@ -38,9 +44,10 @@ module api.content.resource.result {
 
         static fromJson(json: api.content.json.CompareContentResultJson): CompareContentResult {
 
-            var status: CompareStatus = <CompareStatus>CompareStatus[json.compareStatus];
+            var compareStatus: CompareStatus = <CompareStatus>CompareStatus[json.compareStatus],
+                publishStatus: PublishStatus = <PublishStatus>PublishStatus[json.publishStatus];
 
-            return new CompareContentResult(json.id, status);
+            return new CompareContentResult(json.id, compareStatus, publishStatus);
         }
     }
 }

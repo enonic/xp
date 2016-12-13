@@ -19,6 +19,7 @@ include 'core:core-auth'
 include 'core:core-macro'
 include 'core:core-task'
 
+include 'server:server-config'
 include 'server:server-shell'
 include 'server:server-status'
 include 'server:server-udc'

@@ -1,5 +1,7 @@
 module api.content.resource {
 
+    import LocalDateTime = api.util.LocalDateTime;
+
     export class PublishContentRequest extends ContentResourceRequest<api.task.TaskIdJson, api.task.TaskId> {
 
         private ids: ContentId[] = [];
@@ -7,6 +9,10 @@ module api.content.resource {
         private excludedIds: ContentId[] = [];
 
         private includeChildren: boolean;
+
+        private publishFrom: Date;
+
+        private publishTo: Date;
 
         constructor(contentId?: ContentId) {
             super();
@@ -36,6 +42,14 @@ module api.content.resource {
             return this;
         }
 
+        setPublishFrom(publishFrom: Date) {
+            this.publishFrom = publishFrom;
+        }
+
+        setPublishTo(publishTo: Date) {
+            this.publishTo = publishTo;
+        }
+
         getParams(): Object {
             return {
                 ids: this.ids.map((el) => {
@@ -44,7 +58,11 @@ module api.content.resource {
                 excludedIds: this.excludedIds.map((el) => {
                     return el.toString();
                 }),
-                includeChildren: this.includeChildren
+                includeChildren: this.includeChildren,
+                schedule: this.publishFrom ? {
+                    from: this.publishFrom.toISOString(),
+                    to: this.publishTo ? this.publishTo.toISOString() : undefined
+                } : null
             };
         }
 

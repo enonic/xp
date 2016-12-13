@@ -3,6 +3,7 @@ import TreeNode = api.ui.treegrid.TreeNode;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import PublishStatus = api.content.PublishStatus;
 
 export class ContentRowFormatter {
 
@@ -50,24 +51,42 @@ export class ContentRowFormatter {
     public static statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
 
         var data = node.getData(),
-            status,
-            statusEl = new api.dom.SpanEl();
+            compareStatusText;
 
         if (!!data.getContentSummary()) {   // default node
-            var compareStatus: CompareStatus = CompareStatus[CompareStatus[value]];
+            var compareStatus: CompareStatus = CompareStatus[CompareStatus[value]],
+                publishStatus: PublishStatus = data.getPublishStatus();
 
-            status = api.content.CompareStatusFormatter.formatStatus(compareStatus);
+            compareStatusText = api.content.CompareStatusFormatter.formatStatus(compareStatus);
 
-            if (!!CompareStatus[value]) {
-                statusEl.addClass(CompareStatus[value].toLowerCase().replace("_", "-") || "unknown");
+            if (PublishStatus[publishStatus] && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
+                var statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(CompareStatus[value]));
+                statusEl.getEl().setText(compareStatusText);
+                statusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));
+
+                var publishStatusEl = new api.dom.DivEl(),
+                    publishStatusText = api.content.PublishStatusFormatter.formatStatus(publishStatus);
+
+                publishStatusEl.getEl().setText('(' + publishStatusText + ')');
+                publishStatusEl.addClass(ContentRowFormatter.makeClassName(CompareStatus[value]));
+                publishStatusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));
+
+                return statusEl.toString() + publishStatusEl.toString();
+            } else {
+                var statusEl = new api.dom.SpanEl()
+                if (CompareStatus[value]) {
+                    statusEl.addClass(ContentRowFormatter.makeClassName(CompareStatus[value]));
+                }
+                statusEl.getEl().setText(compareStatusText);
+                return statusEl.toString();
             }
-
-            statusEl.getEl().setText(status);
         } else if (!!data.getUploadItem()) {   // uploading node
-            status = new api.ui.ProgressBar(data.getUploadItem().getProgress());
-            statusEl.appendChild(status);
+            compareStatusText = new api.ui.ProgressBar(data.getUploadItem().getProgress());
+            return new api.dom.SpanEl().appendChild(compareStatusText).toString();
         }
+    }
 
-        return statusEl.toString();
+    private static makeClassName(entry): string {
+        return entry.toLowerCase().replace("_", "-") || "unknown";
     }
 }

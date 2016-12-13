@@ -11,32 +11,28 @@ public class BundleInfoTest
     @Test
     public void testSimple()
     {
-        final BundleInfo info = new BundleInfo( "my.jar", 10 );
+        final BundleInfo info = new BundleInfo( new File( "my.jar" ), 10 );
         assertEquals( 10, info.getLevel() );
-        assertEquals( "my.jar", info.getLocation() );
-        assertEquals( "my.jar".hashCode(), info.hashCode() );
+        assertTrue( info.getLocation().endsWith( "/my.jar" ) );
         assertEquals( "my.jar@10", info.toString() );
     }
 
     @Test
     public void testUri()
     {
-        final File baseDir = new File( "/some/location" );
+        final File file = new File( "/some/location/my.jar" );
 
-        final BundleInfo info1 = new BundleInfo( "my.jar", 10 );
-        assertEquals( "file:/some/location/my.jar", info1.getUri( baseDir ).toString() );
-
-        final BundleInfo info2 = new BundleInfo( "file://my.jar", 10 );
-        assertEquals( "file://my.jar", info2.getUri( baseDir ).toString() );
+        final BundleInfo info1 = new BundleInfo( file, 10 );
+        assertEquals( "file:/some/location/my.jar", info1.getUri().toString() );
     }
 
     @Test
     public void testEquals()
     {
-        final BundleInfo info1 = new BundleInfo( "my.jar", 10 );
-        final BundleInfo info2 = new BundleInfo( "my.jar", 10 );
-        final BundleInfo info3 = new BundleInfo( "my.jar", 8 );
-        final BundleInfo info4 = new BundleInfo( "other.jar", 20 );
+        final BundleInfo info1 = new BundleInfo( new File( "my.jar" ), 10 );
+        final BundleInfo info2 = new BundleInfo( new File( "my.jar" ), 10 );
+        final BundleInfo info3 = new BundleInfo( new File( "my.jar" ), 8 );
+        final BundleInfo info4 = new BundleInfo( new File( "other.jar" ), 20 );
 
         assertTrue( info1.equals( info2 ) );
         assertFalse( info1.equals( info3 ) );
@@ -47,9 +43,9 @@ public class BundleInfoTest
     @Test
     public void testCompareTo()
     {
-        final BundleInfo info1 = new BundleInfo( "my.jar", 10 );
-        final BundleInfo info2 = new BundleInfo( "my.jar", 10 );
-        final BundleInfo info3 = new BundleInfo( "my.jar", 20 );
+        final BundleInfo info1 = new BundleInfo( new File( "my.jar" ), 10 );
+        final BundleInfo info2 = new BundleInfo( new File( "my.jar" ), 10 );
+        final BundleInfo info3 = new BundleInfo( new File( "my.jar" ), 20 );
 
         assertEquals( 0, info1.compareTo( info2 ) );
         assertEquals( -1, info1.compareTo( info3 ) );

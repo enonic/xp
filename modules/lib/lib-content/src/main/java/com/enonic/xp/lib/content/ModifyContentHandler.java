@@ -124,23 +124,27 @@ public final class ModifyContentHandler
             return null;
         }
 
-        final ContentPublishInfo.Builder builder = ContentPublishInfo.create();
+        return ContentPublishInfo.create().
+            from( getInstant( value, "from" ) ).
+            to( getInstant( value, "to" ) ).
+            build();
+    }
 
-        final Object from = value.get( "from" );
-
-        if ( from != null )
+    private Instant getInstant( final Map<String, Object> valueMap, final String key )
+    {
+        final Object value = valueMap.get( key );
+        if ( value != null )
         {
             try
             {
-                builder.from( Instant.parse( from.toString() ) );
+                return Instant.parse( value.toString() );
             }
             catch ( DateTimeParseException e )
             {
-                throw new IllegalArgumentException( "publish.from value could not be parsed to instant: [" + from + "]" );
+                throw new IllegalArgumentException( key + " value could not be parsed to instant: [" + value + "]" );
             }
         }
-
-        return builder.build();
+        return null;
     }
 
     private PropertyTree createPropertyTree( final Map<?, ?> value, final ContentTypeName contentTypeName )

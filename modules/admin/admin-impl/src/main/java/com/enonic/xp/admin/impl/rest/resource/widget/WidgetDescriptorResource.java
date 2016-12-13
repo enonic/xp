@@ -26,11 +26,10 @@ import static java.util.stream.Collectors.toList;
 @Path(ResourceConstants.REST_ROOT + "widget")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public class WidgetDescriptorResource
     implements JaxRsComponent
 {
-
     private WidgetDescriptorService widgetDescriptorService;
 
     @POST

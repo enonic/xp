@@ -60,6 +60,35 @@
 
 }
 
+.menu-action-button() {
+  .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+  span {
+    line-height: 1em;
+  }
+
+  &:focus:not(:disabled) {
+    box-shadow: none;
+    border: 1px solid transparent;
+  }
+
+  display: inline-block;
+  vertical-align: top;
+  height: 100%;
+
+  &.pull-right {
+    float: right;
+  }
+
+  &[class*="icon-"] {
+    font-size: 16px;
+
+    span {
+      display: none;
+    }
+  }
+}
+
 .@{_COMMON_PREFIX}button {
   .reset();
   .button(@form-button-font, @form-button-bg);

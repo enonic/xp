@@ -15,7 +15,7 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 
 class ContentQueryNodeQueryTranslator
 {
-    public static NodeQuery translate( final ContentQuery contentQuery )
+    public static NodeQuery.Builder translate( final ContentQuery contentQuery )
     {
         final NodeQuery.Builder builder = NodeQuery.create();
 
@@ -34,7 +34,7 @@ class ContentQueryNodeQueryTranslator
         processContentTypesNames( contentQuery, builder );
         processReferenceIds( contentQuery, builder );
 
-        return builder.build();
+        return builder;
     }
 
     private static void processContentTypesNames( final ContentQuery contentQuery, final NodeQuery.Builder builder )

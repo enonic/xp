@@ -26,9 +26,13 @@ Build all code skipping all tests:
 
 ## Running
 
-After building the project, you can start it locally by running the server script:
+After building the project, you can start it locally by running the server script (or `bat` on Windows):
 
     modules/distro/target/install/bin/server.sh
+    
+You can also go to the `modules/distro` directory and type:
+    
+    gradle run    
 
 ## License
 

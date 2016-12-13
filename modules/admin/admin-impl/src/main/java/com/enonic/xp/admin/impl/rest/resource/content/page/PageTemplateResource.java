@@ -38,7 +38,7 @@ import com.enonic.xp.security.SecurityService;
 @javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 public final class PageTemplateResource
     implements JaxRsComponent
 {

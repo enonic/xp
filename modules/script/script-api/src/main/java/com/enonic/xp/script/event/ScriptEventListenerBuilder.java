@@ -20,15 +20,21 @@ public final class ScriptEventListenerBuilder
         return this;
     }
 
-    public ScriptEventListenerBuilder pattern( final String pattern )
+    public ScriptEventListenerBuilder typePattern( final String pattern )
     {
-        this.listener.pattern = Pattern.compile( pattern.replace( ".", "\\." ).replace( "*", ".*" ) );
+        this.listener.typePattern = Pattern.compile( pattern.replace( ".", "\\." ).replace( "*", ".*" ) );
         return this;
     }
 
     public ScriptEventListenerBuilder listener( final Consumer<Object> listener )
     {
         this.listener.listener = listener;
+        return this;
+    }
+
+    public ScriptEventListenerBuilder localOnly( final boolean localOnly )
+    {
+        this.listener.localOnly = localOnly;
         return this;
     }
 

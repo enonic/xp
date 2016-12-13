@@ -4,6 +4,8 @@ module api.content.json {
 
         compareStatus: string;
 
+        publishStatus: string;
+
         id: string;
     }
 }

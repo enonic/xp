@@ -6,11 +6,11 @@ import java.net.URI;
 final class BundleInfo
     implements Comparable<BundleInfo>
 {
-    private final String location;
+    private final File location;
 
     private final int level;
 
-    BundleInfo( final String location, final int level )
+    BundleInfo( final File location, final int level )
     {
         this.location = location;
         this.level = level;
@@ -18,7 +18,7 @@ final class BundleInfo
 
     String getLocation()
     {
-        return this.location;
+        return this.location.toURI().toString();
     }
 
     int getLevel()
@@ -26,15 +26,9 @@ final class BundleInfo
         return this.level;
     }
 
-    URI getUri( final File baseDir )
+    URI getUri()
     {
-        final URI uri = URI.create( this.location );
-        if ( uri.getScheme() == null )
-        {
-            return URI.create( baseDir.toURI().toString() + "/" + this.location );
-        }
-
-        return uri;
+        return this.location.toURI();
     }
 
     @Override
@@ -72,6 +66,6 @@ final class BundleInfo
     @Override
     public String toString()
     {
-        return this.location + "@" + this.level;
+        return this.location.getName() + "@" + this.level;
     }
 }

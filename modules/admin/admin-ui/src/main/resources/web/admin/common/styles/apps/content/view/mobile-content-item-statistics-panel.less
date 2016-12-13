@@ -22,67 +22,137 @@
   }
 
   .mobile-content-item-statistics-header {
+    .box-sizing(border-box);
+    height: @app-header-height;
     z-index: 2;
-    margin: 0px;
     width: 100%;
     position: absolute;
-    padding: 8px 0px 8px 0px;
-    overflow: hidden;
+    padding: 6px @app-header-height 6px @app-header-height;
     display: block;
-    line-height: 20px !important;
-    background-color: @admin-bg-almost-white;
+    background-color: @admin-black;
     text-align: center;
     font-size: 14px;
+    color: @admin-white;
+
+    .mobile-header-title {
+      display: inline-block;
+      max-width: calc(~'100% - 44px');
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-weight: bold;
+      line-height: 18px;
+      .ellipsis();
+
+      position: relative;
+
+      &:after {
+        content: "";
+        position: absolute;
+        top: 5px;
+        right: 0px;
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 8px solid @admin-white;
+        border-bottom: none;
+      }
+
+    }
+
+
+    &.context-menu .mobile-header-title:after {
+      border-top: none;
+      border-bottom: 8px solid @admin-white;
+    }
+
+    > span {
+      display: block;
+      font-size: 11px;
+      line-height: 8px;
+      opacity: 0.8;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+
+      &.online {
+        opacity: 1;
+        color: #7dce2f;
+      }
+    }
+
+    .mobile-header-title, > span {
+      padding-right: 20px;
+    }
+  }
+
+  .mobile-details-panel-toggle-button,
+  .mobile-details-panel-back-button {
+    z-index: 3;
+    width: @app-header-height;
+    height: @app-header-height;
+    line-height: @app-header-height;;
+    position: absolute;
+    top: 0px;
+    cursor: pointer;
+
+    &:before {
+      color: @admin-white;
+    }
   }
 
   .mobile-details-panel-toggle-button {
-
-    z-index: 2;
-    margin: 0px;
-    right: 2px;
-    float: right;
-    width: 35px;
-    height: 20px;
-    position: absolute;
-    line-height: 20px;
-    top: 0px;
-    padding: 8px 0px 8px 0px;
+    right: 0px;
     font-size: 15px;
-    overflow: hidden;
-    display: block;
-    cursor: pointer;
 
+    .box-sizing(border-box);
     .icon-list();
 
     &.expanded {
       font-size: 25px;
-      padding-top: 5px;
+      padding: 10px 0;
       .icon-close2();
     }
   }
 
-  .back-button {
+  .mobile-details-panel-back-button {
 
-    z-index: 3;
-    margin: 0px 0px 0px 5px;
-    float: left;
-    width: 35px;
-    height: 20px;
-    position: absolute;
-    line-height: 20px;
-    top: 0px;
-    padding: 8px 0px 8px 0px;
+    left: 0px;
     font-size: 20px;
-    overflow: hidden;
-    display: block;
-    cursor: pointer;
     transform: rotate(180deg);
 
     .icon-trending_neutral();
   }
 
+  .mobile-content-item-statistics-header.context-menu {
+    .mobile-preview-fold-button .@{_COMMON_PREFIX}dropdown {
+      display: block;
+    }
+  }
+
+  .mobile-preview-fold-button {
+    position: absolute;
+    top: @app-header-height;
+    left: 0px;
+    width: 100%;
+    border: none;
+
+    &:after {
+      display: none;
+    }
+
+    .@{_COMMON_PREFIX}dropdown {
+      width: 100%;
+      .box-sizing(border-box);
+
+      .action-button.publish span {
+        color: @admin-green;
+      }
+    }
+
+  }
+
   .content-item-preview-panel {
-    padding-top: 36px;
+    padding-top: @app-header-height;
   }
 
   .details-panel {
@@ -191,47 +261,6 @@
     }
   }
 
-  .toolbar {
-    position: absolute;
-    bottom: 0px;
-    width: 100%;
-    border-top: 1px solid @admin-bg-light-gray;
-    background-color: fade(@admin-bg-almost-white, 95%);
-
-    .fold-button {
-      border: 0px;
-
-      &:hover .@{_COMMON_PREFIX}dropdown,
-      &:focus .@{_COMMON_PREFIX}dropdown,
-      .@{_COMMON_PREFIX}dropdown:hover,
-      .@{_COMMON_PREFIX}dropdown:focus {
-        bottom: 100%;
-      }
-
-      &:after {
-        border-top: 0px;
-      }
-
-      .@{_COMMON_PREFIX}dropdown {
-        .box-shadow(1px -1px 2px 0px rgba(0, 0, 0, 0.3));
-      }
-    }
-
-    .mobile-edit-action {
-      position: absolute;
-      bottom: 0px;
-      right: 0px;
-      vertical-align: middle;
-      padding: 0px 14px;
-      line-height: 36px;
-      border: 0px;
-
-      &:disabled {
-        background-color: transparent;
-      }
-
-    }
-  }
 }
 
 // Transition when opeining content preview on a mobile

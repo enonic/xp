@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
 
-@Component(immediate = true)
+@Component(immediate = true, property = "group=admin")
 @Provider
 public final class SecurityFeature
     implements DynamicFeature, JaxRsComponent

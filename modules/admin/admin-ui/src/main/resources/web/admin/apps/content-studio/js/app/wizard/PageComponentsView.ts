@@ -87,6 +87,8 @@ export class PageComponentsView extends api.dom.DivEl {
             }
         });
 
+        this.onAdded(this.initLiveEditEvents.bind(this));
+
         this.responsiveItem = ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
             var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
             if (!smallSize && this.isVisible()) {
@@ -155,9 +157,7 @@ export class PageComponentsView extends api.dom.DivEl {
         }
     }
 
-    private createTree(content: Content, pageView: PageView) {
-        this.tree = new PageComponentsTreeGrid(content, pageView);
-
+    private initLiveEditEvents() {
         this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
             if (!event.isNew() && !this.pageView.isLocked()) {
                 var selectedItemId = this.tree.getDataId(event.getItemView());
@@ -264,6 +264,10 @@ export class PageComponentsView extends api.dom.DivEl {
 
             this.removeFromInvalidItems(oldDataId);
         });
+    }
+
+    private createTree(content: Content, pageView: PageView) {
+        this.tree = new PageComponentsTreeGrid(content, pageView);
 
         this.clickListener = (event, data) => {
             var elem = new api.dom.ElementHelper(event.target);

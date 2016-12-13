@@ -3,14 +3,22 @@
 
   background-color: @admin-white;
   height: @toolbar-height;
-  line-height: 41px;
+  line-height: @toolbar-height;
   overflow: visible; // for the button glow
   .box-sizing(border-box);
   border-bottom: 1px solid @admin-bg-light-gray;
   min-width: 200px;
 
-  .@{_COMMON_PREFIX}button {
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+  .fold-button {
+    margin-right: 18px;
+
+    .@{_COMMON_PREFIX}dropdown {
+      margin-top: 35px;
+    }
+  }
+
+  > .@{_COMMON_PREFIX}button {
+    .menu-action-button();
 
     &:focus:not(:disabled) {
       box-shadow: none;
@@ -43,39 +51,6 @@
 
   .menu-button {
     height: 100%;
-  }
-
-  .fold-button {
-    margin-right: 18px;
-    padding: 0 27px 0 17px;
-    position: relative; // for the dropdown to position itself
-
-    &:after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      width: 0;
-      height: 0;
-      margin: -2px 0 0 -4px;
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-top: 6px solid @admin-dark-gray;
-    }
-
-    &:hover .@{_COMMON_PREFIX}dropdown {
-      .@{_COMMON_PREFIX}button {
-        &:hover:not(:disabled) span {
-          color: @admin-font-gray3;
-          cursor: pointer;
-        }
-
-        &:not(:disabled) span {
-          color: @admin-font-gray2;
-        }
-      }
-
-    }
   }
 
   &.content-browse-toolbar, &.user-browse-toolbar {

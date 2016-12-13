@@ -164,6 +164,7 @@ public class ContentServiceImplTest_create
             type( ContentTypeName.folder() ).
             contentPublishInfo( ContentPublishInfo.create().
                 from( Instant.parse( "2016-11-03T10:42:00Z" ) ).
+                from( Instant.parse( "2016-11-23T10:42:00Z" ) ).
                 build() ).
             build();
 

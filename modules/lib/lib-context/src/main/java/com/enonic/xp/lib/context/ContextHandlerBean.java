@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.context;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
@@ -29,6 +30,7 @@ public final class ContextHandlerBean
         applyRepository( builder, params.repository );
         applyAuthInfo( builder, params.username, params.userStore, params.principals );
         applyBranch( builder, params.branch );
+        addAttributes( builder, params.attributes );
 
         return builder.build().
             callWith( params.callback );
@@ -80,6 +82,17 @@ public final class ContextHandlerBean
         }
 
         builder.branch( branch );
+    }
+
+    private void addAttributes( final ContextBuilder builder, final Map<String, Object> attributes )
+    {
+        if ( attributes != null )
+        {
+            for ( Map.Entry<String, Object> attribute : attributes.entrySet() )
+            {
+                builder.attribute( attribute.getKey(), attribute.getValue() );
+            }
+        }
     }
 
     private AuthenticationInfo getAuthenticationInfo( final String username, final String userStore )

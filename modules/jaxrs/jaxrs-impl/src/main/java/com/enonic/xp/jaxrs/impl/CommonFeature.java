@@ -19,8 +19,6 @@ import org.jboss.resteasy.plugins.providers.JaxrsFormProvider;
 import org.jboss.resteasy.plugins.providers.ReaderProvider;
 import org.jboss.resteasy.plugins.providers.StreamingOutputProvider;
 import org.jboss.resteasy.plugins.providers.StringTextStar;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.impl.exception.JsonExceptionMapper;
@@ -29,11 +27,15 @@ import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
 import com.enonic.xp.web.multipart.MultipartService;
 
-@Component(immediate = true, service = JaxRsComponent.class)
-public final class CommonFeature
+final class CommonFeature
     implements Feature, JaxRsComponent
 {
-    private MultipartService multipartService;
+    private final MultipartService multipartService;
+
+    CommonFeature( final MultipartService multipartService )
+    {
+        this.multipartService = multipartService;
+    }
 
     @Override
     public boolean configure( final FeatureContext context )
@@ -53,19 +55,11 @@ public final class CommonFeature
         context.register( AcceptEncodingGZIPFilter.class );
         context.register( ClientContentEncodingAnnotationFeature.class );
         context.register( GZIPDecodingInterceptor.class );
-        // context.register( GZIPEncodingInterceptor.class );
         context.register( ServerContentEncodingAnnotationFeature.class );
-
         context.register( new MultipartFormReader( this.multipartService ) );
         context.register( new JsonObjectProvider() );
         context.register( new JsonExceptionMapper() );
         context.register( new RenderedImageProvider() );
         return true;
-    }
-
-    @Reference
-    public void setMultipartService( final MultipartService multipartService )
-    {
-        this.multipartService = multipartService;
     }
 }

@@ -1,8 +1,13 @@
 package com.enonic.xp.jaxrs;
 
-import java.util.List;
-
 public interface JaxRsService
+    extends Iterable<JaxRsComponent>
 {
-    List<JaxRsComponent> getComponents();
+    void init();
+
+    void add( JaxRsComponent component );
+
+    void remove( JaxRsComponent component );
+
+    void destroy();
 }

@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -19,6 +20,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentService;
@@ -166,8 +170,12 @@ public class ImageServiceImpl
         //Source binary key
         final String binaryKey = contentService.getBinaryKey( readImageParams.getContentId(), readImageParams.getBinaryReference() );
 
-        return Paths.get( homeDir, "work", "cache", "img", binaryKey, cropping, scale, filter, format, background, orientation, quality,
-                          readImageParams.getBinaryReference().toString() ).toAbsolutePath();
+        final String key = String.join( "/", binaryKey, cropping, scale, filter, format, background, orientation, quality,
+                                        readImageParams.getBinaryReference().toString() );
+        final HashCode hashCode = Hashing.sha1().hashString( key, StandardCharsets.UTF_8 );
+        final String hash = BaseEncoding.base16().encode( hashCode.asBytes() ).toLowerCase();
+        return Paths.get( homeDir, "work", "cache", "img", hash.substring( 0, 2 ), hash.substring( 2, 4 ), hash.substring( 4, 6 ),
+                          hash ).toAbsolutePath();
     }
 
     private BufferedImage readBufferedImage( final ByteSource blob, final ReadImageParams readImageParams )

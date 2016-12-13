@@ -6,8 +6,8 @@ module api.ui.toolbar {
         private dropdown: api.dom.DivEl;
         private widthCache: number[] = [];
 
-        constructor() {
-            super("button", api.StyleHelper.COMMON_PREFIX);
+        constructor(caption: string = "Actions") {
+            super();
 
             this.addClass("fold-button");
 
@@ -15,7 +15,7 @@ module api.ui.toolbar {
             this.appendChild(this.dropdown);
 
             this.span = new api.dom.SpanEl('fold-label');
-            this.span.setHtml("More");
+            this.span.setHtml(caption);
             this.appendChild(this.span);
         }
 

@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeProcessor;
@@ -27,11 +26,7 @@ public class DuplicateContentProcessor
         originalData.setString( ContentPropertyNames.OWNER, user.getKey().toString() );
         originalData.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
         originalData.setString( ContentPropertyNames.MODIFIER, user.getKey().toString() );
-        final PropertySet publishInfo = originalData.getSet( ContentPropertyNames.PUBLISH_INFO );
-        if ( publishInfo != null )
-        {
-            publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
-        }
+        originalData.removeProperty( ContentPropertyNames.PUBLISH_INFO );
 
         return builder.build();
     }

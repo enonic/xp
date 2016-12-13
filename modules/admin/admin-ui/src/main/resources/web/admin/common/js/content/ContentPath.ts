@@ -134,7 +134,7 @@ module api.content {
             return new ContentPath(prettyElements);
         }
 
-        toString() {
+        toString(): string {
             return this.refString;
         }
     }

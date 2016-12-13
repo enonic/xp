@@ -1,4 +1,5 @@
 module api.app.view {
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class ViewItem<M extends api.Equitable> implements api.Equitable {
 
@@ -20,6 +21,13 @@ module api.app.view {
 
         constructor(model: M) {
             this.model = model;
+        }
+
+        static fromContentSummaryAndCompareStatus(model: ContentSummaryAndCompareStatus): ViewItem<ContentSummaryAndCompareStatus>{
+            return new api.app.view.ViewItem<ContentSummaryAndCompareStatus>(model)
+                .setIconUrl(model.getIconUrl())
+                .setDisplayName(model.getDisplayName())
+                .setPath(model.getPath().toString());
         }
 
         setDisplayName(value: string): ViewItem<M> {

@@ -451,6 +451,7 @@ public class ContentServiceImplTest_update
             editor( edit -> {
                 edit.publishInfo = ContentPublishInfo.create().
                     from( Instant.parse( "2016-11-03T10:43:44Z" ) ).
+                    to( Instant.parse( "2016-11-23T10:43:44Z" ) ).
                     build();
             } );
 
@@ -459,5 +460,8 @@ public class ContentServiceImplTest_update
         final Content storedContent = this.contentService.getById( content.getId() );
         assertNotNull( storedContent.getPublishInfo() );
         assertNotNull( storedContent.getPublishInfo().getFrom() );
+        assertNotNull( storedContent.getPublishInfo().getTo() );
+        assertEquals( storedContent.getPublishInfo().getFrom(), Instant.parse( "2016-11-03T10:43:44Z" ) );
+        assertEquals( storedContent.getPublishInfo().getTo(), Instant.parse( "2016-11-23T10:43:44Z" ) );
     }
 }

@@ -25,6 +25,7 @@ import ContentId = api.content.ContentId;
 import ContentPath = api.content.ContentPath;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
+import PublishStatus = api.content.PublishStatus;
 import ContentBuilder = api.content.ContentBuilder;
 import Thumbnail = api.thumb.Thumbnail;
 import ContentName = api.content.ContentName;
@@ -158,7 +159,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.contentParams = params;
 
         this.loadData();
-        
+
         this.isContentFormValid = false;
         this.isSecurityWizardStepFormAllowed = false;
 
@@ -248,11 +249,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     let shownHandler = () => {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
-                                (application: Application) => {
-                                    if (application.getState() == "stopped") {
-                                        api.notify.showWarning(message);
-                                    }
-                                })
+                            (application: Application) => {
+                                if (application.getState() == "stopped") {
+                                    api.notify.showWarning(message);
+                                }
+                            })
                             .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
@@ -692,16 +693,20 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 if (this.isCurrentContentId(content.getContentId())) {
 
                     this.persistedContentCompareStatus = this.currentContentCompareStatus = content.getCompareStatus();
-                    this.getContentWizardToolbarPublishControls().setCompareStatus(this.currentContentCompareStatus);
+                    this.getContentWizardToolbarPublishControls().setPublishStatus(content.getPublishStatus()).setCompareStatus(
+                        this.currentContentCompareStatus);
 
                     this.getWizardHeader().disableNameGeneration(this.currentContentCompareStatus === CompareStatus.EQUAL);
                 }
             });
         };
 
-        var updateHandler = (contentId: ContentId, compareStatus?: CompareStatus) => {
+        var updateHandler = (contentId: ContentId, compareStatus?: CompareStatus, publishStatus?: PublishStatus) => {
 
             if (this.isCurrentContentId(contentId)) {
+                if (publishStatus) {
+                    this.getContentWizardToolbarPublishControls().setPublishStatus(publishStatus);
+                }
                 if (compareStatus != undefined) {
                     this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
                     this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
@@ -745,7 +750,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 return this.isCurrentContentId(sorted.getContentId());
             });
             if (wasSorted) {
-                this.getContentWizardToolbarPublishControls().setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
+                this.getContentWizardToolbarPublishControls().setPublishStatus(
+                    data[indexOfCurrentContent].getPublishStatus()).setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
             }
         };
 
@@ -755,14 +761,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
 
             if (wasMoved) {
-                updateHandler(this.getPersistedItem().getContentId(), data[0].getCompareStatus());
+                updateHandler(this.getPersistedItem().getContentId(), data[0].getCompareStatus(), data[0].getPublishStatus());
             }
         };
 
         var contentUpdatedHandler = (data: ContentSummaryAndCompareStatus[]) => {
             if (!this.contentUpdateDisabled) {
                 data.forEach((updated: ContentSummaryAndCompareStatus) => {
-                    updateHandler(updated.getContentId(), updated.getCompareStatus());
+                    updateHandler(updated.getContentId(), updated.getCompareStatus(), updated.getPublishStatus());
                 });
             }
         };
@@ -870,8 +876,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 wizardHeader.disableNameGeneration(this.currentContentCompareStatus !== CompareStatus.NEW);
 
-                publishControls.setCompareStatus(this.currentContentCompareStatus);
-                publishControls.setLeafContent(!this.getPersistedItem().hasChildren());
+                publishControls.setPublishStatus(summaryAndStatus.getPublishStatus()).setCompareStatus(
+                    this.currentContentCompareStatus).setLeafContent(!this.getPersistedItem().hasChildren());
             });
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
@@ -925,7 +931,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         ConfirmationDialog.get().setQuestion(
                             "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
                             () => this.doLayoutPersistedItem(persistedContent.clone())).setNoCallback(() => {/* Do nothing... */
-                        }).show();
+                            }).show();
                     }
                 }
 
@@ -1021,7 +1027,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                 this.settingsWizardStepForm.layout(content);
-                this.settingsWizardStepForm.getModel().onPropertyChanged(this.dataChangedListener);
+                this.settingsWizardStepForm.onPropertyChanged(this.dataChangedListener);
 
                 if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);
@@ -1265,7 +1271,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         var updateContentRequest = new UpdateContentRequest(persistedContent.getId()).setRequireValid(this.requireValid).setContentName(
             viewedContent.getName()).setDisplayName(viewedContent.getDisplayName()).setData(viewedContent.getContentData()).setExtraData(
-            viewedContent.getAllExtraData()).setOwner(viewedContent.getOwner()).setLanguage(viewedContent.getLanguage());
+            viewedContent.getAllExtraData()).setOwner(viewedContent.getOwner()).setLanguage(viewedContent.getLanguage()).setPublishFrom(
+            viewedContent.getPublishFromTime()).setPublishTo(viewedContent.getPublishToTime());
 
         return updateContentRequest;
     }
@@ -1327,7 +1334,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         viewedContentBuilder.setExtraData(extraData);
 
-        this.settingsWizardStepForm.getModel().apply(viewedContentBuilder);
+        this.settingsWizardStepForm.apply(viewedContentBuilder);
 
         viewedContentBuilder.setPage(this.assembleViewedPage());
         return viewedContentBuilder;

@@ -76,6 +76,8 @@ public interface ContentService
 
     CompareContentResults compare( CompareContentsParams params );
 
+    GetPublishStatusesResult getPublishStatuses( GetPublishStatusesParams params );
+
     FindContentVersionsResult getVersions( FindContentVersionsParams params );
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );

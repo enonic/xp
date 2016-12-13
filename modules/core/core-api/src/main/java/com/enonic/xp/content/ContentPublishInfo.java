@@ -1,14 +1,18 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public class ContentPublishInfo
 {
     private Instant from;
 
+    private Instant to;
+
     private ContentPublishInfo( final Builder builder )
     {
         from = builder.from;
+        to = builder.to;
     }
 
     public static Builder create()
@@ -21,9 +25,16 @@ public class ContentPublishInfo
         return from;
     }
 
+    public Instant getTo()
+    {
+        return to;
+    }
+
     public static final class Builder
     {
         private Instant from;
+
+        private Instant to;
 
         private Builder()
         {
@@ -32,6 +43,12 @@ public class ContentPublishInfo
         public Builder from( final Instant val )
         {
             from = val;
+            return this;
+        }
+
+        public Builder to( final Instant val )
+        {
+            to = val;
             return this;
         }
 
@@ -54,14 +71,13 @@ public class ContentPublishInfo
         }
 
         final ContentPublishInfo that = (ContentPublishInfo) o;
-
-        return from != null ? from.equals( that.from ) : that.from == null;
+        return Objects.equals( from, that.from ) & Objects.equals( to, that.to );
 
     }
 
     @Override
     public int hashCode()
     {
-        return from != null ? from.hashCode() : 0;
+        return Objects.hash( from, to );
     }
 }
