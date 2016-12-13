@@ -281,6 +281,24 @@ RepoConnection.prototype.refresh = function (mode) {
     this.native.refresh(valueOrDefault(mode, "ALL"));
 };
 
+
+/**
+ * Set the root node permissions and inherit.
+ *
+ * @example-ref examples/node/modifyRootPermissions.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {object} params._permissions the permission json
+ * @param {object} [params._inheritsPermissions]= true if the permissions should be inherited to children
+ *
+ * @returns {object} Updated root-node as JSON.
+ */
+RepoConnection.prototype.setRootPermissions = function (params) {
+    required(params, "_permissions");
+    return __.toNativeObject(this.native.setRootPermissions(__.toScriptValue(params)));
+};
+
+
 /**
  * Creates a connection to a repository with a given branch and authentication info.
  *

@@ -18,6 +18,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -402,6 +403,13 @@ public class MoveNodeCommandTest
         assertEquals( a1_1.id(), iterator.next() );
         assertEquals( a2_2.id(), iterator.next() );
         assertEquals( a2_1.id(), iterator.next() );
+    }
+
+    @Test(expected = OperationNotPermittedException.class)
+    public void cannot_move_root_node()
+        throws Exception
+    {
+        doMoveNode( NodePath.create( "/fisk" ).build(), Node.ROOT_UUID );
     }
 
     private void doMoveNode( final NodePath newParent, final NodeId nodeId )

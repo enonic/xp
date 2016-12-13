@@ -7,6 +7,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -155,5 +156,12 @@ public class DeleteNodeByIdCommandTest
         refresh();
 
         doDeleteNode( parentNode.id() );
+    }
+
+    @Test(expected = OperationNotPermittedException.class)
+    public void cannot_delete_root_node()
+        throws Exception
+    {
+        doDeleteNode( Node.ROOT_UUID );
     }
 }

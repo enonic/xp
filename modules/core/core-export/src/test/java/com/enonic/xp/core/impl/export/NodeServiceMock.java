@@ -63,6 +63,7 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
 class NodeServiceMock
@@ -445,5 +446,11 @@ class NodeServiceMock
             build(), importNode.getTimestamp() );
 
         return ImportNodeResult.create().node( createdNode ).preExisting( preExist ).build();
+    }
+
+    @Override
+    public Node setRootPermissions( final AccessControlList accessControlList, final boolean inheritPermissions )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 }

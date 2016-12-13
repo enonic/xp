@@ -7,6 +7,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -22,6 +23,11 @@ abstract class AbstractDeleteNodeCommand
 
     NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context )
     {
+        if ( node.isRoot() )
+        {
+            throw new OperationNotPermittedException( "Not allowed to delete root-node" );
+        }
+
         doRefresh();
 
         final NodeBranchEntries nodesToBeDeleted = newResolveNodesToDelete( node );

@@ -72,6 +72,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
@@ -688,6 +689,19 @@ public class NodeServiceImpl
         }
 
         throw new RuntimeException( "Expected node with path " + NodePath.ROOT.toString() + " to be of type RootNode, found " + node.id() );
+    }
+
+    @Override
+    public Node setRootPermissions( final AccessControlList acl, final boolean inheritPermissions )
+    {
+        return SetRootPermissionsCommand.create().
+            permissions( acl ).
+            inheritPermissions( inheritPermissions ).
+            indexServiceInternal( indexServiceInternal ).
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            build().
+            execute();
     }
 
     @Override

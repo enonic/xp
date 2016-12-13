@@ -16,6 +16,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
@@ -51,6 +52,11 @@ public final class DuplicateNodeCommand
         if ( existingNode == null )
         {
             throw new NodeNotFoundException( "cannot duplicate node with id [" + nodeId + "]" );
+        }
+
+        if ( existingNode.isRoot() )
+        {
+            throw new OperationNotPermittedException( "Not allowed to duplicate root-node" );
         }
 
         final String newNodeName = resolveNewNodeName( existingNode );

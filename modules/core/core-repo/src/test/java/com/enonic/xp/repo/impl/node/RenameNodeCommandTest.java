@@ -7,6 +7,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RenameNodeParams;
 
 import static org.junit.Assert.*;
@@ -166,5 +167,21 @@ public class RenameNodeCommandTest
             execute();
 
         createNode( createNodeNamedMyNodeParams );
+    }
+
+    @Test(expected = OperationNotPermittedException.class)
+    public void cannot_rename_root_node()
+        throws Exception
+    {
+        RenameNodeCommand.create().
+            params( RenameNodeParams.create().
+                nodeId( Node.ROOT_UUID ).
+                nodeName( NodeName.from( "my-node-edited" ) ).
+                build() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
     }
 }
