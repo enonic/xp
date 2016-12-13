@@ -5,8 +5,6 @@ apply plugin: 'java-base'
 configurations {
     lib
     toolbox
-    bundle
-    bundle.transitive = false
 }
 
 dependencies {
@@ -17,63 +15,134 @@ dependencies {
 ext {
     installDir = "$buildDir/install"
     bundlesDir = "$installDir/system"
-    bundlesFile = "$projectDir/src/system/bundles.xml"
     archiveBase = "enonic-xp-$version"
-    leafProjects = rootProject.subprojects.findAll { p -> p.subprojects.empty }
+    bundleCopySpecs = []
 }
 
-def getProjectMappings()
+// Core bundles
+addBundle( 'org.apache.felix:org.apache.felix.metatype:1.1.2', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.4.4', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.8.8', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.scr:2.0.2', 5 )
+
+// Library dependencies
+addBundle( 'com.google.guava:guava:18.0', 8 )
+addBundle( 'commons-lang:commons-lang:2.4', 8 )
+addBundle( 'commons-io:commons-io:2.4', 8 )
+addBundle( 'com.fasterxml.jackson.core:jackson-core:2.6.2', 8 )
+addBundle( 'com.fasterxml.jackson.core:jackson-annotations:2.6.2', 8 )
+addBundle( 'com.fasterxml.jackson.core:jackson-databind:2.6.2', 8 )
+addBundle( 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.2', 8 )
+addBundle( 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.6.2', 8 )
+addBundle( 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2', 8 )
+addBundle( 'org.apache.tika:tika-core:1.13', 8 )
+addBundle( 'org.apache.tika:tika-bundle:1.13', 8 )
+addBundle( 'io.dropwizard.metrics:metrics-core:3.1.2', 8 )
+addBundle( 'io.dropwizard.metrics:metrics-json:3.1.2', 8 )
+addBundle( 'io.dropwizard.metrics:metrics-jvm:3.1.2', 8 )
+addBundle( 'io.dropwizard.metrics:metrics-jetty9:3.1.2', 8 )
+addBundle( project( ':repack:repack-jparsec' ), 8 )
+addBundle( project( ':repack:repack-elasticsearch' ), 8 )
+addBundle( project( ':repack:repack-resteasy' ), 8 )
+addBundle( project( ':repack:repack-attoparser' ), 8 )
+addBundle( project( ':repack:repack-okhttp' ), 8 )
+
+// API bundles
+addBundle( project( ':core:core-api' ), 10 )
+addBundle( project( ':script:script-api' ), 10 )
+addBundle( project( ':portal:portal-api' ), 10 )
+addBundle( project( ':web:web-api' ), 10 )
+addBundle( project( ':jaxrs:jaxrs-api' ), 10 )
+addBundle( project( ':admin:admin-api' ), 10 )
+
+// Core bundles
+addBundle( project( ':core:core-event' ), 22 )
+addBundle( project( ':core:core-schema' ), 22 )
+addBundle( project( ':core:core-repo' ), 22 )
+addBundle( project( ':core:core-security' ), 22 )
+addBundle( project( ':core:core-image' ), 22 )
+addBundle( project( ':core:core-export' ), 22 )
+addBundle( project( ':core:core-mail' ), 22 )
+addBundle( project( ':core:core-elasticsearch' ), 22 )
+addBundle( project( ':core:core-content' ), 22 )
+addBundle( project( ':core:core-site' ), 22 )
+addBundle( project( ':core:core-i18n' ), 22 )
+addBundle( project( ':core:core-media' ), 22 )
+addBundle( project( ':core:core-app' ), 22 )
+addBundle( project( ':core:core-service' ), 22 )
+addBundle( project( ':core:core-blobstore' ), 22 )
+addBundle( project( ':core:core-extractor' ), 22 )
+addBundle( project( ':core:core-auth' ), 22 )
+addBundle( project( ':core:core-macro' ), 22 )
+addBundle( project( ':core:core-task' ), 22 )
+
+// Server bundles
+addBundle( project( ':server:server-config' ), 12 )
+addBundle( project( ':server:server-shell' ), 17 )
+addBundle( project( ':server:server-status' ), 17 )
+addBundle( project( ':server:server-udc' ), 17 )
+addBundle( project( ':server:server-rest' ), 30 )
+
+// Script app
+addBundle( project( ':script:script-impl' ), 24 )
+
+// Web app
+addBundle( project( ':web:web-jetty' ), 26 )
+addBundle( project( ':web:web-impl' ), 26 )
+addBundle( project( ':web:web-vhost' ), 26 )
+addBundle( project( ':web:web-dos' ), 26 )
+
+// JaxRs app
+addBundle( project( ':jaxrs:jaxrs-impl' ), 28 )
+
+// Portal app
+addBundle( project( ':portal:portal-impl' ), 30 )
+addBundle( project( ':portal:portal-owasp' ), 30 )
+
+// Admin app
+addBundle( project( ':admin:admin-event' ), 30 )
+addBundle( project( ':admin:admin-ui' ), 30 )
+addBundle( project( ':admin:admin-impl' ), 30 )
+
+// BlobStore providers
+addBundle( project( ':blobstore:blobstore-file' ), 22 )
+
+// Applications
+addBundle( project( ':app:app-standardidprovider' ), 32 )
+
+def addBundle( dep, level )
 {
-    def map = [:]
-    leafProjects.each {
-        map["${it.group}:${it.name}:${it.version}"] = it
+    def config = getOrCreateBundleConfig( level )
+    dependencies.add( config.name, dep )
+}
+
+def getOrCreateBundleConfig( level )
+{
+    def levelStr = "$level".padLeft( 2, '0' )
+    def name = "bundle@$levelStr"
+
+    if ( configurations.asMap.containsKey( name ) )
+    {
+        return configurations.getByName( name )
     }
-    return map
-}
+    else
+    {
+        def config = configurations.create( name )
+        config.transitive = false
+        config.description = "Bundles for run-level $level"
 
-def expandGav( gav )
-{
-    def template = new groovy.text.SimpleTemplateEngine()
-    return template.createTemplate( gav ).make( project.properties ).toString();
-}
-
-def addBundleDependencies()
-{
-    def mappings = getProjectMappings()
-    def bundlesXml = new XmlSlurper().parse( bundlesFile )
-
-    bundlesXml.bundle.each {
-        def gav = expandGav( it.text().trim() )
-        def dep = mappings[gav]
-
-        if ( !dep )
-        {
-            dep = gav
+        bundleCopySpecs += project.copySpec {
+            from config
+            into levelStr
         }
 
-        dependencies.bundle dep
+        return config
     }
 }
-
-addBundleDependencies();
 
 task copyBundles( type: Copy ) {
     into bundlesDir
-    from configurations.bundle
-    rename { name ->
-        def artifacts = configurations.bundle.resolvedConfiguration.resolvedArtifacts
-        def artifact = artifacts.find { it.file.name == name }
-        def id = artifact.moduleVersion.id
-        def dir = id.group.replace( '.', '/' ) + "/${id.name}/${id.version}"
-        def fileName = "${id.name}-${id.version}"
-
-        if ( artifact.classifier != null )
-        {
-            fileName += '-' + artifact.classifier
-        }
-
-        return "${dir}/${fileName}.${artifact.extension}"
-    }
+    with( bundleCopySpecs as CopySpec[] )
 }
 
 task copyResources( type: Copy ) {
@@ -100,11 +169,6 @@ task copyResources( type: Copy ) {
     }
     into( 'lib' ) {
         from( configurations.lib )
-    }
-    into( 'system' ) {
-        from( bundlesFile ) {
-            expand project.properties
-        }
     }
     into( 'toolbox' ) {
         from( 'src/toolbox' ) {

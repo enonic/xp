@@ -115,7 +115,7 @@ public final class LauncherImpl
     private void addProvisionActivator()
     {
         final File systemDir = new File( this.env.getInstallDir(), "system" );
-        final ProvisionActivator activator = new ProvisionActivator( systemDir, this.config );
+        final ProvisionActivator activator = new ProvisionActivator( systemDir );
         this.framework.activator( activator );
     }
 
