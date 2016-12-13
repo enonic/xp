@@ -289,7 +289,8 @@ module api.liveedit {
 
         clone(): ComponentView<Component> {
 
-            var index = this.getParentItemView().getComponentViewIndex(this);
+            var isFragmentContent = this.liveEditModel.getContent().getType().isFragment();
+            var index = isFragmentContent ? 0 : this.getParentItemView().getComponentViewIndex(this);
 
             var clone = this.getType().createView(
                 new CreateItemViewConfig<RegionView,Component>().
