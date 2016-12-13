@@ -7,6 +7,7 @@ import ContentSummary = api.content.ContentSummary;
 import DropdownHandle = api.ui.button.DropdownHandle;
 import ArrayHelper = api.util.ArrayHelper;
 import KeyHelper = api.ui.KeyHelper;
+import AppHelper = api.util.AppHelper;
 
 export class SortContentTabMenu extends api.ui.tab.TabMenu {
 
@@ -40,10 +41,6 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         });
 
         this.dropdownHandle.onKeyDown((event: KeyboardEvent) => {
-            const saveFocus = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-            };
 
             if (KeyHelper.isArrowDownKey(event)) {
                 if (this.isMenuVisible()) {
@@ -51,17 +48,22 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
                 } else {
                     this.showMenu();
                 }
-                saveFocus(event);
+                AppHelper.lockEvent(event);
             } else if (KeyHelper.isArrowUpKey(event)) {
                 this.hideMenu();
-                saveFocus(event);
+                AppHelper.lockEvent(event);
             } else if (KeyHelper.isApplyKey(event)) {
                 if (this.isMenuVisible()) {
                     this.hideMenu();
                 } else {
                     this.showMenu();
                 }
-                saveFocus(event);
+                AppHelper.lockEvent(event);
+            } else if (KeyHelper.isEscKey(event)) {
+                if (this.isMenuVisible()) {
+                    this.hideMenu();
+                    AppHelper.lockEvent(event);
+                }
             }
         });
     }
@@ -87,6 +89,7 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
     protected showMenu() {
         super.showMenu();
         this.dropdownHandle.down();
+        this.focus();
     }
 
     selectNavigationItem(tabIndex: number) {

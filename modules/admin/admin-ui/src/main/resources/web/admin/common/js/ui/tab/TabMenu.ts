@@ -74,8 +74,12 @@ module api.ui.tab {
                     }
                 }
 
-                event.stopPropagation();
-                event.preventDefault();
+
+                if (KeyHelper.isEscKey(event) && this.isMenuVisible()) {
+                    this.hideMenu();
+                }
+
+                AppHelper.lockEvent(event);
             });
         }
 

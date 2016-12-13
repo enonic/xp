@@ -79,6 +79,11 @@ module api.util {
                 });
             }
         }
+
+        static lockEvent(event: Event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
     }
 
 }
