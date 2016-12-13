@@ -1027,7 +1027,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                 this.settingsWizardStepForm.layout(content);
-                this.settingsWizardStepForm.getModel().onPropertyChanged(this.dataChangedListener);
+                this.settingsWizardStepForm.onPropertyChanged(this.dataChangedListener);
 
                 if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);

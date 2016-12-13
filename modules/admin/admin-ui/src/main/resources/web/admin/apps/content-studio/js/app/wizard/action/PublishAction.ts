@@ -9,7 +9,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 export class PublishAction extends api.ui.Action {
 
     constructor(wizard: ContentWizardPanel, includeChildItems: boolean = false) {
-        super("Publish");
+        super("Publish...");
 
         this.setEnabled(false);
 

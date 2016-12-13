@@ -258,8 +258,8 @@ exports.modify = function (params) {
  * @param {string} params.targetBranch The branch to which the content should be published.  Technically, publishing is just a move from one branch
  * to another, and publishing user content from master to draft is therefore also valid usage of this function, which may be practical if user input to a web-page is stored on master.
  * @param {object} [params.schedule] Schedule the publish.
- * @param {object} [params.schedule.from] Time from which the content is considered published. Defaults to the time of the publish
- * @param {object} [params.schedule.to] Time until which the content is considered published.
+ * @param {string} [params.schedule.from] Time from which the content is considered published. Defaults to the time of the publish
+ * @param {string} [params.schedule.to] Time until which the content is considered published.
  * @param {boolean} [params.includeChildren=true] Whether all children should be included when publishing content.
  * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
  *
@@ -287,12 +287,14 @@ exports.publish = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string[]} params.keys List of all content keys(path or id) that should be unpublished.
+ * @param {boolean} [params.clearPublishInfo] Clear all publish times.
  *
  * @returns {string[]} List with ids of the content that were unpublished.
  */
 exports.unpublish = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.UnpublishContentHandler');
     bean.keys = required(params, 'keys');
+    bean.clearPublishInfo = params.clearPublishInfo;
     return __.toNativeObject(bean.execute());
 };
 

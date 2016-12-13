@@ -27,6 +27,8 @@ public final class UnpublishContentHandler
 
     private ContentService contentService;
 
+    private boolean clearPublishInfo;
+
     public List<String> execute()
     {
         final Branch targetBranch = ContentConstants.BRANCH_MASTER;
@@ -37,11 +39,14 @@ public final class UnpublishContentHandler
             build();
         final List<ContentId> contentIds = context.callWith( this::resolveContentIds );
 
-        final UnpublishContentParams.Builder builder = UnpublishContentParams.create();
-        builder.contentIds( ContentIds.from( contentIds ) );
-        builder.unpublishBranch( targetBranch );
-        builder.includeChildren( true );
-        final UnpublishContentsResult result = this.contentService.unpublishContent( builder.build() );
+        final UnpublishContentParams unpublishContentParams = UnpublishContentParams.create().
+            contentIds( ContentIds.from( contentIds ) ).
+            unpublishBranch( targetBranch ).
+            clearPublishInfo( clearPublishInfo ).
+            includeChildren( true ).
+            build();
+
+        final UnpublishContentsResult result = this.contentService.unpublishContent( unpublishContentParams );
         return result.getUnpublishedContents().stream().map( ContentId::toString ).collect( Collectors.toList() );
     }
 
@@ -82,6 +87,11 @@ public final class UnpublishContentHandler
     public void setKeys( final String[] keys )
     {
         this.keys = keys;
+    }
+
+    public void setClearPublishInfo( final boolean clearPublishInfo )
+    {
+        this.clearPublishInfo = clearPublishInfo;
     }
 
     @Override
