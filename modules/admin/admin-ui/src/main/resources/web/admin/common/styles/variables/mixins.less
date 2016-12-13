@@ -746,14 +746,15 @@
   }
 }
 
-.close-mixin() {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  cursor: pointer;
-  font-size: 12px;
-  display: block;
-  text-decoration: none;
+.icon-close-mixin() {
+  .icon-close {
+    .focusable();
+    position: absolute;
+    top: 8px;
+    right: 0px;
+    cursor: pointer;
+    text-decoration: none;
+  }
 }
 
 .flat-mixin(@bgColor: @admin-white) {
