@@ -16,12 +16,12 @@ import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
