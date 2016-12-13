@@ -26,8 +26,8 @@ task cleanSourceFiles( type: Delete ) {
     delete fileTree( dir: '.', includes: ['*.tmp.txt'] )
 }
 
-task ciLint( type: NpmTask, dependsOn: npmInstall ) {
-    args = ['run', 'ci-lint']
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    args = ['run', 'lint']
 }
 
 task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
@@ -43,5 +43,4 @@ task copyAll( type: Copy, dependsOn: gulpAll ) {
 }
 
 jar.dependsOn += copyAll
-jar.dependsOn += ciLint
 clean.dependsOn += cleanSourceFiles

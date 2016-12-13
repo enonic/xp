@@ -4,7 +4,6 @@
   "description": "Enonix XP - Admin UI module",
   "scripts": {
     "postinstall": "gulp resources",
-    "ci-lint": "runwith gulp/scripts/ci.js || tslint src/main/resources/web/admin/**/*.ts --exclude **/*.d.ts",
     "lint": "tslint src/main/resources/web/admin/**/*.ts --exclude **/*.d.ts",
     "fix": "tslint src/main/resources/web/admin/**/*.ts --fix --exclude **/*.d.ts || exit 0",
     "quicklint": "runwith gulp/scripts/lint.js --prop=diff"
@@ -23,7 +22,6 @@
     "gulp-sourcemaps": "^1.9.1",
     "gulp-typescript": "^3.1.3",
     "gulp-util": "^3.0.7",
-    "is-ci": "^1.0.10",
     "jasmine-core": "^2.5.2",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
