@@ -200,3 +200,29 @@ task distZip( type: Zip, dependsOn: installDist ) {
 artifacts {
     archives distZip
 }
+
+task run( type: Exec, dependsOn: 'installDist' ) {
+    description = 'Starts the server (use -Pdev for dev-mode or -Pdebug for debug-mode).'
+    workingDir "$buildDir/install/bin"
+
+    doFirst {
+        if ( System.getProperty( "os.name" ).equalsIgnoreCase( 'windows' ) )
+        {
+            commandLine 'cmd', '/c', 'server.bat'
+        }
+        else
+        {
+            commandLine './server.sh'
+        }
+
+        if ( project.hasProperty( 'dev' ) )
+        {
+            commandLine += 'dev'
+        }
+
+        if ( project.hasProperty( 'debug' ) )
+        {
+            commandLine += 'debug'
+        }
+    }
+}
