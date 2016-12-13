@@ -1,5 +1,6 @@
 import "../../../api.ts";
 import {MarketAppsTreeGrid} from "./MarketAppsTreeGrid";
+import {ApplicationInput} from "./../view/ApplicationInput";
 
 import Application = api.application.Application;
 
@@ -11,14 +12,14 @@ export class MarketAppPanel extends api.ui.panel.Panel {
 
     private isGridLoadingData: boolean = false;
 
-    constructor(className?: string) {
+    constructor(applicationInput: ApplicationInput, className?: string) {
         super(className);
+        this.marketAppsTreeGrid = new MarketAppsTreeGrid(applicationInput);
     }
 
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
-            this.marketAppsTreeGrid = new MarketAppsTreeGrid();
             this.appendChild(this.marketAppsTreeGrid);
 
             this.initDataLoadListener();

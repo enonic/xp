@@ -9,10 +9,6 @@
     height: 2em;
   }
 
-  .market-app-panel {
-    overflow-y: auto;
-  }
-
   .market-app-panel, .slick-viewport {
 
     max-height: 560px;
@@ -44,6 +40,8 @@
   }
 
   .file-input {
+    margin-bottom: 20px;
+
     > input.text {
       width: calc(~'100% - 37px');
     }
@@ -57,6 +55,10 @@
     position: absolute;
     top: 0;
     right: 0;
+
+    .upload-button {
+      .input-glow()
+    }
   }
 
   .dropzone-container {
@@ -72,105 +74,134 @@
     padding: 1px;
   }
 
-  .validation-viewer {
-    width: inherit;
-    padding: 20px 10px 20px 0;
-    background-color: @input-light-red;
-    color: @input-red-text;
-    display: table;
-    ul {
-      display: table-cell;
-      vertical-align: middle;
-      text-align: center;
-    }
+  .panel {
+    position: static;
   }
 
-  .install-app-docked-panel {
+  .market-app-panel {
+
     position: static !important;
     box-shadow: none;
     width: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
 
-    .panel {
-      position: static;
-    }
-
-    .tab-bar-item {
-      display: inline-table;
-      width: 25%;
-    }
-
-    .market-app-panel {
-
-      .market-app-tree-grid {
-        .grid {
-          padding-right: 15px;
-          .slick-cell {
-            padding-top: 15px;
-            height: 52px;
+    .market-app-tree-grid {
+      .grid {
+        padding-right: 15px;
+        .slick-cell {
+          padding-top: 15px;
+          height: 52px;
+          cursor: default;
+          * {
             cursor: default;
-            * {
+          }
+
+          .viewer {
+            .names-and-icon-view {
               cursor: default;
             }
+          }
 
-            .viewer {
-              .names-and-icon-view {
-                cursor: default;
-              }
-            }
-
-            &.app-name-and-icon {
-              margin-left: 10px;
-              .@{_COMMON_PREFIX}main-name {
-                font-size: 16px;
-                padding-bottom: 2px;
-                color: @admin-blue;
-                a {
-                  cursor: pointer !important;
-                  text-decoration: none;
+          &.app-name-and-icon {
+            margin-left: 10px;
+            .@{_COMMON_PREFIX}main-name {
+              font-size: 16px;
+              padding-bottom: 2px;
+              color: @admin-blue;
+              a {
+                cursor: pointer !important;
+                text-decoration: none;
+                &:hover, &:focus {
+                  text-decoration: underline;
                 }
               }
             }
-
-            .toggle.icon {
-              display: none;
-            }
-
           }
-        }
 
-        .load-mask {
-          max-height: 580px;
-        }
+          .toggle.icon {
+            display: none;
+          }
 
-        .version {
-          text-align: center;
-          color: @admin-black;
-          font-size: 12px;
-        }
-
-        .app-status {
-          text-align: center;
-
-          .install, .update {
-            cursor: pointer !important;
-            font-size: 16px;
-            padding: 0px 15px;
-          }
-          .install {
-            color: @admin-green;
-          }
-          .update {
-            color: @input-dark-red;
-          }
-          .installed {
-            opacity: 0.6;
-            font-size: 14px;
-            color: #777777;
-          }
         }
       }
 
+      .load-mask {
+        max-height: 580px;
+      }
+
+      .version {
+        text-align: center;
+        color: @admin-black;
+        font-size: 12px;
+      }
+
+      .app-status {
+        text-align: center;
+
+        a {
+          text-decoration: none;
+        }
+
+        .install, .update {
+          cursor: pointer !important;
+          font-size: 16px;
+          padding: 0px 15px;
+        }
+        .install {
+          &:hover, &:focus {
+            text-decoration: underline;
+          }
+          color: @admin-green;
+        }
+        .update {
+          &:hover, &:focus {
+            text-decoration: underline;
+          }
+          color: @input-dark-red;
+        }
+        .installed {
+          opacity: 0.6;
+          font-size: 14px;
+          color: #777777;
+        }
+      }
+    }
+  }
+
+  .status-message {
+    display: block;
+    color: @admin-font-gray2;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+
+    &.loaded:not(.empty) {
+      display: none;
+    }
+  }
+
+  .clear-button {
+    .icon-close2();
+    position: absolute;
+    top: 83px;
+    font-size: 20px;
+    line-height: 20px;
+    border-radius: 20px;
+    border: none;
+    right: 70px;
+    padding: 0px 4px;
+    background-color: white;
+    cursor: pointer;
+    &:hover, &:focus {
+      opacity: 0.7;
+      color: @admin-input-blue;
+    }
+    @media screen and (max-width: 540px) {
+      right: 56px;
+    }
+    &.hidden {
+      display: none;
     }
   }
 }
