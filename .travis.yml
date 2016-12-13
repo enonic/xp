@@ -6,8 +6,7 @@ jdk:
 
 install: true
 script:
-  - ./gradlew :admin:admin-ui:ciLint
-  - ./gradlew ci
+  - ./gradlew :admin:admin-ui:ciLint && ./gradlew ci
 
 cache:
   directories:
