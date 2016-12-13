@@ -82,7 +82,7 @@ public interface NodeService
 
     Node getRoot();
 
-    Node updateRootPermissions( AccessControlList accessControlList );
+    Node setRootPermissions( AccessControlList accessControlList, boolean inheritPermissions );
 
     ImportNodeResult importNode( ImportNodeParams params );
 

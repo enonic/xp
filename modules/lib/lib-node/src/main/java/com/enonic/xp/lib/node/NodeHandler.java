@@ -3,10 +3,15 @@ package com.enonic.xp.lib.node;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.Context;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.lib.value.ScriptValueTranslator;
+import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.security.acl.AccessControlList;
 
 public class NodeHandler
 {
@@ -108,6 +113,30 @@ public class NodeHandler
             childOrder( ChildOrder.from( params.getChildOrder() ) ).
             countOnly( params.isCountOnly() ).
             recursive( params.isRecursive() ).
+            nodeService( this.nodeService ).
+            build() );
+    }
+
+    public Object setRootPermissions( final ScriptValue value )
+    {
+        final ScriptValueTranslatorResult translatorResult = new ScriptValueTranslator( false ).create( value );
+
+        final PropertyTree asPropertyTree = translatorResult.getPropertyTree();
+        final Iterable<PropertySet> asPropertySets = asPropertyTree.getSets( "_permissions" );
+
+        final boolean inheritPermissions =
+            asPropertyTree.getBoolean( "_inheritsPermissions" ) != null ? asPropertyTree.getBoolean( "_inheritsPermissions" ) : true;
+
+        if ( asPropertySets == null )
+        {
+            throw new IllegalArgumentException( "Did not find parameter [_permissions]" );
+        }
+
+        final AccessControlList permissions = new PermissionsFactory( asPropertySets ).create();
+
+        return execute( SetRootPermissionsHandler.create().
+            permissions( permissions ).
+
             nodeService( this.nodeService ).
             build() );
     }

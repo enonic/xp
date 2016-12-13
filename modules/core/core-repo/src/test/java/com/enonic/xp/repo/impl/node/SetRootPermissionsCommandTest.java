@@ -15,7 +15,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.Assert.*;
 
-public class UpdateRootPermissionsCommandTest
+public class SetRootPermissionsCommandTest
     extends AbstractNodeTest
 {
 
@@ -26,7 +26,7 @@ public class UpdateRootPermissionsCommandTest
         assertNotNull( getNode( Node.ROOT_UUID ) );
         assertNull( anonymousContext().callWith( () -> getNode( Node.ROOT_UUID ) ) );
 
-        UpdateRootPermissionsCommand.create().
+        SetRootPermissionsCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
             storageService( this.storageService ).
@@ -46,7 +46,7 @@ public class UpdateRootPermissionsCommandTest
     public void update_without_permission()
         throws Exception
     {
-        anonymousContext().callWith( () -> UpdateRootPermissionsCommand.create().
+        anonymousContext().callWith( () -> SetRootPermissionsCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
             storageService( this.storageService ).

@@ -11,15 +11,18 @@ import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermissionOrAdmin;
 
-public class UpdateRootPermissionsCommand
+public class SetRootPermissionsCommand
     extends AbstractNodeCommand
 {
     private final AccessControlList permissions;
 
-    private UpdateRootPermissionsCommand( final Builder builder )
+    private final boolean inheritPermissions;
+
+    private SetRootPermissionsCommand( final Builder builder )
     {
         super( builder );
-        permissions = builder.permissions;
+        this.permissions = builder.permissions;
+        this.inheritPermissions = builder.inheritPermissions;
     }
 
     public Node execute()
@@ -35,7 +38,8 @@ public class UpdateRootPermissionsCommand
 
         return StoreNodeCommand.create( this ).
             node( Node.create( rootNode ).
-                permissions( permissions ).
+                permissions( this.permissions ).
+                inheritPermissions( this.inheritPermissions ).
                 timestamp( Instant.now() ).
                 build() ).
             build().
@@ -57,6 +61,8 @@ public class UpdateRootPermissionsCommand
     {
         private AccessControlList permissions;
 
+        private boolean inheritPermissions = true;
+
         private Builder()
         {
         }
@@ -72,9 +78,15 @@ public class UpdateRootPermissionsCommand
             return this;
         }
 
-        public UpdateRootPermissionsCommand build()
+        public Builder inheritPermissions( final boolean inheritPermissions )
         {
-            return new UpdateRootPermissionsCommand( this );
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
+        public SetRootPermissionsCommand build()
+        {
+            return new SetRootPermissionsCommand( this );
         }
     }
 }
