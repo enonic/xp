@@ -131,6 +131,7 @@ module api.content.form.inputtype.image {
                 this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
             }
 
+            // tslint:disable-next-line:no-unused-new
             new Tooltip(optionView, isMissingContent ? option.value : option.displayValue.getPath(), 1000);
         }
 
