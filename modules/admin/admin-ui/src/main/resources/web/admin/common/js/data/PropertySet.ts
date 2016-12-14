@@ -57,7 +57,7 @@ module api.data {
         /**
          * If true, do not add property if it's value is null.
          */
-        private _ifNotNull: boolean = false;
+        private skipNulls: boolean = false;
 
         private changedListeners: {(event: PropertyEvent): void}[] = [];
 
@@ -137,8 +137,8 @@ module api.data {
 
         addProperty(name: string, value: Value): Property {
 
-            if (this._ifNotNull && value.isNull()) {
-                this._ifNotNull = false;
+            if (this.skipNulls && value.isNull()) {
+                this.skipNulls = false;
                 return null;
             }
 

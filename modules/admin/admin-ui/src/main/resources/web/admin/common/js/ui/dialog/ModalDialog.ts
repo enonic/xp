@@ -15,7 +15,7 @@ module api.ui.dialog {
 
         private actions: api.ui.Action[] = [];
 
-        private mouseClickListener: {(MouseEvent): void};
+        private mouseClickListener: (event: MouseEvent) => void;
 
         private cancelButton: api.dom.DivEl;
 

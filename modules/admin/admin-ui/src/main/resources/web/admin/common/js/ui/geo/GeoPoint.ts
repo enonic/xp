@@ -9,7 +9,7 @@ module api.ui.geo {
 
             this.validUserInput = true;
             this.getEl().setAttribute("title", "latitude,longitude");
-            this.setPlaceholder(_i18n('latitude,longitude'));
+            this.setPlaceholder(api.i18n.i18n('latitude,longitude'));
 
             this.onValueChanged((event: api.ValueChangedEvent) => {
                 var typedGeoPoint = this.getValue();

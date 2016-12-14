@@ -26,7 +26,7 @@ module api.content.form.inputtype.image {
 
         private removeSelectedOptionsListeners: {(option: SelectedOption<ImageSelectorDisplayValue>[]): void}[] = [];
 
-        private mouseClickListener: {(MouseEvent): void};
+        private mouseClickListener: (event: MouseEvent) => void;
 
         private clickDisabled: boolean = false;
 
