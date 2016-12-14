@@ -48,9 +48,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.getEl().addClass("publish-dialog");
 
 
-        this.initPublishAction();
         this.initShowScheduleAction();
-
+        this.initPublishAction();
         this.addCancelButtonToBottom();
 
         this.initChildrenCheckbox();
@@ -66,14 +65,15 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private initPublishAction() {
         var publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this, false));
-        this.actionButton = this.addAction(publishAction, true, true);
+        this.actionButton = this.addAction(publishAction, true);
         this.lockControls();
     }
 
     private initShowScheduleAction() {
         var showScheduleAction = new ShowSchedulePublishDialogAction();
         showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
-        this.showScheduleDialogButton = this.addAction(showScheduleAction, false, true);
+        this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
+        this.showScheduleDialogButton.setTitle("Schedule Publishing");
         this.showScheduleDialogButton.setEnabled(true);
     }
 
