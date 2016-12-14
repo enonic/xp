@@ -28,6 +28,7 @@ import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import Content = api.content.Content;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
+import ImgEl = api.dom.ImgEl;
 
 declare var CONFIG;
 
@@ -111,21 +112,50 @@ function updateTabTitle(title: string) {
     wemjq('title').html(`${title} / Content Studio`);
 }
 
-function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver) {
-    if (!content.isImage() && navigator.userAgent.search("Chrome") > -1) {
-        // Chrome currently doesn't support SVG favicons which are served for not image contents
-        return;
-    }
-    let resolver = iconUrlResolver.setContent(content).setCrop(false);
+function shouldUpdateFavicon(contentTypeName: ContentTypeName): boolean {
+    // Chrome currently doesn't support SVG favicons which are served for not image contents
+    return contentTypeName.isImage() || navigator.userAgent.search("Chrome") == -1
+}
+
+let faviconCache: {[url: string]: Element} = {};
+
+function clearFavicon() {
+    // save current favicon hrefs
     wemjq('link[rel*=icon][sizes]').each((index, link) => {
-        let sizes = link.getAttribute('sizes').split('x');
-        if (sizes.length > 0) {
-            try {
-                resolver.setSize(parseInt(sizes[0]));
-            } catch (e) { }
-        }
-        link.setAttribute('href', resolver.resolve());
+        let href = link.getAttribute('href');
+        faviconCache[href] = link;
+        link.setAttribute('href', ImgEl.PLACEHOLDER);
     });
+}
+
+function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver) {
+    let resolver = iconUrlResolver.setContent(content).setCrop(false);
+    let shouldUpdate = shouldUpdateFavicon(content.getType());
+    for (var href in faviconCache) {
+        if (faviconCache.hasOwnProperty(href)) {
+            let link = faviconCache[href];
+            if (shouldUpdate) {
+                let sizes = link.getAttribute('sizes').split('x');
+                if (sizes.length > 0) {
+                    try {
+                        resolver.setSize(parseInt(sizes[0]));
+                    } catch (e) { }
+                }
+                link.setAttribute('href', resolver.resolve());
+            } else {
+                link.setAttribute('href', href);
+            }
+            delete faviconCache[href];
+        }
+    }
+}
+
+function preLoadApplication() {
+    let application: api.app.Application = getApplication();
+    let wizardParams = ContentWizardPanelParams.fromApp(application);
+    if (wizardParams) {
+        clearFavicon();
+    }
 }
 
 function startApplication() {
@@ -300,6 +330,8 @@ function startContentApplication(application: api.app.Application) {
         }
     };
 }
+
+preLoadApplication();
 
 window.onload = function () {
     startApplication();
