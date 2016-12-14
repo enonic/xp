@@ -38,12 +38,8 @@ export class PageComponentsView extends api.dom.DivEl {
     private modal: boolean;
     private floating: boolean;
     private draggable: boolean;
-    private clicked: boolean;
 
     private mask: Mask;
-
-    private selectionChangedHandler: (treeNode: TreeNode<ItemView>) =>
-        void = api.util.AppHelper.debounce(this.selectItem, 500, this.clicked);
 
     private beforeInsertActionListeners: {(event): void}[] = [];
 
@@ -51,6 +47,7 @@ export class PageComponentsView extends api.dom.DivEl {
     private mouseUpListener: (event?: MouseEvent) => void;
     private mouseMoveListener: (event: MouseEvent) => void;
     private clickListener: (event, data) => void;
+    private dblClickListener: (event, data) => void;
     private mouseDown: boolean = false;
     public static debug: boolean = false;
 
@@ -272,18 +269,12 @@ export class PageComponentsView extends api.dom.DivEl {
         this.clickListener = (event, data) => {
             var elem = new api.dom.ElementHelper(event.target);
 
-            if (this.sameRowClicked(data.row)) {
-                this.hideContextMenu();
-            } else {
-                this.clicked = true;
-            }
+            this.hideContextMenu();
 
             if (elem.hasClass('toggle')) {
                 // do nothing if expand toggle is clicked
                 return;
             }
-
-            this.tree.getGrid().selectRow(data.row);
 
             Highlighter.get().hide();
 
@@ -296,7 +287,22 @@ export class PageComponentsView extends api.dom.DivEl {
             }
         };
 
+        this.dblClickListener = (event, data) => {
+            if(this.pageView.isLocked()) {
+                return;
+            }
+
+            var clickedItemView: ItemView = this.tree.getGrid().getDataView().getItem(data.row).getData();
+            var isTextComponent = api.ObjectHelper.iFrameSafeInstanceOf(clickedItemView, TextComponentView);
+
+            if(isTextComponent) {
+                this.editTextComponent(clickedItemView);
+            }
+        };
+
         this.tree.getGrid().subscribeOnClick(this.clickListener);
+
+        this.tree.getGrid().subscribeOnDblClick(this.dblClickListener);
 
         this.tree.getGrid().subscribeOnMouseEnter((event, data) => {
 
@@ -335,9 +341,7 @@ export class PageComponentsView extends api.dom.DivEl {
             var treeNode = data[0];
 
             if (treeNode && !treeNode.getData().isSelected()) {
-                this.clicked ? this.selectItem(treeNode) : //immediate
-                this.selectionChangedHandler(treeNode); // with timeout
-                this.clicked = false;
+                this.selectItem(treeNode);
             }
 
             this.hideContextMenu();
@@ -355,6 +359,7 @@ export class PageComponentsView extends api.dom.DivEl {
         this.appendChild(this.tree);
 
         this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
+        this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnDblClick(this.dblClickListener));
 
         this.tree.onLoaded(() => {
             this.bindTextComponentViewsUpdateOnTextModify();
@@ -602,7 +607,6 @@ export class PageComponentsView extends api.dom.DivEl {
         return cellNumber == 1;
     }
 
-    //
     private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
         var node = this.tree.getGrid().getDataView().getItem(row);
         if (node) {
@@ -722,5 +726,21 @@ export class PageComponentsView extends api.dom.DivEl {
         });
     }
 
+    private editTextComponent(textComponent: ItemView) {
+        var contextMenuActions: api.ui.Action[] = textComponent.getContextMenuActions();
 
+        var editAction: api.ui.Action;
+
+        contextMenuActions.some((action: api.ui.Action) => {
+            if(action.getLabel() == "Edit") {
+                editAction = action;
+                return true;
+            }
+        });
+
+        if(editAction) {
+            this.hide();
+            editAction.execute();
+        }
+    }
 }
