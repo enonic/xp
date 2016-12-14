@@ -287,14 +287,12 @@ exports.publish = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string[]} params.keys List of all content keys(path or id) that should be unpublished.
- * @param {boolean} [params.clearPublishInfo] Clear all publish times.
  *
  * @returns {string[]} List with ids of the content that were unpublished.
  */
 exports.unpublish = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.UnpublishContentHandler');
     bean.keys = required(params, 'keys');
-    bean.clearPublishInfo = params.clearPublishInfo;
     return __.toNativeObject(bean.execute());
 };
 
