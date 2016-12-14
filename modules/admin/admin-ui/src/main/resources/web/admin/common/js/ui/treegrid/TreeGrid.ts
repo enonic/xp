@@ -704,7 +704,6 @@ module api.ui.treegrid {
 
         protected handleError(reason: any, message?: String) {
             this.grid.show();
-            this.errorPanel.hide();
             if (this.quietErrorHandling) {
                 this.errorPanel.setError(message || reason);
                 this.grid.hide();
@@ -712,6 +711,13 @@ module api.ui.treegrid {
             }
             else {
                 api.DefaultErrorHandler.handle(reason);
+            }
+        }
+
+        protected hideErrorPanel() {
+            this.grid.show();
+            if (this.quietErrorHandling) {
+                this.errorPanel.hide();
             }
         }
 
@@ -1143,6 +1149,10 @@ module api.ui.treegrid {
             this.contextMenuListeners.forEach((listener) => {
                 listener(showContextMenuEvent);
             });
+        }
+
+        protected getErrorPanel(): ValidationRecordingViewer {
+            return this.errorPanel;
         }
 
         onContextMenuShown(listener: () => void) {

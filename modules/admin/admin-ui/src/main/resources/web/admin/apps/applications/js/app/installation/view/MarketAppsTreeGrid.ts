@@ -281,6 +281,11 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             from--;
         }
 
+        if (this.getErrorPanel().isVisible()) {
+            this.hideErrorPanel();
+            this.mask();
+        }
+        
         return MarketApplicationsFetcher.fetchChildren(this.getVersion(), this.installApplications, from,
             MarketAppsTreeGrid.MAX_FETCH_SIZE).then(
             (data: MarketApplicationResponse) => {
@@ -295,8 +300,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 }
                 return applications;
             }).catch((reason: any) => {
-            var status500Message = "Woops... The server seems to be experiencing problems. Please try again later.";
-            var defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
+            var status500Message = "Woops... The server seems to be experiencing problems. Please try again later.",
+                defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
             this.handleError(reason, reason.getStatusCode() === 500 ? status500Message : defaultErrorMessage);
             return [];
         });
