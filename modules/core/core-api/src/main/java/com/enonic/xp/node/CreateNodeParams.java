@@ -226,7 +226,7 @@ public class CreateNodeParams
 
         public Builder setNodeId( final NodeId nodeId )
         {
-            this.nodeId = nodeId;
+            this.nodeId = nodeId != null ? NodeId.from( nodeId.toString().toLowerCase() ) : null;
             return this;
         }
 
