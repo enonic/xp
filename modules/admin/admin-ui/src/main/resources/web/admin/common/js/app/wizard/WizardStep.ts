@@ -26,5 +26,15 @@ module api.app.wizard {
         hasHelpText(): boolean {
             return this.stepForm.hasHelpText();
         }
+
+        show(show: boolean) {
+            if (show) {
+                this.tabBarItem.show();
+                this.stepForm.show();
+            } else {
+                this.tabBarItem.hide();
+                this.stepForm.hide();
+            }
+        }
     }
 }
