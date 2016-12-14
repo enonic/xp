@@ -354,6 +354,7 @@ exports.move = function (params) {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
+ * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden. Default is the current branch set in portal.
  * @param {boolean} [params.inheritPermissions] Set to true if the content must inherit permissions. Default to false.
  * @param {boolean} [params.overwriteChildPermissions] Set to true to overwrite child permissions. Default to false.
  * @param {array} [params.permissions] Array of permissions.
@@ -377,6 +378,7 @@ exports.setPermissions = function (params) {
     if (params.permissions) {
         bean.permissions = __.toScriptValue(params.permissions);
     }
+    bean.branch = nullOrValue(params.branch);
     return __.toNativeObject(bean.execute());
 };
 
