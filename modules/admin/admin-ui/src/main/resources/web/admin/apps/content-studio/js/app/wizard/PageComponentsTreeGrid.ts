@@ -98,7 +98,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
 
     fetch(node: TreeNode<ItemView>, dataId?: string): Q.Promise<ItemView> {
         var deferred = wemQ.defer<ItemView>();
-        var itemViewId = dataId ? new api.liveedit.ItemViewId(parseInt(dataId)) : node.getData().getItemId();
+        var itemViewId = dataId ? new api.liveedit.ItemViewId(parseInt(dataId, 10)) : node.getData().getItemId();
         deferred.resolve(this.pageView.getItemViewById(itemViewId));
         return deferred.promise;
     }

@@ -121,7 +121,7 @@ function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver
         let sizes = link.getAttribute('sizes').split('x');
         if (sizes.length > 0) {
             try {
-                resolver.setSize(parseInt(sizes[0]));
+                resolver.setSize(parseInt(sizes[0], 10));
             } catch (e) { }
         }
         link.setAttribute('href', resolver.resolve());

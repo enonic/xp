@@ -94,13 +94,13 @@ module api.content.image {
                 metaData = content.getContentData().getProperty('metadata');
 
             if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
-                value = parseInt(metaData.getPropertySet().getProperty(propertyName).getString());
+                value = parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
             }
             else {
                 var allExtraData = content.getAllExtraData();
                 allExtraData.forEach((extraData: ExtraData) => {
                     if (!value && extraData.getData().getProperty(propertyName)) {
-                        value = parseInt(extraData.getData().getProperty(propertyName).getValue().getString());
+                        value = parseInt(extraData.getData().getProperty(propertyName).getValue().getString(), 10);
                     }
                 });
             }

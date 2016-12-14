@@ -234,12 +234,12 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
         let visibleItems = [];
 
-        for (let key in items) {
-            let position = items[key].getEl().getOffsetTop();
+        items.forEach((item) => {
+            let position = item.getEl().getOffsetTop();
             if (position >= start && position <= end) {
-                visibleItems.push(items[key]);
+                visibleItems.push(item);
             }
-        }
+        });
 
         lastVisible = items.indexOf(visibleItems[visibleItems.length - 1]);
 

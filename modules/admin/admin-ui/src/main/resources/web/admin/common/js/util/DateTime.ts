@@ -235,8 +235,9 @@ module api.util {
                 return dateString.substr(0, tzStartIndex);
             } else {
                 tzStartIndex = dateString.toLowerCase().indexOf("z");
-                if(tzStartIndex > 0)
+                if (tzStartIndex > 0) {
                     return dateString.substr(0, tzStartIndex);
+                }
             }
             return dateString;
         }
@@ -291,7 +292,9 @@ module api.util {
         }
 
         public setFractions(value: number): DateTimeBuilder {
-            if (this.seconds && value > 0) this.fractions = value;
+            if (this.seconds && value > 0) {
+                this.fractions = value;
+            }
             return this;
         }
 

@@ -72,7 +72,7 @@ module api.ui.time {
                     if (parsedTime && parsedTime.length == 1) {
                         var splitTime = parsedTime[0].split(':');
                         this.validUserInput = true;
-                        this.popup.setSelectedTime(parseInt(splitTime[0]), parseInt(splitTime[1]));
+                        this.popup.setSelectedTime(parseInt(splitTime[0], 10), parseInt(splitTime[1], 10));
                         if (!this.popup.isVisible()) {
                             this.popup.show();
                         }

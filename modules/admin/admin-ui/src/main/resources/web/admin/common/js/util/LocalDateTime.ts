@@ -204,7 +204,9 @@ module api.util {
         }
 
         public setFractions(value: number): LocalDateTimeBuilder {
-            if (this.seconds && value > 0) this.fractions = value;
+            if (this.seconds && value > 0) {
+                this.fractions = value;
+            }
             return this;
         }
 

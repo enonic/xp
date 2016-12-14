@@ -132,7 +132,7 @@ module api.liveedit {
                     screenH = bodyEl.getHeight(),
                     screenW = bodyEl.getWidth();
 
-                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue("stroke-width"));
+                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue("stroke-width"), 10);
 
                 this.path.getEl()
                     .setAttribute('d',

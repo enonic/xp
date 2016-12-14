@@ -102,7 +102,7 @@ module api.content.page.region {
             for (var i = 0; i < elements.length - 1; i += 2) {
                 var regionName = elements[i];
                 var componentIndexAsString = elements[i + 1];
-                var regionAndComponent = new ComponentPathRegionAndComponent(regionName, parseInt(componentIndexAsString));
+                var regionAndComponent = new ComponentPathRegionAndComponent(regionName, parseInt(componentIndexAsString, 10));
                 regionAndComponentList.push(regionAndComponent);
             }
 
