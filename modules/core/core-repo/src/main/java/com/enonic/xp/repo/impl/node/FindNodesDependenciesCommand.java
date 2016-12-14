@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.filter.ExistsFilter;
-import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValue;
@@ -88,9 +88,9 @@ public class FindNodesDependenciesCommand
             addQueryFilter( ExistsFilter.create().
                 fieldName( NodeIndexPath.REFERENCE.getPath() ).
                 build() ).
-            addQueryFilter( ValueFilter.create().
+            addQueryFilter( IdFilter.create().
                 fieldName( NodeIndexPath.ID.getPath() ).
-                addValues( NodeIds.from( nonProcessedNodes ).getAsStrings() ).
+                values( NodeIds.from( nonProcessedNodes ) ).
                 build() ).
             from( 0 ).
             size( nonProcessedNodes.size() ).

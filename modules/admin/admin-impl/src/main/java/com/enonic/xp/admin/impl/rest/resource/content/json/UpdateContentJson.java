@@ -36,8 +36,7 @@ public final class UpdateContentJson
                        @JsonProperty("contentName") final String contentName,
                        @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
                        @JsonProperty("meta") final List<ExtraDataJson> extraDataJsonList,
-                       @JsonProperty("displayName") final String displayName,
-                       @JsonProperty("requireValid") final String requireValid,
+                       @JsonProperty("displayName") final String displayName, @JsonProperty("requireValid") final String requireValid,
                        @JsonProperty("owner") final String owner, @JsonProperty("language") final String language,
                        @JsonProperty("publishFrom") final String publishFrom, @JsonProperty("publishTo") final String publishTo )
     {

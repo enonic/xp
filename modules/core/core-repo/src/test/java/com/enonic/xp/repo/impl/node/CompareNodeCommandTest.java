@@ -8,6 +8,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
@@ -47,6 +48,23 @@ public class CompareNodeCommandTest
         final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
+            build() ) );
+
+        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+
+        assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
+    }
+
+    @Test
+    public void status_capital_node_id()
+        throws Exception
+    {
+        master.callWith( this::createDefaultRootNode );
+
+        final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            setNodeId( NodeId.from( "MyNodeId" ) ).
             build() ) );
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );

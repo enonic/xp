@@ -1,13 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
@@ -61,14 +62,10 @@ class ContentQueryNodeQueryTranslator
 
         if ( contentIds != null && contentIds.isNotEmpty() )
         {
-            final ValueFilter.Builder contentTypeFilterBuilder = ValueFilter.create().
-                fieldName( ContentPropertyNames.ID ).
+            final IdFilter.Builder contentTypeFilterBuilder = IdFilter.create().
+                fieldName( ContentIndexPath.ID.getPath() ).
+                values( contentIds.asStrings() ).
                 setCache( true );
-
-            for ( final ContentId contentId : contentIds )
-            {
-                contentTypeFilterBuilder.addValue( ValueFactory.newString( contentId.toString() ) );
-            }
 
             builder.addQueryFilter( contentTypeFilterBuilder.build() );
         }

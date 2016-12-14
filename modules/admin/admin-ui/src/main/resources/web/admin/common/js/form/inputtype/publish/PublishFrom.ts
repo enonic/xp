@@ -14,16 +14,14 @@ module api.content.form.inputtype.publish {
 
                 if (!publishFrom && publishTo) {
                     recording.setBreaksMinimumOccurrences(true);
-                    recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
-                        setOverwriteDefault(true).
-                        setMessage("[Publish to] cannot be set without [Publish from]").
-                        build());
+                    recording.setAdditionalValidationRecord(
+                        api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
+                            "[Publish to] cannot be set without [Publish from]").build());
                 } else if (publishFrom && publishTo && (publishTo.toDate() < publishFrom.toDate())) {
                     recording.setBreaksMinimumOccurrences(true);
-                    recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
-                        setOverwriteDefault(true).
-                        setMessage("[Publish from] value must be set before [Publish to]").
-                        build());
+                    recording.setAdditionalValidationRecord(
+                        api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
+                            "[Publish from] value must be set before [Publish to]").build());
                 }
             }
         }

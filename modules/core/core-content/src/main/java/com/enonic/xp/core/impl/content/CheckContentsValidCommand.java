@@ -1,11 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
 public class CheckContentsValidCommand
@@ -27,9 +29,9 @@ public class CheckContentsValidCommand
                 fieldName( ContentPropertyNames.VALID ).
                 addValue( ValueFactory.newBoolean( false ) ).
                 build() ).
-            queryFilter( ValueFilter.create().
-                fieldName( "_id" ).
-                addValues( contentIds.asStrings() ).
+            queryFilter( IdFilter.create().
+                fieldName( ContentIndexPath.ID.getPath() ).
+                values( contentIds.asStrings() ).
                 build() ).
             size( 0 ).
             build();

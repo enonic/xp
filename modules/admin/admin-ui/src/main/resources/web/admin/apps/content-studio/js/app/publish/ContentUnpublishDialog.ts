@@ -72,7 +72,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
                     // do not set requested contents as they are never going to change
 
-                    this.unlockControls();
+                this.unlockControls();
                 }).finally(() => {
                     this.loadMask.hide();
                 });
@@ -137,12 +137,12 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
             .then((taskId: api.task.TaskId) => {
                 this.pollTask(taskId);
             }).catch((reason) => {
-                this.unlockControls();
-                this.close();
-                if (reason && reason.message) {
-                    api.notify.showError(reason.message);
-                }
-            });
+            this.unlockControls();
+            this.close();
+            if (reason && reason.message) {
+                api.notify.showError(reason.message);
+            }
+        });
     }
 }
 

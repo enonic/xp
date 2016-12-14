@@ -410,6 +410,31 @@ public class PushNodesCommandTest
         assertEquals( 7, result.getSuccessful().getSize() );
     }
 
+    @Test
+    public void push_with_capital_node_id()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            setNodeId( NodeId.from( "MyNodeId" ) ).
+            build() );
+
+        final Node child = createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child" ).
+            setNodeId( NodeId.from( "MyChildId" ) ).
+            build() );
+
+        pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        pushNodes( NodeIds.from( child.id() ), WS_OTHER );
+
+        final Node prodNode = CTX_OTHER.callWith( () -> getNodeById( child.id() ) );
+
+        assertTrue( prodNode != null );
+    }
+
+
     private void renameNode( final Node node, final String newName )
     {
         doRenameNode( node.id(), newName );

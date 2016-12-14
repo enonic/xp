@@ -32,30 +32,22 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
     static MAX_FETCH_SIZE: number = 30;
 
     constructor() {
-        super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
-                setColumnConfig([{
-                    name: "Name",
-                    id: "displayName",
-                    field: "contentSummary.displayName",
-                    formatter: SortContentTreeGrid.nameFormatter,
-                    style: {minWidth: 130},
-                    behavior: "selectAndMove"
-                }, {
-                    name: "ModifiedTime",
-                    id: "modifiedTime",
-                    field: "contentSummary.modifiedTime",
-                    formatter: DateTimeFormatter.format,
-                    style: {cssClass: "modified", minWidth: 150, maxWidth: 170},
-                    behavior: "selectAndMove"
-                }]).
-
-                setPartialLoadEnabled(true).
-                setCheckableRows(false).
-                setShowToolbar(false).
-                setDragAndDrop(true).
-                disableMultipleSelection(true).
-                prependClasses("content-tree-grid").
-                setSelectedCellCssClass("selected-sort-row")
+        super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumnConfig([{
+                name: "Name",
+                id: "displayName",
+                field: "contentSummary.displayName",
+                formatter: SortContentTreeGrid.nameFormatter,
+                style: {minWidth: 130},
+                behavior: "selectAndMove"
+            }, {
+                name: "ModifiedTime",
+                id: "modifiedTime",
+                field: "contentSummary.modifiedTime",
+                formatter: DateTimeFormatter.format,
+                style: {cssClass: "modified", minWidth: 150, maxWidth: 170},
+                behavior: "selectAndMove"
+            }]).setPartialLoadEnabled(true).setCheckableRows(false).setShowToolbar(false).setDragAndDrop(true).disableMultipleSelection(
+            true).prependClasses("content-tree-grid").setSelectedCellCssClass("selected-sort-row")
         );
     }
 
@@ -115,16 +107,16 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
 
         return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, SortContentTreeGrid.MAX_FETCH_SIZE,
             this.curChildOrder).then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
-                var contents = parentNode.getChildren().map((el) => {
-                    return el.getData();
-                }).slice(0, from).concat(data.getContents());
-                var meta = data.getMetadata();
-                parentNode.setMaxChildren(meta.getTotalHits());
-                if (from + meta.getHits() < meta.getTotalHits()) {
-                    contents.push(new ContentSummaryAndCompareStatus());
-                }
-                return contents;
-            });
+            var contents = parentNode.getChildren().map((el) => {
+                return el.getData();
+            }).slice(0, from).concat(data.getContents());
+            var meta = data.getMetadata();
+            parentNode.setMaxChildren(meta.getTotalHits());
+            if (from + meta.getHits() < meta.getTotalHits()) {
+                contents.push(new ContentSummaryAndCompareStatus());
+            }
+            return contents;
+        });
 
     }
 

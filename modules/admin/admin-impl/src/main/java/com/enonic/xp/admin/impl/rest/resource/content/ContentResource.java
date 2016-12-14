@@ -749,7 +749,7 @@ public final class ContentResource
                     iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
-            collect( Collectors.toList() );
+                collect( Collectors.toList() );
     }
 
     @POST

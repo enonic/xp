@@ -70,7 +70,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
             this.slideAllOut();
         });
     }
-    
+
     private createFoldButton(browseActions: ContentTreeGridActions) {
         this.foldButton = new MobilePreviewFoldButton([
             browseActions.DELETE_CONTENT,
@@ -83,7 +83,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
             browseActions.EDIT_CONTENT
         ]);
     }
-    
+
     private toggleFoldButton(forceHide: boolean = false) {
         this.foldButton.isVisible() || forceHide ? this.foldButton.hide() : this.foldButton.show();
         this.itemHeader.toggleClass("context-menu", this.foldButton.isVisible());

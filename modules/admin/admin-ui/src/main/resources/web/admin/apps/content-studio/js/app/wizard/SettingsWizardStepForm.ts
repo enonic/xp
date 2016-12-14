@@ -57,12 +57,8 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
         var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
 
-        this.ownerCombo = PrincipalComboBox.create().
-            setLoader(loader).
-            setMaxOccurences(1).
-            setValue(content.getOwner() ? content.getOwner().toString() : undefined).
-            setDisplayMissing(true).
-            build();
+        this.ownerCombo = PrincipalComboBox.create().setLoader(loader).setMaxOccurences(1).setValue(
+            content.getOwner() ? content.getOwner().toString() : undefined).setDisplayMissing(true).build();
 
         var ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
 
@@ -111,25 +107,15 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     private initFormView(content: api.content.Content) {
-        var formBuilder = new api.form.FormBuilder().
-            addFormItem(new api.form.InputBuilder().
-                setName("from").
-                setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).
-                setLabel("Publish From").
-                setHelpText("Time from which your contents will be available online").
-                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
-                setInputTypeConfig({}).
-                setMaximizeUIInputWidth(true).
-                build()).
-            addFormItem(new api.form.InputBuilder().
-                setName("to").
-                setInputType(api.content.form.inputtype.publish.PublishTo.getName()).
-                setLabel("Publish To").
-                setHelpText("Time until which your contents will be available online").
-                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
-                setInputTypeConfig({}).
-                setMaximizeUIInputWidth(true).
-                build());
+        var formBuilder = new api.form.FormBuilder().addFormItem(
+            new api.form.InputBuilder().setName("from").setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
+                "Publish From").setHelpText("Time from which your contents will be available online").setOccurrences(
+                new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
+                true).build()).addFormItem(
+            new api.form.InputBuilder().setName("to").setInputType(api.content.form.inputtype.publish.PublishTo.getName()).setLabel(
+                "Publish To").setHelpText("Time until which your contents will be available online").setOccurrences(
+                new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
+                true).build());
 
         this.initPropertySet(content);
         this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
