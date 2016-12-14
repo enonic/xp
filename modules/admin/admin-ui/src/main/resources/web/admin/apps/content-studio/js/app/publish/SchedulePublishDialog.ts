@@ -55,11 +55,11 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     private initFormView() {
         var formBuilder = new api.form.FormBuilder().addFormItem(
             new api.form.InputBuilder().setName("from").setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
-                "Publish From").setHelpText("Time from which your contents will be available online").setOccurrences(
+                "Online from").setHelpText("Time from which your contents will be available online").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build()).addFormItem(
             new api.form.InputBuilder().setName("to").setInputType(api.content.form.inputtype.publish.PublishToFuture.getName()).setLabel(
-                "Publish To").setHelpText("Time until when your contents will be available online").setOccurrences(
+                "Online to").setHelpText("Time until when your contents will be available online").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build());
 
@@ -81,13 +81,12 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
     private addSubtitle() {
         this.appendChildToHeader(
-            new api.dom.H6El("schedule-publish-dialog-subtitle").setHtml("NB: Items with existing publish times will not be affected. " +
-                                                                         "Changes to previously published items will be effective immediately.",
+            new api.dom.H6El("schedule-publish-dialog-subtitle").setHtml("NB: These times will only affect offline items.",
                 false));
     }
 
     private initConfirmScheduleAction() {
-        this.confirmScheduleAction = new api.ui.Action("Publish");
+        this.confirmScheduleAction = new api.ui.Action("Schedule");
 
         this.confirmScheduleAction.setIconClass("confirm-schedule-action");
         this.confirmScheduleAction.onExecuted(() => {
