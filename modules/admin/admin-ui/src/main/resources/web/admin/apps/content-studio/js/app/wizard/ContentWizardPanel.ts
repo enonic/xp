@@ -898,7 +898,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 publishControls.setPublishStatus(summaryAndStatus.getPublishStatus()).
                     setCompareStatus(this.currentContentCompareStatus).
                     setLeafContent(!this.getPersistedItem().hasChildren());
-                this.showScheduleWizardStep(this.currentContentCompareStatus);
             });
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
@@ -1051,6 +1050,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.settingsWizardStepForm.onPropertyChanged(this.dataChangedListener);
                 this.scheduleWizardStepForm.layout(content);
                 this.scheduleWizardStepForm.onPropertyChanged(this.dataChangedListener);
+                this.showScheduleWizardStep(this.currentContentCompareStatus);
 
                 if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);
