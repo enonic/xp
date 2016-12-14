@@ -109,11 +109,11 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     private initFormView(content: api.content.Content) {
         var formBuilder = new api.form.FormBuilder().addFormItem(
             new api.form.InputBuilder().setName("from").setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
-                "Publish From").setHelpText("Time from which your contents will be available online").setOccurrences(
+                "Online from").setHelpText("Time from which your contents will be available online").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build()).addFormItem(
             new api.form.InputBuilder().setName("to").setInputType(api.content.form.inputtype.publish.PublishTo.getName()).setLabel(
-                "Publish To").setHelpText("Time until which your contents will be available online").setOccurrences(
+                "Online to").setHelpText("Time until which your contents will be available online").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build());
 

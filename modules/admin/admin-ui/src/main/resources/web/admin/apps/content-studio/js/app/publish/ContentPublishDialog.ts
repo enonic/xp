@@ -214,7 +214,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let count = this.countTotal();
 
         this.updateSubTitle(count);
-        this.updateButtonCount("Publish Now", count);
+        this.updateButtonCount("Publish", count);
     }
 
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
@@ -229,7 +229,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let count = this.countTotal();
 
         this.updateSubTitle(count);
-        this.updateButtonCount("Publish Now", count);
+        this.updateButtonCount("Publish", count);
     }
 
 
@@ -394,7 +394,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
 export class ContentPublishDialogAction extends api.ui.Action {
     constructor() {
-        super("Publish Now");
+        super("Publish");
         this.setIconClass("publish-action");
     }
 }
