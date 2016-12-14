@@ -501,6 +501,10 @@ module api.ui.grid {
             this.slickGrid.onDblClick.subscribe(callback);
         }
 
+        unsubscribeOnDblClick(callback: (e, args) => void) {
+            this.slickGrid.onDblClick.unsubscribe(callback);
+        }
+
         subscribeOnContextMenu(callback: (e, args) => void) {
             this.slickGrid.onContextMenu.subscribe(callback);
         }
