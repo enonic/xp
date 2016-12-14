@@ -195,7 +195,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
                 this.enableCheckbox();
 
                 this.setStashedItems(dependants.slice());
-                this.updateSubTitleAndButtonCount();
+                this.updateSubTitleShowScheduleAndButtonCount();
 
                 if (this.childrenCheckbox.isChecked()) {
                     this.childrenLoaded = true;
@@ -210,13 +210,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         });
     }
 
-    private updateSubTitleAndButtonCount() {
-        let count = this.countTotal();
-
-        this.updateSubTitle(count);
-        this.updateButtonCount("Publish", count);
-    }
-
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
         if (this.isProgressBarEnabled()) {
             return;
@@ -226,9 +219,14 @@ export class ContentPublishDialog extends ProgressBarDialog {
                 (newDependantItem) => oldDependantItem.equals(newDependantItem)));
         this.getDependantList().removeItems(itemsToRemove);
 
+        this.updateSubTitleShowScheduleAndButtonCount();
+    }
+
+    private updateSubTitleShowScheduleAndButtonCount() {
         let count = this.countTotal();
 
         this.updateSubTitle(count);
+        this.updateShowScheduleDialogButton();
         this.updateButtonCount("Publish", count);
     }
 
@@ -240,7 +238,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         super.setDependantItems(items);
 
         if (this.getStashedItems()) {
-            this.updateSubTitleAndButtonCount();
+            this.updateSubTitleShowScheduleAndButtonCount();
         }
     }
 
@@ -356,6 +354,19 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.getButtonRow().focusDefaultAction();
             this.updateTabbable();
         }
+    }
+
+    protected updateShowScheduleDialogButton() {
+        if (this.areAllOffline()) {
+            this.showScheduleDialogButton.show();
+        } else {
+            this.showScheduleDialogButton.hide();
+        }
+    }
+
+    private areAllOffline(): boolean {
+        let summaries: ContentSummaryAndCompareStatus[] = this.getItemList().getItems();
+        return summaries.every((summary) => summary.getCompareStatus() == CompareStatus.NEW);
     }
 
     private areAllValid(summaries: ContentSummaryAndCompareStatus[]): boolean {
