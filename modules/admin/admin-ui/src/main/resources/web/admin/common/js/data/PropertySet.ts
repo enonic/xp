@@ -213,8 +213,9 @@ module api.data {
         }
 
         isEmpty(): boolean {
-            var isEmpty: boolean = true;
-            for (var name in this.propertyArrayByName) {
+            let isEmpty: boolean = true;
+            // tslint:disable-next-line:forin
+            for (const name in this.propertyArrayByName) {
                 if (!isEmpty) {
                     return isEmpty;
                 }

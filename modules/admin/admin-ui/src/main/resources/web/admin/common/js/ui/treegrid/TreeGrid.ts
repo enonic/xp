@@ -1121,9 +1121,9 @@ module api.ui.treegrid {
         }
 
         triggerSelectionChangedListeners() {
-            for (var i in this.selectionChangeListeners) {
-                this.selectionChangeListeners[i](this.root.getCurrentSelection(), this.root.getFullSelection());
-            }
+            this.selectionChangeListeners.forEach((listener: Function) => {
+                listener(this.root.getCurrentSelection(), this.root.getFullSelection());
+            });
         }
 
         onSelectionChanged(listener: (currentSelection: TreeNode<DATA>[], fullSelection: TreeNode<DATA>[]) => void) {

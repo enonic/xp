@@ -2,12 +2,14 @@ module api.liveedit {
 
     import StringHelper = api.util.StringHelper;
 
+    type ShortName = {[shortName: string]: ItemType};
+
     export class ItemType implements api.Equitable {
 
         static ATTRIBUTE_TYPE = "portal-component-type";
         static ATTRIBUTE_REGION_NAME = "portal-region";
 
-        private static shortNameToInstance: {[shortName: string]: ItemType} = {};
+        private static shortNameToInstance: ShortName = {};
 
         private shortName: string;
 
@@ -61,11 +63,13 @@ module api.liveedit {
         }
 
         static getDraggables(): ItemType[] {
-            var draggables: ItemType[] = [];
-            for (var shortName in  ItemType.shortNameToInstance) {
-                var itemType = ItemType.shortNameToInstance[shortName];
-                if (itemType.getConfig().isDraggable()) {
-                    draggables.push(itemType);
+            const draggables: ItemType[] = [];
+            for (const shortName in  ItemType.shortNameToInstance) {
+                if (ItemType.shortNameToInstance.hasOwnProperty(shortName)) {
+                    const itemType = ItemType.shortNameToInstance[shortName];
+                    if (itemType.getConfig().isDraggable()) {
+                        draggables.push(itemType);
+                    }
                 }
             }
             return draggables;

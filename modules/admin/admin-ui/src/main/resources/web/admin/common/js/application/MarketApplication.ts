@@ -31,9 +31,11 @@ module api.application {
         }
 
         static fromJsonArray(appsObj: Object): MarketApplication[] {
-            var array: MarketApplication[] = [];
-            for (var property in appsObj) {
-                array.push(MarketApplication.fromJson(property, <api.application.json.MarketApplicationJson>appsObj[property]));
+            const array: MarketApplication[] = [];
+            for (const name in appsObj) {
+                if (appsObj.hasOwnProperty(name)) {
+                    array.push(MarketApplication.fromJson(name, <api.application.json.MarketApplicationJson>appsObj[name]));
+                }
             }
             return array;
         }

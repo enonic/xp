@@ -25,11 +25,13 @@ module api.ui.responsive {
         }
 
         private fitToRange() {
-            for (var key in ResponsiveRanges) {
-                var range = ResponsiveRanges[key];
-                if (range && (api.ObjectHelper.iFrameSafeInstanceOf(range, ResponsiveRange)) && range.isFit(this.rangeValue)) {
-                    this.rangeSize = range;
-                    break;
+            for (const name in ResponsiveRanges) {
+                if (ResponsiveRanges.hasOwnProperty(name)) {
+                    const range = ResponsiveRanges[name];
+                    if (range && (api.ObjectHelper.iFrameSafeInstanceOf(range, ResponsiveRange)) && range.isFit(this.rangeValue)) {
+                        this.rangeSize = range;
+                        break;
+                    }
                 }
             }
         }

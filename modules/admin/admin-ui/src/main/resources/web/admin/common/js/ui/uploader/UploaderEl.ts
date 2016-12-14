@@ -292,23 +292,19 @@ module api.ui.uploader {
         }
 
         protected appendNewItems(newItemsToAppend: Element[]) {
-            for (var key in newItemsToAppend) {
-                this.getResultContainer().appendChild(newItemsToAppend[key]);
-            }
+            newItemsToAppend.forEach((elem: Element) => this.getResultContainer().appendChild(elem));
         }
 
         protected removeAllChildrenExceptGiven(itemsToKeep: Element[]) {
-            var items = this.getResultContainer().getChildren(),
-                toRemove = [];
+            const items: Element[] = this.getResultContainer().getChildren();
+            const toRemove = [];
 
-            items.forEach((elem) => {
-                if (!itemsToKeep.some((itemToKeep) => itemToKeep == elem)) {
+            items.forEach((elem: Element) => {
+                if (!itemsToKeep.some((itemToKeep: Element) => itemToKeep === elem)) {
                     toRemove.push(elem);
                 }
             });
-            for (var key in toRemove) {
-                toRemove[key].remove();
-            }
+            toRemove.forEach((elem: Element) => elem.remove())
         }
 
         protected refreshExistingItem(existingItem: Element, value: string) {

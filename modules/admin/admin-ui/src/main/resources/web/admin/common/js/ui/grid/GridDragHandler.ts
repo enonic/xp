@@ -82,30 +82,31 @@ module api.ui.grid {
             if (!this.draggableItem) {
                 this.handleDragStart();
             }
-            var gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, "."),
-                children = Element.fromSelector(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false);
+            const gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, ".");
+            const children = Element.fromSelector(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false);
 
             if (children && !children[0].getPreviousElement()) {
-                children = children.slice(1);
+                children.shift();
             }
 
-            for (let key in children) {
-                if (data.rows[0] <= data.insertBefore) {//move item down
-                    if (key > data.rows[0].toString() && key <= data.insertBefore.toString()) {
-                        children[key].getEl().setMarginTop("-" + this.rowHeight + "px");
+            const setMarginTop = (element: Element, margin: string) => element.getEl().setMarginTop(margin);
+
+            children.forEach((child: Element, index: number) => {
+                if (data.rows[0] <= data.insertBefore) { //move item down
+                    if (index > data.rows[0].toString() && index <= data.insertBefore.toString()) {
+                        setMarginTop(child, `-${this.rowHeight}px`);
                     } else {
-                        children[key].getEl().setMarginTop(null);
+                        setMarginTop(child, null);
                     }
-                    continue;
-                }
-                if (data.rows[0] >= data.insertBefore) {//move item up
-                    if (key < data.rows[0].toString() && key >= data.insertBefore.toString()) {
-                        children[key].getEl().setMarginTop(this.rowHeight + "px");
+                } else if (data.rows[0] >= data.insertBefore) { //move item up
+                    if (index < data.rows[0].toString() && index >= data.insertBefore.toString()) {
+                        setMarginTop(child, `${this.rowHeight}px`);
                     } else {
-                        children[key].getEl().setMarginTop(null);
+                        setMarginTop(child, null);
                     }
                 }
-            }
+            });
+
             this.contentGrid.scrollToRow(data.insertBefore);
             return true;
         }

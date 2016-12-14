@@ -1,5 +1,7 @@
 module api.ui {
 
+    type ExecutionListener = {(action: Action): wemQ.Promise<any>|void};
+
     export class Action {
 
         private label: string;
@@ -18,7 +20,7 @@ module api.ui {
 
         protected forceExecute: boolean = false;
 
-        private executionListeners: {(action:Action): wemQ.Promise<any>|void}[] = [];
+        private executionListeners: ExecutionListener[] = [];
 
         private propertyChangedListeners: Function[] = [];
 
@@ -146,9 +148,7 @@ module api.ui {
         }
 
         private notifyPropertyChanged() {
-            for (var i in this.propertyChangedListeners) {
-                this.propertyChangedListeners[i](this);
-            }
+            this.propertyChangedListeners.forEach((listener: Function) => listener(this));
         }
 
         hasShortcut(): boolean {
@@ -176,10 +176,7 @@ module api.ui {
                 this.notifyBeforeExecute();
                 this.forceExecute = forceExecute;
 
-                var promises = [];
-                for (var i in this.executionListeners) {
-                    promises.push(this.executionListeners[i](this));
-                }
+                const promises = this.executionListeners.map((listener: ExecutionListener) => listener(this));
 
                 wemQ.all(promises).then(() => {
                     this.forceExecute = false;

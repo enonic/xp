@@ -125,9 +125,10 @@ module api.ui {
 
             this.activeBindings = {};
             Mousetrap.reset();
-            for (var key in previousMousetraps) {
-                var mousetrap: KeyBinding = <KeyBinding> previousMousetraps[key];
-                this.bindKey(mousetrap);
+            for (const name in previousMousetraps) {
+                if (previousMousetraps.hasOwnProperty(name)) {
+                    this.bindKey(<KeyBinding> previousMousetraps[name]);
+                }
             }
         }
 

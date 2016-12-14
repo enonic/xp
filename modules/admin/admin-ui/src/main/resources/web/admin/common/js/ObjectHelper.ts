@@ -147,16 +147,16 @@ module api {
                 return false;
             }
 
-            for (var keyA  in keysA) {
+            return keysA.every((keyA: string) => {
                 var valueA: Equitable = mapA[keysA[keyA]];
                 var valueB: Equitable = mapB[keysA[keyA]];
 
                 if (!ObjectHelper.equals(valueA, valueB)) {
                     return false;
                 }
-            }
 
-            return true;
+                return true;
+            });
         }
 
         static stringEquals(a: string, b: string) {
