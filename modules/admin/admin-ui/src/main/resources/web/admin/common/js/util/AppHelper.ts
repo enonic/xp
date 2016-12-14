@@ -25,6 +25,15 @@ module api.util {
             };
         }
 
+        // Handles the result of the initialization, while the result is truthy
+        static whileTruthy(initializer: () => any, callback: (value: any) => void) {
+            let result: any;
+
+            for (result = initializer(); !!result; result = initializer()) {
+                callback(result);
+            }
+        }
+
         static preventDragRedirect(message: String = "", element?: api.dom.Element) {
             element = element || api.dom.Body.get();
 

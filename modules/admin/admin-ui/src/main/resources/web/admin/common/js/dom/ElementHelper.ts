@@ -710,12 +710,15 @@ module api.dom {
          */
         getSiblingIndex(): number {
 
-            var i = 0;
-            var prev: HTMLElement = this.el;
-            while ((prev = <HTMLElement>prev.previousElementSibling) != null) {
-                i++;
+            const getPrevSibling = (elem) => <HTMLElement>elem.previousElementSibling;
+            let prev: HTMLElement;
+            let index;
+
+            for (index = 0, prev = getPrevSibling(this.el); !!prev; index++) {
+                prev = getPrevSibling(prev);
             }
-            return i;
+
+            return index;
         }
 
         isVisible(): boolean {

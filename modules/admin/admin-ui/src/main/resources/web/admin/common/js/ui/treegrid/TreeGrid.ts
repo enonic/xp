@@ -17,6 +17,7 @@ module api.ui.treegrid {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
+    import AppHelper = api.util.AppHelper;
 
     /*
      * There are several methods that should be overridden:
@@ -848,10 +849,9 @@ module api.ui.treegrid {
         }
 
         private deleteRootNode(root: TreeNode<DATA>, data: DATA): void {
-            var dataId = this.getDataId(data),
-                node: TreeNode<DATA>;
+            const dataId = this.getDataId(data);
 
-            while (node = root.findNode(dataId)) {
+            AppHelper.whileTruthy(() => root.findNode(dataId), (node) => {
                 if (node.hasChildren()) {
                     node.getChildren().forEach((child: TreeNode<DATA>) => {
                         this.deleteNode(child.getData());
@@ -861,13 +861,13 @@ module api.ui.treegrid {
                     this.gridData.deleteItem(node.getId());
                 }
 
-                var parent = node.getParent();
+                const parent = node.getParent();
                 if (node && parent) {
                     parent.removeChild(node);
                     parent.setMaxChildren(parent.getMaxChildren() - 1);
                     this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.DELETED));
                 }
-            }
+            });
 
             this.root.removeSelections([dataId]);
         }

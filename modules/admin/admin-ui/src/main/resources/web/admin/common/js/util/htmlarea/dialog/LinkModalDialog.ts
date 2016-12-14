@@ -177,13 +177,7 @@ module api.util.htmlarea.dialog {
         }
 
         private static validationRequiredEmail(input: api.dom.FormInputEl): string {
-            var isValid;
-
-            if (!(isValid = Validators.required(input))) {
-                isValid = Validators.validEmail(input);
-            }
-
-            return isValid;
+            return Validators.required(input) || Validators.validEmail(input);
         }
 
         private getTarget(isTabSelected: boolean): boolean {
