@@ -165,4 +165,27 @@ public class FormDefaultValuesProcessorImplTest
         assertEquals( "default", data.getString( "myOptionSet.option1.myInput" ) );
         assertNull( data.getDouble( "myOptionSet.option1.myDouble" ) );
     }
+
+    @Test
+    public void testOptionSetHasDefaultOptionsInData()
+    {
+        FormOptionSet.Builder myOptionSet = FormOptionSet.create().required( false ).name( "myOptionSet" );
+
+        FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).defaultOption( true );
+        FormOptionSetOption.Builder option2 = FormOptionSetOption.create().name( "option2" );
+
+        myOptionSet.addOptionSetOption( option1.build() );
+        myOptionSet.addOptionSetOption( option2.build() );
+
+        final Form form = Form.create().
+            addFormItem( myOptionSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertNotNull( data.getSet( "myOptionSet.option1" ) );
+        assertNull( data.getSet( "myOptionSet.option2" ) );
+    }
 }

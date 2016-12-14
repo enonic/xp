@@ -2,14 +2,11 @@ package com.enonic.xp.core.impl.content.validate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -18,15 +15,11 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 
-import static java.lang.Math.toIntExact;
-
 public final class OccurrenceValidator
 {
     private final Form form;
 
     private final List<DataValidationError> validationErrors = Lists.newArrayList();
-
-    private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
 
     public OccurrenceValidator( final Form form )
     {
@@ -91,25 +84,11 @@ public final class OccurrenceValidator
         for ( PropertySet optionSetOccurrencePropertySet : optionSetOccurrencePropertySets )
         {
 
-            boolean hasSelectionArray =
-                StreamSupport.stream( optionSetOccurrencePropertySet.getPropertyArrays().spliterator(), false ).anyMatch(
-                    array -> array.getValueType().equals( ValueTypes.STRING ) );
-
-            final List<Property> selectedItems = optionSetOccurrencePropertySet.getProperties( OPTION_SET_SELECTION_ARRAY_NAME );
-
-            if ( hasSelectionArray )
-            {
-                validateOptionSetSelection( formOptionSet, selectedItems.size() );
-            }
-            else
-            {
-                validateDefaultOptionSetSelection( formOptionSet );
-            }
+            validateOptionSetSelection( formOptionSet, optionSetOccurrencePropertySet.getPropertyNames().length );
 
             for ( final FormOptionSetOption option : formOptionSet )
             {
-                if ( ( hasSelectionArray && optionIsSelected( option, selectedItems ) ) ||
-                    ( !hasSelectionArray && option.isDefaultOption() ) )
+                if ( optionIsSelected( option, optionSetOccurrencePropertySet ) )
                 {
                     final List<PropertySet> optionDataSets = Lists.newArrayList();
                     optionDataSets.add( optionSetOccurrencePropertySet.getSet( option.getName() ) );
@@ -119,21 +98,9 @@ public final class OccurrenceValidator
         }
     }
 
-    private boolean optionIsSelected( final FormOptionSetOption option, final List<Property> selectedItems )
+    private boolean optionIsSelected( final FormOptionSetOption option, final PropertySet parentPropertySet )
     {
-        return selectedItems.stream().anyMatch( elem -> elem.getString().equals( option.getName() ) );
-    }
-
-    private void validateDefaultOptionSetSelection( final FormOptionSet formOptionSet )
-    {
-        final long numberOfDefaultOptions = StreamSupport.stream( formOptionSet.spliterator(), false ).
-            filter( FormOptionSetOption::isDefaultOption ).
-            count();
-        if ( numberOfDefaultOptions > formOptionSet.getMultiselection().getMaximum() ||
-            numberOfDefaultOptions < formOptionSet.getMultiselection().getMinimum() )
-        {
-            validationErrors.add( new OptionSetSelectionValidationError( formOptionSet, toIntExact( numberOfDefaultOptions ) ) );
-        }
+        return parentPropertySet.getSet( option.getName() ) != null;
     }
 
     private void validateOptionSetSelection( final FormOptionSet formOptionSet, int numberOfSelectedOptions )
