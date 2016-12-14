@@ -366,7 +366,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private areAllOffline(): boolean {
         let summaries: ContentSummaryAndCompareStatus[] = this.getItemList().getItems();
-        return summaries.every((summary) => summary.getCompareStatus() == CompareStatus.NEW);
+        return summaries.every((summary) => summary.getCompareStatus() === CompareStatus.NEW);
     }
 
     private areAllValid(summaries: ContentSummaryAndCompareStatus[]): boolean {

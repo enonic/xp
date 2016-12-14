@@ -23,7 +23,7 @@ export class ScheduleWizardStepForm extends api.app.wizard.WizardStepForm {
     private propertySet: PropertySet = new api.data.PropertyTree().getRoot();
 
     constructor() {
-        super("settings-wizard-step-form");
+        super("schedule-wizard-step-form");
     }
 
     layout(content: api.content.Content) {
