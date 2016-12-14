@@ -230,9 +230,12 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
                 this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
 
+            var noPreviewMessageEl = new api.dom.PEl("no-preview-message").setHtml(
+                "Failed to render content preview.<br/> Please check logs for errors or open preview in a new window", false);
 
             // append mask here in order for the context window to be above
-            this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow);
+            this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow,
+                noPreviewMessageEl);
 
             this.contextWindow.onDisplayModeChanged(() => {
                 const enabled = this.contentWizardPanel.getComponentsViewToggler().isEnabled();

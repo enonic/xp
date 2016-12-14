@@ -44,4 +44,20 @@
     }
   }
 
+  .no-preview-message {
+    display: none;
+  }
+
+  &.no-preview {
+    .no-preview-message {
+      .watermark-text(21px, true);
+      margin-top: -20px;
+      z-index: 2;
+      display: block;
+    }
+    .frame-container {
+      display: none;
+    }
+    background-color: @admin-white;
+  }
 }

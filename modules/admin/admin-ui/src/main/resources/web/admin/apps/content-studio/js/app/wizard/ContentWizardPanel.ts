@@ -142,10 +142,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private applicationUnavailableListener: (event: ApplicationEvent) => void;
 
+    private applicationStartedListener: (event: ApplicationEvent) => void;
+
     private static EDITOR_DISABLED_TYPES = [ContentTypeName.FOLDER, ContentTypeName.TEMPLATE_FOLDER, ContentTypeName.SHORTCUT,
         ContentTypeName.UNSTRUCTURED];
 
     private contentUpdateDisabled: boolean;
+
+    private missingOrStoppedAppKeys: ApplicationKey[] = [];
 
     private contentDeleted: boolean;
 
@@ -240,6 +244,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
 
             if (isAppFromSiteModelUnavailable) {
+                this.missingOrStoppedAppKeys.push(event.getApplicationKey());
+
                 let message = "Required application " + event.getApplicationKey().toString() + " not available.";
 
                 if (this.isVisible()) {
@@ -262,12 +268,29 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     };
 
                     this.onShown(shownHandler);
-
                 }
 
+                this.handleMissingApp();
             }
-
         };
+
+        this.applicationStartedListener = (event: ApplicationEvent) => {
+            var isAppFromSiteModelStarted: boolean = this.siteModel.getApplicationKeys().some((applicationKey: ApplicationKey) => {
+                return event.getApplicationKey().equals(applicationKey);
+            });
+
+            if (isAppFromSiteModelStarted) {
+                var indexToRemove = -1;
+                this.missingOrStoppedAppKeys.some((applicationKey: ApplicationKey, index) => {
+                    indexToRemove = index;
+                    return event.getApplicationKey().equals(applicationKey);
+                });
+                if (indexToRemove > -1) {
+                    this.missingOrStoppedAppKeys.splice(indexToRemove, 1);
+                }
+                this.handleMissingApp();
+            }
+        }
 
         api.app.wizard.MaskContentWizardPanelEvent.on(event => {
             if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
@@ -403,7 +426,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             this.inMobileViewMode = false;
 
-            var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, this.availableSizeChangedHandler.bind(this));
+            ResponsiveManager.onAvailableSizeChanged(this, this.availableSizeChangedHandler.bind(this));
 
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
@@ -514,6 +537,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.contentWizardStepForm = new ContentWizardStepForm();
         this.settingsWizardStepForm = new SettingsWizardStepForm();
         this.securityWizardStepForm = new SecurityWizardStepForm();
+        this.missingOrStoppedAppKeys = [];
 
         var applicationKeys = this.site ? this.site.getApplicationKeys() : [];
         var applicationPromises = applicationKeys.map((key: ApplicationKey) => this.fetchApplication(key));
@@ -522,17 +546,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             this.checkSecurityWizardStepFormAllowed(loginResult);
             return wemQ.all(applicationPromises);
         }).then((applications: Application[]) => {
-            for (var i = 0; i < applications.length; i++) {
-                var app = applications[i];
-                if (!app.isStarted()) {
-                    var deferred = wemQ.defer<Mixin[]>();
-                    deferred.reject(new api.Exception("Application '" + app.getDisplayName() +
-                                                      "' required by the site is not available. " +
-                                                      "Make sure all applications specified in the site configuration are installed and started.",
-                        api.ExceptionType.WARNING));
-                    return deferred.promise;
-                }
-            }
+            this.handleMissingApp();
 
             var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
             metadataMixinPromises = metadataMixinPromises.concat(
@@ -540,7 +554,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     return this.fetchMixin(name);
                 }));
 
-            applications.forEach((app: Application) => {
+            applications.filter((app) => app != null).forEach((app: Application) => {
                 metadataMixinPromises = metadataMixinPromises.concat(
                     app.getMetaSteps().map((name: MixinName) => {
                         return this.fetchMixin(name);
@@ -569,13 +583,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 steps.push(new WizardStep("Security", this.securityWizardStepForm));
             }
 
-
             this.setSteps(steps);
 
             return mixins;
         });
     }
-
 
     close(checkCanClose: boolean = false) {
         var liveFormPanel = this.getLivePanel();
@@ -598,13 +610,29 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private fetchApplication(key: ApplicationKey): wemQ.Promise<Application> {
         var deferred = wemQ.defer<Application>();
-        new api.application.GetApplicationRequest(key).sendAndParse().then((mod) => {
-            deferred.resolve(mod);
+        new api.application.GetApplicationRequest(key).sendAndParse().then((app) => {
+            if (app.getState() == Application.STATE_STOPPED) {
+                this.missingOrStoppedAppKeys.push(key);
+            }
+            deferred.resolve(app);
         }).catch((reason) => {
-            deferred.reject(new api.Exception("Content cannot be opened. Required application '" + key.toString() + "' not found.",
-                api.ExceptionType.WARNING));
+            this.missingOrStoppedAppKeys.push(key);
+            deferred.resolve(null);
         }).done();
         return deferred.promise;
+    }
+
+    private handleMissingApp() {
+        var atLeastOneAppIsMissing = this.missingOrStoppedAppKeys.length > 0;
+        this.getLivePanel().toggleClass("no-preview", atLeastOneAppIsMissing);
+        this.getCycleViewModeButton().setEnabled(!atLeastOneAppIsMissing);
+        if (atLeastOneAppIsMissing) {
+            this.getMainToolbar().getComponentsViewToggler().hide();
+            this.getMainToolbar().getContextWindowToggler().hide();
+        } else {
+            this.getMainToolbar().getComponentsViewToggler().show();
+            this.getMainToolbar().getContextWindowToggler().show();
+        }
     }
 
     saveChanges(): wemQ.Promise<Content> {
@@ -822,6 +850,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             this.siteModel = new SiteModel(<Site>content);
         }
         if (this.siteModel) {
+            this.unbindSiteModelListeners();
             this.initSiteModelListeners();
         }
     }
@@ -1063,6 +1092,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         this.siteModel = new SiteModel(<Site>content);
                     }
                     if (this.siteModel) {
+                        this.unbindSiteModelListeners();
                         this.initSiteModelListeners();
                     }
                     return wemQ(null);
@@ -1096,29 +1126,36 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.siteModel.onApplicationAdded(this.applicationAddedListener);
         this.siteModel.onApplicationRemoved(this.applicationRemovedListener);
         this.siteModel.onApplicationUnavailable(this.applicationUnavailableListener);
+        this.siteModel.onApplicationStarted(this.applicationStartedListener);
     }
 
     private unbindSiteModelListeners() {
         this.siteModel.unApplicationAdded(this.applicationAddedListener);
         this.siteModel.unApplicationRemoved(this.applicationRemovedListener);
         this.siteModel.unApplicationUnavailable(this.applicationUnavailableListener);
+        this.siteModel.unApplicationStarted(this.applicationStartedListener);
     }
 
     private removeMetadataStepForms() {
+        this.missingOrStoppedAppKeys = [];
         var applicationKeys = this.siteModel.getApplicationKeys();
         var applicationPromises = applicationKeys.map(
-            (key: ApplicationKey) => new api.application.GetApplicationRequest(key).sendAndParse());
+            (key: ApplicationKey) => this.fetchApplication(key));
 
         return wemQ.all(applicationPromises).then((applications: Application[]) => {
             var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
             applications.forEach((app: Application) => {
-                metadataMixinPromises = metadataMixinPromises.concat(
-                    app.getMetaSteps().map((name: MixinName) => {
-                        return new GetMixinByQualifiedNameRequest(name).sendAndParse();
-                    })
-                );
+                if (app && app.getState() !== Application.STATE_STOPPED) {
+                    metadataMixinPromises = metadataMixinPromises.concat(
+                        app.getMetaSteps().map((name: MixinName) => {
+                            return new GetMixinByQualifiedNameRequest(name).sendAndParse();
+                        })
+                    );
+                }
             });
+
+            this.handleMissingApp();
 
             return wemQ.all(metadataMixinPromises);
         }).then((mixins: Mixin[]) => {
@@ -1181,6 +1218,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private initLiveEditModel(content: Content, siteModel: SiteModel, formContext: ContentFormContext): wemQ.Promise<void> {
+        this.unbindSiteModelListeners();
         this.initSiteModelListeners();
         this.liveEditModel =
             LiveEditModel.create().setParentContent(this.parentContent).setContent(content).setContentFormContext(formContext).setSiteModel(

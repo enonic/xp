@@ -25,14 +25,11 @@ module api.content.site.inputtype.siteconfigurator {
             };
 
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
-            builder.
-                setMaximumOccurrences(maxOccurrences).
-                setIdentifierMethod('getApplicationKey').
+            builder.setMaximumOccurrences(maxOccurrences).setIdentifierMethod("getApplicationKey").
                 setComboBoxName("applicationSelector").setLoader(new SiteApplicationLoader(filterObject)).setSelectedOptionsView(
                 new SiteConfiguratorSelectedOptionsView(siteConfigProvider, formContext)).
-                setOptionDisplayValueViewer(new ApplicationViewer()).
-                setValue(value).
-                setDelayedInputValueChangedHandling(500);
+                setOptionDisplayValueViewer(new ApplicationViewer()).setValue(value).setDelayedInputValueChangedHandling(
+                500).setDisplayMissingSelectedOptions(true);
 
             super(builder);
 

@@ -44,7 +44,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
-                this.application.getName() + "-" + this.application.getVersion());
+                this.application.getName() + (!!this.application.getVersion() ? "-" + this.application.getVersion() : ""));
 
             if (this.application.getIconUrl()) {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());
@@ -62,9 +62,12 @@ module api.content.site.inputtype.siteconfigurator {
                 this.toggleClass("invalid", !event.isValid())
             };
 
+            this.toggleClass("empty", !!this.getOption().empty);
+            this.toggleClass("stopped", this.application.getState() === Application.STATE_STOPPED);
+
             this.formView = this.createFormView(this.siteConfig);
 
-            if (this.application.getForm().getFormItems().length > 0) {
+            if (this.application.getForm() && this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
             }
 
