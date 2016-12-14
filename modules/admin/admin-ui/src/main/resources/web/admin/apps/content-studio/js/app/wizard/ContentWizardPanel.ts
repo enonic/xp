@@ -2,6 +2,7 @@ import "../../api.ts";
 import {DefaultModels} from "./page/DefaultModels";
 import {ContentWizardStepForm} from "./ContentWizardStepForm";
 import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
+import {ScheduleWizardStepForm} from "./ScheduleWizardStepForm";
 import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
 import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
 import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
@@ -111,6 +112,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private settingsWizardStepForm: SettingsWizardStepForm;
 
     private settingsWizardStep: WizardStep;
+
+    private scheduleWizardStepForm: ScheduleWizardStepForm;
+
+    private scheduleWizardStep: WizardStep;
 
     private securityWizardStepForm: SecurityWizardStepForm;
 
@@ -249,11 +254,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     let shownHandler = () => {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
-                                (application: Application) => {
-                                    if (application.getState() == "stopped") {
-                                        api.notify.showWarning(message);
-                                    }
-                                })
+                            (application: Application) => {
+                                if (application.getState() == "stopped") {
+                                    api.notify.showWarning(message);
+                                }
+                            })
                             .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
@@ -513,6 +518,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private createSteps(): wemQ.Promise<Mixin[]> {
         this.contentWizardStepForm = new ContentWizardStepForm();
         this.settingsWizardStepForm = new SettingsWizardStepForm();
+        this.scheduleWizardStepForm = new ScheduleWizardStepForm();
         this.securityWizardStepForm = new SecurityWizardStepForm();
 
         var applicationKeys = this.site ? this.site.getApplicationKeys() : [];
@@ -564,6 +570,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
             this.settingsWizardStep = new WizardStep("Settings", this.settingsWizardStepForm);
             steps.push(this.settingsWizardStep);
+
+            this.scheduleWizardStep = new WizardStep("Schedule", this.scheduleWizardStepForm);
+            steps.push(this.scheduleWizardStep);
 
             if (this.isSecurityWizardStepFormAllowed) {
                 steps.push(new WizardStep("Security", this.securityWizardStepForm));
@@ -652,6 +661,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.contentWizardStepForm.reset();
         this.settingsWizardStepForm.reset();
+        this.scheduleWizardStepForm.reset();
 
         for (var key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
@@ -931,7 +941,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         ConfirmationDialog.get().setQuestion(
                             "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
                             () => this.doLayoutPersistedItem(persistedContent.clone())).setNoCallback(() => {/* Do nothing... */
-                        }).show();
+                            }).show();
                     }
                 }
 
@@ -1028,6 +1038,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                 this.settingsWizardStepForm.layout(content);
                 this.settingsWizardStepForm.onPropertyChanged(this.dataChangedListener);
+                this.scheduleWizardStepForm.layout(content);
+                this.scheduleWizardStepForm.onPropertyChanged(this.dataChangedListener);
 
                 if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);
@@ -1335,6 +1347,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         viewedContentBuilder.setExtraData(extraData);
 
         this.settingsWizardStepForm.apply(viewedContentBuilder);
+        this.scheduleWizardStepForm.apply(viewedContentBuilder);
 
         viewedContentBuilder.setPage(this.assembleViewedPage());
         return viewedContentBuilder;
@@ -1585,6 +1598,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         }
 
         this.settingsWizardStepForm.update(contentCopy, unchangedOnly);
+        this.scheduleWizardStepForm.update(contentCopy, unchangedOnly);
 
         if (this.isSecurityWizardStepFormAllowed) {
             this.securityWizardStepForm.update(contentCopy, unchangedOnly);
