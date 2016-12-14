@@ -104,6 +104,8 @@ module api.content.page {
 
         private componentPropertyChangedListeners: {(event: api.content.page.region.ComponentPropertyChangedEvent):void}[] = [];
 
+        private customizeChangedListeners: {(value: boolean): void}[] = [];
+
         private resetListeners: {():void}[] = [];
 
         private ignorePropertyChanges: boolean = false;
@@ -177,7 +179,16 @@ module api.content.page {
         }
 
         setCustomized(value: boolean) {
+            const oldValue = this.customized;
             this.customized = value;
+
+            if (!oldValue && value) {
+                this.setController(new SetController(this).setDescriptor(this.templateDescriptor || this.getDefaultPageDescriptor()));
+            }
+
+            if (oldValue != value) {
+                this.notifyCustomizeChanged(this.customized);
+            }
         }
 
         reset(eventSource?: any) {
@@ -220,7 +231,7 @@ module api.content.page {
             }
 
 
-            if (!this.isPageTemplate()) {
+            if (!this.isPageTemplate() && !this.isCustomized()) {
                 this.setCustomized(true);
             }
 
@@ -504,12 +515,6 @@ module api.content.page {
             return this.customized;
         }
 
-        isModified(): boolean {
-            // default template regions differing from page regions means it has been modified
-            return !!this.getDefaultPageTemplate() && this.getDefaultPageTemplate().isPage() &&
-                   !this.getDefaultPageTemplate().getRegions().equals(this.getRegions());
-        }
-
         private contentHasNonRenderableTemplateSet() {
             return !this.isPageTemplate() && (this.mode == PageMode.NO_CONTROLLER) &&
                    this.liveEditModel.getContent().getPage() &&
@@ -578,6 +583,22 @@ module api.content.page {
                 this.componentPropertyChangedListeners.filter((curr: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) => {
                     return listener != curr;
                 });
+        }
+
+        onCustomizeChanged(listener: (value: boolean)=>void) {
+            this.customizeChangedListeners.push(listener);
+        }
+
+        unCustomizeChanged(listener: (value: boolean)=>void) {
+            this.customizeChangedListeners = this.customizeChangedListeners.filter((curr: (value: boolean)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyCustomizeChanged(value: boolean) {
+            this.customizeChangedListeners.forEach((listener: (value: boolean)=>void) => {
+                listener(value);
+            })
         }
 
         onReset(listener: ()=>void) {

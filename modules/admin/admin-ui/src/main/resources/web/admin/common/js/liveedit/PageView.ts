@@ -75,6 +75,8 @@ module api.liveedit {
 
         private pageModeChangedListener: (event: PageModeChangedEvent) => void;
 
+        private customizeChangedListener: (value: boolean) => void;
+
         private lockedContextMenu: api.liveedit.ItemViewContextMenu;
 
         private disableContextMenu: boolean;
@@ -130,7 +132,7 @@ module api.liveedit {
             // lock page by default for every content that has not been modified except for page template
             var isCustomized = this.liveEditModel.getPageModel().isCustomized();
             var isFragment = !!this.fragmentView;
-            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized && !isFragment) {
+            if (!this.pageModel.isPageTemplate() && !isCustomized && !isFragment) {
                 this.setLocked(true);
             }
 
@@ -158,6 +160,13 @@ module api.liveedit {
                 this.resetAction.setEnabled(resetEnabled);
             };
             this.pageModel.onPageModeChanged(this.pageModeChangedListener);
+
+            this.customizeChangedListener = ((value) => {
+                if (this.isLocked() && value) {
+                    this.setLocked(false);
+                }
+            });
+            this.pageModel.onCustomizeChanged(this.customizeChangedListener);
         }
 
         private unregisterPageModel(pageModel: PageModel) {
@@ -166,6 +175,7 @@ module api.liveedit {
             }
             pageModel.unPropertyChanged(this.propertyChangedListener);
             pageModel.unPageModeChanged(this.pageModeChangedListener);
+            pageModel.unCustomizeChanged(this.customizeChangedListener);
         }
 
         private addPageContextMenuActions() {
@@ -461,8 +471,7 @@ module api.liveedit {
                 this.unshade();
 
                 if (!this.pageModel.isPageTemplate()) {
-                    var setController = new SetController(this).setDescriptor(this.pageModel.getDefaultPageDescriptor());
-                    this.pageModel.setController(setController);
+                    this.pageModel.setCustomized(true);
                 }
 
                 new PageUnlockedEvent(this).fire();

@@ -293,13 +293,13 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
             // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
 
-            if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
+            if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.sameObject(this, event.getSource())) {
                 if (!this.pageModel.getDefaultPageTemplate().getController().equals(this.pageModel.getController().getKey()) ||
                     event.getOldValue() || this.pageModel.hasTemplate()) {
                     this.contentWizardPanel.saveChanges();
                 }
             }
-            else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
+            else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && !api.ObjectHelper.sameObject(this, event.getSource())) {
 
                 // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
                 // only reload when switching from customized with controller set back to template or automatic template
@@ -676,6 +676,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     isShown(): boolean {
-        return this.getHTMLElement().style.display !== "none";
+        return !api.ObjectHelper.stringEquals(this.getHTMLElement().style.display, "none");
     }
 }

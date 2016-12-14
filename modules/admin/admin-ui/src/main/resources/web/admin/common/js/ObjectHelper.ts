@@ -279,6 +279,20 @@ module api {
 
         }
 
+        static sameObject(a: Object, b: Object): boolean {
+            if (!a && !b) {
+                return true;
+            }
+            else if (!a && b) {
+                return false;
+            }
+            else if (a && !b) {
+                return false;
+            }
+
+            return a === b;
+        }
+
         static contains(array: Equitable[], el: Equitable): boolean {
             if (array && array.length > 0) {
                 return array.some((curEl) => {
