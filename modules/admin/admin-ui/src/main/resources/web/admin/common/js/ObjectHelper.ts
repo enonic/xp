@@ -258,10 +258,16 @@ module api {
             if (!a && !b) {
                 return true;
             }
-            else if (!a && b) {
+            if (!a && b) {
                 return false;
             }
-            else if (a && !b) {
+            if (a && !b) {
+                return false;
+            }
+            if (a === b) {
+                return true;
+            }
+            if (ClassHelper.getClassName(a) !== ClassHelper.getClassName(b)) {
                 return false;
             }
 
@@ -277,20 +283,6 @@ module api {
             });
             return aString == bString;
 
-        }
-
-        static sameObject(a: Object, b: Object): boolean {
-            if (!a && !b) {
-                return true;
-            }
-            else if (!a && b) {
-                return false;
-            }
-            else if (a && !b) {
-                return false;
-            }
-
-            return a === b;
         }
 
         static contains(array: Equitable[], el: Equitable): boolean {
