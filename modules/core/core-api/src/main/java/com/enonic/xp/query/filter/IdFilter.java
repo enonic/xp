@@ -39,13 +39,13 @@ public class IdFilter
 
         public Builder values( final NodeIds val )
         {
-            values.addAll( val.getAsStrings() );
+            this.values.addAll( val.getAsStrings() );
             return this;
         }
 
         public Builder values( final Collection<String> values )
         {
-            values.addAll( values );
+            this.values.addAll( values );
             return this;
         }
 
