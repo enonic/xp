@@ -357,16 +357,16 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     protected updateShowScheduleDialogButton() {
-        if (this.areAllOffline()) {
+        if (this.areSomeItemsOffline()) {
             this.showScheduleDialogButton.show();
         } else {
             this.showScheduleDialogButton.hide();
         }
     }
 
-    private areAllOffline(): boolean {
+    private areSomeItemsOffline(): boolean {
         let summaries: ContentSummaryAndCompareStatus[] = this.getItemList().getItems();
-        return summaries.every((summary) => summary.getCompareStatus() === CompareStatus.NEW);
+        return summaries.some((summary) => summary.getCompareStatus() === CompareStatus.NEW);
     }
 
     private areAllValid(summaries: ContentSummaryAndCompareStatus[]): boolean {
