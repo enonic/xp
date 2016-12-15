@@ -56,8 +56,8 @@ module api.util {
         }
 
         static focusInOut(element: api.dom.Element, onFocusOut: () => void, wait: number = 50, preventMouseDown: boolean = true) {
-            let target,
-                focusOutTimeout = 0;
+            let focusOutTimeout = 0;
+            let target;
 
             element.onFocusOut((event) => {
                 if(target == event.target) {
@@ -78,6 +78,11 @@ module api.util {
                     }
                 });
             }
+        }
+
+        static lockEvent(event: Event) {
+            event.stopPropagation();
+            event.preventDefault();
         }
     }
 

@@ -1,5 +1,6 @@
 module api.ui.tab {
 
+    import AppHelper = api.util.AppHelper;
     export class TabMenu extends api.dom.DivEl implements api.ui.Navigator {
 
         private tabMenuButton: TabMenuButton;
@@ -23,6 +24,8 @@ module api.ui.tab {
         private navigationItemDeselectedListeners: {(event: NavigatorEvent):void}[] = [];
 
         private enabled: boolean = true;
+
+        private focusIndex: number = -1;
 
         constructor(className?: string) {
             super("tab-menu" + (className ? " " + className : ""));
@@ -49,10 +52,8 @@ module api.ui.tab {
         }
 
         private initListeners() {
-            api.dom.Body.get().onClicked((event: MouseEvent) => {
-                if (!this.getEl().contains(<HTMLElement> event.target)) {
-                    this.hideMenu();
-                }
+            AppHelper.focusInOut(this, () => {
+                this.hideMenu();
             });
 
             this.onClicked((e: MouseEvent) => {
@@ -60,6 +61,68 @@ module api.ui.tab {
                     this.handleClick(e);
                 }
             });
+
+            this.menuEl.onKeyDown((event: KeyboardEvent) => {
+                if (this.isKeyNext(event)) {
+                    this.focusNextTab();
+                } else if (this.isKeyPrevious(event)) {
+                    this.focusPreviousTab();
+                } else if (KeyHelper.isApplyKey(event)) {
+                    const tab = this.tabs[this.focusIndex];
+                    if (tab) {
+                        tab.select();
+                    }
+                }
+
+
+                if (KeyHelper.isEscKey(event) && this.isMenuVisible()) {
+                    this.hideMenu();
+                }
+
+                AppHelper.lockEvent(event);
+            });
+        }
+
+        giveFocusToMenu(): boolean {
+            const first = this.tabs[0];
+
+            if (first) {
+                this.focusIndex = 0;
+                return first.giveFocus();
+            }
+            return false;
+        }
+
+        returnFocusFromMenu(): boolean {
+            return this.giveFocus();
+        }
+
+        focusNextTab() {
+            const tabIndex = this.focusIndex + 1;
+
+            if (tabIndex < this.tabs.length) {
+                this.tabs[tabIndex].giveFocus();
+                this.focusIndex = tabIndex;
+            }
+        }
+
+        focusPreviousTab() {
+            const tabIndex = this.focusIndex - 1;
+
+            if (tabIndex >= 0) {
+                this.tabs[tabIndex].giveFocus();
+                this.focusIndex = tabIndex;
+            } else {
+                this.returnFocusFromMenu();
+            }
+        }
+
+        isKeyNext(event: KeyboardEvent) {
+            return KeyHelper.isArrowRightKey(event);
+        }
+
+        isKeyPrevious(event: KeyboardEvent) {
+            KeyHelper.isArrowLeftKey(event)
         }
 
         setEnabled(enabled: boolean): TabMenu {

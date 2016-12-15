@@ -6,6 +6,8 @@ import ChildOrder = api.content.order.ChildOrder;
 import ContentSummary = api.content.ContentSummary;
 import DropdownHandle = api.ui.button.DropdownHandle;
 import ArrayHelper = api.util.ArrayHelper;
+import KeyHelper = api.ui.KeyHelper;
+import AppHelper = api.util.AppHelper;
 
 export class SortContentTabMenu extends api.ui.tab.TabMenu {
 
@@ -25,7 +27,12 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         this.dropdownHandle = new DropdownHandle();
         this.appendChild(this.dropdownHandle);
         this.dropdownHandle.up();
-        this.dropdownHandle.onClicked((event: any) => {
+
+        this.initEventHandlers();
+    }
+
+    initEventHandlers() {
+        this.dropdownHandle.onClicked(() => {
             if (this.isMenuVisible()) {
                 this.hideMenu();
             } else {
@@ -33,6 +40,44 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
             }
         });
 
+        this.dropdownHandle.onKeyDown((event: KeyboardEvent) => {
+
+            if (KeyHelper.isArrowDownKey(event)) {
+                if (this.isMenuVisible()) {
+                    this.giveFocusToMenu();
+                } else {
+                    this.showMenu();
+                }
+                AppHelper.lockEvent(event);
+            } else if (KeyHelper.isArrowUpKey(event)) {
+                this.hideMenu();
+                AppHelper.lockEvent(event);
+            } else if (KeyHelper.isApplyKey(event)) {
+                if (this.isMenuVisible()) {
+                    this.hideMenu();
+                } else {
+                    this.showMenu();
+                }
+                AppHelper.lockEvent(event);
+            } else if (KeyHelper.isEscKey(event)) {
+                if (this.isMenuVisible()) {
+                    this.hideMenu();
+                    AppHelper.lockEvent(event);
+                }
+            }
+        });
+    }
+
+    returnFocusFromMenu(): boolean {
+        return this.focus();
+    }
+
+    isKeyNext(event: KeyboardEvent) {
+        return KeyHelper.isArrowDownKey(event);
+    }
+
+    isKeyPrevious(event: KeyboardEvent) {
+        return KeyHelper.isArrowUpKey(event)
     }
 
     protected hideMenu() {
@@ -44,6 +89,7 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
     protected showMenu() {
         super.showMenu();
         this.dropdownHandle.down();
+        this.focus();
     }
 
     selectNavigationItem(tabIndex: number) {
@@ -108,6 +154,10 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         this.sortOrderChangedListeners.forEach((listener: () => void) => {
             listener.call(this);
         });
+    }
+
+    focus(): boolean {
+        return this.dropdownHandle.giveFocus();
     }
 
 }
