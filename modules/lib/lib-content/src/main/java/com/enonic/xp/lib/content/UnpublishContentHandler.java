@@ -27,8 +27,6 @@ public final class UnpublishContentHandler
 
     private ContentService contentService;
 
-    private boolean clearPublishInfo;
-
     public List<String> execute()
     {
         final Branch targetBranch = ContentConstants.BRANCH_MASTER;
@@ -42,7 +40,6 @@ public final class UnpublishContentHandler
         final UnpublishContentParams unpublishContentParams = UnpublishContentParams.create().
             contentIds( ContentIds.from( contentIds ) ).
             unpublishBranch( targetBranch ).
-            clearPublishInfo( clearPublishInfo ).
             includeChildren( true ).
             build();
 
@@ -87,11 +84,6 @@ public final class UnpublishContentHandler
     public void setKeys( final String[] keys )
     {
         this.keys = keys;
-    }
-
-    public void setClearPublishInfo( final boolean clearPublishInfo )
-    {
-        this.clearPublishInfo = clearPublishInfo;
     }
 
     @Override

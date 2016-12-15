@@ -16,12 +16,12 @@ module api.content.form.inputtype.publish {
                     recording.setBreaksMinimumOccurrences(true);
                     recording.setAdditionalValidationRecord(
                         api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                            "[Publish to] cannot be set without [Publish from]").build());
+                            '"Online to" date/time cannot be set without "Online from"').build());
                 } else if (publishFrom && publishTo && (publishTo.toDate() < publishFrom.toDate())) {
                     recording.setBreaksMinimumOccurrences(true);
                     recording.setAdditionalValidationRecord(
                         api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                            "[Publish from] value must be set before [Publish to]").build());
+                            '"Online from" date/time must be earlier than "Online to"').build());
                 }
             }
         }

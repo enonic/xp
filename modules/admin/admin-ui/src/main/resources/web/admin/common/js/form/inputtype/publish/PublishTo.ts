@@ -15,7 +15,7 @@ module api.content.form.inputtype.publish {
                     recording.setBreaksMinimumOccurrences(true);
                     recording.setAdditionalValidationRecord(
                         api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                            "[Publish to] value must be set after [Publish from]").build());
+                            '"Online to" date/time must be later than "Online from"').build());
 
                 }
             }

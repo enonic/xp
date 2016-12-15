@@ -65,10 +65,7 @@ public class UnpublishContentCommand
             branch( ContentConstants.BRANCH_DRAFT ).
             build();
 
-        if ( params.isClearPublishInfo() )
-        {
-            draftContext.callWith( () -> removePublishInfo( contentIds ) );
-        }
+        draftContext.callWith( () -> removePublishInfo( contentIds ) );
 
         final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().
             addUnpublished( contentIds );

@@ -48,9 +48,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.getEl().addClass("publish-dialog");
 
 
-        this.initPublishAction();
         this.initShowScheduleAction();
-
+        this.initPublishAction();
         this.addCancelButtonToBottom();
 
         this.initChildrenCheckbox();
@@ -66,14 +65,15 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private initPublishAction() {
         var publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this, false));
-        this.actionButton = this.addAction(publishAction, true, true);
+        this.actionButton = this.addAction(publishAction, true);
         this.lockControls();
     }
 
     private initShowScheduleAction() {
         var showScheduleAction = new ShowSchedulePublishDialogAction();
         showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
-        this.showScheduleDialogButton = this.addAction(showScheduleAction, true, true);
+        this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
+        this.showScheduleDialogButton.setTitle("Schedule Publishing");
         this.showScheduleDialogButton.setEnabled(true);
     }
 
@@ -195,7 +195,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
                 this.enableCheckbox();
 
                 this.setStashedItems(dependants.slice());
-                this.updateSubTitleAndButtonCount();
+                this.updateSubTitleShowScheduleAndButtonCount();
 
                 if (this.childrenCheckbox.isChecked()) {
                     this.childrenLoaded = true;
@@ -210,13 +210,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         });
     }
 
-    private updateSubTitleAndButtonCount() {
-        let count = this.countTotal();
-
-        this.updateSubTitle(count);
-        this.updateButtonCount("Publish Now", count);
-    }
-
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
         if (this.isProgressBarEnabled()) {
             return;
@@ -226,10 +219,15 @@ export class ContentPublishDialog extends ProgressBarDialog {
                 (newDependantItem) => oldDependantItem.equals(newDependantItem)));
         this.getDependantList().removeItems(itemsToRemove);
 
+        this.updateSubTitleShowScheduleAndButtonCount();
+    }
+
+    private updateSubTitleShowScheduleAndButtonCount() {
         let count = this.countTotal();
 
         this.updateSubTitle(count);
-        this.updateButtonCount("Publish Now", count);
+        this.updateShowScheduleDialogButton();
+        this.updateButtonCount("Publish", count);
     }
 
 
@@ -240,7 +238,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         super.setDependantItems(items);
 
         if (this.getStashedItems()) {
-            this.updateSubTitleAndButtonCount();
+            this.updateSubTitleShowScheduleAndButtonCount();
         }
     }
 
@@ -358,6 +356,19 @@ export class ContentPublishDialog extends ProgressBarDialog {
         }
     }
 
+    protected updateShowScheduleDialogButton() {
+        if (this.areAllOffline()) {
+            this.showScheduleDialogButton.show();
+        } else {
+            this.showScheduleDialogButton.hide();
+        }
+    }
+
+    private areAllOffline(): boolean {
+        let summaries: ContentSummaryAndCompareStatus[] = this.getItemList().getItems();
+        return summaries.every((summary) => summary.getCompareStatus() === CompareStatus.NEW);
+    }
+
     private areAllValid(summaries: ContentSummaryAndCompareStatus[]): boolean {
         return summaries.every((summary: ContentSummaryAndCompareStatus) => isContentSummaryValid(summary));
     }
@@ -394,7 +405,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
 export class ContentPublishDialogAction extends api.ui.Action {
     constructor() {
-        super("Publish Now");
+        super("Publish");
         this.setIconClass("publish-action");
     }
 }

@@ -6,8 +6,6 @@ module api.content.resource {
 
         private includeChildren: boolean;
 
-        private clearPublishInfo: boolean;
-
         constructor(contentId?: ContentId) {
             super();
             this.setHeavyOperation(true);
@@ -32,15 +30,9 @@ module api.content.resource {
             return this;
         }
 
-        setClearPublishInfo(clearPublishInfo: boolean): UnpublishContentRequest {
-            this.clearPublishInfo = clearPublishInfo;
-            return this;
-        }
-
         getParams(): Object {
             return {
                 includeChildren: this.includeChildren,
-                clearPublishInfo: this.clearPublishInfo,
                 ids: this.ids.map((el) => {
                     return el.toString();
                 })

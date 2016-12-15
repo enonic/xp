@@ -7,6 +7,7 @@
   url('../icons/fonts/icomoon.svg?d2dpl4#icomoon-release') format('svg');
 }
 
+
 .icon-base {
   font-weight: normal;
   font-style: normal;
@@ -181,6 +182,18 @@
   &:before {
     content: "\e900";
   }
+}
+
+.icon-calendar {
+  &:extend(.icon-base);
+  font-family: 'icomoon' !important;
+  content: "\e115";
+}
+
+.icon-clock {
+  &:extend(.icon-base);
+  font-family: 'icomoon' !important;
+  content: "\e101";
 }
 
 .@{_COMMON_PREFIX}button.icon-applications, .home-button:hover&.@{_COMMON_PREFIX}button.icon-applications,
@@ -506,10 +519,6 @@
 
 .@{_COMMON_PREFIX}icon-text {
   .icon-type;
-  /*
-    &:before {
-      font-family: 'icomoon' !important;
-    }*/
 }
 
 .@{_COMMON_PREFIX}icon-file {

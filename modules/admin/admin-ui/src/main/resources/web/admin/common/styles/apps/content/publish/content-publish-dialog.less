@@ -57,51 +57,24 @@
     }
   }
 
-  .dialog-buttons .xp-admin-common-button.show-schedule-action {
+  .dialog-buttons .@{_COMMON_PREFIX}button.show-schedule-action {
 
-    padding: 0px 10px;
-    line-height: 32px;
-    border: none;
-    margin: 0px;
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
 
-    background-color: transparent;
-    &:hover:not(:disabled) {
-      background-color: transparent;
-      opacity: 0.5;
-      box-shadow: none;
-    }
+    .picker-icon("date", 22px, 4px, 10px, all);
+
+    position: relative;
+    height: 24px;
+    outline: none;
+
     &:focus {
-      border: none;
-    }
-
-    &:after {
-      &:extend(.icon-base);
-      font-family: 'icomoon' !important;
-      content: "\e115";
-      position: relative;
-      top: 4px;
-      font-size: 22px;
-    }
-
-    > span {
-      display: none;
+      border-color: transparent;
+      box-shadow: none;
     }
   }
 
   &.masked {
-
-    border: 1px solid;
-
-    &:after {
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background-color: black;
-      opacity: 0.5;
-      content: "";
-      position: absolute;
-    }
+     opacity: 0;
   }
 }
 

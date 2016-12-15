@@ -17,12 +17,12 @@ module api.content.form.inputtype.publish {
                         recording.setBreaksMinimumOccurrences(true);
                         recording.setAdditionalValidationRecord(
                             api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                                "[Publish to] value cannot be set in the past").build());
+                                '"Online to" date/time cannot be in the past').build());
                     } else if (publishFrom && (publishTo.toDate() < publishFrom.toDate())) {
                         recording.setBreaksMinimumOccurrences(true);
                         recording.setAdditionalValidationRecord(
                             api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                                "[Publish to] value must be set after [Publish from]").build());
+                                '"Online to" date/time value must be later than "Publish from"').build());
                     }
                 }
             }
