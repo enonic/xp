@@ -40,11 +40,9 @@ function argsToStringArray(argsArray) {
         var currArgument = argsArray[i];
         if (Array.isArray(currArgument)) {
             currArgument.forEach(function (v) {
-                array.push(v)
-                log.info("Pushing array element: %s", v);
+                array.push(v);
             }, this);
         } else {
-            log.info("Pushing single element: %s", currArgument);
             array.push(currArgument);
         }
     }
