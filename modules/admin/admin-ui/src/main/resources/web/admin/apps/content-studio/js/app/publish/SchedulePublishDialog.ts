@@ -111,7 +111,6 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
     resetPublishDates() {
         this.propertySet.reset();
-        this.propertySet.setLocalDateTime("from", 0, api.util.LocalDateTime.fromDate(new Date()));
         this.formView.update(this.propertySet);
     }
 
