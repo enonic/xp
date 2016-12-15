@@ -15,6 +15,7 @@ module api.util.htmlarea.dialog {
         private link: HTMLElement;
         private linkText: string;
         private onlyTextSelected: boolean;
+        private textFormItem: FormItem;
 
         private content: api.content.ContentSummary;
 
@@ -43,11 +44,13 @@ module api.util.htmlarea.dialog {
                 this.dockedPanel.addItem(LinkModalDialog.tabNames.anchor, true, this.createAnchorPanel(config.anchorList), this.isAnchor());
             }
 
-            this.onlyTextSelected = config.onlyTextSelected
+            this.onlyTextSelected = config.onlyTextSelected;
             if (this.onlyTextSelected) {
-                let formItem = this.createFormItem("linkText", "Text", Validators.required, this.getLinkText());
-                this.getMainForm().insertChild(this.createFieldSet(formItem), 0);
-                formItem.getInput().giveFocus();
+                this.textFormItem.getInput().giveFocus();
+            }
+            else {
+                this.textFormItem.hide();
+                this.textFormItem.removeValidator();
             }
         }
 
@@ -201,9 +204,10 @@ module api.util.htmlarea.dialog {
         }
 
         protected getMainFormItems(): FormItem [] {
+            this.textFormItem = this.createFormItemWithPostponedValue("linkText", "Text", this.getLinkText, Validators.required);
             let toolTipFormItem = this.createFormItemWithPostponedValue("toolTip", "Tooltip", this.getToolTip);
 
-            return [toolTipFormItem];
+            return [this.textFormItem, toolTipFormItem];
         }
 
         private createDockedPanel(): DockedPanel {
