@@ -51,7 +51,7 @@ public class IdFilter
 
         public Builder value( final String value )
         {
-            values.add( value );
+            this.values.add( value );
             return this;
         }
 
