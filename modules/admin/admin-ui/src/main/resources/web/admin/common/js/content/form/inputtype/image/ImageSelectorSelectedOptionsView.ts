@@ -26,7 +26,7 @@ module api.content.form.inputtype.image {
 
         private removeSelectedOptionsListeners: {(option: SelectedOption<ImageSelectorDisplayValue>[]): void}[] = [];
 
-        private mouseClickListener: {(MouseEvent): void};
+        private mouseClickListener: (event: MouseEvent) => void;
 
         private clickDisabled: boolean = false;
 
@@ -131,6 +131,7 @@ module api.content.form.inputtype.image {
                 this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
             }
 
+            // tslint:disable-next-line:no-unused-new
             new Tooltip(optionView, isMissingContent ? option.value : option.displayValue.getPath(), 1000);
         }
 

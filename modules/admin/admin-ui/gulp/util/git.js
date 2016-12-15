@@ -37,10 +37,10 @@ function mergeBase() {
     });
 }
 
-// git diff --name-only origin/master..HEAD
-//   Outputs modified files from all commits that are not in master yet
+// git diff --name-only origin/master
+//   Outputs modified files from all commits that are not in master yet and indexed files
 function diff(branch = 'origin/master', extension = '') {
-    const options = ['--name-only', `${branch}..HEAD`];
+    const options = ['--name-only', `${branch}`];
     return new Promise((resolve) => {
         git.diff(options, (err, result) => {
             const files = !result ? [] : result.trim().split('\n');

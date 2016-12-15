@@ -65,29 +65,38 @@ function startLostConnectionDetector() {
 }
 
 function initToolTip() {
-    var ID = api.StyleHelper.getCls("tooltip", api.StyleHelper.COMMON_PREFIX),
-        CLS_ON = "tooltip_ON", FOLLOW = true,
-        DATA = "_tooltip", OFFSET_X = 0, OFFSET_Y = 20,
-        pageX = 0, pageY = 0,
-        showAt = function (e) {
-            var ntop = pageY + OFFSET_Y, nleft = pageX + OFFSET_X;
-            var tooltipText = api.util.StringHelper.escapeHtml(wemjq(e.currentTarget || e.target).data(DATA));
-            if (!tooltipText) { //if no text then probably hovering over children of original element that has title attr
-                return;
-            }
 
-            var tooltipWidth = tooltipText.length * 7.5;
-            var windowWidth = wemjq(window).width();
-            if (nleft + tooltipWidth >= windowWidth) {
-                nleft = windowWidth - tooltipWidth;
-            }
-            wemjq("#" + ID).html(tooltipText).css({
-                position: "absolute", top: ntop, left: nleft
-            }).show();
+    const ID = api.StyleHelper.getCls("tooltip", api.StyleHelper.COMMON_PREFIX);
+    const CLS_ON = "tooltip_ON";
+    const FOLLOW = true;
+    const DATA = "_tooltip";
+    const OFFSET_X = 0;
+    const OFFSET_Y = 20;
+
+    let pageX = 0;
+    let pageY = 0;
+
+    const showAt = function (e) {
+        const top = pageY + OFFSET_Y;
+        let left = pageX + OFFSET_X;
+
+        const tooltipText = api.util.StringHelper.escapeHtml(wemjq(e.currentTarget || e.target).data(DATA));
+        if (!tooltipText) { //if no text then probably hovering over children of original element that has title attr
+            return;
+        }
+
+        const tooltipWidth = tooltipText.length * 7.5;
+        const windowWidth = wemjq(window).width();
+        if (left + tooltipWidth >= windowWidth) {
+            left = windowWidth - tooltipWidth;
+        }
+        wemjq("#" + ID).html(tooltipText).css({
+            position: "absolute", top, left
+        }).show();
         };
     wemjq(document).on("mouseenter", "*[title]", function (e) {
-        wemjq(this).data(DATA, wemjq(this).attr("title"));
-        wemjq(this).removeAttr("title").addClass(CLS_ON);
+        wemjq(window).data(DATA, wemjq(window).attr("title"));
+        wemjq(window).removeAttr("title").addClass(CLS_ON);
         wemjq("<div id='" + ID + "' />").appendTo("body");
         if (e.pageX) {
             pageX = e.pageX;
@@ -98,10 +107,10 @@ function initToolTip() {
         showAt(e);
     });
     wemjq(document).on("mouseleave click", "." + CLS_ON, function (e) {
-        if (wemjq(this).data(DATA)) {
-            wemjq(this).attr("title", wemjq(this).data(DATA));
+        if (wemjq(window).data(DATA)) {
+            wemjq(window).attr("title", wemjq(window).data(DATA));
         }
-        wemjq(this).removeClass(CLS_ON);
+        wemjq(window).removeClass(CLS_ON);
         wemjq("#" + ID).remove();
     });
     if (FOLLOW) { wemjq(document).on("mousemove", "." + CLS_ON, showAt); }
@@ -121,7 +130,7 @@ function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver
         let sizes = link.getAttribute('sizes').split('x');
         if (sizes.length > 0) {
             try {
-                resolver.setSize(parseInt(sizes[0]));
+                resolver.setSize(parseInt(sizes[0], 10));
             } catch (e) { }
         }
         link.setAttribute('href', resolver.resolve());

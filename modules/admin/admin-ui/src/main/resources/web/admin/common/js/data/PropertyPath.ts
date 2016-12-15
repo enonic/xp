@@ -149,7 +149,7 @@ module api.data {
                 return new PropertyPathElement(str, 0);
             }
             var name = str.substring(0, str.indexOf("["));
-            var index = parseInt(str.substring(str.indexOf("[") + 1, str.indexOf("]")));
+            var index = parseInt(str.substring(str.indexOf("[") + 1, str.indexOf("]")), 10);
             return new PropertyPathElement(name, index);
         }
     }

@@ -21,7 +21,7 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
     private static INSTANCE: ApplicationBrowseActions;
 
     static init(applicationTreeGrid: ApplicationTreeGrid): ApplicationBrowseActions {
-        new ApplicationBrowseActions(applicationTreeGrid);
+        ApplicationBrowseActions.INSTANCE = new ApplicationBrowseActions(applicationTreeGrid);
         return ApplicationBrowseActions.INSTANCE;
     }
 
@@ -39,8 +39,6 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
         this.INSTALL_APPLICATION.setEnabled(true);
 
         this.allActions.push(this.START_APPLICATION, this.STOP_APPLICATION, this.UNINSTALL_APPLICATION);
-
-        ApplicationBrowseActions.INSTANCE = this;
     }
 
     getAllActions(): api.ui.Action[] {

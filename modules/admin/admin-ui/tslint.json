@@ -1,11 +1,11 @@
 {
   "rules": {
-    "forin": false,
+    "forin": true,
     "label-position": true,
     "no-any": false,
     "no-arg": true,
     "no-bitwise": false,
-    "no-conditional-assignment": false,
+    "no-conditional-assignment": true,
     "no-console": [
       true,
       "time",
@@ -15,13 +15,13 @@
     "no-debugger": true,
     "no-duplicate-variable": false,
     "no-empty": false,
-    "no-invalid-this": false,
+    "no-invalid-this": true,
     "no-string-literal": false,
     "no-unsafe-finally": true,
     "no-unused-expression": true,
-    "no-unused-new": false,
+    "no-unused-new": true,
     "no-use-before-declare": false,
-    "radix": false,
+    "radix": true,
     "switch-default": false,
     "triple-equals": [
       false
@@ -54,11 +54,11 @@
     "typedef": [
       true
     ],
-    "variable-name": false,
+    "variable-name": true,
     "align": [
       false
     ],
-    "curly": false,
+    "curly": true,
     "eofline": false,
     "indent": [
       true,

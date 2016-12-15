@@ -5,11 +5,12 @@ module api.util.htmlarea.editor {
     import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
     import HtmlAreaAnchor = api.util.htmlarea.dialog.HtmlAreaAnchor;
     import HtmlAreaImage = api.util.htmlarea.dialog.HtmlAreaImage;
+    import StringHelper = api.util.StringHelper;
 
     export class HTMLAreaHelper {
 
         private static getConvertedImageSrc(imgSrc:string):string {
-            var contentId = imgSrc.replace(ImageModalDialog.imagePrefix, api.util.StringHelper.EMPTY_STRING),
+            var contentId = imgSrc.replace(ImageModalDialog.imagePrefix, StringHelper.EMPTY_STRING),
                 imageUrl = new api.content.util.ContentImageUrlResolver().
                     setContentId(new api.content.ContentId(contentId)).
                     setScaleWidth(true).
@@ -43,22 +44,21 @@ module api.util.htmlarea.editor {
         }
 
         public static prepareEditorImageSrcsBeforeSave(editor:HtmlAreaEditor):string {
-            var content = editor.getContent(),
-                processedContent = editor.getContent(),
-                regex = /<img.*?data-src="(.*?)".*?>/g,
-                imgTags, imgTag;
+            const content = editor.getContent();
+            const regex = /<img.*?data-src="(.*?)".*?>/g;
+            let processedContent = editor.getContent();
 
-            while ((imgTags = regex.exec(content)) != null) {
-                imgTag = imgTags[0];
+            AppHelper.whileTruthy(() => regex.exec(content), (imgTags) => {
+                const imgTag = imgTags[0];
+
                 if (imgTag.indexOf("<img ") === 0 && imgTag.indexOf(ImageModalDialog.imagePrefix) > 0) {
-                    var dataSrc = /<img.*?data-src="(.*?)".*?>/.exec(imgTag)[1],
-                        src = /<img.*?src="(.*?)".*?>/.exec(imgTags[0])[1];
+                    const dataSrc = /<img.*?data-src="(.*?)".*?>/.exec(imgTag)[1];
+                    const src = /<img.*?src="(.*?)".*?>/.exec(imgTags[0])[1];
 
-                    var convertedImg = imgTag.replace(src, dataSrc).replace(" data-src=\"" + dataSrc + "\"",
-                        api.util.StringHelper.EMPTY_STRING);
+                    const convertedImg = imgTag.replace(src, dataSrc).replace(` data-src="${dataSrc}"`, StringHelper.EMPTY_STRING);
                     processedContent = processedContent.replace(imgTag, convertedImg);
                 }
-            }
+            });
 
             return processedContent;
         }
@@ -99,10 +99,10 @@ module api.util.htmlarea.editor {
             switch (alignment) {
                 case 'left':
                 case 'right':
-                    styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
+                    styleAttr = StringHelper.format(styleFormat, alignment, "15px", "40");
                     break;
                 case 'center':
-                    styleAttr = api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                    styleAttr = StringHelper.format(styleFormat, "none", "auto", "60");
                     image.parentElement.classList.add(alignment);
                     break;
             case 'justify':

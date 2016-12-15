@@ -40,7 +40,7 @@ module api.dom {
 
         public static getElementCountById(id: string): number {
             // Get the counter from the id according to the name notation
-            let count = parseInt(id.slice(id.lastIndexOf('-') + 1)) || 0;
+            let count = parseInt(id.slice(id.lastIndexOf('-') + 1), 10) || 0;
             return count;
         }
     }

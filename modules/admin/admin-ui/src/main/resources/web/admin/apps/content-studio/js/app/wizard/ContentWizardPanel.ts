@@ -1159,17 +1159,20 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             return wemQ.all(metadataMixinPromises);
         }).then((mixins: Mixin[]) => {
-            var activeMixinsNames = api.schema.mixin.MixinNames.create().fromMixins(mixins).build();
+            const activeMixinsNames = api.schema.mixin.MixinNames.create().fromMixins(mixins).build();
 
-            var panelNamesToRemoveBuilder = MixinNames.create();
+            const panelNamesToRemoveBuilder = MixinNames.create();
 
-            for (var key in this.metadataStepFormByName) {// check all old mixin panels
-                var mixinName = new MixinName(key);
-                if (!activeMixinsNames.contains(mixinName)) {
-                    panelNamesToRemoveBuilder.addMixinName(mixinName);
+            const meta = this.metadataStepFormByName;
+            for (const name in meta) { // check all old mixin panels
+                if (meta.hasOwnProperty(name)) {
+                    const mixinName = new MixinName(name);
+                    if (!activeMixinsNames.contains(mixinName)) {
+                        panelNamesToRemoveBuilder.addMixinName(mixinName);
+                    }
                 }
             }
-            var panelNamesToRemove = panelNamesToRemoveBuilder.build();
+            const panelNamesToRemove = panelNamesToRemoveBuilder.build();
             panelNamesToRemove.forEach((panelName: MixinName) => {
                 this.removeStepWithForm(this.metadataStepFormByName[panelName.toString()]);
                 delete this.metadataStepFormByName[panelName.toString()];

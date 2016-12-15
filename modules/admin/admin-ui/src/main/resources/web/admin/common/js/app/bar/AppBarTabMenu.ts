@@ -172,15 +172,13 @@ module api.app.bar {
         }
 
         private makeTabFirst(tab: AppBarTabMenuItem) {
-            var canBeMoved;
+            const menuWithTab = menuTab => this.getMenuEl().hasChild(menuTab) ? this.getMenuEl() : null;
+            const barWithTab = barTab => this.barEl.hasChild(barTab) ? this.barEl : null;
 
-            if (canBeMoved = this.getMenuEl().hasChild(tab)) {
-                this.getMenuEl().removeChild(tab);
-            } else if (canBeMoved = this.barEl.hasChild(tab)) {
-                this.barEl.removeChild(tab);
-            }
+            const elemWithTab = menuWithTab(tab) || barWithTab(tab);
 
-            if (canBeMoved) {
+            if (elemWithTab) {
+                elemWithTab.removeChild(tab);
                 this.barEl.prependChild(tab);
                 this.moveTabs();
             }

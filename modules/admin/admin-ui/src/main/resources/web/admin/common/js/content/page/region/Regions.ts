@@ -68,9 +68,10 @@ module api.content.page.region {
 
         getRegions(): Region[] {
             var regions = [];
-            for (var i in this.regionByName) {
-                var region = this.regionByName[i];
-                regions.push(region);
+            for (const name in this.regionByName) {
+                if (this.regionByName.hasOwnProperty(name)) {
+                    regions.push(this.regionByName[name]);
+                }
             }
             return regions;
         }
