@@ -412,7 +412,9 @@ export class PageComponentsView extends api.dom.DivEl {
 
 
     private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
-        var handler = () => this.tree.updateNode(textComponentView);
+        var handler = api.util.AppHelper.debounce((event) => {
+            this.tree.updateNode(textComponentView);
+        }, 500, false);
 
         textComponentView.onKeyUp(handler);
         textComponentView.getHTMLElement().onpaste = handler;

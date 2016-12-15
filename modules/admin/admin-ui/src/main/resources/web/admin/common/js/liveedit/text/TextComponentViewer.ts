@@ -10,7 +10,7 @@ module api.liveedit.text {
 
         resolveDisplayName(object: api.content.page.region.TextComponent, componentView?: api.liveedit.text.TextComponentView): string {
             if (componentView) {
-                return this.extractTextFromTextComponentView(componentView) || componentView.getName();
+                return componentView.extractText() || componentView.getName();
             }
             else {
                 return object.getText();
@@ -25,9 +25,6 @@ module api.liveedit.text {
             return api.liveedit.ItemViewIconClassResolver.resolveByType("text");
         }
 
-        private extractTextFromTextComponentView(object: ItemView): string {
-            return wemjq(object.getHTMLElement()).text().trim();
-        }
     }
 
 }
