@@ -1,11 +1,11 @@
-var _ = require("lodash");
+var forOwn = require("lodash.forown");
 var CONFIG = require("../config");
 var path = require("path");
 
 module.exports = function (tasks) {
     var entry = {};
 
-    _.forOwn(tasks, function (task) {
+    forOwn(tasks, function (task) {
         var basePath = task.assets ? CONFIG.assets.src : CONFIG.root.src;
         entry[task.name] = "." + path.join('/', basePath, task.src);
     });

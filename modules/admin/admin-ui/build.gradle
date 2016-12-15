@@ -1,9 +1,10 @@
 apply from: "$rootDir/gradle/osgi.gradle"
+apply plugin: 'com.moowork.node'
 apply plugin: 'com.moowork.gulp'
 
 node {
     download = true
-    version = '4.2.1'
+    version = '6.9.2'
 }
 
 bundle {
@@ -23,6 +24,10 @@ task cleanSourceFiles( type: Delete ) {
     description = 'Clean source files that is used by Gulp.'
     delete fileTree( dir: 'src/main/resources', includes: ['**/_all.*'] )
     delete fileTree( dir: '.', includes: ['*.tmp.txt'] )
+}
+
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    args = ['run', 'lint']
 }
 
 task gulpAll( type: GulpTask, dependsOn: npmInstall ) {

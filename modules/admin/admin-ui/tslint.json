@@ -1,0 +1,99 @@
+{
+  "rules": {
+    "forin": false,
+    "label-position": true,
+    "no-any": false,
+    "no-arg": true,
+    "no-bitwise": false,
+    "no-conditional-assignment": false,
+    "no-console": [
+      true,
+      "time",
+      "timeEnd",
+      "trace"
+    ],
+    "no-debugger": true,
+    "no-duplicate-variable": false,
+    "no-empty": false,
+    "no-invalid-this": false,
+    "no-string-literal": false,
+    "no-unsafe-finally": true,
+    "no-unused-expression": true,
+    "no-unused-new": false,
+    "no-use-before-declare": false,
+    "radix": false,
+    "switch-default": false,
+    "triple-equals": [
+      false
+    ],
+    "use-isnan": true,
+    "arrow-parens": false,
+    "class-name": true,
+    "comment-format": true,
+    "interface-name": false,
+    "jsdoc-format": true,
+    "max-file-line-count": true,
+    "max-line-length": [
+      false
+    ],
+    "member-access": false,
+    "member-ordering": false,
+    "new-parens": true,
+    "no-construct": true,
+    "no-default-export": true,
+    "no-inferrable-types": false,
+    "no-null-keyword": false,
+    "no-require-imports": true,
+    "no-shadowed-variable": false,
+    "no-var-keyword": false,
+    "no-var-requires": true,
+    "object-literal-sort-keys": false,
+    "one-variable-per-declaration": false,
+    "only-arrow-functions": false,
+    "ordered-imports": false,
+    "typedef": [
+      true
+    ],
+    "variable-name": false,
+    "align": [
+      false
+    ],
+    "curly": false,
+    "eofline": false,
+    "indent": [
+      true,
+      "spaces"
+    ],
+    "linebreak-style": false,
+    "no-consecutive-blank-lines": false,
+    "no-trailing-whitespace": false,
+    "object-literal-key-quotes": [
+      false
+    ],
+    "one-line": [
+      false
+    ],
+    "quotemark": [
+      true
+    ],
+    "semicolon": [
+      false
+    ],
+    "trailing-comma": [
+      true,
+      {
+        "singleline": "never"
+      }
+    ],
+    "typedef-whitespace": false,
+    "whitespace": [
+      false
+    ],
+    "ban": false,
+    "no-angle-bracket-type-assertion": false,
+    "no-internal-module": false,
+    "no-mergeable-namespace": false,
+    "no-namespace": false,
+    "no-reference": false
+  }
+}

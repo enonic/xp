@@ -4,7 +4,7 @@
 
 var CONFIG = require("../config");
 var gulp = require("gulp");
-var _ = require("lodash");
+var forOwn = require("lodash.forown");
 var less = require("gulp-less");
 var AutoPrefixer = require("less-plugin-autoprefix");
 var sourcemaps = require("gulp-sourcemaps");
@@ -29,7 +29,7 @@ const cssResolver = nameResolver.bind(null, 'css');
  css: editor
  css: launcher
  */
-_.forOwn(subtasks, function (task, name) {
+forOwn(subtasks, function (task, name) {
     var dest = task.assets ? CONFIG.assets.dest : CONFIG.root.dest;
     var taskPath = pathResolver.commonPaths(task.src, task.dest, CONFIG.root.src, CONFIG.root.dest);
     var newerPath = pathResolver.anyPath(taskPath.src.dir);

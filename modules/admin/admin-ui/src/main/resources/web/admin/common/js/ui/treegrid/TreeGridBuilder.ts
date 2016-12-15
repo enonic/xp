@@ -276,7 +276,7 @@ module api.ui.treegrid {
         }
 
         /**
-         Should be overriden by child class.
+         * Should be overriden by child class.
          */
         build(): TreeGrid<NODE> {
             return new TreeGrid<NODE>(this);
