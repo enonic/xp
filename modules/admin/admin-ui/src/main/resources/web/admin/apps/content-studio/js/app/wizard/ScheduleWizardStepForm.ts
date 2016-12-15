@@ -107,4 +107,12 @@ export class ScheduleWizardStepForm extends api.app.wizard.WizardStepForm {
         return this.formView.giveFocus();
     }
 
+    toggleHelpText(show?: boolean) {
+        this.formView.toggleHelpText(show);
+    }
+
+    hasHelpText(): boolean {
+        return this.formView.hasHelpText();
+    }
+
 }
