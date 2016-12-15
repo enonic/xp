@@ -73,14 +73,14 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
     private createFoldButton(browseActions: ContentTreeGridActions) {
         this.foldButton = new MobilePreviewFoldButton([
-            browseActions.DELETE_CONTENT,
-            browseActions.MOVE_CONTENT,
-            browseActions.DUPLICATE_CONTENT,
-            browseActions.SORT_CONTENT,
-            browseActions.SHOW_NEW_CONTENT_DIALOG_ACTION,
-            browseActions.PUBLISH_CONTENT,
             browseActions.UNPUBLISH_CONTENT,
-            browseActions.EDIT_CONTENT
+            browseActions.PUBLISH_CONTENT,
+            browseActions.MOVE_CONTENT,
+            browseActions.SORT_CONTENT,
+            browseActions.DELETE_CONTENT,
+            browseActions.DUPLICATE_CONTENT,
+            browseActions.EDIT_CONTENT,
+            browseActions.SHOW_NEW_CONTENT_DIALOG_ACTION
         ], this.itemHeader);
     }
 
