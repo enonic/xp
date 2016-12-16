@@ -295,8 +295,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             if (!api.ObjectHelper.objectEquals(this, event.getSource())) {
 
                 if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER) {
-                    if (!this.pageModel.getDefaultPageTemplate().getController().equals(this.pageModel.getController().getKey()) ||
-                        event.getOldValue() || this.pageModel.hasTemplate()) {
+                    if (!api.ObjectHelper.objectEquals(event.getOldValue(), event.getNewValue())) {
                         this.contentWizardPanel.saveChanges();
                     }
                 }

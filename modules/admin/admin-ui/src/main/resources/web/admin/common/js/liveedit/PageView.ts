@@ -471,7 +471,10 @@ module api.liveedit {
                 this.unshade();
 
                 if (!this.pageModel.isPageTemplate()) {
-                    this.pageModel.setCustomized(true);
+                    if (!this.pageModel.isCustomized()) {
+                        this.pageModel.setCustomized(true);
+                        this.pageModel.setTemplateContoller();
+                    }
                 }
 
                 new PageUnlockedEvent(this).fire();
