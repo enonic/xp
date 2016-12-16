@@ -758,6 +758,40 @@ public class ResolveSyncWorkCommandTest
             parent( "b2", "s2" ) );
     }
 
+
+    /*
+     - S1 (New)
+         - A1 (New)
+         - A2 (New)
+             - A2_1 - Ref:B2_1 (New)
+               - A2_1_1
+     - S2 (New)
+         - B1 (New)
+         - B2 (New)
+             - B2_1 (New)
+             - B2_2 (New)
+
+      Resolve: A2_1
+    */
+    @Test
+    public void do_not_publish_dependencies_of_equal_parent()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        pushAllNodesInS1S2Tree();
+
+        updateNode( "a2_1_1" );
+        moveNode( "b2_1", NodePath.create( "/s2/b2" ).build(), "b2_1_renamed" );
+
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1_1" );
+
+        assertEquals( 1, result.getSize() );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1_1" ) );
+    }
+
     /*
      - S1 (New) s
          - A1 (New)
