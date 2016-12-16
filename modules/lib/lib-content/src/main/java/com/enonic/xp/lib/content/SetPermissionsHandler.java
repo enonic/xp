@@ -183,7 +183,7 @@ public final class SetPermissionsHandler
         }
         catch ( final ContentNotFoundException e )
         {
-            LOG.warn( "Cannot set permissions - Content not found: " + this.key );
+            LOG.warn( "Content not found: " + this.key );
         }
 
         return null;
@@ -196,7 +196,7 @@ public final class SetPermissionsHandler
         {
             if ( !principalExists( principal ) )
             {
-                LOG.warn( "Cannot set permissions - Principal not found: " + principal );
+                LOG.warn( "Principal not found: " + principal );
                 valid = false;
             }
         }
