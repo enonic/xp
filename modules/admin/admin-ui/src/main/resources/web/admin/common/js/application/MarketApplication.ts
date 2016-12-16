@@ -40,6 +40,10 @@ module api.application {
             return array;
         }
 
+        public isEmpty(): boolean {
+            return !this.displayName && !this.url;
+        }
+
         public getDisplayName(): string {
             return this.displayName;
         }
@@ -65,7 +69,11 @@ module api.application {
         }
 
         public getLatestVersionDownloadUrl(): string {
-            return this.getVersions()[this.getLatestVersion()]["applicationUrl"];
+            if (this.getLatestVersion()) {
+                return this.getVersions()[this.getLatestVersion()]["applicationUrl"];
+            } else {
+                return null;
+            }
         }
 
         public getVersions(): Object {
