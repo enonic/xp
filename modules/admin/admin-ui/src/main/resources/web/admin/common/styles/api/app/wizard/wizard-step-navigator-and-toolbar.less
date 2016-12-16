@@ -41,8 +41,8 @@
   .fold-button {
     display: none;
     position: relative;
-    height: 100%;
     width: 100%;
+    height: 100%;
     padding: 0;
     padding-left: 22px; // Same as width of the help button on the right
     border: none;
@@ -76,6 +76,7 @@
     .@{_COMMON_PREFIX}dropdown {
       top: 40px;
       width: 100%;
+      max-width: none;
       box-sizing: border-box;
       box-shadow: 0px 5px 10px -3px rgba(0, 0, 0, 0.3);
       border-top: 1px solid lightgray;
@@ -170,8 +171,15 @@
     }
   }
 }
-
-
+/*
+&._0-240, &._240-360, ._360-540 {
+  .wizard-step-navigator-and-toolbar {
+    .fold-button {
+      width: 100%;
+    }
+  }
+}
+*/
 ._0-240, ._240-360, ._360-540, ._540-720, ._720-960 {
   .wizard-step-navigator-and-toolbar {
     padding-left: 0;
