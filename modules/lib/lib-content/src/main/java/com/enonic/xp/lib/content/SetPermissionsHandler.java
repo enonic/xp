@@ -139,11 +139,10 @@ public final class SetPermissionsHandler
             final UpdateContentParams updatePermissionsParams = new UpdateContentParams().
                 contentId( contentId ).
                 modifier( modifier ).
-                editor( edit ->
-                        {
-                            edit.inheritPermissions = inheritPermissions;
-                            edit.permissions = permissions;
-                        } );
+                editor( edit -> {
+                    edit.inheritPermissions = inheritPermissions;
+                    edit.permissions = permissions;
+                } );
             contentService.update( updatePermissionsParams );
 
             try
@@ -184,7 +183,7 @@ public final class SetPermissionsHandler
         }
         catch ( final ContentNotFoundException e )
         {
-            // Do nothing
+            LOG.warn( "Cannot set permissions - Content not found: " + this.key );
         }
 
         return null;
@@ -197,7 +196,7 @@ public final class SetPermissionsHandler
         {
             if ( !principalExists( principal ) )
             {
-                LOG.warn( "Principal not found: " + principal );
+                LOG.warn( "Cannot set permissions - Principal not found: " + principal );
                 valid = false;
             }
         }
