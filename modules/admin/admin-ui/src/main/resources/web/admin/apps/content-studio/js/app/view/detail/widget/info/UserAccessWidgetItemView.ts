@@ -10,6 +10,7 @@ import UserAccessListItemView = api.ui.security.acl.UserAccessListItemView;
 import Permission = api.security.acl.Permission;
 import User = api.security.User;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import OpenEditPermissionsDialogEvent = api.content.event.OpenEditPermissionsDialogEvent;
 
 export class UserAccessWidgetItemView extends WidgetItemView {
 
@@ -83,7 +84,9 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         this.appendChild(this.bottomEl);
 
         this.bottomEl.onClicked((event: MouseEvent) => {
-            new api.content.event.OpenEditPermissionsDialogEvent(content).fire();
+
+            OpenEditPermissionsDialogEvent.create().applyContent(content).build().fire();
+
             event.stopPropagation();
             event.preventDefault();
             return false;

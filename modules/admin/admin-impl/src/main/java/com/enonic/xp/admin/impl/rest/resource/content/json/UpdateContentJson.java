@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
+import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -22,6 +23,7 @@ import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlList;
 
 public final class UpdateContentJson
 {
@@ -31,6 +33,8 @@ public final class UpdateContentJson
 
     final RenameContentParams renameContentParams;
 
+    final ApplyContentPermissionsParams applyContentPermissionsParams;
+
     @JsonCreator
     UpdateContentJson( @JsonProperty("contentId") final String contentId,
                        @JsonProperty("contentName") final String contentName,
@@ -39,7 +43,10 @@ public final class UpdateContentJson
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("requireValid") final String requireValid,
                        @JsonProperty("owner") final String owner, @JsonProperty("language") final String language,
-                       @JsonProperty("publishFrom") final String publishFrom, @JsonProperty("publishTo") final String publishTo )
+                       @JsonProperty("publishFrom") final String publishFrom, @JsonProperty("publishTo") final String publishTo,
+                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,
+                       @JsonProperty("inheritPermissions") final boolean inheritPermissions,
+                       @JsonProperty("overwriteChildPermissions") final boolean overwriteChildPermissions )
     {
         this.contentName = ContentName.from( contentName );
 
@@ -61,11 +68,18 @@ public final class UpdateContentJson
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
                 edit.publishInfo = publishInfo.build();
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
+                edit.inheritPermissions = inheritPermissions;
+                edit.permissions = parseAcl( permissions );
             } );
 
         this.renameContentParams = RenameContentParams.create().
             contentId( ContentId.from( contentId ) ).
             newName( this.contentName ).
+            build();
+
+        this.applyContentPermissionsParams = ApplyContentPermissionsParams.create().
+            contentId( ContentId.from( contentId ) ).
+            overwriteChildPermissions( overwriteChildPermissions ).
             build();
     }
 
@@ -82,6 +96,13 @@ public final class UpdateContentJson
     }
 
     @JsonIgnore
+    public ApplyContentPermissionsParams getApplyContentPermissionsParams()
+    {
+        return applyContentPermissionsParams;
+    }
+
+
+    @JsonIgnore
     public ContentName getContentName()
     {
         return contentName;
@@ -95,5 +116,15 @@ public final class UpdateContentJson
             extradatasBuilder.add( extraDataJson.getExtraData() );
         }
         return extradatasBuilder.build();
+    }
+
+    private AccessControlList parseAcl( final List<AccessControlEntryJson> accessControlListJson )
+    {
+        final AccessControlList.Builder builder = AccessControlList.create();
+        for ( final AccessControlEntryJson entryJson : accessControlListJson )
+        {
+            builder.add( entryJson.getSourceEntry() );
+        }
+        return builder.build();
     }
 }

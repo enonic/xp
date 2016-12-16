@@ -9,7 +9,6 @@ import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublish
 import {ContentWizardActions} from "./action/ContentWizardActions";
 import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
 import {ContentWizardToolbar} from "./ContentWizardToolbar";
-import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
 import {Router} from "../Router";
 import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
 import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
@@ -249,11 +248,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     let shownHandler = () => {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
-                            (application: Application) => {
-                                if (application.getState() == "stopped") {
-                                    api.notify.showWarning(message);
-                                }
-                            })
+                                (application: Application) => {
+                                    if (application.getState() == "stopped") {
+                                        api.notify.showWarning(message);
+                                    }
+                                })
                             .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
@@ -275,7 +274,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         });
 
-        ContentPermissionsAppliedEvent.on((event) => this.contentPermissionsUpdated(event.getContent()));
     }
 
     protected doLoadData(): Q.Promise<api.content.Content> {
@@ -931,7 +929,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         ConfirmationDialog.get().setQuestion(
                             "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
                             () => this.doLayoutPersistedItem(persistedContent.clone())).setNoCallback(() => {/* Do nothing... */
-                            }).show();
+                        }).show();
                     }
                 }
 
@@ -1272,7 +1270,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var updateContentRequest = new UpdateContentRequest(persistedContent.getId()).setRequireValid(this.requireValid).setContentName(
             viewedContent.getName()).setDisplayName(viewedContent.getDisplayName()).setData(viewedContent.getContentData()).setExtraData(
             viewedContent.getAllExtraData()).setOwner(viewedContent.getOwner()).setLanguage(viewedContent.getLanguage()).setPublishFrom(
-            viewedContent.getPublishFromTime()).setPublishTo(viewedContent.getPublishToTime());
+            viewedContent.getPublishFromTime()).setPublishTo(viewedContent.getPublishToTime()).setPermissions(
+            viewedContent.getPermissions()).setInheritPermissions(viewedContent.isInheritPermissionsEnabled()).setOverwritePermissions(
+            viewedContent.isOverwritePermissionsEnabled());
 
         return updateContentRequest;
     }
@@ -1337,6 +1337,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.settingsWizardStepForm.apply(viewedContentBuilder);
 
         viewedContentBuilder.setPage(this.assembleViewedPage());
+
+        this.securityWizardStepForm.apply(viewedContentBuilder);
+
         return viewedContentBuilder;
     }
 
@@ -1502,16 +1505,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.contentNamedListeners.forEach((listener: (event: ContentNamedEvent)=>void)=> {
             listener.call(this, new ContentNamedEvent(this, content));
         });
-    }
-
-    private contentPermissionsUpdated(content: Content) {
-        var persistedContent: Content = this.getPersistedItem();
-
-        if (persistedContent && (content.getId() === persistedContent.getId())) {
-            var updatedContent: Content = persistedContent.newBuilder().setInheritPermissionsEnabled(
-                content.isInheritPermissionsEnabled()).setPermissions(content.getPermissions().clone()).build();
-            this.setPersistedItem(updatedContent);
-        }
     }
 
     private createFormContext(content: Content): ContentFormContext {

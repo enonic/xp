@@ -20,6 +20,8 @@ module api.content {
 
         private inheritPermissions: boolean;
 
+        private overwritePermissions: boolean;
+
         constructor(builder: ContentBuilder) {
             super(builder);
 
@@ -30,6 +32,7 @@ module api.content {
             this.pageObj = builder.pageObj;
             this.permissions = builder.permissions || new AccessControlList();
             this.inheritPermissions = builder.inheritPermissions;
+            this.overwritePermissions = builder.overwritePermissions;
         }
 
         getContentData(): PropertyTree {
@@ -62,6 +65,10 @@ module api.content {
 
         isInheritPermissionsEnabled(): boolean {
             return this.inheritPermissions;
+        }
+
+        isOverwritePermissionsEnabled(): boolean {
+            return this.overwritePermissions;
         }
 
         isAnyPrincipalAllowed(principalKeys: api.security.PrincipalKey[], permission: api.security.acl.Permission): boolean {
@@ -162,6 +169,10 @@ module api.content {
                 return false;
             }
 
+            if (this.overwritePermissions !== other.overwritePermissions) {
+                return false;
+            }
+
             return true;
         }
 
@@ -209,6 +220,8 @@ module api.content {
 
         inheritPermissions: boolean = true;
 
+        overwritePermissions: boolean = false;
+
         constructor(source?: Content) {
             super(source);
             if (source) {
@@ -219,6 +232,7 @@ module api.content {
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
                 this.permissions = source.getPermissions(); // TODO clone?
                 this.inheritPermissions = source.isInheritPermissionsEnabled();
+                this.overwritePermissions = source.isOverwritePermissionsEnabled();
             }
         }
 
@@ -243,6 +257,8 @@ module api.content {
             if (typeof json.inheritPermissions !== "undefined") {
                 this.inheritPermissions = json.inheritPermissions;
             }
+
+            this.overwritePermissions = false;
 
             return this;
         }
@@ -275,6 +291,11 @@ module api.content {
 
         setInheritPermissionsEnabled(value: boolean): ContentBuilder {
             this.inheritPermissions = value;
+            return this;
+        }
+
+        setOverwritePermissionsEnabled(value: boolean): ContentBuilder {
+            this.overwritePermissions = value;
             return this;
         }
 
