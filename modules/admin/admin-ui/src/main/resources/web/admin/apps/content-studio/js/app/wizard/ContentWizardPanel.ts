@@ -642,7 +642,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.updateWizardHeader(content);
         this.updateWizardStepForms(content, unchangedOnly);
-        this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
+        this.updateMetadataAndMetadataStepForms(content, unchangedOnly);
         this.resetLastFocusedElement();
     }
 
@@ -1036,8 +1036,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 schemas.forEach((schema: Mixin, index: number) => {
                     var extraData = content.getExtraData(schema.getMixinName());
                     if (!extraData) {
-                        extraData = new ExtraData(schema.getMixinName(), new PropertyTree());
-                        content.getAllExtraData().push(extraData);
+                        extraData = this.enrichWithExtraData(content, schema.getMixinName());
                     }
                     var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
                     var metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
@@ -1046,6 +1045,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     data.onChanged(this.dataChangedListener);
 
                     formViewLayoutPromises.push(metadataFormView.layout(formContext, data, metadataForm));
+
+                    this.synchPersistedItemWithMixinData(schema.getMixinName(), data);
                 });
 
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
@@ -1069,6 +1070,27 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 });
             });
         });
+    }
+
+    // synch persisted content extra data with data from mixins
+    // when rendering form - we may add extra fields from mixins; as this is intended action from XP, not user - it should be present in persisted content
+    private synchPersistedItemWithMixinData(mixinName: MixinName, mixinData: PropertyTree) {
+        var persistedContent = this.getPersistedItem(),
+            extraData = persistedContent.getExtraData(mixinName);
+        if (!extraData) { // ensure ExtraData object corresponds to each step form
+            this.enrichWithExtraData(persistedContent, mixinName, mixinData.copy());
+        } else {
+            var diff = extraData.getData().diff(mixinData);
+            diff.added.forEach((property: api.data.Property) => {
+                extraData.getData().addProperty(property.getName(), property.getValue());
+            });
+        }
+    }
+
+    private enrichWithExtraData(content: Content, mixinName: MixinName, propertyTree?: PropertyTree): ExtraData {
+        var extraData = new ExtraData(mixinName, propertyTree ? propertyTree.copy() : new PropertyTree());
+        content.getAllExtraData().push(extraData);
+        return extraData;
     }
 
     private setupWizardLiveEdit() {
@@ -1552,8 +1574,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 var mixinName = new MixinName(key);
                 var extraData = contentCopy.getExtraData(mixinName);
                 if (!extraData) { // ensure ExtraData object corresponds to each step form
-                    extraData = new ExtraData(mixinName, new PropertyTree());
-                    contentCopy.getAllExtraData().push(extraData);
+                    extraData = this.enrichWithExtraData(contentCopy, mixinName);
                 }
 
                 let form = this.metadataStepFormByName[key];
@@ -1563,6 +1584,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 data.onChanged(this.dataChangedListener);
 
                 form.update(data, unchangedOnly);
+
+                this.synchPersistedItemWithMixinData(mixinName, data);
             }
         }
     }
