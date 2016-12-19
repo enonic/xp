@@ -32,7 +32,13 @@
         font-family: 'icomoon';
         pointer-events: none;
         opacity: 0.5;
+      }
+    }
+  }
 
+  &.locked:not(.no-publish) {
+    .dialog-buttons {
+      button:not(.cancel-button-bottom) {
         &:after {
           .animation(rotate360, .5s, .0s, linear);
           content: "\e007";
