@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
+import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.Assert.*;
 
@@ -66,7 +67,7 @@ public class PathCacheImplTest
 
     private CachePath createPath( final String path )
     {
-        return new BranchPath( Branch.from( "test" ), NodePath.create( path ).build() );
+        return new BranchPath( RepositoryId.from( "repo" ), Branch.from( "test" ), NodePath.create( path ).build() );
     }
 
 }
