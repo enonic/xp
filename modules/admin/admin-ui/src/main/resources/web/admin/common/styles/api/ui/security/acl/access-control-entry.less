@@ -5,6 +5,7 @@
   .flexbox();
   flex-flow: row wrap;
   .clearfix();
+  .icon-close-mixin();
 
   &.dirty {
     .access-selector {
@@ -30,12 +31,6 @@
     margin: 0 10px 0 0;
     min-width: 200px;
     .flex(1 auto);
-  }
-
-  .icon-close {
-    border: 1px solid transparent;
-    .close-mixin();
-    .focusable();
   }
 
   .permission-selector {

@@ -157,11 +157,20 @@
     }
     .tab-menu-item {
       display: block;
-      padding: 5px 35px;
-      overflow: hidden;
-      white-space: pre;
-      color: @admin-button-blue2;
-      .ellipsis();
+      padding: 0;
+      .label {
+        display: block;
+        padding: 5px 35px;
+        overflow: hidden;
+        white-space: pre;
+        color: @admin-button-blue2;
+        .ellipsis();
+
+        &:focus {
+          background-color: @admin-bg-light-gray;
+        }
+
+      }
     }
     .@{_COMMON_PREFIX}dropdown-handle {
       z-index: 3;

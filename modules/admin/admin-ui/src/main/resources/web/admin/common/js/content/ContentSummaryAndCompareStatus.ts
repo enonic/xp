@@ -21,6 +21,10 @@ module api.content {
             return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary);
         }
 
+        public static fromContentAndCompareStatus(contentSummary: ContentSummary, compareStatus: CompareStatus) {
+            return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary).setCompareStatus(compareStatus);
+        }
+
         public static fromContentAndCompareAndPublishStatus(contentSummary: ContentSummary, compareStatus: CompareStatus,
                                                             publishStatus: PublishStatus) {
             return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary).setCompareStatus(compareStatus).setPublishStatus(

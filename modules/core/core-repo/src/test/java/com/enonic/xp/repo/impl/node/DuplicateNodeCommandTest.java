@@ -329,6 +329,47 @@ public class DuplicateNodeCommandTest
         assertOrder( duplicateParent, "child1", "child3", "child2" );
     }
 
+    @Test
+    public void duplicate_with_capital_node_id()
+        throws Exception
+    {
+        final String nodeName = "my-node";
+        final Node createdNode = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( nodeName ).
+            setNodeId( NodeId.from( "MyNodeId" ) ).
+            build() );
+
+        final Node childNode = createNode( CreateNodeParams.create().
+            parent( createdNode.path() ).
+            name( "my-child" ).
+            setNodeId( NodeId.from( "MyChildId" ) ).
+            build() );
+
+        refresh();
+
+        final Node duplicatedNode = DuplicateNodeCommand.create().
+            id( createdNode.id() ).
+            indexServiceInternal( indexServiceInternal ).
+            binaryService( binaryService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
+
+        refresh();
+
+        final FindNodesByParentResult children = findByParent( FindNodesByParentParams.create().
+            parentPath( duplicatedNode.path() ).
+            build() );
+
+        final NodeIds childNodes = children.getNodeIds();
+        assertEquals( 1, childNodes.getSize() );
+        final Node duplicatedChildNode = getNode( childNodes.first() );
+        assertEquals( childNode.name(), duplicatedChildNode.name() );
+        assertEquals( duplicatedNode.path(), duplicatedChildNode.parentPath() );
+    }
+
 
     @Test(expected = OperationNotPermittedException.class)
     public void cannot_duplicate_root_node()

@@ -93,13 +93,13 @@ module api.ui.grid {
 
             children.forEach((child: Element, index: number) => {
                 if (data.rows[0] <= data.insertBefore) { //move item down
-                    if (index > data.rows[0].toString() && index <= data.insertBefore.toString()) {
+                    if (index > data.rows[0] && index <= data.insertBefore) {
                         setMarginTop(child, `-${this.rowHeight}px`);
                     } else {
                         setMarginTop(child, null);
                     }
                 } else if (data.rows[0] >= data.insertBefore) { //move item up
-                    if (index < data.rows[0].toString() && index >= data.insertBefore.toString()) {
+                    if (index < data.rows[0] && index >= data.insertBefore) {
                         setMarginTop(child, `${this.rowHeight}px`);
                     } else {
                         setMarginTop(child, null);

@@ -13,10 +13,9 @@ module api.content.form.inputtype.publish {
                 var publishTo = publishInfoPropertySet.getDateTime("to");
                 if (publishTo && publishFrom && (publishTo.toDate() < publishFrom.toDate())) {
                     recording.setBreaksMinimumOccurrences(true);
-                    recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
-                        setOverwriteDefault(true).
-                        setMessage("[Publish to] value must be set after [Publish from]").
-                        build());
+                    recording.setAdditionalValidationRecord(
+                        api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
+                            '"Online to" date/time must be later than "Online from"').build());
 
                 }
             }

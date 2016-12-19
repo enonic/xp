@@ -8,7 +8,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.Filters;
-import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AclFilterBuilderFactory;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
@@ -55,9 +55,9 @@ public class FindNodeBranchEntriesByIdCommand
     {
         final NodeQuery.Builder queryBuilder = NodeQuery.create().
             addQueryFilters( Filters.create().
-                add( ValueFilter.create().
+                add( IdFilter.create().
                     fieldName( NodeIndexPath.ID.getPath() ).
-                    addValues( this.ids.getAsStrings() ).
+                    values( this.ids ).
                     build() ).
                 build() ).
             from( 0 ).

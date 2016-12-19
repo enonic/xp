@@ -71,7 +71,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
-        this.saveButton.giveFocus();
+        this.sortContentMenu.focus();
     }
 
     close() {
@@ -91,7 +91,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
         this.contentGrid.getEl().addClass("sort-content-grid");
         this.contentGrid.onLoaded(() => {
             this.contentGrid.render(true);
-
+            this.centerMyself();
             if (this.contentGrid.getContentId()) {
                 this.open();
             }
@@ -121,6 +121,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
         this.sortContentMenu.onSortOrderChanged(() => {
             this.handleOnSortOrderChangedEvent();
+            this.saveButton.giveFocus();
         });
     }
 

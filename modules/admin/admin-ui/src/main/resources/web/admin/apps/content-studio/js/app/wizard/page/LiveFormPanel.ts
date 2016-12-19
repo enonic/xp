@@ -295,19 +295,24 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.pageModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
 
             // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
+            if (!api.ObjectHelper.objectEquals(this, event.getSource())) {
 
-            if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
-                this.contentWizardPanel.saveChanges();
-            }
-            else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER) {
+                    if (!this.pageModel.getDefaultPageTemplate().getController().equals(this.pageModel.getController().getKey()) ||
+                        event.getOldValue() || this.pageModel.hasTemplate()) {
+                        this.contentWizardPanel.saveChanges();
+                    }
+                }
+                if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE) {
 
-                // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
-                // only reload when switching from customized with controller set back to template or automatic template
-                if (!(this.pageModel.getDefaultPageTemplate().equals(this.pageModel.getTemplate()) && !event.getOldValue() &&
-                      !this.pageModel.hasController())) {
-                    this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
-                    this.lockPageAfterProxyLoad = true;
-                    this.contentWizardPanel.saveChanges();
+                    // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
+                    // only reload when switching from customized with controller set back to template or automatic template
+                    if (!(this.pageModel.getDefaultPageTemplate().equals(this.pageModel.getTemplate()) && !event.getOldValue() &&
+                          !this.pageModel.hasController())) {
+                        this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
+                        this.lockPageAfterProxyLoad = true;
+                        this.contentWizardPanel.saveChanges();
+                    }
                 }
             }
         });
@@ -676,6 +681,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     isShown(): boolean {
-        return this.getHTMLElement().style.display !== "none";
+        return !api.ObjectHelper.stringEquals(this.getHTMLElement().style.display, "none");
     }
 }

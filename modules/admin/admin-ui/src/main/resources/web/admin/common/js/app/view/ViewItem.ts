@@ -23,7 +23,7 @@ module api.app.view {
             this.model = model;
         }
 
-        static fromContentSummaryAndCompareStatus(model: ContentSummaryAndCompareStatus): ViewItem<ContentSummaryAndCompareStatus>{
+        static fromContentSummaryAndCompareStatus(model: ContentSummaryAndCompareStatus): ViewItem<ContentSummaryAndCompareStatus> {
             return new api.app.view.ViewItem<ContentSummaryAndCompareStatus>(model)
                 .setIconUrl(model.getIconUrl())
                 .setDisplayName(model.getDisplayName())

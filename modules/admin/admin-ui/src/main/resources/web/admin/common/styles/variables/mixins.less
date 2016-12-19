@@ -523,15 +523,21 @@
   }
 }
 
-.picker-icon(@content) {
+.picker-icon(@picker-type: "date", @font-size: 18px, @top: 9px, @right: 7px, @pointer-events: none) {
   &:before {
-    &:extend(.icon-base);
-    font-family: 'icomoon' !important;
+    & when (@picker-type = "date") {
+      .icon-calendar;
+    }
+    & when (@picker-type = "time") {
+      .icon-clock;
+    }
+
     position: absolute;
-    right: 5px;
-    top: 8px;
-    font-size: 18px;
-    content: @content;
+    right: @right;
+    top: @top;
+    font-size: @font-size;
+    pointer-events: @pointer-events;
+
   }
 }
 
@@ -746,14 +752,15 @@
   }
 }
 
-.close-mixin() {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  cursor: pointer;
-  font-size: 12px;
-  display: block;
-  text-decoration: none;
+.icon-close-mixin() {
+  .icon-close {
+    .focusable();
+    position: absolute;
+    top: 8px;
+    right: 0px;
+    cursor: pointer;
+    text-decoration: none;
+  }
 }
 
 .flat-mixin(@bgColor: @admin-white) {

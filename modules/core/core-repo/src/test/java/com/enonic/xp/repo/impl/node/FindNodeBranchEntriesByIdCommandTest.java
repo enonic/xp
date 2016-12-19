@@ -31,6 +31,37 @@ public class FindNodeBranchEntriesByIdCommandTest
         this.createDefaultRootNode();
     }
 
+    @Test
+    public void node_with_capital_letter_in_id()
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            name( "node1" ).
+            setNodeId( NodeId.from( "Node1" ) ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            name( "node1_1" ).
+            setNodeId( NodeId.from( "Node1_1" ) ).
+            parent( node1.path() ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            name( "node1_1_1" ).
+            setNodeId( NodeId.from( "Node1_1_1" ) ).
+            parent( node1_1.path() ).
+            build() );
+
+        final NodeBranchEntries result = FindNodeBranchEntriesByIdCommand.create().
+            ids( NodeIds.from( node1.id(), node1_1.id(), node1_1_1.id() ) ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            indexServiceInternal( indexServiceInternal ).
+            build().
+            execute();
+
+        assertEquals( 3, result.getSize() );
+    }
 
     @Test
     public void find_order_by_path()

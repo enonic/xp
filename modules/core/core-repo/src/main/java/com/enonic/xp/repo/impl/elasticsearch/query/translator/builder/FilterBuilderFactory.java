@@ -19,10 +19,12 @@ import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.ValueHelper;
+import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public class FilterBuilderFactory
@@ -86,9 +88,33 @@ public class FilterBuilderFactory
             {
                 filtersToApply.add( createBooleanFilter( (BooleanFilter) filter ) );
             }
+            else if ( filter instanceof IdFilter )
+            {
+                final FilterBuilder idFilter = createIdFilter( (IdFilter) filter );
+
+                if ( idFilter != null )
+                {
+                    filtersToApply.add( idFilter );
+                }
+            }
         }
     }
 
+    private FilterBuilder createIdFilter( final IdFilter idFilter )
+    {
+        if ( idFilter.getValues().isEmpty() )
+        {
+            return null;
+        }
+
+        final String queryFieldName = IndexFieldNameNormalizer.normalize( idFilter.getFieldName() );
+
+        final Set<Object> values = Sets.newHashSet();
+
+        values.addAll( idFilter.getValues() );
+
+        return new TermsFilterBuilder( queryFieldName, values );
+    }
 
     private FilterBuilder createBooleanFilter( final BooleanFilter booleanFilter )
     {

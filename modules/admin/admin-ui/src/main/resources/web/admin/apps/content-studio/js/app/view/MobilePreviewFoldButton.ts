@@ -6,10 +6,9 @@ import ActionButton = api.ui.button.ActionButton;
 
 export class MobilePreviewFoldButton extends api.ui.toolbar.FoldButton {
 
-    constructor(actions: Action[]) {
-        super("");
-        
-        this.hide();
+    constructor(actions: Action[], hostElement: api.dom.Element) {
+        super("", hostElement);
+
         this.addClass("mobile-preview-fold-button");
         this.addActions(actions);
     }

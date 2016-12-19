@@ -15,7 +15,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
-import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.query.filter.IdFilter;
 
 public class SetPublishInfoCommand
     extends AbstractContentCommand
@@ -82,9 +82,9 @@ public class SetPublishInfoCommand
                 mustNot( ExistsFilter.create().
                     fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).
                     build() ).
-                must( ValueFilter.create().
-                    fieldName( ContentPropertyNames.ID ).
-                    addValues( nodesToPush.getAsStrings() ).
+                must( IdFilter.create().
+                    fieldName( ContentIndexPath.ID.getPath() ).
+                    values( nodesToPush ).
                     build() ).
                 build() ).
             size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).

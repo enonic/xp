@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -75,7 +76,7 @@ public final class PropertySet
                 final Value value = property.getValue();
                 if ( value.isPropertySet() )
                 {
-                    setMapValue( map, name, value.asData().toMap() );
+                    setMapValue( map, name, value.asData() == null ? Maps.newHashMap() : value.asData().toMap() );
                 }
                 else
                 {
@@ -217,7 +218,7 @@ public final class PropertySet
             return 0;
         }
 
-        long result = array.getProperties().stream().filter( (p) -> p.getValue() != null && p.getValue().getObject() != null).count();
+        long result = array.getProperties().stream().filter( ( p ) -> p.getValue() != null && p.getValue().getObject() != null ).count();
         return (int) result;
     }
 

@@ -22,12 +22,3 @@ exports.unpublishByPath = function () {
 
     assert.assertJsonEquals(expectedJson, result);
 };
-
-exports.unpublishAndClearPublishInfo = function () {
-    var result = content.unpublish({
-        keys: ['9f5b0db0-38f9-4e81-b92e-116f25476b1c', '45d67001-7f2b-4093-99ae-639be9fdd1f6', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
-        clearPublishInfo: true
-    });
-    
-    assert.assertJsonEquals(expectedJson, result);
-};
