@@ -433,7 +433,7 @@ module api.content.page {
                 }
             }
             else if (this.mode == PageMode.FRAGMENT) {
-                return new PageBuilder().setRegions(this.regions).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
+                return new PageBuilder().setRegions(null).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
                     this.fragment).build();
             }
             else {
