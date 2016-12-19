@@ -1,13 +1,13 @@
 import "../../api.ts";
-
-import BrowseItem = api.app.browse.BrowseItem;
-import Application = api.application.Application;
-import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
 import {StartApplicationAction} from "./StartApplicationAction";
 import {StopApplicationAction} from "./StopApplicationAction";
 import {InstallApplicationAction} from "./InstallApplicationAction";
 import {UninstallApplicationAction} from "./UninstallApplicationAction";
+
+import BrowseItem = api.app.browse.BrowseItem;
+import Application = api.application.Application;
+import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 
 export class ApplicationBrowseActions implements TreeGridActions<Application> {
 
@@ -39,6 +39,8 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
         this.INSTALL_APPLICATION.setEnabled(true);
 
         this.allActions.push(this.START_APPLICATION, this.STOP_APPLICATION, this.UNINSTALL_APPLICATION);
+
+        ApplicationBrowseActions.INSTANCE = this;
     }
 
     getAllActions(): api.ui.Action[] {
