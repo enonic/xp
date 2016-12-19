@@ -146,7 +146,7 @@
     top: 9px;
     padding: 0 14px 0 10px;
     overflow: hidden;
-    z-index: @z-index-mask - 1;
+    z-index: @z-index-mask - 2;
     cursor: pointer;
 
     &:after {
@@ -171,15 +171,6 @@
     }
   }
 }
-/*
-&._0-240, &._240-360, ._360-540 {
-  .wizard-step-navigator-and-toolbar {
-    .fold-button {
-      width: 100%;
-    }
-  }
-}
-*/
 ._0-240, ._240-360, ._360-540, ._540-720, ._720-960 {
   .wizard-step-navigator-and-toolbar {
     padding-left: 0;

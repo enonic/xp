@@ -4,6 +4,7 @@ module api.app.browse {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import TreeNode = api.ui.treegrid.TreeNode;
+    import ActionButton = api.ui.button.ActionButton;
 
     export class BrowsePanel<M extends api.Equitable> extends api.ui.panel.Panel implements api.ui.ActionContainer {
 
@@ -33,7 +34,7 @@ module api.app.browse {
 
         private toggleFilterPanelAction: api.ui.Action;
 
-        private toggleFilterPanelButton: api.ui.button.ActionButton;
+        private toggleFilterPanelButton: ActionButton;
 
         constructor() {
             super();
@@ -250,10 +251,8 @@ module api.app.browse {
 
         private addToggleFilterPanelButtonInToolbar() {
             this.toggleFilterPanelAction = new api.app.browse.action.ToggleFilterPanelAction(this);
-            var existingActions: api.ui.Action[] = this.browseToolbar.getActions();
-            this.browseToolbar.removeActions();
-            this.toggleFilterPanelButton = this.browseToolbar.addAction(this.toggleFilterPanelAction);
-            this.browseToolbar.addActions(existingActions);
+            this.toggleFilterPanelButton = new ActionButton(this.toggleFilterPanelAction);
+            this.browseToolbar.prependChild(this.toggleFilterPanelButton);
             this.toggleFilterPanelAction.setVisible(false);
         }
 
