@@ -78,13 +78,13 @@ module api.app.wizard {
 
         private isStepNavigatorFit(): boolean {
             let width;
-
+            
             if (this.stepNavigator.isVisible()) {
                 // StepNavigator fits if summary width of its steps < width of StepNavigator
                 // StepNavigator width is calculated in CSS
                 width = this.stepNavigator.getEl().getWidthWithoutPadding();
                 const steps = this.stepNavigator.getChildren();
-                const stepsWidth = steps.reduce((width, step) => width + step.getEl().getWidthWithMargin(), 0);
+                const stepsWidth = steps.reduce((totalStepWidth, step) => totalStepWidth + (step.isVisible() ? step.getEl().getWidthWithMargin() : 0), 0);
 
                 // Update fitting width to check, when toolbar is minimized
                 this.fittingWidth = stepsWidth;
