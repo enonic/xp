@@ -26,16 +26,8 @@
 
   .grid .slick-row {
     .slick-cell {
-      &:not(.selected) {
-        &.status .equal {
-          color: @admin-green;
-          &.pending {
-            color: darkorange;
-          }
-          &.expired {
-            color: @admin-red;
-          }
-        }
+      &:not(.selected).status {
+          .content-status-mixin();
       }
 
       &.status {

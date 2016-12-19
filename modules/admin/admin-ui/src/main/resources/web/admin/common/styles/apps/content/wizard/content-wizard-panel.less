@@ -206,17 +206,10 @@
           margin-right: 14px;
           color: @admin-font-gray2;
 
+          .content-status-mixin();
+
           span {
             color: @admin-black;
-            &.online {
-              color: @admin-green;
-              &.pending {
-                color: darkorange;
-              }
-              &.expired {
-                color: @admin-red;
-              }
-            }
           }
         }
       }
