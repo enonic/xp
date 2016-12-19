@@ -44,21 +44,10 @@
     }
   }
 
-  &:hover .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}button {
-    &:hover:not(:disabled) span {
-      color: @admin-font-gray3;
-      cursor: pointer;
-    }
-
-    &:not(:disabled) span {
-      color: @admin-font-gray2;
+  &.expanded {
+    .@{_COMMON_PREFIX}dropdown {
+      display: block;
     }
   }
 
-  &:hover .@{_COMMON_PREFIX}dropdown,
-  &:focus .@{_COMMON_PREFIX}dropdown,
-  .@{_COMMON_PREFIX}dropdown:hover,
-  .@{_COMMON_PREFIX}dropdown:focus {
-    display: block;
-  }
 }

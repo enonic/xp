@@ -655,7 +655,6 @@ public final class ContentResource
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             includeChildren( params.isIncludeChildren() ).
-            clearPublishInfo( params.isClearPublishInfo() ).
             pushListener( listener ).
             build() );
 

@@ -44,7 +44,7 @@
     height: 100%;
     width: 100%;
     padding: 0;
-    padding-left: 22px;  // Same as width of the help button on the right
+    padding-left: 22px; // Same as width of the help button on the right
     border: none;
     background-color: @admin-bg-light-gray;
     vertical-align: middle;
@@ -55,7 +55,7 @@
       display: none;
     }
 
-    &:hover:not(:disabled) {
+    &.expanded:not(:disabled) {
       background-color: @admin-white;
 
       + .help-text-button {
@@ -134,7 +134,7 @@
   }
 
   &:not(.scroll-stick) {
-    .fold-button:hover:not(:disabled) {
+    .fold-button.expanded:not(:disabled) {
       box-shadow: -2px -5px 10px -3px rgba(0, 0, 0, 0.3);
     }
   }

@@ -8,7 +8,7 @@ module api.ui.tab {
 
         private label: string;
 
-        private labelEl: api.dom.SpanEl;
+        private labelEl: api.dom.AEl;
 
         private active: boolean = false;
 
@@ -26,7 +26,7 @@ module api.ui.tab {
 
             super("tab-item" + (!classes ? "" : " " + classes));
 
-            this.labelEl = new api.dom.SpanEl('label');
+            this.labelEl = new api.dom.AEl('label');
             this.appendChild(this.labelEl);
 
             this.setLabel(builder.label, builder.markUnnamed, builder.addLabelTitleAttribute);
@@ -40,7 +40,7 @@ module api.ui.tab {
             }
 
             this.onClicked((event: MouseEvent) => {
-                this.notifySelectedListeners();
+                this.select();
             });
         }
 
@@ -55,6 +55,10 @@ module api.ui.tab {
                 });
                 this.prependChild(this.removeButton);
             }
+        }
+
+        select() {
+            this.notifySelectedListeners();
         }
 
         setIndex(value: number) {
@@ -159,6 +163,10 @@ module api.ui.tab {
             this.closedListeners.forEach((listener: (event: TabItemClosedEvent)=>void) => {
                 listener.call(this, new TabItemClosedEvent(this));
             });
+        }
+
+        giveFocus(): boolean {
+            return this.labelEl.giveFocus();
         }
 
     }

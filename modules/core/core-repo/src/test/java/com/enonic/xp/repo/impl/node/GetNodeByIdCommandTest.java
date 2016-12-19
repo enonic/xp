@@ -45,8 +45,6 @@ public class GetNodeByIdCommandTest
             execute();
 
         assertEquals( createdNode, fetchedNode );
-
-        printBranchIndex();
     }
 
     @Test

@@ -83,5 +83,13 @@ module api.ui {
         static isEnterKey(event: KeyboardEvent): boolean {
             return event.keyCode === 13;
         }
+
+        static isSpaceKey(event: KeyboardEvent): boolean {
+            return event.keyCode === 32;
+        }
+
+        static isApplyKey(event: KeyboardEvent): boolean {
+            return KeyHelper.isEnterKey(event) || KeyHelper.isSpaceKey(event);
+        }
     }
 }

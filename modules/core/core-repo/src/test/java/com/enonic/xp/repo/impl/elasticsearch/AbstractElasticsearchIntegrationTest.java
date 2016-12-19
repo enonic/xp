@@ -70,7 +70,7 @@ public abstract class AbstractElasticsearchIntegrationTest
             setIndices( indexName ).
             setTypes( indexType ).
             setSource( termQuery ).
-            addFields( "*" );
+            addFields( "_source" );
 
         final SearchResponse searchResponse = this.client.search( searchRequest.request() ).actionGet();
 

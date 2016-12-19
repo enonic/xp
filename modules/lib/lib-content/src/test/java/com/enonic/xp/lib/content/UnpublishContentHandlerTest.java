@@ -110,21 +110,4 @@ public class UnpublishContentHandlerTest
 
         runFunction( "/site/test/UnpublishContentHandlerTest.js", "unpublishByPath" );
     }
-
-    @Test
-    public void unpublishAndClearPublishInfo()
-    {
-        ContentIds ids = ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID );
-
-        UnpublishContentParams unpublishParams = UnpublishContentParams.create().
-            contentIds( ids ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
-            clearPublishInfo( true ).
-            includeChildren( true ).
-            build();
-
-        Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
-
-        runFunction( "/site/test/UnpublishContentHandlerTest.js", "unpublishAndClearPublishInfo" );
-    }
 }

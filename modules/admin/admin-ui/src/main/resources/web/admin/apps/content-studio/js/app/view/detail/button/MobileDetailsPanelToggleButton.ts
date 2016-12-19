@@ -12,7 +12,7 @@ export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
 
         this.detailsPanel = detailsPanel;
 
-        this.onClicked(() => {
+        this.onClicked((event) => {
             this.toggleClass(MobileDetailsPanelToggleButton.EXPANDED_CLASS);
             if (this.hasClass(MobileDetailsPanelToggleButton.EXPANDED_CLASS)) {
                 this.detailsPanel.slideIn();
@@ -22,6 +22,7 @@ export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
             } else {
                 this.detailsPanel.slideOut();
             }
+            event.stopPropagation();
         });
     }
 }

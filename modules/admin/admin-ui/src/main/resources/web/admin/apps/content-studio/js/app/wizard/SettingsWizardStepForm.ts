@@ -24,9 +24,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     private localeCombo: LocaleComboBox;
     private ownerCombo: PrincipalComboBox;
 
-    private formView: FormView;
-    private propertySet: PropertySet = new api.data.PropertyTree().getRoot();
-
     constructor() {
         super("settings-wizard-step-form");
 
@@ -57,12 +54,8 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
         var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
 
-        this.ownerCombo = PrincipalComboBox.create().
-            setLoader(loader).
-            setMaxOccurences(1).
-            setValue(content.getOwner() ? content.getOwner().toString() : undefined).
-            setDisplayMissing(true).
-            build();
+        this.ownerCombo = PrincipalComboBox.create().setLoader(loader).setMaxOccurences(1).setValue(
+            content.getOwner() ? content.getOwner().toString() : undefined).setDisplayMissing(true).build();
 
         var ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
 
@@ -71,9 +64,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         fieldSet.add(ownerFormItem);
 
         var form = new api.ui.form.Form().add(fieldSet);
-
         this.appendChild(form);
-        this.initFormView(content);
 
         form.onFocus((event) => {
             this.notifyFocused(event);
@@ -87,83 +78,19 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
     update(content: api.content.Content, unchangedOnly: boolean = true) {
         this.updateUnchangedOnly = unchangedOnly;
-
         this.model.setOwner(content.getOwner(), true).setLanguage(content.getLanguage(), true);
-
-        this.propertySet.reset();
-        this.initPropertySet(content);
-        this.formView.update(this.propertySet, unchangedOnly);
     }
 
     reset() {
         this.localeCombo.resetBaseValues();
-        this.formView.reset();
     }
 
-    onPropertyChanged(listener: {(): void;}) {
-        this.propertySet.onChanged(listener);
+    onPropertyChanged(listener: {(event: api.PropertyChangedEvent): void;}) {
         this.model.onPropertyChanged(listener);
     }
 
-    unPropertyChanged(listener: {(): void;}) {
-        this.propertySet.unChanged(listener);
+    unPropertyChanged(listener: {(event: api.PropertyChangedEvent): void;}) {
         this.model.unPropertyChanged(listener);
-    }
-
-    private initFormView(content: api.content.Content) {
-        var formBuilder = new api.form.FormBuilder().
-            addFormItem(new api.form.InputBuilder().
-                setName("from").
-                setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).
-                setLabel("Publish From").
-                setHelpText("Time from which your contents will be available online").
-                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
-                setInputTypeConfig({}).
-                setMaximizeUIInputWidth(true).
-                build()).
-            addFormItem(new api.form.InputBuilder().
-                setName("to").
-                setInputType(api.content.form.inputtype.publish.PublishTo.getName()).
-                setLabel("Publish To").
-                setHelpText("Time until which your contents will be available online").
-                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
-                setInputTypeConfig({}).
-                setMaximizeUIInputWidth(true).
-                build());
-
-        this.initPropertySet(content);
-        this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
-        this.formView.addClass("display-validation-errors");
-        this.formView.layout().then(() => {
-            this.formView.onFocus((event) => {
-                this.notifyFocused(event);
-            });
-            this.formView.onBlur((event) => {
-                this.notifyBlurred(event);
-            });
-
-            this.appendChild(this.formView);
-
-            this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
-                this.previousValidation = event.getRecording();
-                this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
-            });
-
-            this.propertySet.onChanged(() => {
-                this.formView.validate();
-            });
-        });
-    }
-
-    private initPropertySet(content: api.content.Content) {
-        var publishFromDate = content.getPublishFromTime();
-        if (publishFromDate) {
-            this.propertySet.setLocalDateTime("from", 0, api.util.LocalDateTime.fromDate(publishFromDate));
-        }
-        var publishToDate = content.getPublishToTime();
-        if (publishToDate) {
-            this.propertySet.setLocalDateTime("to", 0, api.util.LocalDateTime.fromDate(publishToDate));
-        }
     }
 
     private setModel(model: ContentSettingsModel) {
@@ -198,15 +125,6 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
     apply(builder: api.content.ContentBuilder) {
         this.model.apply(builder);
-
-        var publishFrom = this.propertySet.getDateTime("from");
-        builder.setPublishFromTime(publishFrom && publishFrom.toDate());
-        var publishTo = this.propertySet.getDateTime("to");
-        builder.setPublishToTime(publishTo && publishTo.toDate());
-    }
-
-    getModel(): ContentSettingsModel {
-        return this.model;
     }
 
     giveFocus(): boolean {

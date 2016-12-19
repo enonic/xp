@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
@@ -296,9 +297,9 @@ public class BranchServiceImpl
                     fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
                     addValue( ValueFactory.newString( context.getBranch().getValue() ) ).
                     build() ).
-                addQueryFilter( ValueFilter.create().
+                addQueryFilter( IdFilter.create().
                     fieldName( BranchIndexPath.NODE_ID.getPath() ).
-                    addValues( nodeIds.getAsStrings() ).
+                    values( nodeIds ).
                     build() ).
                 size( nodeIds.getSize() ).
                 build() ).

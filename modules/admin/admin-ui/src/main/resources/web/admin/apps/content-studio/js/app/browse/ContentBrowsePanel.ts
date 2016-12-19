@@ -219,7 +219,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             return defer.promise;
         };
 
-        const showMobilePanel = () => this.mobileContentItemStatisticsPanel.slideIn();
+        const showMobilePanel = () => {
+            setTimeout(() => {
+                this.mobileContentItemStatisticsPanel.slideIn();
+            }, 400);
+        }
 
         const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
 

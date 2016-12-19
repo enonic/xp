@@ -287,14 +287,12 @@ exports.publish = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string[]} params.keys List of all content keys(path or id) that should be unpublished.
- * @param {boolean} [params.clearPublishInfo] Clear all publish times.
  *
  * @returns {string[]} List with ids of the content that were unpublished.
  */
 exports.unpublish = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.UnpublishContentHandler');
     bean.keys = required(params, 'keys');
-    bean.clearPublishInfo = params.clearPublishInfo;
     return __.toNativeObject(bean.execute());
 };
 
@@ -354,6 +352,7 @@ exports.move = function (params) {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
+ * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden. Default is the current branch set in portal.
  * @param {boolean} [params.inheritPermissions] Set to true if the content must inherit permissions. Default to false.
  * @param {boolean} [params.overwriteChildPermissions] Set to true to overwrite child permissions. Default to false.
  * @param {array} [params.permissions] Array of permissions.
@@ -377,6 +376,7 @@ exports.setPermissions = function (params) {
     if (params.permissions) {
         bean.permissions = __.toScriptValue(params.permissions);
     }
+    bean.branch = nullOrValue(params.branch);
     return __.toNativeObject(bean.execute());
 };
 
