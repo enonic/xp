@@ -75,7 +75,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
             });
             this.propertySet.onChanged(() => {
                 this.formView.validate();
-            })
+            });
             this.appendChildToContentPanel(this.formView);
             this.centerMyself();
 
