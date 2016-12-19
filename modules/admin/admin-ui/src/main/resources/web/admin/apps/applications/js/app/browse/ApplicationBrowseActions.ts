@@ -39,8 +39,6 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
         this.INSTALL_APPLICATION.setEnabled(true);
 
         this.allActions.push(this.START_APPLICATION, this.STOP_APPLICATION, this.UNINSTALL_APPLICATION);
-
-        ApplicationBrowseActions.INSTANCE = this;
     }
 
     getAllActions(): api.ui.Action[] {

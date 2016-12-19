@@ -40,7 +40,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
             }]).prependClasses("application-grid")
         );
 
-        this.setContextMenu(new TreeGridContextMenu(new ApplicationBrowseActions(this)));
+        this.setContextMenu(new TreeGridContextMenu(ApplicationBrowseActions.init(this)));
 
         this.initEventHandlers();
     }
