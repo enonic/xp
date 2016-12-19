@@ -470,11 +470,9 @@ module api.liveedit {
             } else {
                 this.unshade();
 
-                if (!this.pageModel.isPageTemplate()) {
-                    if (!this.pageModel.isCustomized()) {
-                        this.pageModel.setCustomized(true);
-                        this.pageModel.setTemplateContoller();
-                    }
+                if (!(this.pageModel.isPageTemplate() || this.pageModel.isCustomized())) {
+                    this.pageModel.setCustomized(true);
+                    this.pageModel.setTemplateContoller();
                 }
 
                 new PageUnlockedEvent(this).fire();

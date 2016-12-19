@@ -220,13 +220,7 @@ module api.content.page {
 
             this.setControllerData(setController);
 
-            if (setController.descriptor) {
-                this.setMode(PageMode.FORCED_CONTROLLER);
-            }
-            else {
-                this.setMode(PageMode.NO_CONTROLLER);
-            }
-
+            this.setMode(setController.descriptor ? PageMode.FORCED_CONTROLLER : PageMode.NO_CONTROLLER);
 
             if (!this.isPageTemplate()) {
                 this.setCustomized(true);
@@ -275,7 +269,10 @@ module api.content.page {
         }
 
         setTemplateContoller() {
-            this.setController(new SetController(this).setDescriptor(this.templateDescriptor || this.getDefaultPageDescriptor()));
+            this.setController(
+                new SetController(this).
+                setDescriptor(this.templateDescriptor || this.getDefaultPageDescriptor())
+            );
         }
 
         setAutomaticTemplate(eventSource?: any, ignoreRegionChanges: boolean = false): PageModel {
