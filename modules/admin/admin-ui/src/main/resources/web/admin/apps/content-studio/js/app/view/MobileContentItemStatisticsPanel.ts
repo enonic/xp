@@ -24,9 +24,13 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private detailsToggleButton: MobileDetailsPanelToggleButton;
 
     private foldButton: MobilePreviewFoldButton;
+    private mask: api.ui.mask.LoadMask;
     
     constructor(browseActions: ContentTreeGridActions, detailsView: DetailsView) {
         super("mobile-content-item-statistics-panel");
+        this.mask = new api.ui.mask.LoadMask(this);
+        this.mask.addClass("mobile");
+        this.appendChild(this.mask);
 
         this.setDoOffset(false);
 
@@ -179,6 +183,16 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     slideIn() {
         api.dom.Body.get().getHTMLElement().classList.add("mobile-statistics-panel");
         this.getEl().setRightPx(0);
+    }
+
+    showMask() {
+        if (this.isVisible()) {
+            this.mask.show();
+        }
+    }
+
+    hideMask() {
+        this.mask.hide();
     }
 
     private calcAndSetDetailsPanelTopOffset() {

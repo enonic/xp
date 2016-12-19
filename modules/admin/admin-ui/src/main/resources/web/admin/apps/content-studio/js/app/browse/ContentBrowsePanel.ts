@@ -99,7 +99,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         return filterPanel;
     }
-    
+
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
@@ -195,8 +195,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
 
-        const updateMobilePanel = () => {
-            const defer = wemQ.defer();
+        var updateMobilePanel = () => {
 
             const prevItem = this.mobileContentItemStatisticsPanel.getPreviewPanel().getItem();
             const browseItem = this.getFirstSelectedBrowseItem();
@@ -205,39 +204,28 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             const itemChanged = !prevItem || !prevItem.getModel() || prevItem.getModel().getId() !== browseItem.getId();
 
             if (itemChanged) {
-                new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
-                    (renderable: boolean) => {
-                        item.setRenderable(renderable);
-                        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
-                        this.mobileContentItemStatisticsPanel.setItem(item);
-                        defer.resolve(true);
-                    });
-            } else {
-                defer.resolve(true);
+                this.mobileContentItemStatisticsPanel.showMask();
+                this.mobileContentItemStatisticsPanel.setItem(item);
+
+                setTimeout(() => {
+                    new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
+                        (renderable: boolean) => {
+                            item.setRenderable(renderable);
+                            this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                            this.mobileContentItemStatisticsPanel.hideMask();
+                        });
+                }, 300);
             }
-
-            return defer.promise;
         };
-
-        const showMobilePanel = () => {
-            setTimeout(() => {
-                this.mobileContentItemStatisticsPanel.slideIn();
-            }, 400);
-        }
-
-        const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
 
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
             if (this.isSomethingSelectedInMobileMode()) {
-                updateAndShowMobilePanel();
+                this.mobileContentItemStatisticsPanel.slideIn();
+                updateMobilePanel();
             }
         });
 
         this.appendChild(this.mobileContentItemStatisticsPanel);
-    }
-
-    private updateMobilePanel(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]) {
-        this.mobileContentItemStatisticsPanel.setItem(this.getFirstSelectedBrowseItem(fullSelection).toViewItem());
     }
 
     private getFirstSelectedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
