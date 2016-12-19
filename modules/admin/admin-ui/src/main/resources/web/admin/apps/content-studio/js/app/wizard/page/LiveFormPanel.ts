@@ -294,11 +294,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
             if (!api.ObjectHelper.objectEquals(this, event.getSource())) {
 
-                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER) {
-                    if (!this.pageModel.getDefaultPageTemplate().getController().equals(this.pageModel.getController().getKey()) ||
-                        event.getOldValue() || this.pageModel.hasTemplate()) {
-                        this.contentWizardPanel.saveChanges();
-                    }
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(event.getOldValue(), event.getNewValue())) {
+                    this.contentWizardPanel.saveChanges();
                 }
                 if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE) {
 

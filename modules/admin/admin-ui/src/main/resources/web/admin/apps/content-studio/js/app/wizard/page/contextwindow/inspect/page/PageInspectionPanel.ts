@@ -1,4 +1,9 @@
 import "../../../../../../api.ts";
+import {PageTemplateSelector} from "./PageTemplateSelector";
+import {BaseInspectionPanel} from "../BaseInspectionPanel";
+import {PageTemplateForm} from "./PageTemplateForm";
+import {PageControllerForm} from "./PageControllerForm";
+import {PageControllerSelector} from "./PageControllerSelector";
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import PropertyTree = api.data.PropertyTree;
@@ -15,11 +20,7 @@ import LiveEditModel = api.liveedit.LiveEditModel;
 import PageTemplate = api.content.page.PageTemplate;
 import PageDescriptor = api.content.page.PageDescriptor;
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
-import {PageTemplateSelector} from "./PageTemplateSelector";
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
-import {PageTemplateForm} from "./PageTemplateForm";
-import {PageControllerForm} from "./PageControllerForm";
-import {PageControllerSelector} from "./PageControllerSelector";
+import SetController = api.content.page.SetController;
 
 export class PageInspectionPanel extends BaseInspectionPanel {
 
@@ -113,7 +114,9 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             this.addClass("customized");
             this.pageControllerForm.getSelector().reset();
             this.pageControllerForm.show();
+
             this.pageModel.setCustomized(true);
+            this.pageModel.setTemplateContoller();
         });
 
         this.pageModel.onReset(this.modelResetListener.bind(this));
