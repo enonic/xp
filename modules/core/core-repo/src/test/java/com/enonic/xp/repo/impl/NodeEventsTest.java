@@ -28,7 +28,7 @@ public class NodeEventsTest
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
-        assertEquals( "[{id=id, path=/mynode1/child1/created, branch=draft}]", event.getValue( "nodes" ).get().toString() );
+        assertEquals( "[{id=id, path=/mynode1/child1/created, branch=draft, repo=cms-repo}]", event.getValue( "nodes" ).get().toString() );
     }
 
     @Test
@@ -72,9 +72,9 @@ public class NodeEventsTest
         assertTrue( event.isDistributed() );
         assertTrue( event.hasValue( "nodes" ) );
         assertEquals( NodeEvents.NODE_PUSHED_EVENT, event.getType() );
-        assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=master}" +
-                          ", {id=id2, path=/mynode1/pushed2/pushed2, branch=master}" +
-                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, currentTargetPath=/mynode1/pushed3/pushed3}]",
+        assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=master, repo=cms-repo}" +
+                          ", {id=id2, path=/mynode1/pushed2/pushed2, branch=master, repo=cms-repo}" +
+                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, repo=cms-repo, currentTargetPath=/mynode1/pushed3/pushed3}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -87,7 +87,8 @@ public class NodeEventsTest
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/deleted, branch=draft}]", event.getValue( "nodes" ).get().toString() );
+        assertEquals( "[{id=myId, path=/mynode1/child1/deleted, branch=draft, repo=cms-repo}]",
+                      event.getValue( "nodes" ).get().toString() );
     }
 
     @Test
@@ -100,7 +101,8 @@ public class NodeEventsTest
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_DUPLICATED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/duplicated, branch=draft}]", event.getValue( "nodes" ).get().toString() );
+        assertEquals( "[{id=myId, path=/mynode1/child1/duplicated, branch=draft, repo=cms-repo}]",
+                      event.getValue( "nodes" ).get().toString() );
     }
 
     @Test
@@ -113,7 +115,8 @@ public class NodeEventsTest
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_UPDATED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/updated, branch=draft}]", event.getValue( "nodes" ).get().toString() );
+        assertEquals( "[{id=myId, path=/mynode1/child1/updated, branch=draft, repo=cms-repo}]",
+                      event.getValue( "nodes" ).get().toString() );
     }
 
     @Test
@@ -127,7 +130,7 @@ public class NodeEventsTest
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_MOVED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, newPath=/mynode1/after}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=cms-repo, newPath=/mynode1/after}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -142,7 +145,7 @@ public class NodeEventsTest
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_RENAMED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, newPath=/mynode1/child1/after}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=cms-repo, newPath=/mynode1/child1/after}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -156,7 +159,7 @@ public class NodeEventsTest
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_SORTED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/sorted, branch=draft}]", event.getValue( "nodes" ).get().toString() );
+        assertEquals( "[{id=myId, path=/mynode1/child1/sorted, branch=draft, repo=cms-repo}]", event.getValue( "nodes" ).get().toString() );
     }
 
     @Test
@@ -175,9 +178,9 @@ public class NodeEventsTest
         assertTrue( event.hasValue( "state" ) );
         assertEquals( NodeEvents.NODE_STATE_UPDATED_EVENT, event.getType() );
         assertEquals( NodeState.DEFAULT.toString(), event.getValue( "state" ).get() );
-        assertEquals( "[{id=id1, path=/mynode1/state_updated1/state_updated1, branch=draft}" +
-                          ", {id=id2, path=/mynode1/state_updated2/state_updated2, branch=draft}" +
-                          ", {id=id3, path=/mynode1/state_updated3/state_updated3, branch=draft}]",
+        assertEquals( "[{id=id1, path=/mynode1/state_updated1/state_updated1, branch=draft, repo=cms-repo}" +
+                          ", {id=id2, path=/mynode1/state_updated2/state_updated2, branch=draft, repo=cms-repo}" +
+                          ", {id=id3, path=/mynode1/state_updated3/state_updated3, branch=draft, repo=cms-repo}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
