@@ -91,7 +91,7 @@ module api.dom {
                 console.groupCollapsed(this.toString() + '.setValue(' + value + ')');
             }
             // force set value in case of user input regardless of old value
-            if (this.oldValue != value || userInput) {
+            if ((this.oldValue != value || this.isSameValueUpdateAllowed()) || userInput) {
                 if (FormInputEl.debug) {
                     console.debug('update value from "' + this.oldValue + '" to "' + value + '"');
                 }
@@ -160,6 +160,10 @@ module api.dom {
                     this.notifyDirtyChanged(dirty);
                 }
             }
+        }
+
+        protected isSameValueUpdateAllowed(): boolean {
+            return false;
         }
 
         /**
