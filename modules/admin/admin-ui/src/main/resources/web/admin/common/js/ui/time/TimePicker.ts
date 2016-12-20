@@ -41,7 +41,7 @@ module api.ui.time {
             }
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
-            this.input.setPlaceholder("mm:ss");
+            this.input.setPlaceholder("hh:mm");
         }
 
         protected setupListeners(builder: TimePickerBuilder) {

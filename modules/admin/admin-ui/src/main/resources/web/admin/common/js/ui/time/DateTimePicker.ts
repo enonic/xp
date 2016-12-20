@@ -103,7 +103,7 @@ module api.ui.time {
 
         protected initInput() {
             this.input = api.ui.text.TextInput.middle(undefined, this.formatDateTime(this.selectedDate));
-            this.input.setPlaceholder("YYYY-MM-DD mm:ss");
+            this.input.setPlaceholder("YYYY-MM-DD hh:mm");
         }
 
         protected initPopup(builder: DateTimePickerBuilder) {
