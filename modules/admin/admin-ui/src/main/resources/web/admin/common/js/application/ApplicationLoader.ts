@@ -6,7 +6,7 @@ module api.application {
     export class ApplicationLoader extends api.util.loader.BaseLoader<ApplicationListResult, Application> {
 
         protected request: ListApplicationsRequest;
-        
+
         private filterObject: Object;
 
         constructor(filterObject: Object, request?: ListApplicationsRequest) {
@@ -24,7 +24,7 @@ module api.application {
         protected getRequest(): ListApplicationsRequest {
             return this.request;
         }
-        
+
         search(searchString: string): wemQ.Promise<Application[]> {
             this.getRequest().setSearchQuery(searchString);
             return this.load();

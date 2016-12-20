@@ -57,7 +57,7 @@ module api.ui.form {
                 this.validator = null;
             }
         }
-        
+
         validate(validationResult:ValidationResult, markInvalid?: boolean) {
             if (this.validator) {
                 var validationMessage = this.validator(this.input);

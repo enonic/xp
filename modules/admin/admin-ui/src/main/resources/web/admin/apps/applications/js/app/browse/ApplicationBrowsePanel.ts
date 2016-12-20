@@ -44,13 +44,14 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
     protected createBrowseItemPanel(): ApplicationBrowseItemPanel {
         return new ApplicationBrowseItemPanel();
     }
-    
+
     treeNodesToBrowseItems(nodes: TreeNode<Application>[]): BrowseItem<Application>[] {
         var browseItems: BrowseItem<Application>[] = [];
 
         // do not proceed duplicated content. still, it can be selected
         nodes.forEach((node: TreeNode<Application>, index: number) => {
-            for (var i = 0; i <= index; i++) {
+            let i = 0;
+            for (; i <= index; i++) {
                 if (nodes[i].getData().getId() === node.getData().getId()) {
                     break;
                 }

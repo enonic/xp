@@ -87,20 +87,20 @@ module api.liveedit {
             if (!this.lastHighlightedItemView) {
                 return false;
             }
-            
+
             return this.lastHighlightedItemView.isContainer() &&
                     itemView.isChildOfItemView(this.lastHighlightedItemView);
         }
-        
+
         getSelectedView(): ItemView {
             return this.lastHighlightedItemView;
         }
 
         unselect() {
             this.hide();
-            this.lastHighlightedItemView = null; 
+            this.lastHighlightedItemView = null;
         }
-        
+
         protected preProcessStyle(style: HighlighterStyle, isEmptyView: boolean): HighlighterStyle {
             return {
                 stroke: 'rgba(0, 0, 0, 1)',
@@ -142,7 +142,7 @@ module api.liveedit {
                     .setStroke(style.stroke)
                     .setStrokeDasharray(style.strokeDasharray)
                     .setFill('transparent');
-                
+
                 this.rectangle.getEl()
                     .setAttribute('width', w + '')
                     .setAttribute('height', h + '')
@@ -150,7 +150,7 @@ module api.liveedit {
                     .setAttribute('y', top + '')
                     .setStroke(style.stroke)
                     .setFill(style.fill);
-                
+
                 this.getEl().setWidthPx(screenW).setHeightPx(screenH).setTopPx(0).setLeftPx(0);
                 break;
             }

@@ -26,7 +26,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     private duplicate: api.ui.Action;
 
     private publish: api.ui.Action;
-    
+
     private publishTree: api.ui.Action;
 
     private unpublish: api.ui.Action;

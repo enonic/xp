@@ -169,7 +169,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         item.onUploaded(deleteUploadedNodeHandler);
 
         item.onUploadStopped(deleteUploadedNodeHandler);
-        
+
         item.onFailed(() => {
             this.deleteNode(<any>appMock);
             this.triggerSelectionChangedListeners();

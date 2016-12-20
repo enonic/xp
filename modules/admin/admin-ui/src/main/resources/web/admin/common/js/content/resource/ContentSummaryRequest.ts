@@ -21,7 +21,7 @@ module api.content.resource {
         public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
         public static PATH_ASC = new FieldOrderExpr(new FieldExpr("_path"), OrderDirection.ASC);
-        
+
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSummaryRequest.SCORE_DESC, ContentSummaryRequest.MODIFIED_TIME_DESC];
 
         constructor() {
@@ -100,7 +100,7 @@ module api.content.resource {
         protected getDefaultOrder(): OrderExpr[] {
             return ContentSummaryRequest.DEFAULT_ORDER;
         }
-        
+
         protected createSearchExpression(): ConstraintExpr {
             return new api.query.PathMatchExpressionBuilder()
                 .setSearchString(this.searchString)

@@ -81,7 +81,7 @@ module api.liveedit.layout {
             if (!this.regionViews) {
                 return;
             }
-            
+
             var regions = layoutComponent.getRegions().getRegions();
             this.regionViews.forEach((regionView: RegionView, index: number) => {
                 var region = regions[index];

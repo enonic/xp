@@ -29,7 +29,7 @@ module api.content.form.inputtype.customselector {
         setRequestPath(requestPath: string) {
             this.requestPath = requestPath;
         }
-        
+
         isPartiallyLoaded(): boolean {
             return this.results.length > 0 && !this.loaded;
         }

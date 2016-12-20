@@ -12,7 +12,7 @@ module api.ui.button {
         setEnabled(value: boolean) {
             this.toggleClass("disabled", !value);
         }
-        
+
         isEnabled(): boolean {
             return !this.hasClass('disabled');
         }

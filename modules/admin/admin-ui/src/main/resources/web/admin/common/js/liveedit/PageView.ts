@@ -503,7 +503,7 @@ module api.liveedit {
             if (this.editorToolbar) {
                 this.editorToolbar.toggleClass("visible", flag);
             }
-            
+
             if (flag) {
                 this.addVerticalSpaceForEditorToolbar();
 
@@ -528,7 +528,7 @@ module api.liveedit {
         getPageView(): PageView {
             return this;
         }
-        
+
         private updateVerticalSpaceForEditorToolbar() {
             var result = this.getEditorToolbarWidth();
 

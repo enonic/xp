@@ -27,7 +27,7 @@ module api.liveedit.fragment {
 
             var sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
             var loader = new api.content.resource.FragmentContentSummaryLoader().setParentSitePath(sitePath);
-            
+
             this.comboBox = api.content.ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).setMinWidth(270).build();
 
             this.comboboxWrapper.appendChildren(this.comboBox);
@@ -41,11 +41,11 @@ module api.liveedit.fragment {
                 if (this.isInsideLayout()) {
                     new GetContentByIdRequest(fragmentContent.getContentId()).sendAndParse().done((content: Content) => {
                         let fragmentComponent = content.getPage() ? content.getPage().getFragment() : null;
-                        
+
                         if (fragmentComponent && api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent.getType(), LayoutComponentType)) {
                             this.comboBox.clearSelection();
                             new api.liveedit.ShowWarningLiveEditEvent("Layout within layout not allowed").fire();
-                            
+
                         } else {
                             component.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());
                             this.fragmentComponentView.showLoadingSpinner();

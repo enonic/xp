@@ -533,7 +533,7 @@ module api.ui.selector.combobox {
         getSelectedOptionsView(): SelectedOptionsView<T> {
             return this.selectedOptionsView;
         }
-        
+
         setMaximumOccurrences(maximumOccurrences: number): RichComboBoxBuilder<T> {
             this.maximumOccurrences = maximumOccurrences;
             return this;

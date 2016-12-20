@@ -151,7 +151,7 @@ module api.liveedit {
             this.addClassEx("item-view");
 
             this.contextMenuActions = [];
-            
+
             this.setDraggable(true);
 
             this.mouseOver = false;
@@ -319,7 +319,7 @@ module api.liveedit {
             if (!this.getPageView().isHighlightingAllowed()) {
                 return;
             }
-            
+
             SelectedHighlighter.get().highlightItemView(this);
         }
 
@@ -961,10 +961,10 @@ module api.liveedit {
                 result = (parentItemView == itemView);
                 parentItemView = parentItemView.getParentItemView();
             }
-            
+
             return result;
         }
-        
+
         isContainer(): boolean {
             return api.ObjectHelper.iFrameSafeInstanceOf(this, PageView) ||
                    api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView) ||

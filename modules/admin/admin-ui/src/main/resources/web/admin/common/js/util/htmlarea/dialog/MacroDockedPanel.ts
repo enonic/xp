@@ -52,7 +52,7 @@ module api.util.htmlarea.dialog {
         public setContent(content: api.content.ContentSummary) {
             this.content = content;
         }
-        
+
         private createConfigurationPanel(): Panel {
             return this.configPanel = new Panel("macro-config-panel");
         }

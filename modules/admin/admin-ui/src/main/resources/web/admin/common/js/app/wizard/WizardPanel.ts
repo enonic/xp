@@ -90,7 +90,7 @@ module api.app.wizard {
             this.setParams(params);
 
             this.wizardActions = this.createWizardActions();
-            
+
             if (params.persistedItem) {
                 this.setPersistedItem(params.persistedItem);
                 this.formState.setIsNew(false);
@@ -141,7 +141,7 @@ module api.app.wizard {
         protected createWizardActions(): WizardActions<EQUITABLE> {
             throw Error('Override me');
         }
-        
+
         /*
          Loads necessary data for rendering on wizard open
          */
@@ -609,7 +609,7 @@ module api.app.wizard {
                 this.toggleHelpTextShown();
             });
         }
-        
+
         isMinimized(): boolean {
             return this.minimized;
         }

@@ -11,7 +11,7 @@ module api.content.form.inputtype.customselector {
 
         constructor(input: api.form.Input, requestPath: string, value: string) {
             var loader = new CustomSelectorLoader(requestPath);
-            
+
             var builder = new RichComboBoxBuilder<CustomSelectorItem>()
                 .setComboBoxName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
@@ -44,7 +44,7 @@ module api.content.form.inputtype.customselector {
         protected createView(content: CustomSelectorItem): CustomSelectorItemViewer {
             let viewer = new CustomSelectorItemViewer();
             viewer.setObject(this.getOption().displayValue);
-            
+
             return viewer;
         }
 

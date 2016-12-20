@@ -1028,7 +1028,7 @@ module api.ui.treegrid {
 
         expandNode(node?: TreeNode<DATA>, expandAll: boolean = false): wemQ.Promise<boolean> {
             var deferred = wemQ.defer<boolean>();
-            
+
             node = node || this.root.getCurrentRoot();
 
             if (node) {

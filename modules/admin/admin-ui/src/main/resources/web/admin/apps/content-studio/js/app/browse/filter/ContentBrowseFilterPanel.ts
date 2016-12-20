@@ -70,7 +70,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
         return [this.contentTypeAggregation, this.lastModifiedAggregation];
     }
-    
+
     protected appendExtraSection() {
         this.dependenciesSection = new DependenciesSection(this.removeDependencyItemCallback.bind(this));
         this.appendChild(this.dependenciesSection);

@@ -17,7 +17,7 @@ module api.ui.selector.dropdown {
         protected createLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
             throw new Error('Must be implemented by inheritors');
         }
-        
+
         private initLoaderListeners() {
             this.loader.onLoadedData(this.handleLoadedData.bind(this));
 

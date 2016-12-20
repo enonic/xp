@@ -2,7 +2,7 @@ module api.content.resource {
 
     import ListContentResult = api.content.resource.result.ListContentResult;
     import ContentResponse = api.content.resource.result.ContentResponse;
-    
+
     export class ListContentByPathRequest<T> extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
         private parentPath: ContentPath;

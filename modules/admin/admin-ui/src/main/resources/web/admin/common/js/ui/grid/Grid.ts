@@ -34,7 +34,7 @@ module api.ui.grid {
 
             let options = gridOptions || this.createOptions();
             let columns = gridColumns || this.createColumns();
-            
+
             if (options.isHideColumnHeaders()) {
                 this.addClass("no-header");
             }

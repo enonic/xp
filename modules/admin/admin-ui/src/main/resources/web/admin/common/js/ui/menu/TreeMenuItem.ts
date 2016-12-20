@@ -5,7 +5,7 @@ module api.ui.menu {
 
         constructor(action: api.ui.Action, cls: string = "", expanded: boolean = false) {
             super(action.hasParentAction() ? "dd" : "dt");
-            
+
             this.action = action;
             cls = this.getCls(action, cls, expanded);
             if (cls) {

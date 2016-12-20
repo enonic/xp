@@ -213,7 +213,7 @@ export class LiveEditPageProxy {
     public getPlaceholderIFrame(): api.dom.IFrameEl {
         return this.placeholderIFrame;
     }
-    
+
     public getLoadMask(): api.ui.mask.LoadMask {
         return this.loadMask;
     }

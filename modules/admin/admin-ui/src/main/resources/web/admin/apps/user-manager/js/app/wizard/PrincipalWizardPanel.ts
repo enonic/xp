@@ -40,7 +40,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     protected getParams(): PrincipalWizardPanelParams {
         return this.params;
     }
-    
+
     protected doLoadData(): Q.Promise<Principal> {
         if (PrincipalWizardPanel.debug) {
             console.debug("PrincipalWizardPanel.doLoadData");

@@ -20,7 +20,7 @@ module api.security {
         protected getRequest(): FindPrincipalListRequest {
             return this.request;
         }
-        
+
         setUserStoreKey(key: UserStoreKey): PrincipalLoader {
             this.getRequest().setUserStoreKey(key);
             return this;

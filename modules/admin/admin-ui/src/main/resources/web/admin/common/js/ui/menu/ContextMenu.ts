@@ -4,9 +4,9 @@ module api.ui.menu {
 
         constructor(actions?: api.ui.Action[], appendToBody = true) {
             super(actions);
-            
+
             this.addClass("context-menu");
-            
+
             if (appendToBody) {
                 api.dom.Body.get().appendChild(this);
                 api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));

@@ -7,7 +7,7 @@ module api.data {
     import DateTime = api.util.DateTime;
     import LocalDateTime = api.util.LocalDateTime;
     import LocalDate = api.util.LocalDate;
-    
+
     /**
      * A Property has a [[name]] and a [[value]],
      * but also:

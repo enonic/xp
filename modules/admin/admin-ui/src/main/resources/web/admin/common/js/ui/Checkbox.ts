@@ -44,7 +44,7 @@ module api.ui {
         }
 
         private getInputAlignmentAsString(inputAlignment: InputAlignment = InputAlignment.LEFT): string {
-            
+
             return InputAlignment[inputAlignment].toLowerCase();
         }
 

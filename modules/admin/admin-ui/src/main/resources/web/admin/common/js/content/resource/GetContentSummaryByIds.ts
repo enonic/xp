@@ -1,7 +1,7 @@
 module api.content.resource {
 
     import BatchContentResult = api.content.resource.result.BatchContentResult;
-    
+
     export class GetContentSummaryByIds extends ContentResourceRequest<BatchContentResult<api.content.json.ContentSummaryJson>, ContentSummary[]> {
 
         private ids: ContentId[];

@@ -10,7 +10,7 @@ module api.content {
     export class ContentComboBox extends RichComboBox<ContentSummary> {
 
         protected loader: ContentSummaryLoader;
-        
+
         constructor(builder: ContentComboBoxBuilder) {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
@@ -35,7 +35,7 @@ module api.content {
         getLoader(): ContentSummaryLoader {
             return this.loader;
         }
-        
+
         getContent(contentId: ContentId): ContentSummary {
             var option = this.getOptionByValue(contentId.toString());
             if (option) {

@@ -75,7 +75,7 @@ module api.content.page.region {
         }
 
         doRender(): wemQ.Promise<boolean> {
-            
+
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView.setIconClass(api.StyleHelper.getCommonIconCls("part") + " icon-medium")
                 .setMainName(this.descriptor.getDisplayName())

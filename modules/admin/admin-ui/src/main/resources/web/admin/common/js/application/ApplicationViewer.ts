@@ -27,7 +27,7 @@ module api.application {
             if (object instanceof Application && object.getDescription()) {
                 return object.getDescription();
             }
-            
+
             return object.getName();
         }
 

@@ -315,7 +315,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             this.hideErrorPanel();
             this.mask();
         }
-        
+
         return MarketApplicationsFetcher.fetchChildren(this.getVersion(), this.installApplications, from,
             MarketAppsTreeGrid.MAX_FETCH_SIZE).then(
             (data: MarketApplicationResponse) => {

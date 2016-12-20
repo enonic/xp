@@ -1,5 +1,5 @@
 module api.ui.toolbar {
-    
+
     import ActionButton = api.ui.button.ActionButton;
 
     export class Toolbar extends api.dom.DivEl implements api.ui.ActionContainer {
@@ -59,7 +59,7 @@ module api.ui.toolbar {
             } else {
                 element.insertBeforeEl(this.fold);
             }
-            
+
             return element;
         }
 

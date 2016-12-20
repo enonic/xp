@@ -41,7 +41,7 @@ module api.util.loader {
         protected getRequest(): api.rest.ResourceRequest<JSON, OBJECT[]> {
             return this.request;
         }
-        
+
         sendRequest(): wemQ.Promise<OBJECT[]> {
             return this.request.sendAndParse();
         }

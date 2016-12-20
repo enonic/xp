@@ -282,7 +282,7 @@ module api.application {
             return new Application(this);
         }
     }
-    
+
     export class ApplicationUploadMock {
 
         private id: string;

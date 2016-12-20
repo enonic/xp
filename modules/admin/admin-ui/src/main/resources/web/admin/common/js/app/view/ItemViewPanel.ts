@@ -23,7 +23,7 @@ module api.app.view {
             this.panel = panel;
             this.appendChild(this.panel);
         }
-        
+
         /*
          As long as the close action is excluded from the toolbar,
          we should add it along with the other toolbar actions to be able to close tabs.

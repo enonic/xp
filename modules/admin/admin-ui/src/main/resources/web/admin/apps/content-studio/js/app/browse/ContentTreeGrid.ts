@@ -184,7 +184,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
                     this.notifyLoaded();
                 })
-                
+
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();

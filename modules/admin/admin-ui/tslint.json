@@ -66,7 +66,7 @@
     ],
     "linebreak-style": false,
     "no-consecutive-blank-lines": false,
-    "no-trailing-whitespace": false,
+    "no-trailing-whitespace": true,
     "object-literal-key-quotes": [
       false
     ],

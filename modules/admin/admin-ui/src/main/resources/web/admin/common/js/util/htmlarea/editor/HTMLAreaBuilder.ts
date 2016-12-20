@@ -33,7 +33,7 @@ module api.util.htmlarea.editor {
             this.editableSourceCode = value;
             return this;
         }
-        
+
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
             return this;

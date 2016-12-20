@@ -43,7 +43,7 @@ module api.app.browse {
             //this.browseItemPanel = this.createBrowseItemPanel();
             this.filterPanel = this.createFilterPanel();
             this.browseToolbar = this.createToolbar();
-            
+
 
             let selectionChangedDebouncedHandler = api.util.AppHelper.debounce(
                 (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
@@ -108,7 +108,7 @@ module api.app.browse {
         protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel {
             return null;
         }
-        
+
         doRender(): wemQ.Promise<boolean> {
             return super.doRender().then((rendered) => {
                 if (!this.browseItemPanel) {

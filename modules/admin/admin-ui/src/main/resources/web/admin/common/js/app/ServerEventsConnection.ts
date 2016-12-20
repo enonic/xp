@@ -4,7 +4,7 @@ module api.app {
 
     export class ServerEventsConnection {
         private static INSTANCE: ServerEventsConnection;
-        
+
         private static KEEP_ALIVE_TIME: number = 30 * 1000;
 
         private ws: WebSocket;

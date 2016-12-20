@@ -102,7 +102,7 @@ module api.ui {
 
             if (value !== this.label) {
                 let label = this.label;
-                
+
                 this.label = value;
 
                 if (!!label) {
