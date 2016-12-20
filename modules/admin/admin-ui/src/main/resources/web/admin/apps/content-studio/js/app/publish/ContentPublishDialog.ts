@@ -146,7 +146,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             return this.reloadPublishDependencies(childrenNotLoadedYet);
         } else {
             // apply the stash to avoid extra heavy request
-            this.updateSubTitleShowScheduleAndButtonCount();
+            this.lockControls();
             this.loadMask.show();
             setTimeout(() => {
                 this.setDependantItems(stashedItems.slice());
@@ -349,8 +349,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         let canPublish = count > 0 && this.areItemsAndDependantsValid();
 
-        this.toggleControls(canPublish);
-        this.toggleClass('no-publish', !canPublish);
+        this.togglePublish(canPublish);
         if (canPublish) {
             this.getButtonRow().focusDefaultAction();
             this.updateTabbable();
@@ -401,6 +400,11 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     protected hasSubDialog(): boolean {
         return true;
+    }
+
+    private togglePublish(enable) {
+        this.toggleControls(enable);
+        this.toggleClass('no-publish', !enable);
     }
 }
 
