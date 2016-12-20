@@ -27,6 +27,7 @@ module api.liveedit.part {
             this.resetHrefForRootLink(builder);
 
             this.parseContentViews(this);
+            this.disableLinks();
         }
 
         private createPlaceholder() {
