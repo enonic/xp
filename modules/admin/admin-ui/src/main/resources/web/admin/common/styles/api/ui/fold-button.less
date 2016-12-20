@@ -12,7 +12,7 @@
   &:after {
     content: "";
     position: absolute;
-    top: 45%;
+    top: 42%;
     right: 0px;
     width: 0;
     height: 0;
@@ -22,11 +22,12 @@
   }
 
   .@{_COMMON_PREFIX}dropdown {
+    width: auto;
     display: none;
     position: absolute;
     left: 0;
     z-index: @z-index-toolbar-element;
-    padding: 4px;
+    padding: 4px 8px;
     background-color: @admin-white;
     .material-layer-shadow();
 

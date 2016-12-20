@@ -106,7 +106,7 @@ module api.ui.toolbar {
                 }
             }
 
-            this.fold.setLabel(this.getFoldableButtons().length == 0 ? 'Actions' : 'More');
+            this.fold.setLabel(this.areAllActionsFolded() ? 'Actions' : 'More');
         }
 
         private getVisibleButtonsWidth(includeFold: boolean = true): number {
@@ -120,8 +120,8 @@ module api.ui.toolbar {
             return this.getChildren()[this.getChildren().indexOf(this.fold) - 1];
         }
 
-        private getFoldableButtons(): api.dom.Element[] {
-            return this.getChildren().slice(0, this.getChildren().indexOf(this.fold));
+        private areAllActionsFolded(): boolean {
+            return this.actions.length == this.fold.getButtonsCount();
         }
 
     }
