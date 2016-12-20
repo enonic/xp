@@ -26,7 +26,10 @@ public class DuplicateContentProcessor
         originalData.setString( ContentPropertyNames.OWNER, user.getKey().toString() );
         originalData.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
         originalData.setString( ContentPropertyNames.MODIFIER, user.getKey().toString() );
-        originalData.removeProperty( ContentPropertyNames.PUBLISH_INFO );
+        if ( originalData.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
+        {
+            originalData.removeProperty( ContentPropertyNames.PUBLISH_INFO );
+        }
 
         return builder.build();
     }
