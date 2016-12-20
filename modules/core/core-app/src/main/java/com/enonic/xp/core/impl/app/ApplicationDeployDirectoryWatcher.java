@@ -156,8 +156,7 @@ public class ApplicationDeployDirectoryWatcher
     private void installApplication( final File file )
     {
         //Installs the application
-        final ByteSource byteSource = Files.asByteSource( file );
-        final Application application = ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
+        final Application application = ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( file ) );
         final ApplicationKey applicationKey = application.getKey();
         final String path = file.getPath();
 

@@ -1,5 +1,6 @@
 package com.enonic.xp.app;
 
+import java.io.File;
 import java.net.URL;
 
 import com.google.common.annotations.Beta;
@@ -26,6 +27,8 @@ public interface ApplicationService
     Application installGlobalApplication( final URL url );
 
     Application installGlobalApplication( final ByteSource byteSource );
+
+    Application installLocalApplication( final File file );
 
     Application installLocalApplication( final ByteSource byteSource );
 

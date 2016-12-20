@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -137,9 +139,38 @@ public final class ApplicationServiceImpl
     }
 
     @Override
+    public Application installLocalApplication( final File file )
+    {
+        final ByteSource byteSource = Files.asByteSource( file );
+
+        return ApplicationHelper.callWithContext( () ->
+                                                  {
+                                                      try
+                                                      {
+                                                          return doInstallLocalApplication( byteSource );
+                                                      }
+                                                      catch ( ApplicationInstallException e )
+                                                      {
+                                                          throw new LocalApplicationInstallException(
+                                                              "'" + file.getName() + "': " + e.getMessage() );
+                                                      }
+                                                  } );
+    }
+
+    @Override
     public Application installLocalApplication( final ByteSource byteSource )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallLocalApplication( byteSource ) );
+        return ApplicationHelper.callWithContext( () ->
+                                                  {
+                                                      try
+                                                      {
+                                                          return doInstallLocalApplication( byteSource );
+                                                      }
+                                                      catch ( ApplicationInstallException e )
+                                                      {
+                                                          throw new LocalApplicationInstallException( e );
+                                                      }
+                                                  } );
     }
 
     private Application doInstallLocalApplication( final ByteSource byteSource )

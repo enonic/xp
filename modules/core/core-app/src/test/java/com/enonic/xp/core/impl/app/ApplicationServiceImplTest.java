@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,6 +13,7 @@ import org.osgi.framework.Bundle;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -32,9 +34,9 @@ import static org.junit.Assert.*;
 public class ApplicationServiceImplTest
     extends BundleBasedTest
 {
-    private ApplicationServiceImpl service;
-
     private final ApplicationRepoServiceImpl repoService = Mockito.mock( ApplicationRepoServiceImpl.class );
+
+    private ApplicationServiceImpl service;
 
     private EventPublisher eventPublisher;
 
@@ -183,6 +185,28 @@ public class ApplicationServiceImplTest
 
         verifyInstalledEvents( applicationNode, Mockito.never() );
         verifyStartedEvent( application, Mockito.never() );
+    }
+
+    @Test(expected = LocalApplicationInstallException.class)
+    public void install_local_invalid()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final Node applicationNode = Node.create().
+            id( NodeId.from( "myNode" ) ).
+            parentPath( NodePath.ROOT ).
+            name( "myNode" ).
+            build();
+
+        final String bundleName = "my-bundle";
+
+        mockRepoCreateNode( applicationNode );
+        mockRepoGetNode( applicationNode, bundleName );
+
+        final File file = createBundleFile( bundleName, false );
+
+        this.service.installLocalApplication( file );
     }
 
     @Test
@@ -544,10 +568,25 @@ public class ApplicationServiceImplTest
     private ByteSource createBundleSource( final String bundleName )
         throws IOException
     {
-        final InputStream in = newBundle( bundleName, true ).
+        return createBundleSource( bundleName, true );
+    }
+
+    private ByteSource createBundleSource( final String bundleName, final boolean isApp )
+        throws IOException
+    {
+        final InputStream in = newBundle( bundleName, isApp ).
             build();
 
         return ByteSource.wrap( ByteStreams.toByteArray( in ) );
+    }
+
+    private File createBundleFile( final String bundleName, final boolean isApp )
+        throws IOException
+    {
+        final File targetFile = File.createTempFile( "app-name", ".jar" );
+        createBundleSource( bundleName, isApp ).copyTo( Files.asByteSink( targetFile ) );
+
+        return targetFile;
     }
 
     private Bundle deployBundle( final String key, final boolean isApp )
@@ -557,30 +596,6 @@ public class ApplicationServiceImplTest
             build();
 
         return deploy( key, in );
-    }
-
-    private class ApplicationEventMatcher
-        extends ArgumentMatcher<Event>
-    {
-        Event thisObject;
-
-        public ApplicationEventMatcher( Event thisObject )
-        {
-            this.thisObject = thisObject;
-        }
-
-        @Override
-        public boolean matches( Object argument )
-        {
-            if ( argument == null || thisObject.getClass() != argument.getClass() )
-            {
-                return false;
-            }
-
-            final Event event = (Event) argument;
-
-            return thisObject.getType().equals( event.getType() ) && this.thisObject.getData().equals( event.getData() );
-        }
     }
 
     @Test
@@ -606,5 +621,29 @@ public class ApplicationServiceImplTest
 
         Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key );
         Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
+    }
+
+    private class ApplicationEventMatcher
+        extends ArgumentMatcher<Event>
+    {
+        Event thisObject;
+
+        public ApplicationEventMatcher( Event thisObject )
+        {
+            this.thisObject = thisObject;
+        }
+
+        @Override
+        public boolean matches( Object argument )
+        {
+            if ( argument == null || thisObject.getClass() != argument.getClass() )
+            {
+                return false;
+            }
+
+            final Event event = (Event) argument;
+
+            return thisObject.getType().equals( event.getType() ) && this.thisObject.getData().equals( event.getData() );
+        }
     }
 }
