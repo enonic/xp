@@ -99,7 +99,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         return filterPanel;
     }
-    
+
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
@@ -195,49 +195,43 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
 
-        const updateMobilePanel = () => {
-            const defer = wemQ.defer();
-
-            const prevItem = this.mobileContentItemStatisticsPanel.getPreviewPanel().getItem();
+        var updateMobilePanel = () => {
             const browseItem = this.getFirstSelectedBrowseItem();
             const item = browseItem.toViewItem();
 
-            const itemChanged = !prevItem || !prevItem.getModel() || prevItem.getModel().getId() !== browseItem.getId();
+            if (this.itemChanged()) {
+                this.mobileContentItemStatisticsPanel.getPreviewPanel().showMask();
+                this.mobileContentItemStatisticsPanel.setItem(item);
 
-            if (itemChanged) {
-                new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
-                    (renderable: boolean) => {
-                        item.setRenderable(renderable);
-                        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
-                        this.mobileContentItemStatisticsPanel.setItem(item);
-                        defer.resolve(true);
-                    });
-            } else {
-                defer.resolve(true);
+                setTimeout(() => {
+                    this.mobileContentItemStatisticsPanel.getPreviewPanel().setBlankFrame();
+                    this.mobileContentItemStatisticsPanel.getPreviewPanel().showMask();
+                    new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItem.getId())).sendAndParse().then(
+                        (renderable: boolean) => {
+                            item.setRenderable(renderable);
+                            this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                        });
+                }, 300);
             }
-
-            return defer.promise;
         };
-
-        const showMobilePanel = () => {
-            setTimeout(() => {
-                this.mobileContentItemStatisticsPanel.slideIn();
-            }, 400);
-        }
-
-        const updateAndShowMobilePanel = () => updateMobilePanel().then(showMobilePanel);
 
         api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
             if (this.isSomethingSelectedInMobileMode()) {
-                updateAndShowMobilePanel();
+                if (this.itemChanged()) {
+                    this.mobileContentItemStatisticsPanel.getPreviewPanel().setBlank();
+                }
+                this.mobileContentItemStatisticsPanel.slideIn();
+                updateMobilePanel();
             }
         });
 
         this.appendChild(this.mobileContentItemStatisticsPanel);
     }
 
-    private updateMobilePanel(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]) {
-        this.mobileContentItemStatisticsPanel.setItem(this.getFirstSelectedBrowseItem(fullSelection).toViewItem());
+    private itemChanged(): boolean {
+        const prevItem = this.mobileContentItemStatisticsPanel.getPreviewPanel().getItem();
+        const browseItem = this.getFirstSelectedBrowseItem();
+        return !prevItem || !prevItem.getModel() || prevItem.getModel().getId() !== browseItem.getId();
     }
 
     private getFirstSelectedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {

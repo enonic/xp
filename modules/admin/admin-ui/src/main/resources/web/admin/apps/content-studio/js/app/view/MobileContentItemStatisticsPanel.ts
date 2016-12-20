@@ -118,6 +118,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private initPreviewPanel() {
         this.previewPanel = new ContentItemPreviewPanel();
         this.previewPanel.setDoOffset(false);
+        this.previewPanel.addClass("mobile");
         this.appendChild(this.previewPanel);
     }
 

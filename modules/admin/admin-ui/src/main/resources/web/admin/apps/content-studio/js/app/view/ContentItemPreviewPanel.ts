@@ -15,7 +15,8 @@ enum PREVIEW_TYPE {
     SVG,
     PAGE,
     EMPTY,
-    FAILED
+    FAILED,
+    BLANK
 }
 
 export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
@@ -172,7 +173,9 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                         type: "HEAD",
                         async: true,
                         url: src
-                    }).done(() => this.frame.setSrc(src)).fail(() => this.setPreviewType(PREVIEW_TYPE.FAILED));
+                    }).done(() => {
+                        this.frame.setSrc(src);
+                    }).fail(() => this.setPreviewType(PREVIEW_TYPE.FAILED));
                 } else {
                     this.setPreviewType(PREVIEW_TYPE.EMPTY);
                 }
@@ -183,6 +186,14 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
     public getItem(): ViewItem<ContentSummaryAndCompareStatus> {
         return this.item;
+    }
+
+    public setBlank() {
+        this.setPreviewType(PREVIEW_TYPE.BLANK);
+    }
+
+    public setBlankFrame() {
+        this.frame.setSrc("about:blank");
     }
 
     private setPreviewType(previewType: PREVIEW_TYPE) {
@@ -223,6 +234,11 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                     "Failed to render content preview.<br/> Please check logs for errors or open preview in a new window");
                 break;
             }
+            case PREVIEW_TYPE.BLANK:
+            {
+                this.getEl().addClass("no-preview");
+                break;
+            }
             }
         }
 
@@ -242,7 +258,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         this.frame.setSrc("about:blank");
     }
 
-    private showMask() {
+    public showMask() {
         if (this.isVisible()) {
             this.mask.show();
         }
