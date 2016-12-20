@@ -132,13 +132,7 @@
 
     .icon-trending_neutral();
   }
-/*
-  .mobile-content-item-statistics-header.context-menu {
-    .mobile-preview-fold-button .@{_COMMON_PREFIX}dropdown {
-      display: block;
-    }
-  }
-*/
+
   .mobile-preview-fold-button {
     position: absolute;
     top: @app-header-height;
@@ -152,10 +146,17 @@
 
     .@{_COMMON_PREFIX}dropdown {
       width: 100%;
+      background-color: @admin-black;
       .box-sizing(border-box);
 
-      .action-button.publish span {
-        color: @admin-green;
+      .action-button {
+        padding-left: 10px;
+        span {
+          color: @admin-white;
+        }
+        &.publish span {
+          color: @admin-green;
+        }
       }
     }
 
