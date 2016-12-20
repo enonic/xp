@@ -755,26 +755,18 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     }
                 });
             } else {
-                let containsHandler = () => {
-                    new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
-                        this.updateWizard(content, true);
-                        if (this.isEditorEnabled()) {
-                            let liveFormPanel = this.getLivePanel();
-                            liveFormPanel.skipNextReloadConfirmation(true);
-                            liveFormPanel.loadPage(false);
-                        }
-                    });
-                };
-                if (this.doHtmlAreasContainId(contentId.toString()) ||
-                    this.doesFragmentContainId(this.getPersistedItem().getPage(), contentId)) {
-                    containsHandler();
-                } else {
-                    this.doImageComponentsContainId(contentId).then((contains) => {
-                        if (contains) {
-                            containsHandler();
-                        }
-                    });
-                }
+                this.doComponentsContainId(contentId).then((contains) => {
+                    if (contains) {
+                        new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
+                            this.updateWizard(content, true);
+                            if (this.isEditorEnabled()) {
+                                let liveFormPanel = this.getLivePanel();
+                                liveFormPanel.skipNextReloadConfirmation(true);
+                                liveFormPanel.loadPage(false);
+                            }
+                        });
+                    }
+                });
             }
         };
 
@@ -863,6 +855,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         }
     }
 
+    private doComponentsContainId(contentId: ContentId): wemQ.Promise<boolean> {
+        if (this.doHtmlAreasContainId(contentId.toString()) ||
+            this.doesFragmentContainId(this.getPersistedItem().getPage(), contentId)) {
+            return wemQ(true);
+        }
+
+        return this.doImageComponentsContainId(contentId);
+    }
+
     private doesFragmentContainId(fragmentPage: Page, id: ContentId): boolean {
         let containsId = false;
 
@@ -896,12 +897,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return region.getComponents().some((component: Component) => {
                 if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), FragmentComponentType)) {
                     fragments.push((<FragmentComponent>component).getFragment());
-                    return false;
-                } else if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), ImageComponentType)) {
+                }
+                if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), ImageComponentType)) {
                     return (<ImageComponent>component).getImage().equals(id);
-                } else if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), LayoutComponentType)) {
+                }
+                if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), LayoutComponentType)) {
                     return this.doRegionsContainId((<LayoutComponent>component).getRegions().getRegions(), id, fragments);
                 }
+                return false;
             })
         });
     }
