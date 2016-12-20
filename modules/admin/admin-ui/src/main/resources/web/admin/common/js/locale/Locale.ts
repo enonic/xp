@@ -11,10 +11,6 @@ module api.locale {
         private country: string;
         private displayCountry: string;
 
-        constructor() {
-
-        }
-
         equals(other: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(other, Locale)) {
                 return false;

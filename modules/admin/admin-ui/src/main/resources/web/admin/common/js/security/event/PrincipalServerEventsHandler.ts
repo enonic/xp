@@ -42,9 +42,6 @@ module api.security.event {
 
             if (event.getType() == NodeServerChangeType.DELETE) {
                this.handleContentDeleted(this.extractContentPaths([event.getNodeChange()]));
-
-            } else {
-
             }
         }
 

@@ -14,7 +14,7 @@
     ],
     "no-debugger": true,
     "no-duplicate-variable": false,
-    "no-empty": false,
+    "no-empty": true,
     "no-invalid-this": true,
     "no-string-literal": false,
     "no-unsafe-finally": true,

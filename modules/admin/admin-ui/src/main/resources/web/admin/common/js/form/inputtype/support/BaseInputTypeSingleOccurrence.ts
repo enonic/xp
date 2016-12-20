@@ -34,7 +34,7 @@ module api.form.inputtype.support {
         }
 
         availableSizeChanged() {
-
+            // must be implemented by children
         }
 
         public getContext(): api.form.inputtype.InputTypeViewContext {
@@ -106,11 +106,8 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
-        /**
-         * Override when needed.
-         */
         displayValidationErrors(value: boolean) {
-
+            // must be implemented by children
         }
 
         hasValidUserInput(): boolean {

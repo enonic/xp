@@ -247,6 +247,7 @@ class BaseInspectionHandler {
     }
 
     refreshConfigView(liveEditModel: LiveEditModel) {
+        // must be implemented by children
     }
 
     protected showPageConfig(pageModel: PageModel, formContext: FormContext) {

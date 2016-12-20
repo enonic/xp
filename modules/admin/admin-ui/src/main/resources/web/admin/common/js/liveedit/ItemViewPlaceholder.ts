@@ -22,11 +22,11 @@ module api.liveedit {
         }
 
         select() {
-
+            // must be implemented by children
         }
 
         deselect() {
-
+            // must be implemented by children
         }
     }
 }

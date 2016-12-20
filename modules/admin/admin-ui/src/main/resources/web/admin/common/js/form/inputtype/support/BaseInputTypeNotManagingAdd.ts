@@ -70,7 +70,7 @@ module api.form.inputtype.support {
         }
 
         availableSizeChanged() {
-
+            // must be implemented by children
         }
 
         public getContext(): api.form.inputtype.InputTypeViewContext {
@@ -212,11 +212,8 @@ module api.form.inputtype.support {
             this.inputOccurrences.unBlur(listener);
         }
 
-        /**
-         * Override when needed.
-         */
         displayValidationErrors(value: boolean) {
-
+            // must be implemented by children
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {

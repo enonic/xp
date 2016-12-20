@@ -53,9 +53,6 @@ module api.content.form.inputtype.double {
             input.resetBaseValues();
         }
 
-        availableSizeChanged() {
-        }
-
         valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.DOUBLE);
         }

@@ -232,9 +232,11 @@ module api.ui.security.acl {
         }
 
         onOptionMoved(listener: {(moved: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+            // must be implemented by children
         }
 
         unOptionMoved(listener: {(moved: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+            // must be implemented by children
         }
 
     }

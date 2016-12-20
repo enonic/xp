@@ -26,7 +26,7 @@ module api.ui {
          Need a sync method (instead of async doRender) to use in grid formatters which use viewer.toString()
          */
         protected doLayout(object: OBJECT) {
-
+            // may be implemented in children
         }
 
         setObject(object: OBJECT) {

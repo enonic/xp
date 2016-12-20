@@ -149,7 +149,7 @@ function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver
                 if (sizes.length > 0) {
                     try {
                         resolver.setSize(parseInt(sizes[0], 10));
-                    } catch (e) { }
+                    } catch (e) { /* empty */ }
                 }
                 link.setAttribute('href', resolver.resolve());
             } else {

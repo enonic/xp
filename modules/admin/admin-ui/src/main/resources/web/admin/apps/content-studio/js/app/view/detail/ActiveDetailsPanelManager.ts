@@ -12,9 +12,6 @@ export class ActiveDetailsPanelManager {
         ActiveDetailsPanelManager.doSetActiveDetailsPanel,
         300, false);
 
-    constructor() {
-    }
-
     static setActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
         ActiveDetailsPanelManager.debouncedSetActiveDetailsPanel(detailsPanelToMakeActive);
     }

@@ -63,6 +63,7 @@ module api.form.inputtype.text {
         }
 
         availableSizeChanged() {
+            // must be implemented by children
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

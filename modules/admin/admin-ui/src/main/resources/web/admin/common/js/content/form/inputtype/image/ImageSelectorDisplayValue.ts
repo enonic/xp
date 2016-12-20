@@ -11,9 +11,6 @@ module api.content.form.inputtype.image {
 
         private empty: boolean;
 
-        constructor() {
-        }
-
         static fromUploadItem(item: UploadItem<ContentSummary>): ImageSelectorDisplayValue {
             return new ImageSelectorDisplayValue().setUploadItem(item);
         }

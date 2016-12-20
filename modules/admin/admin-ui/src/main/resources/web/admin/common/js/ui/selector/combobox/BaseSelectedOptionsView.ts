@@ -82,7 +82,7 @@ module api.ui.selector.combobox {
         }
 
         protected handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
-
+            // must be implemented by children
         }
 
         private handleMovedOccurrence(fromIndex: number, toIndex: number) {

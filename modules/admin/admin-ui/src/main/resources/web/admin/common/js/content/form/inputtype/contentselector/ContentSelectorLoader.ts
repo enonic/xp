@@ -53,9 +53,6 @@ module api.content.form.inputtype.contentselector {
 
     export class Builder {
 
-        constructor() {
-        }
-
         content: ContentSummary;
 
         inputName: string;

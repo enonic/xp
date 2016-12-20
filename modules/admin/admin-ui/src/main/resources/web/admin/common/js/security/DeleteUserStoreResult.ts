@@ -6,9 +6,6 @@ module api.security {
         private deleted: boolean;
         private reason: string;
 
-        constructor() {
-        }
-
         getUserStoreKey(): UserStoreKey {
             return this.userStoreKey;
         }

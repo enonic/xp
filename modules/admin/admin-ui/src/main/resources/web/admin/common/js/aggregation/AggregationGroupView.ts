@@ -34,7 +34,7 @@ module api.aggregation {
         }
 
         initialize(): void {
-
+            // must be implemented by children
         }
 
         getAggregationViews(): api.aggregation.AggregationView[] {

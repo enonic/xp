@@ -100,6 +100,7 @@ module api.app.browse.filter {
         }
 
         protected appendExtraSection() {
+            // must be implemented by children
         }
 
         setRefreshOfFilterRequired() {

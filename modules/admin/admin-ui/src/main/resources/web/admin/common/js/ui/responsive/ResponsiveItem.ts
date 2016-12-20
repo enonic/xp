@@ -14,8 +14,7 @@ module api.ui.responsive {
 
         private handle: Function;              // Additional handler on update
 
-        constructor(element: api.dom.Element, handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {
-        })) {
+        constructor(element: api.dom.Element, handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => { /* empty */ })) {
             this.element = element;
             this.rangeValue = this.element.getEl().getWidthWithBorder();
             this.oldRangeValue = this.rangeValue;
@@ -62,8 +61,7 @@ module api.ui.responsive {
             return this.rangeSize !== this.oldRangeSize;
         }
 
-        setHandler(handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {
-        })) {
+        setHandler(handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => { /* empty */ })) {
             this.handle = handler;
         }
 

@@ -105,7 +105,6 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 this.userDataContainer.appendChild(rolesAndGroupsGroup);
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
-        }).finally(() => {
         }).done();
     }
 
@@ -151,7 +150,6 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
-        }).finally(() => {
         }).done();
     }
 }

@@ -149,9 +149,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
 
         var appMock: ApplicationUploadMock = new ApplicationUploadMock(item);
 
-        this.appendNode(<any>appMock, false).then(() => {
-
-        }).done();
+        this.appendNode(<any>appMock, false).done();
 
         var deleteUploadedNodeHandler = () => {
             var nodeToRemove = this.getRoot().getCurrentRoot().findNode(item.getId());

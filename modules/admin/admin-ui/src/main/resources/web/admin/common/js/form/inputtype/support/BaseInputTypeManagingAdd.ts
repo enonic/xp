@@ -57,7 +57,7 @@ module api.form.inputtype.support {
         }
 
         availableSizeChanged() {
-
+            // must be implemented by children
         }
 
         getElement(): api.dom.Element {
@@ -153,11 +153,8 @@ module api.form.inputtype.support {
             return true;
         }
 
-        /**
-         * Override when needed.
-         */
         displayValidationErrors(value: boolean) {
-
+            // must be implemented by children
         }
 
         validate(silent: boolean = true,

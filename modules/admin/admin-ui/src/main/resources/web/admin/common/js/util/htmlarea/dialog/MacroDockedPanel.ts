@@ -289,8 +289,7 @@ module api.util.htmlarea.dialog {
                     ? scrollHeight > maxFrameHeight ? maxFrameHeight : scrollHeight + (this.isInstagramPreview() ? 18 : 0)
                     : wemjq("#" + this.id).contents().find('body').outerHeight());
                 this.notifyPreviewRendered();
-            } catch (error) {
-            }
+            } catch (error) { /* empty*/ }
         }
 
         private getMaxFrameHeight(): number {

@@ -6,9 +6,6 @@ module api.security {
         private deleted: boolean;
         private reason: string;
 
-        constructor() {
-        }
-
         getPrincipalKey(): PrincipalKey {
             return this.principalKey;
         }

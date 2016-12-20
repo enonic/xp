@@ -161,9 +161,6 @@ module api.ui {
 
         inputAlignment: InputAlignment;
 
-        constructor() {
-        }
-
         setLabelText(value: string): CheckboxBuilder {
             this.text = value;
             return this;

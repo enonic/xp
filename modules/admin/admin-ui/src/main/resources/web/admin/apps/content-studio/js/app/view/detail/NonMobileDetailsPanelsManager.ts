@@ -225,9 +225,6 @@ export class NonMobileDetailsPanelsManagerBuilder {
     private dockedDetailsPanel: DockedDetailsPanel;
     private floatingDetailsPanel: FloatingDetailsPanel;
 
-    constructor() {
-    }
-
     setSplitPanelWithGridAndDetails(splitPanelWithGridAndDetails: api.ui.panel.SplitPanel) {
         this.splitPanelWithGridAndDetails = splitPanelWithGridAndDetails;
     }

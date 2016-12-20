@@ -7,9 +7,6 @@ module api.content.page.region {
         private targetRegionsNameByPosition: { [key: number]: string; };
         private sourceRegionsPositionByName: { [regionName: string]: number; };
 
-        constructor() {
-        }
-
         /**
          * Merge the components of regions existing in a layout component, distribute them in the regions of the target layout descriptor according to following rules:
          *  - If a region with the same name exists on the target layout: move components from source into region with the same name

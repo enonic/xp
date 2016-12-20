@@ -69,24 +69,18 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
     private registerEvents() {
         StopApplicationEvent.on((event: StopApplicationEvent) => {
             var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
-            new StopApplicationRequest(applicationKeys).sendAndParse()
-                .then(() => {
-                }).done();
+            new StopApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
         StartApplicationEvent.on((event: StartApplicationEvent) => {
             var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
-            new StartApplicationRequest(applicationKeys).sendAndParse()
-                .then(() => {
-                }).done();
+            new StartApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
 
         UninstallApplicationEvent.on((event: UninstallApplicationEvent) => {
             var applicationKeys = ApplicationKey.fromClusterApplications(event.getApplications());
-            new UninstallApplicationRequest(applicationKeys).sendAndParse()
-                .then(() => {
-                }).done();
+            new UninstallApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
         api.application.ApplicationEvent.on((event: ApplicationEvent) => {

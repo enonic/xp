@@ -123,10 +123,6 @@ export class UserTreeGridItemBuilder {
     principal: Principal;
     type: UserTreeGridItemType;
 
-    constructor() {
-    }
-
-
     setUserStore(userStore: UserStore): UserTreeGridItemBuilder {
         this.userStore = userStore;
         return this;

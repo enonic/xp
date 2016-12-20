@@ -105,9 +105,6 @@ module api.security {
         idProviderMode: IdProviderMode;
         permissions: api.security.acl.UserStoreAccessControlList;
 
-        constructor() {
-        }
-
         fromJson(json: api.security.UserStoreJson): UserStoreBuilder {
             this.key = new UserStoreKey(json.key);
             this.displayName = json.displayName;

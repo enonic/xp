@@ -58,9 +58,6 @@ module api.content.form.inputtype.long {
             input.resetBaseValues();
         }
 
-        availableSizeChanged() {
-        }
-
         valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.LONG);
         }
