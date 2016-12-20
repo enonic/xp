@@ -32,7 +32,7 @@ final class GetBinaryCommand
         if ( shouldFilterScheduledPublished() )
         {
             final Node node = nodeService.getById( NodeId.from( contentId.toString() ) );
-            if ( node == null || !contentPendingOrExpired( node, Instant.now() ) )
+            if ( node == null || contentPendingOrExpired( node, Instant.now() ) )
             {
                 throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
             }
