@@ -23,7 +23,8 @@ export class PublishAction extends api.ui.Action {
                     wizard.saveChanges().then((content) => {
                         if (content) {
                             let contentSummary = ContentSummaryAndCompareStatus.fromContentSummary(content);
-                            contentSummary.setCompareStatus(wizard.getContentCompareStatus());
+                            contentSummary.setCompareStatus(wizard.getContentCompareStatus()).
+                                setPublishStatus(wizard.getContentPublishStatus());
                             new ContentPublishPromptEvent([contentSummary], includeChildItems).fire();
                         }
                     }).catch((reason: any) => {
@@ -31,7 +32,8 @@ export class PublishAction extends api.ui.Action {
                     }).finally(() => this.setEnabled(true)).done();
                 } else {
                     let contentSummary = ContentSummaryAndCompareStatus.fromContentSummary(wizard.getPersistedItem());
-                    contentSummary.setCompareStatus(wizard.getContentCompareStatus());
+                    contentSummary.setCompareStatus(wizard.getContentCompareStatus()).
+                        setPublishStatus(wizard.getContentPublishStatus());
                     new ContentPublishPromptEvent([contentSummary], includeChildItems).fire();
                 }
             } else {
