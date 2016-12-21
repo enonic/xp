@@ -32,6 +32,13 @@ module api.ui.button {
             }
         }
 
+        setVisible(value: boolean): TogglerButton {
+            if (!value) {
+                this.setActive(value);
+            }
+            return <TogglerButton>super.setVisible(value);
+        }
+
         isActive() {
             return this.hasClass("active");
         }
