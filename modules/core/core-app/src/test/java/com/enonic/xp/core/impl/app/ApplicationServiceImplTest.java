@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -13,7 +12,6 @@ import org.osgi.framework.Bundle;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -147,7 +145,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName );
 
-        final Application application = this.service.installGlobalApplication( byteSource );
+        final Application application = this.service.installGlobalApplication( byteSource, bundleName );
 
         assertNotNull( application );
         assertEquals( bundleName, application.getKey().getName() );
@@ -156,6 +154,28 @@ public class ApplicationServiceImplTest
 
         verifyInstalledEvents( applicationNode, Mockito.times( 1 ) );
         verifyStartedEvent( application, Mockito.times( 1 ) );
+    }
+
+    @Test(expected = GlobalApplicationInstallException.class)
+    public void install_global_invalid()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final Node applicationNode = Node.create().
+            id( NodeId.from( "myNode" ) ).
+            parentPath( NodePath.ROOT ).
+            name( "myNode" ).
+            build();
+
+        final String bundleName = "my-bundle";
+
+        mockRepoCreateNode( applicationNode );
+        mockRepoGetNode( applicationNode, bundleName );
+
+        final ByteSource byteSource = createBundleSource( bundleName, false );
+
+        this.service.installGlobalApplication( byteSource, bundleName );
     }
 
     @Test
@@ -176,7 +196,7 @@ public class ApplicationServiceImplTest
         mockRepoGetNode( applicationNode, bundleName );
 
         final ByteSource byteSource = createBundleSource( bundleName );
-        final Application application = this.service.installLocalApplication( byteSource );
+        final Application application = this.service.installLocalApplication( byteSource, bundleName );
 
         assertNotNull( application );
         assertEquals( bundleName, application.getKey().getName() );
@@ -204,9 +224,9 @@ public class ApplicationServiceImplTest
         mockRepoCreateNode( applicationNode );
         mockRepoGetNode( applicationNode, bundleName );
 
-        final File file = createBundleFile( bundleName, false );
+        final ByteSource source = createBundleSource( bundleName, false );
 
-        this.service.installLocalApplication( file );
+        this.service.installLocalApplication( source, bundleName );
     }
 
     @Test
@@ -232,13 +252,13 @@ public class ApplicationServiceImplTest
 
         final Application originalApplication =
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.0" ).
-                build() ) ) );
+                build() ) ), bundleName );
 
         mockRepoGetNode( node, bundleName );
 
         final Application updatedApplication =
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).
-                build() ) ) );
+                build() ) ), bundleName );
 
         assertEquals( "1.0.0", originalApplication.getVersion().toString() );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
@@ -268,11 +288,11 @@ public class ApplicationServiceImplTest
 
         final Application originalApplication =
             this.service.installLocalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.0" ).
-                build() ) ) );
+                build() ) ), bundleName );
 
         final Application updatedApplication =
             this.service.installLocalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).
-                build() ) ) );
+                build() ) ), bundleName );
 
         assertEquals( "1.0.0", originalApplication.getVersion().toString() );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
@@ -396,7 +416,7 @@ public class ApplicationServiceImplTest
         mockRepoCreateNode( applicationNode );
 
         final ByteSource byteSource = createBundleSource( bundleName );
-        final Application application = this.service.installLocalApplication( byteSource );
+        final Application application = this.service.installLocalApplication( byteSource, bundleName );
         assertNotNull( this.service.getInstalledApplication( application.getKey() ) );
 
         this.service.uninstallApplication( application.getKey(), false );
@@ -429,13 +449,13 @@ public class ApplicationServiceImplTest
 
         final Application originalApplication =
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.0" ).
-                build() ) ) );
+                build() ) ), bundleName );
 
         assertFalse( this.service.isLocalApplication( originalApplication.getKey() ) );
 
         final Application updatedApplication =
             this.service.installLocalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).
-                build() ) ) );
+                build() ) ), bundleName );
 
         assertEquals( "1.0.0", originalApplication.getVersion().toString() );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
@@ -473,7 +493,7 @@ public class ApplicationServiceImplTest
 
         final Application originalApplication =
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.0" ).
-                build() ) ) );
+                build() ) ), bundleName );
 
         final ApplicationKey applicationKey = originalApplication.getKey();
 
@@ -482,7 +502,7 @@ public class ApplicationServiceImplTest
 
         final Application updatedApplication =
             this.service.installLocalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).
-                build() ) ) );
+                build() ) ), bundleName );
 
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
 
@@ -518,14 +538,14 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName );
 
-        final Application application = this.service.installLocalApplication( byteSource );
+        final Application application = this.service.installLocalApplication( byteSource, bundleName );
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
         Mockito.when( this.repoService.getApplicationNode( application.getKey() ) ).
             thenReturn( null ).
             thenReturn( applicationNode );
 
-        this.service.installGlobalApplication( byteSource );
+        this.service.installGlobalApplication( byteSource, bundleName );
 
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
@@ -578,15 +598,6 @@ public class ApplicationServiceImplTest
             build();
 
         return ByteSource.wrap( ByteStreams.toByteArray( in ) );
-    }
-
-    private File createBundleFile( final String bundleName, final boolean isApp )
-        throws IOException
-    {
-        final File targetFile = File.createTempFile( "app-name", ".jar" );
-        createBundleSource( bundleName, isApp ).copyTo( Files.asByteSink( targetFile ) );
-
-        return targetFile;
     }
 
     private Bundle deployBundle( final String key, final boolean isApp )

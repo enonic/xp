@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -21,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -113,9 +111,21 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application installGlobalApplication( final ByteSource byteSource )
+    public Application installGlobalApplication( final ByteSource byteSource, final String applicationName )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( byteSource ) );
+        return ApplicationHelper.callWithContext( () ->
+                                                  {
+                                                      try
+                                                      {
+                                                          return doInstallGlobalApplication( byteSource );
+                                                      }
+                                                      catch ( ApplicationInstallException e )
+                                                      {
+                                                          throw new GlobalApplicationInstallException(
+                                                              "'" + applicationName + "': " + e.getMessage() );
+                                                      }
+                                                  } );
+
     }
 
     private Application doInstallGlobalApplicationFromUrl( final URL url )
@@ -139,10 +149,8 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application installLocalApplication( final File file )
+    public Application installLocalApplication( final ByteSource byteSource, final String applicationName )
     {
-        final ByteSource byteSource = Files.asByteSource( file );
-
         return ApplicationHelper.callWithContext( () ->
                                                   {
                                                       try
@@ -152,23 +160,7 @@ public final class ApplicationServiceImpl
                                                       catch ( ApplicationInstallException e )
                                                       {
                                                           throw new LocalApplicationInstallException(
-                                                              "'" + file.getName() + "': " + e.getMessage() );
-                                                      }
-                                                  } );
-    }
-
-    @Override
-    public Application installLocalApplication( final ByteSource byteSource )
-    {
-        return ApplicationHelper.callWithContext( () ->
-                                                  {
-                                                      try
-                                                      {
-                                                          return doInstallLocalApplication( byteSource );
-                                                      }
-                                                      catch ( ApplicationInstallException e )
-                                                      {
-                                                          throw new LocalApplicationInstallException( e );
+                                                              "'" + applicationName + "': " + e.getMessage() );
                                                       }
                                                   } );
     }
