@@ -714,23 +714,16 @@ public final class ContentResource
             setContainsRemovable( anyRemovable ).
             setRequestedContents( requestedContentIds ).
             setDependentContents( dependentContentIds ).
-            setAllContentsAreValid( this.allContentsAreValid( results ) ).
+            setContainsInvalid( !this.isValidContent( results ) ).
             build();
     }
 
-    private boolean allContentsAreValid( final CompareContentResults compareResults )
+    private boolean isValidContent( final CompareContentResults compareResults )
     {
-        ContentIds.Builder contentIds = ContentIds.create();
-
-        for ( CompareContentResult compareResult : compareResults )
-        {
-            if ( compareResult.getCompareStatus() != CompareStatus.PENDING_DELETE )
-            {
-                contentIds.add( compareResult.getContentId() );
-            }
-        }
-
-        return contentService.checkAllContentsValid( contentIds.build() );
+        return contentService.isValidContent(
+            ContentIds.from( compareResults.stream().filter( ( result ) -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
+                map( CompareContentResult::getContentId ).
+                collect( Collectors.toList() ) ) );
     }
 
     private Boolean isAnyContentRemovableFromPublish( final ContentIds contentIds )

@@ -380,7 +380,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public boolean checkAllContentsValid( ContentIds contentIds )
+    public boolean isValidContent( ContentIds contentIds )
     {
         return CheckContentsValidCommand.create().
             translator( this.translator ).

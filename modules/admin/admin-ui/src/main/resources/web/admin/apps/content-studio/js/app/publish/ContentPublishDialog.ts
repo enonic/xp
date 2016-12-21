@@ -26,7 +26,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private childrenLoaded: boolean = false;
 
-    private contentFormsAreValid: boolean = false; // result of back-end check for all the publish candidates that do not pend deletion
+    private containsInvalidContents: boolean = false; // result of back-end check for all the publish candidates that do not pend deletion
 
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
@@ -183,7 +183,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
             this.dependantIds = result.getDependants();
-            this.contentFormsAreValid = result.areAllContentsValid();
+            this.containsInvalidContents = result.isContainsInvalid();
             this.setStashedCount(this.dependantIds.length);
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
@@ -381,7 +381,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     private areItemsAndDependantsValid(): boolean {
-        return this.contentFormsAreValid &&
+        return !this.containsInvalidContents &&
                this.areAllValid(this.getItemList().getItems()) &&
                this.areAllValid(this.getDependantList().getItems());
     }

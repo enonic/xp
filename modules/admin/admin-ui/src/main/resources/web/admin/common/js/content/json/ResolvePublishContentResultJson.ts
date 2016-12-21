@@ -5,6 +5,6 @@ module api.content.json {
         dependentContents: ContentIdBaseItemJson[];
         requestedContents: ContentIdBaseItemJson[];
         containsRemovable: boolean;
-        allContentsAreValid: boolean;
+        containsInvalid: boolean;
     }
 }
