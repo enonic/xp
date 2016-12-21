@@ -26,6 +26,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private childrenLoaded: boolean = false;
 
+    private contentFormsAreValid: boolean = false; // result of back-end check for all the publish candidates that do not pend deletion
+
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
     private stashedCount: {[checked: string]: number} = {};
@@ -46,7 +48,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.setAutoUpdateTitle(false);
         this.getEl().addClass("publish-dialog");
-
 
         this.initShowScheduleAction();
         this.initPublishAction();
@@ -182,6 +183,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
             this.dependantIds = result.getDependants();
+            this.contentFormsAreValid = result.areAllContentsValid();
             this.setStashedCount(this.dependantIds.length);
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
@@ -229,7 +231,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.updateShowScheduleDialogButton();
         this.updateButtonCount("Publish", count);
     }
-
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
         if (this.isProgressBarEnabled()) {
@@ -380,12 +381,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     private areItemsAndDependantsValid(): boolean {
-        var itemsValid = this.areAllValid(this.getItemList().getItems());
-        if (!itemsValid) {
-            return false;
-        }
-
-        return this.areAllValid(this.getDependantList().getItems());
+        return this.contentFormsAreValid &&
+               this.areAllValid(this.getItemList().getItems()) &&
+               this.areAllValid(this.getDependantList().getItems());
     }
 
     private disableCheckbox() {

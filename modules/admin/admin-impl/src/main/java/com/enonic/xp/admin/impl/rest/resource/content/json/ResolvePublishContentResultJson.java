@@ -14,11 +14,14 @@ public class ResolvePublishContentResultJson
 
     private final Boolean containsRemovable;
 
+    private final Boolean allContentsAreValid;
+
     private ResolvePublishContentResultJson( Builder builder )
     {
         requestedContents = builder.requestedContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         dependentContents = builder.dependentContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         containsRemovable = builder.containsRemovable;
+        allContentsAreValid = builder.allContentsAreValid;
     }
 
     @SuppressWarnings("unused")
@@ -33,9 +36,16 @@ public class ResolvePublishContentResultJson
         return dependentContents;
     }
 
+    @SuppressWarnings("unused")
     public Boolean getContainsRemovable()
     {
         return containsRemovable;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getAllContentsAreValid()
+    {
+        return allContentsAreValid;
     }
 
     public static Builder create()
@@ -51,6 +61,8 @@ public class ResolvePublishContentResultJson
         private ContentIds dependentContents;
 
         private Boolean containsRemovable;
+
+        private Boolean allContentsAreValid;
 
         private Builder()
         {
@@ -71,6 +83,12 @@ public class ResolvePublishContentResultJson
         public Builder setContainsRemovable( final Boolean containsRemovable )
         {
             this.containsRemovable = containsRemovable;
+            return this;
+        }
+
+        public Builder setAllContentsAreValid( final Boolean allContentsAreValid )
+        {
+            this.allContentsAreValid = allContentsAreValid;
             return this;
         }
 

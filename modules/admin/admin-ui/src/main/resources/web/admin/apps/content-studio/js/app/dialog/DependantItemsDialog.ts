@@ -64,7 +64,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         let itemsChangedListener = (items) => {
             let count = this.itemList.getItemCount();
             if (this.autoUpdateTitle) {
-                this.setTitle(this.dialogName + (count > 1 ? "s" : ''));
+                this.setTitle(this.dialogName + (count > 1 ? "s" : ""));
             }
 
             this.toggleClass("contains-removable", (count > 1));
@@ -77,7 +77,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dependantList = this.createDependantList();
         this.dependantList.addClass("dependant-list");
 
-        this.dependantsContainer = new api.dom.DivEl('dependants');
+        this.dependantsContainer = new api.dom.DivEl("dependants");
         this.dependantsContainer.appendChildren(this.dependantsHeader, this.dependantList);
 
         let dependantsChangedListener = (items) => {
@@ -161,7 +161,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     private extendsWindowHeightSize(): boolean {
         if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
             var el = this.getEl(),
-                bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty('top')) || 0) +
+                bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty("top")) || 0) +
                                          el.getMarginTop() +
                                          el.getHeightWithBorder() +
                                          el.getMarginBottom();
