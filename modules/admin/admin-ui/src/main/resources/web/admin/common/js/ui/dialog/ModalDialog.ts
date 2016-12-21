@@ -35,7 +35,7 @@ module api.ui.dialog {
             super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
 
             this.forceHorizontalCentering = forceHorizontalCentering;
-            
+
             var wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
             this.appendChild(wrapper);
 

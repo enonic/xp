@@ -58,7 +58,7 @@ module api.app.browse.filter {
             this.aggregationContainer.hide();
             this.appendChild(this.aggregationContainer);
 
-            let groupViews = this.getGroupViews(); 
+            let groupViews = this.getGroupViews();
             if (groupViews != null) {
                 groupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
@@ -100,6 +100,7 @@ module api.app.browse.filter {
         }
 
         protected appendExtraSection() {
+            // must be implemented by children
         }
 
         setRefreshOfFilterRequired() {

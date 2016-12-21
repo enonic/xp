@@ -48,7 +48,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
         super(dialogName);
-        
+
         this.addClass("dependant-dialog");
 
         this.dialogName = dialogName;
@@ -172,7 +172,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         }
         return false;
     }
-    
+
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.setItems(items);
 

@@ -48,7 +48,7 @@ module api.content.site.inputtype.authappselector {
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
                 this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
-            
+
             if (this.application.getIconUrl()) {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());
             }

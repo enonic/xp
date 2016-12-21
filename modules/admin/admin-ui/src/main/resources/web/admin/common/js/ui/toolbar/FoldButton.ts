@@ -34,13 +34,13 @@ module api.ui.toolbar {
                 this.hostElement.toggleClass(FoldButton.expandedCls);
             }
         }
-        
+
         private onButtonClicked(e) {
             let onBodyClicked = () => {
                 this.collapse();
                 api.dom.Body.get().unClicked(onBodyClicked);
             };
-            
+
             this.toggle();
             if (this.hasClass(FoldButton.expandedCls)) {
                 api.dom.Body.get().onClicked(onBodyClicked);

@@ -1,6 +1,8 @@
 module api.application {
 
-    export class ListMarketApplicationsRequest extends ApplicationResourceRequest<api.application.json.MarketApplicationsListJson, MarketApplicationResponse> {
+    import MarketApplicationsListJson = api.application.json.MarketApplicationsListJson;
+
+    export class ListMarketApplicationsRequest extends ApplicationResourceRequest<MarketApplicationsListJson, MarketApplicationResponse> {
 
         private version: string;
         private start: number = 0;
@@ -46,7 +48,7 @@ module api.application {
         }
 
         sendAndParse(): wemQ.Promise<MarketApplicationResponse> {
-            return this.send().then((response: api.rest.JsonResponse<api.application.json.MarketApplicationsListJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<MarketApplicationsListJson>) => {
                 let applications = MarketApplication.fromJsonArray(response.getResult().hits);
                 let hits = applications.length;
                 let totalHits = response.getResult().total;

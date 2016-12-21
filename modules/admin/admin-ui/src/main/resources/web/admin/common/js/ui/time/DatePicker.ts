@@ -121,7 +121,7 @@ module api.ui.time {
                 if (api.ui.KeyHelper.isArrowKey(event) || api.ui.KeyHelper.isModifierKey(event)) {
                     return;
                 }
-                
+
                 var typedDate = this.input.getValue();
 
                 if (api.util.StringHelper.isEmpty(typedDate)) {

@@ -294,15 +294,20 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.pageModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
 
-            // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
+            // NB: To make the event.getSource() check work,
+            // all calls from this to PageModel that changes a property must done with this as eventSource argument
             if (!api.ObjectHelper.objectEquals(this, event.getSource())) {
 
-                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(event.getOldValue(), event.getNewValue())) {
+                const oldValue = event.getOldValue();
+                const newValue = event.getNewValue();
+
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(oldValue, newValue)) {
                     this.contentWizardPanel.saveChanges();
                 }
                 if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE) {
 
-                    // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
+                    // do not reload page if there was no template in pageModel before and if new template is the default one -
+                    // case when switching automatic template to default
                     // only reload when switching from customized with controller set back to template or automatic template
                     if (!(this.pageModel.getDefaultPageTemplate().equals(this.pageModel.getTemplate()) && !event.getOldValue() &&
                           !this.pageModel.hasController())) {
@@ -506,7 +511,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy.onComponentAdded((event: ComponentAddedEvent) => {
             // do something when component is added
-            // onItemViewSelected() is not called on adding TextComponentView thus calling minimizeContentFormPanelIfNeeded() for it from here
+            // onItemViewSelected() is not called on adding TextComponentView
+            // thus calling minimizeContentFormPanelIfNeeded() for it from here
             if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
                 this.minimizeContentFormPanelIfNeeded();
             }

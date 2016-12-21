@@ -308,7 +308,7 @@ module api.ui.uploader {
         }
 
         protected refreshExistingItem(existingItem: Element, value: string) {
-
+            // must be implemented by children
         }
 
         protected getExistingItem(value: string): Element {
@@ -325,7 +325,7 @@ module api.ui.uploader {
                 if (o && typeof o === "object" && o.length) {
                     return o;
                 }
-            } catch (e) { }
+            } catch (error) { /* empty*/ }
 
             // Value is not JSON so just return it
             return [jsonString];
@@ -587,7 +587,7 @@ module api.ui.uploader {
         protected initUploader() {
             var uploader = new qq.FineUploaderBasic({
                 debug: false,
-                button: document.getElementById(this.dropzone.getId()), //this.config.allowBrowse ? document.getElementById(this.dropzone.getId()) : undefined,
+                button: document.getElementById(this.dropzone.getId()),
                 multiple: this.config.allowMultiSelection,
                 folders: false,
                 autoUpload: false,

@@ -99,7 +99,7 @@ module api.ui.selector {
                     columnFormatter).build()
             ];
         }
-        
+
         getElement(): api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>> {
             return this.grid;
         }

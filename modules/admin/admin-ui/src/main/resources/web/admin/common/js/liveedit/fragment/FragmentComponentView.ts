@@ -35,7 +35,7 @@ module api.liveedit.fragment {
             super(builder.setViewer(new FragmentComponentViewer()).setInspectActionRequired(true));
 
             this.addFragmentContextMenuActions();
-            
+
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentContainsLayout = false;
             this.fragmentContent = null;

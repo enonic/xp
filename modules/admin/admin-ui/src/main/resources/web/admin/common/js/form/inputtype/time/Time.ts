@@ -75,6 +75,7 @@ module api.content.form.inputtype.time {
         }
 
         availableSizeChanged() {
+            // must be implemented by children
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

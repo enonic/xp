@@ -4,19 +4,22 @@ module api.app.wizard {
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import Panel = api.ui.panel.Panel;
+    import Equitable = api.Equitable;
+    import ActionContainer = api.ui.ActionContainer;
+    import Closeable = api.ui.Closeable;
 
     /*
      Only data should be passed to constructor
      views are to be created on render
      */
-    export interface WizardPanelParams<EQUITABLE extends api.Equitable> {
+    export interface WizardPanelParams<EQUITABLE extends Equitable> {
 
         tabId: api.app.bar.AppBarTabId;
 
         persistedItem?: EQUITABLE;
     }
 
-    export class WizardPanel<EQUITABLE extends api.Equitable> extends api.ui.panel.Panel implements api.ui.Closeable, api.ui.ActionContainer {
+    export class WizardPanel<EQUITABLE extends Equitable> extends Panel implements Closeable, ActionContainer {
 
         protected params: WizardPanelParams<EQUITABLE>;
 
@@ -90,7 +93,7 @@ module api.app.wizard {
             this.setParams(params);
 
             this.wizardActions = this.createWizardActions();
-            
+
             if (params.persistedItem) {
                 this.setPersistedItem(params.persistedItem);
                 this.formState.setIsNew(false);
@@ -141,7 +144,7 @@ module api.app.wizard {
         protected createWizardActions(): WizardActions<EQUITABLE> {
             throw Error('Override me');
         }
-        
+
         /*
          Loads necessary data for rendering on wizard open
          */
@@ -609,7 +612,7 @@ module api.app.wizard {
                 this.toggleHelpTextShown();
             });
         }
-        
+
         isMinimized(): boolean {
             return this.minimized;
         }

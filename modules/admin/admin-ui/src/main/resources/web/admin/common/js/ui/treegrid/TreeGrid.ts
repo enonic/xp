@@ -1028,7 +1028,7 @@ module api.ui.treegrid {
 
         expandNode(node?: TreeNode<DATA>, expandAll: boolean = false): wemQ.Promise<boolean> {
             var deferred = wemQ.defer<boolean>();
-            
+
             node = node || this.root.getCurrentRoot();
 
             if (node) {
@@ -1059,7 +1059,6 @@ module api.ui.treegrid {
                         }).catch((reason: any) => {
                             this.handleError(reason);
                         deferred.resolve(false);
-                        }).finally(() => {
                         }).done(() => this.notifyLoaded());
                 }
             }
@@ -1202,7 +1201,8 @@ module api.ui.treegrid {
             return null;
         }
 
-        sortNodeChildren(node: TreeNode<DATA>) {
+        sortNodeChildren(node: TreeNode<DATA>): void {
+            // must be implemented by children
         }
 
         protected handleItemMetadata(row: number) {

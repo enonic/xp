@@ -17,7 +17,7 @@ module api.ui.menu {
                 e.stopPropagation();
             });
         }
-        
+
         isHideOnItemClick(): boolean {
             return this.hideOnItemClick;
         }

@@ -36,10 +36,6 @@ module api.content.form.inputtype.tag {
             }
         }
 
-        availableSizeChanged() {
-
-        }
-
         getValueType(): ValueType {
             return ValueTypes.STRING;
         }

@@ -300,8 +300,11 @@ module api.liveedit.text {
                     var pageView = this.getPageView();
                     if (pageView.isTextEditMode()) {
                         pageView.setTextEditMode(false);
-                        pageView.setNextClickDisabled(true); // preventing mouse click event that triggered blur from further processing in ItemView
-                        setTimeout(() => pageView.setNextClickDisabled(false), 200); // enable mouse click handling if click's target was not ItemView
+                        // preventing mouse click event that triggered blur from further processing in ItemView
+                        pageView.setNextClickDisabled(true);
+
+                        // enable mouse click handling if click's target was not ItemView
+                        setTimeout(() => pageView.setNextClickDisabled(false), 200);
                     }
                 }
             }, 50);

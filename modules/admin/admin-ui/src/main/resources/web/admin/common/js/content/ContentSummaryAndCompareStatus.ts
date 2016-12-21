@@ -14,9 +14,6 @@ module api.content {
 
         private readOnly: boolean;
 
-        constructor() {
-        }
-
         public static fromContentSummary(contentSummary: ContentSummary) {
             return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary);
         }

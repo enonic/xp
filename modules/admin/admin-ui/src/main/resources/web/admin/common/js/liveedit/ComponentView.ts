@@ -128,7 +128,7 @@ module api.liveedit {
             this.parentRegionView = builder.parentRegionView;
 
             this.addComponentContextMenuActions(builder.inspectActionRequired);
-            
+
             this.propertyChangedListener = () => this.refreshEmptyState();
             this.resetListener = () => {
                 // recreate the component view from scratch
@@ -443,7 +443,7 @@ module api.liveedit {
         isEmpty(): boolean {
             return !this.component || this.component.isEmpty();
         }
-        
+
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
             var parentItemView = ItemView.findParentItemViewAsHTMLElement(htmlElement);

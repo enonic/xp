@@ -21,7 +21,9 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<LayoutDescriptor[]> {
 
-            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse());
+            const req = (applicationKey: ApplicationKey) => new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse();
+
+            var promises = this.applicationKeys.map(req);
 
             return wemQ.all(promises).
                 then((results: LayoutDescriptor[][]) => {

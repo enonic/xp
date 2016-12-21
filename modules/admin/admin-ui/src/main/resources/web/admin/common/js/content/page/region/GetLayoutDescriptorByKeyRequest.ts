@@ -26,15 +26,16 @@ module api.content.page.region {
         sendAndParse(): wemQ.Promise<LayoutDescriptor> {
             var deferred = wemQ.defer<LayoutDescriptor>();
 
-            new GetLayoutDescriptorsByApplicationRequest(this.key.getApplicationKey()).sendAndParse().then((descriptors: LayoutDescriptor[]) => {
-                descriptors.forEach((descriptor: LayoutDescriptor) => {
-                    if (this.key.equals(descriptor.getKey())) {
-                        deferred.resolve(descriptor);
-                    }
-                });
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+            new GetLayoutDescriptorsByApplicationRequest(this.key.getApplicationKey()).sendAndParse()
+                .then((descriptors: LayoutDescriptor[]) => {
+                    descriptors.forEach((descriptor: LayoutDescriptor) => {
+                        if (this.key.equals(descriptor.getKey())) {
+                            deferred.resolve(descriptor);
+                        }
+                    });
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
 
             return deferred.promise;
         }

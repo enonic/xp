@@ -8,6 +8,8 @@ import ContentDependencyJson = api.content.json.ContentDependencyJson;
 import ContentDependencyGroupJson = api.content.json.ContentDependencyGroupJson;
 import ActionButton = api.ui.button.ActionButton;
 import Action = api.ui.Action;
+import NamesAndIconViewSize = api.app.NamesAndIconViewSize;
+import NamesAndIconViewBuilder = api.app.NamesAndIconViewBuilder;
 
 export class DependenciesWidgetItemView extends WidgetItemView {
 
@@ -86,7 +88,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
 
     private appendContentNamesAndIcon(item: ContentSummaryAndCompareStatus) {
         this.nameAndIcon =
-            new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium))
+            new api.app.NamesAndIconView(new NamesAndIconViewBuilder().setSize(NamesAndIconViewSize.medium))
                 .setIconUrl(item.getIconUrl())
                 .setMainName(item.getDisplayName())
                 .setSubName(item.getPath().toString());
@@ -135,7 +137,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
 
     private appendDependencies(container: api.dom.DivEl, dependencies: DependencyGroup[]) {
         dependencies.forEach((dependencyGroup: DependencyGroup) => {
-            var dependencyGroupView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small))
+            var dependencyGroupView = new api.app.NamesAndIconView(new NamesAndIconViewBuilder().setSize(NamesAndIconViewSize.small))
                 .setIconUrl(dependencyGroup.getIconUrl())
                 .setMainName("(" + dependencyGroup.getItemCount().toString() + ")");
 

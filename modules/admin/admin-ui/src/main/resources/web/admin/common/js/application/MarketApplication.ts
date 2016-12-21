@@ -209,9 +209,6 @@ module api.application {
         status: string;
         appKey: ApplicationKey;
 
-        constructor() {
-        }
-
         public fromJson(appKey: string, json: api.application.json.MarketApplicationJson): MarketApplicationBuilder {
             this.appKey = ApplicationKey.fromString(appKey);
             this.displayName = json.displayName;

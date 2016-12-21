@@ -41,7 +41,8 @@ module api.ui.panel {
 
         private firstPanelIsDecidingPanel: boolean = true;
 
-        private secondPanelShouldSlideRight: boolean = false; //property that indicates to slide second panel instead of hide while in horizontal layout
+        // property that indicates to slide second panel instead of hide while in horizontal layout
+        private secondPanelShouldSlideRight: boolean = false;
 
         constructor(firstPanel: Panel, secondPanel: Panel) {
             this.firstPanel = firstPanel;

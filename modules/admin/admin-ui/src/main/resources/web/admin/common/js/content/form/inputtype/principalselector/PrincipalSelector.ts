@@ -9,6 +9,7 @@ module api.content.form.inputtype.principalselector {
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
+    import PrincipalSelectedOptionView = api.ui.security.PrincipalSelectedOptionView;
 
     export class PrincipalSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.security.Principal> {
 
@@ -93,13 +94,13 @@ module api.content.form.inputtype.principalselector {
                 if (!key) {
                     return;
                 }
-                var selectedOptionView: api.ui.security.PrincipalSelectedOptionView = <api.ui.security.PrincipalSelectedOptionView>selectedOption.getOptionView();
+                var selectedOptionView: PrincipalSelectedOptionView = <PrincipalSelectedOptionView>selectedOption.getOptionView();
                 this.saveToSet(selectedOptionView.getOption(), selectedOption.getIndex());
                 this.validate(false);
             });
 
             comboBox.onOptionMoved((selectedOption: api.ui.selector.combobox.SelectedOption<api.security.Principal>) => {
-                var selectedOptionView: api.ui.security.PrincipalSelectedOptionView = <api.ui.security.PrincipalSelectedOptionView> selectedOption.getOptionView();
+                var selectedOptionView: PrincipalSelectedOptionView = <PrincipalSelectedOptionView> selectedOption.getOptionView();
                 this.saveToSet(selectedOptionView.getOption(), selectedOption.getIndex());
                 this.validate(false);
             });

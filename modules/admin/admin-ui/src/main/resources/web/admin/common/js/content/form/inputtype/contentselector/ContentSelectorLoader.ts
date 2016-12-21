@@ -6,7 +6,7 @@ module api.content.form.inputtype.contentselector {
     export class ContentSelectorLoader extends ContentSummaryPreLoader {
 
         protected request: ContentSelectorQueryRequest;
-        
+
         constructor(builder: Builder) {
             super();
 
@@ -29,7 +29,7 @@ module api.content.form.inputtype.contentselector {
         protected getRequest(): ContentSelectorQueryRequest {
             return this.request;
         }
-        
+
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
             this.getRequest().setQueryExpr(searchString);
@@ -52,9 +52,6 @@ module api.content.form.inputtype.contentselector {
     }
 
     export class Builder {
-
-        constructor() {
-        }
 
         content: ContentSummary;
 

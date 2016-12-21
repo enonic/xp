@@ -56,7 +56,8 @@ export class WidgetItemView extends api.dom.DivEl {
 
     private stripOffAssets(html: string): string {
         var result = this.stripOffScripts(html);
-        result = (api.BrowserHelper.isFirefox() || api.BrowserHelper.isSafari()) ? result : this.stripOffLinks(result); // leave stylesheet links for FF & Safari due to bug in processing them
+        // leave stylesheet links for FF & Safari due to bug in processing them
+        result = (api.BrowserHelper.isFirefox() || api.BrowserHelper.isSafari()) ? result : this.stripOffLinks(result);
         return result;
     }
 

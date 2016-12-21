@@ -12,15 +12,15 @@ module api.query.aggregation {
 
         private orderByType: string = TermsAggregationOrderType.TERM;
 
-        toJson(): api.query.aggregation.AggregationQueryTypeWrapperJson {
+        toJson(): AggregationQueryTypeWrapperJson {
 
-            var json: api.query.aggregation.TermsAggregationQueryJson = <api.query.aggregation.TermsAggregationQueryJson>super.toAggregationQueryJson();
+            var json: TermsAggregationQueryJson = <TermsAggregationQueryJson>super.toAggregationQueryJson();
             json.fieldName = this.getFieldName();
             json.size = this.getSize();
             json.orderByDirection = this.orderByDirection;
             json.orderByType = this.orderByType;
 
-            return <api.query.aggregation.AggregationQueryTypeWrapperJson> {
+            return <AggregationQueryTypeWrapperJson> {
                 TermsAggregationQuery: json
             };
         }

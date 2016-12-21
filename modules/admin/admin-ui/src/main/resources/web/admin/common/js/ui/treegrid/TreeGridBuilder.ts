@@ -162,7 +162,7 @@ module api.ui.treegrid {
             })
             return this;
         }
-        
+
         setClasses(classes: string): TreeGridBuilder<NODE> {
             this.classes = classes;
             return this;

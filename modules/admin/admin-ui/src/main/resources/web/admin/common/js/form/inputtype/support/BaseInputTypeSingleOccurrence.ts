@@ -4,8 +4,9 @@ module api.form.inputtype.support {
     import PropertyArray = api.data.PropertyArray;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
+    import InputTypeView = api.form.inputtype.InputTypeView;
 
-    export class BaseInputTypeSingleOccurrence<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
+    export class BaseInputTypeSingleOccurrence<RAW_VALUE_TYPE> extends api.dom.DivEl implements InputTypeView<RAW_VALUE_TYPE> {
 
         private context: api.form.inputtype.InputTypeViewContext;
 
@@ -34,7 +35,7 @@ module api.form.inputtype.support {
         }
 
         availableSizeChanged() {
-
+            // must be implemented by children
         }
 
         public getContext(): api.form.inputtype.InputTypeViewContext {
@@ -106,11 +107,8 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
-        /**
-         * Override when needed.
-         */
         displayValidationErrors(value: boolean) {
-
+            // must be implemented by children
         }
 
         hasValidUserInput(): boolean {

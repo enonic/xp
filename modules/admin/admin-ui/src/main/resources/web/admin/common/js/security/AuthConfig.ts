@@ -55,9 +55,6 @@ module api.security {
         applicationKey: api.application.ApplicationKey;
         config: api.data.PropertyTree;
 
-        constructor() {
-        }
-
         setApplicationKey(applicationKey: api.application.ApplicationKey): AuthConfigBuilder {
             this.applicationKey = applicationKey;
             return this;

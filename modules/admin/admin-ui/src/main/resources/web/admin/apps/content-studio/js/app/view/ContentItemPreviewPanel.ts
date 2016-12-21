@@ -70,8 +70,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                 if (frameWindow) {
                     frameWindow.addEventListener("click", this.frameClickHandler.bind(this));
                 }
-            } catch (reason) {
-            }
+            } catch (error) { /* error */ }
         });
     }
 

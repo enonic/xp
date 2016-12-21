@@ -19,7 +19,7 @@ module api.content.resource {
         protected getRequest(): ContentSummaryRequest {
             return this.request;
         }
-        
+
         setAllowedContentTypes(contentTypes: string[]) {
             this.getRequest().setAllowedContentTypes(contentTypes);
         }

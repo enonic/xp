@@ -377,6 +377,7 @@ module api.liveedit {
 
             if (!ui.placeholder || !ui.placeholder.parent()[0]) {
                 if (DragAndDrop.debug) {
+                    // tslint:disable-next-line:max-line-length
                     console.log('DragAndDrop.handleDragOut skipping because there is no placeholder, probably item has been already dropped...');
                 }
                 return;
@@ -427,9 +428,8 @@ module api.liveedit {
             fromRegionView.refreshEmptyState();
         }
 
-        /*
-         *  This event is triggered when an item from a connected sortable list has been dropped into another list. The latter is the event target.
-         */
+        // This event is triggered when an item from a connected sortable list has been dropped into another list.
+        // The latter is the event target.
         handleReceive(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
                 console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleReceive");
@@ -627,7 +627,8 @@ module api.liveedit {
         }
 
         private calculateScrollSensitivity(): number {
-            // use getViewPortSize() instead of document.body.clientHeight which returned the height of the whole rendered page, not just of the part visible in LiveEdit
+            // use getViewPortSize() instead of document.body.clientHeight
+            // which returned the height of the whole rendered page,not just of the part visible in LiveEdit
             var height = wemjq(window).height();
             var scrollSensitivity = Math.round(height / 8);
             scrollSensitivity = Math.max(20, Math.min(scrollSensitivity, 100));

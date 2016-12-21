@@ -11,7 +11,7 @@ export class ContentPublishPromptEvent extends BaseContentModelEvent {
         super(model);
         this.includeChildItems = includeChildItems;
     }
-    
+
     isIncludeChildItems(): boolean {
         return this.includeChildItems;
     }

@@ -503,7 +503,7 @@ module api.liveedit {
             if (this.editorToolbar) {
                 this.editorToolbar.toggleClass("visible", flag);
             }
-            
+
             if (flag) {
                 this.addVerticalSpaceForEditorToolbar();
 
@@ -528,7 +528,7 @@ module api.liveedit {
         getPageView(): PageView {
             return this;
         }
-        
+
         private updateVerticalSpaceForEditorToolbar() {
             var result = this.getEditorToolbarWidth();
 
@@ -780,8 +780,8 @@ module api.liveedit {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     }
                     else {
-                        var layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>regionView.getComponentViewByIndex(
-                            firstLevelOfPath.getComponentIndex());
+                        const view = regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        const layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>view;
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
                     }
                 }
@@ -901,8 +901,11 @@ module api.liveedit {
 
                 if (itemType && itemType.isComponentType()) {
                     if (component) {
-                        var itemViewConfig = new CreateItemViewConfig<PageView, Component>().setParentView(this).setData(
-                            component).setElement(childElement).setParentElement(parentElement ? parentElement : this);
+                        const itemViewConfig = new CreateItemViewConfig<PageView, Component>()
+                            .setParentView(this)
+                            .setData(component)
+                            .setElement(childElement)
+                            .setParentElement(parentElement ? parentElement : this);
                         componentView = <ComponentView<Component>> itemType.createView(itemViewConfig);
 
                         this.registerFragmentComponentView(componentView);

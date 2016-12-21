@@ -24,16 +24,35 @@ module api.util.htmlarea.editor {
         private customToolConfig: any;
         private editableSourceCode: boolean;
 
-        private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
+        private tools: string = [
+            "styleselect",
+            "alignleft aligncenter alignright alignjustify",
+            "bullist numlist outdent indent",
+            "charmap anchor image macro link unlink",
+            "table",
+            "pastetext"
+        ].join(" | ");
 
-        private plugins: string[] = ['directionality', 'hr', 'preview', 'searchreplace', 'textcolor', 'visualchars', 'visualblocks',
-            'autoresize', 'table', 'fullscreen', 'charmap', 'paste'];
+        private plugins: string[] = [
+            'directionality',
+            'hr',
+            'preview',
+            'searchreplace',
+            'textcolor',
+            'visualchars',
+            'visualblocks',
+            'autoresize',
+            'table',
+            'fullscreen',
+            'charmap',
+            'paste'
+        ];
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
             this.editableSourceCode = value;
             return this;
         }
-        
+
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
             return this;

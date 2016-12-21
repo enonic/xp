@@ -105,7 +105,7 @@ module api.ui.tags {
             var searchSuggestionHandler = api.util.AppHelper.debounce((searchString: string) => {
                 this.searchSuggestions(searchString);
             }, 300, false);
-            
+
             this.textInput.onValueChanged((event: api.ValueChangedEvent) => {
                 var searchString = event.getNewValue();
 

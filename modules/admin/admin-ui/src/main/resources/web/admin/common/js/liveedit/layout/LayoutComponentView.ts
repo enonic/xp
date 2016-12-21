@@ -66,7 +66,8 @@ module api.liveedit.layout {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     }
                     else {
-                        var layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        const index = firstLevelOfPath.getComponentIndex();
+                        const layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(index);
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
                     }
                 }
@@ -81,7 +82,7 @@ module api.liveedit.layout {
             if (!this.regionViews) {
                 return;
             }
-            
+
             var regions = layoutComponent.getRegions().getRegions();
             this.regionViews.forEach((regionView: RegionView, index: number) => {
                 var region = regions[index];

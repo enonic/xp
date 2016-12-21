@@ -53,10 +53,6 @@ module api.content.form.inputtype.geo {
             input.resetBaseValues();
         }
 
-
-        availableSizeChanged() {
-        }
-
         valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.GEO_POINT);
         }

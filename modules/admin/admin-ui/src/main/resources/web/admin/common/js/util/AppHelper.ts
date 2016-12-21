@@ -82,7 +82,8 @@ module api.util {
             // Prevent focus loss on mouse down
             if (preventMouseDown) {
                 element.onMouseDown((e) => {
-                    if ((<HTMLElement>e.target).tagName.toLowerCase() !== "input") { // if click is inside of input then focus will remain in it and no need to prevent default
+                    // if click is inside of input then focus will remain in it and no need to prevent default
+                    if ((<HTMLElement>e.target).tagName.toLowerCase() !== "input") {
                         e.preventDefault();
                     }
                 });

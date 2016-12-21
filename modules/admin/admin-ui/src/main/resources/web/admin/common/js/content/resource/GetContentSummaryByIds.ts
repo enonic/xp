@@ -1,8 +1,9 @@
 module api.content.resource {
 
     import BatchContentResult = api.content.resource.result.BatchContentResult;
-    
-    export class GetContentSummaryByIds extends ContentResourceRequest<BatchContentResult<api.content.json.ContentSummaryJson>, ContentSummary[]> {
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
+
+    export class GetContentSummaryByIds extends ContentResourceRequest<BatchContentResult<ContentSummaryJson>, ContentSummary[]> {
 
         private ids: ContentId[];
 
@@ -24,7 +25,7 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<ContentSummary[]> {
             if (this.ids && this.ids.length > 0) {
-                return this.send().then((response: api.rest.JsonResponse<BatchContentResult<api.content.json.ContentSummaryJson>>) => {
+                return this.send().then((response: api.rest.JsonResponse<BatchContentResult<ContentSummaryJson>>) => {
                     return ContentSummary.fromJsonArray(response.getResult().contents);
                 });
             } else {

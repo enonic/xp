@@ -121,7 +121,8 @@ module api.content.page.region {
         }
     }
 
-    export class DescriptorBasedComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent> extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+    export class DescriptorBasedComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent>
+    extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
 
         descriptor: DescriptorKey;
 

@@ -184,7 +184,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
                     this.notifyLoaded();
                 })
-                
+
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -452,7 +452,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     private doSelectNodeByPath(nodeToSearchTargetIn: TreeNode<ContentSummaryAndCompareStatus>, targetPath: ContentPath) {
         this.expandNode(nodeToSearchTargetIn).then(() => {
-            if (this.isTargetNodeLevelReached(nodeToSearchTargetIn, targetPath)) { // if true means one of direct children of node is searched target node
+            // if true means one of direct children of node is searched target node
+            if (this.isTargetNodeLevelReached(nodeToSearchTargetIn, targetPath)) {
                 this.findChildNodeByPath(nodeToSearchTargetIn, targetPath).then((targetNode) => {
                     this.selectNode(targetNode.getDataId());
                     this.scrollToRow(this.getGrid().getDataView().getRowById(targetNode.getId()));
@@ -501,7 +502,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             }
         }
 
-        this.scrollToRow(this.getGrid().getDataView().getRowById(child.getId())); // scrolling to last child of node to make node load the rest
+        // scrolling to last child of node to make node load the rest
+        this.scrollToRow(this.getGrid().getDataView().getRowById(child.getId()));
 
         return null;
     }
@@ -520,7 +522,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         this.onDataChanged(dateChangedHandler);
 
-        let childNode = this.doFindChildNodeByPath(node, childNodePath); // check in case child was loaded between this method call and listener set
+        // check in case child was loaded between this method call and listener set
+        const childNode = this.doFindChildNodeByPath(node, childNodePath);
         if (childNode) {
             this.unDataChanged(dateChangedHandler);
             deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));

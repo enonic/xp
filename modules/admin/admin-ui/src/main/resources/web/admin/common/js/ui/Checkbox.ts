@@ -44,7 +44,7 @@ module api.ui {
         }
 
         private getInputAlignmentAsString(inputAlignment: InputAlignment = InputAlignment.LEFT): string {
-            
+
             return InputAlignment[inputAlignment].toLowerCase();
         }
 
@@ -160,9 +160,6 @@ module api.ui {
         checked: boolean;
 
         inputAlignment: InputAlignment;
-
-        constructor() {
-        }
 
         setLabelText(value: string): CheckboxBuilder {
             this.text = value;

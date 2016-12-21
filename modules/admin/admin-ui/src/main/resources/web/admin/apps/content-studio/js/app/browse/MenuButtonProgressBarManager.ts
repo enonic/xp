@@ -11,8 +11,7 @@ export class MenuButtonProgressBarManager {
 
     static updateProgressHandler(progressHandler: () => void) {
         if (MenuButtonProgressBarManager.progressBar) {
-            MenuButtonProgressBarManager.progressBar.unClicked(MenuButtonProgressBarManager.progressHandler || (() => {
-                }));
+            MenuButtonProgressBarManager.progressBar.unClicked(MenuButtonProgressBarManager.progressHandler || (() => { /* empty */ }));
             MenuButtonProgressBarManager.progressHandler = progressHandler;
             MenuButtonProgressBarManager.progressBar.onClicked(MenuButtonProgressBarManager.progressHandler);
         }

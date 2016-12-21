@@ -130,18 +130,27 @@ module api.content.site.inputtype.siteconfigurator {
 
         private createComboBox(input: api.form.Input, siteConfigProvider: SiteConfigProvider): SiteConfiguratorComboBox {
 
-            var value = this.getValueFromPropertyArray(this.getPropertyArray());
-            var siteConfigFormsToDisplay = value.split(';');
-            var comboBox = new SiteConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider, this.formContext,
-                value);
+            const value = this.getValueFromPropertyArray(this.getPropertyArray());
+            const siteConfigFormsToDisplay = value.split(';');
+            const maximum = input.getOccurrences().getMaximum() || 0;
+            const comboBox = new SiteConfiguratorComboBox(maximum, siteConfigProvider, this.formContext, value);
+
+            const forcedValidate = () => {
+                this.ignorePropertyChange = false;
+                this.validate(false);
+            };
+            const saveAndForceValidate = (selectedOption: SelectedOption<Application>) => {
+                const view: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
+                this.saveToSet(view.getSiteConfig(), selectedOption.getIndex());
+                forcedValidate();
+            };
 
             comboBox.onOptionDeselected((event: SelectedOptionEvent<Application>) => {
                 this.ignorePropertyChange = true;
 
                 this.getPropertyArray().remove(event.getSelectedOption().getIndex());
 
-                this.ignorePropertyChange = false;
-                this.validate(false);
+                forcedValidate();
             });
 
             comboBox.onOptionSelected((event: SelectedOptionEvent<Application>) => {
@@ -150,25 +159,16 @@ module api.content.site.inputtype.siteconfigurator {
                 this.ignorePropertyChange = true;
 
                 const selectedOption = event.getSelectedOption();
-                var key = selectedOption.getOption().displayValue.getApplicationKey();
-                if (!key) {
-                    return;
+                const key = selectedOption.getOption().displayValue.getApplicationKey();
+                if (key) {
+                    saveAndForceValidate(selectedOption);
                 }
-                var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
-                this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
-
-                this.ignorePropertyChange = false;
-                this.validate(false);
             });
 
             comboBox.onOptionMoved((selectedOption: SelectedOption<Application>) => {
                 this.ignorePropertyChange = true;
 
-                var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView> selectedOption.getOptionView();
-                this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
-
-                this.ignorePropertyChange = false;
-                this.validate(false);
+                saveAndForceValidate(selectedOption);
             });
 
             comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {

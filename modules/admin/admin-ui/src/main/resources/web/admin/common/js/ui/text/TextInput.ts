@@ -22,7 +22,7 @@ module api.ui.text {
             if (className) {
                 this.addClass(className);
             }
-            
+
             if (size) {
                 this.addClassEx(size);
             }

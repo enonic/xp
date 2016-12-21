@@ -86,6 +86,7 @@ module api.form {
         }
 
         protected initValidationMessageBlock() {
+            // must be implemented by children
         }
 
         getDataPath(): api.data.PropertyPath {
@@ -113,6 +114,7 @@ module api.form {
         }
 
         protected extraValidation(validationRecording: ValidationRecording) {
+            // must be implemented by children
         }
 
         protected subscribeOnItemEvents() {

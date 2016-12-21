@@ -83,9 +83,11 @@ module api.ui.time {
         }
 
         protected handleShownEvent() {
+            // must be implemented by children
         }
 
         protected initData(builder: any) {
+            // must be implemented by children
         }
 
         protected initPopup(builder: any) {

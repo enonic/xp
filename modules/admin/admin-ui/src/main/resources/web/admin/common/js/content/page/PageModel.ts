@@ -1,6 +1,7 @@
 module api.content.page {
 
     import PropertyTree = api.data.PropertyTree;
+    import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 
     export class SetController {
 
@@ -102,7 +103,7 @@ module api.content.page {
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
-        private componentPropertyChangedListeners: {(event: api.content.page.region.ComponentPropertyChangedEvent):void}[] = [];
+        private componentPropertyChangedListeners: {(event: ComponentPropertyChangedEvent):void}[] = [];
 
         private customizeChangedListeners: {(value: boolean): void}[] = [];
 
@@ -149,7 +150,7 @@ module api.content.page {
                     this.initializePageFromDefault(this);
                 }
 
-                this.componentPropertyChangedListeners.forEach((listener: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) => {
+                this.componentPropertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent) => void) => {
                     listener(event);
                 });
             }
@@ -389,7 +390,8 @@ module api.content.page {
          * NoController:        Content is:
          *                      1. PageTemplate with no controller set
          *                      2. Content that has no Page set and no any template that can be used as default
-         *                      3. Content that has a Page set with at Page.template set but template was deleted or updated to not support content's type
+         *                      3. Content that has a Page set with at Page.template set but template was deleted
+         *                         or updated to not support content's type
          */
         getPage(): Page {
 
@@ -576,23 +578,23 @@ module api.content.page {
             })
         }
 
-        onComponentPropertyChangedEvent(listener: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) {
+        onComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners.push(listener);
         }
 
-        unComponentPropertyChangedEvent(listener: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) {
+        unComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners =
-                this.componentPropertyChangedListeners.filter((curr: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) => {
+                this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent) => void) => {
                     return listener != curr;
                 });
         }
 
-        onCustomizeChanged(listener: (value: boolean)=>void) {
+        onCustomizeChanged(listener: (value: boolean) => void) {
             this.customizeChangedListeners.push(listener);
         }
 
-        unCustomizeChanged(listener: (value: boolean)=>void) {
-            this.customizeChangedListeners = this.customizeChangedListeners.filter((curr: (value: boolean)=>void) => {
+        unCustomizeChanged(listener: (value: boolean) => void) {
+            this.customizeChangedListeners = this.customizeChangedListeners.filter((curr: (value: boolean) => void) => {
                 return listener != curr;
             });
         }

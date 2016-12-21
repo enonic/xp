@@ -133,7 +133,8 @@ module api.ui.mask {
 
         private triggerScroll(event: WheelEvent) {
             wemjq(this.masked.getHTMLElement()).stop().animate({
-                scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25 //converting ff wheel deltaY from lines to px (approximate)
+                // converting ff wheel deltaY from lines to px (approximate)
+                scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25
             }, 600 / Math.abs(event.deltaY), 'linear');
         }
 

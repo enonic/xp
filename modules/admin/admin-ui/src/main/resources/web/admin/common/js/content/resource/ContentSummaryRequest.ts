@@ -7,27 +7,30 @@ module api.content.resource {
     import FieldOrderExpr = api.query.expr.FieldOrderExpr;
     import OrderDirection = api.query.expr.OrderDirection;
     import ConstraintExpr = api.query.expr.ConstraintExpr;
+    import ContentQuery = api.content.query.ContentQuery;
+    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
 
-    export class ContentSummaryRequest extends api.rest.ResourceRequest<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary[]> {
+    export class ContentSummaryRequest extends api.rest.ResourceRequest<ContentQueryResultJson<ContentSummaryJson>, ContentSummary[]> {
 
         private path: ContentPath;
 
         private searchString: string = "";
 
-        private request: ContentQueryRequest<json.ContentSummaryJson, ContentSummary>;
+        private request: ContentQueryRequest<ContentSummaryJson, ContentSummary>;
 
         public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
 
         public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
         public static PATH_ASC = new FieldOrderExpr(new FieldExpr("_path"), OrderDirection.ASC);
-        
+
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSummaryRequest.SCORE_DESC, ContentSummaryRequest.MODIFIED_TIME_DESC];
 
         constructor() {
             super();
             this.request =
-                new ContentQueryRequest<json.ContentSummaryJson, ContentSummary>(new query.ContentQuery()).setExpand(api.rest.Expand.SUMMARY);
+                new ContentQueryRequest<ContentSummaryJson, ContentSummary>(new ContentQuery()).setExpand(api.rest.Expand.SUMMARY);
         }
 
         getSearchString(): string {
@@ -50,7 +53,7 @@ module api.content.resource {
             return this.request.getParams();
         }
 
-        send(): wemQ.Promise<api.rest.JsonResponse<json.ContentQueryResultJson<json.ContentSummaryJson>>> {
+        send(): wemQ.Promise<api.rest.JsonResponse<ContentQueryResultJson<ContentSummaryJson>>> {
             this.buildSearchQueryExpr();
 
             return this.request.send();
@@ -60,7 +63,7 @@ module api.content.resource {
             this.buildSearchQueryExpr();
 
             return this.request.sendAndParse().then(
-                (queryResult: api.content.resource.result.ContentQueryResult<ContentSummary,json.ContentSummaryJson>) => {
+                (queryResult: api.content.resource.result.ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                     return queryResult.getContents();
                 });
         }
@@ -100,7 +103,7 @@ module api.content.resource {
         protected getDefaultOrder(): OrderExpr[] {
             return ContentSummaryRequest.DEFAULT_ORDER;
         }
-        
+
         protected createSearchExpression(): ConstraintExpr {
             return new api.query.PathMatchExpressionBuilder()
                 .setSearchString(this.searchString)

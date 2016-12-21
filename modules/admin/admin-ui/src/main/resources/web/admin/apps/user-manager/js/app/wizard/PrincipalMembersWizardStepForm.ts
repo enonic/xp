@@ -23,8 +23,7 @@ export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepFor
     constructor(loadedHandler?: Function) {
         super();
 
-        loadedHandler = loadedHandler || (() => {
-            });
+        loadedHandler = loadedHandler || (() => { /* empty */ });
         this.loader =
             new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).skipPrincipals([PrincipalKey.ofAnonymous()]);
 

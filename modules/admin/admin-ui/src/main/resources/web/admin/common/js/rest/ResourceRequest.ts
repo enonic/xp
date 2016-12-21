@@ -38,11 +38,8 @@ module api.rest {
             this.heavyOperation = value;
         }
 
-        /*
-         * Override to ensure any validation of ResourceRequest before sending.
-         */
         validate() {
-
+            // Override to ensure any validation of ResourceRequest before sending.
         }
 
         send(): wemQ.Promise<JsonResponse<RAW_JSON_TYPE>> {

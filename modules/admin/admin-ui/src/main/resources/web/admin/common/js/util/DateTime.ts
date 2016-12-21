@@ -74,13 +74,17 @@ module api.util {
         }
 
         dateToString(): string {
-            return this.year + DateTime.DATE_SEPARATOR + this.padNumber(this.month + 1) + DateTime.DATE_SEPARATOR + this.padNumber(this.day);
+            return this.year +
+                   DateTime.DATE_SEPARATOR + this.padNumber(this.month + 1) +
+                   DateTime.DATE_SEPARATOR + this.padNumber(this.day);
         }
 
         timeToString(): string {
             var fractions = this.fractions ? DateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
 
-            return this.padNumber(this.hours) + DateTime.TIME_SEPARATOR + this.padNumber(this.minutes) + DateTime.TIME_SEPARATOR + this.padNumber(this.seconds ? this.seconds : 0) + fractions;
+            return this.padNumber(this.hours) + DateTime.TIME_SEPARATOR +
+                   this.padNumber(this.minutes) + DateTime.TIME_SEPARATOR +
+                   this.padNumber(this.seconds ? this.seconds : 0) + fractions;
         }
 
         /** Returns date in ISO format. Month value is incremented because ISO month range is 1-12, whereas JS Date month range is 0-11 */
@@ -104,7 +108,13 @@ module api.util {
         }
 
         toDate(): Date {
-            return DateHelper.parseLongDateTime(DateTime.trimTZ(this.toString()), DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
+            return DateHelper.parseLongDateTime(
+                DateTime.trimTZ(this.toString()),
+                DateTime.DATE_TIME_SEPARATOR,
+                DateTime.DATE_SEPARATOR,
+                DateTime.TIME_SEPARATOR,
+                DateTime.FRACTION_SEPARATOR
+            );
         }
 
         private padNumber(num: number, length: number = 2): string {
@@ -121,9 +131,17 @@ module api.util {
             if (StringHelper.isBlank(s)) {
                 return false;
             }
-            //matches 2015-02-29T12:05 or 2015-02-29T12:05:59 or 2015-02-29T12:05:59Z or 2015-02-29T12:05:59+01:00 or 2015-02-29T12:05:59.001+01:00
-            var re = /^(\d{2}|\d{4})(?:\-)?([0]{1}\d{1}|[1]{1}[0-2]{1})(?:\-)?([0-2]{1}\d{1}|[3]{1}[0-1]{1})(T)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\d{1})((:[0-5]{1}\d{1})(\.\d{3})?)?((\+|\-)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(:)([0-5]{1}\d{1})|(z|Z)|$)$/;
-            return re.test(s);
+            /*
+            matches:
+            2015-02-29T12:05
+            2015-02-29T12:05:59
+            2015-02-29T12:05:59Z
+            2015-02-29T12:05:59+01:00
+            2015-02-29T12:05:59.001+01:00
+            */
+            // tslint:disable-next-line:max-line-length
+            const regex = /^(\d{2}|\d{4})(?:\-)?([0]{1}\d{1}|[1]{1}[0-2]{1})(?:\-)?([0-2]{1}\d{1}|[3]{1}[0-1]{1})(T)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\d{1})((:[0-5]{1}\d{1})(\.\d{3})?)?((\+|\-)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(:)([0-5]{1}\d{1})|(z|Z)|$)$/;
+            return regex.test(s);
         }
 
         /**
@@ -145,13 +163,19 @@ module api.util {
                     date.setHours(date.getHours() - 1);
                 }
             } else {
-                var withoutTZ = DateTime.trimTZ(s);
-                date = DateHelper.parseLongDateTime(withoutTZ, DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
+                date = DateHelper.parseLongDateTime(
+                    DateTime.trimTZ(s),
+                    DateTime.DATE_TIME_SEPARATOR,
+                    DateTime.DATE_SEPARATOR,
+                    DateTime.TIME_SEPARATOR,
+                    DateTime.FRACTION_SEPARATOR
+                );
                 var offset = DateTime.parseOffset(s);
                 if(offset != null) {
                     timezone = Timezone.fromOffset(offset);
                 } else {
-                    // assume that if passed date string is not in UTC format and does not contain explicit offset (like '2015-02-29T12:05:59') - use zero offset timezone
+                    // assume that if passed date string is not in UTC format and does not contain explicit offset,
+                    // like '2015-02-29T12:05:59' - use zero offset timezone
                     timezone = Timezone.getZeroOffsetTimezone();
                 }
             }

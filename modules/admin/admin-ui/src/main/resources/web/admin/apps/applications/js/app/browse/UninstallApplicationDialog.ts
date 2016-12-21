@@ -13,7 +13,7 @@ export class UninstallApplicationDialog extends api.ui.dialog.ModalDialog {
 
     constructor(applications: Application[]) {
         super("Uninstall Applications");
-        
+
         this.applications = applications;
         this.addClass("uninstall-dialog");
 

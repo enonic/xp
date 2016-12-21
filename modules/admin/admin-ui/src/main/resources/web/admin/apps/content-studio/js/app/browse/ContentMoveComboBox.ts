@@ -6,13 +6,14 @@ import ContentSummary = api.content.ContentSummary;
 import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
 import ContentPath = api.content.ContentPath;
 import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
+import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
 
 export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<ContentSummary> {
 
     protected loader: MoveContentSummaryLoader;
 
     constructor() {
-        var richComboBoxBuilder: api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary>();
+        var richComboBoxBuilder: RichComboBoxBuilder<ContentSummary> = new RichComboBoxBuilder<ContentSummary>();
         richComboBoxBuilder
             .setMaximumOccurrences(1)
             .setComboBoxName("contentSelector")

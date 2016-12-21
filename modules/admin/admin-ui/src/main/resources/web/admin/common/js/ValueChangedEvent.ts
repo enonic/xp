@@ -19,7 +19,7 @@ module api {
         getNewValue(): string {
             return this.newValue;
         }
-        
+
         valuesAreEqual(): boolean {
             return this.oldValue === this.newValue;
         }

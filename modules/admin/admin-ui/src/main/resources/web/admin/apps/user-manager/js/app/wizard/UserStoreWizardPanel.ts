@@ -301,7 +301,8 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         };
 
         var principalDeletedHandler = (event: api.security.UserItemDeletedEvent) => {
-            if (!this.getPersistedItem() || !event.getPrincipals()) { // skip if user store is not persisted yet or if anything except users or roles was deleted
+            // skip if user store is not persisted yet or if anything except users or roles was deleted
+            if (!this.getPersistedItem() || !event.getPrincipals()) {
                 return;
             }
 

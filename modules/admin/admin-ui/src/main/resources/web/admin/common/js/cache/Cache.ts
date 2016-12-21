@@ -8,10 +8,6 @@ module api.cache {
 
         private loadedListeners: Function[] = [];
 
-        constructor() {
-
-        }
-
         getAll(): T[] {
             var all: T[] = [];
             for (var key in this.objectsByKey) {

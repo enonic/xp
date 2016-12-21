@@ -84,6 +84,7 @@ module api.ui.security {
         }
 
         setEditable(editable: boolean) {
+            // must be implemented by children
         }
 
         setOption(option: api.ui.selector.Option<Principal>) {

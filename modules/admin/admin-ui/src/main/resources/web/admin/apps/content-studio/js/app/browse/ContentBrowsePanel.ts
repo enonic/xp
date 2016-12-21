@@ -234,6 +234,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return !prevItem || !prevItem.getModel() || prevItem.getModel().getId() !== browseItem.getId();
     }
 
+    // tslint:disable-next-line:max-line-length
     private getFirstSelectedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
         var browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(!!fullSelection
                 ? fullSelection

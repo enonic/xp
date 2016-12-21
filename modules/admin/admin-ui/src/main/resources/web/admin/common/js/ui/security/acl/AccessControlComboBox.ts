@@ -223,9 +223,11 @@ module api.ui.security.acl {
         }
 
         onOptionMoved(listener: {(moved: SelectedOption<AccessControlEntry>): void;}) {
+            // must be implemented by children
         }
 
         unOptionMoved(listener: {(moved: SelectedOption<AccessControlEntry>): void;}) {
+            // must be implemented by children
         }
 
     }

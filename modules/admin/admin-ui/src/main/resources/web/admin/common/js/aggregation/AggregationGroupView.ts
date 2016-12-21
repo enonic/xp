@@ -1,5 +1,8 @@
 module api.aggregation {
 
+    import BucketAggregationView = api.aggregation.BucketAggregationView;
+    import AggregationSelection = api.aggregation.AggregationSelection;
+
     export class AggregationGroupView extends api.dom.DivEl {
 
         private name: string;
@@ -34,7 +37,7 @@ module api.aggregation {
         }
 
         initialize(): void {
-
+            // must be implemented by children
         }
 
         getAggregationViews(): api.aggregation.AggregationView[] {
@@ -53,16 +56,16 @@ module api.aggregation {
             return aggregation.getName() == this.name;
         }
 
-        getSelectedValuesByAggregationName(): api.aggregation.AggregationSelection[] {
+        getSelectedValuesByAggregationName(): AggregationSelection[] {
 
-            var aggregationSelections: api.aggregation.AggregationSelection[] = [];
+            var aggregationSelections: AggregationSelection[] = [];
 
-            this.aggregationViews.forEach((bucketAggregationView: api.aggregation.BucketAggregationView) => {
+            this.aggregationViews.forEach((bucketAggregationView: BucketAggregationView) => {
 
                 var selectedBuckets: api.aggregation.Bucket[] = bucketAggregationView.getSelectedValues();
 
                 if (selectedBuckets != null) {
-                    var aggregationSelection: api.aggregation.AggregationSelection = new api.aggregation.AggregationSelection(bucketAggregationView.getName());
+                    var aggregationSelection: AggregationSelection = new AggregationSelection(bucketAggregationView.getName());
                     aggregationSelection.setValues(selectedBuckets);
 
                     aggregationSelections.push(aggregationSelection);
@@ -117,9 +120,9 @@ module api.aggregation {
                     this.addAggregationView(api.aggregation.AggregationView.createAggregationView(aggregation, this));
                 }
                 else {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(existingAggregationView, api.aggregation.BucketAggregationView)) {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(existingAggregationView, BucketAggregationView)) {
 
-                        var bucketAggregationView: api.aggregation.BucketAggregationView = <api.aggregation.BucketAggregationView>existingAggregationView;
+                        var bucketAggregationView: BucketAggregationView = <BucketAggregationView>existingAggregationView;
                         bucketAggregationView.update(aggregation);
                     }
                     // Here be Metric-aggregations

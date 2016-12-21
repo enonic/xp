@@ -26,6 +26,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     protected subscribeOnEvents() {
+        // must be implemented by children
     }
 
     public setItem(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {

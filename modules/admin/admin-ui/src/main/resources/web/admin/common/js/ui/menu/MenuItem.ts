@@ -34,7 +34,7 @@ module api.ui.menu {
                 el.addClass("disabled");
             }
         }
-        
+
         isEnabled(): boolean {
             return this.action.isEnabled();
         }

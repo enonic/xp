@@ -6,6 +6,9 @@ import PageCUDRequest = api.content.page.PageCUDRequest;
 import CreatePageRequest = api.content.page.CreatePageRequest;
 import UpdatePageRequest = api.content.page.UpdatePageRequest;
 import DeletePageRequest = api.content.page.DeletePageRequest;
+import UpdateContentRequest = api.content.resource.UpdateContentRequest;
+
+type Producer = { (content: Content, viewedContent: Content): UpdateContentRequest; };
 
 export class UpdatePersistedContentRoutineContext {
 
@@ -18,7 +21,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
     private viewedContent: Content;
 
-    private updateContentRequestProducer: {(content: Content, viewedContent: Content): api.content.resource.UpdateContentRequest; };
+    private updateContentRequestProducer: Producer;
 
     private doneHandledContent = false;
 
@@ -30,8 +33,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
         this.viewedContent = viewedContent;
     }
 
-    public setUpdateContentRequestProducer(producer: {(content: Content,
-                                                       viewedContent: Content): api.content.resource.UpdateContentRequest; }): UpdatePersistedContentRoutine {
+    public setUpdateContentRequestProducer(producer: Producer): UpdatePersistedContentRoutine {
         this.updateContentRequestProducer = producer;
         return this;
     }

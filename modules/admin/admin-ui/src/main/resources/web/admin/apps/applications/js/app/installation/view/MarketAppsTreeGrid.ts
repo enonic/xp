@@ -315,7 +315,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             this.hideErrorPanel();
             this.mask();
         }
-        
+
         return MarketApplicationsFetcher.fetchChildren(this.getVersion(), this.installApplications, from,
             MarketAppsTreeGrid.MAX_FETCH_SIZE).then(
             (data: MarketApplicationResponse) => {
@@ -351,7 +351,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     private nodePassesFilterCondition(node: TreeNode<MarketApplication>): boolean {
         var app: MarketApplication = node.getData();
-        return app.isEmpty() ? true : this.appHasFilterEntry(app); // true for empty app because empty app is empty node that triggers loading
+        // true for empty app because empty app is empty node that triggers loading
+        return app.isEmpty() ? true : this.appHasFilterEntry(app);
     }
 
     private appHasFilterEntry(app: MarketApplication): boolean {

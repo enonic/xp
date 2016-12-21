@@ -155,6 +155,7 @@ module api.dom {
 
             if (this.parentElement && this.el.getHTMLElement().parentElement) {
                 if (!(this.parentElement.getHTMLElement() === this.el.getHTMLElement().parentElement )) {
+                    // tslint:disable-next-line:max-line-length
                     throw new Error("Illegal state: HTMLElement in parent Element is not the as the HTMLElement parent to this HTMLElement");
                 }
             }

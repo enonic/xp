@@ -29,7 +29,7 @@ module api.macro {
         getLoader(): MacrosLoader {
             return this.loader;
         }
-        
+
         createOption(val: MacroDescriptor): Option<MacroDescriptor> {
             return {
                 value: val.getKey().getRefString(),

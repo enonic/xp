@@ -20,7 +20,9 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {
 
-            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse());
+            const request = (applicationKey: ApplicationKey) => new GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse();
+
+            const promises = this.applicationKeys.map(request);
 
             return wemQ.all(promises).then((results: PartDescriptor[][]) => {
                 var all: PartDescriptor[] = [];

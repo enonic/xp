@@ -1,6 +1,6 @@
 module api.app.browse {
     import TreeGrid = api.ui.treegrid.TreeGrid;
-    
+
     export class BrowseItemPanel<M extends api.Equitable> extends api.ui.panel.DeckPanel {
 
         private itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;

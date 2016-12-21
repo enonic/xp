@@ -130,6 +130,7 @@
 
 ///<reference path='thumb/_module.ts' />
 ///<reference path='content/json/_module.ts' />
+///<reference path='content/query/_module.ts' />
 ///<reference path='content/attachment/_module.ts' />
 ///<reference path='content/event/_module.ts' />
 ///<reference path='content/resource/result/_module.ts' />
@@ -137,7 +138,6 @@
 ///<reference path='content/_module.ts' />
 ///<reference path='content/util/_module.ts' />
 ///<reference path='content/order/_module.ts' />
-///<reference path='content/query/_module.ts' />
 ///<reference path='content/image/_module.ts' />
 ///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />

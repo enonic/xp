@@ -7,6 +7,8 @@ module api.ui.security.acl {
     import UserStoreAccessControlEntry = api.security.acl.UserStoreAccessControlEntry;
     import UserStoreAccessControlEntryLoader = api.security.acl.UserStoreAccessControlEntryLoader;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
+    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
 
     export class UserStoreAccessControlComboBox extends api.ui.selector.combobox.RichComboBox<UserStoreAccessControlEntry> {
 
@@ -36,7 +38,9 @@ module api.ui.security.acl {
         }
     }
 
-    class UserStoreACESelectedOptionView extends UserStoreAccessControlEntryView implements api.ui.selector.combobox.SelectedOptionView<UserStoreAccessControlEntry> {
+    class UserStoreACESelectedOptionView
+    extends UserStoreAccessControlEntryView
+    implements SelectedOptionView<UserStoreAccessControlEntry> {
 
         private option: Option<UserStoreAccessControlEntry>;
 
@@ -57,7 +61,9 @@ module api.ui.security.acl {
 
     }
 
-    class UserStoreACESelectedOptionsView extends UserStoreAccessControlListView implements api.ui.selector.combobox.SelectedOptionsView<UserStoreAccessControlEntry> {
+    class UserStoreACESelectedOptionsView
+    extends UserStoreAccessControlListView
+    implements SelectedOptionsView<UserStoreAccessControlEntry> {
 
         private maximumOccurrences: number;
         private list: SelectedOption<UserStoreAccessControlEntry>[] = [];
@@ -232,9 +238,11 @@ module api.ui.security.acl {
         }
 
         onOptionMoved(listener: {(moved: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+            // must be implemented by children
         }
 
         unOptionMoved(listener: {(moved: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+            // must be implemented by children
         }
 
     }

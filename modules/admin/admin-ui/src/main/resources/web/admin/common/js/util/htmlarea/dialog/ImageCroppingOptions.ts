@@ -18,10 +18,6 @@ module api.util.htmlarea.dialog {
 
         static SKYSCRAPER: ImageCroppingOption = new ImageCroppingOption("skyscraper", 9, 21);
 
-        constructor() {
-
-        }
-
         static getOptions(): Option<ImageCroppingOption>[] {
 
             var options: Option<ImageCroppingOption>[] = [];

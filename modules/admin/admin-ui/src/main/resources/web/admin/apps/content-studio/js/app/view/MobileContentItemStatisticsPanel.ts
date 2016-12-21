@@ -24,7 +24,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private detailsToggleButton: MobileDetailsPanelToggleButton;
 
     private foldButton: MobilePreviewFoldButton;
-    
+
     constructor(browseActions: ContentTreeGridActions, detailsView: DetailsView) {
         super("mobile-content-item-statistics-panel");
 

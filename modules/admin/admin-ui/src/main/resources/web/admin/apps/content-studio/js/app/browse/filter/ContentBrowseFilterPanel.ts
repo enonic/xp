@@ -70,7 +70,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
         return [this.contentTypeAggregation, this.lastModifiedAggregation];
     }
-    
+
     protected appendExtraSection() {
         this.dependenciesSection = new DependenciesSection(this.removeDependencyItemCallback.bind(this));
         this.appendChild(this.dependenciesSection);
@@ -170,7 +170,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private handleDataSearchResult(contentQuery: ContentQuery,
                                    contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) {
-        this.getAggregations(contentQuery, contentQueryResult).then((aggregations: api.aggregation.Aggregation[]) => {
+        this.getAggregations(contentQuery, contentQueryResult).then((aggregations: Aggregation[]) => {
             this.updateAggregations(aggregations, true);
             this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
             this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
@@ -179,7 +179,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private handleNoSearchResultOnRefresh(contentQuery: ContentQuery) {
-        if (this.contentTypesAndRangeFiltersUsed(contentQuery)) { //remove content type facet from search if both content types and date are filtered
+        // remove content type facet from search if both content types and date are filtered
+        if (this.contentTypesAndRangeFiltersUsed(contentQuery)) {
             this.refreshDataAndHandleResponse(this.cloneContentQueryNoContentTypes(contentQuery));
         }
         else if (this.hasSearchStringSet()) { // if still no result and search text is set remove last modified facet
@@ -209,7 +210,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private getAggregations(contentQuery: ContentQuery,
-                            contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): wemQ.Promise<api.aggregation.Aggregation[]> {
+                            contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): wemQ.Promise<Aggregation[]> {
 
         var clonedContentQueryNoContentTypes: ContentQuery = this.cloneContentQueryNoContentTypes(contentQuery);
 
@@ -224,7 +225,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             });
     }
 
-    private combineAggregations(contentQueryResult, contentQueryResultNoContentTypesSelected): api.aggregation.Aggregation[] {
+    private combineAggregations(contentQueryResult, contentQueryResultNoContentTypesSelected): Aggregation[] {
         var contentTypesAggr = contentQueryResultNoContentTypesSelected.getAggregations().filter((aggregation) => {
             return aggregation.getName() === ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME;
         });
@@ -413,7 +414,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         contentQuery.addAggregationQuery(dateRangeAgg);
     }
 
-    private toggleAggregationsVisibility(aggregations: api.aggregation.Aggregation[]) {
+    private toggleAggregationsVisibility(aggregations: Aggregation[]) {
         aggregations.forEach((aggregation: api.aggregation.BucketAggregation) => {
             var aggregationIsEmpty = !aggregation.getBuckets().some((bucket: api.aggregation.Bucket) => {
                 if (bucket.docCount > 0) {

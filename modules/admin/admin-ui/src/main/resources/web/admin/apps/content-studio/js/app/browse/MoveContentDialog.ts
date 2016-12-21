@@ -23,7 +23,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
     constructor() {
         super("Move item with children");
-        
+
         this.addClass("move-content-dialog");
 
         this.contentPathSubHeader = new api.dom.H6El().addClass("content-path");

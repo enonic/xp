@@ -79,7 +79,7 @@ module api.ui.security.acl {
                         this.permissionSelector.setValue(this.getPermissionsValueFromAccess(Access[event.getNewValue()]));
                     }
                 });
-                
+
                 if (this.accessSelector.getValue() == Access.CUSTOM) {
                     this.permissionSelector.show();
                 }
