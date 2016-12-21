@@ -714,7 +714,16 @@ public final class ContentResource
             setContainsRemovable( anyRemovable ).
             setRequestedContents( requestedContentIds ).
             setDependentContents( dependentContentIds ).
+            setContainsInvalid( !this.isValidContent( results ) ).
             build();
+    }
+
+    private boolean isValidContent( final CompareContentResults compareResults )
+    {
+        return contentService.isValidContent(
+            ContentIds.from( compareResults.stream().filter( ( result ) -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
+                map( CompareContentResult::getContentId ).
+                collect( Collectors.toList() ) ) );
     }
 
     private Boolean isAnyContentRemovableFromPublish( final ContentIds contentIds )
@@ -748,7 +757,7 @@ public final class ContentResource
                     iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
-            collect( Collectors.toList() );
+                collect( Collectors.toList() );
     }
 
     @POST
