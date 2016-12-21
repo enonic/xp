@@ -290,6 +290,10 @@ module api.content.image {
             })
         }
 
+        protected isSameValueUpdateAllowed(): boolean {
+            return true;
+        }
+
         onEditModeChanged(listener: (edit: boolean, crop: Rect, zoom: Rect, focus: Point) => void) {
             this.editModeListeners.push(listener);
         }

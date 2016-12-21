@@ -23,7 +23,8 @@ module api.util.htmlarea.dialog {
         private previewResolved: boolean = false;
         private macroPreview: MacroPreview;
         private data: PropertySet;
-        private macroLoadMask: api.ui.mask.LoadMask;
+        private previewPanelLoadMask: api.ui.mask.LoadMask;
+        private configPanelLoadMask: api.ui.mask.LoadMask;
 
         private formValueChangedHandler: () => void;
 
@@ -35,8 +36,10 @@ module api.util.htmlarea.dialog {
             this.addItem(MacroDockedPanel.CONFIGURATION_TAB_NAME, true, this.createConfigurationPanel());
             this.addItem(MacroDockedPanel.PREVIEW_TAB_NAME, true, this.createPreviewPanel());
 
-            this.macroLoadMask = new api.ui.mask.LoadMask(this.previewPanel);
-            this.appendChild(this.macroLoadMask);
+            this.previewPanelLoadMask = new api.ui.mask.LoadMask(this.previewPanel);
+            this.configPanelLoadMask = new api.ui.mask.LoadMask(this.configPanel);
+            this.appendChild(this.previewPanelLoadMask);
+            this.appendChild(this.configPanelLoadMask);
 
             this.handleConfigPanelShowEvent();
             this.handlePreviewPanelShowEvent();
@@ -63,6 +66,7 @@ module api.util.htmlarea.dialog {
                 if (this.validateMacroForm()) {
                     if (!!this.macroDescriptor && !this.previewResolved) {
                         this.previewPanel.removeChildren();
+                        this.previewPanelLoadMask.show();
                         this.fetchPreview().then((macroPreview: MacroPreview) => {
                             this.previewResolved = true;
                             this.macroPreview = macroPreview;
@@ -71,7 +75,7 @@ module api.util.htmlarea.dialog {
                             api.DefaultErrorHandler.handle(reason);
                             this.renderPreviewWithMessage(MacroDockedPanel.PREVIEW_LOAD_ERROR_MESSAGE);
                         }).finally(() => {
-                            this.macroLoadMask.hide();
+                            this.previewPanelLoadMask.hide();
                         });
                     } else {
                         this.notifyPanelRendered();
@@ -89,8 +93,6 @@ module api.util.htmlarea.dialog {
         }
 
         private fetchPreview(): wemQ.Promise<MacroPreview> {
-            this.macroLoadMask.show();
-
             return new api.macro.resource.GetPreviewRequest(
                 new api.data.PropertyTree(this.data),
                 this.macroDescriptor.getKey(),
@@ -99,8 +101,6 @@ module api.util.htmlarea.dialog {
         }
 
         private fetchMacroString(): wemQ.Promise<string> {
-            this.macroLoadMask.show();
-
             return new api.macro.resource.GetPreviewStringRequest(new api.data.PropertyTree(this.data),
                 this.macroDescriptor.getKey()).sendAndParse();
         }
@@ -110,12 +110,13 @@ module api.util.htmlarea.dialog {
             if (this.previewResolved) {
                 deferred.resolve(this.macroPreview.getMacroString());
             } else {
+                this.configPanelLoadMask.show();
                 this.fetchMacroString().then((macroString: string) => {
                     deferred.resolve(macroString);
                 }).catch((reason: any) => {
                     deferred.reject(reason);
                 }).finally(() => {
-                    this.macroLoadMask.hide();
+                    this.configPanelLoadMask.hide();
                 });
             }
 

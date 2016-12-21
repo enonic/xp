@@ -32,7 +32,13 @@
         font-family: 'icomoon';
         pointer-events: none;
         opacity: 0.5;
+      }
+    }
+  }
 
+  &.locked:not(.no-publish) {
+    .dialog-buttons {
+      button:not(.cancel-button-bottom) {
         &:after {
           .animation(rotate360, .5s, .0s, linear);
           content: "\e007";
@@ -51,18 +57,20 @@
   .browse-selection-item {
     padding: 4px 0px;
     margin: 0px;
-    display: block;
+    .flexbox();
+
+    .viewer {
+      .flex(5);
+      max-width: 80%;
+    }
 
     .status {
+      .flex(1);
       margin-right: 10px;
-      display: inline-block;
-      float: right;
       text-align: right;
-
-      &.equal {
-        color: @admin-green;
-      }
     }
+
+    .content-status-mixin();
   }
 
   .dialog-content {
@@ -131,6 +139,7 @@
           .remove {
             display: none;
             height: 16px;
+            width: 24px;
           }
 
           &.removable {
@@ -167,8 +176,6 @@
           }
 
           .dependant-item-viewer {
-            width: calc(~'100% - 97px');
-
             &.pending-delete .@{_COMMON_PREFIX}names-view {
               .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
                 text-decoration: line-through;
@@ -195,7 +202,7 @@
               }
 
               .@{_COMMON_PREFIX}names-view {
-                margin-left: 37px;
+                margin-left: 30px;
               }
             }
 

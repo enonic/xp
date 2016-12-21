@@ -180,11 +180,8 @@ module api.content.page {
 
         setCustomized(value: boolean) {
             const oldValue = this.customized;
-            this.customized = value;
 
-            if (!oldValue && value) {
-                this.setController(new SetController(this).setDescriptor(this.templateDescriptor || this.getDefaultPageDescriptor()));
-            }
+            this.customized = value;
 
             if (oldValue != value) {
                 this.notifyCustomizeChanged(this.customized);
@@ -217,22 +214,20 @@ module api.content.page {
         }
 
         setController(setController: SetController): PageModel {
-            var oldControllerKey = this.controller ? this.controller.getKey() : null;
-            var newControllerKey = setController.descriptor ? setController.descriptor.getKey() : null;
-            var controllerChanged = !api.ObjectHelper.equals(oldControllerKey, newControllerKey);
+            let oldControllerKey = this.controller ? this.controller.getKey() : null;
+            let newControllerKey = setController.descriptor ? setController.descriptor.getKey() : null;
+            let controllerChanged = !api.ObjectHelper.equals(oldControllerKey, newControllerKey);
 
             this.setControllerData(setController);
 
-            if (setController.descriptor) {
-                this.setMode(PageMode.FORCED_CONTROLLER);
-            }
-            else {
-                this.setMode(PageMode.NO_CONTROLLER);
-            }
+            this.setMode(setController.descriptor ? PageMode.FORCED_CONTROLLER : PageMode.NO_CONTROLLER);
 
-
-            if (!this.isPageTemplate() && !this.isCustomized()) {
+            if (!this.isPageTemplate()) {
                 this.setCustomized(true);
+            }
+
+            if (!oldControllerKey && this.templateDescriptor) {
+                oldControllerKey = this.templateDescriptor.getKey();
             }
 
             this.template = null;
@@ -271,6 +266,13 @@ module api.content.page {
                 this.unregisterFragmentListeners(this.fragment);
                 this.registerFragmentListeners(this.fragment);
             }
+        }
+
+        setTemplateContoller() {
+            this.setController(
+                new SetController(this).
+                setDescriptor(this.templateDescriptor || this.getDefaultPageDescriptor())
+            );
         }
 
         setAutomaticTemplate(eventSource?: any, ignoreRegionChanges: boolean = false): PageModel {
@@ -431,7 +433,7 @@ module api.content.page {
                 }
             }
             else if (this.mode == PageMode.FRAGMENT) {
-                return new PageBuilder().setRegions(this.regions).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
+                return new PageBuilder().setRegions(null).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
                     this.fragment).build();
             }
             else {

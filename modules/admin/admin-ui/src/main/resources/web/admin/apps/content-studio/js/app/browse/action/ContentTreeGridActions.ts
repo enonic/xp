@@ -144,7 +144,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             unpublishEnabled = anyPublished;
         }
 
-        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
         this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(false);
@@ -156,8 +156,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
         this.PUBLISH_CONTENT.setVisible(publishEnabled);
         this.UNPUBLISH_CONTENT.setVisible(!publishEnabled);
-
-        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {

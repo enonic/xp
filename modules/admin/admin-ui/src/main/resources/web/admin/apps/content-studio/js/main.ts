@@ -29,6 +29,7 @@ import Content = api.content.Content;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import ImgEl = api.dom.ImgEl;
+import LostConnectionDetector = api.system.LostConnectionDetector;
 
 declare var CONFIG;
 
@@ -46,9 +47,9 @@ function getApplication(): api.app.Application {
     return application;
 }
 
-function startLostConnectionDetector() {
+function startLostConnectionDetector(): LostConnectionDetector {
     let messageId;
-    let lostConnectionDetector = new api.system.LostConnectionDetector();
+    let lostConnectionDetector = new LostConnectionDetector();
     lostConnectionDetector.setAuthenticated(true);
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
@@ -63,6 +64,7 @@ function startLostConnectionDetector() {
     });
 
     lostConnectionDetector.startPolling();
+    return lostConnectionDetector;
 }
 
 function initToolTip() {
@@ -173,11 +175,11 @@ function startApplication() {
     let serverEventsListener = new api.app.ServerEventsListener([application]);
     serverEventsListener.start();
 
-    startLostConnectionDetector();
+    let connectionDetector = startLostConnectionDetector();
 
     let wizardParams = ContentWizardPanelParams.fromApp(application);
     if (wizardParams) {
-        startContentWizard(wizardParams);
+        startContentWizard(wizardParams, connectionDetector);
     } else {
         startContentApplication(application);
     }
@@ -220,7 +222,7 @@ function startApplication() {
     api.content.event.ContentServerEventsHandler.getInstance().start();
 }
 
-function startContentWizard(wizardParams: ContentWizardPanelParams) {
+function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDetector: LostConnectionDetector) {
     let wizard = new ContentWizardPanel(wizardParams);
     let iconUrlResolver = new ContentIconUrlResolver();
 
@@ -244,7 +246,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams) {
     wizard.onClosed(event => window.close());
 
     api.dom.WindowDOM.get().onBeforeUnload((event) => {
-        if (wizard.isContentDeleted()) {
+        if (wizard.isContentDeleted() || !connectionDetector.isConnected() || !connectionDetector.isAuthenticated()) {
             return;
         }
         if (wizard.hasUnsavedChanges()) {

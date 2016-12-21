@@ -492,5 +492,13 @@ module api.liveedit.text {
         private isEditorReady(): boolean {
             return !!this.htmlAreaEditor || this.isInitializingEditor;
         }
+
+        extractText(): string {
+            if(this.htmlAreaEditor) {
+                return this.htmlAreaEditor.getContent({format: 'text'}).trim();
+            }
+
+            return wemjq(this.getHTMLElement()).text().trim();
+        }
     }
 }

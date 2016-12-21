@@ -85,6 +85,15 @@ import Toolbar = api.ui.toolbar.Toolbar;
 import CycleButton = api.ui.button.CycleButton;
 
 import Permission = api.security.acl.Permission;
+import Region = api.content.page.region.Region;
+import Component = api.content.page.region.Component;
+import ImageComponent = api.content.page.region.ImageComponent;
+import ImageComponentType = api.content.page.region.ImageComponentType;
+import ObjectHelper = api.ObjectHelper;
+import LayoutComponentType = api.content.page.region.LayoutComponentType;
+import LayoutComponent = api.content.page.region.LayoutComponent;
+import FragmentComponent = api.content.page.region.FragmentComponent;
+import FragmentComponentType = api.content.page.region.FragmentComponentType;
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -680,7 +689,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.updateWizardHeader(content);
         this.updateWizardStepForms(content, unchangedOnly);
-        this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
+        this.updateMetadataAndMetadataStepForms(content, unchangedOnly);
         this.resetLastFocusedElement();
     }
 
@@ -732,9 +741,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 if (this.isCurrentContentId(content.getContentId())) {
 
                     this.persistedContentCompareStatus = this.currentContentCompareStatus = content.getCompareStatus();
-                    this.getContentWizardToolbarPublishControls().
-                        setPublishStatus(content.getPublishStatus()).
-                        setCompareStatus(this.currentContentCompareStatus);
+                    this.getContentWizardToolbarPublishControls().setPublishStatus(content.getPublishStatus()).setCompareStatus(
+                        this.currentContentCompareStatus);
                     this.showScheduleWizardStep(this.currentContentCompareStatus);
 
 
@@ -751,8 +759,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 if (compareStatus != undefined) {
                     this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
-                    this.getContentWizardToolbarPublishControls().
-                        setCompareStatus(compareStatus);
+                    this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
                     this.showScheduleWizardStep(compareStatus);
                 }
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
@@ -774,17 +781,20 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         this.resetWizard();
                     }
                 });
-            } else if (this.doHtmlAreasContainId(contentId.toString())) {   // Check if there are html areas in form that contain event.getContentId() that was updated
-                new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
-                    this.updateWizard(content, true);
-                    if (this.isEditorEnabled()) {
-                        let liveFormPanel = this.getLivePanel();
-                        liveFormPanel.skipNextReloadConfirmation(true);
-                        liveFormPanel.loadPage(false);
+            } else {
+                this.doComponentsContainId(contentId).then((contains) => {
+                    if (contains) {
+                        new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
+                            this.updateWizard(content, true);
+                            if (this.isEditorEnabled()) {
+                                let liveFormPanel = this.getLivePanel();
+                                liveFormPanel.skipNextReloadConfirmation(true);
+                                liveFormPanel.loadPage(false);
+                            }
+                        });
                     }
                 });
             }
-
         };
 
         var sortedHandler = (data: ContentSummaryAndCompareStatus[]) => {
@@ -794,9 +804,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 return this.isCurrentContentId(sorted.getContentId());
             });
             if (wasSorted) {
-                this.getContentWizardToolbarPublishControls().
-                    setPublishStatus(data[indexOfCurrentContent].getPublishStatus()).
-                    setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
+                this.getContentWizardToolbarPublishControls()
+                    .setPublishStatus(data[indexOfCurrentContent].getPublishStatus())
+                    .setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
                 this.showScheduleWizardStep(data[indexOfCurrentContent].getCompareStatus());
             }
         };
@@ -873,6 +883,60 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         }
     }
 
+    private doComponentsContainId(contentId: ContentId): wemQ.Promise<boolean> {
+        if (this.doHtmlAreasContainId(contentId.toString()) ||
+            this.doesFragmentContainId(this.getPersistedItem().getPage(), contentId)) {
+            return wemQ(true);
+        }
+
+        return this.doImageComponentsContainId(contentId);
+    }
+
+    private doesFragmentContainId(fragmentPage: Page, id: ContentId): boolean {
+        let containsId = false;
+
+        if (fragmentPage) {
+            let fragmentCmp = fragmentPage.getFragment();
+            if (!!fragmentCmp && ObjectHelper.iFrameSafeInstanceOf(fragmentCmp.getType(), ImageComponentType)) {
+                containsId = (<ImageComponent>fragmentCmp).getImage().equals(id);
+            }
+        }
+        return containsId;
+    }
+
+    private doImageComponentsContainId(id: ContentId): wemQ.Promise<boolean> {
+        let page = this.getPersistedItem().getPage();
+        let fragments: ContentId[] = [];
+        let containsId = this.doRegionsContainId(page.getRegions().getRegions(), id, fragments);
+        if (!containsId && fragments.length > 0) {
+            return wemQ.all(fragments.map(fragmentId => new GetContentByIdRequest(fragmentId).sendAndParse()))
+                .then((fragmentContents: Content[]) => {
+                    return fragmentContents.some((fragmentContent: Content) => {
+                        return this.doesFragmentContainId(fragmentContent.getPage(), id);
+                    })
+                });
+        } else {
+            return wemQ(containsId);
+        }
+    }
+
+    private doRegionsContainId(regions: Region[], id: ContentId, fragments: ContentId[] = []): boolean {
+        return regions.some((region: Region) => {
+            return region.getComponents().some((component: Component) => {
+                if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), FragmentComponentType)) {
+                    fragments.push((<FragmentComponent>component).getFragment());
+                }
+                if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), ImageComponentType)) {
+                    return (<ImageComponent>component).getImage().equals(id);
+                }
+                if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), LayoutComponentType)) {
+                    return this.doRegionsContainId((<LayoutComponent>component).getRegions().getRegions(), id, fragments);
+                }
+                return false;
+            })
+        });
+    }
+
     private doHtmlAreasContainId(id: string): boolean {
         var areas = this.getHtmlAreasInForm(this.getContentType().getForm()),
             data: api.data.PropertyTree = this.getPersistedItem().getContentData();
@@ -923,9 +987,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 wizardHeader.disableNameGeneration(this.currentContentCompareStatus !== CompareStatus.NEW);
 
-                publishControls.setPublishStatus(summaryAndStatus.getPublishStatus()).
-                    setCompareStatus(this.currentContentCompareStatus).
-                    setLeafContent(!this.getPersistedItem().hasChildren());
+                publishControls.setPublishStatus(summaryAndStatus.getPublishStatus()).setCompareStatus(
+                    this.currentContentCompareStatus).setLeafContent(!this.getPersistedItem().hasChildren());
             });
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
@@ -1087,8 +1150,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 schemas.forEach((schema: Mixin, index: number) => {
                     var extraData = content.getExtraData(schema.getMixinName());
                     if (!extraData) {
-                        extraData = new ExtraData(schema.getMixinName(), new PropertyTree());
-                        content.getAllExtraData().push(extraData);
+                        extraData = this.enrichWithExtraData(content, schema.getMixinName());
                     }
                     var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
                     var metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
@@ -1097,6 +1159,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     data.onChanged(this.dataChangedListener);
 
                     formViewLayoutPromises.push(metadataFormView.layout(formContext, data, metadataForm));
+
+                    this.synchPersistedItemWithMixinData(schema.getMixinName(), data);
                 });
 
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
@@ -1121,6 +1185,27 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 });
             });
         });
+    }
+
+    // synch persisted content extra data with data from mixins
+    // when rendering form - we may add extra fields from mixins; as this is intended action from XP, not user - it should be present in persisted content
+    private synchPersistedItemWithMixinData(mixinName: MixinName, mixinData: PropertyTree) {
+        var persistedContent = this.getPersistedItem(),
+            extraData = persistedContent.getExtraData(mixinName);
+        if (!extraData) { // ensure ExtraData object corresponds to each step form
+            this.enrichWithExtraData(persistedContent, mixinName, mixinData.copy());
+        } else {
+            var diff = extraData.getData().diff(mixinData);
+            diff.added.forEach((property: api.data.Property) => {
+                extraData.getData().addProperty(property.getName(), property.getValue());
+            });
+        }
+    }
+
+    private enrichWithExtraData(content: Content, mixinName: MixinName, propertyTree?: PropertyTree): ExtraData {
+        var extraData = new ExtraData(mixinName, propertyTree ? propertyTree.copy() : new PropertyTree());
+        content.getAllExtraData().push(extraData);
+        return extraData;
     }
 
     private setupWizardLiveEdit() {
@@ -1611,8 +1696,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 var mixinName = new MixinName(key);
                 var extraData = contentCopy.getExtraData(mixinName);
                 if (!extraData) { // ensure ExtraData object corresponds to each step form
-                    extraData = new ExtraData(mixinName, new PropertyTree());
-                    contentCopy.getAllExtraData().push(extraData);
+                    extraData = this.enrichWithExtraData(contentCopy, mixinName);
                 }
 
                 let form = this.metadataStepFormByName[key];
@@ -1622,6 +1706,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 data.onChanged(this.dataChangedListener);
 
                 form.update(data, unchangedOnly);
+
+                this.synchPersistedItemWithMixinData(mixinName, data);
             }
         }
     }

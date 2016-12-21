@@ -15,6 +15,7 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.repository.RepositoryId;
 
 public class NodeEvents
 {
@@ -91,6 +92,7 @@ public class NodeEvents
             put( "id", sourceNode.id().toString() ).
             put( "path", sourceNode.path().toString() ).
             put( "branch", ContextAccessor.current().getBranch().getValue() ).
+            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
             put( "newPath", targetNode.path().toString() ).
             build();
 
@@ -106,6 +108,7 @@ public class NodeEvents
             put( "id", sourceNode.id().toString() ).
             put( "path", sourceNode.path().toString() ).
             put( "branch", ContextAccessor.current().getBranch().getValue() ).
+            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
             put( "newPath", targetNode.path().toString() ).
             build();
 
@@ -174,7 +177,7 @@ public class NodeEvents
     {
         List<ImmutableMap> list = new ArrayList<>();
         pushNodeEntries.stream().
-            map( node -> NodeEvents.nodeToMap( node, pushNodeEntries.getTargetBranch() ) ).
+            map( node -> NodeEvents.nodeToMap( node, pushNodeEntries.getTargetBranch(), pushNodeEntries.getTargetRepo() ) ).
             forEach( list::add );
 
         return ImmutableList.copyOf( list );
@@ -186,6 +189,7 @@ public class NodeEvents
             put( "id", node.getNodeId().toString() ).
             put( "path", node.getNodePath().toString() ).
             put( "branch", ContextAccessor.current().getBranch().getValue() ).
+            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
             build();
     }
 
@@ -195,15 +199,17 @@ public class NodeEvents
             put( "id", node.id().toString() ).
             put( "path", node.path().toString() ).
             put( "branch", ContextAccessor.current().getBranch().getValue() ).
+            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
             build();
     }
 
-    private static ImmutableMap nodeToMap( final PushNodeEntry node, final Branch targetBranch )
+    private static ImmutableMap nodeToMap( final PushNodeEntry node, final Branch targetBranch, final RepositoryId targetRepository )
     {
         final ImmutableMap.Builder<Object, Object> nodeAsMap = ImmutableMap.builder().
             put( "id", node.getNodeBranchEntry().getNodeId().toString() ).
             put( "path", node.getNodeBranchEntry().getNodePath().toString() ).
-            put( "branch", targetBranch.getValue() );
+            put( "branch", targetBranch.getValue() ).
+            put( "repo", targetRepository.toString() );
         if ( node.getCurrentTargetPath() != null )
         {
             nodeAsMap.put( "currentTargetPath", node.getCurrentTargetPath().toString() );

@@ -2,16 +2,20 @@ package com.enonic.xp.repo.impl.cache;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repository.RepositoryId;
 
 public class BranchPath
     implements CachePath
 {
+    private final RepositoryId repositoryId;
+
     private final Branch branch;
 
     private final NodePath path;
 
-    public BranchPath( final Branch branch, final NodePath path )
+    public BranchPath( final RepositoryId repositoryId, final Branch branch, final NodePath path )
     {
+        this.repositoryId = repositoryId;
         this.branch = branch;
         this.path = path;
     }
@@ -19,13 +23,13 @@ public class BranchPath
     @Override
     public CachePath getParentPath()
     {
-        return new BranchPath( this.branch, path.getParentPath() );
+        return new BranchPath( this.repositoryId, this.branch, path.getParentPath() );
     }
 
     @Override
     public String toString()
     {
-        return branch != null ? branch.getValue() + ":" + path : null;
+        return ( repositoryId == null ? null : repositoryId.toString() ) + ":" + ( branch == null ? null : branch.getValue() ) + ":" + path;
     }
 
     @Override
@@ -42,6 +46,10 @@ public class BranchPath
 
         final BranchPath that = (BranchPath) o;
 
+        if ( repositoryId != null ? !repositoryId.equals( that.repositoryId ) : that.repositoryId != null )
+        {
+            return false;
+        }
         if ( branch != null ? !branch.equals( that.branch ) : that.branch != null )
         {
             return false;
@@ -52,7 +60,8 @@ public class BranchPath
     @Override
     public int hashCode()
     {
-        int result = branch != null ? branch.hashCode() : 0;
+        int result = repositoryId != null ? repositoryId.hashCode() : 0;
+        result = 31 * result + ( branch != null ? branch.hashCode() : 0 );
         result = 31 * result + ( path != null ? path.hashCode() : 0 );
         return result;
     }

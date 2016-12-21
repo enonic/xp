@@ -151,7 +151,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             setTimeout(() => {
                 this.setDependantItems(stashedItems.slice());
                 this.centerMyself();
-                this.unlockControls();
+                this.updateSubTitleShowScheduleAndButtonCount();
                 this.loadMask.hide();
             }, 100);
             return wemQ<void>(null);
@@ -349,7 +349,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         let canPublish = count > 0 && this.areItemsAndDependantsValid();
 
-        this.toggleControls(canPublish);
+        this.togglePublish(canPublish);
         if (canPublish) {
             this.getButtonRow().focusDefaultAction();
             this.updateTabbable();
@@ -400,6 +400,11 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     protected hasSubDialog(): boolean {
         return true;
+    }
+
+    private togglePublish(enable) {
+        this.toggleControls(enable);
+        this.toggleClass('no-publish', !enable);
     }
 }
 

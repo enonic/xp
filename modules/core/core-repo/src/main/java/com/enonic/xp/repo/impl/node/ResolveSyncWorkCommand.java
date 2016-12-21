@@ -175,12 +175,19 @@ public class ResolveSyncWorkCommand
 
         final NodeIds parentIds = getParentIdsFromPaths( parentPaths );
 
-        final NodeIds parentsDependencies = includeDependencies ? getNodeDependencies( parentIds ) : NodeIds.empty();
+        final NodeIds.Builder filteredParentIdsBuilder = NodeIds.create();
+        getFilteredNewAndMovedParentComparisons( parentIds ).
+            stream().
+            map( NodeComparison::getNodeId ).
+            forEach( filteredParentIdsBuilder::add );
+        final NodeIds filteredParentIds = filteredParentIdsBuilder.build();
+
+        final NodeIds parentsDependencies = includeDependencies ? getNodeDependencies( filteredParentIds ) : NodeIds.empty();
 
         final NodeComparisons newComparisonsToConsider = CompareNodesCommand.create().
             nodeIds( NodeIds.create().
                 addAll( parentsDependencies ).
-                addAll( parentIds ).
+                addAll( filteredParentIds ).
                 build() ).
             target( this.target ).
             storageService( this.nodeStorageService ).
@@ -260,6 +267,21 @@ public class ResolveSyncWorkCommand
             collect( Collectors.toSet() );
     }
 
+    private Set<NodeComparison> getFilteredNewAndMovedParentComparisons( final NodeIds nodeIds )
+    {
+        final NodeComparisons allNodesComparisons = CompareNodesCommand.create().
+            target( this.target ).
+            nodeIds( nodeIds ).
+            storageService( this.nodeStorageService ).
+            build().
+            execute();
+
+        return allNodesComparisons.getComparisons().stream().
+            filter( comparison -> nodeMoved( comparison ) || nodeNotInTarget( comparison ) ).
+            filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
+            collect( Collectors.toSet() );
+    }
+
     private void markChildrenForDeletion( final NodeComparison comparison )
     {
         final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).
@@ -309,6 +331,16 @@ public class ResolveSyncWorkCommand
     {
         this.result.addAll( comparisons.getComparisons() );
         this.processedIds.addAll( comparisons.getNodeIds().getSet() );
+    }
+
+    private boolean nodeMoved( final NodeComparison comparison )
+    {
+        return comparison.getCompareStatus() == CompareStatus.MOVED;
+    }
+
+    private boolean nodeNotInTarget( final NodeComparison comparison )
+    {
+        return comparison.getCompareStatus() == CompareStatus.NEW;
     }
 
     private boolean nodeNotInSource( final NodeComparison comparison )

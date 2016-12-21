@@ -5,19 +5,7 @@
   background-color: @admin-bg-almost-white;
 
   .@{_COMMON_PREFIX}button {
-    &:not(.fold-button) {
-      padding: 0 7px;
-    }
-
     border: none;
-
-    &:first-child {
-      margin-left: 10px;
-    }
-
-    &:not(:first-child) {
-      margin-left: 4px;
-    }
 
     &.@{_CLS_PREFIX}icon-loop {
       padding: 0 14px;
@@ -42,21 +30,11 @@
       box-shadow: none;
       border: none;
     }
-
-    &.fold-button {
-      margin-left: 0px;
-    }
   }
 
   .fold-button {
-    padding: 0 26px 0 22px;
-
     .@{_COMMON_PREFIX}dropdown {
-      width: 130px;
       button {
-        margin: 0 28px 0 0;
-        line-height: 1.5em;
-        border: 1px solid transparent;
         &:not(:disabled) span {
           color: @admin-button-blue2;
         }

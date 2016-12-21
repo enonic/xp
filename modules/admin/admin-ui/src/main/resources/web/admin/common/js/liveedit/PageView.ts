@@ -470,8 +470,9 @@ module api.liveedit {
             } else {
                 this.unshade();
 
-                if (!this.pageModel.isPageTemplate()) {
+                if (!(this.pageModel.isPageTemplate() || this.pageModel.isCustomized())) {
                     this.pageModel.setCustomized(true);
+                    this.pageModel.setTemplateContoller();
                 }
 
                 new PageUnlockedEvent(this).fire();
@@ -598,6 +599,9 @@ module api.liveedit {
             if (this.pageModel.hasTemplate()) {
                 return this.pageModel.getTemplate().getDisplayName();
             }
+            if (this.pageModel.isPageTemplate() && this.pageModel.getController()) {
+                return this.pageModel.getController().getDisplayName();
+            }
             if (this.pageModel.isCustomized()) {
                 return this.pageModel.hasController()
                     ? this.pageModel.getController().getDisplayName()
@@ -619,6 +623,9 @@ module api.liveedit {
 
             if (this.pageModel.hasTemplate()) {
                 return "icon-newspaper" + largeIconCls;
+            }
+            if (this.pageModel.isPageTemplate() && this.pageModel.getController()) {
+                return "icon-file" + largeIconCls;
             }
             if (this.pageModel.isCustomized()) {
                 return "icon-cog" + largeIconCls;

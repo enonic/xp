@@ -32,6 +32,8 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
     show() {
         this.resetPublishDates();
+        this.formView.displayValidationErrors(false);
+        this.confirmScheduleAction.setEnabled(true);
         api.dom.Body.get().appendChild(this);
         super.show();
     }
@@ -65,17 +67,18 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
         this.propertySet = new api.data.PropertyTree().getRoot();
         this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
-        this.formView.addClass("display-validation-errors");
+
         this.formView.layout().then(() => {
-            this.appendChildToContentPanel(this.formView);
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
                 this.confirmScheduleAction.setEnabled(event.isValid());
+                this.formView.displayValidationErrors(true);
             });
             this.propertySet.onChanged(() => {
                 this.formView.validate();
-
             });
-            this.confirmScheduleAction.setEnabled(this.formView.isValid());
+            this.appendChildToContentPanel(this.formView);
+            this.centerMyself();
+
         });
     }
 
@@ -90,9 +93,15 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
         this.confirmScheduleAction.setIconClass("confirm-schedule-action");
         this.confirmScheduleAction.onExecuted(() => {
-            this.close();
-            if (this.onScheduleCallback) {
-                this.onScheduleCallback();
+            let validationRecording = this.formView.validate();
+            if (validationRecording.isValid()) {
+                this.close();
+                if (this.onScheduleCallback) {
+                    this.onScheduleCallback();
+                }
+            } else {
+                this.confirmScheduleAction.setEnabled(false);
+                this.formView.displayValidationErrors(true);
             }
         });
 
@@ -112,6 +121,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     resetPublishDates() {
         this.propertySet.reset();
         this.formView.update(this.propertySet);
+        this.formView.validate();
     }
 
     protected hasSubDialog(): boolean {

@@ -51,6 +51,14 @@ module api.system {
             }).done();
         }
 
+        isConnected(): boolean {
+            return this.connected;
+        }
+
+        isAuthenticated(): boolean {
+            return this.authenticated;
+        }
+
         onConnectionLost(listener: ()=>void) {
             this.connectionLostListeners.push(listener);
         }

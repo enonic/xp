@@ -43,7 +43,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     }
 
     open() {
-        this.reloadUnpublishDependencies().done(() => this.centerMyself());
+        this.reloadUnpublishDependencies();
 
         super.open();
     }
@@ -66,6 +66,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
                 this.unlockControls();
                 }).finally(() => {
                     this.loadMask.hide();
+                    this.centerMyself();
                 });
         });
 
