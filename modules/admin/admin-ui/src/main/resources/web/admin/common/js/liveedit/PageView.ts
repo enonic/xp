@@ -751,8 +751,8 @@ module api.liveedit {
 
                 if (path.hasParentComponentPath()) {
                     var componentView = this.getComponentViewByPath(path.getParentComponentPath());
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
-                        var layoutView = <LayoutComponentView>componentView;
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, api.liveedit.layout.LayoutComponentView)) {
+                        var layoutView = <api.liveedit.layout.LayoutComponentView>componentView;
                         layoutView.getRegionViewByName(path.getRegionName());
                     }
                 }
@@ -780,8 +780,8 @@ module api.liveedit {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     }
                     else {
-                        var layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(
-                            firstLevelOfPath.getComponentIndex());
+                        const view = regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        const layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>view;
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
                     }
                 }
@@ -901,8 +901,11 @@ module api.liveedit {
 
                 if (itemType && itemType.isComponentType()) {
                     if (component) {
-                        var itemViewConfig = new CreateItemViewConfig<PageView, Component>().setParentView(this).setData(
-                            component).setElement(childElement).setParentElement(parentElement ? parentElement : this);
+                        const itemViewConfig = new CreateItemViewConfig<PageView, Component>()
+                            .setParentView(this)
+                            .setData(component)
+                            .setElement(childElement)
+                            .setParentElement(parentElement ? parentElement : this);
                         componentView = <ComponentView<Component>> itemType.createView(itemViewConfig);
 
                         this.registerFragmentComponentView(componentView);
@@ -918,7 +921,7 @@ module api.liveedit {
             componentView.onItemViewRemoved(this.itemViewRemovedListener);
 
             this.registerItemView(componentView);
-            if (componentView instanceof LayoutComponentView) {
+            if (componentView instanceof api.liveedit.layout.LayoutComponentView) {
                 componentView.getRegions().forEach((regionView) => {
                     this.registerRegionView(regionView);
                 });
