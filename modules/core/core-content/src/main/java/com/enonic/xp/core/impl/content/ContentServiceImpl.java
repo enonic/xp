@@ -380,6 +380,19 @@ public class ContentServiceImpl
     }
 
     @Override
+    public boolean checkAllContentsValid( ContentIds contentIds )
+    {
+        return CheckContentsValidCommand.create().
+            translator( this.translator ).
+            nodeService( this.nodeService ).
+            eventPublisher( this.eventPublisher ).
+            contentTypeService( this.contentTypeService ).
+            contentIds( contentIds ).
+            build().
+            execute();
+    }
+
+    @Override
     public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
         return UnpublishContentCommand.create().
