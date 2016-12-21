@@ -3,6 +3,7 @@ package com.enonic.xp.content;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
@@ -27,6 +28,11 @@ public class CompareContentResults
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public Stream<CompareContentResult> stream()
+    {
+        return this.compareContentResults.stream();
     }
 
     @Override
