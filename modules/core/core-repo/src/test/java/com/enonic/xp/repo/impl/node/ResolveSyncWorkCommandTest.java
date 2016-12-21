@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -719,7 +720,6 @@ public class ResolveSyncWorkCommandTest
         assertEquals( 1, result.getSize() );
     }
 
-
     /*
      - S1 (New)
          - A1 (New)
@@ -750,14 +750,12 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
         assertEquals( 6, result.getSize() );
-
         assertNodes( result, ExpectedNodes.create().
             implicit( "a2_1" ).
             parent( "a2", "s1" ).
             referred( "b2_1" ).
             parent( "b2", "s2" ) );
     }
-
 
     /*
      - S1 (New)
@@ -778,17 +776,58 @@ public class ResolveSyncWorkCommandTest
         throws Exception
     {
         createS1S2Tree();
-
         pushAllNodesInS1S2Tree();
 
         updateNode( "a2_1_1" );
         moveNode( "b2_1", NodePath.create( "/s2/b2" ).build(), "b2_1_renamed" );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1_1" );
-
-        assertEquals( 1, result.getSize() );
-
         assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1_1" ) );
+    }
+
+    @Test
+    public void do_not_publish_dependencies_of_modified_parent()
+        throws Exception
+    {
+        createS1S2Tree();
+        pushAllNodesInS1S2Tree();
+
+        updateNode( "a2_1_1" );
+        updateNode( "a2_1" );
+        updateNode( "b2_1" );
+
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1_1" );
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1_1" ) );
+    }
+
+    @Test
+    public void do_publish_new_dependencies_of_moved_parent()
+        throws Exception
+    {
+        createS1S2Tree();
+        pushAllNodesInS1S2Tree();
+
+        updateNode( "a2_1_1" );
+        renameNode( "a2_1", "newName" );
+
+        createNode( NodePath.ROOT, "s3" );
+
+        // Update parent node with new reference
+        updateNode( UpdateNodeParams.create().
+            id( NodeId.from( "a2_1" ) ).
+            editor( ( node ) -> {
+                node.data.addReference( "newRef", Reference.from( "s3" ) );
+            } ).
+            build() );
+
+        updateNode( "b2_1" );
+
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1_1" );
+        assertNodes( result, ExpectedNodes.create().
+            parent( "a2_1" ).
+            referred( "s3" ).
             implicit( "a2_1_1" ) );
     }
 
@@ -1380,6 +1419,20 @@ public class ResolveSyncWorkCommandTest
             id( NodeId.from( nodeId ) ).
             newNodeName( NodeName.from( newName ) ).
             newParent( newParent ).
+            build().
+            execute();
+    }
+
+    private void renameNode( final String nodeId, final String newName )
+    {
+        RenameNodeCommand.create().
+            params( RenameNodeParams.create().
+                nodeId( NodeId.from( nodeId ) ).
+                nodeName( NodeName.from( newName ) ).
+                build() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
