@@ -8,10 +8,14 @@ module api.content.page.region {
         private sourceRegionsPositionByName: { [regionName: string]: number; };
 
         /**
-         * Merge the components of regions existing in a layout component, distribute them in the regions of the target layout descriptor according to following rules:
-         *  - If a region with the same name exists on the target layout: move components from source into region with the same name
-         *  - If a region with the same name does not exists, but exists a region with the same position (index) on target: move components to target region with the same position
-         *  - If a region with the same name or position (index) cannot be found on target: move components to the last region of target
+         * Merge the components of regions existing in a layout component, distribute them
+         * in the regions of the target layout descriptor according to following rules:
+         *  - If a region with the same name exists on the target layout:
+         *    move components from source into region with the same name
+         *  - If a region with the same name does not exists, but exists a region
+         *    with the same position (index) on target: move components to target region with the same position
+         *  - If a region with the same name or position (index) cannot be found on target:
+         *    move components to the last region of target
          *
          */
         merge(regions: Regions, layoutDescriptorRegions: RegionDescriptor[],
@@ -57,7 +61,8 @@ module api.content.page.region {
                 var regionName = region.getName();
                 if (!this.targetRegionsByName[regionName]) {
                     var sourceRegionPos: number = this.sourceRegionsPositionByName[regionName];
-                    // insert region components in region with the same position in target, or in last region if there are less regions in target
+                    // insert region components in region with the same position in target,
+                    // or in last region if there are less regions in target
                     var targetRegionName = this.targetRegionsNameByPosition[sourceRegionPos] || lastRegionName;
                     var targetRegion: Region = this.targetRegionsByName[targetRegionName];
 

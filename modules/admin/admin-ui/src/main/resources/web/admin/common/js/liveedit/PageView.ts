@@ -751,8 +751,8 @@ module api.liveedit {
 
                 if (path.hasParentComponentPath()) {
                     var componentView = this.getComponentViewByPath(path.getParentComponentPath());
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, api.liveedit.layout.LayoutComponentView)) {
-                        var layoutView = <api.liveedit.layout.LayoutComponentView>componentView;
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+                        var layoutView = <LayoutComponentView>componentView;
                         layoutView.getRegionViewByName(path.getRegionName());
                     }
                 }
@@ -780,7 +780,7 @@ module api.liveedit {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     }
                     else {
-                        var layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>regionView.getComponentViewByIndex(
+                        var layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(
                             firstLevelOfPath.getComponentIndex());
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
                     }
@@ -918,7 +918,7 @@ module api.liveedit {
             componentView.onItemViewRemoved(this.itemViewRemovedListener);
 
             this.registerItemView(componentView);
-            if (componentView instanceof api.liveedit.layout.LayoutComponentView) {
+            if (componentView instanceof LayoutComponentView) {
                 componentView.getRegions().forEach((regionView) => {
                     this.registerRegionView(regionView);
                 });

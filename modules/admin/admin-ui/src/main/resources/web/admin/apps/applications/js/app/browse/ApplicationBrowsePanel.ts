@@ -102,7 +102,8 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
             } else if (ApplicationEventType.STOPPED == event.getEventType()) {
                 setTimeout(() => { // as uninstall usually follows stop event, lets wait to check if app still exists
                     var stoppedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
-                    if (!!stoppedApp && api.app.ServerEventsConnection.getInstance().isConnected()) { // seems to be present in the grid and xp is running
+                    // seems to be present in the grid and xp is running
+                    if (stoppedApp && api.app.ServerEventsConnection.getInstance().isConnected()) {
                         this.treeGrid.updateApplicationNode(event.getApplicationKey());
                     }
                 }, 400);

@@ -1,4 +1,5 @@
 module api.data {
+    /* tslint:disable:max-line-length */
 
     import Reference = api.util.Reference;
     import BinaryReference = api.util.BinaryReference;

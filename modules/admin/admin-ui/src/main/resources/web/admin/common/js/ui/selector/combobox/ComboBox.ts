@@ -971,7 +971,8 @@ module api.ui.selector.combobox {
         }
 
         private notifyExpanded(expanded: boolean) {
-            var event = new api.ui.selector.DropdownExpandedEvent(<api.dom.Element>this.comboBoxDropdown.getDropdownGrid().getElement(), expanded);
+            const grid: api.dom.Element = <api.dom.Element>this.comboBoxDropdown.getDropdownGrid().getElement();
+            const event = new api.ui.selector.DropdownExpandedEvent(grid, expanded);
             this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
                 listener(event);
             });

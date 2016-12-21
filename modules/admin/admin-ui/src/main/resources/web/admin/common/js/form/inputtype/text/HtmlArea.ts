@@ -160,8 +160,8 @@ module api.form.inputtype.text {
                     e.preventDefault();
 
                     this.notifyValueChanged(id, textAreaWrapper);
-
-                    wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
+                    // as editor resides in a frame - propagate event via wrapping element
+                    wemjq(this.getEl().getHTMLElement()).simulate(e.type, {
                         bubbles: e.bubbles,
                         cancelable: e.cancelable,
                         view: parent,
@@ -172,16 +172,18 @@ module api.form.inputtype.text {
                         keyCode: e.keyCode,
                         charCode: e.charCode
                     });
-                } else if ((e.altKey) && e.keyCode === 9) {  // alt+tab for OSX
+                } else if ((e.altKey) && e.keyCode === 9) { // alt+tab for OSX
                     e.preventDefault();
-
-                    let htmlAreaIframe = wemjq(textAreaWrapper.getHTMLElement()).find("iframe").get(0); // the one that event is triggered from
-                    let activeElement = this.isNotActiveElement(htmlAreaIframe) ? htmlAreaIframe : <HTMLElement>document.activeElement; // check if focused element is html area that triggered event
+                    // the one that event is triggered from
+                    let htmlAreaIframe = wemjq(textAreaWrapper.getHTMLElement()).find("iframe").get(0);
+                    // check if focused element is html area that triggered event
+                    let activeElement = this.isNotActiveElement(htmlAreaIframe) ? htmlAreaIframe : <HTMLElement>document.activeElement;
                     let nextFocusable = api.dom.FormEl.getNextFocusable(api.dom.Element.fromHtmlElement(activeElement),
                         "iframe, input, select");
 
                     if (nextFocusable) {
-                        if (this.isIframe(nextFocusable)) { // if iframe is next focusable then it is a html area and using it's own focus method
+                        // if iframe is next focusable then it is a html area and using it's own focus method
+                        if (this.isIframe(nextFocusable)) {
                             let nextId = nextFocusable.getId().replace("_ifr", "");
                             this.getEditor(nextId).focus();
                         }
@@ -289,7 +291,7 @@ module api.form.inputtype.text {
         private updateEditorToolbarWidth(inputOccurence: Element, editorInfo: HtmlAreaOccurrenceInfo) {
             if (editorInfo.hasStickyToolbar) {
                 // Toolbar in sticky mode has position: fixed which makes it not
-                // inherit width of its parent, so we have to explicitly set width 
+                // inherit width of its parent, so we have to explicitly set width
                 wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").width(inputOccurence.getEl().getWidth() - 3);
             }
             else {

@@ -2,7 +2,7 @@ module api.schema.content {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class PageTemplateContentTypeLoader extends api.util.loader.BaseLoader<api.schema.content.ContentTypeSummaryListJson, ContentTypeSummary> {
+    export class PageTemplateContentTypeLoader extends api.util.loader.BaseLoader<ContentTypeSummaryListJson, ContentTypeSummary> {
 
         private contentId: api.content.ContentId;
         constructor(contentId: api.content.ContentId) {

@@ -1,6 +1,9 @@
 module api.content.page {
 
-    export class UpdatePageRequest extends PageResourceRequest<api.content.json.ContentJson, api.content.Content> implements PageCUDRequest {
+    import Content = api.content.Content;
+    import ContentJson = api.content.json.ContentJson;
+
+    export class UpdatePageRequest extends PageResourceRequest<ContentJson, Content> implements PageCUDRequest {
 
         private contentId: api.content.ContentId;
 
@@ -68,9 +71,9 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "update");
         }
 
-        sendAndParse(): wemQ.Promise<api.content.Content> {
+        sendAndParse(): wemQ.Promise<Content> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentJson>) => {
                 return response.isBlank() ? null : this.fromJsonToContent(response.getResult());
             });
         }

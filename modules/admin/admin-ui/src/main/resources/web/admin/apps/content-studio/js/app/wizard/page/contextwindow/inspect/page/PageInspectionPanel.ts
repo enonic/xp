@@ -71,7 +71,8 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
         this.inspectionHandler = this.pageModel.isPageTemplate() ? new PageTemplateInspectionHandler() : new ContentInspectionHandler();
 
-        if (!this.pageModel.isPageTemplate()) { //init page controller selector in case of 'customized' template chosen or no template presents
+        // init page controller selector in case of 'customized' template chosen or no template presents
+        if (!this.pageModel.isPageTemplate()) {
             this.pageControllerSelector.load();
 
             if (this.pageModel.isCustomized()) {
@@ -93,12 +94,14 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
                 if (pageTemplate) {
                     this.pageControllerForm.hide();
-                    new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().then((pageDescriptor: PageDescriptor) => {
-                        var setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor);
-                        this.pageModel.setTemplate(setTemplate, true);
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
+                    new GetPageDescriptorByKeyRequest(pageTemplate.getController())
+                        .sendAndParse()
+                        .then((pageDescriptor: PageDescriptor) => {
+                            var setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor);
+                            this.pageModel.setTemplate(setTemplate, true);
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
                 }
                 else if (this.pageModel.hasDefaultPageTemplate()) {
                     this.pageControllerForm.hide();

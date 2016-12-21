@@ -22,19 +22,20 @@ module api.content.site.inputtype.authappselector {
                     formContext: api.content.form.ContentFormContext, value: string, readOnly: boolean) {
 
             let builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
-            let authApplicationSelectedOptionsView: AuthApplicationSelectedOptionsView = new AuthApplicationSelectedOptionsView(siteConfigProvider, formContext, readOnly);
+            // tslint:disable-next-line:max-line-length
+            const view: AuthApplicationSelectedOptionsView = new AuthApplicationSelectedOptionsView(siteConfigProvider, formContext, readOnly);
             builder.
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getApplicationKey').
-                setComboBoxName("applicationSelector").setLoader(new api.security.auth.AuthApplicationLoader()).setSelectedOptionsView(
-                authApplicationSelectedOptionsView).
+                setComboBoxName("applicationSelector").setLoader(new api.security.auth.AuthApplicationLoader())
+                .setSelectedOptionsView(view).
                 setOptionDisplayValueViewer(new ApplicationViewer()).
                 setValue(value).
                 setDelayedInputValueChangedHandling(500);
 
             super(builder);
 
-            this.authApplicationSelectedOptionsView = authApplicationSelectedOptionsView;
+            this.authApplicationSelectedOptionsView = view;
         }
 
         getSelectedOptionViews(): AuthApplicationSelectedOptionView[] {

@@ -4,8 +4,9 @@ module api.form.inputtype.support {
     import PropertyArray = api.data.PropertyArray;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
+    import InputTypeView = api.form.inputtype.InputTypeView;
 
-    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
+    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements InputTypeView<RAW_VALUE_TYPE> {
 
         private context: api.form.inputtype.InputTypeViewContext;
 

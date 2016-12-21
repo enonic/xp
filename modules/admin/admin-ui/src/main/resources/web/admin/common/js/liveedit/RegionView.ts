@@ -254,7 +254,10 @@ module api.liveedit {
             }
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, rightClicked: boolean = false) {
+        select(clickPosition?: Position,
+               menuPosition?: ItemViewContextMenuPosition,
+               isNew: boolean = false,
+               rightClicked: boolean = false) {
             super.select(clickPosition, menuPosition, false, rightClicked);
 
             new RegionSelectedEvent(this).fire();

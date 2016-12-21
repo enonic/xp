@@ -4,19 +4,22 @@ module api.app.wizard {
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import Panel = api.ui.panel.Panel;
+    import Equitable = api.Equitable;
+    import ActionContainer = api.ui.ActionContainer;
+    import Closeable = api.ui.Closeable;
 
     /*
      Only data should be passed to constructor
      views are to be created on render
      */
-    export interface WizardPanelParams<EQUITABLE extends api.Equitable> {
+    export interface WizardPanelParams<EQUITABLE extends Equitable> {
 
         tabId: api.app.bar.AppBarTabId;
 
         persistedItem?: EQUITABLE;
     }
 
-    export class WizardPanel<EQUITABLE extends api.Equitable> extends api.ui.panel.Panel implements api.ui.Closeable, api.ui.ActionContainer {
+    export class WizardPanel<EQUITABLE extends Equitable> extends Panel implements Closeable, ActionContainer {
 
         protected params: WizardPanelParams<EQUITABLE>;
 

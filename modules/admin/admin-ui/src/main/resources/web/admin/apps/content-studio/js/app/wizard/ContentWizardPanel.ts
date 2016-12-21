@@ -1039,10 +1039,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     if (persistedContent.getType().isDescendantOfMedia()) {
                         this.updateMetadataAndMetadataStepForms(persistedContent);
                     } else {
-                        ConfirmationDialog.get().setQuestion(
-                            "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
-                            () => this.doLayoutPersistedItem(persistedContent.clone())).setNoCallback(() => {/* Do nothing... */
-                        }).show();
+                        const msg = "Received Content from server differs from what you have. Would you like to load changes from server?";
+                        ConfirmationDialog.get()
+                            .setQuestion(msg)
+                            .setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone()))
+                            .setNoCallback(() => { /* empty */ })
+                            .show();
                     }
                 }
 
@@ -1135,7 +1137,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 var formViewLayoutPromises: wemQ.Promise<void>[] = [];
                 formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
-                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor,
+                // since a new is created for each call to renderExisting
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                 this.settingsWizardStepForm.layout(content);
                 this.settingsWizardStepForm.onPropertyChanged(this.dataChangedListener);
@@ -1188,7 +1191,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     // synch persisted content extra data with data from mixins
-    // when rendering form - we may add extra fields from mixins; as this is intended action from XP, not user - it should be present in persisted content
+    // when rendering form - we may add extra fields from mixins;
+    // as this is intended action from XP, not user - it should be present in persisted content
     private synchPersistedItemWithMixinData(mixinName: MixinName, mixinData: PropertyTree) {
         var persistedContent = this.getPersistedItem(),
             extraData = persistedContent.getExtraData(mixinName);
@@ -1684,7 +1688,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     /**
-     * Synchronizes wizard's extraData step forms with passed content - erases steps forms (meta)data and populates it with content's (meta)data.
+     * Synchronizes wizard's extraData step forms with passed content -
+     * erases steps forms (meta)data and populates it with content's (meta)data.
      * @param content
      */
     private updateMetadataAndMetadataStepForms(content: Content, unchangedOnly: boolean = true) {
@@ -1807,7 +1812,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         if (this.isContentFormValid) {
             if (!this.hasUnsavedChanges()) {
                 // WARN: intended to restore status to persisted value if data is changed to original values,
-                // but if invoked after save this will revert status to persisted one as well 
+                // but if invoked after save this will revert status to persisted one as well
                 this.currentContentCompareStatus = this.persistedContentCompareStatus;
 
             } else if (publishControls.isOnline()) {

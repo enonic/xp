@@ -192,11 +192,12 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                     console.warn(" viewedPrincipal: ", viewedPrincipal);
                     console.warn(" persistedPrincipal: ", persistedPrincipal);
 
-                    ConfirmationDialog.get().setQuestion(
-                        "Received Principal from server differs from what you have. Would you like to load changes from server?").setYesCallback(
-                        () => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null)).setNoCallback(
-                        () => {/* Do nothing */
-                        }).show();
+                    const msg = "Received Principal from server differs from what you have. Would you like to load changes from server?";
+                    ConfirmationDialog.get()
+                        .setQuestion(msg)
+                        .setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null))
+                        .setNoCallback(() => { /* empty */ })
+                        .show();
                 }
 
                 return wemQ<void>(null);

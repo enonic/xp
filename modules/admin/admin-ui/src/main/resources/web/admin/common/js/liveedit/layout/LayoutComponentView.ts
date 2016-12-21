@@ -66,7 +66,8 @@ module api.liveedit.layout {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     }
                     else {
-                        var layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        const index = firstLevelOfPath.getComponentIndex();
+                        const layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(index);
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
                     }
                 }

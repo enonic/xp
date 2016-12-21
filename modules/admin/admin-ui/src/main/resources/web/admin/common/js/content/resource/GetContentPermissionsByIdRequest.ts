@@ -1,8 +1,9 @@
 module api.content.resource {
 
     import AccessControlList = api.security.acl.AccessControlList;
+    import PermissionsJson = api.content.json.PermissionsJson;
 
-    export class GetContentPermissionsByIdRequest extends ContentResourceRequest<json.PermissionsJson, AccessControlList> {
+    export class GetContentPermissionsByIdRequest extends ContentResourceRequest<PermissionsJson, AccessControlList> {
 
         private contentId: ContentId;
 
@@ -24,7 +25,7 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<AccessControlList> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.PermissionsJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<PermissionsJson>) => {
                 return AccessControlList.fromJson(response.getResult());
             });
         }

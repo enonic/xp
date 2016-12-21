@@ -34,7 +34,9 @@ module api.liveedit {
             return controllerDropdown;
         }
 
-        private addControllerDropdownEvents(controllerDropdown: PageDescriptorDropdown, pageView: PageView, infoBlock: PagePlaceholderInfoBlock) {
+        private addControllerDropdownEvents(controllerDropdown: PageDescriptorDropdown,
+                                            pageView: PageView,
+                                            infoBlock: PagePlaceholderInfoBlock) {
             controllerDropdown.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
                 if (event.getData().length > 0) {
                     controllerDropdown.show();

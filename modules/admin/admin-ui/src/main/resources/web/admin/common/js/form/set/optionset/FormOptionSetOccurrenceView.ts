@@ -83,7 +83,8 @@ module api.form {
                         multiselectionState = this.validateMultiselection();
 
                     if (multiselectionState.isValid()) {
-                        if (this.formOptionSet.isRadioSelection()) { // for radio - we clean all validation, as even selected item should not be validated
+                        // for radio - we clean all validation, as even selected item should not be validated
+                        if (this.formOptionSet.isRadioSelection()) {
                             this.currentValidationState.removeByPath(
                                 new ValidationRecordingPath(this.getDataPath(), null), true, true);
 

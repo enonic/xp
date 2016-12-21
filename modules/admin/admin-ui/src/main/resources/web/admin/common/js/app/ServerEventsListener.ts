@@ -1,6 +1,7 @@
 module api.app {
 
     import ContentServerEvent = api.content.event.ContentServerEvent;
+    import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
 
     export class ServerEventsListener {
 
@@ -16,7 +17,7 @@ module api.app {
 
             this.aggregator.onBatchIsReady(() => {
 
-                var event = new api.content.event.BatchContentServerEvent(<ContentServerEvent[]>this.aggregator.getEvents(), this.aggregator.getType());
+                var event = new BatchContentServerEvent(<ContentServerEvent[]>this.aggregator.getEvents(), this.aggregator.getType());
                 this.fireEvent(event);
 
                 this.aggregator.resetEvents();

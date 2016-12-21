@@ -77,26 +77,27 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         var providerResponse = this.initProviders(currentApplication.getApplicationKey());
 
 
-        wemQ.all([descriptorResponse, schemaResponse, macroResponse, providerResponse]).spread((descriptorsGroup, schemasGroup, macrosGroup, providersGroup) => {
-            if (!infoGroup.isEmpty()) {
-                this.applicationDataContainer.appendChild(infoGroup);
-            }
-            if (descriptorsGroup && !descriptorsGroup.isEmpty()) {
-                this.applicationDataContainer.appendChild(descriptorsGroup);
-            }
+        wemQ.all([descriptorResponse, schemaResponse, macroResponse, providerResponse])
+            .spread((descriptorsGroup, schemasGroup, macrosGroup, providersGroup) => {
+                if (!infoGroup.isEmpty()) {
+                    this.applicationDataContainer.appendChild(infoGroup);
+                }
+                if (descriptorsGroup && !descriptorsGroup.isEmpty()) {
+                    this.applicationDataContainer.appendChild(descriptorsGroup);
+                }
 
-            if (schemasGroup && !schemasGroup.isEmpty()) {
-                this.applicationDataContainer.appendChild(schemasGroup);
-            }
+                if (schemasGroup && !schemasGroup.isEmpty()) {
+                    this.applicationDataContainer.appendChild(schemasGroup);
+                }
 
-            if (macrosGroup && !macrosGroup.isEmpty()) {
-                this.applicationDataContainer.appendChild(macrosGroup);
-            }
+                if (macrosGroup && !macrosGroup.isEmpty()) {
+                    this.applicationDataContainer.appendChild(macrosGroup);
+                }
 
-            if (providersGroup && !providersGroup.isEmpty()) {
-                this.applicationDataContainer.appendChild(providersGroup);
-            }
-        })
+                if (providersGroup && !providersGroup.isEmpty()) {
+                    this.applicationDataContainer.appendChild(providersGroup);
+                }
+            })
 
     }
 

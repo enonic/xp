@@ -157,7 +157,8 @@ module api.ui.image {
                            '            <rect x="0" y="0" width="0" height="0"/>' +
                            '        </clipPath>' +
                            '    </defs>' +
-                           '    <image xlink:href="' + ImgEl.PLACEHOLDER + '" width="100%" height="100%"/>' +   // FF won't apply css dimensions to image
+                           // FF won't apply css dimensions to image
+                           '    <image xlink:href="' + ImgEl.PLACEHOLDER + '" width="100%" height="100%"/>' +
                            '    <g class="edit-group focus-group">' +
                            '        <circle cx="0" cy="0" r="0" class="stroke-circle"/>' +
                            '    </g>' +

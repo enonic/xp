@@ -6,6 +6,8 @@ module api.content {
     import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
     import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
     import RichSelectedOptionViewBuilder = api.ui.selector.combobox.RichSelectedOptionViewBuilder;
+    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
 
     export class ContentComboBox extends RichComboBox<ContentSummary> {
 
@@ -143,7 +145,7 @@ module api.content {
 
         maximumOccurrences: number = 0;
 
-        loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>;
+        loader: api.util.loader.BaseLoader<ContentQueryResultJson<ContentSummaryJson>, ContentSummary>;
 
         minWidth: number;
 
@@ -163,7 +165,7 @@ module api.content {
             return this;
         }
 
-        setLoader(loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>): ContentComboBoxBuilder {
+        setLoader(loader: api.util.loader.BaseLoader<ContentQueryResultJson<ContentSummaryJson>, ContentSummary>): ContentComboBoxBuilder {
             this.loader = loader;
             return this;
         }

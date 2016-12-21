@@ -1,6 +1,8 @@
 module api.application {
 
-    export class GetApplicationRequest extends ApplicationResourceRequest<json.ApplicationJson, Application> {
+    import ApplicationJson = api.application.json.ApplicationJson;
+
+    export class GetApplicationRequest extends ApplicationResourceRequest<ApplicationJson, Application> {
 
         private applicationKey: ApplicationKey;
 
@@ -32,7 +34,7 @@ module api.application {
                 return wemQ(appObj);
             }
             else {
-                return this.send().then((response: api.rest.JsonResponse<json.ApplicationJson>) => {
+                return this.send().then((response: api.rest.JsonResponse<ApplicationJson>) => {
                     appObj = this.fromJsonToApplication(response.getResult());
                     cache.put(appObj);
                     return appObj;

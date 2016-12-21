@@ -81,8 +81,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return this.actions;
     }
 
-    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
-                              changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
+    // tslint:disable-next-line:max-line-length
+    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[], changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
         this.TOGGLE_SEARCH_PANEL.setVisible(false);
 

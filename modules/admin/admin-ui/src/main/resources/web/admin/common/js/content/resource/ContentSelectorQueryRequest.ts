@@ -9,8 +9,9 @@ module api.content.resource {
     import QueryExpr = api.query.expr.QueryExpr;
     import ContentSummaryJson = api.content.json.ContentSummaryJson;
     import ContentId = api.content.ContentId;
+    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
 
-    export class ContentSelectorQueryRequest extends ContentResourceRequest<json.ContentQueryResultJson<ContentSummaryJson>, ContentSummary[]> {
+    export class ContentSelectorQueryRequest extends ContentResourceRequest<ContentQueryResultJson<ContentSummaryJson>, ContentSummary[]> {
 
         public static DEFAULT_SIZE = 15;
 
@@ -149,14 +150,14 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<ContentSummary[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.ContentQueryResultJson<ContentSummaryJson>>) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentQueryResultJson<ContentSummaryJson>>) => {
 
-                var responseResult: json.ContentQueryResultJson<ContentSummaryJson> = response.getResult();
+                var responseResult: ContentQueryResultJson<ContentSummaryJson> = response.getResult();
 
-                var contentsAsJson: json.ContentSummaryJson[] = responseResult.contents;
+                var contentsAsJson: ContentSummaryJson[] = responseResult.contents;
 
                 var contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(
-                    <json.ContentSummaryJson[]>contentsAsJson);
+                    <ContentSummaryJson[]>contentsAsJson);
 
                 if (this.from === 0) {
                     this.results = [];

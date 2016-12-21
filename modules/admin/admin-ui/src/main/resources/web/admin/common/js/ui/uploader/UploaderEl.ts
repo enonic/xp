@@ -587,7 +587,7 @@ module api.ui.uploader {
         protected initUploader() {
             var uploader = new qq.FineUploaderBasic({
                 debug: false,
-                button: document.getElementById(this.dropzone.getId()), //this.config.allowBrowse ? document.getElementById(this.dropzone.getId()) : undefined,
+                button: document.getElementById(this.dropzone.getId()),
                 multiple: this.config.allowMultiSelection,
                 folders: false,
                 autoUpload: false,

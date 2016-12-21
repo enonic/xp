@@ -4,7 +4,8 @@ module api.content.resource {
     import ContentsPermissionsEntryJson = api.content.json.ContentPermissionsJson;
     import ContentAccessControlList = api.security.acl.ContentAccessControlList;
 
-    export class GetContentPermissionsByIdsRequest extends ContentResourceRequest<ContentsPermissionsEntryJson[], ContentAccessControlList[]> {
+    export class GetContentPermissionsByIdsRequest
+    extends ContentResourceRequest<ContentsPermissionsEntryJson[], ContentAccessControlList[]> {
 
         private contentIds: ContentId[];
 

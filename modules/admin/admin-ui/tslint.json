@@ -34,7 +34,8 @@
     "jsdoc-format": true,
     "max-file-line-count": true,
     "max-line-length": [
-      false
+      true,
+      140
     ],
     "member-access": false,
     "member-ordering": false,

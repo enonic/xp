@@ -131,7 +131,8 @@ module api.util.htmlarea.dialog {
         }
 
         private renderPreview(macroPreview: MacroPreview) {
-            if (macroPreview.getPageContributions().hasAtLeastOneScript()) { // render in iframe if there are scripts to be included for preview rendering
+            // render in iframe if there are scripts to be included for preview rendering
+            if (macroPreview.getPageContributions().hasAtLeastOneScript()) {
                 this.previewPanel.appendChild(this.makePreviewFrame(macroPreview));
             } else {
                 var appendMe = new api.dom.DivEl("preview-content");
