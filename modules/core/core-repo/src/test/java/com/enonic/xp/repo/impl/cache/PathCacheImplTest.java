@@ -5,12 +5,12 @@ import org.junit.Test;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
+import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.Assert.*;
 
 public class PathCacheImplTest
 {
-
     @Test
     public void put()
         throws Exception
@@ -35,7 +35,6 @@ public class PathCacheImplTest
         cache.evict( a );
         assertNull( cache.get( a ) );
     }
-
 
     @Test
     public void update_entry()
@@ -63,10 +62,30 @@ public class PathCacheImplTest
         assertEquals( "1_draft", cache.get( createPath( "/newPath" ) ) );
     }
 
+    @Test
+    public void repo_separation()
+        throws Exception
+    {
+        final PathCacheImpl cache = new PathCacheImpl();
+
+        final CachePath repo1Path = createPath( "/myPath", RepositoryId.from( "repo1" ) );
+        final CachePath repo2Path = createPath( "/myPath", RepositoryId.from( "repo2" ) );
+        cache.cache( repo1Path, BranchDocumentId.from( "1_fisk" ) );
+        cache.cache( repo2Path, BranchDocumentId.from( "2_fisk" ) );
+
+        assertEquals( "1_fisk", cache.get( repo1Path ) );
+        assertEquals( "2_fisk", cache.get( repo2Path ) );
+    }
 
     private CachePath createPath( final String path )
     {
-        return new BranchPath( Branch.from( "test" ), NodePath.create( path ).build() );
+        final RepositoryId repo = RepositoryId.from( "repo" );
+        return createPath( path, repo );
+    }
+
+    private CachePath createPath( final String path, final RepositoryId repo )
+    {
+        return new BranchPath( repo, Branch.from( "test" ), NodePath.create( path ).build() );
     }
 
 }

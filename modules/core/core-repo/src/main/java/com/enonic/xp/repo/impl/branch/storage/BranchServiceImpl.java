@@ -179,7 +179,7 @@ public class BranchServiceImpl
     @Override
     public void evictPath( final NodePath nodePath, final InternalContext context )
     {
-        pathCache.evict( new BranchPath( context.getBranch(), nodePath ) );
+        pathCache.evict( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ) );
     }
 
     @Override
@@ -190,13 +190,13 @@ public class BranchServiceImpl
 
     private BranchPath createPath( final NodePath nodePath, final InternalContext context )
     {
-        return new BranchPath( context.getBranch(), nodePath );
+        return new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath );
     }
 
 
     private NodeBranchEntry doGetByPath( final NodePath nodePath, final InternalContext context )
     {
-        final String id = this.pathCache.get( new BranchPath( context.getBranch(), nodePath ) );
+        final String id = this.pathCache.get( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ) );
 
         if ( id != null )
         {
@@ -259,7 +259,7 @@ public class BranchServiceImpl
 
     private void doCache( final InternalContext context, final NodePath nodePath, final BranchDocumentId branchDocumentId )
     {
-        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), branchDocumentId );
+        pathCache.cache( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ), branchDocumentId );
     }
 
     private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
