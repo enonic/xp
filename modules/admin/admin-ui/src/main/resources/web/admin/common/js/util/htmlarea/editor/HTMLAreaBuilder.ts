@@ -191,6 +191,7 @@ module api.util.htmlarea.editor {
 
             tinymce.init({
                 selector: this.selector,
+                forced_root_block : 'div',
                 document_base_url: this.assetsUri + '/common/lib/tinymce/',
                 skin_url: this.assetsUri + '/common/lib/tinymce/skins/lightgray',
                 content_css: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css',
