@@ -46,8 +46,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.setAutoUpdateTitle(false);
         this.getEl().addClass("publish-dialog");
 
-        this.initShowScheduleAction();
-        this.initPublishAction();
+        this.initActions();
         this.addCancelButtonToBottom();
 
         this.initChildrenCheckbox();
@@ -60,19 +59,17 @@ export class ContentPublishDialog extends ProgressBarDialog {
         });
     }
 
-    private initPublishAction() {
-        var publishAction = new ContentPublishDialogAction();
-        publishAction.onExecuted(this.doPublish.bind(this, false));
-        this.actionButton = this.addAction(publishAction, true);
-        this.lockControls();
-    }
-
-    private initShowScheduleAction() {
+    private initActions() {
         var showScheduleAction = new ShowSchedulePublishDialogAction();
         showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
         this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
         this.showScheduleDialogButton.setTitle("Schedule Publishing");
-        this.showScheduleDialogButton.setEnabled(true);
+
+        var publishAction = new ContentPublishDialogAction();
+        publishAction.onExecuted(this.doPublish.bind(this, false));
+        this.actionButton = this.addAction(publishAction, true);
+
+        this.lockControls();
     }
 
     protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -114,6 +111,15 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.childrenCheckbox.setChecked(false);
     }
 
+    protected lockControls() {
+        super.lockControls();
+        this.showScheduleDialogButton.setEnabled(false);
+    }
+
+    protected unlockControls() {
+        super.unlockControls();
+        this.showScheduleDialogButton.setEnabled(true);
+    }
 
     private getStashedItems(): ContentSummaryAndCompareStatus[] {
         return this.stash[String(this.childrenCheckbox.isChecked())];
