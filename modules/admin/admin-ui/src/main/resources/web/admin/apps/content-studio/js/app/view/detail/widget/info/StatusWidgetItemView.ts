@@ -1,13 +1,16 @@
 import "../../../../../api.ts";
 
 import CompareStatus = api.content.CompareStatus;
+import PublishStatus = api.content.PublishStatus;
 import CompareStatusFormatter = api.content.CompareStatusFormatter;
+import PublishStatusFormatter = api.content.PublishStatusFormatter;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import {WidgetItemView} from "../../WidgetItemView";
 
 export class StatusWidgetItemView extends WidgetItemView {
 
-    private status: CompareStatus;
+    private compareStatus: CompareStatus;
+    private publishStatus: PublishStatus;
 
     public static debug = false;
 
@@ -16,12 +19,15 @@ export class StatusWidgetItemView extends WidgetItemView {
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-        var status = item.getCompareStatus();
+        var compareStatus = item.getCompareStatus();
+        var publishStatus = item.getPublishStatus();
         if (StatusWidgetItemView.debug) {
-            console.debug('StatusWidgetItemView.setStatus: ', status);
+            console.debug('StatusWidgetItemView.setCompareStatus: ', compareStatus);
+            console.debug('StatusWidgetItemView.setPublishStatus: ', publishStatus);
         }
-        if (status != this.status) {
-            this.status = status;
+        if (compareStatus != this.compareStatus || publishStatus != this.publishStatus) {
+            this.compareStatus = compareStatus;
+            this.publishStatus = publishStatus;
             return this.layout();
         }
         return wemQ<any>(null);
@@ -33,10 +39,18 @@ export class StatusWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.status != undefined) {
-                var statusEl = new api.dom.SpanEl().setHtml(CompareStatusFormatter.formatStatus(this.status).toLocaleUpperCase());
-                statusEl.addClass(CompareStatus[this.status].toLowerCase().replace("_", "-") || "unknown");
+            if (this.compareStatus != undefined) {
+                var statusEl = new api.dom.SpanEl();
 
+                statusEl.addClass(CompareStatus[this.compareStatus].toLowerCase().replace("_", "-") || "unknown");
+                var statusElHtml = CompareStatusFormatter.formatStatus(this.compareStatus).toLocaleUpperCase();
+
+                if (PublishStatus.EXPIRED === this.publishStatus || PublishStatus.PENDING === this.publishStatus) {
+                    statusEl.addClass(PublishStatus[this.publishStatus].toLowerCase().replace("_", "-") || "unknown");
+                    statusElHtml += " (" + PublishStatusFormatter.formatStatus(this.publishStatus).toLocaleUpperCase() + ")";
+                }
+
+                statusEl.setHtml(statusElHtml);
                 this.removeChildren();
                 this.appendChild(statusEl);
             } else {
