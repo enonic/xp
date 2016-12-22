@@ -10,6 +10,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repository.RepositoryId;
 
 abstract class AbstractNodeEventHandler
     implements NodeEventHandler
@@ -19,6 +20,8 @@ abstract class AbstractNodeEventHandler
     private final static String PATH = "path";
 
     private final static String BRANCH = "branch";
+
+    private final static String REPOSITORY_ID = "repo";
 
     final static String NEW_PATH = "newPath";
 
@@ -58,19 +61,30 @@ abstract class AbstractNodeEventHandler
 
     InternalContext createNodeContext( final Map<Object, Object> map, final InternalContext context )
     {
-        final Branch branch = getBranch( map );
-        if ( branch != null && !branch.equals( context.getBranch() ) )
+        final InternalContext.Builder nodeContext = InternalContext.create( context );
+
+        final RepositoryId repositoryId = getRepositoryId( map );
+        if ( repositoryId != null )
         {
-            return InternalContext.create( context ).
-                branch( branch ).
-                build();
+            nodeContext.repositoryId( repositoryId );
         }
-        return context;
+
+        final Branch branch = getBranch( map );
+        if ( branch != null )
+        {
+            nodeContext.branch( branch );
+        }
+        return nodeContext.build();
+    }
+
+    RepositoryId getRepositoryId( final Map<Object, Object> map )
+    {
+        return map.containsKey( REPOSITORY_ID ) ? RepositoryId.from( map.get( REPOSITORY_ID ).toString() ) : null;
     }
 
     Branch getBranch( final Map<Object, Object> map )
     {
-        return map.get( BRANCH ) == null ? null : Branch.from( map.get( BRANCH ).toString() );
+        return map.containsKey( BRANCH ) ? Branch.from( map.get( BRANCH ).toString() ) : null;
     }
 
     NodePath getPath( final Map<Object, Object> map )

@@ -38,6 +38,8 @@ function startApplication() {
     var appBar = new api.app.bar.AppBar(application);
     var appPanel = new UserAppPanel(appBar, application.getPath());
 
+    appBar.addClass("show-tab-menu");
+
     var body = api.dom.Body.get();
     body.appendChild(appBar);
     body.appendChild(appPanel);

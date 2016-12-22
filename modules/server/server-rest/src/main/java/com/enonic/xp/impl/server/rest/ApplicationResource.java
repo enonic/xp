@@ -35,11 +35,11 @@ import com.enonic.xp.web.multipart.MultipartItem;
 public final class ApplicationResource
     implements JaxRsComponent
 {
-    private ApplicationService applicationService;
-
     private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
+
+    private ApplicationService applicationService;
 
     @POST
     @Path("install")
@@ -121,7 +121,7 @@ public final class ApplicationResource
 
         try
         {
-            final Application application = this.applicationService.installGlobalApplication( byteSource );
+            final Application application = this.applicationService.installGlobalApplication( byteSource, applicationName );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }

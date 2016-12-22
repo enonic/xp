@@ -157,7 +157,8 @@ public class ApplicationDeployDirectoryWatcher
     {
         //Installs the application
         final ByteSource byteSource = Files.asByteSource( file );
-        final Application application = ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
+        final Application application =
+            ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource, file.getName() ) );
         final ApplicationKey applicationKey = application.getKey();
         final String path = file.getPath();
 
@@ -206,7 +207,7 @@ public class ApplicationDeployDirectoryWatcher
                     //Installs this previous application
                     final String previousInstalledFile = fileNameStack.peek();
                     final ByteSource byteSource = Files.asByteSource( new File( previousInstalledFile ) );
-                    ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
+                    ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource, previousInstalledFile ) );
                 }
             }
             else

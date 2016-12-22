@@ -25,9 +25,9 @@ public interface ApplicationService
 
     Application installGlobalApplication( final URL url );
 
-    Application installGlobalApplication( final ByteSource byteSource );
+    Application installGlobalApplication( final ByteSource byteSource, final String applicationName );
 
-    Application installLocalApplication( final ByteSource byteSource );
+    Application installLocalApplication( final ByteSource byteSource, final String applicationName );
 
     Application installStoredApplication( final NodeId nodeId );
 

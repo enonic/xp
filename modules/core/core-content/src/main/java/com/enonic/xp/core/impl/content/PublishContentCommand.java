@@ -120,6 +120,10 @@ public class PublishContentCommand
         {
             doPushNodes( pushNodesIds.build() );
         }
+        else
+        {
+            this.resultBuilder.setFailed( pushContentsIds );
+        }
 
         doDeleteNodes( deletedNodesIds.build() );
     }

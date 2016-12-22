@@ -66,6 +66,10 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 public final class ApplicationResource
     implements JaxRsComponent
 {
+    private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
+
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
+
     private final Icon defaultAppIcon;
 
     private ApplicationService applicationService;
@@ -79,10 +83,6 @@ public final class ApplicationResource
     private AuthDescriptorService authDescriptorService;
 
     private ApplicationIconUrlResolver iconUrlResolver;
-
-    private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
-
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
     public ApplicationResource()
     {
@@ -294,7 +294,7 @@ public final class ApplicationResource
 
         try
         {
-            final Application application = this.applicationService.installGlobalApplication( byteSource );
+            final Application application = this.applicationService.installGlobalApplication( byteSource, applicationName );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false, iconUrlResolver ) );
         }

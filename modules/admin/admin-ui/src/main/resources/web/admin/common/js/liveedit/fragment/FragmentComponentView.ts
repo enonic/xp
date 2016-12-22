@@ -52,6 +52,7 @@ module api.liveedit.fragment {
             this.loadFragmentContent();
 
             this.parseContentViews(this);
+            this.disableLinks();
 
             this.handleContentRemovedEvent();
             this.handleContentUpdatedEvent();

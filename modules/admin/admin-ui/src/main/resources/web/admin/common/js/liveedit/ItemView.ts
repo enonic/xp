@@ -194,6 +194,10 @@ module api.liveedit {
             this.appendChild(placeholder);
         }
 
+        protected disableLinks() {
+            wemjq(this.getHTMLElement()).find("a").click(e => e.preventDefault());
+        }
+
         public setContextMenuTitle(title: ItemViewContextMenuTitle) {
             this.contextMenuTitle = title;
         }

@@ -11,9 +11,10 @@ html {
     */
     a {
       pointer-events: none;
+      cursor: move; //IE fix XP-2100; also chrome pointer-events: none not always working
 
-      &[disabled] {
-        cursor: move; //IE fix XP-2100
+      &:active {
+        color: blue; // for chrome
       }
     }
   }
