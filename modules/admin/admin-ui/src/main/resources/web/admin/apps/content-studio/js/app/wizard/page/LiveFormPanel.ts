@@ -294,7 +294,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
             if (!api.ObjectHelper.objectEquals(this, event.getSource())) {
 
-                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(event.getOldValue(), event.getNewValue())) {
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER &&
+                    !api.ObjectHelper.objectEquals(event.getOldValue(), event.getNewValue())) {
                     this.contentWizardPanel.saveChanges();
                 }
                 if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE) {
@@ -434,6 +435,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     updateFrameContainerSize(contextWindowShown: boolean, contextWindowWidth?: number) {
+        if (!this.frameContainer) {
+            return;
+        }
         if (contextWindowShown && contextWindowWidth) {
             this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth - 1) + "px)");
         } else {
