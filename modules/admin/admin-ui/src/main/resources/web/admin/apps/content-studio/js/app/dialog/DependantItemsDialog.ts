@@ -48,7 +48,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
         super(dialogName);
-        
+
         this.addClass("dependant-dialog");
 
         this.dialogName = dialogName;
@@ -172,7 +172,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         }
         return false;
     }
-    
+
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.setItems(items);
 
@@ -196,9 +196,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     protected loadDescendantIds(filterStatuses?: CompareStatus[]) {
         let contents = this.getItemList().getItems();
 
-        return new api.content.resource.GetDescendantsOfContentsRequest().
-            setContentPaths(contents.map(content => content.getContentSummary().getPath())).
-            setFilterStatuses(filterStatuses).sendAndParse()
+        return new api.content.resource.GetDescendantsOfContentsRequest().setContentPaths(
+            contents.map(content => content.getContentSummary().getPath())).setFilterStatuses(filterStatuses).sendAndParse()
             .then((result: ContentId[]) => {
                 this.dependantIds = result;
             });
@@ -207,13 +206,16 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     protected loadDescendants(from: number,
                               size: number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
-        let ids = this.dependantIds.slice(from, from+size);
+        let ids = this.getDependantIds().slice(from, from + size);
         return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByIds(ids);
     }
 
     protected countTotal(): number {
-        return this.getItemList().getItemCount()
-               + this.dependantIds.length;
+        return this.getItemList().getItemCount() + this.getDependantIds().length;
+    }
+
+    protected getDependantIds(): ContentId[] {
+        return this.dependantIds;
     }
 
     private doPostLoad() {
@@ -246,14 +248,16 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         let size = this.getDependantList().getItemCount();
 
         if (!this.loading) {
-            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.dependantIds.length) {
+            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.getDependantIds().length) {
 
+                this.loadMask.show();
                 this.loading = true;
 
                 this.loadDescendants(size, GetDescendantsOfContents.LOAD_SIZE).then((newItems) => {
 
                     this.addDependantItems(newItems);
                     this.loading = false;
+                    this.loadMask.hide();
                     if (this.loadingRequested) {
                         this.loadingRequested = false;
                         this.postLoad();
@@ -317,7 +321,6 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
     getItemId(item: ContentSummaryAndCompareStatus): string {
         return item.getContentSummary().getId();
     }
-
 }
 
 export class DialogDependantList extends ListBox<ContentSummaryAndCompareStatus> {

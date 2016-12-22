@@ -24,13 +24,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private excludedIds: ContentId[] = [];
 
-    private childrenLoaded: boolean = false;
-
-    private containsInvalidContents: boolean = false; // result of back-end check for all the publish candidates that do not pend deletion
-
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
-    private stashedCount: {[checked: string]: number} = {};
+    private stashedDependantIds: {[checked: string]: ContentId[]} = {};
+    private stashedContainsInvalid: {[checked: string]: boolean} = {};
 
     private scheduleDialog: SchedulePublishDialog;
     protected showScheduleDialogButton: api.ui.dialog.DialogButton;
@@ -104,11 +101,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.getButtonRow().addClass("no-checkbox");
         }
 
+        this.excludedIds = [];
+
         this.clearStashedItems();
         this.reloadPublishDependencies(true).done();
-
-        this.excludedIds = [];
-        this.childrenLoaded = false;
 
         super.open();
     }
@@ -127,14 +123,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.stash[String(this.childrenCheckbox.isChecked())] = items.slice();
     }
 
-    private setStashedCount(count: number) {
-        this.stashedCount[String(this.childrenCheckbox.isChecked())] = count;
-    }
-
-    private getStashedCount(): number {
-        return this.stashedCount[String(this.childrenCheckbox.isChecked())];
-    }
-
     private clearStashedItems() {
         this.stash = {};
     }
@@ -143,8 +131,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         var stashedItems = this.getStashedItems();
         // null - means items have not been loaded yet or we had to clear it because of selection change
         if (!stashedItems) {
-            let childrenNotLoadedYet = this.childrenCheckbox.isChecked() && !this.childrenLoaded;
-            return this.reloadPublishDependencies(childrenNotLoadedYet);
+            return this.reloadPublishDependencies(true);
         } else {
             // apply the stash to avoid extra heavy request
             this.lockControls();
@@ -182,9 +169,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
-            this.dependantIds = result.getDependants();
-            this.containsInvalidContents = result.isContainsInvalid();
-            this.setStashedCount(this.dependantIds.length);
+            this.stashedDependantIds[String(this.childrenCheckbox.isChecked())] = result.getDependants().slice();
+            this.stashedContainsInvalid[String(this.childrenCheckbox.isChecked())] = result.isContainsInvalid();
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
@@ -198,10 +184,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
                 this.setStashedItems(dependants.slice());
                 this.updateSubTitleShowScheduleAndButtonCount();
-
-                if (this.childrenCheckbox.isChecked()) {
-                    this.childrenLoaded = true;
-                }
 
                 // do not set requested contents as they are never going to change,
                 // but returned data contains less info than original summaries
@@ -257,7 +239,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.childrenCheckbox.setChecked(include, silent);
         return this;
     }
-
 
     private initChildrenCheckbox() {
 
@@ -324,7 +305,25 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     protected countTotal(): number {
-        return this.countToPublish(this.getItemList().getItems()) + this.getStashedCount();
+        return this.countToPublish(this.getItemList().getItems()) + this.getDependantIds().length;
+    }
+
+    protected loadDescendantIds(filterStatuses?: CompareStatus[]) {
+        let contents = this.getItemList().getItems();
+
+        return new api.content.resource.GetDescendantsOfContentsRequest().setContentPaths(
+            contents.map(content => content.getContentSummary().getPath())).setFilterStatuses(filterStatuses).sendAndParse()
+            .then((result: ContentId[]) => {
+                this.stashedDependantIds[String(this.childrenCheckbox.isChecked())] = result.slice();
+            });
+    }
+
+    protected getDependantIds(): ContentId[] {
+        return this.stashedDependantIds[String(this.childrenCheckbox.isChecked())];
+    }
+
+    protected containsInvalid(): boolean {
+        return this.stashedContainsInvalid[String(this.childrenCheckbox.isChecked())];
     }
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
@@ -381,7 +380,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     private areItemsAndDependantsValid(): boolean {
-        return !this.containsInvalidContents &&
+        return !this.containsInvalid() &&
                this.areAllValid(this.getItemList().getItems()) &&
                this.areAllValid(this.getDependantList().getItems());
     }
