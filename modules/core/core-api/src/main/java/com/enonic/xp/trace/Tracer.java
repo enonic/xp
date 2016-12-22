@@ -36,20 +36,24 @@ public final class Tracer
         }
     }
 
+    public static void trace( final Trace trace, final Runnable runnable )
+    {
+        trace( trace, () ->
+        {
+            runnable.run();
+            return null;
+        } );
+    }
+
     public static <T> T trace( final Trace trace, final TraceRunnable<T> runnable )
     {
-        final Trace current = current();
-
         try
         {
-            setCurrent( trace );
-            startTrace( trace );
-            return runnable.run();
+            return traceEx( trace, runnable::run );
         }
-        finally
+        catch ( final Exception e )
         {
-            endTrace( trace );
-            setCurrent( current );
+            throw new RuntimeException( e );
         }
     }
 
@@ -79,6 +83,11 @@ public final class Tracer
         }
 
         return INSTANCE.manager.newTrace( name, current() );
+    }
+
+    public static void trace( final String name, final Runnable runnable )
+    {
+        trace( newTrace( name ), runnable );
     }
 
     public static <T> T trace( final String name, final TraceRunnable<T> runnable )
