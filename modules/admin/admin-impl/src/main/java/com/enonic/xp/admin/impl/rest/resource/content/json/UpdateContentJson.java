@@ -27,13 +27,14 @@ public final class UpdateContentJson
 {
     final ContentName contentName;
 
+    final ContentPublishInfo contentPublishInfo;
+
     final UpdateContentParams updateContentParams;
 
     final RenameContentParams renameContentParams;
 
     @JsonCreator
-    UpdateContentJson( @JsonProperty("contentId") final String contentId,
-                       @JsonProperty("contentName") final String contentName,
+    UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
                        @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
                        @JsonProperty("meta") final List<ExtraDataJson> extraDataJsonList,
                        @JsonProperty("displayName") final String displayName, @JsonProperty("requireValid") final String requireValid,
@@ -44,9 +45,11 @@ public final class UpdateContentJson
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( propertyArrayJsonList );
         final ExtraDatas extraDatas = parseExtradata( extraDataJsonList );
-        final ContentPublishInfo.Builder publishInfo = ContentPublishInfo.create();
-        publishInfo.from( StringUtils.isNotEmpty( publishFrom ) ? Instant.parse( publishFrom ) : null );
-        publishInfo.to( StringUtils.isNotEmpty( publishTo ) ? Instant.parse( publishTo ) : null );
+
+        this.contentPublishInfo = ContentPublishInfo.create().
+            from( StringUtils.isNotEmpty( publishFrom ) ? Instant.parse( publishFrom ) : null ).
+            to( StringUtils.isNotEmpty( publishTo ) ? Instant.parse( publishTo ) : null ).
+            build();
 
         this.updateContentParams = new UpdateContentParams().
             requireValid( Boolean.valueOf( requireValid ) ).
@@ -58,7 +61,7 @@ public final class UpdateContentJson
                 edit.displayName = displayName;
                 edit.owner = StringUtils.isNotEmpty( owner ) ? PrincipalKey.from( owner ) : null;
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
-                edit.publishInfo = publishInfo.build();
+                edit.publishInfo = this.contentPublishInfo;
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
             } );
 
@@ -84,6 +87,12 @@ public final class UpdateContentJson
     public ContentName getContentName()
     {
         return contentName;
+    }
+
+    @JsonIgnore
+    public ContentPublishInfo getContentPublishInfo()
+    {
+        return contentPublishInfo;
     }
 
     private ExtraDatas parseExtradata( final List<ExtraDataJson> extraDataJsonList )

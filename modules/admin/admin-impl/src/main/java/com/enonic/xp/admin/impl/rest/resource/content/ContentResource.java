@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -391,6 +392,7 @@ public final class ContentResource
                                                 "Content [%s] could not be updated. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
+        validate( json.getContentPublishInfo() );
 
         final UpdateContentParams updateParams = json.getUpdateContentParams();
 
@@ -757,7 +759,7 @@ public final class ContentResource
                     iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
-                collect( Collectors.toList() );
+            collect( Collectors.toList() );
     }
 
     @POST
@@ -1555,6 +1557,23 @@ public final class ContentResource
         }
 
         return true;
+    }
+
+    private void validate( final ContentPublishInfo contentPublishInfo )
+    {
+        final Instant publishToInstant = contentPublishInfo.getTo();
+        if ( publishToInstant != null )
+        {
+            final Instant publishFromInstant = contentPublishInfo.getFrom();
+            if ( publishFromInstant == null )
+            {
+                throw JaxRsExceptions.badRequest( "\"Online to\" date/time cannot be set without \"Online from\"" );
+            }
+            if ( publishToInstant.compareTo( publishFromInstant ) < 0 )
+            {
+                throw JaxRsExceptions.badRequest( "\"Online from\" date/time must be earlier than \"Online to\"" );
+            }
+        }
     }
 
     @Reference
