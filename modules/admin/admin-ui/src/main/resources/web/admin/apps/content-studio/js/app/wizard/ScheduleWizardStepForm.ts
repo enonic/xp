@@ -99,12 +99,12 @@ export class ScheduleWizardStepForm extends api.app.wizard.WizardStepForm {
 
     getPublishStatus(): PublishStatus {
         var publishFrom = this.propertySet.getDateTime("from");
-        if (publishFrom && publishFrom.toDate() > Date.now()) {
+        if (publishFrom && publishFrom.toDate() > new Date()) {
             return PublishStatus.PENDING;
         }
 
         var publishTo = this.propertySet.getDateTime("to");
-        if (publishTo && publishTo.toDate() < Date.now()) {
+        if (publishTo && publishTo.toDate() < new Date()) {
             return PublishStatus.EXPIRED;
         }
 
