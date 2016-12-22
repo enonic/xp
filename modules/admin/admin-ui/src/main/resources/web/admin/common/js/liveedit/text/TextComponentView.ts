@@ -340,7 +340,7 @@ module api.liveedit.text {
                     if (!this.isEditorReady()) {
                         this.doInitEditor();
                     }
-                })
+                });
             }
         }
 

@@ -343,7 +343,7 @@ module api.util.htmlarea.dialog {
             });
 
             uploader.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
-                this.showError("Upload failed")
+                this.showError("Upload failed");
             });
 
             return uploader;

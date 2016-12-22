@@ -422,7 +422,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private bindTreeFragmentNodeUpdateOnComponentLoaded(fragmentComponentView: FragmentComponentView) {
         fragmentComponentView.onFragmentContentLoaded((e)=> {
-            this.tree.updateNode(e.getFragmentComponentView())
+            this.tree.updateNode(e.getFragmentComponentView());
         });
     }
 
@@ -461,7 +461,7 @@ export class PageComponentsView extends api.dom.DivEl {
                             y: event.clientY
                         };
                     }
-                }
+                };
             }
             if (!this.mouseUpListener) {
                 this.mouseUpListener = (event?: MouseEvent) => {
@@ -477,7 +477,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
                         this.mouseDown = false;
                     }
-                }
+                };
             }
             if (!this.mouseMoveListener) {
                 this.mouseMoveListener = (event: MouseEvent) => {
@@ -507,7 +507,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
                         this.hideContextMenu();
                     }
-                }
+                };
             }
             this.header.onMouseDown(this.mouseDownListener);
             body.onMouseUp(this.mouseUpListener);
@@ -537,7 +537,7 @@ export class PageComponentsView extends api.dom.DivEl {
             parentOffset = {
                 top: 0,
                 left: 0
-            }
+            };
         }
 
         el.setMaxHeightPx(parentEl.getHeight());
@@ -718,7 +718,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     unBeforeInsertAction(listener: (event)=>void) {
         this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event)=>void)=> {
-            return listener != currentListener
+            return listener != currentListener;
         });
     }
 

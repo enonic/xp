@@ -39,7 +39,7 @@ module api.content.resource {
         sendAndParse(): wemQ.Promise<ContentId[]> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentIdBaseItemJson[]>) => {
-                return response.getResult().map((item => new ContentId(item.id)))
+                return response.getResult().map((item => new ContentId(item.id)));
             });
         }
     }

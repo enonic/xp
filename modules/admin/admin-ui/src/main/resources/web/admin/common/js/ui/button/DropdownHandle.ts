@@ -22,7 +22,7 @@ module api.ui.button {
         }
 
         up() {
-            this.removeClass('down')
+            this.removeClass('down');
         }
     }
 }

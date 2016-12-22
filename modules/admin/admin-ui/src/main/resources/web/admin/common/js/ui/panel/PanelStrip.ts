@@ -25,7 +25,7 @@ module api.ui.panel {
 
             this.onShown(() => {
                 this.updateLastPanelHeight();
-            })
+            });
         }
 
         private countExistingChildren(index: number): number {

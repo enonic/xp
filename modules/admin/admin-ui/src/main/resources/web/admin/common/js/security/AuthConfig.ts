@@ -24,7 +24,7 @@ module api.security {
             var other = <AuthConfig> o;
 
             return this.applicationKey.equals(other.applicationKey) &&
-                   this.config.equals(other.config)
+                   this.config.equals(other.config);
         }
 
         toJson(): AuthConfigJson {

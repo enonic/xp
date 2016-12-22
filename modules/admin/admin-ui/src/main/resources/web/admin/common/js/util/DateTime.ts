@@ -231,7 +231,7 @@ module api.util {
 
                         return offset;
                     } else {
-                        return 0
+                        return 0;
                     }
                 } else if (dateStr.split("-").length == 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
                     var parts = dateStr.split("-");

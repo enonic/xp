@@ -17,7 +17,7 @@ module api.content.form.inputtype.checkbox {
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
-            this.readConfig(config.inputConfig)
+            this.readConfig(config.inputConfig);
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {

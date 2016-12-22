@@ -40,7 +40,7 @@ module api.application {
                 version: this.version,
                 start: this.start,
                 count: this.count,
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

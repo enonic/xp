@@ -265,7 +265,7 @@ module api.ui.time {
         unShownMonthChanged(listener: (month: number, year: number) => void) {
             this.shownMonthChangedListeners = this.shownMonthChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyShownMonthChanged(month: number, year: number) {

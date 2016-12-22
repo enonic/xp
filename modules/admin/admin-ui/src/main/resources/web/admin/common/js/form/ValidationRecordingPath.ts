@@ -27,7 +27,7 @@ module api.form {
             if (this.parentDataSet && !this.parentDataSet.isRoot()) {
                 s += this.parentDataSet.toString();
                 if (this.dataName) {
-                    s += "." + this.dataName
+                    s += "." + this.dataName;
                 }
             }
             else {
@@ -78,7 +78,7 @@ module api.form {
 
             return otherPath.getElements().every((whatEl, whatIdx) => {
                 return fullPath.getElement(whatIdx).toString() == whatEl.toString();
-            })
+            });
         }
 
     }

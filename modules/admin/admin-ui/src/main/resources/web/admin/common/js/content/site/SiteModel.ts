@@ -62,7 +62,7 @@ module api.content.site {
                 } else if (ApplicationEventType.STARTED == event.getEventType()) {
                     this.notifyApplicationStarted(event);
                 }
-            }
+            };
         }
 
         private setup(site: Site) {
@@ -112,7 +112,7 @@ module api.content.site {
             var event = new api.PropertyChangedEvent(property, oldValue, newValue, source);
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onApplicationAdded(listener: (event: ApplicationAddedEvent)=>void) {
@@ -130,7 +130,7 @@ module api.content.site {
             var event = new ApplicationAddedEvent(siteConfig);
             this.applicationAddedListeners.forEach((listener: (event: ApplicationAddedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onApplicationRemoved(listener: (event: ApplicationRemovedEvent)=>void) {
@@ -148,7 +148,7 @@ module api.content.site {
             var event = new ApplicationRemovedEvent(applicationKey);
             this.applicationRemovedListeners.forEach((listener: (event: ApplicationRemovedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onApplicationUnavailable(listener: (applicationEvent: ApplicationEvent)=>void) {
@@ -165,7 +165,7 @@ module api.content.site {
         private notifyApplicationUnavailable(applicationEvent: ApplicationEvent) {
             this.applicationUnavailableListeners.forEach((listener: (applicationEvent: ApplicationEvent)=>void) => {
                 listener(applicationEvent);
-            })
+            });
         }
 
         onApplicationStarted(listener: (applicationEvent: ApplicationEvent)=>void) {
@@ -182,7 +182,7 @@ module api.content.site {
         private notifyApplicationStarted(applicationEvent: ApplicationEvent) {
             this.applicationStartedListeners.forEach((listener: (applicationEvent: ApplicationEvent)=>void) => {
                 listener(applicationEvent);
-            })
+            });
         }
     }
 }

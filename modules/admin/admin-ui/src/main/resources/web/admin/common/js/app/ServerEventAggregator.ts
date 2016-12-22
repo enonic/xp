@@ -68,7 +68,7 @@ module api.app {
 
         unBatchIsReady(listener: (event)=>void) {
             this.batchReadyListeners = this.batchReadyListeners.filter((currentListener: (event)=>void)=> {
-                return listener != currentListener
+                return listener != currentListener;
             });
         }
 

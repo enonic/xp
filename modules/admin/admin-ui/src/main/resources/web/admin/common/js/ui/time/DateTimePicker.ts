@@ -242,7 +242,7 @@ module api.ui.time {
         private notifySelectedDateTimeChanged(event: SelectedDateChangedEvent) {
             this.selectedDateTimeChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private formatDateTime(date: Date): string {

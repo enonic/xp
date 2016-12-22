@@ -12,6 +12,6 @@ export class ShowFormAction extends api.ui.Action {
         this.onExecuted(() => {
             wizard.showForm();
             new ShowContentFormEvent().fire();
-        })
+        });
     }
 }

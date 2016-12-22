@@ -80,7 +80,7 @@ module api.form {
         toggleHelpText(show?: boolean) {
             this.getOccurrenceViews().forEach((view) => {
                 view.toggleHelpText(show);
-            })
+            });
         }
 
         isCollapsed(): boolean {

@@ -15,7 +15,7 @@ module api.form {
 
         parent: FormItemOccurrenceView;
 
-        dataSet: PropertySet
+        dataSet: PropertySet;
     }
 
     export class FormOptionSetOccurrenceView extends FormSetOccurrenceView {
@@ -102,7 +102,7 @@ module api.form {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }
-                })
+                });
             });
         }
 
@@ -151,7 +151,7 @@ module api.form {
             }
 
             if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 0) {
-                return "(any)"
+                return "(any)";
             }
             if (multiselection.getMinimum() > 0 && multiselection.getMaximum() == 0) {
                 return "(at least " + multiselection.getMinimum() + ")";
@@ -185,7 +185,7 @@ module api.form {
         private addDefaultSelectionToSelectionArray(selectionPropertyArray: PropertyArray) {
             this.formOptionSet.getOptions().forEach((option: FormOptionSetOption) => {
                 if (option.isDefaultOption() && selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMaximum()) {
-                    selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()))
+                    selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()));
                 }
             });
         }

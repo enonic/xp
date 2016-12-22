@@ -133,11 +133,11 @@ module api.util.htmlarea.dialog {
 
             this.dockedPanel.getDeck().onPanelShown(() => {
                 this.centerMyself();
-            })
+            });
 
             this.dockedPanel.onRendered(() => {
                 this.centerMyself();
-            })
+            });
 
         }
 
@@ -224,7 +224,7 @@ module api.util.htmlarea.dialog {
             dockedPanel.getDeck().getPanels().forEach((panel) => {
                 (<Form>panel.getFirstChild()).onValidityChanged(() => {
                     this.centerMyself();
-                })
+                });
             });
 
             return dockedPanel;

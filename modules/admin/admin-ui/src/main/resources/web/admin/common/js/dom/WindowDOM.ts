@@ -19,7 +19,7 @@ module api.dom {
 
             this.el.onbeforeunload = (event) => {
                 this.onBeforeUnloadListeners.forEach((listener) => listener(event));
-            }
+            };
 
             this.el.onunload = (event) => {
                 this.onUnloadListeners.forEach((listener) => listener(event));

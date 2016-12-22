@@ -4,8 +4,8 @@ import Action = api.ui.Action;
 import RenderingMode = api.rendering.RenderingMode;
 
 interface OpenedWindow {
-    openedWindow: Window,
-    isBlocked: boolean
+    openedWindow: Window;
+    isBlocked: boolean;
 }
 
 export class BasePreviewAction extends Action {

@@ -91,7 +91,7 @@ export class ContentWizardDataLoader {
 
         return wemQ.all([modelsPromise, otherPromises]).then(() => {
             return this;
-        })
+        });
     }
 
     private loadContent(contentId: ContentId): wemQ.Promise<Content> {

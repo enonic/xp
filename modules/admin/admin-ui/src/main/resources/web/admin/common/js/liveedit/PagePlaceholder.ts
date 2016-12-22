@@ -29,7 +29,7 @@ module api.liveedit {
             controllerDropdown.hide();
             controllerDropdown.load();
 
-            this.addControllerDropdownEvents(controllerDropdown, pageView, infoBlock)
+            this.addControllerDropdownEvents(controllerDropdown, pageView, infoBlock);
 
             return controllerDropdown;
         }

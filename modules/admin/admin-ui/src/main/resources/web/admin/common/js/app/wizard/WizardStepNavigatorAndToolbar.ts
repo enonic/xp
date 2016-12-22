@@ -119,7 +119,7 @@ module api.app.wizard {
                 else {
                     tab.setLabel(tab.getLabel().replace(strIndex, ""));
                 }
-            })
+            });
         }
 
         checkAndMinimize() {

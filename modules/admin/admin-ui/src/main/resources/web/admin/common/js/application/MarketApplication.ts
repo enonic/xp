@@ -137,7 +137,7 @@ module api.application {
                 status = "Unknown";
                 break;
             default:
-                status = "Unknown"
+                status = "Unknown";
             }
 
             if (!!MarketAppStatus[status]) {
@@ -168,7 +168,7 @@ module api.application {
                 cssClass = "unknown";
                 break;
             default:
-                cssClass = "Unknown"
+                cssClass = "Unknown";
             }
 
             if (!!MarketAppStatus[status]) {
@@ -190,7 +190,7 @@ module api.application {
                 performedOperation = "updated";
                 break;
             default:
-                performedOperation = "installed"
+                performedOperation = "installed";
             }
 
             return performedOperation;

@@ -6,7 +6,7 @@ module api.schema.content {
     export class ContentTypeSummaryLoader extends BaseLoader<ContentTypeSummaryListJson, ContentTypeSummary> {
 
         constructor() {
-            super(new GetAllContentTypesRequest())
+            super(new GetAllContentTypesRequest());
         }
 
         filterFn(contentType: ContentTypeSummary) {

@@ -153,7 +153,7 @@ module api.content.page {
                 this.componentPropertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent) => void) => {
                     listener(event);
                 });
-            }
+            };
         }
 
         /**
@@ -558,7 +558,7 @@ module api.content.page {
             var event = new PageModeChangedEvent(oldValue, newValue);
             this.pageModeChangedListeners.forEach((listener: (event: PageModeChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
@@ -575,7 +575,7 @@ module api.content.page {
             var event = new api.PropertyChangedEvent(property, oldValue, newValue, origin);
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent) => void) {
@@ -602,7 +602,7 @@ module api.content.page {
         private notifyCustomizeChanged(value: boolean) {
             this.customizeChangedListeners.forEach((listener: (value: boolean)=>void) => {
                 listener(value);
-            })
+            });
         }
 
         onReset(listener: ()=>void) {

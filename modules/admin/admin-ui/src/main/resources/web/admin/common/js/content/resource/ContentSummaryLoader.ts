@@ -45,7 +45,7 @@ module api.content.resource {
         }
 
         resetParams() {
-            this.getRequest().resetParams()
+            this.getRequest().resetParams();
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {

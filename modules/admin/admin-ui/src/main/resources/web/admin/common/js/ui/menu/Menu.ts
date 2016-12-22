@@ -100,7 +100,7 @@ module api.ui.menu {
         private removeMenuItem(menuItem: MenuItem) {
             this.menuItems = this.menuItems.filter((item) => {
                 return item != menuItem;
-            })
+            });
         }
 
         private getMenuItem(action: api.ui.Action): MenuItem {

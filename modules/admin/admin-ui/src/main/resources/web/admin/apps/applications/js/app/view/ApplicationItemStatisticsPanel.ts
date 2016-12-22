@@ -97,7 +97,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
                 if (providersGroup && !providersGroup.isEmpty()) {
                     this.applicationDataContainer.appendChild(providersGroup);
                 }
-            })
+            });
 
     }
 
@@ -179,7 +179,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
                 return schemasGroup;
 
-            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason))
+            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
     }
 
     private initProviders(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {

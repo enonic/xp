@@ -43,13 +43,13 @@ module api.ui.security {
         unRemoveClicked(listener: (event: MouseEvent) => void) {
             this.removeClickedListeners = this.removeClickedListeners.filter((current) => {
                 return current !== listener;
-            })
+            });
         }
 
         notifyRemoveClicked(event: MouseEvent) {
             this.removeClickedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
     }
 }

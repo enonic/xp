@@ -5,7 +5,7 @@ module api.util.htmlarea.dialog {
     import Panel = api.ui.panel.Panel;
     import MacroDescriptor = api.macro.MacroDescriptor;
     import FormContext = api.form.FormContext;
-    import ApplicationKey = api.application.ApplicationKey
+    import ApplicationKey = api.application.ApplicationKey;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class MacroModalDialog extends ModalDialog {

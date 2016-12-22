@@ -68,7 +68,7 @@ module api.util.htmlarea.editor {
 
             for (let i = 0; i < imgs.length; i++) {
                 this.changeImageParentAlignmentOnImageAlignmentChange(imgs[i]);
-                this.updateImageParentAlignment(imgs[i])
+                this.updateImageParentAlignment(imgs[i]);
             }
         }
 

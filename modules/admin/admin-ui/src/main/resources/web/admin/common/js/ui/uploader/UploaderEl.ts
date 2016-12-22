@@ -7,12 +7,12 @@ module api.ui.uploader {
     import Element = api.dom.Element;
 
     export interface FineUploaderFile {
-        id: string,
-        name: string,
-        size: number,
-        uuid: string,
-        status: string,
-        percent: number
+        id: string;
+        name: string;
+        size: number;
+        uuid: string;
+        status: string;
+        percent: number;
     }
 
     export interface UploaderElConfig {
@@ -20,8 +20,8 @@ module api.ui.uploader {
         url?: string;
         hasUploadButton?: boolean;
         allowDrop?: boolean;
-        selfIsDropzone?: boolean;            // allow drop no matter if the dropzone is visible
-        resultAlwaysVisisble?: boolean;         // never hide the result
+        selfIsDropzone?: boolean;       // allow drop no matter if the dropzone is visible
+        resultAlwaysVisisble?: boolean; // never hide the result
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
         showCancel?: boolean;
@@ -114,7 +114,7 @@ module api.ui.uploader {
 
         private initUploadButton() {
             if (!this.config.hasUploadButton) {
-                return
+                return;
             }
             this.uploadButton = new api.dom.DivEl('upload-button');
             this.uploadButton.setId('upload-button-' + new Date().getTime());
@@ -304,7 +304,7 @@ module api.ui.uploader {
                     toRemove.push(elem);
                 }
             });
-            toRemove.forEach((elem: Element) => elem.remove())
+            toRemove.forEach((elem: Element) => elem.remove());
         }
 
         protected refreshExistingItem(existingItem: Element, value: string) {
@@ -729,7 +729,7 @@ module api.ui.uploader {
         unFileUploaded(listener: (event: FileUploadedEvent<MODEL>) => void) {
             this.fileUploadedListeners = this.fileUploadedListeners.filter((currentListener) => {
                 return listener != currentListener;
-            })
+            });
         }
 
         onUploadCompleted(listener: (event: FileUploadCompleteEvent<MODEL>) => void) {
@@ -749,7 +749,7 @@ module api.ui.uploader {
         unUploadReset(listener: () => void) {
             this.uploadResetListeners = this.uploadResetListeners.filter((currentListener) => {
                 return listener != currentListener;
-            })
+            });
         }
 
         onUploadFailed(listener: (event: FileUploadFailedEvent<MODEL>) => void) {

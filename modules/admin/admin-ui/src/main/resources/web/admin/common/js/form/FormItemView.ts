@@ -108,7 +108,7 @@ module api.form {
         notifyEditContentRequested(content: api.content.ContentSummary) {
             this.editContentRequestListeners.forEach((listener) => {
                 listener(content);
-            })
+            });
         }
 
         onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {

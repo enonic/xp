@@ -67,7 +67,7 @@ export class WidgetView extends api.dom.DivEl {
             if (this.detailsView.getItem() && containerWidth !== this.containerWidth) {
                 this.updateWidgetItemViews(true);
             }
-        }
+        };
         this.detailsView.onPanelSizeChanged(() => {
             if (this.isActive()) {
                 updateWidgetItemViewsHandler();
@@ -75,7 +75,7 @@ export class WidgetView extends api.dom.DivEl {
                 var onActivatedHandler = () => {
                     updateWidgetItemViewsHandler();
                     this.unActivated(onActivatedHandler);
-                }
+                };
                 this.onActivated(onActivatedHandler);
             }
         });

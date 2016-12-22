@@ -305,7 +305,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 this.handleMissingApp();
             }
-        }
+        };
 
         api.app.wizard.MaskContentWizardPanelEvent.on(event => {
             if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
@@ -913,7 +913,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 .then((fragmentContents: Content[]) => {
                     return fragmentContents.some((fragmentContent: Content) => {
                         return this.doesFragmentContainId(fragmentContent.getPage(), id);
-                    })
+                    });
                 });
         } else {
             return wemQ(containsId);
@@ -933,7 +933,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     return this.doRegionsContainId((<LayoutComponent>component).getRegions().getRegions(), id, fragments);
                 }
                 return false;
-            })
+            });
         });
     }
 
@@ -944,7 +944,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return areas.some((area) => {
             var property = data.getProperty(area);
             if (property && property.hasNonNullValue() && property.getType().equals(api.data.ValueTypes.STRING)) {
-                return property.getString().indexOf(id) >= 0
+                return property.getString().indexOf(id) >= 0;
             }
         });
     }
@@ -1515,11 +1515,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         if (selectedOptionName.getString() == option.getName()) {
                             isSelected = true;
                         }
-                    })
+                    });
                     if (!isSelected) {
                         optionSetProperty.removeProperty(option.getName(), 0);
                     }
-                })
+                });
             }
         });
 

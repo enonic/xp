@@ -120,7 +120,7 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
             status.addClass("online");
         }
         if (publishStatus && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
-            status.addClass(api.content.PublishStatusFormatter.formatStatus(publishStatus).toLowerCase())
+            status.addClass(api.content.PublishStatusFormatter.formatStatus(publishStatus).toLowerCase());
             status.setHtml(api.content.CompareStatusFormatter.formatStatus(compareStatus) + ' (' +
                            api.content.PublishStatusFormatter.formatStatus(publishStatus) + ')');
         } else {

@@ -105,7 +105,7 @@ module api.ui.text {
                 this.complexity = undefined;
             }
             if (this.isExtreme(value)) {
-                this.complexity = 'extreme'
+                this.complexity = 'extreme';
             } else if (this.isStrong(value)) {
                 this.complexity = 'strong';
             } else if (this.isGood(value)) {
@@ -179,7 +179,7 @@ module api.ui.text {
 
         private isWeak(value: string): boolean {
             return !StringHelper.isBlank(value) &&
-                   (value.length < 8 || StringHelper.isLowerCase(value) || StringHelper.isUpperCase(value))
+                   (value.length < 8 || StringHelper.isLowerCase(value) || StringHelper.isUpperCase(value));
         }
 
         private isGood(value: string): boolean {
@@ -258,13 +258,13 @@ module api.ui.text {
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
     }

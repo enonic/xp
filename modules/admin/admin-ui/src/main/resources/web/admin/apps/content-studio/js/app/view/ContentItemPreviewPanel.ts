@@ -92,7 +92,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                         this.item = null; // we don't have ref to content under contentPreviewPath and there is no point in figuring it out
                         this.skipNextSetItemCall = false;
                         this.frame.setSrc(clickedLinkRelativePath);
-                    }, 500)
+                    }, 500);
                 }
             }
         }

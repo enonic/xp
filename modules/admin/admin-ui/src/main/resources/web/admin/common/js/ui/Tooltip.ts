@@ -369,7 +369,7 @@ module api.ui {
                     //console.log("Hiding tooltip because multiple instances are not allowed", tooltip);
                     tooltip.hide();
                 }
-            })
+            });
         }
 
         static allowMultipleInstances(allow: boolean) {

@@ -124,7 +124,7 @@ function updateTabTitle(title: string) {
 
 function shouldUpdateFavicon(contentTypeName: ContentTypeName): boolean {
     // Chrome currently doesn't support SVG favicons which are served for not image contents
-    return contentTypeName.isImage() || navigator.userAgent.search("Chrome") === -1
+    return contentTypeName.isImage() || navigator.userAgent.search("Chrome") === -1;
 }
 
 let faviconCache: {[url: string]: Element} = {};

@@ -16,7 +16,7 @@ module api.notify {
                  delegate: 'notify.action_' + i,
                  stopEvent: true
                  });*/
-                this.listeners.push(actions[i].getHandler())
+                this.listeners.push(actions[i].getHandler());
             }
         }
 

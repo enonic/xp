@@ -15,7 +15,7 @@ module api.form.inputtype.text {
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
     import ElementHelper = api.dom.ElementHelper;
-    import ApplicationKey = api.application.ApplicationKey
+    import ApplicationKey = api.application.ApplicationKey;
     import RoleKeys = api.security.RoleKeys;
     import LoginResult = api.security.auth.LoginResult;
     import Promise = Q.Promise;
@@ -95,7 +95,7 @@ module api.form.inputtype.text {
                 } else {
                     this.authRequest.then(() => {
                         this.initEditor(editorId, property, textAreaWrapper);
-                    })
+                    });
                 }
             });
             textAreaEl.onRemoved(() => {
@@ -123,7 +123,7 @@ module api.form.inputtype.text {
                 if (ObjectHelper.iFrameSafeInstanceOf(child, api.ui.text.TextArea)) {
                     (<api.ui.text.TextArea>child).resetBaseValues();
                 }
-            })
+            });
         }
 
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
@@ -342,7 +342,7 @@ module api.form.inputtype.text {
                 editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : "");
                 HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
             } else {
-                console.log("Editor with id '" + editorId + "' not found")
+                console.log("Editor with id '" + editorId + "' not found");
             }
         }
 
@@ -422,18 +422,18 @@ module api.form.inputtype.text {
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
 
         private destroyEditor(id: string): void {
-            var editor = this.getEditor(id)
+            var editor = this.getEditor(id);
             if (editor) {
                 try {
                     editor.destroy(false);

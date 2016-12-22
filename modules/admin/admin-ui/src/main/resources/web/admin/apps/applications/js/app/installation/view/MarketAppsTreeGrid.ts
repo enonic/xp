@@ -116,7 +116,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         });
         this.applicationInput.getTextInput().getHTMLElement().onpaste = () => {
             this.mask();
-        }
+        };
     }
 
     private subscribeOnUninstallEvent() { // set status of market app to NOT_INSTALLED if it was uninstalled
@@ -139,7 +139,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 return node;
             }
         }
-        return null
+        return null;
     }
 
     private subscribeOnInstallEvent() { // update status of market app
@@ -223,7 +223,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
                 let row = this.getGrid().getDataView().getRowById(node.getId());
                 if (row > -1) {
-                    this.getGrid().updateCell(row, this.getGrid().getColumnIndex("appStatus"))
+                    this.getGrid().updateCell(row, this.getGrid().getColumnIndex("appStatus"));
                 }
 
                 if (MarketAppsTreeGrid.debug) {

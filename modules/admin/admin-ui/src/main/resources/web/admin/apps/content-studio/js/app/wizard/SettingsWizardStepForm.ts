@@ -43,7 +43,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                     break;
                 }
             }
-        }
+        };
     }
 
     layout(content: api.content.Content) {

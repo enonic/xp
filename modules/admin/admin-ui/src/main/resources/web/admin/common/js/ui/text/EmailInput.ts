@@ -153,13 +153,13 @@ module api.ui.text {
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
     }
 }

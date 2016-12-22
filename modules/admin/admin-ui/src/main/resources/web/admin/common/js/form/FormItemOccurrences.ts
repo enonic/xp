@@ -79,7 +79,7 @@ module api.form {
 
         private notifyOccurrenceRendered(occurrence: FormItemOccurrence<V>, occurrenceView: V, validate: boolean) {
             this.occurrenceRenderedListeners.forEach((listener: (event: OccurrenceRenderedEvent)=>void)=> {
-                listener.call(this, new OccurrenceRenderedEvent(occurrence, occurrenceView, validate))
+                listener.call(this, new OccurrenceRenderedEvent(occurrence, occurrenceView, validate));
             });
         }
 
@@ -95,7 +95,7 @@ module api.form {
 
         private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
             this.occurrenceAddedListeners.forEach((listener: (event: OccurrenceAddedEvent)=>void)=> {
-                listener.call(this, new OccurrenceAddedEvent(occurrence, occurrenceView))
+                listener.call(this, new OccurrenceAddedEvent(occurrence, occurrenceView));
             });
         }
 
@@ -112,7 +112,7 @@ module api.form {
 
         private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
             this.occurrenceRemovedListeners.forEach((listener: (event: OccurrenceRemovedEvent)=>void)=> {
-                listener.call(this, new OccurrenceRemovedEvent(occurrence, occurrenceView))
+                listener.call(this, new OccurrenceRemovedEvent(occurrence, occurrenceView));
             });
         }
 
@@ -285,7 +285,7 @@ module api.form {
         unFocus(listener: (event: FocusEvent) => void) {
             this.focusListeners = this.focusListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         onBlur(listener: (event: FocusEvent) => void) {
@@ -295,19 +295,19 @@ module api.form {
         unBlur(listener: (event: FocusEvent) => void) {
             this.blurListeners = this.blurListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         resetOccurrenceIndexes() {
@@ -327,7 +327,7 @@ module api.form {
                 return null;
             }
             return this.occurrenceViews.filter((occurrenceView: V) => {
-                return occurrenceView.getIndex() == index - 1
+                return occurrenceView.getIndex() == index - 1;
             })[0];
         }
 
@@ -348,7 +348,7 @@ module api.form {
             // move FormItemOccurrenceView
             api.util.ArrayHelper.moveElement(fromIndex, toIndex, this.occurrenceViews);
 
-            this.propertyArray.move(fromIndex, toIndex)
+            this.propertyArray.move(fromIndex, toIndex);
 
         }
 

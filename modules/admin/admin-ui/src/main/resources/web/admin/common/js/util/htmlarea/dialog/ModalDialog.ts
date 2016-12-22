@@ -199,22 +199,22 @@ module api.util.htmlarea.dialog {
     }
 
     export interface HtmlAreaAnchor {
-        editor: HtmlAreaEditor
-        element: HTMLElement
-        text: string
-        anchorList: string[]
-        onlyTextSelected: boolean
+        editor: HtmlAreaEditor;
+        element: HTMLElement;
+        text: string;
+        anchorList: string[];
+        onlyTextSelected: boolean;
     }
 
     export interface HtmlAreaImage {
-        editor: HtmlAreaEditor
-        element: HTMLElement
-        container: HTMLElement
-        callback: Function
+        editor: HtmlAreaEditor;
+        element: HTMLElement;
+        container: HTMLElement;
+        callback: Function;
     }
 
     export interface HtmlAreaMacro {
-        editor: HtmlAreaEditor
-        callback: Function
+        editor: HtmlAreaEditor;
+        callback: Function;
     }
 }

@@ -20,7 +20,7 @@ module api.content {
                 status = "Expired";
                 break;
             default:
-                status = "Unknown"
+                status = "Unknown";
             }
 
             if (!!CompareStatus[status]) {

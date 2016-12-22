@@ -436,7 +436,7 @@ module api.liveedit {
             this.notifyMouseOverView();
 
             if (ItemView.debug) {
-                console.groupEnd()
+                console.groupEnd();
             }
         }
 
@@ -800,7 +800,7 @@ module api.liveedit {
         }
 
         toString(): string {
-            return this.getItemId().toNumber() + " : " + this.getType().getShortName()
+            return this.getItemId().toNumber() + " : " + this.getType().getShortName();
         }
 
         getLiveEditModel(): LiveEditModel {

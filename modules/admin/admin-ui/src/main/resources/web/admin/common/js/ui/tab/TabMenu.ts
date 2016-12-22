@@ -122,7 +122,7 @@ module api.ui.tab {
         }
 
         isKeyPrevious(event: KeyboardEvent) {
-            KeyHelper.isArrowLeftKey(event)
+            KeyHelper.isArrowLeftKey(event);
         }
 
         setEnabled(enabled: boolean): TabMenu {

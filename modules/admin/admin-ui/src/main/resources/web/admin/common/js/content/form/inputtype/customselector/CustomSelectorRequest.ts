@@ -3,9 +3,9 @@ module api.content.form.inputtype.customselector {
     import ResourceRequest = api.rest.ResourceRequest;
 
     export interface CustomSelectorResponse {
-        total: number,
-        count: number,
-        hits: CustomSelectorItem[]
+        total: number;
+        count: number;
+        hits: CustomSelectorItem[];
     }
 
     export class CustomSelectorRequest extends ResourceRequest<CustomSelectorResponse, CustomSelectorItem[]> {
@@ -46,7 +46,7 @@ module api.content.form.inputtype.customselector {
                 query: this.query || null,
                 start: this.start || null,
                 count: this.count || null
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

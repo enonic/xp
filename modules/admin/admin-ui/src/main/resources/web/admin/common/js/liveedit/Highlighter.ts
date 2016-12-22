@@ -106,7 +106,7 @@ module api.liveedit {
                 stroke: 'rgba(0, 0, 0, 1)',
                 strokeDasharray: style.strokeDasharray,
                 fill: 'transparent'
-            }
+            };
         }
 
         private resize(dimensions: ElementDimensions, style: HighlighterStyle): void {

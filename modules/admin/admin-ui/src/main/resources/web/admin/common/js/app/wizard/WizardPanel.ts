@@ -130,7 +130,7 @@ module api.app.wizard {
                 if (this.liveMask && this.liveMask.isVisible()) {
                     this.liveMask.hide();
                 }
-            })
+            });
         }
 
         protected setParams(params: WizardPanelParams<EQUITABLE>) {
@@ -478,13 +478,13 @@ module api.app.wizard {
         unDataLoaded(listener: (item: EQUITABLE) => void) {
             this.dataLoadedListeners = this.dataLoadedListeners.filter((current) => {
                 return listener !== current;
-            })
+            });
         }
 
         private notifyDataLoaded(item: EQUITABLE) {
             this.dataLoadedListeners.forEach((listener) => {
                 listener(item);
-            })
+            });
         }
 
         protected getWizardStepsPanel(): WizardStepsPanel {
@@ -626,8 +626,8 @@ module api.app.wizard {
             this.steps.forEach((step) => {
                 step.getStepForm().onFocus((el) => {
                     this.lastFocusedElement = <HTMLElement>el.target;
-                })
-            })
+                });
+            });
         }
 
         resetLastFocusedElement() {

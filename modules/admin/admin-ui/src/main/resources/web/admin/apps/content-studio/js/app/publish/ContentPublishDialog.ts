@@ -275,7 +275,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private getContentToPublishIds(): ContentId[] {
         return this.getItemList().getItems().map(item => {
             return item.getContentId();
-        })
+        });
     }
 
     private showScheduleDialog() {
@@ -388,7 +388,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private disableCheckbox() {
         this.childrenCheckbox.setDisabled(true);
-        this.childrenCheckbox.addClass("disabled")
+        this.childrenCheckbox.addClass("disabled");
     }
 
     private enableCheckbox() {

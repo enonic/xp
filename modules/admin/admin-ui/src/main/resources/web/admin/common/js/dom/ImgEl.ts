@@ -70,13 +70,13 @@ module api.dom {
         unLoaded(listener: (event: UIEvent) => void) {
             this.loadedListeners = this.loadedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         unError(listener: (event: UIEvent) => void) {
             this.errorListeners = this.errorListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyLoaded(event: UIEvent) {

@@ -145,7 +145,7 @@ module api.ui.panel {
         }
 
         getFirstPanelUnit(): SplitPanelUnit {
-            return this.firstPanelUnit
+            return this.firstPanelUnit;
         }
 
         getSecondPanelUnit(): SplitPanelUnit {
@@ -530,7 +530,7 @@ module api.ui.panel {
             if ((panelNumber == 1 && this.isSecondPanelHidden()) || (panelNumber == 2 && this.isFirstPanelHidden())) {
                 return "100%";
             } else if ((panelNumber == 1 && this.isFirstPanelHidden()) || (panelNumber == 2 && this.isSecondPanelHidden())) {
-                return "0"
+                return "0";
             }
 
             var result;

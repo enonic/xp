@@ -118,7 +118,7 @@ module api.liveedit {
 
             this.componentAddedListener = (event: api.content.page.region.ComponentAddedEvent) => {
                 if (RegionView.debug) {
-                    console.log('RegionView.handleComponentAdded: ' + event.getComponentPath().toString())
+                    console.log('RegionView.handleComponentAdded: ' + event.getComponentPath().toString());
                 }
 
                 this.refreshEmptyState();
@@ -126,7 +126,7 @@ module api.liveedit {
 
             this.componentRemovedListener = (event: api.content.page.region.ComponentRemovedEvent) => {
                 if (RegionView.debug) {
-                    console.log('RegionView.handleComponentRemoved: ' + event.getComponentPath().toString())
+                    console.log('RegionView.handleComponentRemoved: ' + event.getComponentPath().toString());
                 }
 
                 this.refreshEmptyState();
@@ -297,7 +297,7 @@ module api.liveedit {
 
         unregisterComponentView(componentView: ComponentView<Component>) {
             if (RegionView.debug) {
-                console.log('RegionView[' + this.toString() + '].unregisterComponentView: ' + componentView.toString())
+                console.log('RegionView[' + this.toString() + '].unregisterComponentView: ' + componentView.toString());
             }
 
             var indexToRemove = this.getComponentViewIndex(componentView);
@@ -337,7 +337,7 @@ module api.liveedit {
 
         removeComponentView(componentView: ComponentView<Component>) {
             if (RegionView.debug) {
-                console.log('RegionView[' + this.toString() + '].removeComponentView: ' + componentView.toString())
+                console.log('RegionView[' + this.toString() + '].removeComponentView: ' + componentView.toString());
             }
 
             this.unregisterComponentView(componentView);
@@ -395,7 +395,7 @@ module api.liveedit {
         hasOnlyMovingComponentViews(): boolean {
             return this.componentViews.length > 0 && this.componentViews.every((view: ComponentView<Component>)=> {
                     return view.isMoving();
-                })
+                });
         }
 
         isEmpty(): boolean {
@@ -440,7 +440,7 @@ module api.liveedit {
         unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
             this.itemViewAddedListeners = this.itemViewAddedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         private notifyItemViewAddedForAll(itemViews: ItemView[]) {
@@ -463,7 +463,7 @@ module api.liveedit {
         unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
             this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         getRegionView(): RegionView {

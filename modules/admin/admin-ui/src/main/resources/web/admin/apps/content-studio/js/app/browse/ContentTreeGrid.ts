@@ -146,7 +146,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         this.getGrid().subscribeOnClick((event, data) => {
             var elem = new ElementHelper(event.target);
             if (elem.hasClass("sort-dialog-trigger")) {
-                new SortContentEvent(this.getSelectedDataList()).fire()
+                new SortContentEvent(this.getSelectedDataList()).fire();
             }
         });
 
@@ -183,7 +183,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     this.filter(contents);
                     this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
                     this.notifyLoaded();
-                })
+                });
 
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
@@ -357,7 +357,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         });
         item.onFailed(() => {
             this.deleteNode(data);
-        })
+        });
     }
 
     refreshNodeData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
@@ -498,7 +498,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 childPath = child.getData().getPath();
 
             if (childPath && childPath.equals(childNodePath)) {
-                return child
+                return child;
             }
         }
 
@@ -577,7 +577,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             parallelPromises.push(this.fetchChildrenIds(relationship.getNode()).then((contentIds: ContentId[]) => {
                 relationship.getChildren().forEach((content: ContentSummaryAndCompareStatus) => {
                     result.push(this.appendContentNode(relationship.getNode(), content, contentIds.indexOf(content.getContentId()), false));
-                })
+                });
                 return result;
             }));
         });
@@ -693,7 +693,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         var parallelPromises: wemQ.Promise<any>[] = [];
 
         nodes.sort((a, b) => {
-            return a.getDataId().localeCompare(b.getDataId())
+            return a.getDataId().localeCompare(b.getDataId());
         });
 
         var groups = [],

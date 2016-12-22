@@ -32,7 +32,7 @@ module api.aggregation {
 
             json.buckets.forEach((bucketWrapper: api.aggregation.BucketWrapperJson) => {
                 bucketAggregation.addBucket(api.aggregation.BucketFactory.createFromJson(bucketWrapper));
-            })
+            });
 
             return bucketAggregation;
         }

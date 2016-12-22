@@ -43,13 +43,13 @@ module api.ui.security.acl {
         unItemValueChanged(listener: (item: UserStoreAccessControlEntry) => void) {
             this.itemValueChangedListeners = this.itemValueChangedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyItemValueChanged(item: UserStoreAccessControlEntry) {
             this.itemValueChangedListeners.forEach((listener) => {
                 listener(item);
-            })
+            });
         }
 
         setItemsEditable(editable: boolean): UserStoreAccessControlListView {

@@ -72,7 +72,7 @@ module api.content.page {
             this.onRemoved(() => {
                 this.liveEditModel.getSiteModel().unApplicationAdded(onApplicationAddedHandler);
                 this.liveEditModel.getSiteModel().unApplicationRemoved(onApplicationRemovedHandler);
-            })
+            });
         }
 
         onLoadedData(listener: (event: LoadedDataEvent<PageDescriptor>) => void) {

@@ -457,7 +457,7 @@ module api.liveedit {
         unDragStarted(listener: (componentView: ComponentView<Component>) => void) {
             this.dragStartedListeners = this.dragStartedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         private notifyDragStarted(componentView: ComponentView<Component>) {
@@ -481,7 +481,7 @@ module api.liveedit {
         unDragStopped(listener: (componentView: ComponentView<Component>) => void) {
             this.dragStoppedListeners = this.dragStoppedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         private notifyDragStopped(componentView: ComponentView<Component>) {
@@ -505,7 +505,7 @@ module api.liveedit {
         unDropped(listener: (componentView: ComponentView<Component>, regionView: RegionView) => void) {
             this.droppedListeners = this.droppedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         private notifyDropped(componentView: ComponentView<Component>, regionView: RegionView) {
@@ -528,7 +528,7 @@ module api.liveedit {
         unCanceled(listener: (componentView: ComponentView<Component>) => void) {
             this.canceledListeners = this.canceledListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         private notifyCanceled(componentView: ComponentView<Component>) {
@@ -632,7 +632,7 @@ module api.liveedit {
             var height = wemjq(window).height();
             var scrollSensitivity = Math.round(height / 8);
             scrollSensitivity = Math.max(20, Math.min(scrollSensitivity, 100));
-            return scrollSensitivity
+            return scrollSensitivity;
         }
 
     }

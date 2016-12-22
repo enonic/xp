@@ -198,7 +198,7 @@ module api.util.loader {
             let error = new LoaderErrorEvent(statusCode, textStatus, postLoad);
             this.loaderErrorListeners.forEach((listener) => {
                 listener(error);
-            })
+            });
         }
     }
 }

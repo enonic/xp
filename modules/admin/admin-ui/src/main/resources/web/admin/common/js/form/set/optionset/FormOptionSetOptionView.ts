@@ -38,7 +38,7 @@ module api.form {
         protected helpText: HelpTextContainer;
 
         private checkboxEnabledStatusHandler: () => void = (() => {
-            this.setCheckBoxDisabled()
+            this.setCheckBoxDisabled();
         }).bind(this);
 
         constructor(config: FormOptionSetOptionViewConfig) {
@@ -109,7 +109,7 @@ module api.form {
 
                 this.onValidityChanged((event: RecordingValidityChangedEvent) => {
                     this.toggleClass("invalid", !event.isValid());
-                })
+                });
 
                 if (validate) {
                     this.validate(true);
@@ -173,7 +173,7 @@ module api.form {
                     this.subscribeOnRadioDeselect(selectedProperty);
                     subscribedOnDeselect = true;
                 } else {
-                    selectedProperty.setValue(new Value(this.getName(), new api.data.ValueTypeString()))
+                    selectedProperty.setValue(new Value(this.getName(), new api.data.ValueTypeString()));
                     if (!subscribedOnDeselect) {
                         this.subscribeOnRadioDeselect(selectedProperty);
                         subscribedOnDeselect = true;
@@ -216,7 +216,7 @@ module api.form {
                 if (event.getPreviousValue().getString() == this.getName()) {
                     this.deselectHandle();
                 }
-            }
+            };
             property.onPropertyValueChanged(radioDeselectHandler);
         }
 

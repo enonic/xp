@@ -113,7 +113,7 @@ module api.form {
                 });
                 formSetOccurrenceView.onEditContentRequest((summary: api.content.ContentSummary) => {
                     this.notifyEditContentRequested(summary);
-                })
+                });
             });
         }
 

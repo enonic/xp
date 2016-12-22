@@ -9,7 +9,7 @@ module api.data {
     export interface PropertyTreeDiff {
         added: Property[];
         removed: Property[];
-        modified: {oldValue: Property; newValue: Property}[]
+        modified: {oldValue: Property; newValue: Property}[];
     }
 
     /**
@@ -262,7 +262,7 @@ module api.data {
             var tree = new PropertyTree();
 
             json.forEach((propertyArrayJson: PropertyArrayJson) => {
-                tree.root.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, tree.root, tree))
+                tree.root.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, tree.root, tree));
             });
 
             return tree;
@@ -339,7 +339,7 @@ module api.data {
         }
 
         setLongByPath(path: any, value: number): Property {
-            return this.root.setLongByPath(path, value)
+            return this.root.setLongByPath(path, value);
         }
 
         getLong(identifier: string, index?: number): number {
@@ -371,7 +371,7 @@ module api.data {
         }
 
         setDoubleByPath(path: any, value: number): Property {
-            return this.root.setDoubleByPath(path, value)
+            return this.root.setDoubleByPath(path, value);
         }
 
         getDouble(identifier: string, index?: number): number {
@@ -403,7 +403,7 @@ module api.data {
         }
 
         setBooleanByPath(path: any, value: boolean): Property {
-            return this.root.setBooleanByPath(path, value)
+            return this.root.setBooleanByPath(path, value);
         }
 
         getBoolean(identifier: string, index?: number): boolean {
@@ -435,7 +435,7 @@ module api.data {
         }
 
         setReferenceByPath(path: any, value: Reference): Property {
-            return this.root.setReferenceByPath(path, value)
+            return this.root.setReferenceByPath(path, value);
         }
 
         getReference(identifier: string, index?: number): Reference {
@@ -467,7 +467,7 @@ module api.data {
         }
 
         setBinaryReferenceByPath(path: any, value: BinaryReference): Property {
-            return this.root.setBinaryReferenceByPath(path, value)
+            return this.root.setBinaryReferenceByPath(path, value);
         }
 
         getBinaryReference(identifier: string, index?: number): BinaryReference {
@@ -499,7 +499,7 @@ module api.data {
         }
 
         setGeoPointByPath(path: any, value: GeoPoint): Property {
-            return this.root.setGeoPointByPath(path, value)
+            return this.root.setGeoPointByPath(path, value);
         }
 
         getGeoPoint(identifier: string, index?: number): GeoPoint {
@@ -531,7 +531,7 @@ module api.data {
         }
 
         setLocalDateByPath(path: any, value: api.util.LocalDate): Property {
-            return this.root.setLocalDateByPath(path, value)
+            return this.root.setLocalDateByPath(path, value);
         }
 
         getLocalDate(identifier: string, index?: number): api.util.LocalDate {
@@ -563,7 +563,7 @@ module api.data {
         }
 
         setLocalDateTimeByPath(path: any, value: api.util.LocalDateTime): Property {
-            return this.root.setLocalDateTimeByPath(path, value)
+            return this.root.setLocalDateTimeByPath(path, value);
         }
 
         getLocalDateTime(identifier: string, index?: number): api.util.LocalDateTime {
@@ -595,7 +595,7 @@ module api.data {
         }
 
         setLocalTimeByPath(path: any, value: LocalTime): Property {
-            return this.root.setLocalTimeByPath(path, value)
+            return this.root.setLocalTimeByPath(path, value);
         }
 
         getLocalTime(identifier: string, index?: number): LocalTime {
@@ -627,7 +627,7 @@ module api.data {
         }
 
         setDateTimeByPath(path: any, value: api.util.DateTime): Property {
-            return this.root.setDateTimeByPath(path, value)
+            return this.root.setDateTimeByPath(path, value);
         }
 
         getDateTime(identifier: string, index?: number): api.util.DateTime {

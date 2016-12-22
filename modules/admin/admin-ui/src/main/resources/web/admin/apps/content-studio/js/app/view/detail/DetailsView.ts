@@ -86,7 +86,7 @@ export class DetailsView extends api.dom.DivEl {
     public resetWidgetsWidth() {
         this.widgetViews.forEach((widgetView: WidgetView) => {
             widgetView.resetContainerWidth();
-        })
+        });
     }
 
     getCustomWidgetViewsAndUpdateDropdown(): wemQ.Promise<void> {
@@ -212,7 +212,7 @@ export class DetailsView extends api.dom.DivEl {
             }, 400);
 
             this.activeWidget.slideIn();
-        })
+        });
     }
 
     public showLoadMask() {
@@ -258,7 +258,7 @@ export class DetailsView extends api.dom.DivEl {
                 var widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
 
                 this.addWidget(widgetView);
-            })
+            });
         }).catch((reason: any) => {
             if (reason && reason.message) {
                 api.notify.showError(reason.message);
@@ -287,7 +287,7 @@ export class DetailsView extends api.dom.DivEl {
     private addWidgets(widgetViews: WidgetView[]) {
         widgetViews.forEach((widget) => {
             this.addWidget(widget);
-        })
+        });
     }
 
     updateViewer() {

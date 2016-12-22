@@ -230,7 +230,7 @@ module api.content.page.region {
         private notifyChangedEvent(event: BaseRegionChangedEvent) {
             this.changedListeners.forEach((listener: (event: BaseRegionChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onComponentAdded(listener: (event: ComponentAddedEvent)=>void) {

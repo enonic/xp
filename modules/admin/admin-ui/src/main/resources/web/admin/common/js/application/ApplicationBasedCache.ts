@@ -20,7 +20,7 @@ module api.application {
                     console.log(api.ClassHelper.getClassName(this) +
                                 " received ApplicationEvent STOPPED - calling deleteByApplicationKey.. " +
                                 event.getApplicationKey().toString());
-                    this.deleteByApplicationKey(event.getApplicationKey())
+                    this.deleteByApplicationKey(event.getApplicationKey());
                 }
             });
         }

@@ -27,7 +27,7 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
         if (api.ObjectHelper.iFrameSafeInstanceOf(object.getType(), TextItemType)) {
             let textView = <TextComponentView> object;
             let textComponent = <TextComponent>textView.getComponent();
-            let viewer = <TextComponentViewer>object.getViewer()
+            let viewer = <TextComponentViewer>object.getViewer();
             return viewer.resolveDisplayName(textComponent, textView);
         } else if (api.ObjectHelper.iFrameSafeInstanceOf(object.getType(), FragmentItemType)) {
             let fragmentView = <FragmentComponentView> object;

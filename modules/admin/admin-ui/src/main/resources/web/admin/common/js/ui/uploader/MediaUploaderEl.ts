@@ -24,7 +24,7 @@ module api.ui.uploader {
         constructor(config: MediaUploaderElConfig) {
 
             if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("content/" + MediaUploaderElOperation[config.operation] + "Media")
+                config.url = api.util.UriHelper.getRestUri("content/" + MediaUploaderElOperation[config.operation] + "Media");
             }
 
             super(config);

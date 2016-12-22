@@ -73,7 +73,7 @@ export class ContentRowFormatter {
 
                 return statusEl.toString() + publishStatusEl.toString();
             } else {
-                var statusEl = new api.dom.SpanEl()
+                var statusEl = new api.dom.SpanEl();
                 if (CompareStatus[value]) {
                     statusEl.addClass(ContentRowFormatter.makeClassName(CompareStatus[value]));
                 }

@@ -29,7 +29,7 @@ export class PublishDialogDependantList extends DialogDependantList {
             if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass("remove")) {
                 this.notifyItemRemoveClicked(item);
             } else {
-                this.notifyItemClicked(item)
+                this.notifyItemClicked(item);
             }
         });
 
@@ -48,13 +48,13 @@ export class PublishDialogDependantList extends DialogDependantList {
     unItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
         this.itemClickListeners = this.itemClickListeners.filter((curr) => {
             return curr !== listener;
-        })
+        });
     }
 
     private notifyItemClicked(item) {
         this.itemClickListeners.forEach(listener => {
             listener(item);
-        })
+        });
     }
 
     onItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
@@ -64,13 +64,13 @@ export class PublishDialogDependantList extends DialogDependantList {
     unItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
         this.removeClickListeners = this.removeClickListeners.filter((curr) => {
             return curr !== listener;
-        })
+        });
     }
 
     private notifyItemRemoveClicked(item) {
         this.removeClickListeners.forEach(listener => {
             listener(item);
-        })
+        });
     }
 }
 

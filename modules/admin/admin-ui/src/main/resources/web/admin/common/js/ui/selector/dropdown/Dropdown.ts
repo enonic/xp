@@ -410,7 +410,7 @@ module api.ui.selector.dropdown {
             this.optionFilterInputValueChangedListeners.filter(
                 (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                     return listener != currentListener;
-                })
+                });
         }
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {

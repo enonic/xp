@@ -401,7 +401,7 @@ module api.liveedit {
         unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
             this.itemViewAddedListeners = this.itemViewAddedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyItemViewAdded(view: ItemView, isNew: boolean = false) {
@@ -418,7 +418,7 @@ module api.liveedit {
         unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
             this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyItemViewRemoved(view: ItemView) {

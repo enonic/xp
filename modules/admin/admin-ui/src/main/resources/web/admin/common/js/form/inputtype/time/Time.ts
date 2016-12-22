@@ -71,7 +71,7 @@ module api.content.form.inputtype.time {
             return {
                 hours: hours,
                 minutes: minutes
-            }
+            };
         }
 
         availableSizeChanged() {

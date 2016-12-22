@@ -104,7 +104,7 @@ module api.ui.treegrid {
              */
             var selectorPlugin = this.grid.getCheckboxSelectorPlugin();
             if (selectorPlugin) {
-                this.grid.unregisterPlugin(this.grid.getCheckboxSelectorPlugin())
+                this.grid.unregisterPlugin(this.grid.getCheckboxSelectorPlugin());
             }
 
             this.grid.syncGridSelection(false);
@@ -412,7 +412,7 @@ module api.ui.treegrid {
         private notifyActiveChanged(active: boolean) {
             this.activeChangedListeners.forEach((listener) => {
                 listener(active);
-            })
+            });
         }
 
         getToolbar(): TreeGridToolbar {
@@ -490,7 +490,7 @@ module api.ui.treegrid {
                         this.grid.isRowSelected(this.gridData.getRowById(node.getId()))
                 );
             } else {
-                return false
+                return false;
             }
         }
 

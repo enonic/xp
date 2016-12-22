@@ -530,7 +530,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             this.treeGrid.notifyDataChanged(changedEvent);
 
             return changed;
-        })
+        });
     }
 
     private updateNodes(data: ContentSummaryAndCompareStatus[]): TreeNode<ContentSummaryAndCompareStatus>[] {
@@ -624,7 +624,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private doUpdateDetailsPanel(item: ContentSummaryAndCompareStatus) {
         var detailsPanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
         if (detailsPanel) {
-            detailsPanel.setItem(item)
+            detailsPanel.setItem(item);
         }
     }
 

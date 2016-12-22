@@ -127,7 +127,7 @@ module api.ui.security.acl {
         addOption(option: Option<UserStoreAccessControlEntry>, silent: boolean = false, keyCode: number = -1): boolean {
             if(option.readOnly)
             {
-                this.addItemReadOnly(option.displayValue)
+                this.addItemReadOnly(option.displayValue);
             }
             else
             {

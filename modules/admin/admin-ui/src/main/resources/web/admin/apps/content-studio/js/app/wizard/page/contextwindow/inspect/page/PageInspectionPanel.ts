@@ -130,7 +130,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             this.pageControllerForm.getSelector().reset();
         }
         if (!this.pageModel.isPageTemplate() && !(this.pageModel.isCustomized() && this.pageModel.hasController())) {
-            this.pageControllerForm.hide()
+            this.pageControllerForm.hide();
         }
     }
 

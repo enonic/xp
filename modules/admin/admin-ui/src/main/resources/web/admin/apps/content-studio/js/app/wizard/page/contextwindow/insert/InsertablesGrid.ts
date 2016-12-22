@@ -21,7 +21,7 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
             if (this.componentGridOptions.onClick) {
                 this.setOnClick(this.componentGridOptions.onClick);
             }
-        })
+        });
     }
 
 
@@ -45,7 +45,7 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
             rowEl.getEl().setData('context-window-draggable', 'true');
         }
         if (this.componentGridOptions.rowClass) {
-            rowEl.addClass(this.componentGridOptions.rowClass)
+            rowEl.addClass(this.componentGridOptions.rowClass);
         }
 
         var icon = new api.ui.FontIcon(insertable.getIconCls());

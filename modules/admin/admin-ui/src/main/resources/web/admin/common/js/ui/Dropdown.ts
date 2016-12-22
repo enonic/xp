@@ -9,7 +9,7 @@ module api.ui {
             this.onChange((event: Event) => {
                 this.refreshDirtyState();
                 this.refreshValueChanged();
-            })
+            });
         }
 
         addOption(value: string, displayName: string) {

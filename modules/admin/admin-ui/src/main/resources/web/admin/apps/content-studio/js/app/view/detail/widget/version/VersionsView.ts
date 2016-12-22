@@ -32,7 +32,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
         return this.loadData().then((contentVersions: ContentVersion[]) => {
             this.updateView(contentVersions);
             this.notifyLoaded();
-        })
+        });
     }
 
     createItemView(item: ContentVersion, readOnly: boolean): api.dom.Element {
@@ -73,7 +73,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
                     return contentVersions.getContentVersions();
                 });
         } else {
-            throw new Error("Required contentId not set for ActiveContentVersionsTreeGrid")
+            throw new Error("Required contentId not set for ActiveContentVersionsTreeGrid");
         }
     }
 

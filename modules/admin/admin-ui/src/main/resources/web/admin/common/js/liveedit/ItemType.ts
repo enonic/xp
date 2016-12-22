@@ -35,7 +35,7 @@ module api.liveedit {
 
 
         isComponentType(): boolean {
-            return false
+            return false;
         }
 
         toComponentType(): api.content.page.region.ComponentType {

@@ -128,7 +128,7 @@ module api.liveedit {
         private notifyOrientationChanged(orientation: ItemViewContextMenuOrientation) {
             this.orientationListeners.forEach((listener) => {
                 listener(orientation);
-            })
+            });
         }
 
         onOrientationChanged(listener: (orientation: ItemViewContextMenuOrientation) => void) {
@@ -138,7 +138,7 @@ module api.liveedit {
         unOrientationChanged(listener: (orientation: ItemViewContextMenuOrientation) => void) {
             this.orientationListeners = this.orientationListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {

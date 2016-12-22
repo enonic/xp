@@ -69,7 +69,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
         previewHandler.onPreviewStateChanged((value) => {
             this.PREVIEW_CONTENT.setEnabled(value);
-        })
+        });
 
     }
 
@@ -275,6 +275,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 this.DUPLICATE_CONTENT.setEnabled(canDuplicate);
             });
 
-        })
+        });
     }
 }

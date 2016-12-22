@@ -214,7 +214,7 @@ module api.content.form.inputtype.upload {
             return {
                 x: x,
                 y: y
-            }
+            };
         }
 
         private getRectFromProperty(content: Content, propertyName: string): Rect {

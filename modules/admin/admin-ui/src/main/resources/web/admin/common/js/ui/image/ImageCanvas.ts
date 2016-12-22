@@ -108,7 +108,7 @@ module api.ui.image {
             return {
                 x: this.pan.x,
                 y: this.pan.y
-            }
+            };
         }
 
         setZoom(value: number, override: boolean = true, x?: number, y?: number) {
@@ -285,7 +285,7 @@ module api.ui.image {
         unZoomChanged(listener: (zoom: number) => void) {
             this.zoomChangeListeners = this.zoomChangeListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyZoomChanged(zoom: number) {
@@ -302,7 +302,7 @@ module api.ui.image {
         unPanChanged(listener: (x: number, y: number) => void) {
             this.panChangeListeners = this.panChangeListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyPanChanged(x: number, y: number) {

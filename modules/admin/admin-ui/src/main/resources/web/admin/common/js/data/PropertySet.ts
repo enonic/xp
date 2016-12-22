@@ -82,16 +82,16 @@ module api.data {
             this.tree = tree;
 
             this.propertyAddedEventHandler = (event) => {
-                this.forwardPropertyAddedEvent(event)
+                this.forwardPropertyAddedEvent(event);
             };
             this.propertyRemovedEventHandler = (event) => {
-                this.forwardPropertyRemovedEvent(event)
+                this.forwardPropertyRemovedEvent(event);
             };
             this.propertyIndexChangedEventHandler = (event) => {
-                this.forwardPropertyIndexChangedEvent(event)
+                this.forwardPropertyIndexChangedEvent(event);
             };
             this.propertyValueChangedEventHandler = (event) => {
-                this.forwardPropertyValueChangedEvent(event)
+                this.forwardPropertyValueChangedEvent(event);
             };
         }
 
@@ -150,7 +150,7 @@ module api.data {
 
         setPropertyByPath(path: any, value: Value): Property {
             if (api.ObjectHelper.iFrameSafeInstanceOf(path, PropertyPath)) {
-                return this.doSetProperty(<PropertyPath>path, value)
+                return this.doSetProperty(<PropertyPath>path, value);
             }
             else {
                 return this.doSetProperty(PropertyPath.fromString(path.toString()), value);
@@ -471,7 +471,7 @@ module api.data {
                 added: added,
                 removed: removed,
                 modified: modified
-            }
+            };
         }
 
         /**
@@ -503,7 +503,7 @@ module api.data {
 
         private registerPropertyArrayListeners(array: PropertyArray) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].registerPropertyArrayListeners: " + array.getName())
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].registerPropertyArrayListeners: " + array.getName());
             }
 
             array.onPropertyAdded(this.propertyAddedEventHandler);
@@ -680,7 +680,7 @@ module api.data {
         }
 
         setPropertySetByPath(path: any, value: PropertySet): Property {
-            return this.setPropertyByPath(path, new Value(value, ValueTypes.DATA))
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.DATA));
         }
 
         getPropertySet(identifier: any, index?: number): PropertySet {
@@ -717,7 +717,7 @@ module api.data {
         }
 
         setStringByPath(path: any, value: string): Property {
-            return this.setPropertyByPath(path, new Value(value, ValueTypes.STRING))
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.STRING));
         }
 
         getString(identifier: string, index?: number): string {

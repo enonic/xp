@@ -159,7 +159,7 @@ module api.ui.treegrid {
         setColumnConfig(columnConfig: GridColumnConfig[]): TreeGridBuilder<NODE> {
             columnConfig.forEach((column: GridColumnConfig) => {
                 this.columns.push(this.buildColumn(column));
-            })
+            });
             return this;
         }
 
@@ -197,7 +197,7 @@ module api.ui.treegrid {
         }
 
         isCheckableRows(): boolean {
-            return this.options.isCheckableRows()
+            return this.options.isCheckableRows();
         }
 
         setDragAndDrop(dragAndDrop: boolean): TreeGridBuilder<NODE> {

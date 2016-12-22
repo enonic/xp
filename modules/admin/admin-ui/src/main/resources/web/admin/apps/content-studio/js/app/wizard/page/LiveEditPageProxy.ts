@@ -295,7 +295,7 @@ export class LiveEditPageProxy {
 
     private hidePlaceholderAndShowEditor() {
         this.placeholderIFrame.removeClass('shown');
-        this.liveEditIFrame.addClass('shown')
+        this.liveEditIFrame.addClass('shown');
     }
 
     public skipNextReloadConfirmation(skip: boolean) {

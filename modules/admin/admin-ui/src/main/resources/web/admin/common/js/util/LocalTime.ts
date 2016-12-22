@@ -91,7 +91,7 @@ module api.util {
                 hour: date.getHours(),
                 minute: date.getMinutes(),
                 seconds: date.getSeconds()
-            }
+            };
         }
 
         public static create(): LocalTimeBuilder {

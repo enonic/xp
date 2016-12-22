@@ -142,7 +142,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         };
 
         this.applicationInput.onUploadFailed((event) => {
-            uploadFailedHandler(event, this.applicationInput.getUploader())
+            uploadFailedHandler(event, this.applicationInput.getUploader());
         });
 
         let uploadStartedHandler = (event: FileUploadStartedEvent<Application>) => {

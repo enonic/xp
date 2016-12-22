@@ -40,7 +40,7 @@ module api.content.form.inputtype.image {
             return {
                 value: this.getDisplayValueId(value),
                 displayValue: ImageSelectorDisplayValue.fromContentSummary(value)
-            }
+            };
         }
 
         public static create(): ImageContentComboBoxBuilder {

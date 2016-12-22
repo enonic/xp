@@ -289,7 +289,7 @@ module api {
             if (array && array.length > 0) {
                 return array.some((curEl) => {
                     return curEl.equals(el);
-                })
+                });
             }
             return false;
         }

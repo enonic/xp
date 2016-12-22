@@ -15,7 +15,7 @@ module api.content.site.inputtype.siteconfigurator {
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Application = api.application.Application;
-    import SiteConfig = api.content.site.SiteConfig
+    import SiteConfig = api.content.site.SiteConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
@@ -76,7 +76,7 @@ module api.content.site.inputtype.siteconfigurator {
             } else {
                 this.readOnlyPromise.then(() => {
                     this.comboBox.setReadOnly(this.readOnly);
-                })
+                });
             }
 
             this.appendChild(this.comboBox);

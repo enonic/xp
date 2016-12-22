@@ -29,7 +29,7 @@ module api.liveedit.image {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
     }
 

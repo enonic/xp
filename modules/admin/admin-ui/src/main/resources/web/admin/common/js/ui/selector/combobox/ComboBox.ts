@@ -36,11 +36,11 @@ module api.ui.selector.combobox {
 
         noOptionsText?: string;
 
-        displayMissingSelectedOptions?: boolean
+        displayMissingSelectedOptions?: boolean;
 
-        removeMissingSelectedOptions?: boolean
+        removeMissingSelectedOptions?: boolean;
 
-        skipAutoDropShowOnValueChange?: boolean
+        skipAutoDropShowOnValueChange?: boolean;
     }
 
     export enum PositionType {
@@ -181,7 +181,7 @@ module api.ui.selector.combobox {
         setReadOnly(readOnly: boolean) {
             super.setReadOnly(readOnly);
 
-            this.input.setReadOnly(readOnly)
+            this.input.setReadOnly(readOnly);
             this.selectedOptionsView.setEditable(!readOnly);
 
             this.toggleClass('readonly', readOnly);
@@ -1001,13 +1001,13 @@ module api.ui.selector.combobox {
         unValueLoaded(listener: (options: Option<OPTION_DISPLAY_VALUE>[]) => void) {
             this.valueLoadedListeners = this.valueLoadedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyValueLoaded(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.valueLoadedListeners.forEach((listener) => {
                 listener(options);
-            })
+            });
         }
 
         onOptionDeselected(listener: {(removed: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {

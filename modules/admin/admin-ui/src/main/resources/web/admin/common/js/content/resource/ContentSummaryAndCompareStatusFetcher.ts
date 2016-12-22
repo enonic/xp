@@ -26,7 +26,7 @@ module api.content.resource {
                                     response.getMetadata()
                                 );
                                 deferred.resolve(result);
-                            })
+                            });
                         });
                 });
 
@@ -124,7 +124,7 @@ module api.content.resource {
                 var compareResult: api.content.resource.result.CompareContentResult = compareResults.get(contentSummary.getId());
                 var newEntry = ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(
                     contentSummary, compareResult.getCompareStatus(), compareResult.getPublishStatus());
-                list.push(newEntry)
+                list.push(newEntry);
             });
 
             return list;
@@ -139,7 +139,7 @@ module api.content.resource {
                                 content.setReadOnly(true);
                                 return true;
                             }
-                        })
+                        });
                     });
 
                     return true;

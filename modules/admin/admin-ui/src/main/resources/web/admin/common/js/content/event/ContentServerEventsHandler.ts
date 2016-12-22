@@ -134,8 +134,8 @@ module api.content.event {
             return changes.some((change: ContentServerChange) => {
                 return change.getChangeItems().some(changeItem => {
                     return changeItem.getBranch() == 'draft';
-                })
-            })
+                });
+            });
         }
 
         private extractContentPaths(changes: ContentServerChange[]): ContentPath[] {
@@ -144,7 +144,7 @@ module api.content.event {
             changes.forEach((change: ContentServerChange) => {
                 change.getChangeItems().forEach((changeItem: ContentServerChangeItem) => {
                     contentPaths.push(changeItem.getPath());
-                })
+                });
             });
 
             return contentPaths;
@@ -166,7 +166,7 @@ module api.content.event {
             changes.forEach((change: ContentServerChange) => {
                 change.getChangeItems().forEach((changeItem: ContentServerChangeItem) => {
                     contentIds.push(changeItem.getContentId());
-                })
+                });
             });
 
             return contentIds;
@@ -185,7 +185,7 @@ module api.content.event {
             }
             // TODO: refactor update event to contain multiple contents ?
             data.forEach((el) => {
-                new api.content.event.ContentUpdatedEvent(el.getContentSummary()).fire()
+                new api.content.event.ContentUpdatedEvent(el.getContentSummary()).fire();
             });
 
             this.notifyContentUpdated(data);

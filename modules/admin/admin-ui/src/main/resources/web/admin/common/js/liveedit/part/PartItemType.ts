@@ -18,7 +18,7 @@ module api.liveedit.part {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
 
         createView(config: CreateItemViewConfig<RegionView,PartComponent>): PartComponentView {

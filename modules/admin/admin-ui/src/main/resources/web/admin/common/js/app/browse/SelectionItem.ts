@@ -38,13 +38,13 @@ module api.app.browse {
         unRemoveClicked(listener: (event: MouseEvent) => void) {
             this.removeListeners = this.removeListeners.filter((current) => {
                 return current !== listener;
-            })
+            });
         }
 
         notifyRemoveClicked(event: MouseEvent) {
             this.removeListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         setBrowseItem(item: BrowseItem<M>) {

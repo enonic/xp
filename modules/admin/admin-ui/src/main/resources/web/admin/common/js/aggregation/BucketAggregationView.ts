@@ -30,7 +30,7 @@ module api.aggregation {
         setDisplayNames(): void {
             this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
                 bucketView.setDisplayName(this.getDisplayNameForName(bucketView.getName()));
-            })
+            });
         }
 
         hasSelectedEntry(): boolean {

@@ -184,7 +184,7 @@ module api.ui.time {
         unCalendarDayClicked(listener: (event: CalendarDayClickedEvent) => void) {
             this.calendarDayClickedListeners = this.calendarDayClickedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyCalendarDayClicked() {

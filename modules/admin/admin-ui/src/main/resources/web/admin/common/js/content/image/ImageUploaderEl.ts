@@ -182,7 +182,7 @@ module api.content.image {
                 new ImageErrorEvent(contentId).fire();
                 this.imageEditors = this.imageEditors.filter((curr) => {
                     return curr !== imageEditor;
-                })
+                });
                 api.notify.showError('Failed to upload an image ' + contentId.toString());
             };
 
@@ -255,7 +255,7 @@ module api.content.image {
                 } else {
                     editor.resetFocusPosition();
                 }
-            })
+            });
         }
 
         setCrop(crop: Rect) {
@@ -265,7 +265,7 @@ module api.content.image {
                 } else {
                     editor.resetCropPosition();
                 }
-            })
+            });
         }
 
         setZoom(zoom: Rect) {
@@ -275,7 +275,7 @@ module api.content.image {
                 } else {
                     editor.resetZoomPosition();
                 }
-            })
+            });
         }
 
         isFocalPointEditMode(): boolean {
@@ -287,7 +287,7 @@ module api.content.image {
         isCropEditMode(): boolean {
             return this.imageEditors.some((editor: ImageEditor) => {
                 return editor.isCropEditMode();
-            })
+            });
         }
 
         protected isSameValueUpdateAllowed(): boolean {
@@ -307,7 +307,7 @@ module api.content.image {
         private notifyEditModeChanged(edit: boolean, crop: Rect, zoom: Rect, focus: Point) {
             this.editModeListeners.forEach((listener) => {
                 listener(edit, crop, zoom, focus);
-            })
+            });
         }
 
         onCropAutoPositionedChanged(listener: (auto: boolean) => void) {

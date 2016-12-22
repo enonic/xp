@@ -420,7 +420,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                 if (bucket.docCount > 0) {
                     return true;
                 }
-            })
+            });
 
             var aggregationGroupView = aggregation.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME
                 ? this.contentTypeAggregation
@@ -432,7 +432,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             else {
                 aggregationGroupView.show();
             }
-        })
+        });
     }
 
 }

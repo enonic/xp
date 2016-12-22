@@ -26,11 +26,11 @@ module api.query.filter {
                 must: this.toJsonWrapperElements(this.must),
                 mustNot: this.toJsonWrapperElements(this.mustNot),
                 should: this.toJsonWrapperElements(this.should)
-            }
+            };
 
             return <api.query.filter.FilterTypeWrapperJson> {
                 BooleanFilter: json
-            }
+            };
         }
 
         toJsonWrapperElements(filters: api.query.filter.Filter[]): api.query.filter.FilterTypeWrapperJson[] {

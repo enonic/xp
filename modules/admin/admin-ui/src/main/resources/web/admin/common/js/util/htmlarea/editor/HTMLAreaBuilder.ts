@@ -1,7 +1,7 @@
 module api.util.htmlarea.editor {
 
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
-    import ApplicationKey = api.application.ApplicationKey
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class HTMLAreaBuilder {
 
@@ -78,7 +78,7 @@ module api.util.htmlarea.editor {
         private notifyCreateDialog(event: CreateHtmlAreaDialogEvent) {
             this.createDialogListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         setFocusHandler(focusHandler: (e) => void): HTMLAreaBuilder {

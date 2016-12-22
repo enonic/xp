@@ -371,7 +371,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         var contentEventListener = (event) => {
             this.propagateEvent(event);
-        }
+        };
 
         ContentDeletedEvent.on(contentEventListener);
         ContentUpdatedEvent.on(contentEventListener);

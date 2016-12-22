@@ -64,7 +64,7 @@ module api.form.inputtype.combobox {
             this.comboBox = this.createComboBox(input, propertyArray);
 
             this.comboBoxOptions.forEach((option: ComboBoxOption) => {
-                this.comboBox.addOption({value: option.value, displayValue: option.label})
+                this.comboBox.addOption({value: option.value, displayValue: option.label});
             });
 
             this.appendChild(this.comboBox);

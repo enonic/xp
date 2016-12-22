@@ -84,7 +84,7 @@ module api.content.resource {
         }
 
         setContentTypeNames(contentTypeNames: string[]) {
-            this.contentTypeNames = contentTypeNames
+            this.contentTypeNames = contentTypeNames;
         }
 
         setAllowedContentPaths(allowedContentPaths: string[]) {

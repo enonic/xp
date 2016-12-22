@@ -27,7 +27,7 @@ module api.schema.mixin {
             return this.send().then((response: api.rest.JsonResponse<MixinListJson>) => {
                 return response.getResult().mixins.map((mixinJson: MixinJson) => {
                     return this.fromJsonToMixin(mixinJson);
-                })
+                });
             });
         }
     }

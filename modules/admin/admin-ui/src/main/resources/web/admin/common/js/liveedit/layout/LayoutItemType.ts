@@ -17,7 +17,7 @@ module api.liveedit.layout {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
 
         createView(config: CreateItemViewConfig<RegionView,LayoutComponent>): LayoutComponentView {

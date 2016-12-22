@@ -48,7 +48,7 @@ module api.content.resource {
                 }
 
                 let pathExpr: ConstraintExpr = CompareExpr.like(new FieldExpr("_path"),
-                    ValueExpr.string("/content" + this.filterContentPaths[index].toString() + "/*"))
+                    ValueExpr.string("/content" + this.filterContentPaths[index].toString() + "/*"));
                 logicalExpr = LogicalExpr.or(logicalExpr, pathExpr);
             });
 

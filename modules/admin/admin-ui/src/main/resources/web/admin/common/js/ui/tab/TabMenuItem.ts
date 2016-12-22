@@ -10,7 +10,7 @@ module api.ui.tab {
 
 
         isVisibleInMenu(): boolean {
-            return this.visibleInMenu
+            return this.visibleInMenu;
         }
 
         setVisibleInMenu(value: boolean) {

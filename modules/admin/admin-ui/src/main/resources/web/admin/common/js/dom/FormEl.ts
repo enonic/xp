@@ -9,7 +9,7 @@ module api.dom {
         preventSubmit() {
             this.onSubmit((event: Event) => {
                 event.preventDefault();
-            })
+            });
         }
 
         onSubmit(listener: (event: Event) => void) {

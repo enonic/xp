@@ -25,7 +25,7 @@ module api.liveedit.fragment {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
     }
 
