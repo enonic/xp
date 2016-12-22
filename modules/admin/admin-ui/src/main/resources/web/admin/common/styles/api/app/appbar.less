@@ -1,60 +1,32 @@
 .appbar {
   width: 100%;
   height: @app-header-height;
-  .flexbox();
-  flex-flow: row no-wrap;
-  align-items: stretch;
-  align-content: stretch;
   position: absolute;
   right: 0px;
 
   padding: 0 10px 0 15px;
   background: @admin-bg-dark-gray;
   background-size: cover;
-  text-align: center;
   overflow: hidden;
   .box-sizing(border-box);
 
-  .launcher-button {
-    &:extend(.icon);
-    .icon-grid2;
-
-    .flex(0 0 30px);
-    .order(3);
-
-    float: right;
-    width: 30px;
-    padding: 0;
-    margin: 4px 0px 4px 0px;
-    border: 0 none;
-    background-color: transparent;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-
-    &:before {
-      .color-transition();
+  &.show-tab-menu {
+    .flexbox();
+    flex-flow: row no-wrap;
+    align-items: stretch;
+    align-content: stretch;
+    .appbar-tab-menu {
+      .flexbox();
     }
-
-    span {
-      display:none;
-    }
-    &:hover {
-      background-color: transparent;
-      &:before {
-        color: rgba(255,255,255,0.5);
-      }
-    }
-
   }
 
   .home-button {
     .flex(0 0 auto);
     .order(1);
 
-    float: left;
+    height: 100%;
     padding: 8px 25px;
-    border: 0;
+    border: none;
     color: @admin-bg-light-gray;
     background-color: transparent;
     font-family: @admin-font-family;
@@ -87,11 +59,8 @@
     }
   }
 
-  .home-button, .launcher-button {
-    &:focus {
-      .box-shadow(none);
-      border: none;
-    }
+  .launcher-button {
+    opacity: 0;
   }
 }
 
@@ -108,7 +77,7 @@
       &:before {
         float: left;
       }
-      
+
       span {
         display: none;
       }

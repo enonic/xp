@@ -87,10 +87,6 @@ body.mobile-statistics-panel {
   height: 100%;
   font-family: @admin-font-family;
 
-  &:focus {
-    outline: none;
-  }
-
   .app-row-selected {
     width: 100%;
     background-color: rgba(255, 255, 255, 0.3);
@@ -274,24 +270,23 @@ body.mobile-statistics-panel {
   }
 }
 
+
 .launcher-button {
+  opacity: 1 !important;
   font-family: @admin-font-family;
   font-size: @admin-font-size;
   position: fixed;
   border: none;
   right: 6px;
-  top: 15px;
+  top: 9px;
   background-color: transparent;
   cursor: pointer;
   z-index: @z-index-launcher-button;
-  line-height: 15px;
+  line-height: 17px;
+  padding-top: 5px;
 
   &::-moz-focus-inner {
     border: 0;
-  }
-
-  &:focus {
-    outline: none;
   }
 
   .line {
@@ -343,8 +338,9 @@ body.mobile-statistics-panel {
   &.toggled {
     -webkit-transform: scale3d(.8, .8, .8);
     transform: scale3d(.8, .8, .8);
-    padding: 6px 3px;
-    margin-top: -3px;
+    padding: 8px 7px 8px 14px;
+    top: 5px;
+    right: 2px;
 
     &:hover {
       .lines {

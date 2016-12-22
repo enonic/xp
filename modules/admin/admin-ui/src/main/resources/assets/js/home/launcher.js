@@ -14,7 +14,8 @@ function appendLauncherButton() {
 
     launcherButton.addEventListener("click", togglePanelState);
 
-    document.getElementsByTagName("body")[0].appendChild(launcherButton);
+    var container = document.querySelector(".appbar") || document.getElementsByTagName("body")[0];
+    container.appendChild(launcherButton);
 }
 
 function togglePanelState() {
