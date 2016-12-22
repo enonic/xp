@@ -2,12 +2,10 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':core:core-api' )
-    compile project( ':web:web-api' )
-    compile 'io.dropwizard.metrics:metrics-jvm:3.1.2'
-    compile 'io.dropwizard.metrics:metrics-json:3.1.2'
+    compile project( ':jaxrs:jaxrs-api' )
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
 
 bundle {
-    instruction 'Bundle-Name', 'Enonic XP Server - Status'
+    instruction 'Bundle-Name', 'Enonic XP Server - Trace'
 }

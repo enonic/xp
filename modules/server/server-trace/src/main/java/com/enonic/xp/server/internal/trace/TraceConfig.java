@@ -1,4 +1,4 @@
-package com.enonic.xp.server.internal.trace.config;
+package com.enonic.xp.server.internal.trace;
 
 public @interface TraceConfig
 {

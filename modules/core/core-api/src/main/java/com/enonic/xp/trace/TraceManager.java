@@ -1,10 +1,8 @@
 package com.enonic.xp.trace;
 
-public interface TraceManager2
+public interface TraceManager
 {
-    void start( Trace2 trace );
+    void dispatch( TraceEvent event );
 
-    void end( Trace2 trace );
-
-    Trace2 newTrace( String type, Trace2 parent );
+    Trace newTrace( String type, Trace parent );
 }

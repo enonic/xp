@@ -1,4 +1,4 @@
-package com.enonic.xp.server.internal.trace.manager;
+package com.enonic.xp.server.internal.trace;
 
 import java.time.Duration;
 import java.time.Instant;

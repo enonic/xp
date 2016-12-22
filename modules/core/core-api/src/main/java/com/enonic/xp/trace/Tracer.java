@@ -3,15 +3,15 @@ package com.enonic.xp.trace;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
-public final class Tracer2
+public final class Tracer
 {
-    private final static Tracer2 INSTANCE = new Tracer2();
+    private final static Tracer INSTANCE = new Tracer();
 
     private final ThreadLocal<Trace> current;
 
     private TraceManager manager;
 
-    private Tracer2()
+    private Tracer()
     {
         this.current = new ThreadLocal<>();
         this.manager = null;
@@ -104,17 +104,23 @@ public final class Tracer2
 
     private static void startTrace( final Trace trace )
     {
-        if ( INSTANCE.manager != null )
+        if ( trace == null )
         {
-            INSTANCE.manager.start( trace );
+            return;
         }
+
+        trace.start();
+        INSTANCE.manager.dispatch( TraceEvent.start( trace ) );
     }
 
     private static void endTrace( final Trace trace )
     {
-        if ( INSTANCE.manager != null )
+        if ( trace == null )
         {
-            INSTANCE.manager.end( trace );
+            return;
         }
+
+        trace.end();
+        INSTANCE.manager.dispatch( TraceEvent.end( trace ) );
     }
 }

@@ -1,5 +1,6 @@
 package com.enonic.xp.trace;
 
-public class TraceListener
+public interface TraceListener
 {
+    void onTrace( TraceEvent event );
 }

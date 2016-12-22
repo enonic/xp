@@ -1,6 +1,7 @@
 package com.enonic.xp.trace;
 
-public interface TraceCallable<T>
+@FunctionalInterface
+public interface TraceRunnable<T>
 {
-    T call();
+    T run();
 }

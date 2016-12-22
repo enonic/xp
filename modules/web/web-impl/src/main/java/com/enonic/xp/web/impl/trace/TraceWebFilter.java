@@ -1,4 +1,4 @@
-package com.enonic.xp.server.internal.trace.web;
+package com.enonic.xp.web.impl.trace;
 
 import org.osgi.service.component.annotations.Component;
 

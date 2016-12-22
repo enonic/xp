@@ -1,4 +1,4 @@
-package com.enonic.xp.server.internal.trace.manager;
+package com.enonic.xp.server.internal.trace;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -7,7 +7,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.server.internal.trace.config.TraceConfig;
 import com.enonic.xp.server.internal.trace.event.TraceEventDispatcher;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceEvent;
