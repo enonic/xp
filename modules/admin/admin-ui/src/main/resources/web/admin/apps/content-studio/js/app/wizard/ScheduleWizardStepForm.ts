@@ -2,6 +2,7 @@ import "../../api.ts";
 import {ContentSettingsModel} from "./ContentSettingsModel";
 
 import Content = api.content.Content;
+import PublishStatus = api.content.PublishStatus;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalLoader = api.security.PrincipalLoader;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
@@ -94,6 +95,20 @@ export class ScheduleWizardStepForm extends api.app.wizard.WizardStepForm {
         if (publishToDate) {
             this.propertySet.setLocalDateTime("to", 0, api.util.LocalDateTime.fromDate(publishToDate));
         }
+    }
+
+    getPublishStatus(): PublishStatus {
+        var publishFrom = this.propertySet.getDateTime("from");
+        if (publishFrom && publishFrom.toDate() > Date.now()) {
+            return PublishStatus.PENDING;
+        }
+
+        var publishTo = this.propertySet.getDateTime("to");
+        if (publishTo && publishTo.toDate() < Date.now()) {
+            return PublishStatus.EXPIRED;
+        }
+
+        return PublishStatus.ONLINE;
     }
 
     apply(builder: api.content.ContentBuilder) {

@@ -269,11 +269,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     let shownHandler = () => {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
-                                (application: Application) => {
-                                    if (application.getState() == "stopped") {
-                                        api.notify.showWarning(message);
-                                    }
-                                })
+                            (application: Application) => {
+                                if (application.getState() == "stopped") {
+                                    api.notify.showWarning(message);
+                                }
+                            })
                             .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
@@ -1025,7 +1025,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         ConfirmationDialog.get().setQuestion(
                             "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
                             () => this.doLayoutPersistedItem(persistedContent.clone())).setNoCallback(() => {/* Do nothing... */
-                        }).show();
+                            }).show();
                     }
                 }
 
@@ -1791,9 +1791,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.currentContentCompareStatus = this.persistedContentCompareStatus;
                 this.currentContentPublishStatus = this.persistedContentPublishStatus;
 
-            } else if (publishControls.isOnline()) {
-                this.currentContentCompareStatus = CompareStatus.NEWER;
-                //this.currentContentPublishStatus = ; //TODO in XP-4751. Find a way to get the publish state without a request
+            } else {
+                if (publishControls.isOnline()) {
+                    this.currentContentCompareStatus = CompareStatus.NEWER;
+                }
+                this.currentContentPublishStatus = this.scheduleWizardStepForm.getPublishStatus();
             }
             publishControls.setCompareStatus(this.currentContentCompareStatus).
                 setPublishStatus(this.currentContentPublishStatus);
