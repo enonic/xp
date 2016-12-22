@@ -16,7 +16,7 @@ final class TraceImpl
 
     private final String parentId;
 
-    private final String type;
+    private final String name;
 
     private Instant startTime;
 
@@ -24,11 +24,11 @@ final class TraceImpl
 
     private final TraceLocation location;
 
-    TraceImpl( final String type, final String parentId, final TraceLocation location )
+    TraceImpl( final String name, final String parentId, final TraceLocation location )
     {
         this.id = UUID.randomUUID().toString();
         this.parentId = parentId;
-        this.type = type;
+        this.name = name;
         this.location = location;
     }
 
@@ -45,9 +45,9 @@ final class TraceImpl
     }
 
     @Override
-    public String getType()
+    public String getName()
     {
-        return this.type;
+        return this.name;
     }
 
     @Override

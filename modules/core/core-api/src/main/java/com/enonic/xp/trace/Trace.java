@@ -11,7 +11,7 @@ public interface Trace
 
     String getParentId();
 
-    String getType();
+    String getName();
 
     TraceLocation getLocation();
 

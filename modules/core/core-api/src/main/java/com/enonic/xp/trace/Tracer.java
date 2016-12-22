@@ -71,25 +71,25 @@ public final class Tracer
         }
     }
 
-    public static Trace newTrace( final String type )
+    public static Trace newTrace( final String name )
     {
         if ( !isEnabled() )
         {
             return null;
         }
 
-        return INSTANCE.manager.newTrace( type, current() );
+        return INSTANCE.manager.newTrace( name, current() );
     }
 
-    public static <T> T trace( final String type, final TraceRunnable<T> runnable )
+    public static <T> T trace( final String name, final TraceRunnable<T> runnable )
     {
-        return trace( newTrace( type ), runnable );
+        return trace( newTrace( name ), runnable );
     }
 
-    public static <T> T traceEx( final String type, final Callable<T> callable )
+    public static <T> T traceEx( final String name, final Callable<T> callable )
         throws Exception
     {
-        return traceEx( newTrace( type ), callable );
+        return traceEx( newTrace( name ), callable );
     }
 
     public static void setManager( final TraceManager manager )

@@ -4,5 +4,5 @@ public interface TraceManager
 {
     void dispatch( TraceEvent event );
 
-    Trace newTrace( String type, Trace parent );
+    Trace newTrace( String name, Trace parent );
 }

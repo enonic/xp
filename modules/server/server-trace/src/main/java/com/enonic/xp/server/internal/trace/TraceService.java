@@ -42,9 +42,9 @@ public final class TraceService
     }
 
     @Override
-    public Trace newTrace( final String type, final Trace parent )
+    public Trace newTrace( final String name, final Trace parent )
     {
-        return new TraceImpl( type, parent != null ? parent.getId() : null, TraceLocationImpl.findLocation() );
+        return new TraceImpl( name, parent != null ? parent.getId() : null, TraceLocationImpl.findLocation() );
     }
 
     @Override
