@@ -1569,12 +1569,12 @@ public final class ContentResource
             final Instant publishFromInstant = contentPublishInfo.getFrom();
             if ( publishFromInstant == null )
             {
-                throw new WebApplicationException( "\"Online to\" date/time cannot be set without \"Online from\"",
+                throw new WebApplicationException( "[Online to] date/time cannot be set without [Online from]",
                                                    HttpStatus.UNPROCESSABLE_ENTITY.value() );
             }
             if ( publishToInstant.compareTo( publishFromInstant ) < 0 )
             {
-                throw new WebApplicationException( "\"Online from\" date/time must be earlier than \"Online to\"",
+                throw new WebApplicationException( "[Online from] date/time must be earlier than [Online to]",
                                                    HttpStatus.UNPROCESSABLE_ENTITY.value() );
             }
         }
