@@ -108,7 +108,7 @@ module api.content.form.inputtype.principalselector {
             return comboBox;
         }
 
-        private saveToSet(principalOption: api.ui.selector.Option<api.security.Principal>, index) {
+        private saveToSet(principalOption: api.ui.selector.Option<api.security.Principal>, index: number) {
             this.getPropertyArray().set(index, ValueTypes.REFERENCE.newValue(principalOption.value));
         }
 

@@ -78,7 +78,7 @@ module api.app.view {
             return iconEl;
         }
 
-        private appendToHeaderPath(value, className) {
+        private appendToHeaderPath(value: string, className: string) {
             var pathName = new api.dom.SpanEl(className);
             pathName.getEl().setInnerHtml(value);
             this.headerPathEl.appendChild(pathName);

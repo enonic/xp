@@ -47,7 +47,7 @@ module api.content {
 
     export class WidgetDescriptorKey implements api.Equitable {
 
-        private static SEPARATOR = ":";
+        private static SEPARATOR: string = ":";
 
         private applicationKey: ApplicationKey;
 

@@ -120,7 +120,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         return contentPreviewPath === UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(href, frameWindow));
     }
 
-    private centerImage(imgWidth, imgHeight, myWidth, myHeight) {
+    private centerImage(imgWidth: number, imgHeight: number, myWidth: number, myHeight: number) {
         var imgMarginTop = 0;
         if (imgHeight < myHeight) {
             // image should be centered vertically

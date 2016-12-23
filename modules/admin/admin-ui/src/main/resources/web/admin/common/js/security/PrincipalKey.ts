@@ -2,7 +2,7 @@ module api.security {
 
     export class PrincipalKey implements api.Equitable {
 
-        private static SEPARATOR = ":";
+        private static SEPARATOR: string = ":";
 
         private static ANONYMOUS_PRINCIPAL: PrincipalKey = new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.USER, "anonymous");
 

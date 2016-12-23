@@ -19,11 +19,11 @@ module api.content.resource {
 
         private request: ContentQueryRequest<ContentSummaryJson, ContentSummary>;
 
-        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
+        public static MODIFIED_TIME_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
 
-        public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
+        public static SCORE_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
-        public static PATH_ASC = new FieldOrderExpr(new FieldExpr("_path"), OrderDirection.ASC);
+        public static PATH_ASC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("_path"), OrderDirection.ASC);
 
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSummaryRequest.SCORE_DESC, ContentSummaryRequest.MODIFIED_TIME_DESC];
 

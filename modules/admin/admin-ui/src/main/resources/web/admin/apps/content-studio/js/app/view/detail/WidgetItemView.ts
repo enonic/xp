@@ -7,7 +7,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 
 export class WidgetItemView extends api.dom.DivEl {
 
-    public static debug = false;
+    public static debug: boolean = false;
     private uid: string = "";
 
     constructor(className?: string) {

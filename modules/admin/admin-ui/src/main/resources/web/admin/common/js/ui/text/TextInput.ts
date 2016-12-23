@@ -111,7 +111,7 @@ module api.ui.text {
             return this;
         }
 
-        moveCaretTo(pos) {
+        moveCaretTo(pos: number) {
             this.selectText(pos, pos);
         }
 

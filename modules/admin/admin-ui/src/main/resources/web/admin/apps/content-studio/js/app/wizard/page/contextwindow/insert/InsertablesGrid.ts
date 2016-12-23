@@ -2,9 +2,9 @@ import "../../../../../api.ts";
 import {Insertable} from "./Insertable";
 
 export interface InsertablesGridOptions {
-    draggableRows?:boolean;
-    rowClass?:string;
-    onClick?:(el) => void;
+    draggableRows?: boolean;
+    rowClass?: string;
+    onClick?: (event: MouseEvent) => void;
 }
 
 export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {

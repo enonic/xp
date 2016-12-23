@@ -91,7 +91,7 @@ module api.content.site.inputtype.authappselector {
         }
 
 
-        private saveToSet(siteConfig: SiteConfig, index) {
+        private saveToSet(siteConfig: SiteConfig, index: number) {
 
             var propertySet = this.getPropertyArray().get(index).getPropertySet();
             if (!propertySet) {

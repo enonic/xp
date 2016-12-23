@@ -8,10 +8,10 @@ module api.dom {
 
         private errorListeners: {(event: UIEvent): void}[] = [];
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         /* 1px x 1px gif with a 1bit palette */
-        public static PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+        public static PLACEHOLDER: string = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
         constructor(src?: string, className?: string, usePlaceholder: boolean = false) {
             super(new NewElementBuilder().

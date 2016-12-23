@@ -53,7 +53,10 @@
     "only-arrow-functions": false,
     "ordered-imports": false,
     "typedef": [
-      true
+      true,
+      "parameter",
+      "property-declaration",
+      "member-variable-declaration"
     ],
     "variable-name": true,
     "align": [

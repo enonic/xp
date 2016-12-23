@@ -11,7 +11,7 @@ module api.aggregation {
 
         private aggregationViews: api.aggregation.AggregationView[] = [];
 
-        private titleEl = new api.dom.H2El();
+        private titleEl: api.dom.H2El = new api.dom.H2El();
 
         private bucketSelectionChangedListeners: Function[] = [];
 
@@ -98,9 +98,10 @@ module api.aggregation {
         }
 
         unBucketViewSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
-            this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners
+                .filter(function (curr: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+                    return curr !== listener;
+                });
         }
 
         notifyBucketViewSelectionChanged(event: api.aggregation.BucketViewSelectionChangedEvent) {

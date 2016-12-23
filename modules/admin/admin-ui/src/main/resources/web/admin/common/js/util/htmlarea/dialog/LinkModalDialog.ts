@@ -27,10 +27,10 @@ module api.util.htmlarea.dialog {
             anchor: "Anchor"
         };
 
-        private static contentPrefix = "content://";
-        private static downloadPrefix = "media://download/";
-        private static emailPrefix = "mailto:";
-        private static subjectPrefix = "?subject=";
+        private static contentPrefix: string = "content://";
+        private static downloadPrefix: string = "media://download/";
+        private static emailPrefix: string = "mailto:";
+        private static subjectPrefix: string = "?subject=";
 
         constructor(config: HtmlAreaAnchor, content: api.content.ContentSummary) {
             super(config.editor, "Insert Link", "link-modal-dialog");

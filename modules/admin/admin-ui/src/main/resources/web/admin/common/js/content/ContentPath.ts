@@ -4,7 +4,7 @@ module api.content {
 
         public static ELEMENT_DIVIDER: string = "/";
 
-        public static ROOT = ContentPath.fromString("/");
+        public static ROOT: ContentPath = ContentPath.fromString("/");
 
         private elements: string[];
 

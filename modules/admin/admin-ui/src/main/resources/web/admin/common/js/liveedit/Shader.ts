@@ -197,7 +197,7 @@ module api.liveedit {
             this.notifyClicked(event);
         }
 
-        private showShaderIfNecessary(shader: Element, x, y, width, height) {
+        private showShaderIfNecessary(shader: Element, x: number, y: number, width: number, height: number) {
             var shaderEl = shader.getEl();
             shaderEl.setTopPx(y).
                 setLeftPx(x).

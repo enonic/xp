@@ -3,8 +3,9 @@ module api.application {
 
     export class Application extends api.item.BaseItem {
 
-        static STATE_STARTED = 'started';
-        static STATE_STOPPED = 'stopped';
+        static STATE_STARTED: string = 'started';
+
+        static STATE_STOPPED: string = 'stopped';
 
         private applicationKey: ApplicationKey;
 

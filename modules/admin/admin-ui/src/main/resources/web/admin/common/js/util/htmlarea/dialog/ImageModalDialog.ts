@@ -34,8 +34,8 @@ module api.util.htmlarea.dialog {
         private dropzoneContainer: api.ui.uploader.DropzoneContainer;
         private imageSelectorFormItem: FormItem;
 
-        static imagePrefix = "image://";
-        static maxImageWidth = 640;
+        static imagePrefix: string = "image://";
+        static maxImageWidth: number = 640;
 
         constructor(config: HtmlAreaImage, content: api.content.ContentSummary) {
             super(config.editor, "Insert Image", "image-modal-dialog");
@@ -246,7 +246,7 @@ module api.util.htmlarea.dialog {
             return imageEl;
         }
 
-        private generateDefaultImgSrc(contentId): string {
+        private generateDefaultImgSrc(contentId: string): string {
             return new api.content.util.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(
                 true).setSize(
                 ImageModalDialog.maxImageWidth).resolve();
@@ -694,7 +694,7 @@ module api.util.htmlarea.dialog {
         private scrollUpButton: api.dom.Element;
         private scrollBarWidth: number;
         private scrollBarRemoveTimeoutId: number;
-        private scrolling;
+        private scrolling: boolean;
 
         constructor(imagePreviewContainer: api.dom.DivEl) {
             this.imagePreviewContainer = imagePreviewContainer;
@@ -779,7 +779,7 @@ module api.util.htmlarea.dialog {
             this.scrollBarWidth = widthNoScroll - widthWithScroll;
         }
 
-        private scrollImagePreview(direction, scrollBy: number = 2) {
+        private scrollImagePreview(direction: string, scrollBy: number = 2) {
             var scrollByPx = (direction === "up" ? "-=" : "+=") + Math.round(scrollBy) + "px";
             var delta = 0.05;
             wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: scrollByPx}, 1, () => {

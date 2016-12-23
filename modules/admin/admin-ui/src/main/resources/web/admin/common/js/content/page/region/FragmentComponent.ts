@@ -5,9 +5,9 @@ module api.content.page.region {
 
     export class FragmentComponent extends Component implements api.Equitable, api.Cloneable {
 
-        public static PROPERTY_FRAGMENT = 'fragment';
+        public static PROPERTY_FRAGMENT: string = 'fragment';
 
-        public static PROPERTY_CONFIG = 'config';
+        public static PROPERTY_CONFIG: string = 'config';
 
         public static debug: boolean = false;
 

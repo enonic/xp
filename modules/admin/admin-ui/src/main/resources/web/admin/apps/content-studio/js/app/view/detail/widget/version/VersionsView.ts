@@ -12,8 +12,8 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     private loadedListeners: {(): void}[] = [];
     private activeVersion: ContentVersion;
 
-    private static branchMaster = "master";
-    private static branchDraft = "draft";
+    private static branchMaster: string = "master";
+    private static branchDraft: string = "draft";
 
     constructor() {
         super("all-content-versions");
@@ -103,8 +103,8 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
         return result;
     }
 
-    private getState(workspace): string {
-        if (workspace == VersionsView.branchMaster) {
+    private getState(workspace: string): string {
+        if (workspace === VersionsView.branchMaster) {
             return api.content.CompareStatusFormatter.formatStatus(api.content.CompareStatus.EQUAL);
         }
         else {

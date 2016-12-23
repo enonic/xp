@@ -22,7 +22,7 @@ module api.form {
 
         protected formItemOccurrences: FormSetOccurrences<V>;
 
-        protected classPrefix = "";
+        protected classPrefix: string = "";
 
         protected helpText: string;
 

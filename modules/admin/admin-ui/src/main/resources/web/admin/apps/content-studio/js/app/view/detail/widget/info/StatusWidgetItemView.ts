@@ -1,15 +1,15 @@
 import "../../../../../api.ts";
+import {WidgetItemView} from "../../WidgetItemView";
 
 import CompareStatus = api.content.CompareStatus;
 import CompareStatusFormatter = api.content.CompareStatusFormatter;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {WidgetItemView} from "../../WidgetItemView";
 
 export class StatusWidgetItemView extends WidgetItemView {
 
     private status: CompareStatus;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super("status-widget-item-view");

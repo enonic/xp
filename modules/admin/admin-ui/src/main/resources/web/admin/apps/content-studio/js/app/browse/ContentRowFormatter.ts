@@ -80,13 +80,13 @@ export class ContentRowFormatter {
                 statusEl.getEl().setText(compareStatusText);
                 return statusEl.toString();
             }
-        } else if (!!data.getUploadItem()) {   // uploading node
+        } else if (!!data.getUploadItem()) { // uploading node
             compareStatusText = new api.ui.ProgressBar(data.getUploadItem().getProgress());
             return new api.dom.SpanEl().appendChild(compareStatusText).toString();
         }
     }
 
-    private static makeClassName(entry): string {
+    private static makeClassName(entry: string): string {
         return entry.toLowerCase().replace("_", "-") || "unknown";
     }
 }

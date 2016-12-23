@@ -2,7 +2,7 @@ module api.data {
 
     export class ValueTypeConverter {
 
-        private static VALID_REFERENCE_ID_PATTERN = /^([a-z0-9A-Z_\-\.:])*$/;
+        private static VALID_REFERENCE_ID_PATTERN: RegExp = /^([a-z0-9A-Z_\-\.:])*$/;
 
         public static convertTo(value: Value, toType: ValueType): Value {
 

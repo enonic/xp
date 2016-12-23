@@ -2,7 +2,7 @@ module api.ui.menu {
 
     export class ContextMenu extends Menu {
 
-        constructor(actions?: api.ui.Action[], appendToBody = true) {
+        constructor(actions?: api.ui.Action[], appendToBody: boolean = true) {
             super(actions);
 
             this.addClass("context-menu");

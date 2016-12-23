@@ -13,7 +13,7 @@ module api {
          * @param args arguments constructor arguments
          * @returns {Object}
          */
-        static create(constructor, ...args) {
+        static create(constructor: Function, ...args: any[]) {
             var factory = constructor.bind.apply(constructor, arguments);
             return new factory();
         }

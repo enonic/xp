@@ -18,8 +18,8 @@ module api.content.image {
         private originalHeight: number;
         private originalWidth: number;
 
-        private static SELECTED_CLASS = 'selected';
-        private static STANDOUT_CLASS = 'standout';
+        private static SELECTED_CLASS: string = 'selected';
+        private static STANDOUT_CLASS: string = 'standout';
 
         constructor(config: api.ui.uploader.MediaUploaderElConfig) {
             if (config.allowTypes == undefined) {

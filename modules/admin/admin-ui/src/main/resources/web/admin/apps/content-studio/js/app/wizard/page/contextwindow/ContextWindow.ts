@@ -55,7 +55,7 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
 
     private displayModeChangedListeners: {(): void}[] = [];
 
-    private animationTimer;
+    private animationTimer: number;
 
     private fixed: boolean = false;
 

@@ -72,7 +72,7 @@ module api.liveedit {
 
         private mouseDownLastTarget: HTMLElement;
 
-        private mouseOverListener;
+        private mouseOverListener: (e: MouseEvent) => void;
 
         public static debug: boolean = false;
 
@@ -141,7 +141,6 @@ module api.liveedit {
                 if (isDragging && this.isElementOverRegion((<HTMLElement>e.target))) {
                     this.highlight();
                 }
-
             };
 
             this.onMouseOver(this.mouseOverListener);

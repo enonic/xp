@@ -242,7 +242,7 @@ module api.dom {
             });
         }
 
-        private initChildren(rendered): wemQ.Promise<boolean> {
+        private initChildren(rendered: boolean): wemQ.Promise<boolean> {
             this.childrenAddedDuringInit = false;
             var childPromises = [];
 
@@ -757,7 +757,7 @@ module api.dom {
         /*
          *      Event listeners
          */
-        private mouseEnterByHandler = {};
+        private mouseEnterByHandler: Object = {};
 
         onMouseEnter(handler: (e: MouseEvent) => any) {
             if (typeof this.getHTMLElement().onmouseenter != "undefined") {
@@ -781,7 +781,7 @@ module api.dom {
             }
         }
 
-        private mouseLeaveByHandler = {};
+        private mouseLeaveByHandler: Object = {};
 
         onMouseLeave(handler: (e: MouseEvent) => any) {
             if (typeof this.getHTMLElement().onmouseleave != "undefined") {

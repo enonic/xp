@@ -13,7 +13,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
     private textInput: InputEl;
     private applicationUploaderEl: ApplicationUploaderEl;
-    private lastTimeKeyPressedTimer;
+    private lastTimeKeyPressedTimer: number;
     private LAST_KEY_PRESS_TIMEOUT: number;
     private cancelAction: Action;
 
@@ -114,7 +114,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         });
     }
 
-    showFailure(failure) {
+    showFailure(failure: string): void {
         if (failure) {
             api.notify.NotifyManager.get().showWarning(failure);
         }

@@ -159,8 +159,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private applicationStartedListener: (event: ApplicationEvent) => void;
 
-    private static EDITOR_DISABLED_TYPES = [ContentTypeName.FOLDER, ContentTypeName.TEMPLATE_FOLDER, ContentTypeName.SHORTCUT,
-        ContentTypeName.UNSTRUCTURED];
+    private static EDITOR_DISABLED_TYPES: ContentTypeName[] = [
+        ContentTypeName.FOLDER,
+        ContentTypeName.TEMPLATE_FOLDER,
+        ContentTypeName.SHORTCUT,
+        ContentTypeName.UNSTRUCTURED,
+    ];
 
     private contentUpdateDisabled: boolean;
 
@@ -423,7 +427,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return <LiveFormPanel> super.getLivePanel();
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
         return super.doRenderOnDataLoaded(rendered, true).then((rendered) => {
             if (ContentWizardPanel.debug) {

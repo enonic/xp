@@ -28,7 +28,7 @@ module api.liveedit.text {
 
         private rootElement: api.dom.Element;
 
-        private htmlAreaEditor;
+        private htmlAreaEditor: HtmlAreaEditor;
 
         private isInitializingEditor: boolean;
 
@@ -36,19 +36,19 @@ module api.liveedit.text {
 
         private editorContainer: api.dom.DivEl;
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         private static DEFAULT_TEXT: string = "";
 
         private static EDITOR_FOCUSED_CLASS: string = "editor-focused";
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
-        public static DBL_CLICK_TIMEOUT = 250;
+        public static DBL_CLICK_TIMEOUT: number = 250;
         private singleClickTimer: number;
         private lastClicked: number;
 
         private modalDialog: ModalDialog;
-        private currentDialogConfig;
+        private currentDialogConfig: any;
 
         private authRequest: Promise<void>;
         private editableSourceCode: boolean;
@@ -82,7 +82,7 @@ module api.liveedit.text {
                 this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
                 if (!this.isEditorReady()) {
                     this.initEditor();
-                } else if (!!this.htmlAreaEditor) {
+                } else if (this.htmlAreaEditor) {
                     this.reInitEditor(); // on added, inline editor losses its root element of the editable area
                 }
                 this.unhighlight();
@@ -95,7 +95,7 @@ module api.liveedit.text {
             });
 
             var handleDialogCreated = (event) => {
-                if (this.currentDialogConfig == event.getConfig()) {
+                if (this.currentDialogConfig === event.getConfig()) {
                     this.modalDialog = event.getModalDialog();
                 }
             };
@@ -175,7 +175,7 @@ module api.liveedit.text {
 
             this.focusOnInit = true;
             this.startPageTextEditMode();
-            if (!!this.htmlAreaEditor) {
+            if (this.htmlAreaEditor) {
                 this.htmlAreaEditor.focus();
                 this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             }
@@ -187,7 +187,7 @@ module api.liveedit.text {
                 if (this.isActive()) {
                     return;
                 }
-                if (!!this.htmlAreaEditor) {
+                if (this.htmlAreaEditor) {
                     this.htmlAreaEditor.focus();
                 }
                 return;
@@ -266,7 +266,7 @@ module api.liveedit.text {
                 }
 
                 if (this.component.isEmpty()) {
-                    if (!!this.htmlAreaEditor) {
+                    if (this.htmlAreaEditor) {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                     }
                     this.rootElement.setHtml(TextComponentView.DEFAULT_TEXT, false);
@@ -286,11 +286,11 @@ module api.liveedit.text {
             }
         }
 
-        private onFocusHandler(e) {
+        private onFocusHandler(e: FocusEvent) {
             this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
         }
 
-        private onBlurHandler(e) {
+        private onBlurHandler(e: FocusEvent) {
             this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
 
             this.collapseEditorMenuItems();
@@ -310,7 +310,7 @@ module api.liveedit.text {
             }, 50);
         }
 
-        private onKeydownHandler(e) {
+        private onKeydownHandler(e: KeyboardEvent) {
             var saveShortcut = (e.keyCode == 83 && (e.ctrlKey || e.metaKey));
 
             if (saveShortcut) { //Cmd-S
@@ -370,7 +370,7 @@ module api.liveedit.text {
 
         private handleEditorCreated(editor: HtmlAreaEditor) {
             this.htmlAreaEditor = editor;
-            if (!!this.component.getText()) {
+            if (this.component.getText()) {
                 this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.component.getText()));
             } else {
                 this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
@@ -391,7 +391,7 @@ module api.liveedit.text {
         }
 
         private forceEditorFocus() {
-            if (!!this.htmlAreaEditor) {
+            if (this.htmlAreaEditor) {
                 this.htmlAreaEditor.focus();
                 wemjq(this.htmlAreaEditor.getElement()).simulate("click");
             }
@@ -449,7 +449,7 @@ module api.liveedit.text {
         }
 
         private selectText() {
-            if (!!this.htmlAreaEditor) {
+            if (this.htmlAreaEditor) {
                 this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
             }
         }

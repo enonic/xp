@@ -46,9 +46,9 @@ module LiveEdit {
 
         private skipConfirmationListener: (event: SkipLiveEditReloadConfirmationEvent) => void;
 
-        private beforeUnloadListener: (event) => void;
+        private beforeUnloadListener: (event: Event) => void;
 
-        private unloadListener: (event) => void;
+        private unloadListener: (event: Event) => void;
 
         private componentLoadedListener: (event: ComponentLoadedEvent) => void;
 
@@ -128,15 +128,16 @@ module LiveEdit {
 
             this.beforeUnloadListener = (event) => {
                 if (!this.skipNextReloadConfirmation) {
-                    var message = "This will close this wizard!";
-                    (event || window.event)['returnValue'] = message;
+                    const message = "This will close this wizard!";
+                    const e = event || window.event || { returnValue: '' };
+                    e['returnValue'] = message;
                     return message;
                 }
             };
 
             api.dom.WindowDOM.get().onBeforeUnload(this.beforeUnloadListener);
 
-            this.unloadListener = (event) => {
+            this.unloadListener = () => {
 
                 if (!this.skipNextReloadConfirmation) {
                     new api.liveedit.PageUnloadedEvent(this.pageView).fire();

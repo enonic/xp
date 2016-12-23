@@ -129,7 +129,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         return wizardHeader;
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
         return super.doRenderOnDataLoaded(rendered).then((rendered) => {
             if (UserStoreWizardPanel.debug) {
                 console.debug("UserStoreWizardPanel.doRenderOnDataLoaded");

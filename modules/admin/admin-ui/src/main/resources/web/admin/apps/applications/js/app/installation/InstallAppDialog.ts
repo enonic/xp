@@ -16,7 +16,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     private dropzoneContainer: api.ui.uploader.DropzoneContainer;
 
-    private onMarketLoaded;
+    private onMarketLoaded: () => void;
 
     private applicationInput: ApplicationInput;
 

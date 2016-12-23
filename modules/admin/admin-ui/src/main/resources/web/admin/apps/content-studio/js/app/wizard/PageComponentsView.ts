@@ -41,13 +41,13 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private mask: Mask;
 
-    private beforeInsertActionListeners: {(event): void}[] = [];
+    private beforeInsertActionListeners: {(event: any): void}[] = [];
 
     private mouseDownListener: (event: MouseEvent) => void;
     private mouseUpListener: (event?: MouseEvent) => void;
     private mouseMoveListener: (event: MouseEvent) => void;
-    private clickListener: (event, data) => void;
-    private dblClickListener: (event, data) => void;
+    private clickListener: (event: any, data: any) => void;
+    private dblClickListener: (event: any, data: any) => void;
     private mouseDown: boolean = false;
     public static debug: boolean = false;
 
@@ -712,18 +712,18 @@ export class PageComponentsView extends api.dom.DivEl {
         }
     }
 
-    onBeforeInsertAction(listener: (event)=>void) {
+    onBeforeInsertAction(listener: (event: any) => void) {
         this.beforeInsertActionListeners.push(listener);
     }
 
-    unBeforeInsertAction(listener: (event)=>void) {
-        this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event)=>void)=> {
+    unBeforeInsertAction(listener: (event: any) => void) {
+        this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event: any) => void) =>  {
             return listener != currentListener;
         });
     }
 
     private notifyBeforeInsertAction() {
-        this.beforeInsertActionListeners.forEach((listener: (event)=>void)=> {
+        this.beforeInsertActionListeners.forEach((listener: (event: any) => void) => {
             listener.call(this);
         });
     }
@@ -734,7 +734,7 @@ export class PageComponentsView extends api.dom.DivEl {
         var editAction: api.ui.Action;
 
         contextMenuActions.some((action: api.ui.Action) => {
-            if(action.getLabel() == "Edit") {
+            if(action.getLabel() === "Edit") {
                 editAction = action;
                 return true;
             }

@@ -32,7 +32,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
     private handleSelectorEvents: boolean = true;
 
-    private componentPropertyChangedEventHandler;
+    private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
     protected selector: PartDescriptorDropdown;
 

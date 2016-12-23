@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class ComponentPath implements api.Equitable {
 
-        private static DIVIDER = "/";
+        private static DIVIDER: string = "/";
 
         private regionAndComponentList: ComponentPathRegionAndComponent[];
 
@@ -126,7 +126,7 @@ module api.content.page.region {
 
     export class ComponentPathRegionAndComponent {
 
-        private static DIVIDER = "/";
+        private static DIVIDER: string = "/";
 
         private regionName: string;
 

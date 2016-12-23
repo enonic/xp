@@ -127,9 +127,9 @@ export class LiveEditPageProxy {
 
     private static debug: boolean = false;
 
-    private regionsCopyForIE;
+    private regionsCopyForIE: any;
 
-    private controllerCopyForIE;
+    private controllerCopyForIE: any;
 
     constructor() {
 
@@ -511,9 +511,10 @@ export class LiveEditPageProxy {
     }
 
     unLoaded(listener: {(): void;}) {
-        this.loadedListeners = this.loadedListeners.filter(function (curr) {
-            return curr != listener;
-        });
+        this.loadedListeners = this.loadedListeners
+            .filter(function (curr: {(): void;}) {
+                return curr !== listener;
+            });
     }
 
     private notifyLoaded() {

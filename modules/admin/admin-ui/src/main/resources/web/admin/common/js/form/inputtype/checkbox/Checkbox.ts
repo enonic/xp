@@ -26,7 +26,7 @@ module api.content.form.inputtype.checkbox {
             }
         }
 
-        private setInputAlignment(inputAlignmentObj) {
+        private setInputAlignment(inputAlignmentObj: any) {
             if (inputAlignmentObj) {
                 var inputAlignment: InputAlignment = InputAlignment[<string>inputAlignmentObj[0].value.toUpperCase()];
                 this.inputAlignment = isNaN(inputAlignment) ? InputAlignment.LEFT : inputAlignment;

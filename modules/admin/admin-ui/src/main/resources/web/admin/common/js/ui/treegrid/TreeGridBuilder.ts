@@ -55,7 +55,7 @@ module api.ui.treegrid {
          of the object, like `node.data.id`, we need to specify a custom
          column value extractor.
          */
-        nodeExtractor(node, column) {
+        nodeExtractor(node: any, column: Slick.Column<NODE>) {
             var names = column.field.split('.');
             var val = node["data"][names[0]];
 

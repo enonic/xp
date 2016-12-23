@@ -34,7 +34,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private sizeChangedListeners: {(): void}[] = [];
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super("details-panel-view");

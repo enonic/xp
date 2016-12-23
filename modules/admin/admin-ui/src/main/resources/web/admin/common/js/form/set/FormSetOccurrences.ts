@@ -39,7 +39,7 @@ module api.form {
             return new FormSetOccurrence(<FormSetOccurrences<V>>formItemOccurrences, insertAtIndex);
         }
 
-        protected getSetFromArray(occurrence): PropertySet {
+        protected getSetFromArray(occurrence: FormItemOccurrence<V>): PropertySet {
             var dataSet = this.propertyArray.getSet(occurrence.getIndex());
             if (!dataSet) {
                 dataSet = this.propertyArray.addSet();

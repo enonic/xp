@@ -10,9 +10,9 @@ module api.content.page.region {
 
     export class ImageComponent extends Component implements api.Equitable, api.Cloneable {
 
-        public static PROPERTY_IMAGE = 'image';
+        public static PROPERTY_IMAGE: string = 'image';
 
-        public static PROPERTY_CONFIG = 'config';
+        public static PROPERTY_CONFIG: string = 'config';
 
         public static debug: boolean = false;
 

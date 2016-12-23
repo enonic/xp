@@ -111,10 +111,10 @@ module api.application {
 
     export class MarketAppStatusFormatter {
 
-        public static statusInstallCssClass = "install";
-        public static statusInstalledCssClass = "installed";
-        public static statusInstallingCssClass = "installing";
-        public static statusUpdateCssClass = "update";
+        public static statusInstallCssClass: string = "install";
+        public static statusInstalledCssClass: string = "installed";
+        public static statusInstallingCssClass: string = "installing";
+        public static statusUpdateCssClass: string = "update";
 
         public static formatStatus(appStatus: MarketAppStatus, progress?: number): string {
 

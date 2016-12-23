@@ -62,7 +62,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
         return <FormIcon> super.getFormIcon();
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
         return super.doRenderOnDataLoaded(rendered).then((rendered) => {
             this.addClass("principal-wizard-panel");

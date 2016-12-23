@@ -2,7 +2,7 @@ module api.application {
 
 
     export class ApplicationBasedName implements api.Equitable {
-        static SEPARATOR = ":";
+        static SEPARATOR: string = ":";
 
         private refString: string;
 

@@ -62,11 +62,11 @@ module api.app {
             return this.openTabs;
         }
 
-        getWindow() {
+        getWindow(): Window {
             return this.window;
         }
 
-        setWindow(window) {
+        setWindow(window: Window) {
             this.window = window;
         }
 

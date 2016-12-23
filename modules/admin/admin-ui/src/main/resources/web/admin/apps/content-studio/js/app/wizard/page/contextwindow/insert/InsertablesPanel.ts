@@ -39,7 +39,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
 
     private contextWindowDraggable: JQuery;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor(config: ComponentTypesPanelConfig) {
         super("insertables-panel");
@@ -228,9 +228,10 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     }
 
     unHideContextWindowRequest(listener: {(): void;}) {
-        this.hideContextWindowRequestListeners = this.hideContextWindowRequestListeners.filter(function (curr) {
-            return curr != listener;
-        });
+        this.hideContextWindowRequestListeners = this.hideContextWindowRequestListeners
+            .filter(function (curr: {(): void;}) {
+                return curr != listener;
+            });
     }
 
     private notifyHideContextWindowRequest() {

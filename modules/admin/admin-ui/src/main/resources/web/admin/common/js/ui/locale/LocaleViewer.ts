@@ -8,7 +8,7 @@ module api.ui.locale {
 
         private removeClickedListeners: {(event: MouseEvent):void}[] = [];
 
-        private displayNamePattern = '{0} ({1})';
+        private displayNamePattern: string = '{0} ({1})';
 
         constructor() {
             super();

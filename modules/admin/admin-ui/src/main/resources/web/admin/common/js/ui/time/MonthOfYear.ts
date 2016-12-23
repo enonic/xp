@@ -4,11 +4,11 @@ module api.ui.time {
 
         private numberCode: number;
 
-        private oneLetterName;
+        private oneLetterName: string;
 
-        private shortName;
+        private shortName: string;
 
-        private fullName;
+        private fullName: string;
 
         private previous: MonthOfYear;
 

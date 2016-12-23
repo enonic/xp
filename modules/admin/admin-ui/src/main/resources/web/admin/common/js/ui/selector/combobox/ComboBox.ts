@@ -67,7 +67,7 @@ module api.ui.selector.combobox {
 
         private input: ComboBoxOptionFilterInput;
 
-        private delayedInputValueChangedHandling;
+        private delayedInputValueChangedHandling: number;
 
         private delayedHandleInputValueChangedFnCall: DelayedFunctionCall;
 
@@ -93,7 +93,7 @@ module api.ui.selector.combobox {
 
         private contentMissingListeners: {(ids: string[]): void}[] = [];
 
-        private selectiondDelta = [];
+        private selectiondDelta: string[] = [];
 
         private noOptionsText: string;
 
@@ -426,7 +426,8 @@ module api.ui.selector.combobox {
             return selectedOptions;
         }
 
-        private selectExistingAndHandleMissing(optionIds, missingOptionIds): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
+        // tslint:disable-next-line:max-line-length
+        private selectExistingAndHandleMissing(optionIds: string[], missingOptionIds: string[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
             let nonExistingIds: string[] = [],
                 selectedOptions = [];
 
@@ -982,9 +983,9 @@ module api.ui.selector.combobox {
             this.contentMissingListeners.push(listener);
         }
 
-        unContentMissing(listener: (ids: string[])=>void) {
-            this.contentMissingListeners = this.contentMissingListeners.filter(function (curr) {
-                return curr != listener;
+        unContentMissing(listener: (ids: string[]) => void) {
+            this.contentMissingListeners = this.contentMissingListeners.filter(function (curr: (ids: string[]) => void) {
+                return curr !== listener;
             });
         }
 

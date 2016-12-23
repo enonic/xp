@@ -8,7 +8,7 @@ module api.form {
 
         private dataName: string;
 
-        private refString;
+        private refString: string;
 
         private min: number;
 

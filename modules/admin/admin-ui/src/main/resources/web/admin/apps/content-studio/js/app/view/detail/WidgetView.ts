@@ -26,7 +26,7 @@ export class WidgetView extends api.dom.DivEl {
 
     private activationListeners: {() : void}[] = [];
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor(builder: WidgetViewBuilder) {
         super("widget-view " + (builder.widget ? "external-widget" : "internal-widget"));

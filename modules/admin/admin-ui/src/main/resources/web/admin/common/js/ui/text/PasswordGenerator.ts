@@ -23,10 +23,10 @@ module api.ui.text {
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
-        private SPECIAL_CHARS = '!@#$%^&*()_+{}:"<>?|[];\',./`~';
-        private LOWERCASE_CHARS = 'abcdefghijklmnopqrstuvwxyz';
-        private UPPERCASE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        private DIGIT_CHARS = '0123456789';
+        private SPECIAL_CHARS: string = '!@#$%^&*()_+{}:"<>?|[];\',./`~';
+        private LOWERCASE_CHARS: string = 'abcdefghijklmnopqrstuvwxyz';
+        private UPPERCASE_CHARS: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        private DIGIT_CHARS: string = '0123456789';
 
         constructor() {
             super("div", "password-generator");

@@ -314,24 +314,24 @@ module api.ui.selector {
         }
 
         private notifyRowSelection(rowSelected: number) {
-            var event = new DropdownGridRowSelectedEvent(rowSelected);
-            this.rowSelectionListeners.forEach((listener: (event: DropdownGridRowSelectedEvent)=>void) => {
+            const event = new DropdownGridRowSelectedEvent(rowSelected);
+            this.rowSelectionListeners.forEach((listener: (event: DropdownGridRowSelectedEvent) => void) => {
                 listener(event);
             });
         }
 
         private notifyMultipleSelection(rowsSelected: number[]) {
-            var event = new DropdownGridMultipleSelectionEvent(rowsSelected);
-            this.multipleSelectionListeners.forEach((listener: (event: DropdownGridMultipleSelectionEvent)=>void) => {
+            const event = new DropdownGridMultipleSelectionEvent(rowsSelected);
+            this.multipleSelectionListeners.forEach((listener: (event: DropdownGridMultipleSelectionEvent) => void) => {
                 listener(event);
             });
         }
 
-        onClick(callback: (e, args) => void) {
+        onClick(callback: (e: MouseEvent, args: any) => void) {
             this.grid.subscribeOnClick(callback);
         }
 
-        unClick(callback: (e, args) => void) {
+        unClick(callback: (e: MouseEvent, args: any) => void) {
             this.grid.unsubscribeOnClick(callback);
         }
     }

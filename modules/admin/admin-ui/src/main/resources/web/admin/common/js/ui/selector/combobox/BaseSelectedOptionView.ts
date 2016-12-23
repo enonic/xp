@@ -58,7 +58,7 @@ module api.ui.selector.combobox {
         }
 
         unRemoveClicked(listener: {(): void;}) {
-            this.removeClickedListeners = this.removeClickedListeners.filter(function (curr) {
+            this.removeClickedListeners = this.removeClickedListeners.filter(function (curr: {(): void;}) {
                 return curr != listener;
             });
         }

@@ -5,6 +5,8 @@ module api.ui.uploader {
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
     import Element = api.dom.Element;
+    import ElementRenderedEvent = api.dom.ElementRenderedEvent;
+    import ElementShownEvent = api.dom.ElementShownEvent;
 
     export interface FineUploaderFile {
         id: string;
@@ -37,9 +39,9 @@ module api.ui.uploader {
     export class UploaderEl<MODEL extends api.Equitable> extends api.dom.FormInputEl {
 
         protected config: UploaderElConfig;
-        protected uploader;
-        protected dragAndDropper;
-        protected value;
+        protected uploader: any;       // qq.FineUploaderBasic
+        protected dragAndDropper: any; // qq.DragAndDrop
+        protected value: string;
         private uploadedItems: UploadItem<MODEL>[] = [];
         private extraDropzoneIds: string[] = [];
 
@@ -58,14 +60,14 @@ module api.ui.uploader {
         private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>): void }[] = [];
         private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>): void }[] = [];
         private uploadResetListeners: {(): void }[] = [];
-        private dropzoneDragEnterListeners: { (event): void }[] = [];
-        private dropzoneDragLeaveListeners: { (event): void }[] = [];
-        private dropzoneDropListeners: { (event): void }[] = [];
+        private dropzoneDragEnterListeners: { (event: DragEvent): void }[] = [];
+        private dropzoneDragLeaveListeners: { (event: DragEvent): void }[] = [];
+        private dropzoneDropListeners: { (event: DragEvent): void }[] = [];
 
         private debouncedUploadStart: () => void;
 
-        private shownInitHandler;
-        private renderedInitHandler;
+        private shownInitHandler: (event: ElementShownEvent) => void;
+        private renderedInitHandler: (event: ElementRenderedEvent) => void;
 
         public static debug: boolean = false;
 
@@ -401,7 +403,7 @@ module api.ui.uploader {
         }
 
 
-        createModel(serverResponse): MODEL {
+        createModel(serverResponse: any): MODEL {
             throw new Error('Should be overridden by inheritors');
         }
 
@@ -449,7 +451,7 @@ module api.ui.uploader {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' shown', this);
                         }
-                        this.shownInitHandler = (event) => {
+                        this.shownInitHandler = (event: ElementShownEvent) => {
                             this.initHandler();
                             this.unShown(this.shownInitHandler);
                             this.shownInitHandler = null;
@@ -464,7 +466,7 @@ module api.ui.uploader {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' rendered', this);
                         }
-                        this.renderedInitHandler = (event) => {
+                        this.renderedInitHandler = (event: ElementRenderedEvent) => {
                             this.initHandler();
                             this.unRendered(this.renderedInitHandler);
                             this.renderedInitHandler = null;
@@ -494,7 +496,7 @@ module api.ui.uploader {
             return null;
         }
 
-        private submitCallback(id, name) {
+        private submitCallback(id: string, name: string) {
             var file: FineUploaderFile = this.uploader.getFile(id);
             file.id = id;
 
@@ -510,14 +512,14 @@ module api.ui.uploader {
             this.debouncedUploadStart();
         }
 
-        private statusChangeCallback(id, oldStatus, newStatus) {
+        private statusChangeCallback(id: string, oldStatus: string, newStatus: string) {
             var uploadItem = this.findUploadItemById(id);
             if (!!uploadItem) {
                 uploadItem.setStatus(newStatus);
             }
         }
 
-        private progressCallback(id, name, uploadedBytes, totalBytes) {
+        private progressCallback(id: string, name: string, uploadedBytes: number, totalBytes: number) {
             var percent = Math.round(uploadedBytes / totalBytes * 100);
 
             this.progress.setValue(percent);
@@ -529,7 +531,7 @@ module api.ui.uploader {
             }
         }
 
-        private fileCompleteCallback(id, name, response, xhrOrXdr) {
+        private fileCompleteCallback(id: string, name: string, response: any, xhrOrXdr: XMLHttpRequest) {
             if (xhrOrXdr && xhrOrXdr.status === 200) {
                 try {
                     var uploadItem = this.findUploadItemById(id);
@@ -544,7 +546,7 @@ module api.ui.uploader {
             }
         }
 
-        private errorCallback(id, name, errorReason, xhrOrXdr) {
+        private errorCallback(id: string, name: string, errorReason: any, xhrOrXdr: XMLHttpRequest) {
             if (xhrOrXdr && xhrOrXdr.status !== 200) {
                 try {
                     var responseObj = JSON.parse(xhrOrXdr.response);
@@ -563,7 +565,7 @@ module api.ui.uploader {
             }
         }
 
-        private allCompleteCallback(succeeded, failed) {
+        private allCompleteCallback() {
             var values = [];
             this.uploadedItems.forEach((item) => {
                 if (item.getStatus() == qq.status.UPLOAD_SUCCESSFUL) {
@@ -622,9 +624,9 @@ module api.ui.uploader {
                     callbacks: {
                         //this submits the dropped files to uploader
                         processingDroppedFilesComplete: (files, dropTarget) => uploader.addFiles(files),
-                        onDrop: (event) => this.notifyDropzoneDrop(event),
-                        onDragEnter: (event) => this.notifyDropzoneDragEnter(event),
-                        onDragLeave: (event) => this.notifyDropzoneDragLeave(event)
+                        onDrop: (event: DragEvent) => this.notifyDropzoneDrop(event),
+                        onDragEnter: (event: DragEvent) => this.notifyDropzoneDragEnter(event),
+                        onDragLeave: (event: DragEvent) => this.notifyDropzoneDragLeave(event)
                     }
                 });
             }
@@ -762,50 +764,50 @@ module api.ui.uploader {
             });
         }
 
-        onDropzoneDragEnter(listener: (event) => void) {
+        onDropzoneDragEnter(listener: (event: DragEvent) => void) {
             this.dropzoneDragEnterListeners.push(listener);
         }
 
-        unDropzoneDragEnter(listener: (event) => void) {
+        unDropzoneDragEnter(listener: (event: DragEvent) => void) {
             this.dropzoneDragEnterListeners = this.dropzoneDragEnterListeners.filter((currentListener) => {
                 return listener != currentListener;
             });
         }
 
-        onDropzoneDragLeave(listener: (event) => void) {
+        onDropzoneDragLeave(listener: (event: DragEvent) => void) {
             this.dropzoneDragLeaveListeners.push(listener);
         }
 
-        unDropzoneDragLeave(listener: (event) => void) {
+        unDropzoneDragLeave(listener: (event: DragEvent) => void) {
             this.dropzoneDragLeaveListeners = this.dropzoneDragLeaveListeners.filter((currentListener) => {
                 return listener != currentListener;
             });
         }
 
-        onDropzoneDrop(listener: (event) => void) {
+        onDropzoneDrop(listener: (event: DragEvent) => void) {
             this.dropzoneDropListeners.push(listener);
         }
 
-        unDropzoneDragDrop(listener: (event) => void) {
+        unDropzoneDragDrop(listener: (event: DragEvent) => void) {
             this.dropzoneDropListeners = this.dropzoneDropListeners.filter((currentListener) => {
                 return listener != currentListener;
             });
         }
 
-        private notifyDropzoneDragEnter(event) {
-            this.dropzoneDragEnterListeners.forEach((listener: (event)=>void) => {
+        private notifyDropzoneDragEnter(event: DragEvent) {
+            this.dropzoneDragEnterListeners.forEach((listener: (event: DragEvent)=>void) => {
                 listener(event);
             });
         }
 
-        private notifyDropzoneDragLeave(event) {
-            this.dropzoneDragLeaveListeners.forEach((listener: (event)=>void) => {
+        private notifyDropzoneDragLeave(event: DragEvent) {
+            this.dropzoneDragLeaveListeners.forEach((listener: (event: DragEvent)=>void) => {
                 listener(event);
             });
         }
 
-        private notifyDropzoneDrop(event) {
-            this.dropzoneDropListeners.forEach((listener: (event)=>void) => {
+        private notifyDropzoneDrop(event: DragEvent) {
+            this.dropzoneDropListeners.forEach((listener: (event: DragEvent) => void) => {
                 listener(event);
             });
         }

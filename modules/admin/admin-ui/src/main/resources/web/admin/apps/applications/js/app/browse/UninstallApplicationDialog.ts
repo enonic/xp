@@ -1,14 +1,15 @@
 import "../../api.ts";
 import {UninstallApplicationEvent} from "./UninstallApplicationEvent";
 import Application = api.application.Application;
+import Action = api.ui.Action;
 
 export class UninstallApplicationDialog extends api.ui.dialog.ModalDialog {
 
     private applications: Application[];
 
-    private yesAction = new api.ui.Action('Yes');
+    private yesAction: Action = new Action('Yes');
 
-    private noAction = new api.ui.Action('No');
+    private noAction: Action = new Action('No');
 
 
     constructor(applications: Application[]) {

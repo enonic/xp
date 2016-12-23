@@ -10,9 +10,9 @@ module api.content.page.region {
 
         private componentPropertyChangedListeners: {(event: ComponentPropertyChangedEvent):void}[] = [];
 
-        private componentPropertyChangedEventHandler;
+        private componentPropertyChangedEventHandler: (event: any) => void;
 
-        private regionsChangedEventHandler;
+        private regionsChangedEventHandler: (event: any) => void;
 
         constructor(builder: LayoutComponentBuilder) {
             super(builder);
@@ -27,8 +27,8 @@ module api.content.page.region {
                 this.regions = Regions.create().build();
             }
 
-            this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
-            this.regionsChangedEventHandler = (event) => {
+            this.componentPropertyChangedEventHandler = (event: any) => this.forwardComponentPropertyChangedEvent(event);
+            this.regionsChangedEventHandler = (event: any) => {
                 if (LayoutComponent.debug) {
                     console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
                 }

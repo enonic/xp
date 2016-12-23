@@ -29,8 +29,8 @@ module api.ui.grid {
         }
 
 
-        protected handleDragInit(e, dd) {
-            e.stopImmediatePropagation();
+        protected handleDragInit(event: DragEvent, data: DragEventData) {
+            event.stopImmediatePropagation();
         }
 
 
@@ -71,7 +71,7 @@ module api.ui.grid {
         }
 
 
-        protected handleDragEnd(event: Event, data) {
+        protected handleDragEnd(event: Event, data: DragEventData) {
             this.draggableItem.remove();
             this.draggableItem = null;
             this.contentGrid.refresh();
@@ -158,7 +158,7 @@ module api.ui.grid {
             return this.draggableItem;
         }
 
-        protected handleMovements(rowDataId, moveBeforeRowDataId) {
+        protected handleMovements(rowDataId: any, moveBeforeRowDataId: any) {
             throw new Error("Must be implemented by inheritors");
         }
 

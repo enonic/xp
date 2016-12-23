@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class Component implements api.Equitable, api.Cloneable {
 
-        public static PROPERTY_NAME = 'name';
+        public static PROPERTY_NAME: string = 'name';
 
         private index: number = -1;
 

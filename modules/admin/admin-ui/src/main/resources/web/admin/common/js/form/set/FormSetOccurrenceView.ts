@@ -23,7 +23,7 @@ module api.form {
 
         protected occurrenceContainerClassName: string;
 
-        constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
+        constructor(className: string, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className, formItemOccurrence);
         }
 

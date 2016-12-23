@@ -11,7 +11,7 @@ module api.liveedit {
 
     export class DragAndDrop {
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         private static messageCounter: number = 0;
 
@@ -101,7 +101,7 @@ module api.liveedit {
         }
 
 
-        createSortable(selector): void {
+        createSortable(selector: any): void {
 
             wemjq(selector).sortable({
                 // append helper to pageView so it doesn't jump when sortable jumps
@@ -621,7 +621,7 @@ module api.liveedit {
             return sortableItemsSelector.toString();
         }
 
-        private updateScrollSensitivity(selector): void {
+        private updateScrollSensitivity(selector: any): void {
             var scrollSensitivity = this.calculateScrollSensitivity();
             wemjq(selector).sortable('option', 'scrollSensitivity', scrollSensitivity);
         }

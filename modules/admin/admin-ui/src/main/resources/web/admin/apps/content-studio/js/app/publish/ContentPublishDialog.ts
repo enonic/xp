@@ -400,7 +400,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         return true;
     }
 
-    private togglePublish(enable) {
+    private togglePublish(enable: boolean) {
         this.toggleControls(enable);
         this.toggleClass('no-publish', !enable);
     }

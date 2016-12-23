@@ -149,7 +149,7 @@ module api.form.inputtype.combobox {
             });
         }
 
-        private comboBoxFilter(item: api.ui.selector.Option<string>, args) {
+        private comboBoxFilter(item: api.ui.selector.Option<string>, args: any) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 

@@ -485,9 +485,10 @@ module api.content.form.inputtype.image {
         }
 
         unEditContentRequest(listener: (content: ContentSummary) => void) {
-            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.editContentRequestListeners = this.editContentRequestListeners
+                .filter(function (curr: (content: ContentSummary) => void) {
+                    return curr != listener;
+                });
         }
 
         private notifyEditContentRequested(content: ContentSummary) {

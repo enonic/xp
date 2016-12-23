@@ -78,7 +78,7 @@ function initToolTip() {
     let pageX = 0;
     let pageY = 0;
 
-    const showAt = function (e) {
+    const showAt = function (e: any) {
         const top = pageY + OFFSET_Y;
         let left = pageX + OFFSET_X;
 
@@ -96,7 +96,7 @@ function initToolTip() {
             position: "absolute", top, left
         }).show();
         };
-    wemjq(document).on("mouseenter", "*[title]", function (e) {
+    wemjq(document).on("mouseenter", "*[title]", function (e: any) {
         wemjq(window).data(DATA, wemjq(window).attr("title"));
         wemjq(window).removeAttr("title").addClass(CLS_ON);
         wemjq("<div id='" + ID + "' />").appendTo("body");
@@ -108,7 +108,7 @@ function initToolTip() {
         }
         showAt(e);
     });
-    wemjq(document).on("mouseleave click", "." + CLS_ON, function (e) {
+    wemjq(document).on("mouseleave click", "." + CLS_ON, function (e: any) {
         if (wemjq(window).data(DATA)) {
             wemjq(window).attr("title", wemjq(window).data(DATA));
         }
@@ -251,7 +251,9 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
         }
         if (wizard.hasUnsavedChanges()) {
             let message = 'Wizard has unsaved changes. Continue without saving ?';
-            (event || window.event)['returnValue'] = message;
+            // Hack for IE. returnValue is boolean
+            const e: any = event || window.event || { returnValue: '' };
+            e['returnValue'] = message;
             return message;
         } else {
             // do close to notify everybody

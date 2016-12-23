@@ -36,7 +36,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
 
     private handleSelectorEvents: boolean = true;
 
-    private componentPropertyChangedEventHandler;
+    private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
     protected selector: LayoutDescriptorDropdown;
 

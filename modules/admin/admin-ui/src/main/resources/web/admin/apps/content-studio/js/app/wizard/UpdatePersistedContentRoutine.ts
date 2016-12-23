@@ -23,9 +23,9 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
     private updateContentRequestProducer: Producer;
 
-    private doneHandledContent = false;
+    private doneHandledContent: boolean = false;
 
-    private doneHandledPage = false;
+    private doneHandledPage: boolean = false;
 
     constructor(thisOfProducer: any, persistedContent: Content, viewedContent: Content) {
         super(thisOfProducer);

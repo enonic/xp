@@ -17,7 +17,7 @@ export class PublishDialogDependantList extends DialogDependantList {
         super.clearItems();
     }
 
-    createItemView(item: api.content.ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
+    createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
 
         if (CompareStatus.NEWER == item.getCompareStatus()) {
@@ -51,7 +51,7 @@ export class PublishDialogDependantList extends DialogDependantList {
         });
     }
 
-    private notifyItemClicked(item) {
+    private notifyItemClicked(item: ContentSummaryAndCompareStatus) {
         this.itemClickListeners.forEach(listener => {
             listener(item);
         });
@@ -67,7 +67,7 @@ export class PublishDialogDependantList extends DialogDependantList {
         });
     }
 
-    private notifyItemRemoveClicked(item) {
+    private notifyItemRemoveClicked(item: ContentSummaryAndCompareStatus) {
         this.removeClickListeners.forEach(listener => {
             listener(item);
         });

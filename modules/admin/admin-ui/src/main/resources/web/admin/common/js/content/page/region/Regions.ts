@@ -16,9 +16,9 @@ module api.content.page.region {
 
         private regionRemovedListeners: {(event: RegionRemovedEvent):void}[] = [];
 
-        private regionChangedEventHandler;
+        private regionChangedEventHandler: (event: any) => void;
 
-        private componentPropertyChangedEventHandler;
+        private componentPropertyChangedEventHandler: (event: any) => void;
 
         constructor(builder: RegionsBuilder) {
 
@@ -161,13 +161,13 @@ module api.content.page.region {
             return new RegionsBuilder(this).build();
         }
 
-        onChanged(listener: (event: BaseRegionChangedEvent)=>void) {
+        onChanged(listener: (event: BaseRegionChangedEvent) => void) {
             this.changedListeners.push(listener);
         }
 
-        unChanged(listener: (event: BaseRegionChangedEvent)=>void) {
+        unChanged(listener: (event: BaseRegionChangedEvent) => void) {
             this.changedListeners =
-            this.changedListeners.filter((curr: (event: BaseRegionChangedEvent)=>void) => {
+            this.changedListeners.filter((curr: (event: BaseRegionChangedEvent) => void) => {
                 return listener != curr;
             });
         }
@@ -176,40 +176,40 @@ module api.content.page.region {
             if (Regions.debug) {
                 console.debug("Regions.notifyChanged");
             }
-            this.changedListeners.forEach((listener: (event: RegionsChangedEvent)=>void) => {
+            this.changedListeners.forEach((listener: (event: RegionsChangedEvent) => void) => {
                 listener(event);
             });
         }
 
-        onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+        onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners.push(listener);
         }
 
-        unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+        unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners =
             this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
                 return listener != curr;
             });
         }
 
-        private forwardComponentPropertyChangedEvent(event: ComponentPropertyChangedEvent) {
+        private forwardComponentPropertyChangedEvent(event: ComponentPropertyChangedEvent): void {
             this.componentPropertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
                 listener(event);
             });
         }
 
-        onRegionChanged(listener: (event: RegionChangedEvent)=>void) {
+        onRegionChanged(listener: (event: RegionChangedEvent) => void) {
             this.regionChangedListeners.push(listener);
         }
 
-        unRegionChanged(listener: (event: RegionChangedEvent)=>void) {
+        unRegionChanged(listener: (event: RegionChangedEvent) => void) {
             this.regionChangedListeners =
-            this.regionChangedListeners.filter((curr: (event: RegionChangedEvent)=>void) => {
+            this.regionChangedListeners.filter((curr: (event: RegionChangedEvent) => void) => {
                 return listener != curr;
             });
         }
 
-        private notifyRegionChanged(regionPath: RegionPath) {
+        private notifyRegionChanged(regionPath: RegionPath): void {
             var event = new RegionChangedEvent(regionPath);
             if (Regions.debug) {
                 console.debug("Regions.notifyRegionChanged: " + event.getRegionPath().toString());

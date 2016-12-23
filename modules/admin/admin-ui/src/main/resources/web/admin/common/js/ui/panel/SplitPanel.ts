@@ -465,7 +465,7 @@ module api.ui.panel {
             throw Error('SplitPanel allows adding children in constructor only.');
         }
 
-        appendChildren<T extends api.dom.Element>(...children): api.dom.Element {
+        appendChildren<T extends api.dom.Element>(...children:T[]): api.dom.Element {
             throw Error('SplitPanel allows adding children in constructor only.');
         }
 

@@ -64,7 +64,7 @@ module api.ui.selector.dropdown {
         }
 
         unOpenDropdown(listener: {(): void;}) {
-            this.openDropdownListeners = this.openDropdownListeners.filter(function (curr) {
+            this.openDropdownListeners = this.openDropdownListeners.filter(function (curr: {(): void;}) {
                 return curr != listener;
             });
         }

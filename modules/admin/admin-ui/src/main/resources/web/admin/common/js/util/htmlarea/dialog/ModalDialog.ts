@@ -7,7 +7,7 @@ module api.util.htmlarea.dialog {
 
     export class ModalDialog extends api.ui.dialog.ModalDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
-        private validated = false;
+        private validated: boolean = false;
         private editor: HtmlAreaEditor;
         private mainForm: Form;
         private firstFocusField: api.dom.Element;
@@ -15,7 +15,7 @@ module api.util.htmlarea.dialog {
 
         protected static VALIDATION_CLASS: string = "display-validation-errors";
 
-        public static CLASS_NAME = "html-area-modal-dialog";
+        public static CLASS_NAME: string = "html-area-modal-dialog";
 
         constructor(editor: HtmlAreaEditor, title: string, cls?: string) {
 

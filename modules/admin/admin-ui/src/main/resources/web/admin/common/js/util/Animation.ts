@@ -17,7 +17,7 @@ module api.util {
             this.interval = interval;
         }
 
-        onStep(doStep:(progress)=>void):void {
+        onStep(doStep: (progress: number) => void):void {
             this.doStep = doStep;
         }
 

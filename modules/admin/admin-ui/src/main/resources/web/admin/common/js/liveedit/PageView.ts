@@ -69,7 +69,7 @@ module api.liveedit {
 
         private scrolledListener: (event: WheelEvent) => void;
 
-        public static debug;
+        public static debug: boolean;
 
         private propertyChangedListener: (event: api.PropertyChangedEvent) => void;
 
@@ -955,17 +955,17 @@ module api.liveedit {
             this.itemViewRemovedListeners.forEach((listener) => listener(event));
         }
 
-        onPageLocked(listener: (event) => void) {
+        onPageLocked(listener: (event: any) => void) {
             this.pageLockedListeners.push(listener);
         }
 
-        unPageLocked(listener: (event) => void) {
+        unPageLocked(listener: (event: any) => void) {
             this.pageLockedListeners = this.pageLockedListeners.filter((current) => (current != listener));
         }
 
-        private notifyPageLockChanged(value) {
+        private notifyPageLockChanged(locked: boolean) {
             this.pageLockedListeners.forEach((listener) => {
-                listener(value);
+                listener(locked);
             });
         }
 

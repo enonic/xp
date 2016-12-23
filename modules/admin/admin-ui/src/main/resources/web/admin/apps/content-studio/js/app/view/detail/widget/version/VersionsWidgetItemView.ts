@@ -10,7 +10,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
 
     private gridLoadDeferred: wemQ.Deferred<any>;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super("version-widget-item-view");
