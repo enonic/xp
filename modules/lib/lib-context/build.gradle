@@ -1,6 +1,8 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     provided project( ':core:core-api' )
     provided project( ':script:script-api' )
-    compile project( ':lib:lib-auth' )
+    include project( ":lib:lib-auth" )
     testCompile project( ':tools:testing' )
 }
