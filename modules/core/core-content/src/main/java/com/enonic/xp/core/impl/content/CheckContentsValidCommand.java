@@ -24,6 +24,11 @@ public class CheckContentsValidCommand
 
     public boolean execute()
     {
+        if ( this.contentIds.getSize() == 0 )
+        {
+            return true;
+        }
+
         final ContentQuery query = ContentQuery.create().
             queryFilter( ValueFilter.create().
                 fieldName( ContentPropertyNames.VALID ).
