@@ -729,7 +729,7 @@ public class ContentResourceTest
             entity( readFromFile( "update_content_params_without_publish_from.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().
             getStatus();
-        assertEquals( 400, status );
+        assertEquals( 422, status );
     }
 
     @Test
@@ -743,7 +743,7 @@ public class ContentResourceTest
             entity( readFromFile( "update_content_params_with_invalid_publish_info.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().
             getStatus();
-        assertEquals( 400, status );
+        assertEquals( 422, status );
     }
 
     @Test

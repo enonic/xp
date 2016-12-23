@@ -23,6 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -178,6 +179,7 @@ import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -1567,14 +1569,17 @@ public final class ContentResource
             final Instant publishFromInstant = contentPublishInfo.getFrom();
             if ( publishFromInstant == null )
             {
-                throw JaxRsExceptions.badRequest( "\"Online to\" date/time cannot be set without \"Online from\"" );
+                throw new WebApplicationException( "\"Online to\" date/time cannot be set without \"Online from\"",
+                                                   HttpStatus.UNPROCESSABLE_ENTITY.value() );
             }
             if ( publishToInstant.compareTo( publishFromInstant ) < 0 )
             {
-                throw JaxRsExceptions.badRequest( "\"Online from\" date/time must be earlier than \"Online to\"" );
+                throw new WebApplicationException( "\"Online from\" date/time must be earlier than \"Online to\"",
+                                                   HttpStatus.UNPROCESSABLE_ENTITY.value() );
             }
         }
     }
+
 
     @Reference
     public void setContentService( final ContentService contentService )
