@@ -172,19 +172,17 @@ module api.form {
         }
 
         protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
-            var selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
-            if (!selectionPropertyArray) {
-                selectionPropertyArray =
-                    PropertyArray.create().setType(ValueTypes.STRING).setName("_selected").setParent(
-                        propertyArraySet).build();
-                propertyArraySet.addPropertyArray(selectionPropertyArray);
-                this.addDefaultSelectionToSelectionArray(selectionPropertyArray);
-            }
+            var selectionPropertyArray =
+                PropertyArray.create().setType(ValueTypes.STRING).setName("_selected").setParent(
+                    propertyArraySet).build();
+            propertyArraySet.addPropertyArray(selectionPropertyArray);
+            this.addSelectionToSelectionArray(propertyArraySet, selectionPropertyArray);
         }
 
-        private addDefaultSelectionToSelectionArray(selectionPropertyArray: PropertyArray) {
+        private addSelectionToSelectionArray(propertyArraySet: PropertySet, selectionPropertyArray: PropertyArray) {
             this.formOptionSet.getOptions().forEach((option: FormOptionSetOption) => {
-                if (option.isDefaultOption() && selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMaximum()) {
+                if (propertyArraySet.getProperty(option.getName()) &&
+                    selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMaximum()) {
                     selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()))
                 }
             });

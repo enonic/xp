@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
@@ -659,25 +660,12 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_default_selection_passes_multiselection_check()
-    {
-        contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 1, 1, 1, 1 ) );
-
-        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
-        assertFalse( validationResults.hasErrors() );
-    }
-
-    @Test
-    public void given_optionset_with_required_selection_and_empty_selection_array_fails_multiselection_check()
+    public void given_optionset_with_required_selection_and_empty_selection_data_fails_multiselection_check()
     {
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 0, 0, 1, 1 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
-        content.getData().setString( "myOptionSet._selected", "1" );
-        content.getData().removeProperty( "myOptionSet._selected" );
+        content.getData().setSet( "myOptionSet", new PropertySet() );
         DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
@@ -685,15 +673,15 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_required_selection_selection_array_hast_too_many_selected_options()
+    public void given_optionset_with_required_selection_has_too_many_selected_options()
     {
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 3, 0, 1, 2 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
-        content.getData().getSet( "myOptionSet" ).addString( "_selected", "option1" );
-        content.getData().getSet( "myOptionSet" ).addString( "_selected", "option2" );
-        content.getData().getSet( "myOptionSet" ).addString( "_selected", "option3" );
+        content.getData().setSet( "myOptionSet", new PropertySet() );
+        content.getData().getSet( "myOptionSet" ).addSet( "option1", new PropertySet() );
+        content.getData().getSet( "myOptionSet" ).addSet( "option2", new PropertySet() );
+        content.getData().getSet( "myOptionSet" ).addSet( "option3", new PropertySet() );
 
         DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
@@ -702,7 +690,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_required_selection_selection_array_hast_too_little_selected_options()
+    public void given_optionset_with_required_selection_selection_data_has_too_little_options()
     {
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 3, 0, 3, 3 ) );
 
@@ -718,25 +706,12 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_required_selection_and_missing_selection_array_has_too_many_default_options()
-    {
-        contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 0, 2, 1, 1 ) );
-
-        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
-        assertTrue( validationResults.hasErrors() );
-        assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
-        assertEquals( "OptionSet [myOptionSet] requires min 1 max 1 items selected: 2", validationResults.getFirst().getErrorMessage() );
-    }
-
-    @Test
-    public void given_optionset_with_required_selection_and_missing_selection_array_has_too_little_default_options()
+    public void given_optionset_with_required_selection_and_missing_selection_data_fails()
     {
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 2, 0, 1, 1 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
+        content.getData().setSet( "myOptionSet", new PropertySet() );
 
         DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );

@@ -1520,6 +1520,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         optionSetProperty.removeProperty(option.getName(), 0);
                     }
                 })
+                // remove selection array
+                var selectionArraySize = selectionArray.getSize();
+                for (var i = 0; i < selectionArraySize; i++) {
+                    optionSetProperty.removeProperty("_selected", 0);
+                }
             }
         });
 
