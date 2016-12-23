@@ -10,14 +10,16 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
 
-public class ContentServiceImplTest_isValidContent
+public class ContentServiceImplTest_getInvalidContent
     extends AbstractContentServiceTest
 {
     @Override
@@ -38,7 +40,7 @@ public class ContentServiceImplTest_isValidContent
             type( ContentTypeName.folder() ).
             build() );
 
-        assertTrue( this.contentService.isValidContent( ContentIds.from( content.getId() ) ) );
+        assertTrue( this.contentService.getInvalidContent( ContentIds.from( content.getId() ) ).isEmpty() );
     }
 
     @Test
@@ -68,7 +70,7 @@ public class ContentServiceImplTest_isValidContent
             displayName( "my display-name" ).
             build() );
 
-        assertFalse( this.contentService.isValidContent( ContentIds.from( content.getId() ) ) );
+        assertFalse( this.contentService.getInvalidContent( ContentIds.from( content.getId() ) ).isEmpty() );
     }
 
     @Test
@@ -105,6 +107,17 @@ public class ContentServiceImplTest_isValidContent
             type( ContentTypeName.folder() ).
             build() );
 
-        assertFalse( this.contentService.isValidContent( ContentIds.from( content.getId(), content2.getId() ) ) );
+        assertFalse( this.contentService.getInvalidContent( ContentIds.from( content.getId(), content2.getId() ) ).isEmpty() );
+    }
+
+    @Test
+    public void test_empty_content_ids_returns_true()
+        throws Exception
+    {
+
+        NodeServiceImpl nodeService = Mockito.spy( this.nodeService );
+        Mockito.verify( nodeService, times( 0 ) ).findByQuery( Mockito.any() );
+
+        assertTrue( this.contentService.getInvalidContent( ContentIds.empty() ).isEmpty() );
     }
 }
