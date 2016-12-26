@@ -64,10 +64,10 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
-        return super.doRenderOnDataLoaded(rendered).then((rendered) => {
+        return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
             this.addClass("principal-wizard-panel");
 
-            var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+            const responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isVisible()) {
                     this.updateStickyToolbar();
                 }
@@ -81,7 +81,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
                 responsiveItem.update();
             });
 
-            return rendered;
+            return nextRendered;
         });
     }
 

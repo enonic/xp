@@ -161,13 +161,13 @@ module api.form {
         }
 
         private makeSelectionRadioButton(): api.ui.RadioButton {
-            var selectedProperty = this.getSelectedOptionsArray().get(0),
-                checked = !!selectedProperty && selectedProperty.getString() == this.getName(),
-                button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked),
-                subscribedOnDeselect = false;
+            const currentlySelected = this.getSelectedOptionsArray().get(0);
+            const checked = !!currentlySelected && currentlySelected.getString() == this.getName();
+            const button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked);
+            let subscribedOnDeselect = false;
 
             button.onChange(() => {
-                var selectedProperty = this.getSelectedOptionsArray().get(0);
+                let selectedProperty = this.getSelectedOptionsArray().get(0);
                 if (!selectedProperty) {
                     selectedProperty = this.getSelectedOptionsArray().set(0, new Value(this.getName(), new api.data.ValueTypeString()));
                     this.subscribeOnRadioDeselect(selectedProperty);
@@ -187,10 +187,12 @@ module api.form {
                         this.calcDistToTopOfScrollableArea(button.getFirstChild()));
                 }
             });
-            if (!!selectedProperty) {
-                this.subscribeOnRadioDeselect(selectedProperty);
+
+            if (currentlySelected) {
+                this.subscribeOnRadioDeselect(currentlySelected);
                 subscribedOnDeselect = true;
             }
+
             return button;
         }
 

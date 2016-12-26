@@ -121,23 +121,21 @@ module api {
 
             if (!mapA && !mapB) {
                 return true;
-            }
-            else if (!mapA && mapB) {
+            } else if (!mapA && mapB) {
                 return false;
-            }
-            else if (mapA && !mapB) {
+            } else if (mapA && !mapB) {
                 return false;
             }
 
             // Gather keys for both maps
-            var keysA: string[] = [];
-            for (var keyA  in mapA) {
+            const keysA: string[] = [];
+            for (const keyA  in mapA) {
                 if (mapA.hasOwnProperty(keyA)) {
                     keysA.push(keyA);
                 }
             }
-            var keysB: string[] = [];
-            for (var keyB  in mapB) {
+            const keysB: string[] = [];
+            for (const keyB  in mapB) {
                 if (mapB.hasOwnProperty(keyB)) {
                     keysB.push(keyB);
                 }
@@ -148,14 +146,10 @@ module api {
             }
 
             return keysA.every((keyA: string) => {
-                var valueA: Equitable = mapA[keysA[keyA]];
-                var valueB: Equitable = mapB[keysA[keyA]];
+                const valueA: Equitable = mapA[keysA[keyA]];
+                const valueB: Equitable = mapB[keysA[keyA]];
 
-                if (!ObjectHelper.equals(valueA, valueB)) {
-                    return false;
-                }
-
-                return true;
+                return ObjectHelper.equals(valueA, valueB);
             });
         }
 

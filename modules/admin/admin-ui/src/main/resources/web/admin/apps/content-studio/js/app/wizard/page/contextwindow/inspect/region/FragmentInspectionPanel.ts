@@ -81,14 +81,14 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         this.fragmentComponent = fragmentView.getComponent();
         this.setComponent(this.fragmentComponent);
 
-        var contentId: ContentId = this.fragmentComponent.getFragment();
+        const contentId: ContentId = this.fragmentComponent.getFragment();
         if (contentId) {
-            var fragment: ContentSummary = this.fragmentSelector.getSelection(contentId);
+            const fragment: ContentSummary = this.fragmentSelector.getSelection(contentId);
             if (fragment) {
                 this.setSelectorValue(fragment);
             } else {
-                new GetContentSummaryByIdRequest(contentId).sendAndParse().then((fragment: ContentSummary) => {
-                    this.setSelectorValue(fragment);
+                new GetContentSummaryByIdRequest(contentId).sendAndParse().then((receivedFragment: ContentSummary) => {
+                    this.setSelectorValue(receivedFragment);
                 }).catch((reason: any) => {
                     if (this.isNotFoundError(reason)) {
                         this.setSelectorValue(null);

@@ -60,10 +60,10 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     }
 
     public static nameFormatter(content: Content, row: number, cell: number, value: any, columnDef: any, node: TreeNode<ItemView>) {
-        var viewer = <PageComponentsItemViewer>node.getViewer("name");
+        let viewer = <PageComponentsItemViewer>node.getViewer("name");
         if (!viewer) {
-            var viewer = new PageComponentsItemViewer(content);
-            var data = node.getData();
+            viewer = new PageComponentsItemViewer(content);
+            const data = node.getData();
 
             viewer.setObject(data);
             node.setViewer("name", viewer);

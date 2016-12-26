@@ -25,12 +25,12 @@ module api.form.inputtype.text {
                 property.convertValueType(ValueTypes.STRING);
             }
 
-            var value = property.hasNonNullValue() ? property.getString() : undefined;
-            var inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
+            const value = property.hasNonNullValue() ? property.getString() : undefined;
+            const inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                var value = ValueTypes.STRING.newValue(event.getNewValue());
-                this.notifyOccurrenceValueChanged(inputEl, value);
+                const newValue = ValueTypes.STRING.newValue(event.getNewValue());
+                this.notifyOccurrenceValueChanged(inputEl, newValue);
             });
 
             return inputEl;

@@ -103,13 +103,13 @@ module api.form {
                 return false;
             }
 
-            for (var i = 0; i < this.breaksMinimumOccurrencesArray.length; i++) {
+            for (let i = 0; i < this.breaksMinimumOccurrencesArray.length; i++) {
                 if (this.breaksMinimumOccurrencesArray[i].toString() != other.breaksMinimumOccurrencesArray[i].toString()) {
                     return false;
                 }
             }
 
-            for (var i = 0; i < this.breaksMaximumOccurrencesArray.length; i++) {
+            for (let i = 0; i < this.breaksMaximumOccurrencesArray.length; i++) {
                 if (this.breaksMaximumOccurrencesArray[i].toString() != other.breaksMaximumOccurrencesArray[i].toString()) {
                     return false;
                 }

@@ -210,8 +210,8 @@ module api.liveedit {
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
                 var itemView = event.getView();
-                itemView.toItemViewArray().forEach((itemView: ItemView) => {
-                    this.registerItemView(itemView);
+                itemView.toItemViewArray().forEach((value: ItemView) => {
+                    this.registerItemView(value);
                 });
 
                 // adding anything except text should exit the text edit mode
@@ -836,8 +836,8 @@ module api.liveedit {
             }
 
             // register everything that was parsed
-            this.toItemViewArray().forEach((itemView: ItemView) => {
-                this.registerItemView(itemView);
+            this.toItemViewArray().forEach((value: ItemView) => {
+                this.registerItemView(value);
             });
         }
 

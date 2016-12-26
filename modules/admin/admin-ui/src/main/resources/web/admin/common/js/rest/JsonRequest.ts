@@ -69,8 +69,7 @@ module api.rest {
                 request.send(paramString);
             }
             else {
-                var request = this.prepareGETRequest(request);
-                request.send();
+                this.prepareGETRequest(request).send();
             }
 
             return deferred.promise;

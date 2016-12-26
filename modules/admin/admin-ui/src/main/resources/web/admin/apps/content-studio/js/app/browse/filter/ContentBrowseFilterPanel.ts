@@ -239,7 +239,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         return aggregations;
     }
 
-    private initAggregationGroupView(aggregationGroupView: AggregationGroupView[]) {
+    private initAggregationGroupView(aggregationGroupViews: AggregationGroupView[]) {
 
         var contentQuery: ContentQuery = this.buildAggregationsQuery();
 
@@ -250,7 +250,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                 this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits(), true);
                 this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
 
-                aggregationGroupView.forEach((aggregationGroupView: AggregationGroupView) => {
+                aggregationGroupViews.forEach((aggregationGroupView: AggregationGroupView) => {
                     aggregationGroupView.initialize();
                 });
             }).catch((reason: any) => {

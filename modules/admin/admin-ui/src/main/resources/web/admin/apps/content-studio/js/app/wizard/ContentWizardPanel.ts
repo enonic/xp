@@ -434,7 +434,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
-        return super.doRenderOnDataLoaded(rendered, true).then((rendered) => {
+        return super.doRenderOnDataLoaded(rendered, true).then((renderedAfter: boolean) => {
             if (ContentWizardPanel.debug) {
                 console.debug("ContentWizardPanel.doRenderOnDataLoaded at " + new Date().toISOString());
             }
@@ -1415,9 +1415,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         var viewedContent = this.assembleViewedContent(persistedContent.newBuilder(), true).build();
 
-        var updatePersistedContentRoutine = new UpdatePersistedContentRoutine(this, persistedContent,
-            viewedContent).setUpdateContentRequestProducer(
-            this.produceUpdateContentRequest);
+        var updatePersistedContentRoutine = new UpdatePersistedContentRoutine(this, persistedContent, viewedContent)
+            .setUpdateContentRequestProducer(this.produceUpdateContentRequest);
 
         return updatePersistedContentRoutine.execute().then((content: Content) => {
 
@@ -1433,17 +1432,22 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
     }
 
-    private produceUpdateContentRequest(persistedContent: Content, viewedContent: Content): UpdateContentRequest {
-        var persistedContent = this.getPersistedItem();
+    private produceUpdateContentRequest(content: Content, viewedContent: Content): UpdateContentRequest {
+        const persistedContent = this.getPersistedItem();
 
-        var updateContentRequest = new UpdateContentRequest(persistedContent.getId()).setRequireValid(this.requireValid).setContentName(
-            viewedContent.getName()).setDisplayName(viewedContent.getDisplayName()).setData(viewedContent.getContentData()).setExtraData(
-            viewedContent.getAllExtraData()).setOwner(viewedContent.getOwner()).setLanguage(viewedContent.getLanguage()).setPublishFrom(
-            viewedContent.getPublishFromTime()).setPublishTo(viewedContent.getPublishToTime()).setPermissions(
-            viewedContent.getPermissions()).setInheritPermissions(viewedContent.isInheritPermissionsEnabled()).setOverwritePermissions(
-            viewedContent.isOverwritePermissionsEnabled());
-
-        return updateContentRequest;
+        return new UpdateContentRequest(persistedContent.getId())
+            .setRequireValid(this.requireValid)
+            .setContentName(viewedContent.getName())
+            .setDisplayName(viewedContent.getDisplayName())
+            .setData(viewedContent.getContentData())
+            .setExtraData(viewedContent.getAllExtraData())
+            .setOwner(viewedContent.getOwner())
+            .setLanguage(viewedContent.getLanguage())
+            .setPublishFrom(viewedContent.getPublishFromTime())
+            .setPublishTo(viewedContent.getPublishToTime())
+            .setPermissions(viewedContent.getPermissions())
+            .setInheritPermissions(viewedContent.isInheritPermissionsEnabled())
+            .setOverwritePermissions(viewedContent.isOverwritePermissionsEnabled());
     }
 
     private isDisplayNameUpdated(): boolean {

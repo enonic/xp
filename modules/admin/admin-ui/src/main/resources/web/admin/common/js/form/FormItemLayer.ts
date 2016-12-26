@@ -56,8 +56,8 @@ module api.form {
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormItemSet)) {
 
-                    var formItemSet: FormItemSet = <FormItemSet>formItem;
-                    var propertyArray: PropertyArray = propertySet.getPropertyArray(formItemSet.getName());
+                    const formItemSet: FormItemSet = <FormItemSet>formItem;
+                    const propertyArray: PropertyArray = propertySet.getPropertyArray(formItemSet.getName());
 
                     if (!propertyArray || propertyArray.getSize() == 0) {
                         if (!this.context) {
@@ -66,7 +66,7 @@ module api.form {
                             this.context.setShowEmptyFormItemSetOccurrences(false);
                         }
                     }
-                    var formItemSetView = new FormItemSetView(<FormItemSetViewConfig>{
+                    const formItemSetView = new FormItemSetView(<FormItemSetViewConfig>{
                         context: this.context,
                         formItemSet: formItemSet,
                         parent: this.parent,
@@ -78,8 +78,8 @@ module api.form {
                     layoutPromises.push(formItemSetView.layout(validate));
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FieldSet)) {
 
-                    var fieldSet: FieldSet = <FieldSet>formItem;
-                    var fieldSetView = new FieldSetView(<FieldSetViewConfig>{
+                    const fieldSet: FieldSet = <FieldSet>formItem;
+                    const fieldSetView = new FieldSetView(<FieldSetViewConfig>{
                         context: this.context,
                         fieldSet: fieldSet,
                         parent: this.parent,
@@ -92,9 +92,9 @@ module api.form {
                     layoutPromises.push(fieldSetView.layout());
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, Input)) {
 
-                    var input: Input = <Input>formItem;
+                    const input: Input = <Input>formItem;
 
-                    var inputView = new InputView(<InputViewConfig>{
+                    const inputView = new InputView(<InputViewConfig>{
                         context: this.context,
                         input: input,
                         parent: this.parent,
@@ -108,8 +108,8 @@ module api.form {
                     layoutPromises.push(inputView.layout(validate));
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormOptionSet)) {
 
-                    var formOptionSet: FormOptionSet = <FormOptionSet>formItem;
-                    var propertyArray: PropertyArray = propertySet.getPropertyArray(formOptionSet.getName());
+                    const formOptionSet: FormOptionSet = <FormOptionSet>formItem;
+                    const propertyArray: PropertyArray = propertySet.getPropertyArray(formOptionSet.getName());
 
                     if (!propertyArray || propertyArray.getSize() == 0) {
                         if (!this.context) {
@@ -119,7 +119,7 @@ module api.form {
                         }
                     }
 
-                    var formOptionSetView = new api.form.FormOptionSetView(<FormOptionSetViewConfig>{
+                    const formOptionSetView = new api.form.FormOptionSetView(<FormOptionSetViewConfig>{
                         context: this.context,
                         formOptionSet: formOptionSet,
                         parent: this.parent,
@@ -131,8 +131,8 @@ module api.form {
                     layoutPromises.push(formOptionSetView.layout(validate));
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormOptionSetOption)) {
 
-                    var formOptionSetOption: FormOptionSetOption = <FormOptionSetOption>formItem;
-                    var formOptionSetOptionView = new api.form.FormOptionSetOptionView(<FormOptionSetOptionViewConfig>{
+                    const formOptionSetOption: FormOptionSetOption = <FormOptionSetOption>formItem;
+                    const formOptionSetOptionView = new api.form.FormOptionSetOptionView(<FormOptionSetOptionViewConfig>{
                         context: this.context,
                         formOptionSetOption: formOptionSetOption,
                         parent: this.parent,

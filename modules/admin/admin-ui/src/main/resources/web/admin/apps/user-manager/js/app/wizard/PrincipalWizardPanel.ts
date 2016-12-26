@@ -117,7 +117,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
-        return super.doRenderOnDataLoaded(rendered).then((rendered) => {
+        return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
             if (PrincipalWizardPanel.debug) {
                 console.debug("PrincipalWizardPanel.doRenderOnDataLoaded");
             }
@@ -135,7 +135,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 break;
             }
 
-            var deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
+            const deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
                 event.getDeletedItems().forEach((path: string) => {
                     if (!!this.getPersistedItem() && this.getPersistedItem().getKey().toPath() == path) {
                         this.close();
@@ -145,11 +145,11 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
             api.security.event.PrincipalDeletedEvent.on(deleteHandler);
 
-            this.onRemoved((event) => {
+            this.onRemoved(() => {
                 api.security.event.PrincipalDeletedEvent.un(deleteHandler);
             });
 
-            return rendered;
+            return nextRendered;
         });
     }
 

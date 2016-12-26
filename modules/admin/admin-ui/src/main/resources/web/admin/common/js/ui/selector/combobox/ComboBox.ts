@@ -435,17 +435,17 @@ module api.ui.selector.combobox {
                 .then((result: api.content.resource.result.ContentsExistResult) => {
 
                     optionIds.forEach((val) => {
-                        var option = this.getOptionByValue(val);
+                        const option = this.getOptionByValue(val);
                         if (option != null) {
                             selectedOptions.push(option);
                             this.selectOption(option, true);
                         } else {
-                            var contentExists = result.contentExists(val);
+                            const contentExists = result.contentExists(val);
                             if (this.displayMissingSelectedOptions && (contentExists || !this.removeMissingSelectedOptions)) {
-                                var option = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView)
+                                const selectedOption = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView)
                                     .makeEmptyOption(val);
-                                selectedOptions.push(option);
-                                this.selectOption(option, true);
+                                selectedOptions.push(selectedOption);
+                                this.selectOption(selectedOption, true);
                             }
                             if (!contentExists) {
                                 nonExistingIds.push(val);

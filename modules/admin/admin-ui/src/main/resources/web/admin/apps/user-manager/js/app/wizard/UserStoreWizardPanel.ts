@@ -130,7 +130,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
-        return super.doRenderOnDataLoaded(rendered).then((rendered) => {
+        return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
             if (UserStoreWizardPanel.debug) {
                 console.debug("UserStoreWizardPanel.doRenderOnDataLoaded");
             }
@@ -138,7 +138,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
             this.getFormIcon().addClass("icon-address-book");
 
-            return rendered;
+            return nextRendered;
         });
     }
 

@@ -523,10 +523,10 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private constrainToParent(offset?: {top: number; left: number}) {
-
-        var parentEl, parentOffset,
-            el = this.getEl(),
-            offset = offset || el.getOffset();
+        const el = this.getEl();
+        const elOffset = offset || el.getOffset();
+        let parentEl;
+        let parentOffset;
 
         if (this.getParentElement()) {
             parentEl = this.getParentElement().getEl();
@@ -543,10 +543,8 @@ export class PageComponentsView extends api.dom.DivEl {
         el.setMaxHeightPx(parentEl.getHeight());
 
         el.setOffset({
-            top: Math.max(parentOffset.top,
-                Math.min(offset.top, parentOffset.top + parentEl.getHeight() - el.getHeightWithBorder())),
-            left: Math.max(parentOffset.left,
-                Math.min(offset.left, parentOffset.left + parentEl.getWidth() - el.getWidthWithBorder()))
+            top: Math.max(parentOffset.top, Math.min(elOffset.top, parentOffset.top + parentEl.getHeight() - el.getHeightWithBorder())),
+            left: Math.max(parentOffset.left, Math.min(elOffset.left, parentOffset.left + parentEl.getWidth() - el.getWidthWithBorder()))
         });
     }
 

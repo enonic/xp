@@ -36,11 +36,11 @@ module api.ui.menu {
             this.actions.push(action);
 
             if (childActions.length > 0) {
-                for (var i = 0; i < childActions.length; i++) {
+                for (let i = 0; i < childActions.length; i++) {
                     subItems.push(this.addAction(childActions[i]));
                 }
                 menuItem.onClicked((event: MouseEvent) => {
-                    for (var i = 0; i < subItems.length; i++) {
+                    for (let i = 0; i < subItems.length; i++) {
                         subItems[i].toggleExpand();
                     }
                 });

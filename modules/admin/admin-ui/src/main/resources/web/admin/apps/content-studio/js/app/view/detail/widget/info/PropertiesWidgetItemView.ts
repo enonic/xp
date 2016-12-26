@@ -38,12 +38,12 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         let layoutOnPublishStateChange = (contents: ContentSummaryAndCompareStatus[]) => {
             let thisContentId = this.content.getId();
 
-            let content: ContentSummaryAndCompareStatus = contents.filter((content) => {
+            let contentSummary: ContentSummaryAndCompareStatus = contents.filter((content) => {
                 return thisContentId == content.getId();
             })[0];
 
-            if (!!content) {
-                this.setContentAndUpdateView(content);
+            if (contentSummary) {
+                this.setContentAndUpdateView(contentSummary);
             }
         };
 

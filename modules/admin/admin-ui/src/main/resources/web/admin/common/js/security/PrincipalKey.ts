@@ -19,17 +19,17 @@ module api.security {
                 return PrincipalKey.ANONYMOUS_PRINCIPAL;
             }
 
-            var sepIndex: number = str.indexOf(PrincipalKey.SEPARATOR);
+            const sepIndex: number = str.indexOf(PrincipalKey.SEPARATOR);
             if (sepIndex === -1) {
                 throw new Error("Not a valid principal key [" + str + "]");
             }
-            var sepIndex2: number = str.indexOf(PrincipalKey.SEPARATOR, sepIndex + 1);
+            const sepIndex2: number = str.indexOf(PrincipalKey.SEPARATOR, sepIndex + 1);
 
-            var typeStr = str.substring(0, sepIndex);
-            var type: PrincipalType = PrincipalType[typeStr.toUpperCase()];
+            const typeStr = str.substring(0, sepIndex);
+            const type: PrincipalType = PrincipalType[typeStr.toUpperCase()];
 
             if (type === PrincipalType.ROLE) {
-                var principalId = str.substring(sepIndex + 1, str.length) || '';
+                const principalId = str.substring(sepIndex + 1, str.length) || '';
                 return new PrincipalKey(null, type, principalId);
 
             } else {
@@ -37,8 +37,8 @@ module api.security {
                     throw new Error("Not a valid principal key [" + str + "]");
                 }
 
-                var userStore = str.substring(sepIndex + 1, sepIndex2) || '';
-                var principalId = str.substring(sepIndex2 + 1, str.length);
+                const userStore = str.substring(sepIndex + 1, sepIndex2) || '';
+                const principalId = str.substring(sepIndex2 + 1, str.length);
 
                 return new PrincipalKey(new UserStoreKey(userStore), type, principalId);
             }

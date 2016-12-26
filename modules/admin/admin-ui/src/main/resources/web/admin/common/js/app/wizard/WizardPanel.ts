@@ -211,11 +211,11 @@ module api.app.wizard {
                 let doRenderOnDataLoadedAndShown = () => {
                     let deferred = wemQ.defer<boolean>();
                     let doRenderOnShown = () => {
-                        this.doRenderOnDataLoaded(rendered).then((rendered) => {
+                        this.doRenderOnDataLoaded(rendered).then((nextRendered) => {
 
                             this.doLayout(this.getPersistedItem())
                                 .then(() => {
-                                    deferred.resolve(rendered);
+                                    deferred.resolve(nextRendered);
 
                                     if (this.hasHelpText()) {
                                         this.setupHelpTextToggleButton();
@@ -255,12 +255,12 @@ module api.app.wizard {
                     let deferred = wemQ.defer<boolean>();
 
                     // ensure render happens when data loaded
-                    this.onDataLoaded((item: EQUITABLE) => {
+                    this.onDataLoaded(() => {
                         if (WizardPanel.debug) {
                             console.debug("WizardPanel.doRender: data loaded, resuming render");
                         }
                         doRenderOnDataLoadedAndShown()
-                            .then((rendered) => deferred.resolve(rendered))
+                            .then((nextRendered) => deferred.resolve(nextRendered))
                             .catch((reason) => deferred.reject(reason));
                     });
 

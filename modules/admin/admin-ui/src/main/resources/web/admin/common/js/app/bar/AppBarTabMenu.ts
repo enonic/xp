@@ -54,20 +54,20 @@ module api.app.bar {
         }
 
         private moveTabsHandler() {
-            var width = this.getEl().getWidth(),
-                barWidth = this.barEl.getEl().getWidth(),
-                exactTabs = AppBarTabMenu.MAX_WIDTH < width ? Math.ceil(barWidth / AppBarTabMenu.TAB_WIDTH) || 1 : 1,
-                barTabs = this.barEl.getChildren(),
-                menuTabs = this.getMenuEl().getChildren(),
-                tabsInBar = barTabs.length,
-                tabsInMenu = menuTabs.length;
+            const width = this.getEl().getWidth();
+            const barWidth = this.barEl.getEl().getWidth();
+            const exactTabs = AppBarTabMenu.MAX_WIDTH < width ? Math.ceil(barWidth / AppBarTabMenu.TAB_WIDTH) || 1 : 1;
+            const barTabs = this.barEl.getChildren();
+            const menuTabs = this.getMenuEl().getChildren();
+            let tabsInBar = barTabs.length;
+            let tabsInMenu = menuTabs.length;
 
             // escape condition
             while (!(exactTabs === tabsInBar || (exactTabs > tabsInBar && tabsInMenu === 0))) {
 
                 if (exactTabs > tabsInBar) {
                     if (tabsInMenu > 0) {
-                        var tabEl = this.getMenuEl().getFirstChild();
+                        const tabEl = this.getMenuEl().getFirstChild();
                         this.getMenuEl().removeChild(tabEl);
                         this.barEl.appendChild(tabEl);
                         tabsInBar++;
@@ -75,7 +75,7 @@ module api.app.bar {
                     }
                 } else if (exactTabs < tabsInBar) {
                     if (tabsInBar > 0) {
-                        var tabEl = this.barEl.getLastChild();
+                        const tabEl = this.barEl.getLastChild();
                         this.barEl.removeChild(tabEl);
                         this.getMenuEl().prependChild(tabEl);
                         tabsInBar--;

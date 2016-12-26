@@ -28,14 +28,14 @@ module api.content.form.inputtype.time {
                 property.convertValueType(ValueTypes.LOCAL_TIME);
             }
 
-            var value = this.getValueFromProperty(property);
-            var timePicker = new api.ui.time.TimePickerBuilder().setHours(value.hours).setMinutes(value.minutes).build();
+            const value = this.getValueFromProperty(property);
+            const timePicker = new api.ui.time.TimePickerBuilder().setHours(value.hours).setMinutes(value.minutes).build();
 
             timePicker.onSelectedTimeChanged((hours: number, minutes: number) => {
-                var valueStr = hours + ':' + minutes;
-                var value = new Value(api.util.LocalTime.isValidString(valueStr) ? api.util.LocalTime.fromString(valueStr) : null,
+                const valueStr = hours + ':' + minutes;
+                const newValue = new Value(api.util.LocalTime.isValidString(valueStr) ? api.util.LocalTime.fromString(valueStr) : null,
                     ValueTypes.LOCAL_TIME);
-                this.notifyOccurrenceValueChanged(timePicker, value);
+                this.notifyOccurrenceValueChanged(timePicker, newValue);
             });
 
             return timePicker;

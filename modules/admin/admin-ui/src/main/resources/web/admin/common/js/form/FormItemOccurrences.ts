@@ -150,7 +150,7 @@ module api.form {
             var arraySize = propertyArray.getSize();
             var occurrencesViewClone = [].concat(this.occurrenceViews);
             if (occurrencesViewClone.length > arraySize) {
-                for (var i = arraySize; i < occurrencesViewClone.length; i++) {
+                for (let i = arraySize; i < occurrencesViewClone.length; i++) {
                     this.removeOccurrenceView(occurrencesViewClone[i]);
                 }
             }
@@ -160,16 +160,16 @@ module api.form {
 
             var promises = [];
             // next update existing occurrences and add missing ones if there are not enough
-            this.propertyArray.forEach((property: api.data.Property, i: number) => {
-                var occurrenceView = this.occurrenceViews[i];
-                var occurrence = this.occurrences[i];
+            this.propertyArray.forEach((property: api.data.Property, index: number) => {
+                var occurrenceView = this.occurrenceViews[index];
+                var occurrence = this.occurrences[index];
                 if (occurrenceView && occurrence) {
                     // update occurrence index
-                    occurrence.setIndex(i);
+                    occurrence.setIndex(index);
                     // update occurence view
                     promises.push(this.updateOccurrenceView(occurrenceView, propertyArray, unchangedOnly));
                 } else {
-                    promises.push(this.createAndAddOccurrence(i));
+                    promises.push(this.createAndAddOccurrence(index));
                 }
             });
 

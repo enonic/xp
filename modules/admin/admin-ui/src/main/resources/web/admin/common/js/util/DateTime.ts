@@ -217,14 +217,14 @@ module api.util {
             if (DateHelper.isUTCdate(value)) {
                 return 0;
             } else {
-                var dateStr = (value || '').trim();
+                const dateStr = (value || '').trim();
 
                 if (dateStr.indexOf("+") > 0) { // case with positive offset
-                    var parts = dateStr.split("+");
-                    if (parts.length == 2) {
-                        var offsetPart = parts[1];
+                    const parts = dateStr.split("+");
+                    if (parts.length === 2) {
+                        const offsetPart = parts[1];
 
-                        var offset = parseFloat(offsetPart);
+                        const offset = parseFloat(offsetPart);
                         if (isNaN(offset)) {
                             return 0;
                         }
@@ -233,16 +233,16 @@ module api.util {
                     } else {
                         return 0;
                     }
-                } else if (dateStr.split("-").length == 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
-                    var parts = dateStr.split("-");
-                    var offsetPart = parts[3];
+                } else if (dateStr.split("-").length === 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
+                    const parts = dateStr.split("-");
+                    const offsetPart = parts[3];
 
-                    var offset = parseFloat(offsetPart);
+                    const offset = parseFloat(offsetPart);
                     if (isNaN(offset)) {
                         return 0;
                     }
 
-                    return offset * -1;
+                    return -offset;
                 } else {
                     return 0;
                 }

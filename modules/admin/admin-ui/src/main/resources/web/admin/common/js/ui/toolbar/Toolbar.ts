@@ -25,7 +25,7 @@ module api.ui.toolbar {
 
         addAction(action: api.ui.Action): ActionButton {
             this.actions.push(action);
-            action.onPropertyChanged((action) => this.foldOrExpand());
+            action.onPropertyChanged(() => this.foldOrExpand());
             return <ActionButton>this.addElement(new ActionButton(action));
         }
 

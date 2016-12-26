@@ -45,7 +45,7 @@
     "no-inferrable-types": false,
     "no-null-keyword": false,
     "no-require-imports": true,
-    "no-shadowed-variable": false,
+    "no-shadowed-variable": true,
     "no-var-keyword": false,
     "no-var-requires": true,
     "object-literal-sort-keys": false,

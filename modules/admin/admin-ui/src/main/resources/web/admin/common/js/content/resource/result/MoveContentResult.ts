@@ -21,9 +21,9 @@ module api.content.resource.result {
         }
 
         static fromJson(json: MoveContentResultJson): MoveContentResult {
-            var success: string[] = json.successes.map((success) => success.name);
-            var failure: MoveContentResultFailure[] = json.failures.
-                map((failure) => new MoveContentResultFailure(failure.name, failure.reason));
+            const success: string[] = json.successes.map((value) => value.name);
+            const failure: MoveContentResultFailure[] = json.failures.
+                map((value) => new MoveContentResultFailure(value.name, value.reason));
             return new MoveContentResult(success, failure);
         }
 

@@ -118,20 +118,20 @@ module api.content.form.inputtype.contentselector {
             }
             super.layout(input, propertyArray);
 
-            var contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
+            const contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
                 setInputName(input.getName()).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(this.allowedContentTypes).
                 setRelationshipType(this.relationshipType).
                 build();
 
-            var value = this.getValueFromPropertyArray(propertyArray);
+            const comboboxValue = this.getValueFromPropertyArray(propertyArray);
 
             this.contentComboBox = api.content.ContentComboBox.create()
                 .setName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setLoader(contentSelectorLoader)
-                .setValue(value)
+                .setValue(comboboxValue)
                 .setRemoveMissingSelectedOptions(true)
                 .build();
 
@@ -140,14 +140,14 @@ module api.content.form.inputtype.contentselector {
                 this.validate(false);
             });
 
-            return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse().then(
-                (relationshipType: api.schema.relationshiptype.RelationshipType) => {
+            return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
+                .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
 
                     this.appendChild(this.contentComboBox);
 
-                    var contentIds: ContentId[] = [];
+                    const contentIds: ContentId[] = [];
                     propertyArray.forEach((property: Property) => {
                         if (property.hasNonNullValue()) {
                             var referenceValue = property.getReference();
@@ -171,9 +171,9 @@ module api.content.form.inputtype.contentselector {
                         this.contentComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
                             this.fireFocusSwitchEvent(event);
 
-                            var reference = api.util.Reference.from(event.getSelectedOption().getOption().displayValue.getContentId());
+                            const reference = api.util.Reference.from(event.getSelectedOption().getOption().displayValue.getContentId());
 
-                                var value = new Value(reference, ValueTypes.REFERENCE);
+                                const value = new Value(reference, ValueTypes.REFERENCE);
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
                                     this.getPropertyArray().set(0, value);
                                 }

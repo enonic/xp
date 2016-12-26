@@ -3,12 +3,13 @@ module api.util {
     export class CookieHelper {
 
         static setCookie(name:string, value:string, days:number = 1):void {
+            let expires;
             if (days) {
-                var date = new Date();
+                const date = new Date();
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                var expires = '; expires=' + date.toUTCString();
+                expires = '; expires=' + date.toUTCString();
             } else {
-                var expires = '';
+                expires = '';
             }
             document.cookie = CookieHelper.escape(name) + '=' + CookieHelper.escape(value) + expires + '; path=/';
         }

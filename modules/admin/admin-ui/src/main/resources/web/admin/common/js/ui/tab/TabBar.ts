@@ -26,8 +26,8 @@ module api.ui.tab {
             this.tabs.splice(index, 0, tab);
             tab.setIndex(index);
 
-            this.tabs.slice(index+1).forEach((tab:TabBarItem) => {
-                tab.setIndex(tab.getIndex()+1);
+            this.tabs.slice(index+1).forEach((slicedTab:TabBarItem) => {
+                slicedTab.setIndex(slicedTab.getIndex()+1);
             });
 
             this.insertChild(tab, index);

@@ -157,16 +157,16 @@ module api.ui.treegrid {
             this.grid.subscribeOnClick((event, data) => {
                 if (this.isActive()) {
                     this.setActive(false);
-                    var elem = new ElementHelper(event.target);
+                    const elem = new ElementHelper(event.target);
                     if (elem.hasClass("expand")) {
                         elem.removeClass("expand").addClass("collapse");
-                        var node = this.gridData.getItem(data.row);
+                        const node = this.gridData.getItem(data.row);
                         this.expandNode(node);
 
                     } else if (elem.hasClass("collapse")) {
                         this.setActive(false);
                         elem.removeClass("collapse").addClass("expand");
-                        var node = this.gridData.getItem(data.row);
+                        const node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
 
                     } else if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
@@ -934,9 +934,9 @@ module api.ui.treegrid {
                                 this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ADDED));
 
                                 if (parentNode != root) {
-                                    this.refreshNodeData(parentNode).then((node: TreeNode<DATA>) => {
+                                    this.refreshNodeData(parentNode).then((refreshedNode: TreeNode<DATA>) => {
                                         if (!stashedParentNode) {
-                                            this.updateSelectedNode(node);
+                                            this.updateSelectedNode(refreshedNode);
                                         }
                                     });
                                 }

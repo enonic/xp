@@ -92,8 +92,8 @@ module api.form {
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormSetOccurrenceView)) {
                     var addedFormSetOccurrenceView = <V>event.getOccurrenceView();
-                    addedFormSetOccurrenceView.onValidityChanged((event: RecordingValidityChangedEvent) => {
-                        this.handleFormSetOccurrenceViewValidityChanged(event);
+                    addedFormSetOccurrenceView.onValidityChanged((addedEvent: RecordingValidityChangedEvent) => {
+                        this.handleFormSetOccurrenceViewValidityChanged(addedEvent);
                     });
                 }
             });

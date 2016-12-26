@@ -58,9 +58,9 @@ module api.content.resource {
                 const contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
                 const contentTypeRequests = contentTypes.map((contentType)=> new GetContentTypeByNameRequest(contentType).sendAndParse());
 
-                wemQ.all(contentTypeRequests).spread((...contentTypes: ContentType[]) => {
+                wemQ.all(contentTypeRequests).spread((...contentType: ContentType[]) => {
                     if (this.filterContentPaths) {
-                        contents = this.filterContent(contents, contentTypes);
+                        contents = this.filterContent(contents, contentType);
                     }
                     if (contents && contents.length > 0) {
                         /*

@@ -204,8 +204,8 @@ module api.data {
             api.util.ArrayHelper.moveElement(index, destinationIndex, this.array);
             toBeMoved.setIndex(destinationIndex);
 
-            this.forEach((property: Property, index: number) => {
-                property.setIndex(index);
+            this.forEach((property: Property, i: number) => {
+                property.setIndex(i);
             });
         }
 
@@ -219,8 +219,8 @@ module api.data {
 
             this.array.splice(index, 1);
 
-            this.forEach((property: Property, index: number) => {
-                property.setIndex(index);
+            this.forEach((property: Property, i: number) => {
+                property.setIndex(i);
             });
 
             this.notifyPropertyRemoved(propertyToRemove);

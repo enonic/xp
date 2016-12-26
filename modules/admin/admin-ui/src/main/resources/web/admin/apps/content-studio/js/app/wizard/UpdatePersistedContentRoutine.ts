@@ -103,22 +103,27 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
     private producePageCUDRequest(persistedContent: Content, viewedContent: Content): PageCUDRequest {
 
         if (persistedContent.isPage() && !viewedContent.isPage()) {
-
             return new DeletePageRequest(persistedContent.getContentId());
         }
         else if (!persistedContent.isPage() && viewedContent.isPage()) {
-
-            var viewedPage = viewedContent.getPage();
-            return new CreatePageRequest(persistedContent.getContentId()).setController(viewedPage.getController()).setPageTemplateKey(
-                viewedPage.getTemplate()).setConfig(viewedPage.getConfig()).setRegions(viewedPage.getRegions()).setFragment(
-                viewedPage.getFragment()).setCustomized(viewedPage.isCustomized());
+            const viewedPage = viewedContent.getPage();
+            return new CreatePageRequest(persistedContent.getContentId())
+                .setController(viewedPage.getController())
+                .setPageTemplateKey(viewedPage.getTemplate())
+                .setConfig(viewedPage.getConfig())
+                .setRegions(viewedPage.getRegions())
+                .setFragment(viewedPage.getFragment())
+                .setCustomized(viewedPage.isCustomized());
         }
         else if (persistedContent.isPage() && viewedContent.isPage()) {
-
-            var viewedPage = viewedContent.getPage();
-            return new UpdatePageRequest(persistedContent.getContentId()).setController((viewedPage.getController())).setPageTemplateKey(
-                (viewedPage.getTemplate())).setConfig(viewedPage.getConfig()).setRegions(viewedPage.getRegions()).setFragment(
-                viewedPage.getFragment()).setCustomized(viewedPage.isCustomized());
+            const viewedPage = viewedContent.getPage();
+            return new UpdatePageRequest(persistedContent.getContentId())
+                .setController((viewedPage.getController()))
+                .setPageTemplateKey((viewedPage.getTemplate()))
+                .setConfig(viewedPage.getConfig())
+                .setRegions(viewedPage.getRegions())
+                .setFragment(viewedPage.getFragment())
+                .setCustomized(viewedPage.isCustomized());
         }
     }
 

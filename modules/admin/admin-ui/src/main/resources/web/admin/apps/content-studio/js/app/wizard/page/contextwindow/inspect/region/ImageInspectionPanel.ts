@@ -77,14 +77,14 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         this.imageComponent = imageView.getComponent();
         this.setComponent(this.imageComponent);
 
-        var contentId: ContentId = this.imageComponent.getImage();
+        const contentId: ContentId = this.imageComponent.getImage();
         if (contentId) {
-            var image: ContentSummary = this.imageSelector.getContent(contentId);
+            const image: ContentSummary = this.imageSelector.getContent(contentId);
             if (image) {
                 this.setImage(image);
             } else {
-                new GetContentSummaryByIdRequest(contentId).sendAndParse().then((image: ContentSummary) => {
-                    this.setImage(image);
+                new GetContentSummaryByIdRequest(contentId).sendAndParse().then((receivedImage: ContentSummary) => {
+                    this.setImage(receivedImage);
                 }).catch((reason: any) => {
                     if (this.isNotFoundError(reason)) {
                         this.setSelectorValue(null);

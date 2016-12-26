@@ -125,7 +125,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, parentOfSameType?: boolean) {
         if (!principal) { // UserStore type
 
-            var userTreeGridItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
+            const userTreeGridItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
 
             this.appendNode(userTreeGridItem, true, false, this.getRoot().isFiltered() ? this.getRoot().getDefaultRoot() : null);
 
@@ -136,7 +136,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
         } else { // Principal type
 
-            var userTreeGridItem = new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
+            const userTreeGridItem = new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
 
             this.appendNode(userTreeGridItem, parentOfSameType, false);
 

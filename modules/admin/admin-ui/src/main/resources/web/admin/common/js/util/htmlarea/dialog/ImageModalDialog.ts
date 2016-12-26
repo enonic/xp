@@ -417,9 +417,9 @@ module api.util.htmlarea.dialog {
         }
 
         private fetchImageCaption(imageContent: ContentSummary): wemQ.Promise<string> {
-            return new api.content.resource.GetContentByIdRequest(imageContent.getContentId()).sendAndParse().then(
-                (imageContent: api.content.Content) => {
-                    return this.getDescriptionFromImageContent(imageContent) || imageContent.getProperty("caption").getString() || "";
+            return new api.content.resource.GetContentByIdRequest(imageContent.getContentId()).sendAndParse()
+                .then((content: api.content.Content) => {
+                    return this.getDescriptionFromImageContent(content) || content.getProperty("caption").getString() || "";
                 });
         }
 

@@ -322,41 +322,37 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.pageModel.onComponentPropertyChangedEvent((event: ComponentPropertyChangedEvent) => {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), DescriptorBasedComponent)) {
-                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+                if (event.getPropertyName() === DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
 
-                    var componentView = this.pageView.getComponentViewByPath(event.getPath());
+                    const componentView = this.pageView.getComponentViewByPath(event.getPath());
                     if (componentView) {
                         if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
-                            var partView = <PartComponentView>componentView;
-                            var partComponent: PartComponent = partView.getComponent();
+                            const partView = <PartComponentView>componentView;
+                            const partComponent: PartComponent = partView.getComponent();
                             if (partComponent.hasDescriptor()) {
                                 this.saveAndReloadOnlyComponent(componentView);
                             }
-                        }
-                        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
-                            var layoutView = <LayoutComponentView>componentView;
-                            var layoutComponent: LayoutComponent = layoutView.getComponent();
+                        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+                            const layoutView = <LayoutComponentView>componentView;
+                            const layoutComponent: LayoutComponent = layoutView.getComponent();
                             if (layoutComponent.hasDescriptor()) {
                                 this.saveAndReloadOnlyComponent(componentView);
                             }
                         }
-                    }
-                    else {
+                    } else {
                         console.debug("ComponentView by path not found: " + event.getPath().toString());
                     }
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
-                if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE && !event.getComponent().isEmpty()) {
-                    var componentView = this.pageView.getComponentViewByPath(event.getPath());
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
+                if (event.getPropertyName() === ImageComponent.PROPERTY_IMAGE && !event.getComponent().isEmpty()) {
+                    const componentView = this.pageView.getComponentViewByPath(event.getPath());
                     if (componentView) {
                         this.saveAndReloadOnlyComponent(componentView);
                     }
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), FragmentComponent)) {
-                if (event.getPropertyName() == FragmentComponent.PROPERTY_FRAGMENT && !event.getComponent().isEmpty()) {
-                    var componentView = this.pageView.getComponentViewByPath(event.getPath());
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), FragmentComponent)) {
+                if (event.getPropertyName() === FragmentComponent.PROPERTY_FRAGMENT && !event.getComponent().isEmpty()) {
+                    const componentView = this.pageView.getComponentViewByPath(event.getPath());
                     if (componentView) {
                         this.saveAndReloadOnlyComponent(componentView);
                     }
@@ -369,7 +365,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
         });
 
-        var contentEventListener = (event) => {
+        const contentEventListener = (event) => {
             this.propagateEvent(event);
         };
 

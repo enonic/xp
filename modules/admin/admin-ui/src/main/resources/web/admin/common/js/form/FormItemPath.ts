@@ -22,8 +22,8 @@ module api.form{
             var elements:string[] = s.split(elementDivider);
             elements = FormItemPath.removeEmptyElements(elements);
             var pathElements:FormItemPathElement[] = [];
-            elements.forEach((s:string) => {
-                pathElements.push(FormItemPathElement.fromString(s));
+            elements.forEach((str:string) => {
+                pathElements.push(FormItemPathElement.fromString(str));
             });
             return new FormItemPath(pathElements, elementDivider, absolute);
         }
