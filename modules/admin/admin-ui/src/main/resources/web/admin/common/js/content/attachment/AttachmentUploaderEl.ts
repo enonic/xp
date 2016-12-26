@@ -14,7 +14,8 @@ module api.content.attachment {
 
         private attachmentItems: AttachmentItem[];
 
-        private removeCallback: (value:string) => void;
+        private removeCallback: (value: string) => void;
+        private addCallback: (value: string) => void;
 
         constructor(config) {
 
@@ -33,15 +34,17 @@ module api.content.attachment {
                 this.removeCallback = config.attachmentRemoveCallback;
             }
 
+            if (config.attachmentAddCallback) {
+                this.addCallback = config.attachmentAddCallback;
+            }
+
             this.addClass('attachment-uploader-el');
         }
 
 
         createModel(serverResponse: AttachmentJson): Attachment {
             if (serverResponse) {
-                return new AttachmentBuilder().
-                    fromJson(serverResponse).
-                    build();
+                return new AttachmentBuilder().fromJson(serverResponse).build();
             }
             else {
                 return null;
@@ -58,10 +61,10 @@ module api.content.attachment {
             );
         }
 
-        getExistingItem(value: string) : api.dom.Element {
-            var element = null;
+        getExistingItem(value: string): api.dom.Element {
+            let element = null;
             this.getResultContainer().getChildren().forEach((item) => {
-                if((<AttachmentItem>item).getValue() == value) {
+                if ((<AttachmentItem>item).getValue() == value) {
                     element = item;
                 }
             });
@@ -70,10 +73,19 @@ module api.content.attachment {
 
         createResultItem(value: string): api.dom.Element {
 
-            var attachmentItem = new AttachmentItem(this.contentId, value, this.removeCallback);
+            let attachmentItem = new AttachmentItem(this.contentId, value, this.removeCallback);
             this.attachmentItems.push(attachmentItem);
 
+            this.addCallback(attachmentItem.getValue());
+
             return attachmentItem;
+        }
+
+        maximumOccurrencesReached(): boolean {
+            if (this.config.maximumOccurrences) {
+                return this.attachmentItems.length >= this.config.maximumOccurrences;
+            }
+            return false;
         }
     }
 }
