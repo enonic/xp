@@ -52,8 +52,11 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         return this;
     }
 
-    setPublishStatus(publishStatus: PublishStatus): ContentWizardToolbarPublishControls {
+    public setPublishStatus(publishStatus: PublishStatus, refresh: boolean = true): ContentWizardToolbarPublishControls {
         this.publishStatus = publishStatus;
+        if (refresh) {
+            this.refreshState();
+        }
         return this;
     }
 

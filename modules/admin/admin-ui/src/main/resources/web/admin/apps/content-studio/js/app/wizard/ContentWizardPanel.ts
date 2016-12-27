@@ -149,6 +149,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private persistedContentCompareStatus: CompareStatus;
 
+    private currentContentPublishStatus: PublishStatus;
+
+    private persistedContentPublishStatus: PublishStatus;
+
     private dataChangedListener: () => void;
 
     private applicationAddedListener: (event: api.content.site.ApplicationAddedEvent) => void;
@@ -274,11 +278,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     let shownHandler = () => {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
-                                (application: Application) => {
-                                    if (application.getState() == "stopped") {
-                                        api.notify.showWarning(message);
-                                    }
-                                })
+                            (application: Application) => {
+                                if (application.getState() == "stopped") {
+                                    api.notify.showWarning(message);
+                                }
+                            })
                             .catch((reason: any) => { //app was uninstalled
                                 api.notify.showWarning(message);
                             });
@@ -338,6 +342,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.contentType = loader.contentType;
                 this.parentContent = loader.parentContent;
                 this.persistedContentCompareStatus = this.currentContentCompareStatus = loader.compareStatus;
+                this.persistedContentPublishStatus = this.currentContentPublishStatus = loader.publishStatus;
 
             }).then(() => super.doLoadData());
     }
@@ -745,9 +750,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 if (this.isCurrentContentId(content.getContentId())) {
 
                     this.persistedContentCompareStatus = this.currentContentCompareStatus = content.getCompareStatus();
-                    this.getContentWizardToolbarPublishControls().setPublishStatus(content.getPublishStatus()).setCompareStatus(
-                        this.currentContentCompareStatus);
-                    this.showScheduleWizardStep(this.currentContentCompareStatus);
+                    this.persistedContentPublishStatus = this.currentContentPublishStatus = content.getPublishStatus();
+                    this.getContentWizardToolbarPublishControls().
+                        setCompareStatus(this.currentContentCompareStatus).
+                        setPublishStatus(this.currentContentPublishStatus);
+                    this.refreshScheduleWizardStep();
 
 
                     this.getWizardHeader().disableNameGeneration(this.currentContentCompareStatus === CompareStatus.EQUAL);
@@ -758,13 +765,16 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var updateHandler = (contentId: ContentId, compareStatus?: CompareStatus, publishStatus?: PublishStatus) => {
 
             if (this.isCurrentContentId(contentId)) {
-                if (publishStatus) {
-                    this.getContentWizardToolbarPublishControls().setPublishStatus(publishStatus);
+                if (publishStatus != undefined) {
+                    this.persistedContentPublishStatus = this.currentContentPublishStatus = publishStatus;
+                    this.getContentWizardToolbarPublishControls().
+                        setPublishStatus(publishStatus);
                 }
                 if (compareStatus != undefined) {
                     this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
-                    this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
-                    this.showScheduleWizardStep(compareStatus);
+                    this.getContentWizardToolbarPublishControls().
+                        setCompareStatus(compareStatus);
+                    this.refreshScheduleWizardStep();
                 }
                 new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                     let isAlreadyUpdated = content.equals(this.getPersistedItem());
@@ -808,10 +818,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 return this.isCurrentContentId(sorted.getContentId());
             });
             if (wasSorted) {
-                this.getContentWizardToolbarPublishControls()
-                    .setPublishStatus(data[indexOfCurrentContent].getPublishStatus())
-                    .setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
-                this.showScheduleWizardStep(data[indexOfCurrentContent].getCompareStatus());
+                this.getContentWizardToolbarPublishControls().
+                    setPublishStatus(data[indexOfCurrentContent].getPublishStatus()).
+                    setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
             }
         };
 
@@ -988,11 +997,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
                 this.persistedContentCompareStatus = this.currentContentCompareStatus = summaryAndStatus.getCompareStatus();
+                this.persistedContentPublishStatus = this.currentContentPublishStatus = summaryAndStatus.getPublishStatus();
 
                 wizardHeader.disableNameGeneration(this.currentContentCompareStatus !== CompareStatus.NEW);
 
-                publishControls.setPublishStatus(summaryAndStatus.getPublishStatus()).setCompareStatus(
-                    this.currentContentCompareStatus).setLeafContent(!this.getPersistedItem().hasChildren());
+                publishControls.setCompareStatus(this.currentContentCompareStatus).
+                    setPublishStatus(this.currentContentPublishStatus).
+                    setLeafContent(!this.getPersistedItem().hasChildren());
             });
 
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
@@ -1148,7 +1159,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.settingsWizardStepForm.onPropertyChanged(this.dataChangedListener);
                 this.scheduleWizardStepForm.layout(content);
                 this.scheduleWizardStepForm.onPropertyChanged(this.dataChangedListener);
-                this.showScheduleWizardStep(this.currentContentCompareStatus);
+                this.refreshScheduleWizardStep();
 
                 if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);
@@ -1660,6 +1671,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.currentContentCompareStatus;
     }
 
+    getContentPublishStatus(): PublishStatus {
+        return this.currentContentPublishStatus;
+    }
+
     private notifyContentNamed(content: api.content.Content) {
         this.contentNamedListeners.forEach((listener: (event: ContentNamedEvent)=>void)=> {
             listener.call(this, new ContentNamedEvent(this, content));
@@ -1818,16 +1833,20 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 // WARN: intended to restore status to persisted value if data is changed to original values,
                 // but if invoked after save this will revert status to persisted one as well
                 this.currentContentCompareStatus = this.persistedContentCompareStatus;
+                this.currentContentPublishStatus = this.persistedContentPublishStatus;
 
-            } else if (publishControls.isOnline()) {
-                this.currentContentCompareStatus = CompareStatus.NEWER;
+            } else {
+                if (publishControls.isOnline()) {
+                    this.currentContentCompareStatus = CompareStatus.NEWER;
+                }
+                this.currentContentPublishStatus = this.scheduleWizardStepForm.getPublishStatus();
             }
-            publishControls.setCompareStatus(this.currentContentCompareStatus);
-
+            publishControls.setCompareStatus(this.currentContentCompareStatus).
+                setPublishStatus(this.currentContentPublishStatus);
         }
     }
 
-    private showScheduleWizardStep(compareStatus: CompareStatus) {
+    private refreshScheduleWizardStep() {
         let show = this.currentContentCompareStatus !== CompareStatus.NEW;
         this.scheduleWizardStep.show(show);
         if (show) {

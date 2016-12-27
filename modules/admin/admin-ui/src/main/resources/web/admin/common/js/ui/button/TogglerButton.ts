@@ -6,7 +6,10 @@ module api.ui.button {
 
         constructor(className?: string, title?: string) {
             super();
-            this.addClass("toggle-button icon-medium " + className);
+            this.addClass("toggle-button icon-medium");
+            if (className) {
+                this.addClass(className);
+            }
             this.setActive(false);
             this.setEnabled(false);
 
@@ -30,6 +33,13 @@ module api.ui.button {
             if (!silent) {
                 this.notifyActiveChanged(value);
             }
+        }
+
+        setVisible(value: boolean): TogglerButton {
+            if (!value) {
+                this.setActive(value);
+            }
+            return <TogglerButton>super.setVisible(value);
         }
 
         isActive() {

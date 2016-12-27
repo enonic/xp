@@ -11,6 +11,7 @@ import Site = api.content.site.Site;
 import ContentType = api.schema.content.ContentType;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
+import PublishStatus = api.content.PublishStatus;
 
 export class ContentWizardDataLoader {
 
@@ -25,6 +26,8 @@ export class ContentWizardDataLoader {
     defaultModels: DefaultModels;
 
     compareStatus: CompareStatus;
+
+    publishStatus: PublishStatus;
 
     loadData(params: ContentWizardPanelParams): wemQ.Promise<ContentWizardDataLoader> {
         if (!params.contentId) {
@@ -85,6 +88,7 @@ export class ContentWizardDataLoader {
                 this.contentType = contentType;
                 if (compareStatus) {
                     this.compareStatus = compareStatus.getCompareStatus();
+                    this.publishStatus = compareStatus.getPublishStatus();
                 }
             });
         });
