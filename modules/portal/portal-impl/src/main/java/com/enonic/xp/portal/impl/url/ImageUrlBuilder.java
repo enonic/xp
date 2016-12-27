@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Charsets;
@@ -65,7 +68,15 @@ final class ImageUrlBuilder
 
     private String resolveName( final Media media )
     {
-        final String name = media.getName().toString();
+        String name = media.getName().toString();
+
+        try
+        {
+            name = URLEncoder.encode( name, "UTF-8" );
+        }
+        catch ( final UnsupportedEncodingException e )
+        {
+        }
 
         if ( this.params.getFormat() != null )
         {
