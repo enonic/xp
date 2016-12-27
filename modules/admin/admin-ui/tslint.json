@@ -13,7 +13,7 @@
       "trace"
     ],
     "no-debugger": true,
-    "no-duplicate-variable": false,
+    "no-duplicate-variable": true,
     "no-empty": true,
     "no-invalid-this": true,
     "no-string-literal": false,

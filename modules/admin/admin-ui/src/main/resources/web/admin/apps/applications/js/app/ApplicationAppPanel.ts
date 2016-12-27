@@ -16,19 +16,18 @@ export class ApplicationAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Ap
     }
 
     private route(path?: api.rest.Path) {
-        var action = path ? path.getElement(0) : undefined;
+        const action = path ? path.getElement(0) : null;
+        const id = path ? path.getElement(1) : null;
 
         switch (action) {
         case 'edit':
-            var id = path.getElement(1);
             if (id) {
-                //TODO
+                // TODO
             }
             break;
         case 'view' :
-            var id = path.getElement(1);
             if (id) {
-                //TODO
+                // TODO
             }
             break;
         default:

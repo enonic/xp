@@ -48,10 +48,11 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
     }
 
     private route(path?: api.rest.Path) {
-        var action = path ? path.getElement(0) : undefined;
+        const action = path ? path.getElement(0) : null;
+        const id = path ? path.getElement(1) : null;
+
         switch (action) {
         case 'edit':
-            var id = path.getElement(1);
             if (id && this.isValidPrincipalKey(id)) {
                 new api.security.GetPrincipalByKeyRequest(api.security.PrincipalKey.fromString(id)).sendAndParse().done(
                     (principal: api.security.Principal) => {
@@ -72,7 +73,6 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
             }
             break;
         case 'view':
-            var id = path.getElement(1);
             if (id) {
                 //TODO
             }
