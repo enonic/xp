@@ -66,7 +66,7 @@ module api.liveedit {
         }
 
         private createShaderDiv(cls: string): DivEl {
-            return new DivEl(Shader.CLS_NAME + " " + cls, api.StyleHelper.getCurrentPrefix())
+            return new DivEl(Shader.CLS_NAME + " " + cls, api.StyleHelper.getCurrentPrefix());
         }
 
         public static get(): Shader {
@@ -110,13 +110,13 @@ module api.liveedit {
         unUnlockClicked(listener: (event: MouseEvent) => void) {
             this.unlockClickedListeners = this.unlockClickedListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyUnlockClicked(event: MouseEvent) {
             this.unlockClickedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onMouseEnter(listener: (event: MouseEvent) => void) {
@@ -126,13 +126,13 @@ module api.liveedit {
         unMouseEnter(listener: (event: MouseEvent) => void) {
             this.mouseEnterListeners = this.mouseEnterListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyMouseEntered(event: MouseEvent) {
             this.mouseEnterListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onMouseLeave(listener: (event: MouseEvent) => void) {
@@ -142,13 +142,13 @@ module api.liveedit {
         unMouseLeave(listener: (event: MouseEvent) => void) {
             this.mouseLeaveListeners = this.mouseLeaveListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyMouseLeft(event: MouseEvent) {
             this.mouseLeaveListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onMouseMove(listener: (event: MouseEvent) => void) {
@@ -158,13 +158,13 @@ module api.liveedit {
         unMouseMove(listener: (event: MouseEvent) => void) {
             this.mouseMoveListeners = this.mouseMoveListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyMouseMove(event: MouseEvent) {
             this.mouseMoveListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onClicked(listener: (event: MouseEvent) => void) {
@@ -174,13 +174,13 @@ module api.liveedit {
         unClicked(listener: (event: MouseEvent) => void) {
             this.clickListeners = this.clickListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyClicked(event: MouseEvent) {
             this.clickListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private handleUnlockClick(event: MouseEvent) {
@@ -197,7 +197,7 @@ module api.liveedit {
             this.notifyClicked(event);
         }
 
-        private showShaderIfNecessary(shader: Element, x, y, width, height) {
+        private showShaderIfNecessary(shader: Element, x: number, y: number, width: number, height: number) {
             var shaderEl = shader.getEl();
             shaderEl.setTopPx(y).
                 setLeftPx(x).

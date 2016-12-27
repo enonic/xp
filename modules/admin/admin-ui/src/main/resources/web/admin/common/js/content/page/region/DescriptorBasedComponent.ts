@@ -7,9 +7,9 @@ module api.content.page.region {
 
         public static debug: boolean = false;
 
-        public static PROPERTY_DESCRIPTOR = 'descriptor';
+        public static PROPERTY_DESCRIPTOR: string = 'descriptor';
 
-        public static PROPERTY_CONFIG = 'config';
+        public static PROPERTY_CONFIG: string = 'config';
 
         private disableEventForwarding: boolean;
 

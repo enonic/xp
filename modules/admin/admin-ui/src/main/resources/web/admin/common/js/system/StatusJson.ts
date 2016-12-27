@@ -6,7 +6,7 @@ module api.system {
         context?: {
             authenticated: boolean;
             principals: string[];
-        }
+        };
     }
 
 }

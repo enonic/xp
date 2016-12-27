@@ -1,3 +1,4 @@
+import KeyBinding = api.ui.KeyBinding;
 declare var CONFIG;
 declare var wemjq: JQueryStatic;
 
@@ -38,7 +39,7 @@ wemjq(document).ready(() => {
         }
     });
 
-    function shouldBubbleEvent(event): boolean {
+    function shouldBubbleEvent(event: any): boolean {
         let shouldBubble: boolean;
         switch (event.keyCode) {
         case 113:  // F2 global help shortcut
@@ -51,7 +52,7 @@ wemjq(document).ready(() => {
         return shouldBubble;
     }
 
-    function stopBrowserShortcuts(event) {
+    function stopBrowserShortcuts(event: any) {
         // get the parent's frame bindings
         var activeBindings = parent['api']['ui']['KeyBindings'].get().getActiveBindings();
 
@@ -63,7 +64,7 @@ wemjq(document).ready(() => {
         }
     }
 
-    function hasMatchingBinding(keys, event) {
+    function hasMatchingBinding(keys: KeyBinding[], event: KeyboardEvent) {
         var isMod = event.ctrlKey || event.metaKey;
         var isAlt = event.altKey;
         var key = event.keyCode || event.which;

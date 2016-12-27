@@ -2,7 +2,7 @@ module api.application {
 
     export class ApplicationResourceKey {
 
-        private static SEPARATOR = ":";
+        private static SEPARATOR: string = ":";
 
         private applicationKey:ApplicationKey;
 

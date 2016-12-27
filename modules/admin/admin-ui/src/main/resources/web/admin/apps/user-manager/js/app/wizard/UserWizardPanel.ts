@@ -189,10 +189,10 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
         // #hack - The newly added members will have different modifiedData
         var viewedMembershipsKeys = viewedPrincipal.getMemberships().map((el) => {
-                return el.getKey()
+                return el.getKey();
             }),
             persistedMembershipsKeys = persistedPrincipal.getMemberships().map((el) => {
-                return el.getKey()
+                return el.getKey();
             });
 
         if (api.ObjectHelper.arrayEquals(viewedMembershipsKeys, persistedMembershipsKeys)) {

@@ -102,7 +102,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     private getContentToUnpublishIds(): ContentId[] {
         return this.getItemList().getItems().map(item => {
             return item.getContentId();
-        })
+        });
     }
 
     private doUnpublish() {

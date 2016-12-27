@@ -171,7 +171,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
             parent: parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString()
         };
 
-        this.fileInput.setUploaderParams(params)
+        this.fileInput.setUploaderParams(params);
     }
 
     open() {

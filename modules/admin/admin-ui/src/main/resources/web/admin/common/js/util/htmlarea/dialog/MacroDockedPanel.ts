@@ -127,7 +127,7 @@ module api.util.htmlarea.dialog {
             this.previewPanel.removeChildren();
             var appendMe = new api.dom.DivEl("preview-message");
             appendMe.setHtml(message);
-            this.previewPanel.appendChild(appendMe)
+            this.previewPanel.appendChild(appendMe);
         }
 
         private renderPreview(macroPreview: MacroPreview) {
@@ -137,7 +137,7 @@ module api.util.htmlarea.dialog {
             } else {
                 var appendMe = new api.dom.DivEl("preview-content");
                 appendMe.setHtml(macroPreview.getHtml(), false);
-                this.previewPanel.appendChild(appendMe)
+                this.previewPanel.appendChild(appendMe);
                 this.notifyPanelRendered();
             }
         }
@@ -184,7 +184,7 @@ module api.util.htmlarea.dialog {
                         build(),
                     macroDescriptor.getForm(), this.data);
 
-                this.renderConfigView(formView)
+                this.renderConfigView(formView);
             }
         }
 
@@ -218,7 +218,7 @@ module api.util.htmlarea.dialog {
         private notifyPanelRendered() {
             this.panelRenderedListeners.forEach((listener) => {
                 listener();
-            })
+            });
         }
     }
 
@@ -239,7 +239,7 @@ module api.util.htmlarea.dialog {
             this.setId(this.id);
             this.macroPreview = macroPreview;
 
-            this.initFrameContent(macroPreview)
+            this.initFrameContent(macroPreview);
         }
 
         private initFrameContent(macroPreview: MacroPreview) {
@@ -320,7 +320,7 @@ module api.util.htmlarea.dialog {
         private notifyPreviewRendered() {
             this.previewRenderedListeners.forEach((listener) => {
                 listener();
-            })
+            });
         }
     }
 }

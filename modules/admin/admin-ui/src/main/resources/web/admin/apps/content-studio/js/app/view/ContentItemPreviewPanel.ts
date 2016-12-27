@@ -92,7 +92,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                         this.item = null; // we don't have ref to content under contentPreviewPath and there is no point in figuring it out
                         this.skipNextSetItemCall = false;
                         this.frame.setSrc(clickedLinkRelativePath);
-                    }, 500)
+                    }, 500);
                 }
             }
         }
@@ -120,7 +120,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         return contentPreviewPath === UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(href, frameWindow));
     }
 
-    private centerImage(imgWidth, imgHeight, myWidth, myHeight) {
+    private centerImage(imgWidth: number, imgHeight: number, myWidth: number, myHeight: number) {
         var imgMarginTop = 0;
         if (imgHeight < myHeight) {
             // image should be centered vertically

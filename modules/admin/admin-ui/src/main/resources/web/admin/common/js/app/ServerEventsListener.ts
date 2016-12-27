@@ -50,7 +50,7 @@ module api.app {
 
         private onServerEvent(event: api.event.Event) {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(event, ContentServerEvent)) {
-                this.fireEvent(event)
+                this.fireEvent(event);
             } else {
                 this.aggregator.appendEvent(<ContentServerEvent>event);
             }

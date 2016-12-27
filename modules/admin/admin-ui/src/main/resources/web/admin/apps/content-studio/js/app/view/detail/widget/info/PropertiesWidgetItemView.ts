@@ -13,7 +13,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
 
     private list: api.dom.DlEl;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super("properties-widget-item-view");

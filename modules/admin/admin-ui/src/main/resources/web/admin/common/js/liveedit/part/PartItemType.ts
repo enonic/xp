@@ -7,7 +7,7 @@ module api.liveedit.part {
 
     export class PartItemType extends ComponentItemType {
 
-        private static INSTANCE = new PartItemType();
+        private static INSTANCE: PartItemType = new PartItemType();
 
         static get(): PartItemType {
             return PartItemType.INSTANCE;
@@ -18,7 +18,7 @@ module api.liveedit.part {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
 
         createView(config: CreateItemViewConfig<RegionView,PartComponent>): PartComponentView {

@@ -201,9 +201,10 @@ module api.ui.security.acl {
         }
 
         unOptionDeselected(listener: {(removed: SelectedOptionEvent<AccessControlEntry>): void;}) {
-            this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners
+                .filter(function (curr: {(removed: SelectedOptionEvent<AccessControlEntry>): void;}) {
+                    return curr !== listener;
+                });
         }
 
         onOptionSelected(listener: {(added: SelectedOptionEvent<AccessControlEntry>): void;}) {
@@ -211,9 +212,10 @@ module api.ui.security.acl {
         }
 
         unOptionSelected(listener: {(added: SelectedOptionEvent<AccessControlEntry>): void;}) {
-            this.selectedOptionAddedListeners = this.selectedOptionAddedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.selectedOptionAddedListeners = this.selectedOptionAddedListeners
+                .filter(function (curr: {(added: SelectedOptionEvent<AccessControlEntry>): void;}) {
+                    return curr !== listener;
+                });
         }
 
         private notifySelectedOptionAdded(added: SelectedOptionEvent<AccessControlEntry>) {

@@ -30,7 +30,7 @@ module api.rest {
             throw new Error("Must be implemented by inheritors");
         }
 
-        setTimeout(timeoutMillis) {
+        setTimeout(timeoutMillis: number) {
             this.timeoutMillis = timeoutMillis;
         }
 

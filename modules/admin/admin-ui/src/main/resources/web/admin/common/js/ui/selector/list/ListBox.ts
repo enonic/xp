@@ -145,13 +145,13 @@ module api.ui.selector.list {
         public unItemsAdded(listener: (items: I[]) => void) {
             this.itemsAddedListeners = this.itemsAddedListeners.filter((current) => {
                 return current !== listener;
-            })
+            });
         }
 
         private notifyItemsAdded(items: I[]) {
             this.itemsAddedListeners.forEach((listener) => {
                 listener(items);
-            })
+            });
         }
 
         public onItemsRemoved(listener: (items: I[]) => void) {
@@ -161,13 +161,13 @@ module api.ui.selector.list {
         public unItemsRemoved(listener: (items: I[]) => void) {
             this.itemsRemovedListeners = this.itemsRemovedListeners.filter((current) => {
                 return current !== listener;
-            })
+            });
         }
 
         private notifyItemsRemoved(items: I[]) {
             this.itemsRemovedListeners.forEach((listener) => {
                 listener(items);
-            })
+            });
         }
 
     }

@@ -14,7 +14,7 @@ module api.form {
 
         parent: FormItemSetOccurrenceView;
 
-        dataSet: PropertySet
+        dataSet: PropertySet;
     }
 
     export class FormItemSetOccurrenceView extends FormSetOccurrenceView {

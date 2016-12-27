@@ -6,7 +6,8 @@ module api {
 
     export class BrowserHelper {
 
-        private static AVAILABLE_VERSIONS = {};
+        // Default Object type contains browser name property
+        private static AVAILABLE_VERSIONS: Object = {};
 
         private static BROWSER_NAME: BrowserName;
 

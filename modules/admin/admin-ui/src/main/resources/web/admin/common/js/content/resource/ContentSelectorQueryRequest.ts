@@ -13,11 +13,11 @@ module api.content.resource {
 
     export class ContentSelectorQueryRequest extends ContentResourceRequest<ContentQueryResultJson<ContentSummaryJson>, ContentSummary[]> {
 
-        public static DEFAULT_SIZE = 15;
+        public static DEFAULT_SIZE: number = 15;
 
-        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
+        public static MODIFIED_TIME_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
 
-        public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
+        public static SCORE_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC, ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
 
@@ -84,7 +84,7 @@ module api.content.resource {
         }
 
         setContentTypeNames(contentTypeNames: string[]) {
-            this.contentTypeNames = contentTypeNames
+            this.contentTypeNames = contentTypeNames;
         }
 
         setAllowedContentPaths(allowedContentPaths: string[]) {
@@ -101,7 +101,7 @@ module api.content.resource {
             this.queryExpr = new QueryExpr(fulltextExpression, ContentSelectorQueryRequest.DEFAULT_ORDER);
         }
 
-        private createSearchExpression(searchString): Expression {
+        private createSearchExpression(searchString: string): Expression {
             return new api.query.PathMatchExpressionBuilder()
                 .setSearchString(searchString)
                 .setPath(this.content ? this.content.getPath().toString() : "")

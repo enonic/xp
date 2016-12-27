@@ -20,7 +20,7 @@ export class UnpublishAction extends api.ui.Action {
                         this.fireContentUnpublishPromptEvent();
                     }
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason)
+                    api.DefaultErrorHandler.handle(reason);
                 }).finally(() => this.setEnabled(true)).done();
             } else {
                 this.fireContentUnpublishPromptEvent();

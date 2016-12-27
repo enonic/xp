@@ -33,7 +33,7 @@ module api.ui.panel {
                 }
 
                 return rendered;
-            })
+            });
         }
 
         protected calculateOffset() {

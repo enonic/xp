@@ -349,9 +349,10 @@ module api.content.form.inputtype.image {
         }
 
         unRemoveSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
-            this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners
+                .filter(function (curr: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
+                    return curr != listener;
+                });
         }
 
         private notifyEditSelectedOptions(option: SelectedOption<ImageSelectorDisplayValue>[]) {
@@ -365,9 +366,10 @@ module api.content.form.inputtype.image {
         }
 
         unEditSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
-            this.editSelectedOptionsListeners = this.editSelectedOptionsListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.editSelectedOptionsListeners = this.editSelectedOptionsListeners
+                .filter(function (curr: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
+                    return curr != listener;
+                });
         }
 
     }

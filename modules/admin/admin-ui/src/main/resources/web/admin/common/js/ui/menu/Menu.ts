@@ -3,7 +3,7 @@ module api.ui.menu {
     export class Menu extends api.dom.UlEl {
 
         private menuItems: MenuItem[] = [];
-        private hideOnItemClick = true;
+        private hideOnItemClick: boolean = true;
         private itemClickListeners: {(item: MenuItem):void}[] = [];
 
         constructor(actions: api.ui.Action[] = []) {
@@ -100,7 +100,7 @@ module api.ui.menu {
         private removeMenuItem(menuItem: MenuItem) {
             this.menuItems = this.menuItems.filter((item) => {
                 return item != menuItem;
-            })
+            });
         }
 
         private getMenuItem(action: api.ui.Action): MenuItem {

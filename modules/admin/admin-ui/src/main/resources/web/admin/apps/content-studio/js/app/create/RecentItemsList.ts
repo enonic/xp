@@ -23,6 +23,6 @@ export class RecentItemsList extends NewContentDialogList {
             }
         });
 
-        this.setItems(recentItems)
+        this.setItems(recentItems);
     }
 }

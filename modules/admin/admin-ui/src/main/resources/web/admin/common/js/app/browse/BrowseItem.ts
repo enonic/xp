@@ -10,7 +10,7 @@ module api.app.browse {
 
         private path: string;
 
-        private iconUrl;
+        private iconUrl: string;
 
         private iconClass: string;
 

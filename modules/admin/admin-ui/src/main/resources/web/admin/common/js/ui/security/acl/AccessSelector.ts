@@ -32,11 +32,11 @@ module api.ui.security.acl {
             this.onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
                 var item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
                 this.setValue(AccessSelector.OPTIONS[item.getIndex()].value);
-            })
+            });
         }
 
         getValue(): Access {
-            return this.value
+            return this.value;
         }
 
         setValue(value: Access, silent?: boolean): AccessSelector {
@@ -96,13 +96,13 @@ module api.ui.security.acl {
         unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
     }

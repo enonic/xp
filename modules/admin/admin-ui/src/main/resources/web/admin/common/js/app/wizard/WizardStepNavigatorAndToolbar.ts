@@ -8,7 +8,7 @@ module api.app.wizard {
 
     export class WizardStepNavigatorAndToolbar extends api.dom.DivEl {
 
-        static maxFittingWidth = 675;
+        static maxFittingWidth: number = 675;
 
         private foldButton: api.ui.toolbar.FoldButton;
 
@@ -119,7 +119,7 @@ module api.app.wizard {
                 else {
                     tab.setLabel(tab.getLabel().replace(strIndex, ""));
                 }
-            })
+            });
         }
 
         checkAndMinimize() {

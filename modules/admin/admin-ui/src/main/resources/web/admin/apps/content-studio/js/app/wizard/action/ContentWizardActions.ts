@@ -77,7 +77,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     enableActionsForNew() {
         this.save.setEnabled(true);
-        this.delete.setEnabled(true)
+        this.delete.setEnabled(true);
     }
 
     enableActionsForExisting(existing: api.content.Content) {
@@ -164,8 +164,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                                 if (!hasParentCreatePermission) {
                                     this.duplicate.setEnabled(false);
                                 }
-                            })
-                    })
+                            });
+                    });
             } else {
                 new api.content.resource.GetContentRootPermissionsRequest().sendAndParse().then(
                     (accessControlList: api.security.acl.AccessControlList) => {
@@ -176,10 +176,10 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                         if (!hasParentCreatePermission) {
                             this.duplicate.setEnabled(false);
                         }
-                    })
+                    });
             }
 
-        })
+        });
     }
 
     getDeleteAction(): api.ui.Action {

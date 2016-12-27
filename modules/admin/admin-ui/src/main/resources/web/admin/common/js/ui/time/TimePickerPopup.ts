@@ -186,7 +186,7 @@ module api.ui.time {
         unSelectedTimeChanged(listener: (hours: number, minutes: number) => void) {
             this.timeChangedListeners = this.timeChangedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         private startInterval(fn: Function, ...args: any[]) {
@@ -268,7 +268,7 @@ module api.ui.time {
 
 
         public isHoursValid(hours: number): boolean {
-            return hours >= 0 && hours < 24
+            return hours >= 0 && hours < 24;
         }
 
         public isMinutesValid(minutes: number): boolean {

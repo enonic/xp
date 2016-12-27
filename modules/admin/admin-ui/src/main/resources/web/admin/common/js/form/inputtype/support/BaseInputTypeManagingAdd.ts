@@ -210,7 +210,7 @@ module api.form.inputtype.support {
         unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
             this.inputValueChangedListeners = this.inputValueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         protected notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {

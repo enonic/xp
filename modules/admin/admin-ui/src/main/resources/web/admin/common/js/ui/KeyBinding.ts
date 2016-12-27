@@ -64,7 +64,7 @@ module api.ui {
             var bindings:KeyBinding[] = [];
 
             combinations.forEach((combination:string) => {
-                bindings.push(new KeyBinding(combination, callback))
+                bindings.push(new KeyBinding(combination, callback));
             });
 
             return bindings;

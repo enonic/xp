@@ -7,7 +7,7 @@ module api.ui {
 
         private label: api.dom.LabelEl;
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         constructor(builder: CheckboxBuilder) {
             super("div", "checkbox", undefined, String(builder.checked || false));

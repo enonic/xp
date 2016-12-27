@@ -90,7 +90,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         var iconUrl = api.dom.ImgEl.PLACEHOLDER;
         let formIcon = new FormIcon(iconUrl, "icon");
         formIcon.addClass("icon-xlarge icon-address-book");
-        return formIcon
+        return formIcon;
     }
 
     protected createWizardHeader(): api.app.wizard.WizardHeaderWithDisplayNameAndName {
@@ -129,7 +129,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         return wizardHeader;
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
         return super.doRenderOnDataLoaded(rendered).then((rendered) => {
             if (UserStoreWizardPanel.debug) {
                 console.debug("UserStoreWizardPanel.doRenderOnDataLoaded");
@@ -308,7 +308,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
             this.getPersistedItem().isDeletable().then((result: boolean) => {
                 this.wizardActions.getDeleteAction().setEnabled(result);
-            })
+            });
         };
 
         api.security.UserItemCreatedEvent.on(principalCreatedHandler);

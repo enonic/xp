@@ -171,9 +171,9 @@ module api.ui.grid {
 
     export class GridColumn<T extends Slick.SlickData> implements Slick.Column<T> {
 
-        asyncPostRender: (cellNode:any, row:any, dataContext:any, colDef:any) => void;
+        asyncPostRender?: (cellNode:any, row:any, dataContext:any, colDef:any) => void;
 
-        behavior: any;
+        behavior?: any;
 
         cannotTriggerInsert: boolean;
 

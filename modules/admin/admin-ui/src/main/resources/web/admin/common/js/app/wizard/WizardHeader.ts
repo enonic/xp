@@ -23,7 +23,7 @@ module api.app.wizard {
             var event = new api.PropertyChangedEvent(property, oldValue, newValue);
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener.call(this, event);
-            })
+            });
         }
 
         isValid(): boolean {

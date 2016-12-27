@@ -215,8 +215,8 @@ module api.ui.selector.combobox {
         }
 
         unOptionDeselected(listener: {(removed: SelectedOptionEvent<T>): void;}) {
-            this.optionRemovedListeners = this.optionRemovedListeners.filter(function (curr) {
-                return curr != listener;
+            this.optionRemovedListeners = this.optionRemovedListeners.filter(function (curr: {(removed: SelectedOptionEvent<T>): void;}) {
+                return curr !== listener;
             });
         }
 
@@ -226,7 +226,7 @@ module api.ui.selector.combobox {
 
         unOptionSelected(listener: (added: SelectedOptionEvent<T>)=>void) {
             this.optionAddedListeners = this.optionAddedListeners.filter((current: (added: SelectedOptionEvent<T>)=>void) => {
-                return listener != current;
+                return listener !== current;
             });
         }
 

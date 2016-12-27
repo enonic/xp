@@ -35,11 +35,11 @@ module api.liveedit.image {
             var contentDeletedListener = (event) => {
                 var deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
                     return !deletedItem.isPending() && deletedItem.getContentId().equals(this.component.getImage());
-                })
+                });
                 if (deleted) {
                     this.remove();
                 }
-            }
+            };
 
             ContentDeletedEvent.on(contentDeletedListener);
 

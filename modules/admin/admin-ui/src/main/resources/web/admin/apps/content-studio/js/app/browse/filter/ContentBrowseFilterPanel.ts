@@ -225,8 +225,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             });
     }
 
-    private combineAggregations(contentQueryResult, contentQueryResultNoContentTypesSelected): Aggregation[] {
-        var contentTypesAggr = contentQueryResultNoContentTypesSelected.getAggregations().filter((aggregation) => {
+    private combineAggregations(contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>,
+                                queryResultNoContentTypesSelected: ContentQueryResult<ContentSummary,ContentSummaryJson>): Aggregation[] {
+        var contentTypesAggr = queryResultNoContentTypesSelected.getAggregations().filter((aggregation) => {
             return aggregation.getName() === ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME;
         });
         var dateModifiedAggr = contentQueryResult.getAggregations().filter((aggregation) => {
@@ -389,7 +390,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         return contentTypeNames;
     }
 
-    private appendContentTypesAggregationQuery(contentQuery) {
+    private appendContentTypesAggregationQuery(contentQuery: ContentQuery) {
         contentQuery.addAggregationQuery(this.createTermsAggregation((ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME),
             QueryField.CONTENT_TYPE, 0));
     }
@@ -420,7 +421,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                 if (bucket.docCount > 0) {
                     return true;
                 }
-            })
+            });
 
             var aggregationGroupView = aggregation.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME
                 ? this.contentTypeAggregation
@@ -432,7 +433,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             else {
                 aggregationGroupView.show();
             }
-        })
+        });
     }
 
 }

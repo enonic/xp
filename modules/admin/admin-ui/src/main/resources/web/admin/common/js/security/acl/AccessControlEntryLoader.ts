@@ -20,7 +20,7 @@ module api.security.acl {
                 "types": this.enumToStrings(this.allowedTypes),
                 "query": this.searchQuery,
                 "userStoreKey": this.userStoreKey ? this.userStoreKey.toString() : undefined
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

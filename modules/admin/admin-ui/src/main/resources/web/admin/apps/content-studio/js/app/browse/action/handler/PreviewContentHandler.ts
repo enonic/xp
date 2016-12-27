@@ -1,10 +1,10 @@
 import "../../../../api.ts";
+import {ContentBrowseItem} from "../../ContentBrowseItem";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import BrowseItemsChanges = api.app.browse.BrowseItemsChanges;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentId = api.content.ContentId;
-import {ContentBrowseItem} from "../../ContentBrowseItem";
 
 export class PreviewContentHandler {
 
@@ -156,7 +156,7 @@ export class PreviewContentHandler {
     private notifyPreviewStateChanged(active: boolean) {
         this.previewStateChangedListeners.forEach((listener) => {
             listener(active);
-        })
+        });
     }
 
 }

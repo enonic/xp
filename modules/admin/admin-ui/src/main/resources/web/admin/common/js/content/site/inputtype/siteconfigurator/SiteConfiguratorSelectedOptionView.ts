@@ -59,7 +59,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.appendChild(header);
 
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
-                this.toggleClass("invalid", !event.isValid())
+                this.toggleClass("invalid", !event.isValid());
             };
 
             this.toggleClass("empty", !!this.getOption().empty);
@@ -144,7 +144,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.unbindValidationEvent(this.formView);
             this.formView = formViewStateToRevertTo;
             this.formView.validate(false, true);
-            this.toggleClass("invalid", !this.formView.isValid())
+            this.toggleClass("invalid", !this.formView.isValid());
         }
 
         private undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel: SiteConfiguratorComboBox) {
@@ -214,13 +214,13 @@ module api.content.site.inputtype.siteconfigurator {
         unEditClicked(listener: (event: MouseEvent) => void) {
             this.editClickedListeners = this.editClickedListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyEditClicked(event: MouseEvent) {
             this.editClickedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey): void;}) {

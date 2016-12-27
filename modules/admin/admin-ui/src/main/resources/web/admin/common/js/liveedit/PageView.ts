@@ -69,7 +69,7 @@ module api.liveedit {
 
         private scrolledListener: (event: WheelEvent) => void;
 
-        public static debug;
+        public static debug: boolean;
 
         private propertyChangedListener: (event: api.PropertyChangedEvent) => void;
 
@@ -205,7 +205,7 @@ module api.liveedit {
 
             this.scrolledListener = (event: WheelEvent) => {
                 this.toggleStickyToolbar();
-            }
+            };
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
@@ -427,7 +427,7 @@ module api.liveedit {
             if (!!target) {
                 var parent = <HTMLElement> target.parentElement;
                 return (target.id.indexOf("mce") >= 0 || target.className.indexOf("mce") >= 0 ||
-                        parent.id.indexOf("mce") >= 0 || parent.className.indexOf("mce") >= 0)
+                        parent.id.indexOf("mce") >= 0 || parent.className.indexOf("mce") >= 0);
             }
             return false;
         }
@@ -521,7 +521,7 @@ module api.liveedit {
 
         private addVerticalSpaceForEditorToolbar() {
             this.getPageView().getEl().setPosition("relative");
-            this.updateVerticalSpaceForEditorToolbar()
+            this.updateVerticalSpaceForEditorToolbar();
             this.toggleStickyToolbar();
         }
 
@@ -823,7 +823,7 @@ module api.liveedit {
 
             // unregister existing regions
             this.regionViews.forEach((regionView: RegionView)=> {
-                this.unregisterRegionView(regionView)
+                this.unregisterRegionView(regionView);
             });
 
             this.regionViews = [];
@@ -955,17 +955,17 @@ module api.liveedit {
             this.itemViewRemovedListeners.forEach((listener) => listener(event));
         }
 
-        onPageLocked(listener: (event) => void) {
+        onPageLocked(listener: (event: any) => void) {
             this.pageLockedListeners.push(listener);
         }
 
-        unPageLocked(listener: (event) => void) {
+        unPageLocked(listener: (event: any) => void) {
             this.pageLockedListeners = this.pageLockedListeners.filter((current) => (current != listener));
         }
 
-        private notifyPageLockChanged(value) {
+        private notifyPageLockChanged(locked: boolean) {
             this.pageLockedListeners.forEach((listener) => {
-                listener(value);
+                listener(locked);
             });
         }
 

@@ -37,13 +37,13 @@ module api.ui.security.acl {
         unItemValueChanged(listener: (item: AccessControlEntry) => void) {
             this.itemValueChangedListeners = this.itemValueChangedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyItemValueChanged(item: AccessControlEntry) {
             this.itemValueChangedListeners.forEach((listener) => {
                 listener(item);
-            })
+            });
         }
 
         setItemsEditable(editable: boolean): AccessControlListView {

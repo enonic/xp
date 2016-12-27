@@ -166,9 +166,10 @@ module api.content.form.inputtype.image {
         }
 
         unChecked(listener: {(option: ImageSelectorSelectedOptionView, checked: boolean): void;}) {
-            this.selectionChangeListeners = this.selectionChangeListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.selectionChangeListeners = this.selectionChangeListeners
+                .filter(function (curr: {(option: ImageSelectorSelectedOptionView, checked: boolean): void;}) {
+                    return curr != listener;
+                });
         }
 
     }

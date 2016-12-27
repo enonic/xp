@@ -93,7 +93,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     }
 
     hasChildren(data: ItemView): boolean {
-        return this.getDataChildren(data).length > 0
+        return this.getDataChildren(data).length > 0;
     }
 
     fetch(node: TreeNode<ItemView>, dataId?: string): Q.Promise<ItemView> {

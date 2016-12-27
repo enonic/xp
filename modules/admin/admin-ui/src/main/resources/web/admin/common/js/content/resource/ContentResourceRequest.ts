@@ -2,9 +2,9 @@ module api.content.resource {
 
     export class ContentResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
-        public static EXPAND_NONE = 'none';
-        public static EXPAND_SUMMARY = 'summary';
-        public static EXPAND_FULL = 'full';
+        public static EXPAND_NONE: string = 'none';
+        public static EXPAND_SUMMARY: string = 'summary';
+        public static EXPAND_FULL: string = 'full';
 
         private resourcePath: api.rest.Path;
 

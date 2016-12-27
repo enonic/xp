@@ -8,7 +8,7 @@ export class NewContentDialogList extends api.ui.selector.list.ListBox<NewConten
 
     private selectedListeners: {(event: NewContentDialogItemSelectedEvent):void}[] = [];
 
-    constructor(className = 'content-types-list') {
+    constructor(className: string = 'content-types-list') {
         super(className);
     }
 

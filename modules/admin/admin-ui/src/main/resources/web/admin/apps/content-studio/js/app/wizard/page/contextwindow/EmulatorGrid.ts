@@ -15,7 +15,7 @@ export class EmulatorGrid extends api.ui.grid.Grid<any> {
         ];
     }
 
-    private buildRow(row, cell, data): api.dom.DivEl {
+    private buildRow(row: any, cell: any, data: any): api.dom.DivEl {
         var rowEl = new api.dom.DivEl();
         rowEl.getEl().setData('width', data.width);
         rowEl.getEl().setData('height', data.height);

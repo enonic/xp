@@ -254,7 +254,7 @@ module api.ui.selector.combobox {
                 value: this.getDisplayValueId(value),
                 displayValue: <OPTION_DISPLAY_VALUE>value,
                 readOnly: readOnly
-            }
+            };
         }
 
         private setupLoader() {

@@ -2,7 +2,7 @@ module api.macro {
 
     export class MacroKey implements api.Equitable {
 
-        private static SEPARATOR = ":";
+        private static SEPARATOR: string = ":";
 
         private applicationKey: api.application.ApplicationKey;
 

@@ -36,11 +36,11 @@ module api.ui.selector.combobox {
 
         noOptionsText?: string;
 
-        displayMissingSelectedOptions?: boolean
+        displayMissingSelectedOptions?: boolean;
 
-        removeMissingSelectedOptions?: boolean
+        removeMissingSelectedOptions?: boolean;
 
-        skipAutoDropShowOnValueChange?: boolean
+        skipAutoDropShowOnValueChange?: boolean;
     }
 
     export enum PositionType {
@@ -67,7 +67,7 @@ module api.ui.selector.combobox {
 
         private input: ComboBoxOptionFilterInput;
 
-        private delayedInputValueChangedHandling;
+        private delayedInputValueChangedHandling: number;
 
         private delayedHandleInputValueChangedFnCall: DelayedFunctionCall;
 
@@ -93,7 +93,7 @@ module api.ui.selector.combobox {
 
         private contentMissingListeners: {(ids: string[]): void}[] = [];
 
-        private selectiondDelta = [];
+        private selectiondDelta: string[] = [];
 
         private noOptionsText: string;
 
@@ -181,7 +181,7 @@ module api.ui.selector.combobox {
         setReadOnly(readOnly: boolean) {
             super.setReadOnly(readOnly);
 
-            this.input.setReadOnly(readOnly)
+            this.input.setReadOnly(readOnly);
             this.selectedOptionsView.setEditable(!readOnly);
 
             this.toggleClass('readonly', readOnly);
@@ -426,7 +426,8 @@ module api.ui.selector.combobox {
             return selectedOptions;
         }
 
-        private selectExistingAndHandleMissing(optionIds, missingOptionIds): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
+        // tslint:disable-next-line:max-line-length
+        private selectExistingAndHandleMissing(optionIds: string[], missingOptionIds: string[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
             let nonExistingIds: string[] = [],
                 selectedOptions = [];
 
@@ -982,9 +983,9 @@ module api.ui.selector.combobox {
             this.contentMissingListeners.push(listener);
         }
 
-        unContentMissing(listener: (ids: string[])=>void) {
-            this.contentMissingListeners = this.contentMissingListeners.filter(function (curr) {
-                return curr != listener;
+        unContentMissing(listener: (ids: string[]) => void) {
+            this.contentMissingListeners = this.contentMissingListeners.filter(function (curr: (ids: string[]) => void) {
+                return curr !== listener;
             });
         }
 
@@ -1001,13 +1002,13 @@ module api.ui.selector.combobox {
         unValueLoaded(listener: (options: Option<OPTION_DISPLAY_VALUE>[]) => void) {
             this.valueLoadedListeners = this.valueLoadedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyValueLoaded(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.valueLoadedListeners.forEach((listener) => {
                 listener(options);
-            })
+            });
         }
 
         onOptionDeselected(listener: {(removed: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {

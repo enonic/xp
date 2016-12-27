@@ -63,12 +63,12 @@ module api.util.htmlarea.editor {
             return processedContent;
         }
 
-        public static updateImageAlignmentBehaviour(editor) {
+        public static updateImageAlignmentBehaviour(editor: HtmlAreaEditor) {
             var imgs = editor.getBody().querySelectorAll('img');
 
             for (let i = 0; i < imgs.length; i++) {
                 this.changeImageParentAlignmentOnImageAlignmentChange(imgs[i]);
-                this.updateImageParentAlignment(imgs[i])
+                this.updateImageParentAlignment(imgs[i]);
             }
         }
 

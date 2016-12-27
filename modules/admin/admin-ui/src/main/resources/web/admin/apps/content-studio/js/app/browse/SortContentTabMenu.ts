@@ -77,7 +77,7 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
     }
 
     isKeyPrevious(event: KeyboardEvent) {
-        return KeyHelper.isArrowUpKey(event)
+        return KeyHelper.isArrowUpKey(event);
     }
 
     protected hideMenu() {

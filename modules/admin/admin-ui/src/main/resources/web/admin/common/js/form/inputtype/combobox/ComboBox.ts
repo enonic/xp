@@ -64,7 +64,7 @@ module api.form.inputtype.combobox {
             this.comboBox = this.createComboBox(input, propertyArray);
 
             this.comboBoxOptions.forEach((option: ComboBoxOption) => {
-                this.comboBox.addOption({value: option.value, displayValue: option.label})
+                this.comboBox.addOption({value: option.value, displayValue: option.label});
             });
 
             this.appendChild(this.comboBox);
@@ -149,7 +149,7 @@ module api.form.inputtype.combobox {
             });
         }
 
-        private comboBoxFilter(item: api.ui.selector.Option<string>, args) {
+        private comboBoxFilter(item: api.ui.selector.Option<string>, args: any) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 

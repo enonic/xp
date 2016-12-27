@@ -28,7 +28,7 @@ module api.security {
             return {
                 displayName: this.displayName,
                 key: this.key.toString()
-            }
+            };
         }
 
         getKey(): PrincipalKey {

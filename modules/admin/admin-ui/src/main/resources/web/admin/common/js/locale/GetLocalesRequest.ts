@@ -14,7 +14,7 @@ module api.locale {
         getParams(): Object {
             return {
                 "query": this.searchQuery
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

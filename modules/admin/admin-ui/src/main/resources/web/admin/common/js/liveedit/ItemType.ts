@@ -6,8 +6,8 @@ module api.liveedit {
 
     export class ItemType implements api.Equitable {
 
-        static ATTRIBUTE_TYPE = "portal-component-type";
-        static ATTRIBUTE_REGION_NAME = "portal-region";
+        static ATTRIBUTE_TYPE: string = "portal-component-type";
+        static ATTRIBUTE_REGION_NAME: string = "portal-region";
 
         private static shortNameToInstance: ShortName = {};
 
@@ -35,7 +35,7 @@ module api.liveedit {
 
 
         isComponentType(): boolean {
-            return false
+            return false;
         }
 
         toComponentType(): api.content.page.region.ComponentType {

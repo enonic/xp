@@ -57,13 +57,13 @@ module api.ui.security.acl {
         unValueChanged(listener: (item: UserStoreAccessControlEntry) => void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyValueChanged(item: UserStoreAccessControlEntry) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(item);
-            })
+            });
         }
 
         public setUserStoreAccessControlEntry(ace: UserStoreAccessControlEntry, silent?: boolean) {

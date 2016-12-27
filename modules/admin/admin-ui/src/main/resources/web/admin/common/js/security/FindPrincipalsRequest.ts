@@ -21,7 +21,7 @@ module api.security {
                 userStoreKey: this.userStoreKey ? this.userStoreKey.toString() : null,
                 from: this.from || null,
                 size: this.size || null
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

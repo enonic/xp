@@ -80,7 +80,7 @@ module api.system {
         unConnectionRestored(listener: ()=>void) {
             this.connectionRestoredListeners = this.connectionRestoredListeners.filter((currentListener: ()=>void) => {
                 return currentListener != listener;
-            })
+            });
         }
 
         unSessionExpired(listener: ()=>void) {

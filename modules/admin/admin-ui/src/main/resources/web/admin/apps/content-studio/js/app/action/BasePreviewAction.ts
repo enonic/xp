@@ -4,8 +4,8 @@ import Action = api.ui.Action;
 import RenderingMode = api.rendering.RenderingMode;
 
 interface OpenedWindow {
-    openedWindow: Window,
-    isBlocked: boolean
+    openedWindow: Window;
+    isBlocked: boolean;
 }
 
 export class BasePreviewAction extends Action {
@@ -51,7 +51,7 @@ export class BasePreviewAction extends Action {
         return {openedWindow, isBlocked};
     }
 
-    protected updateLocation(targetWindow, content: api.content.ContentSummary, focus: boolean = true) {
+    protected updateLocation(targetWindow: Window, content: api.content.ContentSummary, focus: boolean = true) {
         targetWindow.location.href = api.rendering.UriHelper.getPortalUri(content.getPath().toString(),
             RenderingMode.PREVIEW, api.content.Branch.DRAFT);
         if (focus) {

@@ -128,7 +128,7 @@ module api.liveedit {
         private notifyOrientationChanged(orientation: ItemViewContextMenuOrientation) {
             this.orientationListeners.forEach((listener) => {
                 listener(orientation);
-            })
+            });
         }
 
         onOrientationChanged(listener: (orientation: ItemViewContextMenuOrientation) => void) {
@@ -138,7 +138,7 @@ module api.liveedit {
         unOrientationChanged(listener: (orientation: ItemViewContextMenuOrientation) => void) {
             this.orientationListeners = this.orientationListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {
@@ -215,10 +215,10 @@ module api.liveedit {
     }
 
     export class ItemViewContextMenuArrow extends api.dom.DivEl {
-        private static clsBottom = "bottom";
-        private static clsTop = "top";
-        private static clsLeft = "left";
-        private static clsRight = "right";
+        private static clsBottom: string = "bottom";
+        private static clsTop: string = "top";
+        private static clsLeft: string = "left";
+        private static clsRight: string = "right";
 
         constructor() {
             super("item-view-context-menu-arrow " + ItemViewContextMenuArrow.clsBottom);

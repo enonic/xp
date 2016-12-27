@@ -6,7 +6,7 @@ module api.ui.toolbar {
         private dropdown: api.dom.DivEl;
         private widthCache: number[] = [];
         private hostElement: api.dom.Element;
-        private static expandedCls = "expanded";
+        private static expandedCls: string = "expanded";
 
         constructor(caption: string = "Actions", hostElement?: api.dom.Element) {
             super();
@@ -35,7 +35,7 @@ module api.ui.toolbar {
             }
         }
 
-        private onButtonClicked(e) {
+        private onButtonClicked(e: MouseEvent) {
             let onBodyClicked = () => {
                 this.collapse();
                 api.dom.Body.get().unClicked(onBodyClicked);
@@ -49,7 +49,7 @@ module api.ui.toolbar {
             e.stopPropagation();
         }
 
-        private onMenuClicked(e) {
+        private onMenuClicked(e: MouseEvent) {
             this.collapse();
             e.stopPropagation();
         }

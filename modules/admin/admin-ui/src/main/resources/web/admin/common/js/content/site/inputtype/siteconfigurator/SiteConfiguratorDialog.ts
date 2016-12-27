@@ -41,7 +41,7 @@ module api.content.site.inputtype.siteconfigurator {
 
                 api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog().onRemoved(() => {
                     this.removeClass("masked");
-                })
+                });
             });
         }
 

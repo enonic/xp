@@ -2,7 +2,7 @@ module api.content.json {
 
     export interface ContentsExistJson {
 
-        contentsExistJson: ContentExistJson[]
+        contentsExistJson: ContentExistJson[];
     }
 
     export interface ContentExistJson {

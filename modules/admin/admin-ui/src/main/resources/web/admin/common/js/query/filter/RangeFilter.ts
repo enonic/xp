@@ -23,7 +23,7 @@ module api.query.filter {
 
             return <api.query.filter.FilterTypeWrapperJson> {
                 RangeFilter: json
-            }
+            };
 
         }
 

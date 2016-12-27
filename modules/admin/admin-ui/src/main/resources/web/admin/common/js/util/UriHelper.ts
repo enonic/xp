@@ -2,8 +2,8 @@ module api.util {
 
     export class UriHelper {
 
-        private static DEFAULT_URI = '/';
-        private static DEFAULT_ADMIN_URI = '/admin';
+        private static DEFAULT_URI: string = '/';
+        private static DEFAULT_ADMIN_URI: string = '/admin';
 
         /**
          * Creates an URI from supplied path.

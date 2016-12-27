@@ -42,16 +42,16 @@ module api.data {
             this.array = [];
 
             this.propertyAddedEventHandler = (event) => {
-                this.forwardPropertyAddedEvent(event)
+                this.forwardPropertyAddedEvent(event);
             };
             this.propertyRemovedEventHandler = (event) => {
-                this.forwardPropertyRemovedEvent(event)
+                this.forwardPropertyRemovedEvent(event);
             };
             this.propertyIndexChangedEventHandler = (event) => {
-                this.forwardPropertyIndexChangedEvent(event)
+                this.forwardPropertyIndexChangedEvent(event);
             };
             this.propertyValueChangedEventHandler = (event) => {
-                this.forwardPropertyValueChangedEvent(event)
+                this.forwardPropertyValueChangedEvent(event);
             };
         }
 
@@ -504,7 +504,7 @@ module api.data {
                     var propertyArrayJsonArray = propertyValueJson.set;
                     propertyArrayJsonArray.forEach((propertyArrayJson: PropertyArrayJson) => {
 
-                        valueAsPropertySet.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, valueAsPropertySet, tree))
+                        valueAsPropertySet.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, valueAsPropertySet, tree));
                     });
 
                     value = new Value(valueAsPropertySet, ValueTypes.DATA);

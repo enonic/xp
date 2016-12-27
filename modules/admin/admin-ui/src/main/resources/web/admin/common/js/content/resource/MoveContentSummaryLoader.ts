@@ -86,7 +86,7 @@ module api.content.resource {
         }
 
         resetParams() {
-            this.getRequest().resetParams()
+            this.getRequest().resetParams();
         }
 
         private filterContent(contents: ContentSummary[], contentTypes: ContentType[]): ContentSummary[] {

@@ -103,13 +103,13 @@ module api.ui.security.acl {
         unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
     }
 
@@ -191,13 +191,13 @@ module api.ui.security.acl {
         unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
     }

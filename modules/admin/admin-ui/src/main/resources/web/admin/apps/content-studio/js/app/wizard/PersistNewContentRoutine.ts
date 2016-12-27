@@ -13,7 +13,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
     private createContentRequestProducer: {() : wemQ.Promise<CreateContentRequest>; };
 
-    private doneHandledContent = false;
+    private doneHandledContent: boolean = false;
 
     constructor(thisOfProducer: ContentWizardPanel) {
         super(thisOfProducer);

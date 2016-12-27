@@ -111,10 +111,10 @@ module api.application {
 
     export class MarketAppStatusFormatter {
 
-        public static statusInstallCssClass = "install";
-        public static statusInstalledCssClass = "installed";
-        public static statusInstallingCssClass = "installing";
-        public static statusUpdateCssClass = "update";
+        public static statusInstallCssClass: string = "install";
+        public static statusInstalledCssClass: string = "installed";
+        public static statusInstallingCssClass: string = "installing";
+        public static statusUpdateCssClass: string = "update";
 
         public static formatStatus(appStatus: MarketAppStatus, progress?: number): string {
 
@@ -137,7 +137,7 @@ module api.application {
                 status = "Unknown";
                 break;
             default:
-                status = "Unknown"
+                status = "Unknown";
             }
 
             if (!!MarketAppStatus[status]) {
@@ -168,7 +168,7 @@ module api.application {
                 cssClass = "unknown";
                 break;
             default:
-                cssClass = "Unknown"
+                cssClass = "Unknown";
             }
 
             if (!!MarketAppStatus[status]) {
@@ -190,7 +190,7 @@ module api.application {
                 performedOperation = "updated";
                 break;
             default:
-                performedOperation = "installed"
+                performedOperation = "installed";
             }
 
             return performedOperation;

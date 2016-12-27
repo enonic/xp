@@ -6,17 +6,18 @@ module api.util {
         // be triggered. The function will be called after it stops being called for
         // N milliseconds. If `immediate` is passed, trigger the function on the
         // leading edge, instead of the trailing.
-        static debounce(func, wait, immediate) {
-            var timeout;
+        static debounce(func: Function, wait: number, immediate: boolean): (...args: any[]) => void {
+            let timeout;
             return function (...anyArgs: any[]) {
-                var context = this, args = arguments;
-                var later = function () {
+                const context = this;
+                const args = arguments;
+                const later = function () {
                     timeout = null;
                     if (!immediate) {
                         func.apply(context, args);
                     }
                 };
-                var callNow = immediate && !timeout;
+                const callNow = immediate && !timeout;
                 clearTimeout(timeout);
                 timeout = setTimeout(later, wait);
                 if (callNow) {
@@ -26,7 +27,7 @@ module api.util {
         }
 
         // Handles the result of the initialization, while the result is truthy
-        static whileTruthy(initializer: () => any, callback: (value: any) => void) {
+        static whileTruthy(initializer: () => any, callback: (value: any) => void): void {
             let result: any;
 
             for (result = initializer(); !!result; result = initializer()) {
@@ -34,7 +35,7 @@ module api.util {
             }
         }
 
-        static preventDragRedirect(message: String = "", element?: api.dom.Element) {
+        static preventDragRedirect(message: String = "", element?: api.dom.Element): void {
             element = element || api.dom.Body.get();
 
             var window = api.dom.WindowDOM.get();
@@ -60,11 +61,11 @@ module api.util {
             });
         }
 
-        static dispatchCustomEvent(name: string, element: api.dom.Element) {
+        static dispatchCustomEvent(name: string, element: api.dom.Element): void {
             wemjq(element.getHTMLElement()).trigger(name);
         }
 
-        static focusInOut(element: api.dom.Element, onFocusOut: () => void, wait: number = 50, preventMouseDown: boolean = true) {
+        static focusInOut(element: api.dom.Element, onFocusOut: () => void, wait: number = 50, preventMouseDown: boolean = true): void {
             let focusOutTimeout = 0;
             let target;
 
@@ -90,7 +91,7 @@ module api.util {
             }
         }
 
-        static lockEvent(event: Event) {
+        static lockEvent(event: Event): void {
             event.stopPropagation();
             event.preventDefault();
         }

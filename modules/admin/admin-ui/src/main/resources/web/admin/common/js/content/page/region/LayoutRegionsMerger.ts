@@ -98,7 +98,7 @@ module api.content.page.region {
 
             var result = Region.create(toRegion);
             fromRegion.getComponents().forEach((component: Component) => {
-                result.addComponent(component)
+                result.addComponent(component);
             });
             return result.build();
         }

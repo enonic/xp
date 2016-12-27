@@ -34,7 +34,7 @@ module api {
         }
 
         getSource(): any {
-            return this.source
+            return this.source;
         }
     }
 }

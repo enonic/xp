@@ -117,7 +117,7 @@ module api.form.inputtype.support {
         unOccurrenceValueChanged(listener: (occurrence: api.dom.Element, value: api.data.Value) => void) {
             this.inputValueChangedListeners = this.inputValueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         protected notifyOccurrenceValueChanged(occurrence: api.dom.Element, value: api.data.Value) {

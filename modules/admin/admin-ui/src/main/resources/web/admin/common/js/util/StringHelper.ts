@@ -2,16 +2,16 @@ module api.util {
 
     export class StringHelper {
 
-        static EMPTY_STRING = "";
+        static EMPTY_STRING: string = "";
 
-        static SAVE_CHAR_CODES = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': '&quot;',
-        "'": '&#39;',
-        "/": '&#x2F;'
-    };
+        static SAVE_CHAR_CODES: Object = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': '&quot;',
+            "'": '&#39;',
+            "/": '&#x2F;'
+        };
 
         static limit(str: string, length: number, ending: string = "\u2026"): string {
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.substring(0, length) + ending;
@@ -22,7 +22,7 @@ module api.util {
         }
 
         static capitalizeAll(str: string): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/(?:^|\s)\S/g, function (ch) {
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/(?:^|\s)\S/g, function (ch: string) {
                 return ch.toUpperCase();
             });
         }
@@ -110,7 +110,8 @@ module api.util {
          * @returns {string}
          */
         static format(str: string, ...tokens: any[]): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+            const regex: RegExp = /\{\{|\}\}|\{(\d+)\}/g;
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(regex, function (m: string, n: number) {
                 if (m == "{{") { return "{"; }
                 if (m == "}}") { return "}"; }
                 return tokens[n];

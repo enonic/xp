@@ -4,19 +4,19 @@ module api {
 
     export class NamePrettyfier {
 
-        private static STRIP_BEGINNING_PATTERN = /^([\.|\-|_]+)(.*)$/g;
+        private static STRIP_BEGINNING_PATTERN: RegExp = /^([\.|\-|_]+)(.*)$/g;
 
-        private static STRIP_ENDING_PATTERN = /(.*[^\.|\-|_])([\.|\-|_]+)$/g;
+        private static STRIP_ENDING_PATTERN: RegExp = /(.*[^\.|\-|_])([\.|\-|_]+)$/g;
 
-        private static NOT_ASCII = /[^\x00-\x7F]/g;
+        private static NOT_ASCII: RegExp = /[^\x00-\x7F]/g;
 
         private static DEFAULT_REPLACE: string = "";
 
-        private static REPLACE_WITH_HYPHEN_CHARS = NamePrettyfier.buildReplaceWithHyphenMap();
+        private static REPLACE_WITH_HYPHEN_CHARS: NamePrettyfier = NamePrettyfier.buildReplaceWithHyphenMap();
 
-        private static DIACRITICS = NamePrettyfier.buildDiacriticsMap();
+        private static DIACRITICS: NamePrettyfier = NamePrettyfier.buildDiacriticsMap();
 
-        private static NON_DIACRITICS = NamePrettyfier.buildNonDiacriticsMap();
+        private static NON_DIACRITICS: NamePrettyfier = NamePrettyfier.buildNonDiacriticsMap();
 
         static prettify(notPretty: string) {
 

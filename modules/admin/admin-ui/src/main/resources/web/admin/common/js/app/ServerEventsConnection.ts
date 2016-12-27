@@ -186,7 +186,7 @@ module api.app {
         }
 
         private notifyConnectionLost() {
-            this.connectionLostListeners.forEach((listener: (event)=>void)=> {
+            this.connectionLostListeners.forEach((listener: (event: any) => void) =>  {
                 listener.call(this);
             });
         }
@@ -197,13 +197,13 @@ module api.app {
 
         unConnectionLost(listener: () => void) {
             this.connectionLostListeners =
-                this.connectionLostListeners.filter((currentListener: ()=>void)=> {
+                this.connectionLostListeners.filter((currentListener: () => void) =>  {
                     return currentListener != listener;
                 });
         }
 
         private notifyConnectionRestored() {
-            this.connectionRestoredListeners.forEach((listener: (event)=>void)=> {
+            this.connectionRestoredListeners.forEach((listener: (event: any) => void) => {
                 listener.call(this);
             });
         }
@@ -214,8 +214,8 @@ module api.app {
 
         unConnectionRestored(listener: () => void) {
             this.connectionRestoredListeners =
-                this.connectionRestoredListeners.filter((currentListener: ()=>void)=> {
-                    return currentListener != listener;
+                this.connectionRestoredListeners.filter((currentListener: () => void) =>  {
+                    return currentListener !== listener;
                 });
         }
 

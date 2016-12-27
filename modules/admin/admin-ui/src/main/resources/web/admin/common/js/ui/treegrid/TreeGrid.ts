@@ -92,7 +92,7 @@ module api.ui.treegrid {
             this.grid = new Grid<TreeNode<DATA>>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
-            this.grid.setSelectionModel(new Slick.RowSelectionModel({
+            this.grid.setSelectionModel(<Slick.RowSelectionModel<TreeNode<DATA>, any>>new Slick.RowSelectionModel({
                 selectActiveRow: false
             }));
 
@@ -104,7 +104,7 @@ module api.ui.treegrid {
              */
             var selectorPlugin = this.grid.getCheckboxSelectorPlugin();
             if (selectorPlugin) {
-                this.grid.unregisterPlugin(this.grid.getCheckboxSelectorPlugin())
+                this.grid.unregisterPlugin(<Slick.Plugin<TreeNode<DATA>>>this.grid.getCheckboxSelectorPlugin());
             }
 
             this.grid.syncGridSelection(false);
@@ -412,7 +412,7 @@ module api.ui.treegrid {
         private notifyActiveChanged(active: boolean) {
             this.activeChangedListeners.forEach((listener) => {
                 listener(active);
-            })
+            });
         }
 
         getToolbar(): TreeGridToolbar {
@@ -490,7 +490,7 @@ module api.ui.treegrid {
                         this.grid.isRowSelected(this.gridData.getRowById(node.getId()))
                 );
             } else {
-                return false
+                return false;
             }
         }
 
@@ -955,7 +955,12 @@ module api.ui.treegrid {
             return deferred.promise;
         }
 
-        private doInsertNodeToParentWithChildren(parentNode, data, root, index: number, stashedParentNode, isRootParentNode) {
+        private doInsertNodeToParentWithChildren(parentNode: TreeNode<DATA>,
+                                                 data: DATA,
+                                                 root: TreeNode<DATA>,
+                                                 index: number,
+                                                 stashedParentNode: TreeNode<DATA>,
+                                                 isRootParentNode: boolean) {
             parentNode.insertChild(this.dataToTreeNode(data, root), index);
 
             var node = root.findNode(this.getDataId(data));

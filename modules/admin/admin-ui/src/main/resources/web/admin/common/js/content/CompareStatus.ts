@@ -48,7 +48,7 @@ module api.content {
                 status = "Conflict";
                 break;
             default:
-                status = "Unknown"
+                status = "Unknown";
             }
 
             if (!!CompareStatus[status]) {

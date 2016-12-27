@@ -6,7 +6,7 @@ module api.liveedit.layout {
 
     export class LayoutItemType extends ComponentItemType {
 
-        private static INSTANCE = new LayoutItemType();
+        private static INSTANCE: LayoutItemType = new LayoutItemType();
 
         static get(): LayoutItemType {
             return LayoutItemType.INSTANCE;
@@ -17,7 +17,7 @@ module api.liveedit.layout {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
 
         createView(config: CreateItemViewConfig<RegionView,LayoutComponent>): LayoutComponentView {

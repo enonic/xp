@@ -21,7 +21,7 @@ module api.security.acl {
             return {
                 /*"types": this.enumToStrings(this.allowedTypes),*/
                 "query": this.searchQuery
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

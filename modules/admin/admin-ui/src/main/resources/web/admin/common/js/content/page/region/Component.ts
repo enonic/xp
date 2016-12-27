@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class Component implements api.Equitable, api.Cloneable {
 
-        public static PROPERTY_NAME = 'name';
+        public static PROPERTY_NAME: string = 'name';
 
         private index: number = -1;
 
@@ -141,7 +141,7 @@ module api.content.page.region {
         private notifyChangedEvent(event: ComponentChangedEvent) {
             this.changedListeners.forEach((listener: (event: ComponentChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onReset(listener: (event: ComponentResetEvent)=>void) {
@@ -158,7 +158,7 @@ module api.content.page.region {
             var event = new ComponentResetEvent(this.getPath());
             this.resetListeners.forEach((listener: (event: ComponentResetEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         /**

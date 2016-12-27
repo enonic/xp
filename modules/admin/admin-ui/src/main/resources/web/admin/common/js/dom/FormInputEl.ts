@@ -219,13 +219,13 @@ module api.dom {
         unDirtyChanged(listener: (dirty: boolean) => void) {
             this.dirtyChangedListeners = this.dirtyChangedListeners.filter((curr) => {
                 return listener !== curr;
-            })
+            });
         }
 
         private notifyDirtyChanged(dirty: boolean) {
             this.dirtyChangedListeners.forEach((listener) => {
                 listener(dirty);
-            })
+            });
         }
 
         onValueChanged(listener: (event: api.ValueChangedEvent) => void) {
@@ -235,13 +235,13 @@ module api.dom {
         unValueChanged(listener: (event: api.ValueChangedEvent) => void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return listener !== curr;
-            })
+            });
         }
 
         private notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
     }
 }

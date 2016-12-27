@@ -220,7 +220,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         return deferred.promise;
     }
 
-    private loadChildren(parentNode, allowedTypes): wemQ.Promise<UserTreeGridItem[]> {
+    private loadChildren(parentNode: TreeNode<UserTreeGridItem>, allowedTypes: PrincipalType[]): wemQ.Promise<UserTreeGridItem[]> {
 
         var deferred = wemQ.defer<UserTreeGridItem[]>();
 
@@ -234,10 +234,12 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
             return el.getData();
         }).slice(0, from);
 
+        let userStoreNode: UserTreeGridItem = null;
+        let userStoreKey: UserStoreKey = null;
         // fetch principals from the user store, if parent node 'Groups' or 'Users' was selected
         if(parentNode.getData().getType() != UserTreeGridItemType.ROLES) {
-            var userStoreNode: UserTreeGridItem = parentNode.getParent().getData();
-            var userStoreKey: UserStoreKey = userStoreNode.getUserStore().getKey();
+            userStoreNode = parentNode.getParent().getData();
+            userStoreKey = userStoreNode.getUserStore().getKey();
         }
 
         new FindPrincipalsRequest().setUserStoreKey(userStoreKey).

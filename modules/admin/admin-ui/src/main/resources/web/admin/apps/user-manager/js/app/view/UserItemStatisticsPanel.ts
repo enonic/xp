@@ -83,7 +83,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "memeberships");
 
                 var roles = principal.asUser().getMemberships().filter((el) => {
-                    return el.isRole()
+                    return el.isRole();
                 }).map((el) => {
                     var viewer = new PrincipalViewer();
                     viewer.setObject(el);
@@ -92,7 +92,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 rolesAndGroupsGroup.addDataElements("Roles", roles);
 
                 var groups = principal.asUser().getMemberships().filter((el) => {
-                    return el.isGroup()
+                    return el.isGroup();
                 }).map((el) => {
                     var viewer = new PrincipalViewer();
                     viewer.setObject(el);

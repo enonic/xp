@@ -60,7 +60,7 @@ module api.ui.selector.combobox {
 
             var url = this.resolveIconUrl(content);
             if (!api.util.StringHelper.isBlank(url)) {
-                namesAndIconView.setIconUrl(this.resolveIconUrl(content) + '?crop=false')
+                namesAndIconView.setIconUrl(this.resolveIconUrl(content) + '?crop=false');
             } else {
                 namesAndIconView.setIconClass(this.resolveIconClass(content));
             }

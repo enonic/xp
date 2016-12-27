@@ -1,10 +1,13 @@
 module api.schema.relationshiptype {
 
     import ApplicationKey = api.application.ApplicationKey;
+    import ApplicationBasedName = api.application.ApplicationBasedName;
 
     export class RelationshipTypeName extends api.application.ApplicationBasedName {
 
-        static REFERENCE = new RelationshipTypeName(ApplicationKey.SYSTEM + api.application.ApplicationBasedName.SEPARATOR + "reference");
+        static REFERENCE: RelationshipTypeName = new RelationshipTypeName(
+            `${ApplicationKey.SYSTEM}${ApplicationBasedName.SEPARATOR}reference`
+        );
 
         constructor(name: string) {
             api.util.assertNotNull(name, "RelationshipType name can't be null");

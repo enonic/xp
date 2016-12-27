@@ -2,18 +2,18 @@ module api.ui {
 
     export class Tooltip {
 
-        static SIDE_TOP = "top";
-        static SIDE_RIGHT = "right";
-        static SIDE_BOTTOM = "bottom";
-        static SIDE_LEFT = "left";
+        static SIDE_TOP: string = "top";
+        static SIDE_RIGHT: string = "right";
+        static SIDE_BOTTOM: string = "bottom";
+        static SIDE_LEFT: string = "left";
 
-        static TRIGGER_HOVER = "hover";
-        static TRIGGER_FOCUS = "focus";
-        static TRIGGER_NONE = "none";
+        static TRIGGER_HOVER: string = "hover";
+        static TRIGGER_FOCUS: string = "focus";
+        static TRIGGER_NONE: string = "none";
 
-        static MODE_STATIC = "static";
-        static MODE_GLOBAL_STATIC = "global_static";
-        static MODE_FOLLOW = "follow";
+        static MODE_STATIC: string = "static";
+        static MODE_GLOBAL_STATIC: string = "global_static";
+        static MODE_FOLLOW: string = "follow";
 
         private static multipleAllowed: boolean = true;
         private static instances: Tooltip[] = [];
@@ -369,7 +369,7 @@ module api.ui {
                     //console.log("Hiding tooltip because multiple instances are not allowed", tooltip);
                     tooltip.hide();
                 }
-            })
+            });
         }
 
         static allowMultipleInstances(allow: boolean) {

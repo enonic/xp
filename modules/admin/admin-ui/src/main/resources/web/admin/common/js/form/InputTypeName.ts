@@ -45,7 +45,7 @@ module api.form {
 
         public toJson(): string {
 
-            return this.toString()
+            return this.toString();
         }
 
         equals(o: api.Equitable): boolean {

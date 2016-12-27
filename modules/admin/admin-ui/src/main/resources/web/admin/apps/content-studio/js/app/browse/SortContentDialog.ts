@@ -158,7 +158,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
         }
     }
 
-    private handleOpenSortDialogEvent(event) {
+    private handleOpenSortDialogEvent(event: OpenSortDialogEvent) {
         this.parentContent = event.getContent();
         this.curChildOrder = this.getParentChildOrder();
         this.prevChildOrder = null;

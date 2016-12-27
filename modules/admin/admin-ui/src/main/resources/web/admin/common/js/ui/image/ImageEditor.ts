@@ -64,13 +64,13 @@ module api.ui.image {
         private imgH: number = 1;
         private frameW: number = 1;
         private frameH: number = 1;
-        private maxZoom = 5;
+        private maxZoom: number = 5;
 
-        private mouseUpListener;
-        private mouseMoveListener;
-        private mouseDownListener;
-        private dragMouseDownListener;
-        private knobMouseDownListener;
+        private mouseUpListener: (event: MouseEvent) => void;
+        private mouseMoveListener: (event: MouseEvent) => void;
+        private mouseDownListener: (event: MouseEvent) => void;
+        private dragMouseDownListener: (event: MouseEvent) => void;
+        private knobMouseDownListener: (event: MouseEvent) => void;
 
         private stickyToolbar: DivEl;
 
@@ -97,7 +97,7 @@ module api.ui.image {
 
         private skipNextOutsideClick: boolean;
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         constructor(src?: string) {
             super('image-editor');
@@ -182,7 +182,7 @@ module api.ui.image {
 
             // prevent FF image dragging
             this.clip.getHTMLElement().querySelector('image')['ondragstart'] = function () {
-                return false
+                return false;
             };
 
             var imageMask = new api.dom.DivEl("image-bg-mask");
@@ -268,7 +268,7 @@ module api.ui.image {
             return {
                 x: point.x / this.cropData.w,
                 y: point.y / this.cropData.h
-            }
+            };
         }
 
         /**
@@ -282,7 +282,7 @@ module api.ui.image {
             return {
                 x: x * this.cropData.w,
                 y: y * this.cropData.h
-            }
+            };
         }
 
         /**
@@ -298,7 +298,7 @@ module api.ui.image {
                 y: rect.y / minH,
                 w: rect.w / minW,
                 h: rect.h / minH
-            }
+            };
         }
 
         /**
@@ -314,7 +314,7 @@ module api.ui.image {
                 y: rect.y * minH,
                 w: rect.w * minW,
                 h: rect.h * minH
-            }
+            };
         }
 
         /**
@@ -543,10 +543,10 @@ module api.ui.image {
                         if (!isInsideLimit && (Math.abs(newTop - newTopLimited) > Math.abs(myTop - newTopLimited))) {
                             // we are outside limit and trying to move away from it
                             // so keep my current position to prevent it
-                            newTop = myTop
+                            newTop = myTop;
                         } else if (isInsideLimit) {
                             // we are inside limit where limits apply
-                            newTop = newTopLimited
+                            newTop = newTopLimited;
                         } else {
                             // we are outside the limit but moving towards the limit
                             // leave newTop untouched to allow it
@@ -565,7 +565,7 @@ module api.ui.image {
                         api.dom.Body.get().unClicked(this.maskClickListener);
                         api.dom.Body.get().unMouseWheel(this.maskWheelListener);
                         bodyMask.unHidden(this.maskHideListener);
-                    }
+                    };
                 }
                 bodyMask.onHidden(this.maskHideListener);
 
@@ -578,12 +578,12 @@ module api.ui.image {
         }
 
         // Reasonable defaults
-        private WHEEL_PIXEL_STEP = 10;
-        private WHEEL_LINE_HEIGHT = 20;
-        private WHEEL_PAGE_HEIGHT = 800;
+        private WHEEL_PIXEL_STEP: number = 10;
+        private WHEEL_LINE_HEIGHT: number = 20;
+        private WHEEL_PAGE_HEIGHT: number = 800;
 
         // https://github.com/facebook/fixed-data-table/blob/master/dist/fixed-data-table.js#L2052
-        private normalizeWheel(event) {
+        private normalizeWheel(event: (WheelEvent|any)) {
             var sX = 0, sY = 0,       // spinX, spinY
                 pX = 0, pY = 0;       // pixelX, pixelY
 
@@ -929,7 +929,7 @@ module api.ui.image {
                     y: y,
                     r: this.focusData.r,
                     auto: this.focusData.auto
-                }
+                };
             }
         }
 
@@ -978,7 +978,7 @@ module api.ui.image {
             return {
                 x: this.focusData.x,
                 y: this.focusData.y
-            }
+            };
         }
 
         resetFocusPosition() {
@@ -1263,7 +1263,7 @@ module api.ui.image {
                     w: svg.w,
                     h: svg.h,
                     auto: this.cropData.auto
-                }
+                };
             }
         }
 
@@ -1335,7 +1335,7 @@ module api.ui.image {
                 y: this.cropData.y,
                 w: this.cropData.w,
                 h: this.cropData.h
-            }
+            };
         }
 
         resetCropPosition() {
@@ -1594,7 +1594,7 @@ module api.ui.image {
                 y: y,
                 w: x2 - x,
                 h: y2 - y
-            }
+            };
         }
 
         private isCropNotModified(rect: SVGRect): boolean {
@@ -1618,7 +1618,7 @@ module api.ui.image {
                     y: zoom.y,
                     w: zoom.w,
                     h: zoom.h
-                }
+                };
             }
         }
 
@@ -1679,7 +1679,7 @@ module api.ui.image {
                 y: this.zoomData.y,
                 w: this.zoomData.w,
                 h: this.zoomData.h
-            }
+            };
         }
 
         resetZoomPosition() {
@@ -1810,13 +1810,13 @@ module api.ui.image {
         unEditModeChanged(listener: (edit: boolean, position: Rect, zoom: Rect, focus: Point) => void) {
             this.editModeListeners = this.editModeListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyEditModeChanged(edit: boolean, position: Rect, zoom: Rect, focus: Point) {
             this.editModeListeners.forEach((listener) => {
                 listener(edit, position, zoom, focus);
-            })
+            });
         }
 
 
@@ -1837,7 +1837,7 @@ module api.ui.image {
         private notifyFocusAutoPositionedChanged(auto: boolean) {
             this.autoFocusChangedListeners.forEach((listener) => {
                 listener(auto);
-            })
+            });
         }
 
         onFocusPositionChanged(listener: (position: Point) => void) {
@@ -1854,7 +1854,7 @@ module api.ui.image {
             var normalizedPosition = this.normalizePoint(position);
             this.focusPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);
-            })
+            });
         }
 
         onFocusRadiusChanged(listener: (r: number) => void) {
@@ -1871,7 +1871,7 @@ module api.ui.image {
             var normalizedRadius = this.normalizeRadius(r);
             this.focusRadiusChangedListeners.forEach((listener) => {
                 listener(normalizedRadius);
-            })
+            });
         }
 
 
@@ -1892,7 +1892,7 @@ module api.ui.image {
         private notifyCropAutoPositionedChanged(auto: boolean) {
             this.autoCropChangedListeners.forEach((listener) => {
                 listener(auto);
-            })
+            });
         }
 
         onCropPositionChanged(listener: (position: Rect) => void) {
@@ -1909,7 +1909,7 @@ module api.ui.image {
             var normalizedPosition = this.rectFromSVG(this.normalizeRect(position));
             this.cropPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);
-            })
+            });
         }
 
         onShaderVisibilityChanged(listener: (auto: boolean) => void) {
@@ -1925,7 +1925,7 @@ module api.ui.image {
         private notifyShaderVisibilityChanged(auto: boolean) {
             this.shaderVisibilityChangedListeners.forEach((listener) => {
                 listener(auto);
-            })
+            });
         }
 
         onImageError(listener: (event: UIEvent) => void) {
@@ -1935,7 +1935,7 @@ module api.ui.image {
         unImageError(listener: (event: UIEvent) => void) {
             this.imageErrorListeners = this.imageErrorListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyImageError(event: UIEvent) {

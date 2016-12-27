@@ -16,7 +16,7 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
 
     private placeholder: api.dom.SpanEl;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super('attachments-widget-item-view');

@@ -16,7 +16,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     private dropzoneContainer: api.ui.uploader.DropzoneContainer;
 
-    private onMarketLoaded;
+    private onMarketLoaded: () => void;
 
     private applicationInput: ApplicationInput;
 
@@ -142,7 +142,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         };
 
         this.applicationInput.onUploadFailed((event) => {
-            uploadFailedHandler(event, this.applicationInput.getUploader())
+            uploadFailedHandler(event, this.applicationInput.getUploader());
         });
 
         let uploadStartedHandler = (event: FileUploadStartedEvent<Application>) => {

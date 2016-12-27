@@ -242,7 +242,7 @@ module api.dom {
             });
         }
 
-        private initChildren(rendered): wemQ.Promise<boolean> {
+        private initChildren(rendered: boolean): wemQ.Promise<boolean> {
             this.childrenAddedDuringInit = false;
             var childPromises = [];
 
@@ -310,7 +310,7 @@ module api.dom {
                     api.DefaultErrorHandler.handle(reason);
                     return false;
                 });
-            })
+            });
         }
 
         isRendering(): boolean {
@@ -757,7 +757,7 @@ module api.dom {
         /*
          *      Event listeners
          */
-        private mouseEnterByHandler = {};
+        private mouseEnterByHandler: Object = {};
 
         onMouseEnter(handler: (e: MouseEvent) => any) {
             if (typeof this.getHTMLElement().onmouseenter != "undefined") {
@@ -781,7 +781,7 @@ module api.dom {
             }
         }
 
-        private mouseLeaveByHandler = {};
+        private mouseLeaveByHandler: Object = {};
 
         onMouseLeave(handler: (e: MouseEvent) => any) {
             if (typeof this.getHTMLElement().onmouseleave != "undefined") {
@@ -828,7 +828,7 @@ module api.dom {
         unAdded(listener: (event: ElementAddedEvent) => void) {
             this.addedListeners = this.addedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyAdded() {
@@ -839,7 +839,7 @@ module api.dom {
 
             this.children.forEach((child: Element) => {
                 child.notifyAdded();
-            })
+            });
         }
 
         onRemoved(listener: (event: ElementRemovedEvent) => void) {
@@ -849,7 +849,7 @@ module api.dom {
         unRemoved(listener: (event: ElementRemovedEvent) => void) {
             this.removedListeners = this.removedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyRemoved(parent: Element, target?: Element) {
@@ -859,7 +859,7 @@ module api.dom {
             });
             this.children.forEach((child: Element) => {
                 child.notifyRemoved(removedEvent.getParent(), removedEvent.getTarget());
-            })
+            });
         }
 
         onRendered(listener: (event: ElementRenderedEvent) => void) {
@@ -869,7 +869,7 @@ module api.dom {
         unRendered(listener: (event: ElementRenderedEvent) => void) {
             this.renderedListeners = this.renderedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyRendered() {
@@ -887,7 +887,7 @@ module api.dom {
         unShown(listener: (event: ElementShownEvent) => void) {
             this.shownListeners = this.shownListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyShown(target?: Element, deep?: boolean) {
@@ -921,7 +921,7 @@ module api.dom {
             });
             this.children.forEach((child: Element) => {
                 child.notifyHidden(hiddenEvent.getTarget());
-            })
+            });
         }
 
         onScrolled(listener: (event: WheelEvent) => void) {

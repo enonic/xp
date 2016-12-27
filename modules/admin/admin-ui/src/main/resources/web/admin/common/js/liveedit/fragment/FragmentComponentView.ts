@@ -62,14 +62,14 @@ module api.liveedit.fragment {
             var contentDeletedListener = (event) => {
                 var deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
                     return !deletedItem.isPending() && deletedItem.getContentId().equals(this.component.getFragment());
-                })
+                });
                 if (deleted) {
                     this.notifyFragmentLoadError();
                     new api.liveedit.ShowWarningLiveEditEvent("Fragment " + this.component.getFragment() +
                                                               " is no longer available").fire();
                     this.convertToBrokenFragmentView();
                 }
-            }
+            };
 
             ContentDeletedEvent.on(contentDeletedListener);
 
@@ -83,7 +83,7 @@ module api.liveedit.fragment {
                 if (event.getContentId().equals(this.component.getFragment())) {
                     new FragmentComponentReloadRequiredEvent(this).fire();
                 }
-            }
+            };
 
             ContentUpdatedEvent.on(contentUpdatedListener);
 
@@ -187,7 +187,7 @@ module api.liveedit.fragment {
         unFragmentContentLoaded(listener: (event: api.liveedit.FragmentComponentLoadedEvent) => void) {
             this.fragmentContentLoadedListeners = this.fragmentContentLoadedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyFragmentContentLoaded() {
@@ -204,7 +204,7 @@ module api.liveedit.fragment {
         unFragmentLoadError(listener: (event: api.liveedit.FragmentLoadErrorEvent) => void) {
             this.fragmentLoadErrorListeners = this.fragmentLoadErrorListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyFragmentLoadError() {

@@ -51,9 +51,7 @@ module api.content.resource {
                 }
             });
 
-            return Object.keys(contentVersionsMap).map(function (key) {
-                return contentVersionsMap[key];
-            });
+            return Object.keys(contentVersionsMap).map((key: string) => contentVersionsMap[key]);
         }
 
     }

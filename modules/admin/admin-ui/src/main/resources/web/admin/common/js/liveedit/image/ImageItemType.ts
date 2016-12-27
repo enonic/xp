@@ -8,7 +8,7 @@ module api.liveedit.image {
 
     export class ImageItemType extends ComponentItemType {
 
-        private static INSTANCE = new ImageItemType();
+        private static INSTANCE: ImageItemType = new ImageItemType();
 
         static get(): ImageItemType {
             return ImageItemType.INSTANCE;
@@ -29,7 +29,7 @@ module api.liveedit.image {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
     }
 

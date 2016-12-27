@@ -61,7 +61,7 @@ module api.content.form.inputtype.contentselector {
                 this.contentComboBox.getSelectedOptionView().getSelectedOptions().forEach(
                     (selectedOption: any) => {
                         if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = ""
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "";
                         }
                     });
 

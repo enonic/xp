@@ -17,7 +17,7 @@ import Element = api.dom.Element;
 
 export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
-    protected handleDragInit(e, dd) {
+    protected handleDragInit(e: DragEvent, dd: DragEventData) {
         var row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target)),
             nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
             draggedNode = nodes[row.getSiblingIndex()];
@@ -46,7 +46,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     }
 
 
-    protected handleDragEnd(event: Event, data) {
+    protected handleDragEnd(event: Event, data: any) {
         api.dom.Body.get().unMouseMove(this.handleHelperMove);
         api.dom.Body.get().removeChild(DragHelper.get());
 
@@ -56,7 +56,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         super.handleDragEnd(event, data);
     }
 
-    protected handleBeforeMoveRows(event: Event, data): boolean {
+    protected handleBeforeMoveRows(event: Event, data: any): boolean {
 
         var dataList = this.contentGrid.getRoot().getCurrentRoot().treeToList();
 
@@ -100,7 +100,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         return model ? model.getItemId() : null;
     }
 
-    protected handleMovements(rowDataId, moveBeforeRowDataId) {
+    protected handleMovements(rowDataId: any, moveBeforeRowDataId: any) {
         return;
     }
 

@@ -110,7 +110,7 @@ module api.form {
                     formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
                         var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
                         new api.content.event.EditContentEvent([summaryAndStatus]).fire();
-                    })
+                    });
                 });
 
                 api.dom.WindowDOM.get().onResized((event: UIEvent) => this.checkSizeChanges(), this);
@@ -284,19 +284,19 @@ module api.form {
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyLayoutFinished() {
             this.layoutFinishedListeners.forEach((listener) => {
                 listener();
-            })
+            });
         }
 
         toggleHelpText(show?: boolean) {

@@ -153,7 +153,7 @@ module api.app.browse {
                     // Hack: Same hack.
                     this.browseToolbar.onRendered(() => {
                         setTimeout(() => {
-                            this.appendChild(this.gridAndItemsSplitPanel)
+                            this.appendChild(this.gridAndItemsSplitPanel);
                         });
                     });
                 }

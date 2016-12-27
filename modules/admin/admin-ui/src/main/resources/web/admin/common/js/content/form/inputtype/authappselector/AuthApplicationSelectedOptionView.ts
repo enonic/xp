@@ -62,7 +62,7 @@ module api.content.site.inputtype.authappselector {
             this.appendChild(header);
 
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
-                this.toggleClass("invalid", !event.isValid())
+                this.toggleClass("invalid", !event.isValid());
             };
 
             this.formView = this.createFormView(this.siteConfig);
@@ -142,7 +142,7 @@ module api.content.site.inputtype.authappselector {
             this.unbindValidationEvent(this.formView);
             this.formView = formViewStateToRevertTo;
             this.formView.validate(false, true);
-            this.toggleClass("invalid", !this.formView.isValid())
+            this.toggleClass("invalid", !this.formView.isValid());
         }
 
         private undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel: AuthApplicationComboBox) {
@@ -211,13 +211,13 @@ module api.content.site.inputtype.authappselector {
         unEditClicked(listener: (event: MouseEvent) => void) {
             this.editClickedListeners = this.editClickedListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyEditClicked(event: MouseEvent) {
             this.editClickedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey): void;}) {

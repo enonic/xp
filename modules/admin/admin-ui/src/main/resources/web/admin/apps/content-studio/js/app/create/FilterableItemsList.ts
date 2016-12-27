@@ -45,7 +45,7 @@ export class FilterableItemsList extends NewContentDialogList {
             var contentTypeName = contentType.getContentTypeName();
             if (!contentTypeName.isMedia() && !contentTypeName.isDescendantOfMedia() && !contentTypeName.isFragment()) {
                 contentTypesByName[contentType.getName()] = contentType;
-                items.push(NewContentDialogListItem.fromContentType(contentType))
+                items.push(NewContentDialogListItem.fromContentType(contentType));
             }
         });
 

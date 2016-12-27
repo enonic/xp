@@ -7,7 +7,7 @@ module api.liveedit.text {
 
     export class TextItemType extends ComponentItemType {
 
-        private static INSTANCE = new TextItemType();
+        private static INSTANCE: TextItemType = new TextItemType();
 
         static get(): TextItemType {
             return TextItemType.INSTANCE;

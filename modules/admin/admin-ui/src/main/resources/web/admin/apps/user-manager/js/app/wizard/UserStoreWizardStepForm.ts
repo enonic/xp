@@ -65,8 +65,8 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
             var authConfig = userStore.getAuthConfig();
             if (authConfig) {
                 var authConfigPropertySet = new api.data.PropertySet();
-                authConfigPropertySet.addString("applicationKey", authConfig.getApplicationKey().toString())
-                authConfigPropertySet.addPropertySet("config", authConfig.getConfig().getRoot())
+                authConfigPropertySet.addString("applicationKey", authConfig.getApplicationKey().toString());
+                authConfigPropertySet.addPropertySet("config", authConfig.getConfig().getRoot());
                 this.propertySet.addPropertySet("authConfig", authConfigPropertySet);
             }
         }

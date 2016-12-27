@@ -116,7 +116,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         return wizardHeader;
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
         return super.doRenderOnDataLoaded(rendered).then((rendered) => {
             if (PrincipalWizardPanel.debug) {
                 console.debug("PrincipalWizardPanel.doRenderOnDataLoaded");

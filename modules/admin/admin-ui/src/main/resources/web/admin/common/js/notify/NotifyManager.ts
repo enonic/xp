@@ -35,7 +35,7 @@ module api.notify {
 
         showError(message: string, autoHide: boolean = true): string {
             var error = Message.newError(message, autoHide);
-            return this.notify(error)
+            return this.notify(error);
         }
 
         showWarning(message: string, autoHide: boolean = true): string {
@@ -86,7 +86,7 @@ module api.notify {
                 this.stopTimer(el);
             });
             el.onMouseLeave(()=> {
-                this.startTimer(el)
+                this.startTimer(el);
             });
 
             if (opts.listeners) {

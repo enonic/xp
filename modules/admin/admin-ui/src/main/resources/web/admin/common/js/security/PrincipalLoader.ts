@@ -41,13 +41,13 @@ module api.security {
             principalKeys.forEach((principalKey: PrincipalKey) => {
                 this.skipPrincipalKeys[principalKey.toString()] = principalKey;
             });
-            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
+            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()]);
             return this;
         }
 
         skipPrincipal(principalKey: PrincipalKey): PrincipalLoader {
             this.skipPrincipalKeys[principalKey.toString()] = principalKey;
-            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
+            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()]);
             return this;
         }
 

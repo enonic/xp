@@ -86,13 +86,13 @@ module api.ui.form {
         notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {

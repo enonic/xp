@@ -20,22 +20,22 @@ module api.content.page.region {
 
         private propertyValueChangedListeners: {(event: RegionPropertyValueChangedEvent):void}[] = [];
 
-        private componentChangedEventHandler;
+        private componentChangedEventHandler: (event: any) => void;
 
-        private componentPropertyChangedEventHandler;
+        private componentPropertyChangedEventHandler: (event: any) => void;
 
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
             this.parent = builder.parent;
 
-            this.componentChangedEventHandler = (event) => {
+            this.componentChangedEventHandler = (event: any) => {
                 if (Region.debug) {
                     console.debug(this.toString() + ".handleComponentChanged: ", event);
                 }
                 this.notifyRegionPropertyValueChanged("components");
             };
 
-            this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
+            this.componentPropertyChangedEventHandler = (event: any) => this.forwardComponentPropertyChangedEvent(event);
 
             builder.components.forEach((component: Component) => {
                 this.registerComponent(component);
@@ -230,69 +230,69 @@ module api.content.page.region {
         private notifyChangedEvent(event: BaseRegionChangedEvent) {
             this.changedListeners.forEach((listener: (event: BaseRegionChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onComponentAdded(listener: (event: ComponentAddedEvent)=>void) {
             this.componentAddedListeners.push(listener);
         }
 
-        unComponentAdded(listener: (event: ComponentAddedEvent)=>void) {
+        unComponentAdded(listener: (event: ComponentAddedEvent) => void) {
             this.componentAddedListeners =
-            this.componentAddedListeners.filter((curr: (event: ComponentAddedEvent)=>void) => {
+            this.componentAddedListeners.filter((curr: (event: ComponentAddedEvent) => void) => {
                 return listener != curr;
             });
         }
 
         private notifyComponentAdded(componentPath: ComponentPath) {
             var event = new ComponentAddedEvent(this.getPath(), componentPath);
-            this.componentAddedListeners.forEach((listener: (event: ComponentAddedEvent)=>void) => {
+            this.componentAddedListeners.forEach((listener: (event: ComponentAddedEvent) => void) => {
                 listener(event);
             });
             this.notifyChangedEvent(event);
         }
 
-        onComponentRemoved(listener: (event: ComponentRemovedEvent)=>void) {
+        onComponentRemoved(listener: (event: ComponentRemovedEvent) => void) {
             this.componentRemovedListeners.push(listener);
         }
 
-        unComponentRemoved(listener: (event: ComponentRemovedEvent)=>void) {
+        unComponentRemoved(listener: (event: ComponentRemovedEvent) => void) {
             this.componentRemovedListeners =
-            this.componentRemovedListeners.filter((curr: (event: ComponentRemovedEvent)=>void) => {
+            this.componentRemovedListeners.filter((curr: (event: ComponentRemovedEvent) => void) => {
                 return listener != curr;
             });
         }
 
         private notifyComponentRemoved(componentPath: ComponentPath) {
             var event = new ComponentRemovedEvent(this.getPath(), componentPath);
-            this.componentRemovedListeners.forEach((listener: (event: ComponentRemovedEvent)=>void) => {
+            this.componentRemovedListeners.forEach((listener: (event: ComponentRemovedEvent) => void) => {
                 listener(event);
             });
             this.notifyChangedEvent(event);
         }
 
-        onComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent)=>void) {
+        onComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners.push(listener);
         }
 
-        unComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent)=>void) {
+        unComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners =
             this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
                 return listener != curr;
             });
         }
 
-        private forwardComponentPropertyChangedEvent(event: ComponentPropertyChangedEvent) {
+        private forwardComponentPropertyChangedEvent(event: ComponentPropertyChangedEvent): void {
             this.componentPropertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
                 listener(event);
             });
         }
 
-        onRegionPropertyValueChanged(listener: (event: RegionPropertyValueChangedEvent)=>void) {
+        onRegionPropertyValueChanged(listener: (event: RegionPropertyValueChangedEvent) => void) {
             this.propertyValueChangedListeners.push(listener);
         }
 
-        unRegionPropertyValueChanged(listener: (event: RegionPropertyValueChangedEvent)=>void) {
+        unRegionPropertyValueChanged(listener: (event: RegionPropertyValueChangedEvent) => void) {
             this.propertyValueChangedListeners =
             this.propertyValueChangedListeners.filter((curr: (event: RegionPropertyValueChangedEvent)=>void) => {
                 return listener != curr;

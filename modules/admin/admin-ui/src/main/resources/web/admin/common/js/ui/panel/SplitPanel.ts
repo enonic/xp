@@ -145,7 +145,7 @@ module api.ui.panel {
         }
 
         getFirstPanelUnit(): SplitPanelUnit {
-            return this.firstPanelUnit
+            return this.firstPanelUnit;
         }
 
         getSecondPanelUnit(): SplitPanelUnit {
@@ -465,7 +465,7 @@ module api.ui.panel {
             throw Error('SplitPanel allows adding children in constructor only.');
         }
 
-        appendChildren<T extends api.dom.Element>(...children): api.dom.Element {
+        appendChildren<T extends api.dom.Element>(...children:T[]): api.dom.Element {
             throw Error('SplitPanel allows adding children in constructor only.');
         }
 
@@ -530,7 +530,7 @@ module api.ui.panel {
             if ((panelNumber == 1 && this.isSecondPanelHidden()) || (panelNumber == 2 && this.isFirstPanelHidden())) {
                 return "100%";
             } else if ((panelNumber == 1 && this.isFirstPanelHidden()) || (panelNumber == 2 && this.isSecondPanelHidden())) {
-                return "0"
+                return "0";
             }
 
             var result;

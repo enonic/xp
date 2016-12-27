@@ -13,7 +13,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
     private textInput: InputEl;
     private applicationUploaderEl: ApplicationUploaderEl;
-    private lastTimeKeyPressedTimer;
+    private lastTimeKeyPressedTimer: number;
     private LAST_KEY_PRESS_TIMEOUT: number;
     private cancelAction: Action;
 
@@ -94,7 +94,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
                 this.notifyTextValueChanged();
             }
         } else {
-            this.notifyTextValueChanged()
+            this.notifyTextValueChanged();
         }
     }
 
@@ -114,7 +114,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         });
     }
 
-    showFailure(failure) {
+    showFailure(failure: string): void {
         if (failure) {
             api.notify.NotifyManager.get().showWarning(failure);
         }
@@ -126,7 +126,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
     }
 
     public hasMatchInEntry(entry: string): boolean {
-        return entry.toLowerCase().indexOf(this.getValue().toLowerCase()) > -1
+        return entry.toLowerCase().indexOf(this.getValue().toLowerCase()) > -1;
     }
 
     getTextInput(): InputEl {
@@ -171,13 +171,13 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
     unTextValueChanged(listener: () => void) {
         this.textValueChangedListeners = this.textValueChangedListeners.filter((curr) => {
             return listener !== curr;
-        })
+        });
     }
 
     private notifyTextValueChanged() {
         this.textValueChangedListeners.forEach((listener) => {
             listener();
-        })
+        });
     }
 
     onAppInstallFinished(listener: () => void) {
@@ -187,12 +187,12 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
     unAppInstallFinished(listener: () => void) {
         this.appInstallFinishedListeners = this.appInstallFinishedListeners.filter((curr) => {
             return listener !== curr;
-        })
+        });
     }
 
     private notifyAppInstallFinished() {
         this.appInstallFinishedListeners.forEach((listener) => {
             listener();
-        })
+        });
     }
 }

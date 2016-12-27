@@ -111,14 +111,14 @@ module api.liveedit {
 
         private mouseOutViewListeners: {(): void} [];
 
-        private mouseOverViewListener;
-        private mouseLeaveViewListener;
-        private shaderClickedListener;
-        private pageItemViewAddedListener;
-        private mouseEnterListener;
-        private mouseLeaveListener;
-        private mouseClickedListener;
-        private contextMenuListener;
+        private mouseOverViewListener: () => void;
+        private mouseLeaveViewListener: () => void;
+        private shaderClickedListener: (event: MouseEvent) => void;
+        private pageItemViewAddedListener: (event: ItemViewAddedEvent) => void;
+        private mouseEnterListener: (event: MouseEvent) => void;
+        private mouseLeaveListener: (event: MouseEvent) => void;
+        private mouseClickedListener: (event: MouseEvent) => void;
+        private contextMenuListener: (event: MouseEvent) => void;
 
         public static debug: boolean = false;
 
@@ -436,7 +436,7 @@ module api.liveedit {
             this.notifyMouseOverView();
 
             if (ItemView.debug) {
-                console.groupEnd()
+                console.groupEnd();
             }
         }
 
@@ -800,7 +800,7 @@ module api.liveedit {
         }
 
         toString(): string {
-            return this.getItemId().toNumber() + " : " + this.getType().getShortName()
+            return this.getItemId().toNumber() + " : " + this.getType().getShortName();
         }
 
         getLiveEditModel(): LiveEditModel {

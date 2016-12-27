@@ -17,7 +17,7 @@ module api.content.form.inputtype.checkbox {
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
-            this.readConfig(config.inputConfig)
+            this.readConfig(config.inputConfig);
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
@@ -26,7 +26,7 @@ module api.content.form.inputtype.checkbox {
             }
         }
 
-        private setInputAlignment(inputAlignmentObj) {
+        private setInputAlignment(inputAlignmentObj: any) {
             if (inputAlignmentObj) {
                 var inputAlignment: InputAlignment = InputAlignment[<string>inputAlignmentObj[0].value.toUpperCase()];
                 this.inputAlignment = isNaN(inputAlignment) ? InputAlignment.LEFT : inputAlignment;

@@ -159,8 +159,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private applicationStartedListener: (event: ApplicationEvent) => void;
 
-    private static EDITOR_DISABLED_TYPES = [ContentTypeName.FOLDER, ContentTypeName.TEMPLATE_FOLDER, ContentTypeName.SHORTCUT,
-        ContentTypeName.UNSTRUCTURED];
+    private static EDITOR_DISABLED_TYPES: ContentTypeName[] = [
+        ContentTypeName.FOLDER,
+        ContentTypeName.TEMPLATE_FOLDER,
+        ContentTypeName.SHORTCUT,
+        ContentTypeName.UNSTRUCTURED,
+    ];
 
     private contentUpdateDisabled: boolean;
 
@@ -305,7 +309,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 }
                 this.handleMissingApp();
             }
-        }
+        };
 
         api.app.wizard.MaskContentWizardPanelEvent.on(event => {
             if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
@@ -423,7 +427,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return <LiveFormPanel> super.getLivePanel();
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
         return super.doRenderOnDataLoaded(rendered, true).then((rendered) => {
             if (ContentWizardPanel.debug) {
@@ -913,7 +917,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 .then((fragmentContents: Content[]) => {
                     return fragmentContents.some((fragmentContent: Content) => {
                         return this.doesFragmentContainId(fragmentContent.getPage(), id);
-                    })
+                    });
                 });
         } else {
             return wemQ(containsId);
@@ -933,7 +937,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     return this.doRegionsContainId((<LayoutComponent>component).getRegions().getRegions(), id, fragments);
                 }
                 return false;
-            })
+            });
         });
     }
 
@@ -944,7 +948,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return areas.some((area) => {
             var property = data.getProperty(area);
             if (property && property.hasNonNullValue() && property.getType().equals(api.data.ValueTypes.STRING)) {
-                return property.getString().indexOf(id) >= 0
+                return property.getString().indexOf(id) >= 0;
             }
         });
     }
@@ -1515,11 +1519,11 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         if (selectedOptionName.getString() == option.getName()) {
                             isSelected = true;
                         }
-                    })
+                    });
                     if (!isSelected) {
                         optionSetProperty.removeProperty(option.getName(), 0);
                     }
-                })
+                });
             }
         });
 

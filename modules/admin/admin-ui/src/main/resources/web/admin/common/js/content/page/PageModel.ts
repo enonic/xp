@@ -69,13 +69,13 @@ module api.content.page {
 
     export class PageModel {
 
-        public static PROPERTY_REGIONS = 'regions';
+        public static PROPERTY_REGIONS: string = 'regions';
 
-        public static PROPERTY_TEMPLATE = 'template';
+        public static PROPERTY_TEMPLATE: string = 'template';
 
-        public static PROPERTY_CONTROLLER = 'controller';
+        public static PROPERTY_CONTROLLER: string = 'controller';
 
-        public static PROPERTY_CONFIG = 'config';
+        public static PROPERTY_CONFIG: string = 'config';
 
         private liveEditModel: api.liveedit.LiveEditModel;
 
@@ -111,13 +111,13 @@ module api.content.page {
 
         private ignorePropertyChanges: boolean = false;
 
-        private componentPropertyChangedEventHandler;
+        private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
-        private regionsChangedEventHandler;
+        private regionsChangedEventHandler: () => void;
 
-        private configPropertyChangedHandler;
+        private configPropertyChangedHandler: () => void;
 
-        private customized;
+        private customized: boolean;
 
         constructor(liveEditModel: api.liveedit.LiveEditModel, defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor,
                     pageMode: api.content.page.PageMode) {
@@ -127,7 +127,7 @@ module api.content.page {
             this.mode = pageMode;
             this.customized = liveEditModel.getContent().isPage() && liveEditModel.getContent().getPage().isCustomized();
             this.fragment = liveEditModel.getContent().getPage() ? liveEditModel.getContent().getPage().getFragment() : null;
-            this.configPropertyChangedHandler = (event) => {
+            this.configPropertyChangedHandler = () => {
                 if (!this.ignorePropertyChanges) {
                     //console.log("PageModel.config.onChanged: ", event.getPath().toString());
                     if (this.mode == PageMode.AUTOMATIC) {
@@ -136,7 +136,7 @@ module api.content.page {
                     }
                 }
             };
-            this.regionsChangedEventHandler = (event) => {
+            this.regionsChangedEventHandler = () => {
                 if (!this.ignorePropertyChanges) {
                     //console.log("PageModel.regions.onChanged: ", event);
                     if (this.mode == PageMode.AUTOMATIC) {
@@ -145,7 +145,7 @@ module api.content.page {
                     }
                 }
             };
-            this.componentPropertyChangedEventHandler = (event) => {
+            this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
                 if (!this.isPageTemplate() && this.getMode() == PageMode.AUTOMATIC) {
                     this.initializePageFromDefault(this);
                 }
@@ -153,7 +153,7 @@ module api.content.page {
                 this.componentPropertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent) => void) => {
                     listener(event);
                 });
-            }
+            };
         }
 
         /**
@@ -347,7 +347,7 @@ module api.content.page {
             }
         }
 
-        setRegions(value: api.content.page.region.Regions, eventOrigin?: any, ignoreRegionChanges = false): PageModel {
+        setRegions(value: api.content.page.region.Regions, eventOrigin?: any, ignoreRegionChanges: boolean = false): PageModel {
             var oldValue = this.regions;
             if (oldValue) {
                 this.unregisterRegionsListeners(oldValue);
@@ -558,7 +558,7 @@ module api.content.page {
             var event = new PageModeChangedEvent(oldValue, newValue);
             this.pageModeChangedListeners.forEach((listener: (event: PageModeChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
@@ -575,7 +575,7 @@ module api.content.page {
             var event = new api.PropertyChangedEvent(property, oldValue, newValue, origin);
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent) => void) {
@@ -602,7 +602,7 @@ module api.content.page {
         private notifyCustomizeChanged(value: boolean) {
             this.customizeChangedListeners.forEach((listener: (value: boolean)=>void) => {
                 listener(value);
-            })
+            });
         }
 
         onReset(listener: ()=>void) {

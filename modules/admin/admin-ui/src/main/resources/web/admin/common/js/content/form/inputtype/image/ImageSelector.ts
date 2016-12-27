@@ -92,7 +92,7 @@ module api.content.form.inputtype.image {
                 this.selectedOptionsView.getSelectedOptions().forEach(
                     (selectedOption: any) => {
                         if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = ""
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "";
                         }
                     });
 
@@ -110,7 +110,7 @@ module api.content.form.inputtype.image {
 
             this.onRemoved((event) => {
                 ContentDeletedEvent.un(this.contentDeletedListener);
-            })
+            });
         }
 
         public getContentComboBox(): ImageContentComboBox {
@@ -485,9 +485,10 @@ module api.content.form.inputtype.image {
         }
 
         unEditContentRequest(listener: (content: ContentSummary) => void) {
-            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.editContentRequestListeners = this.editContentRequestListeners
+                .filter(function (curr: (content: ContentSummary) => void) {
+                    return curr != listener;
+                });
         }
 
         private notifyEditContentRequested(content: ContentSummary) {

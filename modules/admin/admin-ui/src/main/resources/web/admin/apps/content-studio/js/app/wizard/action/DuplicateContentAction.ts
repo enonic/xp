@@ -10,7 +10,7 @@ export class DuplicateContentAction extends api.ui.Action {
                 var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
                 new api.content.event.EditContentEvent([summaryAndStatus]).fire();
                 api.notify.showFeedback('\"' + source.getDisplayName() + '\" duplicated');
-            })
+            });
         });
     }
 }

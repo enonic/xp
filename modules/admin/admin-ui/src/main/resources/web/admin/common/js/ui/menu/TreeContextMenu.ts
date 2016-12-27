@@ -5,7 +5,7 @@ module api.ui.menu {
 
         private actions: api.ui.Action[] = [];
 
-        constructor(actions?: api.ui.Action[], appendToBody = true) {
+        constructor(actions?: api.ui.Action[], appendToBody: boolean = true) {
             super("context-menu");
 
             if (actions) {

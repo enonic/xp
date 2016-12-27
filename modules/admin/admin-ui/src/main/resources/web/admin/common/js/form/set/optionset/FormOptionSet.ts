@@ -45,7 +45,7 @@ module api.form {
         }
 
         isRadioSelection(): boolean {
-            return this.multiselection.getMinimum() == 1 && this.multiselection.getMaximum() == 1
+            return this.multiselection.getMinimum() == 1 && this.multiselection.getMaximum() == 1;
         }
 
         public toFormOptionSetJson(): api.form.json.FormItemTypeWrapperJson {

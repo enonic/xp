@@ -53,7 +53,7 @@ module api.ui.treegrid {
                 s += "0";
             }
 
-            return s + n
+            return s + n;
         }
     }
 }

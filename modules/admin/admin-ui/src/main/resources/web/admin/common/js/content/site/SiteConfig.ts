@@ -28,7 +28,7 @@ module api.content.site {
             return {
                 applicationKey: this.applicationKey.toString(),
                 config: this.config.toJson()
-            }
+            };
         }
 
         equals(o: api.Equitable): boolean {

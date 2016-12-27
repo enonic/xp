@@ -128,7 +128,7 @@ module api.data {
         }
 
         getName(): string {
-            return this.name
+            return this.name;
         }
 
         getIndex(): number {

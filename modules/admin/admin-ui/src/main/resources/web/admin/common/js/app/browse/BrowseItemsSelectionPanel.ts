@@ -5,10 +5,10 @@ module api.app.browse {
         private deselectedListeners: {(event: ItemDeselectedEvent<M>): void}[] = [];
         private items: BrowseItem<M>[] = [];
         private selectionItems: SelectionItem<M>[] = [];
-        private messageForNoSelection = "You are wasting this space - select something!";
+        private messageForNoSelection: string = 'You are wasting this space - select something!';
         private mobileView: boolean = false;
         private itemsContainer: api.dom.DivEl;
-        private itemsLimit;
+        private itemsLimit: number;
 
         constructor(itemsLimit?: number) {
             super("items-selection-panel");
@@ -26,7 +26,7 @@ module api.app.browse {
             return this.itemsLimit;
         }
 
-        setItemsLimit(limit) {
+        setItemsLimit(limit: number) {
             this.itemsLimit = limit;
         }
 

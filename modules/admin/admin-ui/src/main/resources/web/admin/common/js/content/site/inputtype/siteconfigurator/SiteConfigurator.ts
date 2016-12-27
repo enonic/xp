@@ -15,7 +15,7 @@ module api.content.site.inputtype.siteconfigurator {
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Application = api.application.Application;
-    import SiteConfig = api.content.site.SiteConfig
+    import SiteConfig = api.content.site.SiteConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
@@ -23,6 +23,7 @@ module api.content.site.inputtype.siteconfigurator {
     import ApplicationKey = api.application.ApplicationKey;
     import ApplicationEvent = api.application.ApplicationEvent;
     import ApplicationEventType = api.application.ApplicationEventType;
+    import PrincipalKey = api.security.PrincipalKey;
 
     export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<Application> {
 
@@ -45,7 +46,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.readOnlyPromise =
                 new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-                    this.readOnly = !loginResult.getPrincipals().some(function (principal) {
+                    this.readOnly = !loginResult.getPrincipals().some(function (principal: PrincipalKey) {
                         return principal.equals(api.security.RoleKeys.ADMIN) || principal.equals(api.security.RoleKeys.CMS_ADMIN);
                     });
                 });
@@ -76,7 +77,7 @@ module api.content.site.inputtype.siteconfigurator {
             } else {
                 this.readOnlyPromise.then(() => {
                     this.comboBox.setReadOnly(this.readOnly);
-                })
+                });
             }
 
             this.appendChild(this.comboBox);
@@ -105,7 +106,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
 
-        private saveToSet(siteConfig: SiteConfig, index) {
+        private saveToSet(siteConfig: SiteConfig, index: number) {
 
             var propertySet = this.getPropertyArray().get(index).getPropertySet();
             if (!propertySet) {

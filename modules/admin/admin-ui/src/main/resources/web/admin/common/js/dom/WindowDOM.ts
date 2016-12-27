@@ -6,9 +6,9 @@ module api.dom {
 
         private static instance: WindowDOM = new WindowDOM();
 
-        private onBeforeUnloadListeners: {(event): void;}[] = [];
+        private onBeforeUnloadListeners: {(event: UIEvent): void;}[] = [];
 
-        private onUnloadListeners: {(event): void;}[] = [];
+        private onUnloadListeners: {(event: UIEvent): void;}[] = [];
 
         static get(): WindowDOM {
             return WindowDOM.instance;
@@ -19,7 +19,7 @@ module api.dom {
 
             this.el.onbeforeunload = (event) => {
                 this.onBeforeUnloadListeners.forEach((listener) => listener(event));
-            }
+            };
 
             this.el.onunload = (event) => {
                 this.onUnloadListeners.forEach((listener) => listener(event));
@@ -98,24 +98,24 @@ module api.dom {
             this.el.removeEventListener('scroll', listener);
         }
 
-        onBeforeUnload(listener: (event) => void) {
+        onBeforeUnload(listener: (event: UIEvent) => void) {
             this.onBeforeUnloadListeners.push(listener);
         }
 
-        unBeforeUnload(listener: (event) => void) {
+        unBeforeUnload(listener: (event: UIEvent) => void) {
             this.onBeforeUnloadListeners = this.onBeforeUnloadListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
             return this;
         }
 
-        onUnload(listener: (event) => void) {
+        onUnload(listener: (event: UIEvent) => void) {
             this.onUnloadListeners.push(listener);
         }
 
-        unUnload(listener: (event) => void) {
+        unUnload(listener: (event: UIEvent) => void) {
             this.onUnloadListeners = this.onUnloadListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
             return this;
         }

@@ -56,7 +56,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
     }
 
     private appendButton(label: string, cls: string): ActionButton {
-        var action = new Action(label)
+        var action = new Action(label);
         var button = new ActionButton(action);
 
         button.addClass(cls);

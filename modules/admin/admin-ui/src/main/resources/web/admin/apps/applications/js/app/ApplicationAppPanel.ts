@@ -1,6 +1,6 @@
 import "../api.ts";
-import Application = api.application.Application;
 import {ApplicationBrowsePanel} from "./browse/ApplicationBrowsePanel";
+import Application = api.application.Application;
 
 export class ApplicationAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Application> {
 
@@ -12,7 +12,7 @@ export class ApplicationAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Ap
 
         this.handleGlobalEvents();
 
-        this.route(path)
+        this.route(path);
     }
 
     private route(path?: api.rest.Path) {

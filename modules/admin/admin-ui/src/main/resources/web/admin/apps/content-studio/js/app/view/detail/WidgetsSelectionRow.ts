@@ -70,7 +70,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
         });
 
         if (this.widgetSelectorDropdown.getOptionCount() < 2) {
-            this.widgetSelectorDropdown.addClass("single-optioned")
+            this.widgetSelectorDropdown.addClass("single-optioned");
         }
 
         var visisbleNow = this.isVisible();

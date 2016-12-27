@@ -20,13 +20,13 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private headerEl: api.dom.SpanEl;
 
-    private bottomEl;
+    private bottomEl: api.dom.AEl;
 
     private currentUser: User;// TODO: need to implement caching for current user value;
 
     private everyoneAccessValue: Access;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     private static OPTIONS: any[] = [
         {value: Access.FULL, name: 'has full access to'},
@@ -80,7 +80,9 @@ export class UserAccessWidgetItemView extends WidgetItemView {
             this.removeChild(this.bottomEl);
         }
 
-        this.bottomEl = new api.dom.AEl("edit-permissions-link").setHtml("Edit Permissions");
+        this.bottomEl = new api.dom.AEl("edit-permissions-link");
+        this.bottomEl.setHtml("Edit Permissions");
+
         this.appendChild(this.bottomEl);
 
         this.bottomEl.onClicked((event: MouseEvent) => {

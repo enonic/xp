@@ -148,7 +148,7 @@ export class NonMobileDetailsPanelsManager {
     private dockedToFloatingSync() {
         var activePanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
         this.hideDockedDetailsPanel();
-        this.floatingDetailsPanel.setWidthPx(activePanelWidth)
+        this.floatingDetailsPanel.setWidthPx(activePanelWidth);
     }
 
     private floatingToDockedSync() {

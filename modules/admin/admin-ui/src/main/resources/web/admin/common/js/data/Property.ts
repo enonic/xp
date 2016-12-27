@@ -135,7 +135,7 @@ module api.data {
 
         getPath(): PropertyPath {
             if (this.hasParentProperty()) {
-                return PropertyPath.fromParent(this.getParentProperty().getPath(), new PropertyPathElement(this.name, this.index))
+                return PropertyPath.fromParent(this.getParentProperty().getPath(), new PropertyPathElement(this.name, this.index));
             }
             else {
                 return PropertyPath.fromPathElement(new PropertyPathElement(this.name, this.index));

@@ -2,8 +2,8 @@ module api {
 
     export class ClassHelper {
 
-        static MAX_NEST_LEVEL = 7;
-        static ALLOWED_PACKAGES = ['api', 'app', 'LiveEdit'];
+        static MAX_NEST_LEVEL: number = 7;
+        static ALLOWED_PACKAGES: string[] = ['api', 'app', 'LiveEdit'];
 
         /**
          * Returns function name or empty string if function is anonymous.
@@ -11,8 +11,9 @@ module api {
          * @param func - reference to a function.
          * @returns function name as string.
          */
-
-        static getFunctionName(func): string {
+        // Compiler hack since target version is ES5
+        // but the Function.name was presented in ES2015
+        static getFunctionName(func: any/*Function*/): string {
             if (func.name) {
                 return func.name;
             } else {
@@ -30,7 +31,7 @@ module api {
          * @returns {string} class name.
          */
 
-        static getClassName(instance): string {
+        static getClassName(instance: any): string {
             return ClassHelper.getFunctionName(instance["constructor"]);
         }
 
@@ -64,7 +65,7 @@ module api {
          * @param instance - reference to class, its instance or exported function.
          * @returns {string} full class name.
          */
-        static getFullName(instance): string {
+        static getFullName(instance: any): string {
             var constructor = (typeof instance === 'function') ? instance : instance["constructor"];
             //last one expression for IE
             return ClassHelper.findPath(window, constructor) || constructor["name"] ||

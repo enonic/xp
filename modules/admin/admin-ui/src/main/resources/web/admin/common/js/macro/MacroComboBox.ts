@@ -34,7 +34,7 @@ module api.macro {
             return {
                 value: val.getKey().getRefString(),
                 displayValue: val
-            }
+            };
         }
 
         public static create(): MacroComboBoxBuilder {

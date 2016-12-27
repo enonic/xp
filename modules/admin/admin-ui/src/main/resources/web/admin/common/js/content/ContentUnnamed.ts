@@ -4,7 +4,7 @@ module api.content {
 
     export class ContentUnnamed extends ContentName implements api.Equitable {
 
-        public static PRETTY_UNNAMED = "unnamed";
+        public static PRETTY_UNNAMED: string = "unnamed";
 
         constructor(name: string) {
             super(name);
