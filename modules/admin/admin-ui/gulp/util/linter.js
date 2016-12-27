@@ -46,7 +46,7 @@ function lint(files) {
             });
         }).catch((error) => {
             // Show files that can't be opened or not present in current branch
-            console.error(error.message);
+            // console.error(error.message);
         });
     });
 
