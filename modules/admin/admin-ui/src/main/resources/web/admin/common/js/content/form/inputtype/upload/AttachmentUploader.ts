@@ -87,12 +87,13 @@ module api.content.form.inputtype.upload {
                 hideDefaultDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true,
                 maximumOccurrences: this.getInput().getOccurrences().getMaximum(),
-                attachmentRemoveCallback: this.removeItem.bind(this),
+                attachmentRemoveCallback: this.removeItemCallback.bind(this),
+                attachmentAddCallback: this.addItemCallback.bind(this),
                 hasUploadButton: false
             });
         }
 
-        private removeItem(itemName: string) {
+        private removeItemCallback(itemName: string) {
             var values = this.getFileNamesFromProperty(this.getPropertyArray());
 
             var index = values.indexOf(itemName);
@@ -102,7 +103,17 @@ module api.content.form.inputtype.upload {
             this.getPropertyArray().remove(index);
             this.attachmentNames = this.getFileNamesFromProperty(this.getPropertyArray());
 
+            this.updateOccurrences();
+
             new api.content.event.ContentRequiresSaveEvent(this.getContext().content.getContentId()).fire();
+        }
+
+        private addItemCallback(itemName: string) {
+            this.updateOccurrences();
+        }
+
+        private updateOccurrences() {
+            this.uploadButton.setVisible(!(<AttachmentUploaderEl>this.uploaderEl).maximumOccurrencesReached());
         }
 
     }
