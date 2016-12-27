@@ -597,6 +597,10 @@ module api.liveedit {
                 return;
             }
 
+            const dimensions = this.getEl().getDimensions();
+            let x;
+            let y;
+
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
                 this.contextMenu.onOrientationChanged((orientation: ItemViewContextMenuOrientation) => {
@@ -609,8 +613,6 @@ module api.liveedit {
                     }
                 });
             }
-            var dimensions = this.getEl().getDimensions();
-            var x, y;
 
             if (clickPosition) {
                 // show menu at position

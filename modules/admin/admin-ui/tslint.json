@@ -20,7 +20,7 @@
     "no-unsafe-finally": true,
     "no-unused-expression": true,
     "no-unused-new": true,
-    "no-use-before-declare": false,
+    "no-use-before-declare": true,
     "radix": true,
     "switch-default": false,
     "triple-equals": [
