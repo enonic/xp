@@ -76,7 +76,9 @@ module api.content.attachment {
             let attachmentItem = new AttachmentItem(this.contentId, value, this.removeCallback);
             this.attachmentItems.push(attachmentItem);
 
-            this.addCallback(attachmentItem.getValue());
+            if (this.addCallback) {
+                this.addCallback(attachmentItem.getValue());
+            }
 
             return attachmentItem;
         }
