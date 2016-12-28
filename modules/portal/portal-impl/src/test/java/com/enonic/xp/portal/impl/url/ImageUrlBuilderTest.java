@@ -80,7 +80,19 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "test+Name.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/testScale/test%252BName.png",
+        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/testScale/test%2BName.png",
+                      stringBuilder.toString() );
+    }
+
+    @Test
+    public void testSpacesInNameConverted()
+    {
+        final StringBuilder stringBuilder = new StringBuilder( "test/" );
+
+        Mockito.when( media.getName() ).thenReturn( ContentName.from( "test Name.png" ) );
+
+        urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
+        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/testScale/test%20Name.png",
                       stringBuilder.toString() );
     }
 
