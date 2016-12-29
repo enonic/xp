@@ -31,18 +31,15 @@ interface PrincipalData {
     principalType: PrincipalType;
 }
 
-export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeGridItem> {
+export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private mask: api.ui.mask.LoadMask;
 
-    constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
+    constructor(appBar: api.app.bar.TabbedAppBar, path?: api.rest.Path) {
 
-        super({
-            appBar: appBar
-        });
+        super(appBar);
+
         this.mask = new api.ui.mask.LoadMask(this);
-
-        this.handleGlobalEvents();
 
         this.route(path);
     }
@@ -122,11 +119,8 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
         });
     }
 
-    private handleGlobalEvents() {
-
-        api.app.ShowBrowsePanelEvent.on((event) => {
-            this.handleBrowse(event);
-        });
+    protected handleGlobalEvents() {
+        super.handleGlobalEvents();
 
         NewPrincipalEvent.on((event) => {
             this.handleNew(event);
@@ -137,13 +131,8 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
         });
     }
 
-    private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
-        var browsePanel: api.app.browse.BrowsePanel<UserTreeGridItem> = this.getBrowsePanel();
-        if (!browsePanel) {
-            this.addBrowsePanel(new UserBrowsePanel());
-        } else {
-            this.selectPanelByIndex(this.getPanelIndex(browsePanel));
-        }
+    protected createBrowsePanel() {
+        return new UserBrowsePanel();
     }
 
 

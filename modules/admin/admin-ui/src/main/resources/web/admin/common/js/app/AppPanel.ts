@@ -1,46 +1,74 @@
 module api.app {
 
-    export class AppPanel<M extends api.Equitable> extends api.ui.panel.NavigatedDeckPanel {
+    export class AppPanel<M extends api.Equitable> extends api.ui.panel.DeckPanel {
 
-        private browsePanel: api.app.browse.BrowsePanel<M>;
+        protected browsePanel: api.app.browse.BrowsePanel<M>;
 
-        constructor(tabNavigator: api.app.bar.AppBarTabMenu) {
-            super(tabNavigator);
+        protected currentKeyBindings: api.ui.KeyBinding[];
+
+        constructor() {
+            super();
+
+            this.onPanelShown(this.handlePanelShown.bind(this));
+
+            this.handleGlobalEvents();
         }
 
-        addBrowsePanel(browsePanel: api.app.browse.BrowsePanel<M>) {
+        private handlePanelShown(event: api.ui.panel.PanelShownEvent) {
+            if (event.getPanel() === this.browsePanel) {
+                this.browsePanel.refreshFilter();
+            }
+
+            var previousActions = this.resolveActions(event.getPreviousPanel());
+            api.ui.KeyBindings.get().unbindKeys(api.ui.Action.getKeyBindings(previousActions));
+
+            var nextActions = this.resolveActions(event.getPanel());
+            this.currentKeyBindings = api.ui.Action.getKeyBindings(nextActions);
+            api.ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
+        }
+
+        protected handleGlobalEvents() {
+            ShowBrowsePanelEvent.on((event) => {
+                this.handleBrowse(event);
+            });
+
+            window.onmessage = (e: MessageEvent) => {
+                if (e.data.appLauncherEvent) {
+                    let eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+                    if (eventType == api.app.AppLauncherEventType.Show) {
+                        this.activateCurrentKeyBindings();
+                    }
+                }
+            };
+        }
+
+        private handleBrowse(event) {
+            if (!this.browsePanel) {
+                this.addBrowsePanel(this.createBrowsePanel());
+            }
+
+            this.showPanel(this.browsePanel);
+        }
+
+        protected addBrowsePanel(browsePanel: api.app.browse.BrowsePanel<M>) {
             // limit to 1 browse panel
             if (!this.browsePanel) {
-                var browseMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("<Select>").
-                    setTabId(new api.app.bar.AppBarTabId("hidden", "____home")).
-                    build();
-                browseMenuItem.setVisibleInMenu(false);
-                this.addNavigablePanel(browseMenuItem, browsePanel, true);
                 this.browsePanel = browsePanel;
+                this.addPanel(browsePanel);
+
+                this.currentKeyBindings = api.ui.Action.getKeyBindings(this.resolveActions(browsePanel));
+                this.activateCurrentKeyBindings();
             }
         }
 
-        getBrowsePanel(): api.app.browse.BrowsePanel<M> {
-            return this.browsePanel;
-        }
-
-        removeNavigablePanel(panel: api.ui.panel.Panel, checkCanRemovePanel: boolean = true): number {
-            var index = super.removeNavigablePanel(panel, checkCanRemovePanel);
-            this.checkBrowsePanelNeedsToBeShown(index, panel);
-            return index;
-        }
-
-        private checkBrowsePanelNeedsToBeShown(index: number, panel: api.ui.panel.Panel) {
-            if (panel == this.browsePanel && index > -1) {
-                this.browsePanel = undefined;
-            } else if (this.getSize() == 0) {
-                // show browse panel if all others were removed
-                new ShowBrowsePanelEvent().fire();
+        protected activateCurrentKeyBindings() {
+            if (this.currentKeyBindings) {
+                api.ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
             }
         }
 
-        getNavigator(): api.app.bar.AppBarTabMenu {
-            return <api.app.bar.AppBarTabMenu>super.getNavigator();
+        protected createBrowsePanel(): api.app.browse.BrowsePanel<M> {
+            throw new Error("Must be implemented by inheritors");
         }
     }
 }
