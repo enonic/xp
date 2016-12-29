@@ -1,1 +1,1 @@
-///<reference path='ImageUploaderEl.ts' />
+///<reference path='ImageUploaderEl.spec.ts' />
