@@ -16,8 +16,6 @@ import {ContentWizardPanelParams} from "./app/wizard/ContentWizardPanelParams";
 import {ContentWizardPanel} from "./app/wizard/ContentWizardPanel";
 import {ContentEventsListener} from "./app/ContentEventsListener";
 import {ContentEventsProcessor} from "./app/ContentEventsProcessor";
-import {ContentBrowsePanel} from "./app/browse/ContentBrowsePanel";
-import {NewContentEvent} from "./app/create/NewContentEvent";
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -266,28 +264,10 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
 function startContentApplication(application: api.app.Application) {
     let body = api.dom.Body.get(),
         appBar = new api.app.bar.AppBar(application),
-        appPanel = new ContentAppPanel(appBar, application.getPath());
+        appPanel = new ContentAppPanel(application.getPath());
 
     let clientEventsListener = new ContentEventsListener();
     clientEventsListener.start();
-
-    ShowBrowsePanelEvent.on((event) => {
-        var browsePanel: api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> = appPanel.getBrowsePanel();
-        if (!browsePanel) {
-            appPanel.addBrowsePanel(new ContentBrowsePanel());
-        } else {
-            appPanel.selectPanelByIndex(appPanel.getPanelIndex(browsePanel));
-        }
-    });
-
-    NewContentEvent.on((newContentEvent) => {
-        if (newContentEvent.getContentType().isSite() && appPanel.getBrowsePanel()) {
-            var content: Content = newContentEvent.getParentContent();
-            if (!!content) { // refresh site's node
-                appPanel.getBrowsePanel().getTreeGrid().refreshNodeById(content.getId());
-            }
-        }
-    });
 
     body.appendChild(appBar);
     body.appendChild(appPanel);
@@ -329,15 +309,6 @@ function startContentApplication(application: api.app.Application) {
 
     let sortDialog = new SortContentDialog();
     let moveDialog = new MoveContentDialog();
-
-    window.onmessage = (e: MessageEvent) => {
-        if (e.data.appLauncherEvent) {
-            let eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if (eventType == api.app.AppLauncherEventType.Show) {
-                appPanel.activateCurrentKeyBindings();
-            }
-        }
-    };
 }
 
 preLoadApplication();

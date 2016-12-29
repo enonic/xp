@@ -6,3 +6,4 @@
 ///<reference path='AppBarTabMenu.ts' />
 ///<reference path='AppBarTabMenuButton.ts' />
 ///<reference path='AppBarTabMenuItem.ts' />
+///<reference path='TabbedAppBar.ts' />
