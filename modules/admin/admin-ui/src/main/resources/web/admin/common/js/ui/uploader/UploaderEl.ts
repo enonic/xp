@@ -488,6 +488,10 @@ module api.ui.uploader {
             return this.config.params;
         }
 
+        getAllowedTypes(): {title: string; extensions: string}[] {
+            return this.config.allowTypes;
+        }
+
         private findUploadItemById(id: string): UploadItem<MODEL> {
             for (var i = 0; i < this.uploadedItems.length; i++) {
                 var uploadItem = this.uploadedItems[i];
