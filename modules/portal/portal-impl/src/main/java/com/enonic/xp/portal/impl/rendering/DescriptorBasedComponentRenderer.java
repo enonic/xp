@@ -18,6 +18,7 @@ import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Descriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;
+import com.enonic.xp.web.HttpStatus;
 
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
     implements Renderer<R>
@@ -81,6 +82,12 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
                 final Object bodyObj = portalResponse.getBody();
                 if ( ( bodyObj == null ) || bodyObj instanceof String && StringUtils.isBlank( (String) bodyObj ) )
                 {
+                    if ( portalResponse.getStatus().equals( HttpStatus.METHOD_NOT_ALLOWED ) )
+                    {
+                        final String errorMessage = "No method provided to handle request";
+                        return renderErrorComponentPlaceHolder( component, errorMessage );
+                    }
+
                     return renderEmptyComponent( component, portalRequest );
                 }
             }

@@ -158,6 +158,46 @@ public class PartRendererTest
     }
 
     @Test
+    public void htmlResponseComponentEditModeNoMethodToHandleReq()
+    {
+        final PartDescriptor partDescriptor = PartDescriptor.create().
+            name( "myPartComponent" ).
+            displayName( "My part component" ).
+            config( Form.create().build() ).
+            key( DescriptorKey.from( "module:myPartComponent" ) ).
+            build();
+        final ControllerScript controllerScript = new ControllerScript()
+        {
+            public PortalResponse execute( final PortalRequest portalRequest )
+            {
+                return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
+            }
+
+            public void onSocketEvent( final WebSocketEvent event )
+            {
+            }
+        };
+
+        final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
+        renderer = new PartRenderer();
+        renderer.setPartDescriptorService( partDescriptorService );
+        renderer.setControllerScriptFactory( controllerScriptFactory );
+
+        when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
+        when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
+        portalRequest.setMode( RenderMode.EDIT );
+        partComponent = PartComponent.create().name( "myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
+
+        // exercise
+        portalResponse = renderer.render( partComponent, portalRequest );
+
+        // verify
+        String expected = "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">No method provided to handle request</span></div>";;
+        assertEquals( expected, portalResponse.getAsString() );
+    }
+
+    @Test
     public void nullResponseComponentEditMode()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create().
