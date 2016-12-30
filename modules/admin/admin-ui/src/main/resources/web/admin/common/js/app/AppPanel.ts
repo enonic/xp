@@ -6,8 +6,8 @@ module api.app {
 
         protected currentKeyBindings: api.ui.KeyBinding[];
 
-        constructor() {
-            super();
+        constructor(className?: string) {
+            super(className);
 
             this.onPanelShown(this.handlePanelShown.bind(this));
 
