@@ -344,7 +344,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let subTitle = count == 0
             ? "No items to publish"
             : allValid ? "Your changes are ready for publishing"
-                           : "Invalid content(s) prevent publish";
+                           : "Invalid item(s) prevent publish";
 
         this.setSubTitle(subTitle);
         this.toggleClass("invalid", !allValid);
