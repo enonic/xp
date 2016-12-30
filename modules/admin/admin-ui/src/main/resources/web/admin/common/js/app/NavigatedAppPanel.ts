@@ -12,7 +12,7 @@ module api.app {
         private appBar: api.app.bar.AppBar;
 
         constructor(appBar: api.app.bar.TabbedAppBar) {
-            super();
+            super("navigated-panel");
 
             this.appBar = appBar;
 
