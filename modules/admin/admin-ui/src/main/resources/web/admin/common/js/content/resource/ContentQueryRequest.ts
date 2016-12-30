@@ -45,7 +45,7 @@ module api.content.resource {
 
         getParams(): Object {
 
-            var queryExprAsString = this.contentQuery.getQueryExpr() ? this.contentQuery.getQueryExpr().toString() : "";
+            let queryExprAsString = this.contentQuery.getQueryExpr() ? this.contentQuery.getQueryExpr().toString() : "";
 
             return {
                 queryExpr: queryExprAsString,
@@ -63,7 +63,7 @@ module api.content.resource {
 
             return this.send().then((response: api.rest.JsonResponse<ContentQueryResultJson<CONTENT_JSON>>) => {
 
-                var responseResult: ContentQueryResultJson<CONTENT_JSON> = response.getResult(),
+                let responseResult: ContentQueryResultJson<CONTENT_JSON> = response.getResult(),
                     aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations),
                     contentsAsJson: ContentIdBaseItemJson[] = responseResult.contents,
                     metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]),
@@ -97,7 +97,7 @@ module api.content.resource {
         }
 
         private getMustBereferencedById(): string {
-            var contentId = this.contentQuery.getMustBeReferencedById();
+            let contentId = this.contentQuery.getMustBeReferencedById();
             if (!!contentId) {
                 return contentId.toString();
             }
@@ -105,7 +105,7 @@ module api.content.resource {
         }
 
         private aggregationQueriesToJson(aggregationQueries: api.query.aggregation.AggregationQuery[]): AggregationQueryTypeWrapperJson[] {
-            var aggregationQueryJsons: AggregationQueryTypeWrapperJson[] = [];
+            let aggregationQueryJsons: AggregationQueryTypeWrapperJson[] = [];
 
             if (aggregationQueries == null) {
                 return aggregationQueryJsons;
@@ -121,7 +121,7 @@ module api.content.resource {
 
         private queryFiltersToJson(queryFilters: api.query.filter.Filter[]): api.query.filter.FilterTypeWrapperJson[] {
 
-            var queryFilterJsons: api.query.filter.FilterTypeWrapperJson[] = [];
+            let queryFilterJsons: api.query.filter.FilterTypeWrapperJson[] = [];
 
             if (queryFilters == null || queryFilters.length == 0) {
                 return queryFilterJsons;
@@ -150,7 +150,7 @@ module api.content.resource {
         }
 
         contentTypeNamesAsString(names: api.schema.content.ContentTypeName[]): string[] {
-            var result: string[] = [];
+            let result: string[] = [];
 
             names.forEach((name: api.schema.content.ContentTypeName) => {
                 result.push(name.toString());

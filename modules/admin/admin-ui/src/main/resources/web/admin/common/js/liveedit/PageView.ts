@@ -130,8 +130,8 @@ module api.liveedit {
             this.refreshEmptyState();
 
             // lock page by default for every content that has not been modified except for page template
-            var isCustomized = this.liveEditModel.getPageModel().isCustomized();
-            var isFragment = !!this.fragmentView;
+            let isCustomized = this.liveEditModel.getPageModel().isCustomized();
+            let isFragment = !!this.fragmentView;
             if (!this.pageModel.isPageTemplate() && !isCustomized && !isFragment) {
                 this.setLocked(true);
             }
@@ -153,7 +153,7 @@ module api.liveedit {
             this.pageModel.onPropertyChanged(this.propertyChangedListener);
 
             this.pageModeChangedListener = (event: PageModeChangedEvent) => {
-                var resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
+                let resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
                 if (PageView.debug) {
                     console.log('PageView.pageModeChangedListener setting reset enabled', resetEnabled);
                 }
@@ -209,7 +209,7 @@ module api.liveedit {
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
-                var itemView = event.getView();
+                let itemView = event.getView();
                 itemView.toItemViewArray().forEach((value: ItemView) => {
                     this.registerItemView(value);
                 });
@@ -251,7 +251,7 @@ module api.liveedit {
         }
 
         private createCloseTextEditModeEl(): api.dom.Element {
-            var closeButton = new api.dom.AEl("close-edit-mode-button icon-close2");
+            let closeButton = new api.dom.AEl("close-edit-mode-button icon-close2");
             closeButton.onClicked((event: MouseEvent) => {
                 this.setTextEditMode(false);
                 event.stopPropagation();
@@ -303,7 +303,7 @@ module api.liveedit {
          }
          */
         highlightSelected() {
-            var isDragging = DragAndDrop.get().isDragging();
+            let isDragging = DragAndDrop.get().isDragging();
             if (!this.isTextEditMode() && !this.isLocked() && !isDragging) {
                 super.highlightSelected();
             }
@@ -335,7 +335,7 @@ module api.liveedit {
             });
 
             this.onMouseOverView(() => {
-                var isDragging = DragAndDrop.get().isDragging();
+                let isDragging = DragAndDrop.get().isDragging();
                 if (isDragging && this.lockedContextMenu) {
                     if (this.lockedContextMenu.isVisible()) {
                         this.lockedContextMenu.hide();
@@ -368,7 +368,7 @@ module api.liveedit {
         }
 
         getLockedMenuActions(): api.ui.Action[] {
-            var unlockAction = new api.ui.Action("Customize Page");
+            let unlockAction = new api.ui.Action("Customize Page");
 
             unlockAction.onExecuted(() => {
                 this.setLocked(false);
@@ -423,9 +423,9 @@ module api.liveedit {
         }
 
         private isTextEditorToolbarClicked(event: MouseEvent) {
-            var target = <HTMLElement> event.target;
+            let target = <HTMLElement> event.target;
             if (!!target) {
-                var parent = <HTMLElement> target.parentElement;
+                let parent = <HTMLElement> target.parentElement;
                 return (target.id.indexOf("mce") >= 0 || target.className.indexOf("mce") >= 0 ||
                         parent.id.indexOf("mce") >= 0 || parent.className.indexOf("mce") >= 0);
             }
@@ -433,7 +433,7 @@ module api.liveedit {
         }
 
         private isTextEditorDialogClicked(event: MouseEvent) {
-            var target = <HTMLElement> event.target;
+            let target = <HTMLElement> event.target;
             while (target) {
                 if (target.classList.contains(api.util.htmlarea.dialog.ModalDialog.CLASS_NAME)) {
                     return true;
@@ -489,9 +489,9 @@ module api.liveedit {
             this.setHighlightingAllowed(!flag);
             this.toggleClass('text-edit-mode', flag);
 
-            var textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
+            let textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
 
-            var textView: api.liveedit.text.TextComponentView;
+            let textView: api.liveedit.text.TextComponentView;
             textItemViews.forEach((view: ItemView) => {
                 textView = <api.liveedit.text.TextComponentView> view;
                 if (textView.isEditMode() != flag) {
@@ -530,7 +530,7 @@ module api.liveedit {
         }
 
         private updateVerticalSpaceForEditorToolbar() {
-            var result = this.getEditorToolbarWidth();
+            let result = this.getEditorToolbarWidth();
 
             if (!!result) {
                 this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + "px");
@@ -542,7 +542,7 @@ module api.liveedit {
         }
 
         private waitUntilEditorToolbarShown() {
-            var intervalId,
+            let intervalId,
                 toolbarHeight,
                 attempts = 0;
 
@@ -570,10 +570,10 @@ module api.liveedit {
         }
 
         hasTargetWithinTextComponent(target: HTMLElement) {
-            var textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
-            var result: boolean = false;
+            let textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
+            let result: boolean = false;
 
-            var textView: api.liveedit.text.TextComponentView;
+            let textView: api.liveedit.text.TextComponentView;
             textItemViews.forEach((view: ItemView) => {
                 textView = <api.liveedit.text.TextComponentView> view;
                 if (textView.getEl().contains(target)) {
@@ -590,12 +590,12 @@ module api.liveedit {
         }
 
         private isContentEmpty() {
-            var content = this.liveEditModel.getContent();
+            let content = this.liveEditModel.getContent();
             return (!content || api.util.StringHelper.isEmpty(content.getDisplayName()));
         }
 
         getName(): string {
-            var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+            let pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
             if (this.pageModel.hasTemplate()) {
                 return this.pageModel.getTemplate().getDisplayName();
             }
@@ -619,7 +619,7 @@ module api.liveedit {
         }
 
         getIconClass(): string {
-            var largeIconCls = " icon-large";
+            let largeIconCls = " icon-large";
 
             if (this.pageModel.hasTemplate()) {
                 return "icon-newspaper" + largeIconCls;
@@ -650,7 +650,7 @@ module api.liveedit {
         }
 
         unregisterRegionView(regionView: RegionView) {
-            var index = this.regionViews.indexOf(regionView);
+            let index = this.regionViews.indexOf(regionView);
             if (index > -1) {
                 this.regionViews.splice(index, 1);
 
@@ -669,10 +669,10 @@ module api.liveedit {
 
         toItemViewArray(): ItemView[] {
 
-            var array: ItemView[] = [];
+            let array: ItemView[] = [];
             array.push(this);
             this.regionViews.forEach((regionView: RegionView) => {
-                var itemViews = regionView.toItemViewArray();
+                let itemViews = regionView.toItemViewArray();
                 array = array.concat(itemViews);
             });
             return array;
@@ -683,7 +683,7 @@ module api.liveedit {
         }
 
         getSelectedView(): ItemView {
-            for (var id in this.viewsById) {
+            for (let id in this.viewsById) {
                 if (this.viewsById.hasOwnProperty(id) && this.viewsById[id].isSelected()) {
                     return this.viewsById[id];
                 }
@@ -697,10 +697,10 @@ module api.liveedit {
         }
 
         getItemViewsByType(type: ItemType): ItemView[] {
-            var views: ItemView[] = [];
-            for (var key in this.viewsById) {
+            let views: ItemView[] = [];
+            for (let key in this.viewsById) {
                 if (this.viewsById.hasOwnProperty(key)) {
-                    var view = this.viewsById[key];
+                    let view = this.viewsById[key];
                     if (type.equals(view.getType())) {
                         views.push(view);
                     }
@@ -712,12 +712,12 @@ module api.liveedit {
         getItemViewByElement(element: HTMLElement): ItemView {
             api.util.assertNotNull(element, "element cannot be null");
 
-            var itemId = ItemView.parseItemId(element);
+            let itemId = ItemView.parseItemId(element);
             if (!itemId) {
                 return null;
             }
 
-            var itemView = this.getItemViewById(itemId);
+            let itemView = this.getItemViewById(itemId);
             api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
 
             return itemView;
@@ -725,7 +725,7 @@ module api.liveedit {
 
         getRegionViewByElement(element: HTMLElement): RegionView {
 
-            var itemView = this.getItemViewByElement(element);
+            let itemView = this.getItemViewByElement(element);
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, RegionView)) {
                 return <RegionView>itemView;
@@ -735,7 +735,7 @@ module api.liveedit {
 
         getComponentViewByElement(element: HTMLElement): ComponentView<Component> {
 
-            var itemView = this.getItemViewByElement(element);
+            let itemView = this.getItemViewByElement(element);
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                 return <ComponentView<Component>> itemView;
@@ -746,13 +746,13 @@ module api.liveedit {
 
         getRegionViewByPath(path: RegionPath): RegionView {
 
-            for (var i = 0; i < this.regionViews.length; i++) {
-                var regionView = this.regionViews[i];
+            for (let i = 0; i < this.regionViews.length; i++) {
+                let regionView = this.regionViews[i];
 
                 if (path.hasParentComponentPath()) {
-                    var componentView = this.getComponentViewByPath(path.getParentComponentPath());
+                    let componentView = this.getComponentViewByPath(path.getParentComponentPath());
                     if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, api.liveedit.layout.LayoutComponentView)) {
-                        var layoutView = <api.liveedit.layout.LayoutComponentView>componentView;
+                        let layoutView = <api.liveedit.layout.LayoutComponentView>componentView;
                         layoutView.getRegionViewByName(path.getRegionName());
                     }
                 }
@@ -771,10 +771,10 @@ module api.liveedit {
                 return this.fragmentView;
             }
 
-            var firstLevelOfPath = path.getFirstLevel();
+            let firstLevelOfPath = path.getFirstLevel();
 
-            for (var i = 0; i < this.regionViews.length; i++) {
-                var regionView = this.regionViews[i];
+            for (let i = 0; i < this.regionViews.length; i++) {
+                let regionView = this.regionViews[i];
                 if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
                     if (path.numberOfLevels() == 1) {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
@@ -815,7 +815,7 @@ module api.liveedit {
 
         private parseItemViews() {
             // unregister existing views
-            for (var itemView in this.viewsById) {
+            for (let itemView in this.viewsById) {
                 if (this.viewsById.hasOwnProperty(itemView)) {
                     this.unregisterItemView(this.viewsById[itemView]);
                 }
@@ -843,16 +843,16 @@ module api.liveedit {
 
         private doParseItemViews(parentElement?: api.dom.Element) {
 
-            var pageRegions = this.liveEditModel.getPageModel().getRegions();
+            let pageRegions = this.liveEditModel.getPageModel().getRegions();
             if (!pageRegions) {
                 return;
             }
-            var children = parentElement ? parentElement.getChildren() : this.getChildren();
+            let children = parentElement ? parentElement.getChildren() : this.getChildren();
 
             children.forEach((childElement: api.dom.Element) => {
-                var itemType = ItemType.fromElement(childElement);
-                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
-                var region, regionName, regionView;
+                let itemType = ItemType.fromElement(childElement);
+                let isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                let region, regionName, regionView;
 
                 if (isRegionView) {
                     regionName = RegionItemType.getRegionName(childElement);
@@ -888,16 +888,16 @@ module api.liveedit {
 
         private doParseFragmentItemViews(parentElement?: api.dom.Element) {
 
-            var fragment = this.liveEditModel.getPageModel().getPage().getFragment();
+            let fragment = this.liveEditModel.getPageModel().getPage().getFragment();
             if (!fragment) {
                 return;
             }
-            var children = parentElement ? parentElement.getChildren() : this.getChildren();
+            let children = parentElement ? parentElement.getChildren() : this.getChildren();
 
             children.forEach((childElement: api.dom.Element) => {
-                var itemType = ItemType.fromElement(childElement);
-                var component: Component = this.pageModel.getPage().getFragment();
-                var componentView: ComponentView<Component>;
+                let itemType = ItemType.fromElement(childElement);
+                let component: Component = this.pageModel.getPage().getFragment();
+                let componentView: ComponentView<Component>;
 
                 if (itemType && itemType.isComponentType()) {
                     if (component) {
@@ -938,7 +938,7 @@ module api.liveedit {
         }
 
         private notifyItemViewAdded(itemView: ItemView) {
-            var event = new ItemViewAddedEvent(itemView);
+            let event = new ItemViewAddedEvent(itemView);
             this.itemViewAddedListeners.forEach((listener) => listener(event));
         }
 
@@ -951,7 +951,7 @@ module api.liveedit {
         }
 
         private notifyItemViewRemoved(itemView: ItemView) {
-            var event = new ItemViewRemovedEvent(itemView);
+            let event = new ItemViewRemovedEvent(itemView);
             this.itemViewRemovedListeners.forEach((listener) => listener(event));
         }
 

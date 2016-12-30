@@ -165,14 +165,14 @@ export class LiveEditPageProxy {
     }
 
     private createLiveEditIFrame(): api.dom.IFrameEl {
-        var liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
+        let liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
         liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
 
         return liveEditIFrame;
     }
 
     private createPlaceholderIFrame(): api.dom.IFrameEl {
-        var placeholderIFrame = new api.dom.IFrameEl("live-edit-frame-blank");
+        let placeholderIFrame = new api.dom.IFrameEl("live-edit-frame-blank");
         placeholderIFrame.setSrc(CONFIG.assetsUri + "/live-edit/js/_blank.html");
 
         return placeholderIFrame;
@@ -253,8 +253,8 @@ export class LiveEditPageProxy {
             this.showLoadMaskHandler();
         }
 
-        var contentId = this.liveEditModel.getContent().getContentId().toString();
-        var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+        let contentId = this.liveEditModel.getContent().getContentId().toString();
+        let pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
 
         if (api.BrowserHelper.isIE()) {
             this.copyObjectsBeforeFrameReloadForIE();
@@ -307,7 +307,7 @@ export class LiveEditPageProxy {
     }
 
     private handleIFrameLoadedEvent() {
-        var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
+        let liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
 
         if (LiveEditPageProxy.debug) {
             console.debug("LiveEditPageProxy.handleIframeLoadedEvent at " + new Date().toISOString());
@@ -353,7 +353,7 @@ export class LiveEditPageProxy {
     }
 
     public loadComponent(componentView: ComponentView<Component>, componentUrl: string): wemQ.Promise<string> {
-        var deferred = wemQ.defer<string>();
+        let deferred = wemQ.defer<string>();
         api.util.assertNotNull(componentView, "componentView cannot be null");
         api.util.assertNotNull(componentUrl, "componentUrl cannot be null");
 
@@ -361,17 +361,17 @@ export class LiveEditPageProxy {
             url: componentUrl,
             type: 'GET',
             success: (htmlAsString: string) => {
-                var newElement = api.dom.Element.fromString(htmlAsString);
-                var itemViewIdProducer = componentView.getItemViewIdProducer();
+                let newElement = api.dom.Element.fromString(htmlAsString);
+                let itemViewIdProducer = componentView.getItemViewIdProducer();
 
-                var createViewConfig = new CreateItemViewConfig<RegionView,Component>().setItemViewProducer(
+                let createViewConfig = new CreateItemViewConfig<RegionView,Component>().setItemViewProducer(
                     itemViewIdProducer).setParentView(componentView.getParentItemView()).setData(componentView.getComponent()).setElement(
                     newElement);
-                var newComponentView: ComponentView<Component> = componentView.getType().createView(createViewConfig);
+                let newComponentView: ComponentView<Component> = componentView.getType().createView(createViewConfig);
 
                 componentView.replaceWith(newComponentView);
 
-                var event = new ComponentLoadedEvent(newComponentView, componentView);
+                let event = new ComponentLoadedEvent(newComponentView, componentView);
                 event.fire(this.liveEditWindow);
 
                 newComponentView.select();
@@ -380,8 +380,8 @@ export class LiveEditPageProxy {
                 deferred.resolve("");
             },
             error: (jqXHR: JQueryXHR, textStatus: string, errorThrow: string) => {
-                var responseHtml = wemjq.parseHTML(jqXHR.responseText);
-                var errorMessage = "";
+                let responseHtml = wemjq.parseHTML(jqXHR.responseText);
+                let errorMessage = "";
                 responseHtml.forEach((el: HTMLElement, i) => {
                     if (el.tagName && el.tagName.toLowerCase() == "title") {
                         errorMessage = el.innerHTML;
@@ -845,7 +845,7 @@ export class LiveEditPageProxy {
     }
 
     private copyControllerForIE() {
-        var controller = this.liveEditModel.getPageModel().getController();
+        let controller = this.liveEditModel.getPageModel().getController();
         if (controller) {
             this.controllerCopyForIE = JSON.parse(JSON.stringify(controller));
             this.controllerCopyForIE.key = controller.getKey().toString();
@@ -853,7 +853,7 @@ export class LiveEditPageProxy {
     }
 
     private copyRegionsForIE() {
-        var regions = this.liveEditModel.getPageModel().getRegions();
+        let regions = this.liveEditModel.getPageModel().getRegions();
         if (regions) {
             this.regionsCopyForIE = JSON.parse(JSON.stringify(regions.toJson()));
         }
@@ -866,14 +866,14 @@ export class LiveEditPageProxy {
 
     private resetControllerForIE() {
         if (this.controllerCopyForIE) {
-            var controller = new api.content.page.PageDescriptorBuilder().fromJson(this.controllerCopyForIE).build();
+            let controller = new api.content.page.PageDescriptorBuilder().fromJson(this.controllerCopyForIE).build();
             this.liveEditModel.getPageModel().setControllerDescriptor(controller);
         }
     }
 
     private resetRegionsForIE() {
         if (this.regionsCopyForIE) {
-            var regions = api.content.page.region.Regions.create().fromJson(this.regionsCopyForIE, null).build();
+            let regions = api.content.page.region.Regions.create().fromJson(this.regionsCopyForIE, null).build();
             this.liveEditModel.getPageModel().setRegions(regions);
         }
     }

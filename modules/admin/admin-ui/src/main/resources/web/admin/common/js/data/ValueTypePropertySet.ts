@@ -28,7 +28,7 @@ module api.data {
             if (value.isNull()) {
                 return null;
             }
-            var data = <PropertySet>value.getObject();
+            let data = <PropertySet>value.getObject();
             return data.toJson();
         }
 

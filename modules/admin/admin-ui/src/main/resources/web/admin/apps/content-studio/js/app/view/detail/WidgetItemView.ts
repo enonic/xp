@@ -30,14 +30,14 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     public setUrl(url: string, contentId: string, keepId: boolean = false): wemQ.Promise<void> {
-        var deferred = wemQ.defer<void>(),
+        let deferred = wemQ.defer<void>(),
             uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid,
             linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync(),
             el = this.getEl(),
             onLinkLoaded = ((event: UIEvent) => {
-                var mainContainer = event.target["import"].body;
+                let mainContainer = event.target["import"].body;
                 if (mainContainer) {
-                    var html = this.stripOffAssets(mainContainer.innerHTML);
+                    let html = this.stripOffAssets(mainContainer.innerHTML);
                     el.getHTMLElement().insertAdjacentHTML('beforeend', html);
                 }
 
@@ -55,7 +55,7 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     private stripOffAssets(html: string): string {
-        var result = this.stripOffScripts(html);
+        let result = this.stripOffScripts(html);
         // leave stylesheet links for FF & Safari due to bug in processing them
         result = (api.BrowserHelper.isFirefox() || api.BrowserHelper.isSafari()) ? result : this.stripOffLinks(result);
         return result;

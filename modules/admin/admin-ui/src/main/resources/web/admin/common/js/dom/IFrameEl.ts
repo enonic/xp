@@ -28,7 +28,7 @@ module api.dom {
         }
 
         postMessage(data: any, targetOrigin: string = "*") {
-            var thisIFrameElement: HTMLIFrameElement = <HTMLIFrameElement>this.getHTMLElement();
+            let thisIFrameElement: HTMLIFrameElement = <HTMLIFrameElement>this.getHTMLElement();
             thisIFrameElement.contentWindow.postMessage(data, targetOrigin);
         }
 

@@ -82,7 +82,7 @@ module api.ui.uploader {
                 return false;
             }
 
-            var other = <UploadItem<MODEL>>o;
+            let other = <UploadItem<MODEL>>o;
 
             if (!api.ObjectHelper.equals(this.model, other.model)) {
                 return false;

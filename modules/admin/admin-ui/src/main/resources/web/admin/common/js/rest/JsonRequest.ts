@@ -34,13 +34,14 @@ module api.rest {
 
         send(): wemQ.Promise<JsonResponse<RAW_JSON_TYPE>> {
 
-            var deferred = wemQ.defer<JsonResponse<RAW_JSON_TYPE>>();
+            let deferred = wemQ.defer<JsonResponse<RAW_JSON_TYPE>>();
 
-            var request: XMLHttpRequest = new XMLHttpRequest();
+            let request: XMLHttpRequest = new XMLHttpRequest();
 
             request.onreadystatechange = () => {
 
                 if (request.readyState === 4) {
+                    let errorJson = null;
 
                     if (request.status === 204) {
                         deferred.resolve(new JsonResponse<RAW_JSON_TYPE>(null));
@@ -53,7 +54,7 @@ module api.rest {
                     }
                     else {
                         try {
-                            var errorJson: any = request.response ? JSON.parse(request.response) : null;
+                            errorJson = request.response ? JSON.parse(request.response) : null;
                         } catch (error) {
                             deferred.reject(error);
                         }
@@ -65,7 +66,7 @@ module api.rest {
 
             if ("POST" === this.method.toUpperCase()) {
                 this.preparePOSTRequest(request);
-                var paramString = JSON.stringify(this.params);
+                let paramString = JSON.stringify(this.params);
                 request.send(paramString);
             }
             else {
@@ -76,7 +77,7 @@ module api.rest {
         }
 
         private prepareGETRequest(request: XMLHttpRequest) {
-            var uriString = UriHelper.appendUrlParams(this.path.toString(), this.params);
+            let uriString = UriHelper.appendUrlParams(this.path.toString(), this.params);
             request.open(this.method, UriHelper.getUri(uriString), true);
             request.timeout = this.timeoutMillis;
             request.setRequestHeader("Accept", "application/json");

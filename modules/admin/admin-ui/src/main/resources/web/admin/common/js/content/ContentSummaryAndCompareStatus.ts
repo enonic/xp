@@ -111,7 +111,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentSummaryAndCompareStatus>o;
+            let other = <ContentSummaryAndCompareStatus>o;
 
             if (!api.ObjectHelper.equals(this.uploadItem, other.uploadItem)) {
                 return false;

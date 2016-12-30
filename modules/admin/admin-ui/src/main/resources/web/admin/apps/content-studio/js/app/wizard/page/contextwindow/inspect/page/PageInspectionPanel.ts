@@ -97,7 +97,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
                     new GetPageDescriptorByKeyRequest(pageTemplate.getController())
                         .sendAndParse()
                         .then((pageDescriptor: PageDescriptor) => {
-                            var setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor);
+                            let setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor);
                             this.pageModel.setTemplate(setTemplate, true);
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
@@ -197,7 +197,7 @@ class BaseInspectionHandler {
     }
 
     private initListener(liveEditModel: LiveEditModel) {
-        var pageModel = liveEditModel.getPageModel();
+        let pageModel = liveEditModel.getPageModel();
 
         if (this.propertyChangedListener) {
             liveEditModel.getPageModel().unPropertyChanged(this.propertyChangedListener);
@@ -219,7 +219,7 @@ class BaseInspectionHandler {
                 this.pageDescriptorForm.show();
             }
 
-            var controller = pageModel.getController();
+            let controller = pageModel.getController();
             if (controller) {
                 this.refreshConfigForm(controller, pageModel.getConfig(), liveEditModel.getFormContext());
             }
@@ -270,8 +270,8 @@ class PageTemplateInspectionHandler extends BaseInspectionHandler {
 class ContentInspectionHandler extends BaseInspectionHandler {
 
     refreshConfigView(liveEditModel: LiveEditModel) {
-        var pageModel = liveEditModel.getPageModel();
-        var pageMode = pageModel.getMode();
+        let pageModel = liveEditModel.getPageModel();
+        let pageMode = pageModel.getMode();
 
         if (pageMode == PageMode.FORCED_TEMPLATE || pageMode == PageMode.AUTOMATIC) {
             this.showPageConfig(pageModel, liveEditModel.getFormContext());

@@ -44,7 +44,7 @@ export class ApplicationAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Ap
     }
 
     private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
-        var browsePanel: api.app.browse.BrowsePanel<Application> = this.getBrowsePanel();
+        let browsePanel: api.app.browse.BrowsePanel<Application> = this.getBrowsePanel();
         if (!browsePanel) {
             this.addBrowsePanel(new ApplicationBrowsePanel());
         } else {

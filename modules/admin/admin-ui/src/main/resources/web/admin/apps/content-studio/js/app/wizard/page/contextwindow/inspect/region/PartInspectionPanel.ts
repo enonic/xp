@@ -133,8 +133,8 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
         this.selector.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
             if (this.handleSelectorEvents) {
-                var option: Option<PartDescriptor> = event.getOption();
-                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                let option: Option<PartDescriptor> = event.getOption();
+                let selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                 this.partComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
             }
         });

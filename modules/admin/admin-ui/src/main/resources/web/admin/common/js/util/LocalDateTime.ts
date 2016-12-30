@@ -69,7 +69,7 @@ module api.util {
 
         timeToString(): string {
             // tslint:disable-next-line:max-line-length
-            var fractions = this.fractions ? LocalDateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
+            let fractions = this.fractions ? LocalDateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
 
             return this.padNumber(this.hours) + LocalDateTime.TIME_SEPARATOR +
                    this.padNumber(this.minutes) + LocalDateTime.TIME_SEPARATOR +
@@ -85,7 +85,7 @@ module api.util {
                 return false;
             }
 
-            var other = <LocalDateTime>o;
+            let other = <LocalDateTime>o;
 
             if (!api.ObjectHelper.stringEquals(this.toString(), other.toString())) {
                 return false;
@@ -100,7 +100,7 @@ module api.util {
         }
 
         private padNumber(num: number, length: number = 2): string {
-            var numAsString = String(num);
+            let numAsString = String(num);
 
             while (numAsString.length < length){
                 numAsString = "0" + numAsString;

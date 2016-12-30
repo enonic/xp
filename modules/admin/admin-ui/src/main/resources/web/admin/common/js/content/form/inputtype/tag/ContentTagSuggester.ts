@@ -40,33 +40,33 @@ module api.content.form.inputtype.tag {
 
         suggest(value: string): wemQ.Promise<string[]> {
 
-            var fieldName = "data" + this.propertyPath.getParentPath().toString() + this.propertyPath.getLastElement().getName();
+            let fieldName = "data" + this.propertyPath.getParentPath().toString() + this.propertyPath.getLastElement().getName();
 
-            var fulltextExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
+            let fulltextExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
                 setSearchString(value).
                 addField(new api.query.QueryField(fieldName)).
                 build();
 
-            var queryExpr: QueryExpr = new QueryExpr(fulltextExpression);
+            let queryExpr: QueryExpr = new QueryExpr(fulltextExpression);
 
-            var query = new ContentQuery();
+            let query = new ContentQuery();
             query.setSize(10);
             query.setQueryExpr(queryExpr);
 
-            var queryRequest = new ContentQueryRequest(query);
+            let queryRequest = new ContentQueryRequest(query);
             queryRequest.setExpand(api.rest.Expand.FULL);
 
             return queryRequest.sendAndParse().then(
                 (contentQueryResult: api.content.resource.result.ContentQueryResult<Content,ContentJson>) => {
 
-                    var suggestedTags: string[] = [];
+                    let suggestedTags: string[] = [];
                     contentQueryResult.getContents().forEach((content: Content) => {
-                        var propertySet = this.propertyPath.getParentPath().isRoot() ?
+                        let propertySet = this.propertyPath.getParentPath().isRoot() ?
                                           content.getContentData().getRoot() :
                                           content.getContentData().getPropertySet(this.propertyPath);
                         propertySet.forEachProperty(this.propertyPath.getLastElement().getName(), (property: Property) => {
                             if (property.hasNonNullValue()) {
-                                var suggestedTag = property.getString();
+                                let suggestedTag = property.getString();
                                 if (suggestedTag.search(new RegExp(value, "i")) == 0 && suggestedTags.indexOf(suggestedTag) < 0) {
                                     suggestedTags.push(suggestedTag);
                                 }

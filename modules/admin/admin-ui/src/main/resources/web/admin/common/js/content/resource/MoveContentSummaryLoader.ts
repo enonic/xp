@@ -52,7 +52,7 @@ module api.content.resource {
             this.notifyLoadingData(postLoad);
 
             return this.sendRequest().then((contents: ContentSummary[]) => {
-                var deferred = wemQ.defer<ContentSummary[]>();
+                let deferred = wemQ.defer<ContentSummary[]>();
 
                 const allContentTypes = contents.map((content)=> content.getType());
                 const contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
@@ -90,12 +90,12 @@ module api.content.resource {
         }
 
         private filterContent(contents: ContentSummary[], contentTypes: ContentType[]): ContentSummary[] {
-            var contentTypeAllowsChild: { [s: string]: boolean; } = {};
+            let contentTypeAllowsChild: { [s: string]: boolean; } = {};
             contentTypes.forEach((contentType)=> contentTypeAllowsChild[contentType.getName()] = contentType.isAllowChildContent());
 
-            var createContentFilter = new api.content.util.CreateContentFilter();
+            let createContentFilter = new api.content.util.CreateContentFilter();
 
-            var filtered = contents.slice(0);
+            let filtered = contents.slice(0);
 
             if (this.filterContentPaths.length === 1) {
                 const contentPath = this.filterContentPaths[0];

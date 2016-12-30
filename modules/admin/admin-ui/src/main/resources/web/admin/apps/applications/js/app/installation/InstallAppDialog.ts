@@ -29,7 +29,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         this.addClass("install-application-dialog hidden");
 
-        var loadedAppsAtLeastOnce = false;
+        let loadedAppsAtLeastOnce = false;
 
         this.onMarketLoaded = api.util.AppHelper.debounce((() => {
             if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() == 0) {
@@ -104,7 +104,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     }
 
     public createClearFilterButton(): api.dom.ButtonEl {
-        var clearButton = new api.dom.ButtonEl();
+        let clearButton = new api.dom.ButtonEl();
         clearButton.addClass("clear-button hidden");
         clearButton.onClicked(() => {
             this.applicationInput.reset();
@@ -119,9 +119,9 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     // we catch drag enter on this element and trigger uploader to appear,
     // then catch drag leave on uploader's dropzone to get back to previous state
     private initDragAndDropUploaderEvents() {
-        var dragOverEl;
+        let dragOverEl;
         this.onDragEnter((event: DragEvent) => {
-            var target = <HTMLElement> event.target;
+            let target = <HTMLElement> event.target;
 
             if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
                 this.dropzoneContainer.show();

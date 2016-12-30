@@ -15,7 +15,7 @@ module api.ui.security.acl {
         }
 
         createItemView(entry: AccessControlEntry): AccessControlEntryView {
-            var itemView = new AccessControlEntryView(entry);
+            let itemView = new AccessControlEntryView(entry);
             itemView.setEditable(this.itemsEditable);
             itemView.onRemoveClicked(() => {
                 this.removeItem(entry);

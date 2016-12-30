@@ -11,7 +11,7 @@ export class EditContentAction extends Action {
         super("Edit", "mod+e");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var contents: api.content.ContentSummaryAndCompareStatus[]
+            let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
 
             if (contents.length > EditContentAction.MAX_ITEMS_TO_EDIT) {

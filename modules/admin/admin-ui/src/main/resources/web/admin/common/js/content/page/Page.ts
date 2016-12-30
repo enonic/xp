@@ -76,7 +76,7 @@ module api.content.page {
                 return false;
             }
 
-            var other = <Page>o;
+            let other = <Page>o;
 
             if (!api.ObjectHelper.equals(this.controller, other.controller)) {
                 return false;
@@ -141,7 +141,7 @@ module api.content.page {
             this.setCustomized(json.customized);
 
             if (json.fragment) {
-                var component: Component = api.content.page.region.ComponentFactory.createFromJson(json.fragment, 0, null);
+                let component: Component = api.content.page.region.ComponentFactory.createFromJson(json.fragment, 0, null);
                 this.setFragment(component);
             }
 

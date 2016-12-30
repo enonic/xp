@@ -32,7 +32,7 @@ module api.system {
         }
 
         private doPoll() {
-            var request = new StatusRequest();
+            let request = new StatusRequest();
             request.setTimeout(this.pollIntervalMs);
             request.sendAndParse().then((status: StatusResult) => {
                 if (!this.connected) {

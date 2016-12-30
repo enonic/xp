@@ -103,7 +103,7 @@ module api.util.htmlarea.dialog {
             if (!this.isEmail()) {
                 return api.util.StringHelper.EMPTY_STRING;
             }
-            var emailArr = this.getHref().split(LinkModalDialog.subjectPrefix);
+            let emailArr = this.getHref().split(LinkModalDialog.subjectPrefix);
             return emailArr[0].replace(LinkModalDialog.emailPrefix, api.util.StringHelper.EMPTY_STRING);
         }
 
@@ -119,7 +119,7 @@ module api.util.htmlarea.dialog {
             if (!this.isEmail() || this.getHref().indexOf(LinkModalDialog.subjectPrefix) == -1) {
                 return api.util.StringHelper.EMPTY_STRING;
             }
-            var emailArr = this.getHref().split(LinkModalDialog.subjectPrefix);
+            let emailArr = this.getHref().split(LinkModalDialog.subjectPrefix);
             return decodeURI(emailArr[1].replace(LinkModalDialog.subjectPrefix, api.util.StringHelper.EMPTY_STRING));
         }
 
@@ -168,7 +168,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createEmailPanel(): Panel {
-            var emailFormItem: FormItem = this.createFormItemWithPostponedValue("email", "Email", this.getEmail,
+            let emailFormItem: FormItem = this.createFormItemWithPostponedValue("email", "Email", this.getEmail,
                 LinkModalDialog.validationRequiredEmail);
 
             emailFormItem.getLabel().addClass("required");
@@ -188,7 +188,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createTargetCheckbox(id: string, isTabSelectedFn: Function): FormItem {
-            var checkbox = api.ui.Checkbox.create().setLabelText("Open in new tab").setInputAlignment(InputAlignment.RIGHT).build();
+            let checkbox = api.ui.Checkbox.create().setLabelText("Open in new tab").setInputAlignment(InputAlignment.RIGHT).build();
 
             this.onAdded(() => {
                 checkbox.setChecked(this.getTarget(isTabSelectedFn.call(this)));
@@ -205,7 +205,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createDockedPanel(): DockedPanel {
-            var dockedPanel = new DockedPanel();
+            let dockedPanel = new DockedPanel();
             dockedPanel.addItem(LinkModalDialog.tabNames.content, true, this.createContentPanel());
             dockedPanel.addItem(LinkModalDialog.tabNames.url, true, this.createUrlPanel());
             dockedPanel.addItem(LinkModalDialog.tabNames.download, true, this.createDownloadPanel());
@@ -231,7 +231,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            var submitAction = new api.ui.Action(this.link ? "Update" : "Insert");
+            let submitAction = new api.ui.Action(this.link ? "Update" : "Insert");
             this.setSubmitAction(submitAction);
 
             this.addAction(submitAction.onExecuted(() => {
@@ -278,7 +278,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createAnchorDropdown(anchorList: string[]): FormItem {
-            var dropDown = new Dropdown<string>("anchor", <DropdownConfig<string>>{});
+            let dropDown = new Dropdown<string>("anchor", <DropdownConfig<string>>{});
 
             anchorList.forEach((anchor: string) => {
                 dropDown.addOption(<Option<string>>{value: "#" + anchor, displayValue: anchor});
@@ -292,68 +292,68 @@ module api.util.htmlarea.dialog {
         }
 
         private validateDockPanel(): boolean {
-            var form = <Form>this.dockedPanel.getDeck().getPanelShown().getFirstChild();
+            let form = <Form>this.dockedPanel.getDeck().getPanelShown().getFirstChild();
 
             return form.validate(true).isValid();
         }
 
         protected validate(): boolean {
-            var mainFormValid = super.validate();
-            var dockPanelValid = this.validateDockPanel();
+            let mainFormValid = super.validate();
+            let dockPanelValid = this.validateDockPanel();
 
             return mainFormValid && dockPanelValid;
         }
 
         private createContentLink(): api.dom.AEl {
-            var contentSelector = <api.content.ContentComboBox>this.getFieldById("contentId"),
+            let contentSelector = <api.content.ContentComboBox>this.getFieldById("contentId"),
                 targetCheckbox = <api.ui.Checkbox>this.getFieldById("contentTarget");
 
-            var linkEl = new api.dom.AEl();
+            let linkEl = new api.dom.AEl();
             linkEl.setUrl(LinkModalDialog.contentPrefix + contentSelector.getValue(), targetCheckbox.isChecked() ? "_blank" : null);
 
             return linkEl;
         }
 
         private createDownloadLink(): api.dom.AEl {
-            var contentSelector = <api.content.ContentComboBox>this.getFieldById("downloadId");
+            let contentSelector = <api.content.ContentComboBox>this.getFieldById("downloadId");
 
-            var linkEl = new api.dom.AEl();
+            let linkEl = new api.dom.AEl();
             linkEl.setUrl(LinkModalDialog.downloadPrefix + contentSelector.getValue());
 
             return linkEl;
         }
 
         private createUrlLink(): api.dom.AEl {
-            var url = (<api.ui.text.TextInput>this.getFieldById("url")).getValue(),
+            let url = (<api.ui.text.TextInput>this.getFieldById("url")).getValue(),
                 targetCheckbox = <api.ui.Checkbox>this.getFieldById("urlTarget");
 
-            var linkEl = new api.dom.AEl();
+            let linkEl = new api.dom.AEl();
             linkEl.setUrl(url, targetCheckbox.isChecked() ? "_blank" : null);
 
             return linkEl;
         }
 
         private createAnchor(): api.dom.AEl {
-            var anchorName = (<api.ui.text.TextInput>this.getFieldById("anchor")).getValue();
+            let anchorName = (<api.ui.text.TextInput>this.getFieldById("anchor")).getValue();
 
-            var linkEl = new api.dom.AEl();
+            let linkEl = new api.dom.AEl();
             linkEl.setUrl(anchorName);
 
             return linkEl;
         }
 
         private createEmailLink(): api.dom.AEl {
-            var email = (<api.ui.text.TextInput>this.getFieldById("email")).getValue(),
+            let email = (<api.ui.text.TextInput>this.getFieldById("email")).getValue(),
                 subject = (<api.ui.text.TextInput>this.getFieldById("subject")).getValue();
 
-            var linkEl = new api.dom.AEl();
+            let linkEl = new api.dom.AEl();
             linkEl.setUrl(LinkModalDialog.emailPrefix + email + (subject ? LinkModalDialog.subjectPrefix + encodeURI(subject) : ""));
 
             return linkEl;
         }
 
         private createLink(): void {
-            var linkEl: api.dom.AEl,
+            let linkEl: api.dom.AEl,
                 deck = <api.ui.panel.NavigatedDeckPanel>this.dockedPanel.getDeck(),
                 selectedTab = <api.ui.tab.TabBarItem>deck.getSelectedNavigationItem(),
                 linkText: string = this.onlyTextSelected ? (<api.ui.text.TextInput>this.getFieldById("linkText")).getValue() : "",
@@ -390,7 +390,7 @@ module api.util.htmlarea.dialog {
                     this.getEditor().insertContent(linkEl.toString());
                 }
                 else {
-                    var linkAttrs = {
+                    let linkAttrs = {
                         href: linkEl.getHref(),
                         target: linkEl.getTarget() ? linkEl.getTarget() : null,
                         rel: null,

@@ -27,12 +27,12 @@ export class FloatingDetailsPanel extends SlidablePanel {
     }
 
     private onRenderedHandler() {
-        var initialPos = 0;
-        var splitterPosition = 0;
+        let initialPos = 0;
+        let splitterPosition = 0;
         this.actualWidth = this.getEl().getWidth();
         this.mask = new api.ui.mask.DragMask(this.getParentElement());
 
-        var dragListener = (e: MouseEvent) => {
+        let dragListener = (e: MouseEvent) => {
             if (this.splitterWithinBoundaries(initialPos - e.clientX)) {
                 splitterPosition = e.clientX;
                 this.ghostDragger.getEl().setLeftPx(e.clientX - this.getEl().getOffsetLeft());
@@ -71,7 +71,7 @@ export class FloatingDetailsPanel extends SlidablePanel {
     }
 
     private splitterWithinBoundaries(offset: number) {
-        var newWidth = this.actualWidth + offset;
+        let newWidth = this.actualWidth + offset;
         return (newWidth >= this.minWidth) && (newWidth <= this.getParentElement().getEl().getWidth() - this.parentMinWidth);
     }
 

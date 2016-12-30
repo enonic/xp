@@ -29,7 +29,7 @@ module api.application {
         }
 
         isSystemReserved(): boolean {
-            for (var key in ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS) {
+            for (let key in ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS) {
                 if (ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS[key].equals(this)) {
                     return true;
                 }
@@ -47,7 +47,7 @@ module api.application {
                 return false;
             }
 
-            var other = <ApplicationKey>o;
+            let other = <ApplicationKey>o;
             return api.ObjectHelper.stringEquals(this.name, other.name);
         }
 

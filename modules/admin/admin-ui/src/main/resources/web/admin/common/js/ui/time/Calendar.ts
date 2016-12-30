@@ -65,7 +65,7 @@ module api.ui.time {
         constructor(builder: CalendarBuilder) {
             super("calendar");
 
-            var now = new Date();
+            let now = new Date();
             this.year = builder.year || now.getFullYear();
             this.month = builder.month != undefined ? builder.month : now.getMonth();
             this.selectedDate = builder.selectedDate;
@@ -83,7 +83,7 @@ module api.ui.time {
                 this.removeChildren();
 
                 if (api.util.DateHelper.isInvalidDate(value)) {
-                    var spanEl = new api.dom.SpanEl().setHtml("Invalid date");
+                    let spanEl = new api.dom.SpanEl().setHtml("Invalid date");
                     this.appendChild(spanEl);
                 }
                 else {
@@ -92,7 +92,7 @@ module api.ui.time {
             }
             else {
                 this.selectedDate = null;
-                var now = new Date();
+                let now = new Date();
                 this.year = now.getFullYear();
                 this.month = now.getMonth();
             }
@@ -136,7 +136,7 @@ module api.ui.time {
 
         private renderMonth() {
             this.calendarDays = this.resolveDaysInMonth();
-            var firstDay = this.resolveFirstDayOfCalendar();
+            let firstDay = this.resolveFirstDayOfCalendar();
             this.weeks = this.createCalendarWeeks(firstDay);
             this.weeks.forEach((week) => {
                 this.appendChild(week);
@@ -145,11 +145,11 @@ module api.ui.time {
         }
 
         private resolveDaysInMonth() {
-            var calendarDays: CalendarDay[] = [];
-            var daysInMonth = api.util.DateHelper.numDaysInMonth(this.year, this.month);
-            var previousDay: CalendarDay = null;
-            for (var i = 1; i <= daysInMonth; i++) {
-                var calendarDay = this.createCalendarDay(i, previousDay);
+            let calendarDays: CalendarDay[] = [];
+            let daysInMonth = api.util.DateHelper.numDaysInMonth(this.year, this.month);
+            let previousDay: CalendarDay = null;
+            for (let i = 1; i <= daysInMonth; i++) {
+                let calendarDay = this.createCalendarDay(i, previousDay);
                 calendarDays.push(calendarDay);
                 previousDay = calendarDay;
             }
@@ -157,12 +157,12 @@ module api.ui.time {
         }
 
         private resolveFirstDayOfCalendar() {
-            var firstDay: CalendarDay = null;
+            let firstDay: CalendarDay = null;
             if (this.startingDayOfWeek.equals(this.calendarDays[0].getDayOfWeek())) {
                 firstDay = this.calendarDays[0];
             }
             else {
-                var previousDay = this.calendarDays[0].getPrevious();
+                let previousDay = this.calendarDays[0].getPrevious();
                 while (!previousDay.getDayOfWeek().equals(this.startingDayOfWeek)) {
                     previousDay = previousDay.getPrevious();
                 }
@@ -172,11 +172,11 @@ module api.ui.time {
         }
 
         private createCalendarWeeks(firstDay: CalendarDay) {
-            var weeks: CalendarWeek [] = [];
-            var currWeek = this.createCalendarWeek(firstDay);
+            let weeks: CalendarWeek [] = [];
+            let currWeek = this.createCalendarWeek(firstDay);
             weeks.push(currWeek);
             while (!currWeek.hasLastDayOfMonth(this.month)) {
-                var newWeek = this.createCalendarWeek(currWeek.getNextWeeksFirstDay());
+                let newWeek = this.createCalendarWeek(currWeek.getNextWeeksFirstDay());
                 weeks.push(newWeek);
                 currWeek = newWeek;
             }
@@ -184,10 +184,10 @@ module api.ui.time {
         }
 
         private createCalendarWeek(firstDayOfWeek: CalendarDay): CalendarWeek {
-            var weekBuilder = new CalendarWeekBuilder();
+            let weekBuilder = new CalendarWeekBuilder();
             weekBuilder.addDay(firstDayOfWeek);
-            var nextDay = firstDayOfWeek.getNext();
-            for (var i = 0; i < 6; i++) {
+            let nextDay = firstDayOfWeek.getNext();
+            for (let i = 0; i < 6; i++) {
                 weekBuilder.addDay(nextDay);
                 nextDay = nextDay.getNext();
             }
@@ -196,8 +196,8 @@ module api.ui.time {
 
         private createCalendarDay(dayOfMonth: number, previousDay: CalendarDay): CalendarDay {
 
-            var date = new Date(this.year, this.month, dayOfMonth);
-            var calendarDay = new CalendarDayBuilder().
+            let date = new Date(this.year, this.month, dayOfMonth);
+            let calendarDay = new CalendarDayBuilder().
                 setDate(date).
                 setMonth(this.month).
                 setPreviousDay(previousDay).
@@ -252,7 +252,7 @@ module api.ui.time {
         }
 
         private notifySelectedDateChanged(date: Date) {
-            var event = new SelectedDateChangedEvent(date);
+            let event = new SelectedDateChangedEvent(date);
             this.selectedDateChangedListeners.forEach((listener) => {
                 listener(event);
             });

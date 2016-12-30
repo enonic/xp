@@ -201,7 +201,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private updateActionsByPermissionsSingleItemSelected(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
-        var selectedItem = contentBrowseItems[0].getModel().getContentSummary();
+        let selectedItem = contentBrowseItems[0].getModel().getContentSummary();
 
         return this.checkIsChildrenAllowedByContentType(selectedItem).then((contentTypeAllowsChildren: boolean) => {
             return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems, contentTypeAllowsChildren).then(() => {
@@ -244,7 +244,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private checkIsChildrenAllowedByContentType(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
-        var deferred = wemQ.defer<boolean>();
+        let deferred = wemQ.defer<boolean>();
 
         new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).sendAndParse().then(
             (contentType: api.schema.content.ContentType) => {

@@ -46,13 +46,13 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
     }
 
     updateActionsEnabledState(applicationBrowseItems: BrowseItem<Application>[]): wemQ.Promise<BrowseItem<Application>[]> {
-        var applicationsSelected = applicationBrowseItems.length;
-        var anySelected = applicationsSelected > 0;
-        var anyStarted = false;
-        var anyStopped = false;
-        var localAppSelected = false;
+        let applicationsSelected = applicationBrowseItems.length;
+        let anySelected = applicationsSelected > 0;
+        let anyStarted = false;
+        let anyStopped = false;
+        let localAppSelected = false;
         applicationBrowseItems.forEach((applicationBrowseItem: BrowseItem<Application>) => {
-            var state = applicationBrowseItem.getModel().getState();
+            let state = applicationBrowseItem.getModel().getState();
             if (state === Application.STATE_STARTED) {
                 anyStarted = true;
             } else if (state === Application.STATE_STOPPED) {
@@ -67,7 +67,7 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
         this.STOP_APPLICATION.setEnabled(anyStarted);
         this.UNINSTALL_APPLICATION.setEnabled(anySelected && !localAppSelected);
 
-        var deferred = wemQ.defer<BrowseItem<Application>[]>();
+        let deferred = wemQ.defer<BrowseItem<Application>[]>();
         deferred.resolve(applicationBrowseItems);
         return deferred.promise;
     }

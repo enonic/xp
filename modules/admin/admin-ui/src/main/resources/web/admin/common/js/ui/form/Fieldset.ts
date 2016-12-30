@@ -38,7 +38,7 @@ module api.ui.form {
         }
 
         removeItem(formItem: FormItem) {
-            for (var i = 0; i < this.items.length; i++) {
+            for (let i = 0; i < this.items.length; i++) {
                 if (this.items[i] === formItem) {
                     this.items.splice(i, 1);
                     this.removeChild(formItem);
@@ -53,7 +53,7 @@ module api.ui.form {
         }
 
         setFieldsetData(data: any) {
-            var input, inputValue;
+            let input, inputValue;
             this.items.forEach((item: api.ui.form.FormItem) => {
                 input = item.getInput();
                 inputValue = data[input.getName()];
@@ -64,7 +64,7 @@ module api.ui.form {
         }
 
         getFieldsetData(): any {
-            var input, data = {};
+            let input, data = {};
             this.items.forEach((item: api.ui.form.FormItem) => {
                 input = item.getInput();
                 data[input.getName()] = input.getValue();

@@ -26,10 +26,10 @@ module api.app {
                     this.getBrowsePanel().refreshFilter();
                 }
 
-                var previousActions = this.resolveActions(event.getPreviousPanel());
+                let previousActions = this.resolveActions(event.getPreviousPanel());
                 api.ui.KeyBindings.get().unbindKeys(api.ui.Action.getKeyBindings(previousActions));
 
-                var nextActions = this.resolveActions(event.getPanel());
+                let nextActions = this.resolveActions(event.getPanel());
                 this.currentKeyBindings = api.ui.Action.getKeyBindings(nextActions);
                 api.ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
             });
@@ -71,7 +71,7 @@ module api.app {
 
         canRemovePanel(panel: api.ui.panel.Panel): boolean {
             if (api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.wizard.WizardPanel)) {
-                var wizardPanel: api.app.wizard.WizardPanel<any> = <api.app.wizard.WizardPanel<any>>panel;
+                let wizardPanel: api.app.wizard.WizardPanel<any> = <api.app.wizard.WizardPanel<any>>panel;
                 return wizardPanel.canClose();
             }
             return true;

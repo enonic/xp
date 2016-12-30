@@ -26,7 +26,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
     public execute(): wemQ.Promise<Content> {
 
-        var context = new PersistedNewContentRoutineContext();
+        let context = new PersistedNewContentRoutineContext();
         return this.doExecute(context);
     }
 

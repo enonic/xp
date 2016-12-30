@@ -21,7 +21,7 @@ module api.ui.menu {
         }
 
         moveBy(dx: number, dy: number) {
-            var offset = this.getEl().getOffsetToParent();
+            let offset = this.getEl().getOffsetToParent();
             // referencing through prototype to be able to call this function with context other than this
             // i.e this.moveBy.call(other, x, y)
             ContextMenu.prototype.doMoveTo(this, offset.left + dx, offset.top + dy);

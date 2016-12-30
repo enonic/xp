@@ -73,14 +73,14 @@ module LiveEdit {
         }
 
         private init(event: InitializeLiveEditEvent) {
-            var startTime = Date.now();
+            let startTime = Date.now();
             if (LiveEditPage.debug) {
                 console.debug("LiveEditPage: starting live edit initialization");
             }
 
-            var liveEditModel = event.getLiveEditModel();
+            let liveEditModel = event.getLiveEditModel();
 
-            var body = api.dom.Body.get().loadExistingChildren();
+            let body = api.dom.Body.get().loadExistingChildren();
             try {
                 this.pageView = new PageViewBuilder()
                     .setItemViewProducer(new ItemViewIdProducer())

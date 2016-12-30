@@ -142,9 +142,9 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.selector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
             if (this.handleSelectorEvents) {
 
-                var option: Option<LayoutDescriptor> = event.getOption();
+                let option: Option<LayoutDescriptor> = event.getOption();
 
-                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                let selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                 this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
             }
         });

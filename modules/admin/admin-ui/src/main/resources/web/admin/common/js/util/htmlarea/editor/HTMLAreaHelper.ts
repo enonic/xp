@@ -10,7 +10,7 @@ module api.util.htmlarea.editor {
     export class HTMLAreaHelper {
 
         private static getConvertedImageSrc(imgSrc:string):string {
-            var contentId = imgSrc.replace(ImageModalDialog.imagePrefix, StringHelper.EMPTY_STRING),
+            let contentId = imgSrc.replace(ImageModalDialog.imagePrefix, StringHelper.EMPTY_STRING),
                 imageUrl = new api.content.util.ContentImageUrlResolver().
                     setContentId(new api.content.ContentId(contentId)).
                     setScaleWidth(true).
@@ -21,7 +21,7 @@ module api.util.htmlarea.editor {
         }
 
         public static prepareImgSrcsInValueForEdit(value:string):string {
-            var processedContent = value,
+            let processedContent = value,
                 regex = /<img.*?src="(.*?)"/g,
                 imgSrcs;
 
@@ -64,7 +64,7 @@ module api.util.htmlarea.editor {
         }
 
         public static updateImageAlignmentBehaviour(editor: HtmlAreaEditor) {
-            var imgs = editor.getBody().querySelectorAll('img');
+            let imgs = editor.getBody().querySelectorAll('img');
 
             for (let i = 0; i < imgs.length; i++) {
                 this.changeImageParentAlignmentOnImageAlignmentChange(imgs[i]);
@@ -73,14 +73,14 @@ module api.util.htmlarea.editor {
         }
 
         public static changeImageParentAlignmentOnImageAlignmentChange(img: HTMLImageElement) {
-            var observer = new MutationObserver((mutations) => {
+            let observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
-                    var alignment = (<HTMLElement>mutation.target).style.textAlign;
+                    let alignment = (<HTMLElement>mutation.target).style.textAlign;
                     HTMLAreaHelper.updateImageParentAlignment(img, alignment);
                 });
             });
 
-            var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
+            let config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
 
             observer.observe(img, config);
         }
@@ -90,7 +90,7 @@ module api.util.htmlarea.editor {
                 alignment = image.style.textAlign;
             }
 
-            var styleFormat = "float: {0}; margin: {1};" +
+            let styleFormat = "float: {0}; margin: {1};" +
                               (HTMLAreaHelper.isImageInOriginalSize(image) ? "" : "width: {2}%;"),
                 styleAttr = "";
 

@@ -20,7 +20,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-        var content = item.getContentSummary();
+        let content = item.getContentSummary();
         if (!content.equals(this.content)) {
             if (!this.content) {
                 this.initListeners();
@@ -62,7 +62,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
 
         return super.layout().then(() => {
             if (this.content != undefined) {
-                var applicationKey = this.content.getType().getApplicationKey();
+                let applicationKey = this.content.getType().getApplicationKey();
                 if (!applicationKey.isSystemReserved()) {
                     return new api.application.GetApplicationRequest(applicationKey).sendAndParse().then((application: Application) => {
                         this.layoutApplication(application);
@@ -83,7 +83,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         }
         this.list = new api.dom.DlEl();
 
-        var strings: FieldString[];
+        let strings: FieldString[];
 
         strings = [
             new FieldString().setName("Type").setValue(this.content.getType().getLocalName()
@@ -138,8 +138,8 @@ class FieldString {
     }
 
     public layout(parentEl: api.dom.Element) {
-        var valueEl = new api.dom.DdDtEl("dt").setHtml(this.value);
-        var spanEl = new api.dom.DdDtEl("dd").setHtml(this.fieldName + ": ");
+        let valueEl = new api.dom.DdDtEl("dt").setHtml(this.value);
+        let spanEl = new api.dom.DdDtEl("dd").setHtml(this.fieldName + ": ");
         parentEl.appendChildren(spanEl, valueEl);
     }
 

@@ -22,7 +22,7 @@ module LiveEdit {
         }
 
         public static getViewPortSize():ViewPortSize {
-            var win:JQuery = wemjq(window);
+            let win:JQuery = wemjq(window);
             return {
                 width: win.width(),
                 height: win.height()

@@ -60,7 +60,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.onHidden((event) => this.hideContextMenu());
 
-        var closeButton = new api.ui.button.CloseButton();
+        let closeButton = new api.ui.button.CloseButton();
         closeButton.onClicked((event: MouseEvent) => this.hide());
 
         this.onRemoved(() => {
@@ -87,7 +87,7 @@ export class PageComponentsView extends api.dom.DivEl {
         this.onAdded(this.initLiveEditEvents.bind(this));
 
         this.responsiveItem = ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
-            var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
+            let smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
             if (!smallSize && this.isVisible()) {
                 this.constrainToParent();
             }
@@ -157,7 +157,7 @@ export class PageComponentsView extends api.dom.DivEl {
     private initLiveEditEvents() {
         this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
             if (!event.isNew() && !this.pageView.isLocked()) {
-                var selectedItemId = this.tree.getDataId(event.getItemView());
+                let selectedItemId = this.tree.getDataId(event.getItemView());
                 this.tree.selectNode(selectedItemId);
                 this.tree.getGrid().focus();
             }
@@ -168,11 +168,11 @@ export class PageComponentsView extends api.dom.DivEl {
         });
 
         this.liveEditPage.onComponentAdded((event: ComponentAddedEvent) => {
-            var parentNode = this.tree.getRoot().getCurrentRoot().findNode(this.tree.getDataId(event.getParentRegionView()));
+            let parentNode = this.tree.getRoot().getCurrentRoot().findNode(this.tree.getDataId(event.getParentRegionView()));
             if (parentNode) {
                 // deselect all otherwise node is going to be added as child to selection (that is weird btw)
                 this.tree.deselectAll();
-                var index = event.getParentRegionView().getComponentViews().indexOf(event.getComponentView());
+                let index = event.getParentRegionView().getComponentViews().indexOf(event.getComponentView());
                 if (index >= 0) {
                     this.tree.insertNode(event.getComponentView(), false, index, parentNode).then(() => {
                         // expand parent node to show added one
@@ -183,7 +183,7 @@ export class PageComponentsView extends api.dom.DivEl {
                         }
 
                         if (this.tree.hasChildren(event.getComponentView())) {
-                            var componentNode = this.tree.getRoot().getCurrentRoot().findNode(
+                            let componentNode = this.tree.getRoot().getCurrentRoot().findNode(
                                 this.tree.getDataId(event.getComponentView()));
                             this.tree.expandNode(componentNode, true);
                         }
@@ -213,17 +213,17 @@ export class PageComponentsView extends api.dom.DivEl {
         });
 
         this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
-            var oldDataId = this.tree.getDataId(event.getOldComponentView());
+            let oldDataId = this.tree.getDataId(event.getOldComponentView());
 
-            var oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
+            let oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
             oldNode.removeChildren();
 
             this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
-                var newDataId = this.tree.getDataId(event.getNewComponentView());
+                let newDataId = this.tree.getDataId(event.getNewComponentView());
 
                 if (this.tree.hasChildren(event.getNewComponentView())) {
                     // expand new node as it has children
-                    var newNode = this.tree.getRoot().getCurrentRoot().findNode(newDataId);
+                    let newNode = this.tree.getRoot().getCurrentRoot().findNode(newDataId);
                     this.tree.expandNode(newNode, true);
                 }
 
@@ -243,10 +243,10 @@ export class PageComponentsView extends api.dom.DivEl {
         });
 
         this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
-            var oldDataId = this.tree.getDataId(event.getOldComponentView());
+            let oldDataId = this.tree.getDataId(event.getOldComponentView());
 
             if (this.tree.hasChildren(event.getOldComponentView())) {
-                var oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
+                let oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
                 oldNode.removeChildren();
                 this.tree.refreshNode(oldNode);
             }
@@ -254,7 +254,7 @@ export class PageComponentsView extends api.dom.DivEl {
             this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
 
                 if (event.getNewComponentView().isSelected()) {
-                    var newDataId = this.tree.getDataId(event.getNewComponentView());
+                    let newDataId = this.tree.getDataId(event.getNewComponentView());
                     this.tree.selectNode(newDataId);
                 }
             });
@@ -267,7 +267,7 @@ export class PageComponentsView extends api.dom.DivEl {
         this.tree = new PageComponentsTreeGrid(content, pageView);
 
         this.clickListener = (event, data) => {
-            var elem = new api.dom.ElementHelper(event.target);
+            let elem = new api.dom.ElementHelper(event.target);
 
             this.hideContextMenu();
 
@@ -292,8 +292,8 @@ export class PageComponentsView extends api.dom.DivEl {
                 return;
             }
 
-            var clickedItemView: ItemView = this.tree.getGrid().getDataView().getItem(data.row).getData();
-            var isTextComponent = api.ObjectHelper.iFrameSafeInstanceOf(clickedItemView, TextComponentView);
+            let clickedItemView: ItemView = this.tree.getGrid().getDataView().getItem(data.row).getData();
+            let isTextComponent = api.ObjectHelper.iFrameSafeInstanceOf(clickedItemView, TextComponentView);
 
             if(isTextComponent) {
                 this.editTextComponent(clickedItemView);
@@ -310,7 +310,7 @@ export class PageComponentsView extends api.dom.DivEl {
                 return;
             }
 
-            var rowElement = event.target,
+            let rowElement = event.target,
                 selected = false;
 
             while (!rowElement.classList.contains("slick-row")) {
@@ -338,7 +338,7 @@ export class PageComponentsView extends api.dom.DivEl {
                 this.hide();
             }
 
-            var treeNode = data[0];
+            let treeNode = data[0];
 
             if (treeNode && !treeNode.getData().isSelected()) {
                 this.selectItem(treeNode);
@@ -351,7 +351,7 @@ export class PageComponentsView extends api.dom.DivEl {
             event.stopPropagation();
             event.preventDefault();
 
-            var cell = this.tree.getGrid().getCellFromEvent(event);
+            let cell = this.tree.getGrid().getCellFromEvent(event);
 
             this.showContextMenu(cell.row, {x: event.pageX, y: event.pageY});
         });
@@ -412,7 +412,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
 
     private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
-        var handler = api.util.AppHelper.debounce((event) => {
+        let handler = api.util.AppHelper.debounce((event) => {
             this.tree.updateNode(textComponentView);
         }, 500, false);
 
@@ -443,9 +443,9 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     setDraggable(draggable: boolean): PageComponentsView {
-        var body = api.dom.Body.get();
+        let body = api.dom.Body.get();
         if (!this.draggable && draggable) {
-            var lastPos;
+            let lastPos;
             if (!this.mouseDownListener) {
                 this.mouseDownListener = (event: MouseEvent) => {
                     if (PageComponentsView.debug) {
@@ -490,7 +490,7 @@ export class PageComponentsView extends api.dom.DivEl {
                         event.preventDefault();
                         event.stopPropagation();
 
-                        var el = this.getEl(),
+                        let el = this.getEl(),
                             newPos = {
                                 x: event.clientX,
                                 y: event.clientY
@@ -573,7 +573,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private scrollToItem(dataId: string) {
-        var node = this.tree.getRoot().getCurrentRoot().findNode(dataId);
+        let node = this.tree.getRoot().getCurrentRoot().findNode(dataId);
 
         if (node) {
             node.getData().scrollComponentIntoView();
@@ -611,14 +611,17 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
-        var node = this.tree.getGrid().getDataView().getItem(row);
+        let node = this.tree.getGrid().getDataView().getItem(row);
+        let itemView: ItemView;
+        let pageView: api.liveedit.PageView;
+
         if (node) {
-            var itemView: ItemView = node.getData(),
-                pageView: api.liveedit.PageView = itemView.getPageView();
+            itemView = node.getData();
+            pageView = itemView.getPageView();
         } else {
             pageView = this.pageView;
         }
-        var contextMenuActions: api.ui.Action[];
+        let contextMenuActions: api.ui.Action[];
 
         if (pageView.isLocked()) {
             contextMenuActions = pageView.getLockedMenuActions();
@@ -655,8 +658,8 @@ export class PageComponentsView extends api.dom.DivEl {
         this.setMenuOpenStyleOnMenuIcon(row);
 
         // show menu at position
-        var x = clickPosition.x;
-        var y = clickPosition.y;
+        let x = clickPosition.x;
+        let y = clickPosition.y;
 
         this.contextMenu.showAt(x, y, false);
     }
@@ -670,7 +673,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private setMenuOpenStyleOnMenuIcon(row: number) {
-        var stylesHash: Slick.CellCssStylesHash = {};
+        let stylesHash: Slick.CellCssStylesHash = {};
         stylesHash[row] = {menu: "menu-open"};
         this.tree.getGrid().setCellCssStyles("menu-open", stylesHash);
     }
@@ -686,7 +689,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private sameRowClicked(clickedRow: number): boolean {
-        var currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
+        let currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
         return clickedRow == currentlySelectedRow;
     }
 
@@ -695,13 +698,13 @@ export class PageComponentsView extends api.dom.DivEl {
             Highlighter.get().hide();
         }
         else {
-            var elementHelper = new api.dom.ElementHelper(rowElement);
-            var dimensions = elementHelper.getDimensions();
-            var nodes = this.tree.getRoot().getCurrentRoot().treeToList(),
+            let elementHelper = new api.dom.ElementHelper(rowElement);
+            let dimensions = elementHelper.getDimensions();
+            let nodes = this.tree.getRoot().getCurrentRoot().treeToList(),
                 hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
 
             if (hoveredNode) {
-                var data = hoveredNode.getData();
+                let data = hoveredNode.getData();
                 if (/*data.getType().isComponentType() && */!api.BrowserHelper.isMobile()) {
                     Highlighter.get().highlightElement(dimensions,
                         data.getType().getConfig().getHighlighterStyle());
@@ -730,9 +733,9 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private editTextComponent(textComponent: ItemView) {
-        var contextMenuActions: api.ui.Action[] = textComponent.getContextMenuActions();
+        let contextMenuActions: api.ui.Action[] = textComponent.getContextMenuActions();
 
-        var editAction: api.ui.Action;
+        let editAction: api.ui.Action;
 
         contextMenuActions.some((action: api.ui.Action) => {
             if(action.getLabel() === "Edit") {

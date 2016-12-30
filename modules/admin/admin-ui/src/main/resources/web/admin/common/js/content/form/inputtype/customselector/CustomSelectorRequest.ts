@@ -56,7 +56,7 @@ module api.content.form.inputtype.customselector {
         sendAndParse(): wemQ.Promise<CustomSelectorItem[]> {
             return this.send().then((response: api.rest.JsonResponse<CustomSelectorResponse>) => {
 
-                var result: CustomSelectorResponse = response.getResult();
+                let result: CustomSelectorResponse = response.getResult();
                 if (this.start == 0) {
                     this.results = [];
                 }

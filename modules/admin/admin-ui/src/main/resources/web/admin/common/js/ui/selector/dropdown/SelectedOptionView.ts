@@ -25,7 +25,7 @@ module api.ui.selector.dropdown {
                     if (document["selection"] && document["selection"].empty) {
                         document["selection"].empty();
                     } else if (window.getSelection) {
-                        var sel = window.getSelection();
+                        let sel = window.getSelection();
                         sel.removeAllRanges();
                     }
 

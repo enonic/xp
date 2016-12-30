@@ -28,7 +28,7 @@ module api.content.form.inputtype.checkbox {
 
         private setInputAlignment(inputAlignmentObj: any) {
             if (inputAlignmentObj) {
-                var inputAlignment: InputAlignment = InputAlignment[<string>inputAlignmentObj[0].value.toUpperCase()];
+                let inputAlignment: InputAlignment = InputAlignment[<string>inputAlignmentObj[0].value.toUpperCase()];
                 this.inputAlignment = isNaN(inputAlignment) ? InputAlignment.LEFT : inputAlignment;
             }
         }
@@ -42,7 +42,7 @@ module api.content.form.inputtype.checkbox {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
-            var checked = property.hasNonNullValue() ? property.getBoolean() : false;
+            let checked = property.hasNonNullValue() ? property.getBoolean() : false;
             this.checkbox =
                 api.ui.Checkbox.create().setLabelText(input.getLabel()).setChecked(checked).setInputAlignment(this.inputAlignment).build();
             this.appendChild(this.checkbox);
@@ -52,7 +52,7 @@ module api.content.form.inputtype.checkbox {
             }
 
             this.checkbox.onValueChanged((event: api.ValueChangedEvent) => {
-                var newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());
+                let newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());
 
                 this.saveToProperty(newValue);
             });

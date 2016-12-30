@@ -57,7 +57,7 @@ module api.content.form.inputtype.contentselector {
                     return;
                 }
 
-                var selectedContentIdsMap: {} = {};
+                let selectedContentIdsMap: {} = {};
                 this.contentComboBox.getSelectedOptionView().getSelectedOptions().forEach(
                     (selectedOption: any) => {
                         if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
@@ -69,7 +69,7 @@ module api.content.form.inputtype.contentselector {
                     filter(deletedItem => !deletedItem.isPending() &&
                                           selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
                     forEach((deletedItem) => {
-                        var option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
+                        let option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
                         if (option != null) {
                             this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
                         }
@@ -84,7 +84,7 @@ module api.content.form.inputtype.contentselector {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
+            let relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
             this.relationshipType = relationshipTypeConfig['value'];
 
             if (this.relationshipType) {
@@ -93,10 +93,10 @@ module api.content.form.inputtype.contentselector {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
 
-            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
+            let allowContentTypeConfig = inputConfig['allowContentType'] || [];
             this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
 
-            var allowContentPathConfig = inputConfig['allowPath'] || [];
+            let allowContentPathConfig = inputConfig['allowPath'] || [];
             this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
@@ -150,7 +150,7 @@ module api.content.form.inputtype.contentselector {
                     const contentIds: ContentId[] = [];
                     propertyArray.forEach((property: Property) => {
                         if (property.hasNonNullValue()) {
-                            var referenceValue = property.getReference();
+                            let referenceValue = property.getReference();
                             if (referenceValue instanceof api.util.Reference) {
                                 contentIds.push(ContentId.fromReference(referenceValue));
                             }
@@ -202,7 +202,7 @@ module api.content.form.inputtype.contentselector {
         }
 
         private removePropertyWithId(id: string) {
-            var length = this.getPropertyArray().getSize();
+            let length = this.getPropertyArray().getSize();
             for (let i = 0; i < length; i++) {
                 if (this.getPropertyArray().get(i).getValue().getString() == id) {
                     this.getPropertyArray().remove(i);
@@ -216,7 +216,7 @@ module api.content.form.inputtype.contentselector {
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
             return super.update(propertyArray, unchangedOnly).then(() => {
                 if (!unchangedOnly || !this.contentComboBox.isDirty()) {
-                    var value = this.getValueFromPropertyArray(propertyArray);
+                    let value = this.getValueFromPropertyArray(propertyArray);
                     this.contentComboBox.setValue(value);
                 }
             });
@@ -269,7 +269,7 @@ module api.content.form.inputtype.contentselector {
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
 
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
 
             ui.placeholder.html("Drop form item set here");
@@ -278,8 +278,8 @@ module api.content.form.inputtype.contentselector {
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                var draggedToIndex = draggedElement.getSiblingIndex();
+                let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                let draggedToIndex = draggedElement.getSiblingIndex();
                 this.getPropertyArray().move(this.draggingIndex, draggedToIndex);
             }
 

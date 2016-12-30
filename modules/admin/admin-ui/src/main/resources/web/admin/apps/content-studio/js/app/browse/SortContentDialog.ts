@@ -106,8 +106,8 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initTabMenu() {
-        var menu = new api.ui.tab.TabMenu();
-        var tabMenuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel("(sorting type)")).build();
+        let menu = new api.ui.tab.TabMenu();
+        let tabMenuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel("(sorting type)")).build();
         tabMenuItem.setActive(true);
         menu.addNavigationItem(tabMenuItem);
         menu.selectNavigationItem(0);
@@ -137,7 +137,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private populateContentPanel() {
-        var header = new api.dom.H6El();
+        let header = new api.dom.H6El();
         header.setHtml("Sort content by selecting default sort above, or drag and drop for manual sorting");
         this.appendChildToContentPanel(header);
         this.appendChildToContentPanel(this.contentGrid);
@@ -175,7 +175,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private handleOnSortOrderChangedEvent() {
-        var newOrder = this.sortContentMenu.getSelectedNavigationItem().getChildOrder();
+        let newOrder = this.sortContentMenu.getSelectedNavigationItem().getChildOrder();
         if (!this.curChildOrder.equals(newOrder)) {
             if (!newOrder.isManual()) {
                 this.curChildOrder = newOrder;

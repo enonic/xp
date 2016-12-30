@@ -28,7 +28,7 @@ module api.ui.time {
         }
 
         hasLastDayOfMonth(month: number): boolean {
-            var match = false;
+            let match = false;
             this.calendarDays.forEach((day: CalendarDay) => {
                 if (day.isLastDayOfMonth(month)) {
                     match = true;

@@ -177,7 +177,7 @@ module api.form {
             if (FormItemLayer.debug) {
                 console.debug('FormItemLayer.update' + (unchangedOnly ? ' (unchanged only)' : ''), this, propertySet);
             }
-            var updatePromises = [];
+            let updatePromises = [];
 
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 updatePromises.push(formItemView.update(propertySet, unchangedOnly));

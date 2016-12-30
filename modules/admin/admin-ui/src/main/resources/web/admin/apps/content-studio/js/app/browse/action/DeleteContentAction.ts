@@ -1,10 +1,10 @@
 import "../../../api.ts";
+import {ContentTreeGrid} from "../ContentTreeGrid";
+import {ContentDeletePromptEvent} from "../ContentDeletePromptEvent";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import Action = api.ui.Action;
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {ContentDeletePromptEvent} from "../ContentDeletePromptEvent";
 
 export class DeleteContentAction extends Action {
 
@@ -12,13 +12,13 @@ export class DeleteContentAction extends Action {
         super("Delete", "mod+del");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var contents: api.content.ContentSummaryAndCompareStatus[]
+            let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
             new ContentDeletePromptEvent(contents)
                 .setNoCallback(null)
                 .setYesCallback((exclude?: api.content.CompareStatus[]) => {
 
-                    var excludeStatuses = !!exclude ? exclude : [CompareStatus.EQUAL, CompareStatus.NEWER, CompareStatus.MOVED,
+                    let excludeStatuses = !!exclude ? exclude : [CompareStatus.EQUAL, CompareStatus.NEWER, CompareStatus.MOVED,
                             CompareStatus.PENDING_DELETE, CompareStatus.OLDER],
                     deselected = [];
                     grid.getSelectedDataList().forEach((content: ContentSummaryAndCompareStatus) => {

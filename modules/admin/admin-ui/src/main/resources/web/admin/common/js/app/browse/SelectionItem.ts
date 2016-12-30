@@ -26,7 +26,7 @@ module api.app.browse {
         }
 
         private initRemoveButton(callback?: () => void) {
-            var removeEl = new api.dom.DivEl("icon remove");
+            let removeEl = new api.dom.DivEl("icon remove");
             removeEl.onClicked(this.notifyRemoveClicked.bind(this));
             return removeEl;
         }

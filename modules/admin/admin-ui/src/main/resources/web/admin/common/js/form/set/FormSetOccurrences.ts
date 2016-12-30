@@ -19,7 +19,7 @@ module api.form {
         }
 
         showOccurrences(show: boolean) {
-            var views = this.getOccurrenceViews();
+            let views = this.getOccurrenceViews();
             this.occurrencesCollapsed = !show;
             views.forEach((formSetOccurrenceView: FormSetOccurrenceView) => {
                 formSetOccurrenceView.showContainer(show);
@@ -40,7 +40,7 @@ module api.form {
         }
 
         protected getSetFromArray(occurrence: FormItemOccurrence<V>): PropertySet {
-            var dataSet = this.propertyArray.getSet(occurrence.getIndex());
+            let dataSet = this.propertyArray.getSet(occurrence.getIndex());
             if (!dataSet) {
                 dataSet = this.propertyArray.addSet();
             }
@@ -48,11 +48,11 @@ module api.form {
         }
 
         protected constructOccurrencesForNoData(): FormItemOccurrence<V>[] {
-            var occurrences: FormItemOccurrence<V>[] = [];
-            var minimumOccurrences = this.getAllowedOccurrences().getMinimum();
+            let occurrences: FormItemOccurrence<V>[] = [];
+            let minimumOccurrences = this.getAllowedOccurrences().getMinimum();
 
             if (minimumOccurrences > 0) {
-                for (var i = 0; i < minimumOccurrences; i++) {
+                for (let i = 0; i < minimumOccurrences; i++) {
                     occurrences.push(this.createNewOccurrence(this, i));
                 }
             } else if (this.context.getShowEmptyFormItemSetOccurrences()) {
@@ -63,14 +63,14 @@ module api.form {
         }
 
         protected constructOccurrencesForData(): FormItemOccurrence<V>[] {
-            var occurrences: FormItemOccurrence<V>[] = [];
+            let occurrences: FormItemOccurrence<V>[] = [];
 
             this.propertyArray.forEach((property: Property, index: number) => {
                 occurrences.push(this.createNewOccurrence(this, index));
             });
 
             if (occurrences.length < this.getAllowedOccurrences().getMinimum()) {
-                for (var index: number = occurrences.length; index < this.getAllowedOccurrences().getMinimum(); index++) {
+                for (let index: number = occurrences.length; index < this.getAllowedOccurrences().getMinimum(); index++) {
                     occurrences.push(this.createNewOccurrence(this, index));
                 }
             }

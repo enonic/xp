@@ -35,7 +35,7 @@ module api.ui.menu {
         }
 
         private getCls(action: api.ui.Action, cls: string = "", expanded: boolean = false): string {
-            var fullCls = action.hasChildActions() ? "collapsible " : "";
+            let fullCls = action.hasChildActions() ? "collapsible " : "";
             fullCls += expanded ? "expanded " : "";
 
             return fullCls + cls;
@@ -46,7 +46,7 @@ module api.ui.menu {
         }
 
         setEnabled(value: boolean) {
-            var el = this.getEl();
+            let el = this.getEl();
             el.setDisabled(!value);
             if (value) {
                 el.removeClass("disabled");

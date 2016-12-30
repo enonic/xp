@@ -17,8 +17,8 @@ module api {
             if (func.name) {
                 return func.name;
             } else {
-                var funcNameRegex = /function (.+)\(/;
-                var results = (funcNameRegex).exec(func.toString());
+                let funcNameRegex = /function (.+)\(/;
+                let results = (funcNameRegex).exec(func.toString());
                 return (results && results.length > 1) ? results[1] : "";
             }
         }
@@ -55,7 +55,7 @@ module api {
          */
 
         static getModuleName(instance: any): string {
-            var fullName = ClassHelper.getFullName(instance);
+            let fullName = ClassHelper.getFullName(instance);
             return fullName ? fullName.substr(0, fullName.lastIndexOf(".")) : "";
         }
 
@@ -66,7 +66,7 @@ module api {
          * @returns {string} full class name.
          */
         static getFullName(instance: any): string {
-            var constructor = (typeof instance === 'function') ? instance : instance["constructor"];
+            let constructor = (typeof instance === 'function') ? instance : instance["constructor"];
             //last one expression for IE
             return ClassHelper.findPath(window, constructor) || constructor["name"] ||
                    constructor.toString().match(/^function\s*([^\s(]+)/)[1];
@@ -91,7 +91,7 @@ module api {
             }
 
             // iterate through object keys, check if they contains constructor function
-            for (var key in obj) {
+            for (let key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     if (nestLevel === 1 && ClassHelper.ALLOWED_PACKAGES.indexOf(key) < 0) {
                         // look into allowed top level packages only or up to max nest level
@@ -126,8 +126,8 @@ module api {
                 return 0;
             }
 
-            var distance = 0;
-            var prototype = Object.getPrototypeOf(instance);
+            let distance = 0;
+            let prototype = Object.getPrototypeOf(instance);
             do {
                 prototype = Object.getPrototypeOf(prototype);
                 if (!prototype) {

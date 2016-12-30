@@ -46,7 +46,7 @@
     "no-null-keyword": false,
     "no-require-imports": true,
     "no-shadowed-variable": true,
-    "no-var-keyword": false,
+    "no-var-keyword": true,
     "no-var-requires": true,
     "object-literal-sort-keys": false,
     "one-variable-per-declaration": false,

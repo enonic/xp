@@ -69,7 +69,7 @@ module api.ui.security.acl {
         public setUserStoreAccessControlEntry(ace: UserStoreAccessControlEntry, silent?: boolean) {
             this.ace = ace;
 
-            var principal = Principal.create().setKey(ace.getPrincipal().getKey()).setDisplayName(
+            let principal = Principal.create().setKey(ace.getPrincipal().getKey()).setDisplayName(
                 ace.getPrincipal().getDisplayName()).setModifiedTime(ace.getPrincipal().getModifiedTime()).build();
             this.setObject(principal);
 
@@ -77,7 +77,7 @@ module api.ui.security.acl {
         }
 
         public getUserStoreAccessControlEntry(): UserStoreAccessControlEntry {
-            var ace = new UserStoreAccessControlEntry(this.ace.getPrincipal(), this.ace.getAccess());
+            let ace = new UserStoreAccessControlEntry(this.ace.getPrincipal(), this.ace.getAccess());
             return ace;
         }
 

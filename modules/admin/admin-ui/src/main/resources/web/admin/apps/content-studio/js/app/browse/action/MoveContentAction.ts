@@ -1,8 +1,8 @@
 import "../../../api.ts";
-
-import Action = api.ui.Action;
 import {MoveContentEvent} from "../MoveContentEvent";
 import {ContentTreeGrid} from "../ContentTreeGrid";
+
+import Action = api.ui.Action;
 
 export class MoveContentAction extends Action {
 
@@ -10,7 +10,7 @@ export class MoveContentAction extends Action {
         super("Move");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var contents: api.content.ContentSummaryAndCompareStatus[]
+            let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
             new MoveContentEvent(contents).fire();
         });

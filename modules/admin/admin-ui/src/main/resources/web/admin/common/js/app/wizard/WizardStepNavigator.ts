@@ -15,12 +15,12 @@ module api.app.wizard {
         }
 
         nextStep() {
-            var nextIndex = Math.min(this.getSelectedIndex() + 1, this.getSize() - 1);
+            let nextIndex = Math.min(this.getSelectedIndex() + 1, this.getSize() - 1);
             this.selectNavigationItem(nextIndex);
         }
 
         previousStep() {
-            var previousIndex = Math.max(this.getSelectedIndex() - 1, 0);
+            let previousIndex = Math.max(this.getSelectedIndex() - 1, 0);
             this.selectNavigationItem(previousIndex);
         }
 

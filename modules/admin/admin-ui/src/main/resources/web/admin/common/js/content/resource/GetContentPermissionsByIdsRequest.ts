@@ -16,7 +16,7 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var fn = (contentId: ContentId) => {
+            let fn = (contentId: ContentId) => {
                 return contentId.toString();
             };
             return {

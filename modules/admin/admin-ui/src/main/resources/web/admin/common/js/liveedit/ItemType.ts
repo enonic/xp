@@ -53,7 +53,7 @@ module api.liveedit {
                 return false;
             }
 
-            var other = <ItemType>o;
+            let other = <ItemType>o;
 
             if (!api.ObjectHelper.stringEquals(this.shortName, other.shortName)) {
                 return false;
@@ -80,9 +80,9 @@ module api.liveedit {
         }
 
         static fromHTMLElement(element: HTMLElement): ItemType {
-            var typeAsString = element.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
+            let typeAsString = element.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
             if (StringHelper.isBlank(typeAsString)) {
-                var regionName = element.getAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+                let regionName = element.getAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
                 if (!StringHelper.isBlank(regionName)) {
                     typeAsString = "region";
                 }

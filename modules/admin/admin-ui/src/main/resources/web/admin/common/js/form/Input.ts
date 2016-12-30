@@ -94,7 +94,7 @@ module api.form {
             this.inputTypeConfig = json.config;
             this.maximizeUIInputWidth = json.maximizeUIInputWidth;
             if (json.defaultValue) {
-                var type = api.data.ValueTypes.fromName(json.defaultValue.type);
+                let type = api.data.ValueTypes.fromName(json.defaultValue.type);
                 this.defaultValue = type.fromJsonValue(json.defaultValue.value);
             }
             return this;
@@ -153,7 +153,7 @@ module api.form {
         }
 
         static fromJson(json: api.form.json.InputJson): Input {
-            var builder = new InputBuilder();
+            let builder = new InputBuilder();
             builder.fromJson(json);
             return builder.build();
         }
@@ -212,7 +212,7 @@ module api.form {
                 return false;
             }
 
-            var other = <Input>o;
+            let other = <Input>o;
 
             if (!api.ObjectHelper.equals(this.inputType, other.inputType)) {
                 return false;

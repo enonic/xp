@@ -9,7 +9,7 @@ module api.content.page.region {
         }
 
         toJson(): ComponentTypeWrapperJson {
-            var json: PartComponentJson = <PartComponentJson>super.toComponentJson();
+            let json: PartComponentJson = <PartComponentJson>super.toComponentJson();
 
             return <ComponentTypeWrapperJson> {
                 PartComponent: json

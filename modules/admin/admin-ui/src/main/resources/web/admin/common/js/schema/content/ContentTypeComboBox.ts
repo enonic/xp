@@ -26,7 +26,7 @@ module api.schema.content {
 
         createSelectedOption(option: api.ui.selector.Option<ContentTypeSummary>): SelectedOption<ContentTypeSummary> {
 
-            var optionView = new ContentTypeSelectedOptionView(option);
+            let optionView = new ContentTypeSelectedOptionView(option);
             return new SelectedOption<ContentTypeSummary>(optionView, this.count());
         }
     }

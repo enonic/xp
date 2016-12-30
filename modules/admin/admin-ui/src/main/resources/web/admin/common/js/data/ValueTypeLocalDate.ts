@@ -37,7 +37,7 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = LocalDate.fromISOString(value);
+            let date = LocalDate.fromISOString(value);
             return new Value(date, this);
         }
 

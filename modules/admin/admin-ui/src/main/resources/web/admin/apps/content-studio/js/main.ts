@@ -40,7 +40,7 @@ declare var CONFIG;
  */
 
 function getApplication(): api.app.Application {
-    var application = new api.app.Application('content-studio', 'Content Studio', 'CM', 'content-studio');
+    let application = new api.app.Application('content-studio', 'Content Studio', 'CM', 'content-studio');
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
 
@@ -141,7 +141,7 @@ function clearFavicon() {
 function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver) {
     let resolver = iconUrlResolver.setContent(content).setCrop(false);
     let shouldUpdate = shouldUpdateFavicon(content.getType());
-    for (var href in faviconCache) {
+    for (let href in faviconCache) {
         if (faviconCache.hasOwnProperty(href)) {
             let link = faviconCache[href];
             if (shouldUpdate) {
@@ -272,7 +272,7 @@ function startContentApplication(application: api.app.Application) {
     clientEventsListener.start();
 
     ShowBrowsePanelEvent.on((event) => {
-        var browsePanel: api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> = appPanel.getBrowsePanel();
+        let browsePanel: api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> = appPanel.getBrowsePanel();
         if (!browsePanel) {
             appPanel.addBrowsePanel(new ContentBrowsePanel());
         } else {
@@ -282,7 +282,7 @@ function startContentApplication(application: api.app.Application) {
 
     NewContentEvent.on((newContentEvent) => {
         if (newContentEvent.getContentType().isSite() && appPanel.getBrowsePanel()) {
-            var content: Content = newContentEvent.getParentContent();
+            let content: Content = newContentEvent.getParentContent();
             if (!!content) { // refresh site's node
                 appPanel.getBrowsePanel().getTreeGrid().refreshNodeById(content.getId());
             }

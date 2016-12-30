@@ -88,15 +88,15 @@ module api.ui.text {
         }
 
         private checkAvailability(email: string) {
-            var status;
-            var isValid = this.input.isValid();
+            let status;
+            let isValid = this.input.isValid();
             this.toggleClass('invalid', !isValid);
 
             if (!StringHelper.isEmpty(email) && isValid) {
                 status = 'checking';
 
                 new CheckEmailAvailabilityRequest(email).setUserStoreKey(this.userStoreKey).sendAndParse().then((available: boolean) => {
-                    var availability = available || email === this.originEmail;
+                    let availability = available || email === this.originEmail;
                     this.updateStatus(availability ? 'available' : 'notavailable');
                     this.notifyValidityChanged(isValid && availability);
                     this.removeClass("just-shown");

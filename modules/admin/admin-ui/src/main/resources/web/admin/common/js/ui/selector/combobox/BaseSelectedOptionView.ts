@@ -28,7 +28,7 @@ module api.ui.selector.combobox {
 
         doRender(): wemQ.Promise<boolean> {
 
-            var removeButtonEl = new api.dom.AEl("remove");
+            let removeButtonEl = new api.dom.AEl("remove");
             this.optionValueEl = new api.dom.DivEl('option-value');
             if (this.option) {
                 this.setOption(this.option);

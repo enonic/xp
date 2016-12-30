@@ -23,7 +23,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
     }
 
     setItem(item: ViewItem<UserTreeGridItem>) {
-        var currentItem = this.getItem();
+        let currentItem = this.getItem();
 
         if (!currentItem || !currentItem.equals(item)) {
 
@@ -38,7 +38,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
             this.userDataContainer.removeChildren();
 
             if (item.getModel().getPrincipal()) {
-                var type = item.getModel().getPrincipal().getType();
+                let type = item.getModel().getPrincipal().getType();
 
                 switch (type) {
                 case PrincipalType.USER:
@@ -66,11 +66,11 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
     private appendUserMetadata(item: ViewItem<UserTreeGridItem>) {
         // Insert an empty data first to avoid blinking, after full data is loaded.
-        var userGroup = new ItemDataGroup("User", "user");
+        let userGroup = new ItemDataGroup("User", "user");
         userGroup.addDataList("E-mail", " ");
         this.userDataContainer.appendChild(userGroup);
 
-        var rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "roles-and-groups");
+        let rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "roles-and-groups");
         rolesAndGroupsGroup.addDataArray("Roles", []);
         rolesAndGroupsGroup.addDataArray("Groups", []);
         this.userDataContainer.appendChild(rolesAndGroupsGroup);
@@ -82,19 +82,19 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
                 rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "memeberships");
 
-                var roles = principal.asUser().getMemberships().filter((el) => {
+                let roles = principal.asUser().getMemberships().filter((el) => {
                     return el.isRole();
                 }).map((el) => {
-                    var viewer = new PrincipalViewer();
+                    let viewer = new PrincipalViewer();
                     viewer.setObject(el);
                     return viewer;
                 });
                 rolesAndGroupsGroup.addDataElements("Roles", roles);
 
-                var groups = principal.asUser().getMemberships().filter((el) => {
+                let groups = principal.asUser().getMemberships().filter((el) => {
                     return el.isGroup();
                 }).map((el) => {
-                    var viewer = new PrincipalViewer();
+                    let viewer = new PrincipalViewer();
                     viewer.setObject(el);
                     return viewer;
                 });

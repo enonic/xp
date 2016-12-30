@@ -34,7 +34,7 @@ module api.app.bar {
         }
 
         private updateTabMenuButtonVisibility() {
-            var menuTabsCount = this.getMenuEl().getChildren().length;
+            let menuTabsCount = this.getMenuEl().getChildren().length;
             if (menuTabsCount === 0) {
                 this.appBarTabMenuButton.hide();
                 this.getMenuEl().hide();
@@ -119,7 +119,7 @@ module api.app.bar {
             super.removeNavigationItem(tab);
 
             this.appBarTabMenuButton.setTabCount(this.countVisible());
-            var newSelectedTab = <AppBarTabMenuItem>this.getSelectedNavigationItem();
+            let newSelectedTab = <AppBarTabMenuItem>this.getSelectedNavigationItem();
             if (newSelectedTab) {
                 this.appBarTabMenuButton.setEditing(newSelectedTab.isEditing());
             }
@@ -130,9 +130,9 @@ module api.app.bar {
         }
 
         getNavigationItemById(tabId: AppBarTabId): AppBarTabMenuItem {
-            var items: api.ui.tab.TabMenuItem[] = this.getNavigationItems();
-            var item;
-            for (var i = 0; i < items.length; i++) {
+            let items: api.ui.tab.TabMenuItem[] = this.getNavigationItems();
+            let item;
+            for (let i = 0; i < items.length; i++) {
                 item = <AppBarTabMenuItem>items[i];
                 if (item.getTabId().equals(tabId)) {
                     return item;
@@ -142,9 +142,9 @@ module api.app.bar {
         }
 
         getNavigationItemByIdValue(tabIdValue: string): AppBarTabMenuItem {
-            var items: api.ui.tab.TabMenuItem[] = this.getNavigationItems();
-            var item;
-            for (var i = 0; i < items.length; i++) {
+            let items: api.ui.tab.TabMenuItem[] = this.getNavigationItems();
+            let item;
+            for (let i = 0; i < items.length; i++) {
                 item = <AppBarTabMenuItem>items[i];
                 if (item.getTabId().getId() === tabIdValue) {
                     return item;
@@ -155,7 +155,7 @@ module api.app.bar {
 
         selectNavigationItem(tabIndex: number) {
             super.selectNavigationItem(tabIndex);
-            var tab = <AppBarTabMenuItem>this.getNavigationItem(tabIndex);
+            let tab = <AppBarTabMenuItem>this.getNavigationItem(tabIndex);
             this.appBarTabMenuButton.setEditing(tab.isEditing());
 
             this.hideMenu();

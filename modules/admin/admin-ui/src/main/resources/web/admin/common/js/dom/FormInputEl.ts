@@ -179,7 +179,7 @@ module api.dom {
          * @param silent
          */
         protected refreshValueChanged(silent?: boolean) {
-            var value = this.doGetValue();
+            let value = this.doGetValue();
 
             if (this.oldValue != value) {
                 if (FormInputEl.debug) {

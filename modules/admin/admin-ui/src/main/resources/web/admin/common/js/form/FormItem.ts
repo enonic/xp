@@ -53,7 +53,7 @@ module api.form {
                 return false;
             }
 
-            var other = <FormItem>o;
+            let other = <FormItem>o;
 
             if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
@@ -86,7 +86,7 @@ module api.form {
 
         public static formItemsToJson(formItems: FormItem[]): api.form.json.FormItemTypeWrapperJson[] {
 
-            var formItemArray: api.form.json.FormItemTypeWrapperJson[] = [];
+            let formItemArray: api.form.json.FormItemTypeWrapperJson[] = [];
             formItems.forEach((formItem: FormItem) => {
                 formItemArray.push(formItem.toFormItemJson());
             });

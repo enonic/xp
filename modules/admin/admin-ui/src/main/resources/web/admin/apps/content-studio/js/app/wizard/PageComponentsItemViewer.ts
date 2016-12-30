@@ -67,7 +67,7 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
     }
 
     private extractTextFromTextComponent(textComponent: TextComponent): string {
-        var tmp = document.createElement("DIV");
+        let tmp = document.createElement("DIV");
         tmp.innerHTML = textComponent.getText() || "";
         return (tmp.textContent || tmp.innerText || "").trim();
     }

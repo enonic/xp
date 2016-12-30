@@ -31,7 +31,7 @@ module api.application {
         }
 
         load(): wemQ.Promise<Application[]> {
-            var me = this;
+            let me = this;
             me.notifyLoadingData();
 
             return me.sendRequest()
@@ -50,8 +50,8 @@ module api.application {
                 return true;
             }
 
-            var result = true;
-            for (var name in this.filterObject) {
+            let result = true;
+            for (let name in this.filterObject) {
                 if (this.filterObject.hasOwnProperty(name)) {
                     if (!application.hasOwnProperty(name) || this.filterObject[name] != application[name]) {
                         result = false;

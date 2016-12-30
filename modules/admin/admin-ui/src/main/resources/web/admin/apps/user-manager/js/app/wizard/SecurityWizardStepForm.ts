@@ -26,12 +26,12 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.comboBox = new UserStoreAccessControlComboBox();
         this.comboBox.addClass('principal-combobox');
 
-        var accessComboBoxFormItem = new FormItemBuilder(this.comboBox).setValidator(Validators.required).setLabel("Permissions").build();
+        let accessComboBoxFormItem = new FormItemBuilder(this.comboBox).setValidator(Validators.required).setLabel("Permissions").build();
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(accessComboBoxFormItem);
 
-        var form = new api.ui.form.Form().add(fieldSet);
+        let form = new api.ui.form.Form().add(fieldSet);
 
         form.onFocus((event) => {
             this.notifyFocused(event);

@@ -60,13 +60,13 @@ module api.ui.form {
 
         validate(validationResult:ValidationResult, markInvalid?: boolean) {
             if (this.validator) {
-                var validationMessage = this.validator(this.input);
+                let validationMessage = this.validator(this.input);
 
                 if(validationMessage) {
                     validationResult.addError(new ValidationError(this, validationMessage));
                 }
                 if (markInvalid) {
-                    var validityChanged = false;
+                    let validityChanged = false;
                     if (validationMessage) {
                         this.addClass(this.invalidClass);
                         validityChanged = (validationMessage !== this.getError());

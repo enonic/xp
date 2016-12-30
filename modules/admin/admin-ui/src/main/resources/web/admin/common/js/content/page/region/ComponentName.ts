@@ -13,7 +13,7 @@ module api.content.page.region {
 
         public hasCountPostfix(): boolean {
 
-            var countDelimiterIndex = this.value.lastIndexOf(ComponentName.COUNT_DELIMITER);
+            let countDelimiterIndex = this.value.lastIndexOf(ComponentName.COUNT_DELIMITER);
             return countDelimiterIndex > 0 && countDelimiterIndex <= this.value.length - 2;
         }
 
@@ -23,7 +23,7 @@ module api.content.page.region {
                 return this;
             }
 
-            var nameWithoutCountPostfix = this.value.substring(0, this.value.lastIndexOf(ComponentName.COUNT_DELIMITER));
+            let nameWithoutCountPostfix = this.value.substring(0, this.value.lastIndexOf(ComponentName.COUNT_DELIMITER));
             return new ComponentName(nameWithoutCountPostfix);
         }
 
@@ -36,13 +36,13 @@ module api.content.page.region {
                 return false;
             }
 
-            var nameWithoutCountPostfix = this.removeCountPostfix();
+            let nameWithoutCountPostfix = this.removeCountPostfix();
             return nameWithoutCountPostfix.equals(other);
         }
 
         public createDuplicate(count: number): ComponentName {
 
-            var newValue = this.value + ComponentName.COUNT_DELIMITER + "" + count;
+            let newValue = this.value + ComponentName.COUNT_DELIMITER + "" + count;
             return new ComponentName(newValue);
         }
 
@@ -56,7 +56,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <ComponentName>o;
+            let other = <ComponentName>o;
 
             if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;

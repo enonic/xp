@@ -169,7 +169,7 @@ module api.app.wizard {
             if (WizardPanel.debug) {
                 console.debug("WizardPanel.doLoadData");
             }
-            var deferred = wemQ.defer<EQUITABLE>();
+            let deferred = wemQ.defer<EQUITABLE>();
 
             if (!this.getPersistedItem()) {
                 if (WizardPanel.debug) {
@@ -185,7 +185,7 @@ module api.app.wizard {
                     deferred.reject(reason);
                 }).done();
             } else {
-                var equitable = this.getPersistedItem();
+                let equitable = this.getPersistedItem();
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel.doLoadData: data present, skipping load...", equitable);
                 }
@@ -338,7 +338,7 @@ module api.app.wizard {
                 }
             });
 
-            var firstShow;
+            let firstShow;
             this.formPanel.onRendered((event) => {
                 if (WizardPanel.debug) {
                     console.debug("WizardPanel: formPanel.onRendered");
@@ -374,7 +374,7 @@ module api.app.wizard {
                 this.appendChild(this.mainToolbar);
             }
 
-            var headerAndNavigatorContainer = new api.dom.DivEl("header-and-navigator-container");
+            let headerAndNavigatorContainer = new api.dom.DivEl("header-and-navigator-container");
 
             this.formIcon = this.createFormIcon();
             if (this.formIcon) {
@@ -554,7 +554,7 @@ module api.app.wizard {
 
             this.stepsPanel.setListenToScroll(false);
 
-            var scroll = this.stepsPanel.getScroll();
+            let scroll = this.stepsPanel.getScroll();
             this.minimized = !this.minimized;
 
             this.stepNavigator.unNavigationItemActivated(this.toggleMinimizeListener);
@@ -667,7 +667,7 @@ module api.app.wizard {
         }
 
         insertStepBefore(stepToInsert: WizardStep, beforeStep: WizardStep) {
-            var indexOfBeforeStep = this.steps.indexOf(beforeStep);
+            let indexOfBeforeStep = this.steps.indexOf(beforeStep);
             this.steps.splice(indexOfBeforeStep, 0, stepToInsert);
             this.stepsPanel.insertNavigablePanel(stepToInsert.getTabBarItem(), stepToInsert.getStepForm(),
                 stepToInsert.getTabBarItem().getLabel(), indexOfBeforeStep);
@@ -676,7 +676,7 @@ module api.app.wizard {
 
         removeStepWithForm(form: WizardStepForm) {
             this.steps = this.steps.filter((step: WizardStep) => {
-                var remove = (step.getStepForm() == form);
+                let remove = (step.getStepForm() == form);
                 if (remove) {
                     this.validityManager.removeItem(step);
                 }
@@ -808,7 +808,7 @@ module api.app.wizard {
         }
 
         private createSplitPanel(firstPanel: api.ui.panel.Panel, secondPanel: api.ui.panel.Panel): api.ui.panel.SplitPanel {
-            var splitPanel = new api.ui.panel.SplitPanelBuilder(firstPanel, secondPanel)
+            let splitPanel = new api.ui.panel.SplitPanelBuilder(firstPanel, secondPanel)
                 .setFirstPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL)
                 .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL);
 

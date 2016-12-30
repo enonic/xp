@@ -20,11 +20,11 @@ module api.content.site.inputtype.siteconfigurator {
         constructor(maxOccurrences: number, siteConfigProvider: SiteConfigProvider,
                     formContext: api.content.form.ContentFormContext, value?: string) {
 
-            var filterObject = {
+            let filterObject = {
                 state: Application.STATE_STARTED
             };
 
-            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
+            let builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
             builder.setMaximumOccurrences(maxOccurrences).setIdentifierMethod("getApplicationKey").
                 setComboBoxName("applicationSelector").setLoader(new SiteApplicationLoader(filterObject)).setSelectedOptionsView(
                 new SiteConfiguratorSelectedOptionsView(siteConfigProvider, formContext)).
@@ -37,7 +37,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         getSelectedOptionViews(): SiteConfiguratorSelectedOptionView[] {
-            var views: SiteConfiguratorSelectedOptionView[] = [];
+            let views: SiteConfiguratorSelectedOptionView[] = [];
             this.getSelectedOptions().forEach((selectedOption: SelectedOption<Application>) => {
                 views.push(<SiteConfiguratorSelectedOptionView>selectedOption.getOptionView());
             });

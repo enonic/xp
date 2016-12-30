@@ -8,7 +8,7 @@ module api.content {
             this.array = [];
             array.forEach((contentId: ContentId) => {
 
-                var duplicate = this.array.some((possibleDuplicate: ContentId) => {
+                let duplicate = this.array.some((possibleDuplicate: ContentId) => {
                     return contentId.equals(possibleDuplicate);
                 });
 
@@ -40,7 +40,7 @@ module api.content {
         }
 
         static fromContents(contents: ContentSummary[]) : ContentIds {
-            var builder = ContentIds.create();
+            let builder = ContentIds.create();
             contents.forEach((content) => {
                builder.addContentId(content.getContentId());
             });
@@ -52,7 +52,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentIds>o;
+            let other = <ContentIds>o;
             return api.ObjectHelper.arrayEquals(this.array, other.array);
         }
 

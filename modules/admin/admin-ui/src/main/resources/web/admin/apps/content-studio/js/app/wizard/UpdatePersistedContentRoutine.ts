@@ -40,7 +40,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
     public execute(): wemQ.Promise<Content> {
 
-        var context = new UpdatePersistedContentRoutineContext();
+        let context = new UpdatePersistedContentRoutineContext();
         context.content = this.persistedContent;
         return this.doExecute(context);
     }
@@ -83,7 +83,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
     private doHandlePage(context: UpdatePersistedContentRoutineContext): wemQ.Promise<void> {
 
-        var pageCUDRequest = this.producePageCUDRequest(context.content, this.viewedContent);
+        let pageCUDRequest = this.producePageCUDRequest(context.content, this.viewedContent);
 
         if (pageCUDRequest != null) {
             return pageCUDRequest
@@ -94,7 +94,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
                 });
         }
         else {
-            var deferred = wemQ.defer<void>();
+            let deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }

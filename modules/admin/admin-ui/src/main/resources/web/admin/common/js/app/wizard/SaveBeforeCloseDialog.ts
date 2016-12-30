@@ -13,7 +13,7 @@ module api.app.wizard {
 
             this.wizardPanel = wizardPanel;
 
-            var message = new api.dom.H6El();
+            let message = new api.dom.H6El();
             message.getEl().setInnerHtml("There are unsaved changes, do you want to save them before closing?");
             this.appendChildToContentPanel(message);
 

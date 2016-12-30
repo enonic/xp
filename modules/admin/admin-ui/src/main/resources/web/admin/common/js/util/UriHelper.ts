@@ -13,7 +13,7 @@ module api.util {
          * @returns {string} the URI (base + path).
          */
         static getUri(path: string): string {
-            var basePath = window['CONFIG'] && window['CONFIG']['baseUri'] || UriHelper.DEFAULT_URI;
+            let basePath = window['CONFIG'] && window['CONFIG']['baseUri'] || UriHelper.DEFAULT_URI;
             return UriHelper.joinPath(basePath, UriHelper.relativePath(path));
         }
 
@@ -24,7 +24,7 @@ module api.util {
          * @returns {string} the URI to a admin path.
          */
         static getAdminUri(path: string): string {
-            var adminUri = UriHelper.getAdminUriPrefix();
+            let adminUri = UriHelper.getAdminUriPrefix();
             return UriHelper.getUri(UriHelper.joinPath(adminUri, UriHelper.relativePath(path)));
         }
 
@@ -81,17 +81,17 @@ module api.util {
         }
 
         static trimWindowProtocolAndPortFromHref(href: string, contentWindow: Window) {
-            var location: Location = contentWindow.location;
+            let location: Location = contentWindow.location;
             return UriHelper.relativePath(href.replace(location.protocol + "//" + location.host, ""));
         }
 
         static trimAnchor(trimMe: string): string {
-            var index = trimMe.lastIndexOf("#");
+            let index = trimMe.lastIndexOf("#");
             return index >= 0 ? UriHelper.relativePath(trimMe.substring(0, index)) : UriHelper.relativePath(trimMe);
         }
 
         static trimUrlParams(trimMe: string): string {
-            var index = trimMe.lastIndexOf("?");
+            let index = trimMe.lastIndexOf("?");
             return index >= 0 ? trimMe.substring(0, index) : trimMe;
         }
 
@@ -108,11 +108,11 @@ module api.util {
             if (StringHelper.isBlank(url)) {
                 return {};
             }
-            var array = url.split(/\?|&/i);
-            var params: {[name: string]: string} = {};
-            var param;
+            let array = url.split(/\?|&/i);
+            let params: {[name: string]: string} = {};
+            let param;
             if (array.length > 1) {
-                for (var i = 1; i < array.length; i++) {
+                for (let i = 1; i < array.length; i++) {
                     param = array[i].split('=');
                     params[param[0]] = param.length > 1 ? decodeURIComponent(param[1]) : undefined;
                 }
@@ -132,11 +132,11 @@ module api.util {
             if (!params) {
                 return StringHelper.EMPTY_STRING;
             }
-            var urlArray = [];
-            for (var key in params) {
+            let urlArray = [];
+            for (let key in params) {
                 if (params.hasOwnProperty(key) && params[key] != undefined) {
-                    var value = params[key];
-                    var prefixedKey = prefix ? prefix + "[" + key + "]" : key;
+                    let value = params[key];
+                    let prefixedKey = prefix ? prefix + "[" + key + "]" : key;
                     if (typeof value == "object") {
                         urlArray.push(this.encodeUrlParams(value, prefixedKey));
                     } else {

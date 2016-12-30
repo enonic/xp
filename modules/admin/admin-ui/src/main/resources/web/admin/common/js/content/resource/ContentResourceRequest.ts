@@ -23,7 +23,7 @@ module api.content.resource {
 
         fromJsonToContentArray(json: json.ContentJson[]): Content[] {
 
-            var array: Content[] = [];
+            let array: Content[] = [];
             json.forEach((itemJson: json.ContentJson) => {
                 array.push(this.fromJsonToContent(itemJson));
             });
@@ -37,7 +37,7 @@ module api.content.resource {
 
         fromJsonToContentSummaryArray(json: json.ContentSummaryJson[]): ContentSummary[] {
 
-            var array: ContentSummary[] = [];
+            let array: ContentSummary[] = [];
             json.forEach((itemJson: json.ContentSummaryJson) => {
                 array.push(this.fromJsonToContentSummary(itemJson));
             });

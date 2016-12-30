@@ -50,7 +50,7 @@ module api.form {
                 return false;
             }
 
-            var other = <FormSet>o;
+            let other = <FormSet>o;
 
             if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
                 return false;

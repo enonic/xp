@@ -26,7 +26,7 @@ module api.ui.menu {
         }
 
         setEnabled(value: boolean) {
-            var el = this.getEl();
+            let el = this.getEl();
             el.setDisabled(!value);
             if (value) {
                 el.removeClass("disabled");

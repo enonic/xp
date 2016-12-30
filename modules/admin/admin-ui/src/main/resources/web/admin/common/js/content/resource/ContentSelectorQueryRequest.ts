@@ -96,7 +96,7 @@ module api.content.resource {
         }
 
         setQueryExpr(searchString: string = "") {
-            var fulltextExpression = this.createSearchExpression(searchString);
+            let fulltextExpression = this.createSearchExpression(searchString);
 
             this.queryExpr = new QueryExpr(fulltextExpression, ContentSelectorQueryRequest.DEFAULT_ORDER);
         }
@@ -133,7 +133,7 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var queryExprAsString = this.getQueryExpr() ? this.getQueryExpr().toString() : "";
+            let queryExprAsString = this.getQueryExpr() ? this.getQueryExpr().toString() : "";
 
             return {
                 queryExpr: queryExprAsString,
@@ -152,11 +152,11 @@ module api.content.resource {
 
             return this.send().then((response: api.rest.JsonResponse<ContentQueryResultJson<ContentSummaryJson>>) => {
 
-                var responseResult: ContentQueryResultJson<ContentSummaryJson> = response.getResult();
+                let responseResult: ContentQueryResultJson<ContentSummaryJson> = response.getResult();
 
-                var contentsAsJson: ContentSummaryJson[] = responseResult.contents;
+                let contentsAsJson: ContentSummaryJson[] = responseResult.contents;
 
-                var contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(
+                let contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(
                     <ContentSummaryJson[]>contentsAsJson);
 
                 if (this.from === 0) {

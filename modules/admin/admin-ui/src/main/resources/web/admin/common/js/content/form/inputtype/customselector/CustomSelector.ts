@@ -87,7 +87,7 @@ module api.content.form.inputtype.customselector {
         }
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return superPromise.then(() => {
@@ -104,7 +104,7 @@ module api.content.form.inputtype.customselector {
 
         createComboBox(input: api.form.Input, propertyArray: PropertyArray): RichComboBox<CustomSelectorItem> {
 
-            var comboBox = new CustomSelectorComboBox(input, this.requestPath, this.getValueFromPropertyArray(propertyArray));
+            let comboBox = new CustomSelectorComboBox(input, this.requestPath, this.getValueFromPropertyArray(propertyArray));
             /*
              comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {
              comboBox.setFilterArgs({searchString: event.getNewValue()});
@@ -114,7 +114,7 @@ module api.content.form.inputtype.customselector {
                 this.ignorePropertyChange = true;
 
                 const option = event.getSelectedOption();
-                var value = new Value(String(option.getOption().value), ValueTypes.STRING);
+                let value = new Value(String(option.getOption().value), ValueTypes.STRING);
                 if (option.getIndex() >= 0) {
                     this.getPropertyArray().set(option.getIndex(), value);
                 } else {
@@ -190,7 +190,7 @@ module api.content.form.inputtype.customselector {
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
 
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
 
             ui.placeholder.html("Drop form item set here");
@@ -199,8 +199,8 @@ module api.content.form.inputtype.customselector {
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                var draggedToIndex = draggedElement.getSiblingIndex();
+                let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                let draggedToIndex = draggedElement.getSiblingIndex();
                 this.getPropertyArray().move(this.draggingIndex, draggedToIndex);
             }
 

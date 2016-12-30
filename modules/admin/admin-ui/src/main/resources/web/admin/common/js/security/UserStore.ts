@@ -42,7 +42,7 @@ module api.security {
         }
 
         isDeletable(): wemQ.Promise<boolean> {
-            var deferred = wemQ.defer<boolean>();
+            let deferred = wemQ.defer<boolean>();
             new GetPrincipalsByUserStoreRequest(this.key,
                 [PrincipalType.USER, PrincipalType.GROUP]).
                 sendAndParse().then((principals: Principal[]) => {
@@ -68,7 +68,7 @@ module api.security {
                 return false;
             }
 
-            var other = <UserStore> o;
+            let other = <UserStore> o;
 
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&

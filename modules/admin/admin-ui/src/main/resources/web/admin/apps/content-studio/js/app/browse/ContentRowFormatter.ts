@@ -23,15 +23,15 @@ export class ContentRowFormatter {
     }
 
     public static orderFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        var wrapper = new api.dom.SpanEl();
+        let wrapper = new api.dom.SpanEl();
 
         if (!api.util.StringHelper.isBlank(value)) {
             wrapper.getEl().setTitle(value);
         }
 
         if (node.getData().getContentSummary()) {
-            var childOrder = node.getData().getContentSummary().getChildOrder();
-            var icon;
+            let childOrder = node.getData().getContentSummary().getChildOrder();
+            let icon;
             if (!childOrder.isDefault()) {
                 if (!childOrder.isManual()) {
                     if (childOrder.isDesc()) {

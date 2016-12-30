@@ -46,7 +46,7 @@ module api.item {
                 return false;
             }
 
-            var other = <BaseItem>o;
+            let other = <BaseItem>o;
 
             if (!ObjectHelper.stringEquals(this.id, other.id)) {
                 return false;

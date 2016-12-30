@@ -93,7 +93,7 @@ module api.security {
         }
 
         toPath(toParent: boolean = false): string {
-            var path = this.isRole() ? "/roles/" :
+            let path = this.isRole() ? "/roles/" :
                 api.util.StringHelper.format("/{0}/{1}/", this.getUserStore().toString(),
                     PrincipalType[this.getType()].toLowerCase().replace(/(group|user)/g, "$&s"));
 
@@ -109,7 +109,7 @@ module api.security {
                 return false;
             }
 
-            var other = <PrincipalKey>o;
+            let other = <PrincipalKey>o;
             if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
             }

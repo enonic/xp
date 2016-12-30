@@ -48,8 +48,8 @@ module api.data {
         ];
 
         public static fromName(name: string): ValueType {
-            for (var i = 0; i < ValueTypes.ALL.length; i++) {
-                var type = ValueTypes.ALL[i];
+            for (let i = 0; i < ValueTypes.ALL.length; i++) {
+                let type = ValueTypes.ALL[i];
                 if (type.toString() == name) {
                     return type;
                 }

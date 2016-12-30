@@ -22,7 +22,7 @@ module api.ui.panel {
 
         addNavigablePanel(item: NavigationItem, panel: Panel, select?: boolean) {
             this.navigator.addNavigationItem(item);
-            var index = this.addPanel(panel);
+            let index = this.addPanel(panel);
             if (select) {
                 this.selectPanelByIndex(index);
             }
@@ -39,9 +39,9 @@ module api.ui.panel {
         }
 
         removeNavigablePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {
-            var index = this.removePanel(panel, checkCanRemovePanel);
+            let index = this.removePanel(panel, checkCanRemovePanel);
             if (index > -1) {
-                var navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(index);
+                let navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(index);
                 this.navigator.removeNavigationItem(navigationItem);
             }
             return index;

@@ -126,13 +126,13 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private createContentQuery(): ContentQuery {
-        var contentQuery: ContentQuery = new ContentQuery(),
+        let contentQuery: ContentQuery = new ContentQuery(),
             values = this.getSearchInputValues();
         this.appendQueryExpression(values, contentQuery);
         this.appendContentTypeFilter(values, contentQuery);
         this.appendOutboundReferencesFilter(contentQuery);
 
-        var lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(values);
+        let lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(values);
         if (lastModifiedFilter != null) {
             contentQuery.addQueryFilter(lastModifiedFilter);
         }
@@ -197,7 +197,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private cloneContentQueryNoContentTypes(contentQuery: ContentQuery): ContentQuery {
-        var newContentQuery: ContentQuery = new ContentQuery().setContentTypeNames([]).setFrom(contentQuery.getFrom()).setQueryExpr(
+        let newContentQuery: ContentQuery = new ContentQuery().setContentTypeNames([]).setFrom(contentQuery.getFrom()).setQueryExpr(
             contentQuery.getQueryExpr()).setSize(contentQuery.getSize()).setAggregationQueries(
             contentQuery.getAggregationQueries()).setQueryFilters(contentQuery.getQueryFilters()).setMustBeReferencedById(
             contentQuery.getMustBeReferencedById());
@@ -212,7 +212,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     private getAggregations(contentQuery: ContentQuery,
                             contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): wemQ.Promise<Aggregation[]> {
 
-        var clonedContentQueryNoContentTypes: ContentQuery = this.cloneContentQueryNoContentTypes(contentQuery);
+        let clonedContentQueryNoContentTypes: ContentQuery = this.cloneContentQueryNoContentTypes(contentQuery);
 
         if (api.ObjectHelper.objectEquals(contentQuery, clonedContentQueryNoContentTypes)) {
             return wemQ(this.combineAggregations(contentQueryResult, contentQueryResult));
@@ -227,21 +227,21 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private combineAggregations(contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>,
                                 queryResultNoContentTypesSelected: ContentQueryResult<ContentSummary,ContentSummaryJson>): Aggregation[] {
-        var contentTypesAggr = queryResultNoContentTypesSelected.getAggregations().filter((aggregation) => {
+        let contentTypesAggr = queryResultNoContentTypesSelected.getAggregations().filter((aggregation) => {
             return aggregation.getName() === ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME;
         });
-        var dateModifiedAggr = contentQueryResult.getAggregations().filter((aggregation) => {
+        let dateModifiedAggr = contentQueryResult.getAggregations().filter((aggregation) => {
             return aggregation.getName() !== ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME;
         });
 
-        var aggregations = [contentTypesAggr[0], dateModifiedAggr[0]];
+        let aggregations = [contentTypesAggr[0], dateModifiedAggr[0]];
 
         return aggregations;
     }
 
     private initAggregationGroupView(aggregationGroupViews: AggregationGroupView[]) {
 
-        var contentQuery: ContentQuery = this.buildAggregationsQuery();
+        let contentQuery: ContentQuery = this.buildAggregationsQuery();
 
         new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).sendAndParse().then(
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
@@ -260,7 +260,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
 
-        var contentQuery: ContentQuery = this.buildAggregationsQuery();
+        let contentQuery: ContentQuery = this.buildAggregationsQuery();
 
         return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).sendAndParse().then(
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
@@ -283,7 +283,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private buildAggregationsQuery(): ContentQuery {
-        var contentQuery: ContentQuery = new ContentQuery();
+        let contentQuery: ContentQuery = new ContentQuery();
         contentQuery.setQueryExpr(new QueryExpr(null));
         contentQuery.setSize(0);
 
@@ -296,7 +296,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendQueryExpression(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
-        var fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues),
+        let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues),
             query: QueryExpr;
 
         if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
@@ -309,9 +309,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private makeInboundDependenciesSearchExpr(): api.query.expr.Expression {
-        var dependencyId = this.dependenciesSection.getDependencyId().toString();
+        let dependencyId = this.dependenciesSection.getDependencyId().toString();
 
-        var query: QueryExpr = new QueryExpr(new LogicalExpr(
+        let query: QueryExpr = new QueryExpr(new LogicalExpr(
             CompareExpr.eq(new FieldExpr(QueryField.REFERENCES), ValueExpr.string(dependencyId)),
             LogicalOperator.AND,
             CompareExpr.neq(new FieldExpr(QueryField.ID), ValueExpr.string(dependencyId))));
@@ -321,7 +321,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private makeFulltextSearchExpr(searchInputValues: SearchInputValues): api.query.expr.Expression {
 
-        var searchString: string = searchInputValues.getTextSearchFieldValue();
+        let searchString: string = searchInputValues.getTextSearchFieldValue();
 
         return new api.query.FulltextSearchExpressionBuilder().setSearchString(
             searchString).addField(new QueryField(QueryField.DISPLAY_NAME, 5)).addField(new QueryField(QueryField.NAME, 3)).addField(
@@ -329,10 +329,10 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendContentTypeFilter(searchInputValues: SearchInputValues, contentQuery: ContentQuery): void {
-        var selectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName(
+        let selectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName(
             ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME);
 
-        var contentTypeNames: ContentTypeName[] = this.parseContentTypeNames(selectedBuckets);
+        let contentTypeNames: ContentTypeName[] = this.parseContentTypeNames(selectedBuckets);
 
         contentQuery.setContentTypeNames(contentTypeNames);
     }
@@ -351,7 +351,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.filter.Filter {
 
-        var lastModifiedSelectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName(
+        let lastModifiedSelectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName(
             ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME);
 
         if (lastModifiedSelectedBuckets == null || lastModifiedSelectedBuckets.length == 0) {
@@ -359,15 +359,15 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         }
 
         if (lastModifiedSelectedBuckets.length == 1) {
-            var dateRangeBucket: api.aggregation.DateRangeBucket = <api.aggregation.DateRangeBucket> lastModifiedSelectedBuckets.pop();
+            let dateRangeBucket: api.aggregation.DateRangeBucket = <api.aggregation.DateRangeBucket> lastModifiedSelectedBuckets.pop();
             return new api.query.filter.RangeFilter(QueryField.MODIFIED_TIME, ValueExpr.dateTime(dateRangeBucket.getFrom()).getValue(),
                 null);
         }
 
-        var booleanFilter: api.query.filter.BooleanFilter = new api.query.filter.BooleanFilter();
+        let booleanFilter: api.query.filter.BooleanFilter = new api.query.filter.BooleanFilter();
 
         lastModifiedSelectedBuckets.forEach((selectedBucket: api.aggregation.DateRangeBucket) => {
-            var rangeFilter: api.query.filter.RangeFilter =
+            let rangeFilter: api.query.filter.RangeFilter =
                 new api.query.filter.RangeFilter(QueryField.MODIFIED_TIME, ValueExpr.dateTime(selectedBucket.getFrom()).getValue(),
                     null);
 
@@ -378,11 +378,11 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private parseContentTypeNames(buckets: api.aggregation.Bucket[]): ContentTypeName[] {
-        var contentTypeNames: ContentTypeName[] = [];
+        let contentTypeNames: ContentTypeName[] = [];
 
         if (buckets) {
-            for (var i = 0; i < buckets.length; i++) {
-                var bucket: api.aggregation.Bucket = buckets[i];
+            for (let i = 0; i < buckets.length; i++) {
+                let bucket: api.aggregation.Bucket = buckets[i];
                 contentTypeNames.push(new ContentTypeName(bucket.getKey()));
             }
         }
@@ -396,7 +396,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private createTermsAggregation(name: string, fieldName: string, size: number): TermsAggregationQuery {
-        var termsAggregation = new TermsAggregationQuery(name);
+        let termsAggregation = new TermsAggregationQuery(name);
         termsAggregation.setFieldName(fieldName);
         termsAggregation.setSize(size);
         termsAggregation.setOrderByType(api.query.aggregation.TermsAggregationOrderType.DOC_COUNT);
@@ -406,7 +406,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private appendLastModifiedAggregationQuery(contentQuery: ContentQuery) {
 
-        var dateRangeAgg = new DateRangeAggregationQuery((ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME));
+        let dateRangeAgg = new DateRangeAggregationQuery((ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME));
         dateRangeAgg.setFieldName(QueryField.MODIFIED_TIME);
         dateRangeAgg.addRange(new DateRange("now-1h", null, "< 1 hour"));
         dateRangeAgg.addRange(new DateRange("now-1d", null, "< 1 day"));
@@ -417,13 +417,13 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
     private toggleAggregationsVisibility(aggregations: Aggregation[]) {
         aggregations.forEach((aggregation: api.aggregation.BucketAggregation) => {
-            var aggregationIsEmpty = !aggregation.getBuckets().some((bucket: api.aggregation.Bucket) => {
+            let aggregationIsEmpty = !aggregation.getBuckets().some((bucket: api.aggregation.Bucket) => {
                 if (bucket.docCount > 0) {
                     return true;
                 }
             });
 
-            var aggregationGroupView = aggregation.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME
+            let aggregationGroupView = aggregation.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME
                 ? this.contentTypeAggregation
                 : this.lastModifiedAggregation;
 
@@ -469,7 +469,7 @@ export class DependenciesSection extends api.dom.DivEl {
     }
 
     private appendCloseButton(): ActionButton {
-        var action = new Action("").onExecuted(() => {
+        let action = new Action("").onExecuted(() => {
             this.dependencyItem = null;
             this.checkVisibilityState();
 
@@ -477,7 +477,7 @@ export class DependenciesSection extends api.dom.DivEl {
                 this.closeCallback();
             }
         });
-        var button = new ActionButton(action);
+        let button = new ActionButton(action);
 
         button.addClass("btn-close");
         this.appendChild(button);

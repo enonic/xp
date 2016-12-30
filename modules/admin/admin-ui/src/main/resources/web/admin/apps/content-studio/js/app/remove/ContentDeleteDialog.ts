@@ -167,7 +167,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
     private createDeleteRequest(): api.content.resource.DeleteContentRequest {
-        var deleteRequest = new api.content.resource.DeleteContentRequest();
+        let deleteRequest = new api.content.resource.DeleteContentRequest();
 
         this.getItemList().getItems().forEach((item) => {
             deleteRequest.addContentPath(item.getContentSummary().getPath());
@@ -209,7 +209,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
     private updateSubTitle() {
-        var items = this.getItemList().getItems(),
+        let items = this.getItemList().getItems(),
             count = items.length;
 
         if (!this.doAnyHaveChildren(items)) {
@@ -221,7 +221,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
 
 
     private isAnySiteToBeDeleted(): boolean {
-        var result = this.getItemList().getItems().some((item: ContentSummaryAndCompareStatus) => {
+        let result = this.getItemList().getItems().some((item: ContentSummaryAndCompareStatus) => {
             return item.getContentSummary().isSite();
         });
 
@@ -229,7 +229,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
             return true;
         }
 
-        var dependantList = this.getDependantList();
+        let dependantList = this.getDependantList();
         if (dependantList.getItemCount() > 0) {
             return dependantList.getItems().some((descendant: ContentSummaryAndCompareStatus) => {
                 return descendant.getContentSummary().isSite();

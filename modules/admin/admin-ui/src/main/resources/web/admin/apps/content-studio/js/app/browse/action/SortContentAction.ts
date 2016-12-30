@@ -1,8 +1,8 @@
 import "../../../api.ts";
-
-import Action = api.ui.Action;
 import {ContentTreeGrid} from "../ContentTreeGrid";
 import {SortContentEvent} from "../SortContentEvent";
+
+import Action = api.ui.Action;
 
 export class SortContentAction extends Action {
 
@@ -10,7 +10,7 @@ export class SortContentAction extends Action {
         super("Sort");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var contents: api.content.ContentSummaryAndCompareStatus[]
+            let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
             new SortContentEvent(contents).fire();
         });

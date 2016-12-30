@@ -15,7 +15,7 @@ module api.aggregation {
 
         public static fromJsonArray(aggregationWrapperJsons: AggregationTypeWrapperJson[]) : Aggregation[] {
 
-            var aggregations: Aggregation[] = [];
+            let aggregations: Aggregation[] = [];
 
             aggregationWrapperJsons.forEach((aggregationJson: AggregationTypeWrapperJson) => {
                 aggregations.push(AggregationFactory.createFromJson(aggregationJson));

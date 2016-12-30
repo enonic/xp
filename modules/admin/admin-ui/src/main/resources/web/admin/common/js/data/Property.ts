@@ -47,7 +47,7 @@ module api.data {
             this.value = builder.value;
 
             if (this.value.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
-                var valuePropertySet = this.value.getPropertySet();
+                let valuePropertySet = this.value.getPropertySet();
                 valuePropertySet.setContainerProperty(this);
             }
         }
@@ -59,7 +59,7 @@ module api.data {
          * @param newIndex
          */
         setIndex(newIndex: number) {
-            var oldIndex = this.index;
+            let oldIndex = this.index;
             this.index = newIndex;
 
             if (oldIndex != newIndex) {
@@ -75,19 +75,19 @@ module api.data {
          */
         setValue(value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
-            var oldValue = this.value;
+            let oldValue = this.value;
             this.value = value;
 
             // Register listeners on PropertySet
             if (this.value.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
-                var propertySet = this.value.getPropertySet();
+                let propertySet = this.value.getPropertySet();
                 propertySet.setContainerProperty(this);
                 this.array.registerPropertySetListeners(propertySet);
             }
 
             // Unregister listeners on PropertySet from oldValue
             if (oldValue.getType().equals(ValueTypes.DATA) && oldValue.isNotNull()) {
-                var removedPropertySet = oldValue.getPropertySet();
+                let removedPropertySet = oldValue.getPropertySet();
                 removedPropertySet.setContainerProperty(null);
                 this.array.unregisterPropertySetListeners(removedPropertySet);
             }
@@ -220,7 +220,7 @@ module api.data {
                 return false;
             }
 
-            var other = <Property>o;
+            let other = <Property>o;
 
             if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
@@ -239,11 +239,11 @@ module api.data {
 
         copy(destinationPropertyArray: PropertyArray) {
 
-            var value: Value;
+            let value: Value;
 
             if (this.value.isPropertySet() && this.value.isNotNull()) {
-                var destinationTree = destinationPropertyArray.getTree();
-                var copiedPropertySet = this.value.getPropertySet().copy(destinationTree);
+                let destinationTree = destinationPropertyArray.getTree();
+                let copiedPropertySet = this.value.getPropertySet().copy(destinationTree);
                 value = new Value(copiedPropertySet, ValueTypes.DATA);
             }
             else {
@@ -268,7 +268,7 @@ module api.data {
         }
 
         private notifyPropertyIndexChangedEvent(previousIndex: number, newIndex: number) {
-            var event = new PropertyIndexChangedEvent(this, previousIndex, newIndex);
+            let event = new PropertyIndexChangedEvent(this, previousIndex, newIndex);
             if (Property.debug) {
                 console.debug("Property[" + this.getPath().toString() + "].notifyPropertyIndexChangedEvent: " + event.toString());
             }
@@ -285,7 +285,7 @@ module api.data {
         }
 
         private notifyPropertyValueChangedEvent(previousValue: Value, newValue: Value) {
-            var event = new PropertyValueChangedEvent(this, previousValue, newValue);
+            let event = new PropertyValueChangedEvent(this, previousValue, newValue);
             if (Property.debug) {
                 console.debug("Property[" + this.getPath().toString() + "].notifyPropertyValueChangedEvent: " + event.toString());
             }

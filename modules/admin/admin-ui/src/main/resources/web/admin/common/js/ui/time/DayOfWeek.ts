@@ -53,7 +53,7 @@ module api.ui.time {
                 return false;
             }
 
-            var other = <DayOfWeek>o;
+            let other = <DayOfWeek>o;
 
             if (!api.ObjectHelper.numberEquals(this.numberCode, other.numberCode)) {
                 return false;

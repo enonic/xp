@@ -87,14 +87,14 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     protected createFormIcon(): api.app.wizard.FormIcon {
-        var iconUrl = api.dom.ImgEl.PLACEHOLDER;
+        let iconUrl = api.dom.ImgEl.PLACEHOLDER;
         let formIcon = new FormIcon(iconUrl, "icon");
         formIcon.addClass("icon-xlarge icon-address-book");
         return formIcon;
     }
 
     protected createWizardHeader(): api.app.wizard.WizardHeaderWithDisplayNameAndName {
-        var wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
+        let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
 
         let existing = this.getPersistedItem(),
@@ -112,7 +112,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             name = "";
 
             wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                var updateStatus = event.getPropertyName() === "name" ||
+                let updateStatus = event.getPropertyName() === "name" ||
                                    (wizardHeader.isAutoGenerationEnabled()
                                     && event.getPropertyName() === "displayName");
 
@@ -147,7 +147,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     createSteps(persistedItem: UserStore): WizardStep[] {
-        var steps: WizardStep[] = [];
+        let steps: WizardStep[] = [];
 
         this.userStoreWizardStepForm = new UserStoreWizardStepForm();
         this.permissionsWizardStepForm = new SecurityWizardStepForm();
@@ -215,14 +215,14 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
 
     hasUnsavedChanges(): boolean {
-        var persistedUserStore: UserStore = this.getPersistedItem();
+        let persistedUserStore: UserStore = this.getPersistedItem();
         if (persistedUserStore == undefined) {
             let wizardHeader = this.getWizardHeader();
             return wizardHeader.getName() !== "" ||
                    wizardHeader.getDisplayName() !== "" ||
                    !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
         } else {
-            var viewedUserStore = this.assembleViewedUserStore();
+            let viewedUserStore = this.assembleViewedUserStore();
             return !this.getPersistedItem().equals(viewedUserStore);
         }
     }
@@ -243,7 +243,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {
-        var header = this.getWizardHeader(),
+        let header = this.getWizardHeader(),
             key = new UserStoreKey(header.getName()),
             name = header.getDisplayName(),
             description = this.userStoreWizardStepForm.getDescription(),
@@ -259,7 +259,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
-        var key = this.getPersistedItem().getKey(),
+        let key = this.getPersistedItem().getKey(),
             name = viewedUserStore.getDisplayName(),
             description = viewedUserStore.getDescription(),
             authConfig = viewedUserStore.getAuthConfig(),
@@ -286,7 +286,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     private listenToUserItemEvents() {
 
-        var principalCreatedHandler = (event: api.security.UserItemCreatedEvent) => {
+        let principalCreatedHandler = (event: api.security.UserItemCreatedEvent) => {
             if (!this.getPersistedItem()) { // skip if user store is not persisted yet
                 return;
             }
@@ -300,7 +300,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             }
         };
 
-        var principalDeletedHandler = (event: api.security.UserItemDeletedEvent) => {
+        let principalDeletedHandler = (event: api.security.UserItemDeletedEvent) => {
             // skip if user store is not persisted yet or if anything except users or roles was deleted
             if (!this.getPersistedItem() || !event.getPrincipals()) {
                 return;

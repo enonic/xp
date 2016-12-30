@@ -21,7 +21,7 @@ module api.ui.treegrid.actions {
         }
 
         updateActionsEnabledState(browseItems: api.app.browse.BrowseItem<M>[]): wemQ.Promise<api.app.browse.BrowseItem<M>[]> {
-            var deferred = wemQ.defer<api.app.browse.BrowseItem<M>[]>();
+            let deferred = wemQ.defer<api.app.browse.BrowseItem<M>[]>();
             deferred.resolve(browseItems);
             return deferred.promise;
         }

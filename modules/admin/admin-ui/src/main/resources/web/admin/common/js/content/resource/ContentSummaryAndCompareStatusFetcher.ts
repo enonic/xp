@@ -11,17 +11,17 @@ module api.content.resource {
         static fetchChildren(parentContentId: ContentId, from: number = 0, size: number = -1,
                              childOrder?: api.content.order.ChildOrder): wemQ.Promise<ContentResponse<ContentSummaryAndCompareStatus>> {
 
-            var deferred = wemQ.defer<ContentResponse<ContentSummaryAndCompareStatus>>();
+            let deferred = wemQ.defer<ContentResponse<ContentSummaryAndCompareStatus>>();
 
             new ListContentByIdRequest(parentContentId).setFrom(from).setSize(size).setOrder(childOrder).sendAndParse().then(
                 (response: ContentResponse<ContentSummary>)=> {
                     CompareContentRequest.fromContentSummaries(response.getContents()).sendAndParse().then(
                         (compareResults: CompareContentResults) => {
-                            var contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(
+                            let contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(
                                 response.getContents(), compareResults);
 
                             ContentSummaryAndCompareStatusFetcher.updateReadOnly(contents).then(() => {
-                                var result = new ContentResponse<ContentSummaryAndCompareStatus>(
+                                let result = new ContentResponse<ContentSummaryAndCompareStatus>(
                                     contents,
                                     response.getMetadata()
                                 );
@@ -35,7 +35,7 @@ module api.content.resource {
 
         static fetch(contentId: ContentId): wemQ.Promise<ContentSummaryAndCompareStatus> {
 
-            var deferred = wemQ.defer<ContentSummaryAndCompareStatus>();
+            let deferred = wemQ.defer<ContentSummaryAndCompareStatus>();
 
             new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
                 CompareContentRequest.fromContentSummaries([content]).sendAndParse().then((compareResults: CompareContentResults) => {
@@ -48,7 +48,7 @@ module api.content.resource {
 
         static fetchByContent(content: Content): wemQ.Promise<ContentSummaryAndCompareStatus> {
 
-            var deferred = wemQ.defer<ContentSummaryAndCompareStatus>();
+            let deferred = wemQ.defer<ContentSummaryAndCompareStatus>();
 
             CompareContentRequest.fromContentSummaries([content]).sendAndParse().then((compareResults: CompareContentResults) => {
                 deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus([content], compareResults)[0]);
@@ -59,11 +59,11 @@ module api.content.resource {
 
         static fetchByPaths(paths: ContentPath[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
-            var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
+            let deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
 
             if (paths.length > 0) {
                 new BatchContentRequest().setContentPaths(paths).sendAndParse().then((response: ContentResponse<ContentSummary>) => {
-                    var contentSummaries: ContentSummary[] = response.getContents();
+                    let contentSummaries: ContentSummary[] = response.getContents();
                     CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then(
                         (compareResults: CompareContentResults) => {
                             deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
@@ -78,7 +78,7 @@ module api.content.resource {
 
         static fetchByIds(ids: ContentId[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
-            var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
+            let deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
 
             if (ids.length > 0) {
                 new GetContentSummaryByIds(ids).sendAndParse().then((contentSummaries: ContentSummary[]) => {
@@ -96,7 +96,7 @@ module api.content.resource {
 
         static fetchStatus(contentSummaries: ContentSummary[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
-            var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
+            let deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
 
             CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
                 deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
@@ -107,7 +107,7 @@ module api.content.resource {
 
         static fetchChildrenIds(parentContentId: ContentId): wemQ.Promise<ContentId[]> {
 
-            var deferred = wemQ.defer<ContentId[]>();
+            let deferred = wemQ.defer<ContentId[]>();
 
             new GetContentIdsByParentRequest().setParentId(parentContentId).sendAndParse().then(
                 (response: ContentId[])=> {
@@ -119,10 +119,10 @@ module api.content.resource {
 
         static updateCompareStatus(contentSummaries: ContentSummary[],
                                    compareResults: CompareContentResults): ContentSummaryAndCompareStatus[] {
-            var list: ContentSummaryAndCompareStatus[] = [];
+            let list: ContentSummaryAndCompareStatus[] = [];
             contentSummaries.forEach((contentSummary: ContentSummary) => {
-                var compareResult: api.content.resource.result.CompareContentResult = compareResults.get(contentSummary.getId());
-                var newEntry = ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(
+                let compareResult: api.content.resource.result.CompareContentResult = compareResults.get(contentSummary.getId());
+                let newEntry = ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(
                     contentSummary, compareResult.getCompareStatus(), compareResult.getPublishStatus());
                 list.push(newEntry);
             });

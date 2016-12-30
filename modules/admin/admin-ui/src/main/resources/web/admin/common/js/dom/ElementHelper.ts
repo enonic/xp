@@ -50,7 +50,7 @@ module api.dom {
          * @returns {api.dom.ElementHelper} ElementHelper for previous node of this element.
          */
         getPrevious(): ElementHelper {
-            var previous = this.el.previousSibling;
+            let previous = this.el.previousSibling;
             while (previous && previous.nodeType != Node.ELEMENT_NODE) {
                 previous = previous.previousSibling;
             }
@@ -58,7 +58,7 @@ module api.dom {
         }
 
         getNext(): ElementHelper {
-            var next = this.el.nextSibling;
+            let next = this.el.nextSibling;
             while (next && next.nodeType != Node.ELEMENT_NODE) {
                 next = next.nextSibling;
             }
@@ -66,7 +66,7 @@ module api.dom {
         }
 
         getParent(): ElementHelper {
-            var parent = this.el.parentElement;
+            let parent = this.el.parentElement;
             return parent ? new ElementHelper(<HTMLElement> parent) : null;
         }
 
@@ -138,7 +138,7 @@ module api.dom {
         }
 
         getData(name: string): string {
-            var data = wemjq(this.el).data(name);
+            let data = wemjq(this.el).data(name);
             return data ? data.toString() : undefined;
         }
 
@@ -163,7 +163,7 @@ module api.dom {
         addClass(clsName: string): ElementHelper {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
-            var classList: string[] = clsName.split(" ");
+            let classList: string[] = clsName.split(" ");
             classList.forEach((classItem: string) => {
                 if (this.el.classList && !this.hasClass(classItem)) {
                     this.el.classList.add(classItem);
@@ -202,9 +202,9 @@ module api.dom {
         hasClass(clsName: string): boolean {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
-            var classList: string[] = clsName.split(" ");
-            for (var i = 0; i < classList.length; i++) {
-                var classItem = classList[i];
+            let classList: string[] = clsName.split(" ");
+            for (let i = 0; i < classList.length; i++) {
+                let classItem = classList[i];
                 if (!this.el.classList || !this.el.classList.contains(classItem)) {
                     return false;
                 }
@@ -215,7 +215,7 @@ module api.dom {
         removeClass(clsName: string): ElementHelper {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
-            var classList: string[] = clsName.split(" ");
+            let classList: string[] = clsName.split(" ");
             classList.forEach((classItem: string) => {
                 if (this.el.classList) {
                     this.el.classList.remove(classItem);
@@ -597,10 +597,10 @@ module api.dom {
         }
 
         getElementsByClassName(className: string): ElementHelper[] {
-            var items: ElementHelper[] = [];
+            let items: ElementHelper[] = [];
             if (className) {
-                var nodeList = this.el.getElementsByClassName(className);
-                for (var i = 0; i < nodeList.length; i++) {
+                let nodeList = this.el.getElementsByClassName(className);
+                for (let i = 0; i < nodeList.length; i++) {
                     items.push(new ElementHelper(<HTMLElement>nodeList.item(i)));
                 }
             }
@@ -608,7 +608,7 @@ module api.dom {
         }
 
         remove() {
-            var parent = this.el.parentElement;
+            let parent = this.el.parentElement;
             if (parent) {
                 parent.removeChild(this.el);
             }
@@ -633,7 +633,7 @@ module api.dom {
         }
 
         getDimensions(): ElementDimensions {
-            var offset = this.getOffset();
+            let offset = this.getOffset();
 
             return {
                 top: offset.top,
@@ -644,8 +644,8 @@ module api.dom {
         }
 
         getDimensionsTopRelativeToParent(): ElementDimensions {
-            var offsetToParent = this.getOffsetToParent();
-            var offsetToDocument = this.getOffset();
+            let offsetToParent = this.getOffsetToParent();
+            let offsetToDocument = this.getOffset();
 
             return {
                 top: offsetToParent.top,

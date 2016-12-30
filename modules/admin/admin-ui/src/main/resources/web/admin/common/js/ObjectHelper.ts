@@ -14,7 +14,7 @@ module api {
          * @returns {Object}
          */
         static create(constructor: Function, ...args: any[]) {
-            var factory = constructor.bind.apply(constructor, arguments);
+            let factory = constructor.bind.apply(constructor, arguments);
             return new factory();
         }
 
@@ -39,7 +39,7 @@ module api {
                 return false;
             }
 
-            var prototype = Object.getPrototypeOf(obj);
+            let prototype = Object.getPrototypeOf(obj);
 
             do {
                 prototype = Object.getPrototypeOf(prototype);
@@ -83,7 +83,7 @@ module api {
                 return false;
             }
 
-            for (var i = 0; i < arrayA.length; i++) {
+            for (let i = 0; i < arrayA.length; i++) {
                 if (!ObjectHelper.equals(arrayA[i], arrayB[i])) {
                     return false;
                 }
@@ -108,7 +108,7 @@ module api {
                 return false;
             }
 
-            for (var i = 0; i < arrayA.length; i++) {
+            for (let i = 0; i < arrayA.length; i++) {
                 if (!ObjectHelper.objectEquals(arrayA[i], arrayB[i])) {
                     return false;
                 }
@@ -184,7 +184,7 @@ module api {
                 return false;
             }
 
-            for (var i = 0; i < arrayA.length; i++) {
+            for (let i = 0; i < arrayA.length; i++) {
                 if (!ObjectHelper.stringEquals(arrayA[i], arrayB[i])) {
                     return false;
                 }
@@ -242,8 +242,8 @@ module api {
                 return false;
             }
 
-            var aString = JSON.stringify(a);
-            var bString = JSON.stringify(b);
+            let aString = JSON.stringify(a);
+            let bString = JSON.stringify(b);
             return aString == bString;
         }
 
@@ -269,10 +269,10 @@ module api {
              To avoid exception, when converting circular structure to JSON in Chrome the replacer
              function must be used to replace references to the same object with `undefined`.
              */
-            var aString = JSON.stringify(a, (key, value) => {
+            let aString = JSON.stringify(a, (key, value) => {
                 return (!!key && a == value) ? undefined : value;
             });
-            var bString = JSON.stringify(b, (key, value) => {
+            let bString = JSON.stringify(b, (key, value) => {
                 return (!!key && b == value) ? undefined : value;
             });
             return aString == bString;
@@ -291,10 +291,10 @@ module api {
 
         static objectPropertyIterator(object: any, callback: {(name: string, property: any, index?: number): void;}) {
 
-            var index = 0;
-            for (var name  in object) {
+            let index = 0;
+            for (let name  in object) {
                 if (object.hasOwnProperty(name)) {
-                    var property = object[name];
+                    let property = object[name];
                     callback(name, property, index++);
                 }
             }

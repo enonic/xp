@@ -45,7 +45,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         super("insertables-panel");
         this.liveEditPageProxy = config.liveEditPage;
 
-        var topDescription = new api.dom.PEl();
+        let topDescription = new api.dom.PEl();
         topDescription.getEl().setInnerHtml('Drag and drop components into the page');
 
         this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
@@ -95,7 +95,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     }
 
     private initializeDraggables() {
-        var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
+        let components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
 
         if (InsertablesPanel.debug) {
             console.log('InsertablesPanel.initializeDraggables', components);
@@ -116,7 +116,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     }
 
     private destroyDraggables() {
-        var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
+        let components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
 
         components.draggable('destroy');
     }
@@ -142,7 +142,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
             return;
         }
 
-        var over = this.isOverIFrame(<JQueryEventObject>event);
+        let over = this.isOverIFrame(<JQueryEventObject>event);
         if (this.overIFrame != over) {
             if (over) {
                 this.onEnterIFrame(event, ui);
@@ -180,7 +180,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         this.liveEditPageProxy.getDragMask().show();
 
         if (this.iFrameDraggable) {
-            var livejq = this.liveEditPageProxy.getJQuery();
+            let livejq = this.liveEditPageProxy.getJQuery();
             // hide the helper of the iframe draggable,
             // it's a function so call it to get element and wrap in jquery to hide
             livejq(this.iFrameDraggable.draggable("option", "helper")()).hide();
@@ -195,10 +195,10 @@ export class InsertablesPanel extends api.ui.panel.Panel {
             console.log('InsertablesPanel.onEnterIFrame');
         }
         this.liveEditPageProxy.getDragMask().hide();
-        var livejq = this.liveEditPageProxy.getJQuery();
+        let livejq = this.liveEditPageProxy.getJQuery();
 
-        var iFrame = <HTMLIFrameElement>this.liveEditPageProxy.getIFrame().getHTMLElement();
-        var hasBody = iFrame && iFrame.contentDocument && iFrame.contentDocument.body;
+        let iFrame = <HTMLIFrameElement>this.liveEditPageProxy.getIFrame().getHTMLElement();
+        let hasBody = iFrame && iFrame.contentDocument && iFrame.contentDocument.body;
         if (!hasBody) {
             if (InsertablesPanel.debug) {
                 console.warn('InsertablesPanel.onEnterIFrame, skip due to missing body in document');

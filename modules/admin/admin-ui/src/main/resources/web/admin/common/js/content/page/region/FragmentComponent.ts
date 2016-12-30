@@ -49,7 +49,7 @@ module api.content.page.region {
         }
 
         setFragment(contentId: api.content.ContentId, name: string) {
-            var oldValue = this.fragment;
+            let oldValue = this.fragment;
             this.fragment = contentId;
 
             this.setName(name ? new ComponentName(name) : this.getType().getDefaultName());
@@ -73,7 +73,7 @@ module api.content.page.region {
 
         toJson(): ComponentTypeWrapperJson {
 
-            var json: FragmentComponentJson = <FragmentComponentJson>super.toComponentJson();
+            let json: FragmentComponentJson = <FragmentComponentJson>super.toComponentJson();
             json.fragment = this.fragment != null ? this.fragment.toString() : null;
             json.config = this.config != null ? this.config.toJson() : null;
 
@@ -88,7 +88,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <FragmentComponent>o;
+            let other = <FragmentComponent>o;
 
             if (!super.equals(o)) {
                 return false;

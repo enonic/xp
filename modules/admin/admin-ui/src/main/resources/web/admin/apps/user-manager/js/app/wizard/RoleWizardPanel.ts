@@ -24,15 +24,15 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
     }
 
     createSteps(principal?: Principal): WizardStep[] {
-        var steps: WizardStep[] = [];
+        let steps: WizardStep[] = [];
 
-        var descriptionStep = this.getDescriptionWizardStepForm();
+        let descriptionStep = this.getDescriptionWizardStepForm();
 
         steps.push(new WizardStep("Role", descriptionStep));
 
-        var principalKey: PrincipalKey = principal ? principal.getKey() : undefined;
+        let principalKey: PrincipalKey = principal ? principal.getKey() : undefined;
         if (!RoleKeys.EVERYONE.equals(principalKey)) {
-            var membersStep = this.getMembersWizardStepForm();
+            let membersStep = this.getMembersWizardStepForm();
             steps.push(new WizardStep("Grants", membersStep));
         }
 
@@ -51,8 +51,8 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
     }
 
     produceCreateRoleRequest(): CreateRoleRequest {
-        var wizardHeader = this.getWizardHeader();
-        var key = PrincipalKey.ofRole(wizardHeader.getName()),
+        let wizardHeader = this.getWizardHeader();
+        let key = PrincipalKey.ofRole(wizardHeader.getName()),
             name = wizardHeader.getDisplayName(),
             members = this.getMembersWizardStepForm().getMembers().map((el) => {
                 return el.getKey();
@@ -62,7 +62,7 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
     }
 
     produceUpdateRequest(viewedPrincipal:Principal):UpdateRoleRequest {
-        var role = viewedPrincipal.asRole(),
+        let role = viewedPrincipal.asRole(),
             key = role.getKey(),
             displayName = role.getDisplayName(),
             description = role.getDescription(),
@@ -93,8 +93,8 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
     }
 
     isPersistedEqualsViewed(): boolean {
-        var persistedPrincipal = this.getPersistedItem().asRole();
-        var viewedPrincipal = this.assembleViewedItem().asRole();
+        let persistedPrincipal = this.getPersistedItem().asRole();
+        let viewedPrincipal = this.assembleViewedItem().asRole();
         // Group/User order can be different for viewed and persisted principal
         viewedPrincipal.getMembers().sort((a, b) => {
             return a.getId().localeCompare(b.getId());

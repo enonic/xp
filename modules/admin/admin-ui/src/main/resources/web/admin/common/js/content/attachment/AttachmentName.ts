@@ -13,7 +13,7 @@ module api.content.attachment {
                 return false;
             }
 
-            var other = <AttachmentName>o;
+            let other = <AttachmentName>o;
 
             if (!api.ObjectHelper.stringEquals(this.fileName, other.fileName)) {
                 return false;

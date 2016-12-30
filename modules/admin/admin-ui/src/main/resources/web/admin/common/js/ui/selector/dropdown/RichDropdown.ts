@@ -44,7 +44,7 @@ module api.ui.selector.dropdown {
         }
 
         private createOptions(values: OPTION_DISPLAY_VALUE[]): Option<OPTION_DISPLAY_VALUE>[] {
-            var options = [];
+            let options = [];
 
             values.forEach((value: OPTION_DISPLAY_VALUE) => {
                 options.push(this.createOption(value));

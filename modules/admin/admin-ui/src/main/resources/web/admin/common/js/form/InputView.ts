@@ -65,7 +65,7 @@ module api.form {
 
             if (this.input.getInputType().getName().toLowerCase() !== "checkbox") { //checkbox input type generates clickable label itself
                 if (this.input.getLabel()) {
-                    var label = new InputLabel(this.input);
+                    let label = new InputLabel(this.input);
                     this.appendChild(label);
                 } else {
                     this.addClass("no-label");
@@ -98,7 +98,7 @@ module api.form {
 
                 if (!this.inputTypeView.isManagingAdd()) {
 
-                    var inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
+                    let inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                     inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
                         this.refresh();
                     });
@@ -135,14 +135,14 @@ module api.form {
         }
 
         private getPropertyArray(propertySet: PropertySet): PropertyArray {
-            var array = propertySet.getPropertyArray(this.input.getName());
+            let array = propertySet.getPropertyArray(this.input.getName());
             if (!array) {
                 array = PropertyArray.create().setType(this.inputTypeView.getValueType()).setName(this.input.getName()).setParent(
                     this.parentPropertySet).build();
 
                 propertySet.addPropertyArray(array);
 
-                var initialValue = this.input.getDefaultValue();
+                let initialValue = this.input.getDefaultValue();
                 if (!initialValue) {
                     initialValue = this.inputTypeView.newInitialValue();
                 }
@@ -173,8 +173,8 @@ module api.form {
         }
 
         private createInputTypeView(): api.form.inputtype.InputTypeView<any> {
-            var inputType: api.form.InputTypeName = this.input.getInputType();
-            var inputTypeViewContext = this.getContext().createInputTypeViewContext(
+            let inputType: api.form.InputTypeName = this.input.getInputType();
+            let inputTypeViewContext = this.getContext().createInputTypeViewContext(
                 this.input.getInputTypeConfig() || {},
                 this.parentPropertySet.getPropertyPath(),
                 this.input
@@ -197,7 +197,7 @@ module api.form {
 
         refresh(validate: boolean = true) {
             if (!this.inputTypeView.isManagingAdd()) {
-                var inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
+                let inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
             }
             if (validate) {
@@ -223,14 +223,14 @@ module api.form {
 
         validate(silent: boolean = true): ValidationRecording {
 
-            var inputRecording = this.inputTypeView.validate(silent);
+            let inputRecording = this.inputTypeView.validate(silent);
             return this.handleInputValidationRecording(inputRecording, silent);
         }
 
         private handleInputValidationRecording(inputRecording: api.form.inputtype.InputValidationRecording,
                                                silent: boolean = true): ValidationRecording {
 
-            var recording = new ValidationRecording(),
+            let recording = new ValidationRecording(),
                 validationRecordingPath = this.resolveValidationRecordingPath(),
                 hasValidInput = this.hasValidUserInput();
 

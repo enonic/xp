@@ -53,7 +53,7 @@ module api.ui.time {
                 return false;
             }
 
-            var other = <MonthOfYear>o;
+            let other = <MonthOfYear>o;
 
             if (!api.ObjectHelper.numberEquals(this.numberCode, other.numberCode)) {
                 return false;

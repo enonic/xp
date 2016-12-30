@@ -35,7 +35,7 @@ module api.ui.menu {
         }
 
         addAction(action: Action) {
-            var actionMenuItem = new ActionMenuItem(action);
+            let actionMenuItem = new ActionMenuItem(action);
             this.actionListEl.appendChild(actionMenuItem);
             actionMenuItem.onClicked(() => {
                 this.removeClass("expanded");

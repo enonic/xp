@@ -23,7 +23,7 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
         this.getEl().addClass("change-password-dialog");
 
         this.userPath = new api.dom.H6El().addClass("user-path");
-        var descMessage = new api.dom.H6El().addClass("desc-message").setHtml("Password will be updated immediately after finishing");
+        let descMessage = new api.dom.H6El().addClass("desc-message").setHtml("Password will be updated immediately after finishing");
 
         this.appendChildToContentPanel(this.userPath);
         this.appendChildToContentPanel(descMessage);
@@ -34,12 +34,12 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
 
         this.onShown(() => this.toggleChangePasswordButton());
 
-        var passwordFormItem = new FormItemBuilder(this.password).setLabel('Password').setValidator(Validators.required).build();
+        let passwordFormItem = new FormItemBuilder(this.password).setLabel('Password').setValidator(Validators.required).build();
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(passwordFormItem);
 
-        var form = new api.ui.form.Form().add(fieldSet);
+        let form = new api.ui.form.Form().add(fieldSet);
 
         this.appendChildToContentPanel(form);
         this.initializeActions();

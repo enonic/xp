@@ -52,8 +52,8 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     protected createFormIcon(): FormIcon {
-        var iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        var formIcon = new FormIcon(iconUrl, "icon");
+        let iconUrl = api.dom.ImgEl.PLACEHOLDER;
+        let formIcon = new FormIcon(iconUrl, "icon");
         formIcon.addClass("icon icon-xlarge");
         return formIcon;
     }
@@ -95,7 +95,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
         if (this.isRendered() && !this.getWizardHeader().getName()) {
-            var deferred = wemQ.defer<USER_ITEM_TYPE>();
+            let deferred = wemQ.defer<USER_ITEM_TYPE>();
             api.notify.showError("Name can not be empty");
             deferred.reject(new Error("Name can not be empty"));
             return deferred.promise;

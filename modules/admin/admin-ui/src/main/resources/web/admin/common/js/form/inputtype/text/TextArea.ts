@@ -37,7 +37,7 @@ module api.form.inputtype.text {
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
-            var input = <api.ui.text.TextArea> occurrence;
+            let input = <api.ui.text.TextArea> occurrence;
 
             if (!unchangedOnly || !input.isDirty()) {
                 input.setValue(property.getString());
@@ -45,7 +45,7 @@ module api.form.inputtype.text {
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            var input = <api.ui.text.TextArea> occurrence;
+            let input = <api.ui.text.TextArea> occurrence;
 
             input.resetBaseValues();
         }

@@ -38,16 +38,16 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
 
         function $(...paths: string[]) {
 
-            var strValues: string [] = [];
+            let strValues: string [] = [];
             paths.forEach((path: string) => {
 
-                var strValue = formView.getData().getString(path);
+                let strValue = formView.getData().getString(path);
                 if (!api.util.StringHelper.isBlank(strValue)) {
                     strValues.push(strValue);
                 }
             });
 
-            var strValue = "";
+            let strValue = "";
             strValues.forEach((s: string, index: number) => {
                 strValue += s;
                 if (index < strValues.length - 1) {
@@ -58,7 +58,7 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
             return strValue;
         }
 
-        var result = '';
+        let result = '';
 
         try {
             // hide eval, Function, document, window and other things from the script.

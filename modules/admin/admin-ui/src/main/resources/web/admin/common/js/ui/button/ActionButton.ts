@@ -55,7 +55,7 @@ module api.ui.button {
         }
 
         private createLabel(action: Action): string {
-            var label: string;
+            let label: string;
             if (action.hasMnemonic()) {
                 label = action.getMnemonic().underlineMnemonic(action.getLabel());
             } else {

@@ -62,7 +62,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                     return loader.principal;
                 });
         } else {
-            var equitable = this.getPersistedItem();
+            let equitable = this.getPersistedItem();
             if (PrincipalWizardPanel.debug) {
                 console.debug("PrincipalWizardPanel.doLoadData: data present, skipping load...", equitable);
             }
@@ -86,7 +86,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     protected createWizardHeader(): WizardHeaderWithDisplayNameAndName {
-        var wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
+        let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
         let existing = this.getPersistedItem(),
             displayName = "",
@@ -100,7 +100,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         } else {
 
             wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                var updateStatus = event.getPropertyName() === "name" ||
+                let updateStatus = event.getPropertyName() === "name" ||
                                    (wizardHeader.isAutoGenerationEnabled()
                                     && event.getPropertyName() === "displayName");
 
@@ -182,7 +182,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
         return super.doLayout(persistedPrincipal).then(() => {
 
-            var viewedPrincipal;
+            let viewedPrincipal;
             if (this.isRendered()) {
 
                 viewedPrincipal = this.assembleViewedItem();
@@ -230,7 +230,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 this.notifyPrincipalNamed(principal);
             }
 
-            var principalTypeName = StringHelper.capitalize(PrincipalType[principal.getType()].toLowerCase());
+            let principalTypeName = StringHelper.capitalize(PrincipalType[principal.getType()].toLowerCase());
             api.notify.showFeedback(principalTypeName + " '" + principal.getDisplayName() + "' was updated!");
             new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
 
@@ -239,11 +239,11 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     hasUnsavedChanges(): boolean {
-        var persistedPrincipal: Principal = this.getPersistedItem();
+        let persistedPrincipal: Principal = this.getPersistedItem();
         if (persistedPrincipal == undefined) {
             return true;
         } else {
-            var viewedPrincipal = this.assembleViewedItem();
+            let viewedPrincipal = this.assembleViewedItem();
             return !viewedPrincipal.equals(this.getPersistedItem());
         }
     }

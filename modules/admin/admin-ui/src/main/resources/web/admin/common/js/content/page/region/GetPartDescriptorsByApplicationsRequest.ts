@@ -25,7 +25,7 @@ module api.content.page.region {
             const promises = this.applicationKeys.map(request);
 
             return wemQ.all(promises).then((results: PartDescriptor[][]) => {
-                var all: PartDescriptor[] = [];
+                let all: PartDescriptor[] = [];
                 results.forEach((result: PartDescriptor[]) => {
                     Array.prototype.push.apply(all, result);
                 });

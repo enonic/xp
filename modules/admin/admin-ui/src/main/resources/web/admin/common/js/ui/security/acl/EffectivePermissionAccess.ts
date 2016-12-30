@@ -8,7 +8,7 @@ module api.ui.security.acl {
 
         static fromJson(json: api.content.json.EffectivePermissionAccessJson) {
 
-            var effectivePermissionAccess = new EffectivePermissionAccess();
+            let effectivePermissionAccess = new EffectivePermissionAccess();
 
             effectivePermissionAccess.count = json.count;
             effectivePermissionAccess.users = json.users.map(

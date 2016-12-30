@@ -26,7 +26,7 @@ module api.ui {
         }
 
         public addOption(value: string, label: string) {
-            var checked = value == this.getOriginalValue(),
+            let checked = value == this.getOriginalValue(),
                 radio = new RadioButton(label, value, this.groupName, checked);
 
             radio.onValueChanged((event: api.ValueChangedEvent) => {
@@ -37,8 +37,8 @@ module api.ui {
         }
 
         doSetValue(value: string, silent?: boolean): RadioGroup {
-            var option;
-            for (var i = 0; i < this.options.length; i++) {
+            let option;
+            for (let i = 0; i < this.options.length; i++) {
                 option = this.options[i];
                 option.setChecked(option.getValue() == value, true);
             }
@@ -46,8 +46,8 @@ module api.ui {
         }
 
         doGetValue(): string {
-            var option;
-            for (var i = 0; i < this.options.length; i++) {
+            let option;
+            for (let i = 0; i < this.options.length; i++) {
                 option = this.options[i];
                 if (option.isChecked()) {
                     return option.getValue();

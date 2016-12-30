@@ -41,7 +41,7 @@ module api.thumb {
                 return false;
             }
 
-            var other = <Thumbnail>o;
+            let other = <Thumbnail>o;
 
             if (!api.ObjectHelper.equals(this.binaryReference, other.binaryReference)) {
                 return false;

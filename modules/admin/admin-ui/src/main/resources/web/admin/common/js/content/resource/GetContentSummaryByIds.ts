@@ -29,7 +29,7 @@ module api.content.resource {
                     return ContentSummary.fromJsonArray(response.getResult().contents);
                 });
             } else {
-                var deferred = wemQ.defer<ContentSummary[]>();
+                let deferred = wemQ.defer<ContentSummary[]>();
                 deferred.resolve([]);
                 return deferred.promise;
             }
