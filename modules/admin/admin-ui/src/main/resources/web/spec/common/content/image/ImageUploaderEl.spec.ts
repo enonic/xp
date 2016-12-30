@@ -3,6 +3,7 @@ module ImageUploaderElSpec {
     import ImageUploaderEl = api.content.image.ImageUploaderEl;
     import Spy = jasmine.Spy;
     import Rect = api.ui.image.Rect;
+    import MaskContentWizardPanelEvent = api.app.wizard.MaskContentWizardPanelEvent;
 
     describe("api.content.image.ImageUploaderEl", () => {
 
@@ -29,9 +30,135 @@ module ImageUploaderElSpec {
 
         });
 
+        describe("image editor listeners", () => {
+
+            let editor;
+
+            beforeEach(() => {
+                api.dom.Body.get().appendChild(imageUploaderEl);
+                editor = imageUploaderEl.createResultItem("testItem");
+            });
+
+            afterEach(() => {
+                editor.remove();
+                api.dom.Body.get().removeChild(imageUploaderEl);
+            });
+
+            it("to be defined", () => {
+                expect(editor).toBeDefined();
+            });
+
+            describe("after image has been loaded", () => {
+
+                let shaderVisibilitySpy, showFileDialogSpy;
+
+                beforeEach(() => {
+                    shaderVisibilitySpy = spyOn(editor, "onShaderVisibilityChanged").and.callThrough();
+                    editor.getImage().notifyLoaded();
+                });
+
+                it("shader visibility listener should be set", () => {
+                    expect(shaderVisibilitySpy).toHaveBeenCalled();
+                });
+
+                describe("and edit mode has been changed", () => {
+
+                    let notifyEditModeSpy, addClassSpy, removeClassSpy: Spy;
+                    beforeEach(() => {
+                        notifyEditModeSpy = spyOn(imageUploaderEl, "notifyEditModeChanged").and.callThrough();
+                        addClassSpy = spyOn(editor, "addClass").and.callThrough();
+                        removeClassSpy = spyOn(editor, "removeClass").and.callThrough();
+                    });
+
+                    it("edit mode listener should be called", () => {
+                        editor.notifyEditModeChanged();
+                        expect(notifyEditModeSpy).toHaveBeenCalled();
+                    });
+
+                    it("standout class should be added on edit", () => {
+                        editor.notifyEditModeChanged(true);
+                        expect(addClassSpy).toHaveBeenCalled();
+                    });
+
+                    it("standout class should be removed if not edit", () => {
+                        editor.notifyEditModeChanged(false);
+                        expect(removeClassSpy).toHaveBeenCalled();
+                    });
+                });
+
+                describe("and shader visibility has been changed", () => {
+
+                    beforeEach(() => {
+                        spyOn(api.app.wizard.MaskContentWizardPanelEvent.prototype, "fire");
+                        editor.notifyShaderVisibilityChanged(true);
+                    });
+
+                    it("MaskContentWizardPanelEvent event should be fired", () => {
+                        expect(api.app.wizard.MaskContentWizardPanelEvent.prototype.fire).toHaveBeenCalled();
+                    });
+                });
+
+                describe("and upload button has been clicked", () => {
+
+                    beforeEach(() => {
+                        showFileDialogSpy = spyOn(imageUploaderEl, 'showFileSelectionDialog').and.callThrough();
+                        editor.getUploadButton().getHTMLElement().click();
+                    });
+
+                    it("show file dialog should be shown", () => {
+                        expect(showFileDialogSpy).toHaveBeenCalled();
+                    });
+                });
+            });
+
+            describe("if image loading throws an error", () => {
+
+                let showErrorSpy: Spy;
+
+                beforeEach(() => {
+                    showErrorSpy = spyOn(api.notify, 'showError');
+                    editor.notifyImageError();
+                });
+
+                it("error should be displayed", () => {
+                    expect(showErrorSpy).toHaveBeenCalled();
+                });
+            });
+
+            describe("getValue()", () => {
+
+                beforeEach(() => {
+                    imageUploaderEl.setValue("testItem1");
+                });
+
+                it("should return last set value", () => {
+                    expect(imageUploaderEl.getValue()).toEqual("testItem1");
+                });
+            });
+
+            describe("refreshExistingItem()", () => {
+
+                let refreshSpy: Spy;
+
+                beforeEach(() => {
+                    let src = jasmine.createSpyObj("src", ['indexOf']);
+                    src.indexOf.and.returnValue(1);
+
+                    spyOn(editor, "getSrc").and.returnValue(src);
+                    refreshSpy = spyOn(imageUploaderEl, "refreshExistingItem").and.callThrough();
+
+                    imageUploaderEl.setValue("testValue");
+                });
+
+                it("should be called for existing value item", () => {
+                    expect(refreshSpy).toHaveBeenCalled();
+                });
+            });
+        });
+
         describe("initialized", () => {
 
-            let editorSpyObj;
+            let editorSpyObj, editorSpy;
 
             beforeEach((done) => {
                 imageUploaderEl.getEl().setWidthPx(0);
@@ -42,7 +169,7 @@ module ImageUploaderElSpec {
                         'setCropPosition', 'resetCropPosition',
                         'setZoomPosition', 'resetZoomPosition', 'isFocusEditMode', 'isCropEditMode']);
 
-                spyOn(imageUploaderEl, "createImageEditor").and.returnValue(editorSpyObj);
+                editorSpy = spyOn(imageUploaderEl, "createImageEditor").and.returnValue(editorSpyObj);
 
                 imageUploaderEl.createResultItem("testItem");
 
@@ -96,6 +223,28 @@ module ImageUploaderElSpec {
                         it("original values is set from metadata", () => {
                             expect(sizeSpy.calls.first().returnValue).toEqual(111);
                         });
+
+                        describe("new editors", () => {
+
+                            let proportionalHeightSpy: Spy;
+                            let newItem;
+
+                            beforeEach(() => {
+                                editorSpy.and.callThrough();
+
+                                proportionalHeightSpy = spyOn(imageUploaderEl, "getProportionalHeight").and.callThrough();
+                                newItem = imageUploaderEl.createResultItem("newTestItem");
+                            });
+
+                            afterEach(() => {
+                                newItem.remove();
+                            })
+
+                            it("should use original height values", () => {
+                                expect(proportionalHeightSpy).toHaveBeenCalled();
+                            });
+                        });
+
 
                     });
 
