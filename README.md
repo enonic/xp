@@ -41,7 +41,7 @@ This software is licensed under AGPL 3.0 license. See full license terms [here](
 read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
 
 	Enonic XP
-	Copyright (C) 2000-2016 Enonic AS.
+	Copyright (C) 2000-2017 Enonic AS.
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as
