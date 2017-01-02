@@ -688,6 +688,10 @@ module api.ui.uploader {
             return this.uploadButton;
         }
 
+        hasUploadButton(): boolean {
+            return !!this.config.hasUploadButton;
+        }
+
         getResultContainer(): api.dom.DivEl {
             return this.resultContainer;
         }

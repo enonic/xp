@@ -442,10 +442,12 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     updateFrameContainerSize(contextWindowShown: boolean, contextWindowWidth?: number) {
-        if (contextWindowShown && contextWindowWidth) {
-            this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth - 1) + "px)");
-        } else {
-            this.frameContainer.getEl().setWidth("100%");
+        if (this.frameContainer) {
+            if (contextWindowShown && contextWindowWidth) {
+                this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth - 1) + "px)");
+            } else {
+                this.frameContainer.getEl().setWidth("100%");
+            }
         }
     }
 

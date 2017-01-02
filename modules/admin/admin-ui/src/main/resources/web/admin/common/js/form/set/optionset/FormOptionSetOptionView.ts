@@ -322,7 +322,9 @@ module api.form {
             this.disableFormItems();
 
             var array = this.getOptionItemsPropertyArray(this.parentDataSet);
-            array.getSet(0).reset();
+            array.getSet(0).forEach((property) => {
+                array.getSet(0).removeProperty(property.getName(), property.getIndex());
+            });
             this.update(this.parentDataSet);
         }
 

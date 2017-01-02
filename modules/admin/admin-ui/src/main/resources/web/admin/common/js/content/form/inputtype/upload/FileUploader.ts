@@ -14,6 +14,7 @@ module api.content.form.inputtype.upload {
         protected config: api.content.form.inputtype.ContentInputTypeViewContext;
         protected uploaderEl: FileUploaderEl<any>;
         protected uploaderWrapper: api.dom.DivEl;
+        protected uploadButton: api.dom.DivEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("file-uploader");
@@ -75,15 +76,19 @@ module api.content.form.inputtype.upload {
         protected createUploaderWrapper(): api.dom.DivEl {
             var wrapper = new api.dom.DivEl("uploader-wrapper");
 
-            var uploadButton = new api.ui.button.Button();
-            uploadButton.addClass('upload-button');
-
-            uploadButton.onClicked((event: MouseEvent) => {
-                this.uploaderEl.showFileSelectionDialog();
-            });
-
             wrapper.appendChild(this.uploaderEl);
-            wrapper.appendChild(uploadButton);
+
+            if (this.uploaderEl.hasUploadButton()) {
+                this.uploadButton = this.uploaderEl.getUploadButton();
+            } else {
+                this.uploadButton = new api.ui.button.Button();
+                this.uploadButton.addClass('upload-button');
+                wrapper.appendChild(this.uploadButton);
+
+                this.uploadButton.onClicked((event: MouseEvent) => {
+                    this.uploaderEl.showFileSelectionDialog();
+                });
+            }
 
             return wrapper;
         }

@@ -591,6 +591,9 @@ export class PageComponentsView extends api.dom.DivEl {
                 this.mask.hide();
             }
         }
+        if (this.tree) {
+            this.tree.reload();
+        }
     }
 
     private maskClickHandler(event: MouseEvent) {
