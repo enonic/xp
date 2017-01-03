@@ -52,6 +52,8 @@ module api.util.htmlarea.dialog {
                 this.textFormItem.hide();
                 this.textFormItem.removeValidator();
             }
+
+            this.setFirstFocusField(this.textFormItem.getInput());
         }
 
         private getHref(): string {
