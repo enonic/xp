@@ -96,7 +96,7 @@ function initToolTip() {
             position: "absolute", top, left
         }).show();
         };
-    wemjq(document).on("mouseenter", "*[title]", function (e: any) {
+    wemjq(document).on("mouseenter", "*[title]:not([disabled]):visible", function (e: any) {
         wemjq(window).data(DATA, wemjq(window).attr("title"));
         wemjq(window).removeAttr("title").addClass(CLS_ON);
         wemjq("<div id='" + ID + "' />").appendTo("body");
