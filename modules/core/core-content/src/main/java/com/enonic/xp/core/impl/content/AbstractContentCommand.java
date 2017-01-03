@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -16,6 +17,7 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
@@ -153,6 +155,14 @@ abstract class AbstractContentCommand
             return Filters.from( notPendingFilter, notExpiredFilter );
         }
         return Filters.from();
+    }
+
+    protected <T> T runAsAdmin( final Callable<T> callable )
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( ContentConstants.CONTENT_SU_AUTH_INFO ).
+            build().
+            callWith( callable );
     }
 
 
