@@ -73,7 +73,7 @@ public class AdminPortalHandlerTest
         PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );
 
         assertEquals( "/admin/portal/edit", portalRequest.getBaseUri() );
-        assertEquals( "master", portalRequest.getBranch().getName() );
+        assertEquals( "master", portalRequest.getBranch().toString() );
         assertEquals( "/content/1", portalRequest.getContentPath().toString() );
         assertEquals( "edit", portalRequest.getMode().toString() );
     }
