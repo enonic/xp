@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.content.mapper;
 
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.DescriptorBasedComponent;
 import com.enonic.xp.region.FragmentComponent;

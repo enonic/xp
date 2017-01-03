@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.auth;
+package com.enonic.xp.lib.common;
 
 import org.junit.Test;
 

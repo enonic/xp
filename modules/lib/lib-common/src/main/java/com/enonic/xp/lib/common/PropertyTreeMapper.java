@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content.mapper;
+package com.enonic.xp.lib.common;
 
 import java.util.List;
 import java.util.Map;

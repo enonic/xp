@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.PrincipalKey;
