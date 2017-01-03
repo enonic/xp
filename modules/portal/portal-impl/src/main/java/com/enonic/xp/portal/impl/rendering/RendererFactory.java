@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.rendering;
+package com.enonic.xp.portal.impl.rendering;
 
 import com.google.common.annotations.Beta;
 

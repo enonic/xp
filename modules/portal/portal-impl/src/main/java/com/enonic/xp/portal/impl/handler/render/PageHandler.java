@@ -9,7 +9,7 @@ import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.portal.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;

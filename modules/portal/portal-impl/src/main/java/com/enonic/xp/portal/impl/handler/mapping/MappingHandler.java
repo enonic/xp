@@ -8,7 +8,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.portal.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;

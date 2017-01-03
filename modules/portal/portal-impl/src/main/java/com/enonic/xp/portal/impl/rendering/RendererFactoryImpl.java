@@ -9,9 +9,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.portal.rendering.RendererFactory;
-
 @Component
 public final class RendererFactoryImpl
     implements RendererFactory
