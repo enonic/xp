@@ -46,14 +46,11 @@ module api.util.htmlarea.dialog {
 
             this.onlyTextSelected = config.onlyTextSelected;
             if (this.onlyTextSelected) {
-                this.textFormItem.getInput().giveFocus();
-            }
-            else {
+                this.setFirstFocusField(this.textFormItem.getInput());
+            } else {
                 this.textFormItem.hide();
                 this.textFormItem.removeValidator();
             }
-
-            this.setFirstFocusField(this.textFormItem.getInput());
         }
 
         private getHref(): string {
