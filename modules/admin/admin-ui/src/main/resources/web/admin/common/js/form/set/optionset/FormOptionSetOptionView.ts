@@ -109,11 +109,18 @@ module api.form {
 
                 this.onValidityChanged((event: RecordingValidityChangedEvent) => {
                     this.toggleClass("invalid", !event.isValid());
-                })
+                });
 
                 if (validate) {
                     this.validate(true);
                 }
+
+                this.formItemViews.forEach((formItemView: FormItemView) => {
+                    formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
+                        var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        new api.content.event.EditContentEvent([summaryAndStatus]).fire();
+                    });
+                });
 
                 deferred.resolve(null);
             }).catch((reason: any) => {
