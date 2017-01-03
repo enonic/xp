@@ -61,7 +61,9 @@ public class VirtualHostFilterTest
         Mockito.when( this.config.isEnabled() ).thenReturn( true );
         this.filter.doFilter( this.req, this.res, this.chain );
 
-        Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
+        Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
+        Assert.assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
+        Assert.assertEquals( 404, this.res.getStatus() );
     }
 
     @Test
@@ -73,8 +75,9 @@ public class VirtualHostFilterTest
         Mockito.when( this.config.isEnabled() ).thenReturn( true );
         this.filter.doFilter( this.req, this.res, this.chain );
 
-        Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
+        Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
         Assert.assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
+        Assert.assertEquals( 404, this.res.getStatus() );
     }
 
     @Test
