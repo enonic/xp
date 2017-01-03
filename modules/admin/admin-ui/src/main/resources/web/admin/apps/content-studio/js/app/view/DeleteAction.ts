@@ -7,7 +7,7 @@ export class DeleteAction extends api.ui.Action {
 
         this.onExecuted(() => {
 
-            var contentToDelete = itemViewPanel.getItem().getModel().getContentSummary();
+            let contentToDelete = itemViewPanel.getItem().getModel().getContentSummary();
 
             api.ui.dialog.ConfirmationDialog.get()
                 .setQuestion("Are you sure you want to delete this content?")

@@ -59,7 +59,7 @@ module api.content.page.region {
         setSelection(fragment: ContentSummary) {
 
             if (fragment) {
-                var option = this.getOptionByValue(fragment.getId().toString());
+                let option = this.getOptionByValue(fragment.getId().toString());
                 if (option) {
                     this.selectOption(option, true);
                 }
@@ -71,7 +71,7 @@ module api.content.page.region {
         getSelection(contentId: ContentId): ContentSummary {
             let id = contentId.toString();
             if (id) {
-                var option = this.getOptionByValue(id);
+                let option = this.getOptionByValue(id);
                 if (option) {
                     return option.displayValue;
                 }

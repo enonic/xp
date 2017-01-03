@@ -48,7 +48,7 @@ module api.app {
         }
 
         private isTheSameTypeEvent(event: NodeServerEvent) {
-            var change = event.getNodeChange();
+            let change = event.getNodeChange();
 
             if (this.type != change.getChangeType()) {
                 return false;

@@ -10,7 +10,7 @@ module api.dom {
             if (!body) {
                 body = document.body;
             }
-            var html = Element.fromHtmlElement(body.parentElement);
+            let html = Element.fromHtmlElement(body.parentElement);
 
             super(new ElementFromHelperBuilder().
                 setHelper(new ElementHelper(body)).

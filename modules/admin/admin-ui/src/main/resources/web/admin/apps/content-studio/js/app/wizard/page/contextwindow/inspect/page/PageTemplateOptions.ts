@@ -1,4 +1,5 @@
 import "../../../../../../api.ts";
+import {PageTemplateOption} from "./PageTemplateOption";
 
 import ContentId = api.content.ContentId;
 import ContentTypeName = api.schema.content.ContentTypeName;
@@ -8,7 +9,6 @@ import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateLoader = api.content.page.PageTemplateLoader;
 import Option = api.ui.selector.Option;
 import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
-import {PageTemplateOption} from "./PageTemplateOption";
 
 export class PageTemplateOptions {
 
@@ -33,24 +33,24 @@ export class PageTemplateOptions {
 
     getOptions(): wemQ.Promise<Option<PageTemplateOption>[]> {
 
-        var deferred = wemQ.defer<Option<PageTemplateOption>[]>();
+        let deferred = wemQ.defer<Option<PageTemplateOption>[]>();
 
-        var options: Option<PageTemplateOption>[] = [];
+        let options: Option<PageTemplateOption>[] = [];
         options.push(this.defaultPageTemplateOption);
 
-        var loader = new PageTemplateLoader(new GetPageTemplatesByCanRenderRequest(this.siteId,
+        let loader = new PageTemplateLoader(new GetPageTemplatesByCanRenderRequest(this.siteId,
             this.contentType));
         loader.setComparator(new api.content.page.PageTemplateByDisplayNameComparator());
         loader.onLoadedData((event: LoadedDataEvent<PageTemplate>) => {
 
             event.getData().forEach((pageTemplate: PageTemplate) => {
 
-                var indices: string[] = [];
+                let indices: string[] = [];
                 indices.push(pageTemplate.getName().toString());
                 indices.push(pageTemplate.getDisplayName());
                 indices.push(pageTemplate.getController().toString());
 
-                var option = {
+                let option = {
                     value: pageTemplate.getId().toString(),
                     displayValue: new PageTemplateOption(pageTemplate, this.pageModel),
                     indices: indices

@@ -16,7 +16,7 @@ module api.content.order {
         }
 
         toArrayJson(): ReorderChildContentJson[] {
-            var result: ReorderChildContentJson[] = [];
+            let result: ReorderChildContentJson[] = [];
             this.reorderChildren.forEach((movement: OrderChildMovement) => {
                 result.push(movement.toJson());
             });

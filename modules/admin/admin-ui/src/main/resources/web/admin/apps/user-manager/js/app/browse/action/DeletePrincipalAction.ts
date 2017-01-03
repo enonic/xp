@@ -1,9 +1,8 @@
 import "../../../api.ts";
+import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
+import {UserTreeGridItemType, UserTreeGridItem} from "../UserTreeGridItem";
 
 import Action = api.ui.Action;
-import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
-import {UserTreeGridItemType} from "../UserTreeGridItem";
-import {UserTreeGridItem} from "../UserTreeGridItem";
 
 export class DeletePrincipalAction extends Action {
 
@@ -17,23 +16,23 @@ export class DeletePrincipalAction extends Action {
                 .setYesCallback(() => {
 
 
-                    var principalItems = grid.getSelectedDataList().filter(
+                    let principalItems = grid.getSelectedDataList().filter(
                         userItem => UserTreeGridItemType.PRINCIPAL == userItem.getType()).map((userItem: UserTreeGridItem) => {
                         return userItem.getPrincipal();
                     });
 
-                    var userStoreItems = grid.getSelectedDataList().filter(
+                    let userStoreItems = grid.getSelectedDataList().filter(
                         userItem => UserTreeGridItemType.USER_STORE == userItem.getType()).map((userItem: UserTreeGridItem) => {
                         return userItem.getUserStore();
                     });
 
-                    var principalKeys = principalItems.filter((userItem) => {
+                    let principalKeys = principalItems.filter((userItem) => {
                         return api.ObjectHelper.iFrameSafeInstanceOf(userItem, api.security.Principal);
                     }).map((principal: api.security.Principal) => {
                         return principal.getKey();
                     });
 
-                    var userStoreKeys = userStoreItems.filter((userItem) => {
+                    let userStoreKeys = userStoreItems.filter((userItem) => {
                         return api.ObjectHelper.iFrameSafeInstanceOf(userItem, api.security.UserStore);
                     }).map((userStore: api.security.UserStore) => {
                         return userStore.getKey();
@@ -45,10 +44,10 @@ export class DeletePrincipalAction extends Action {
                             .setKeys(principalKeys)
                             .send()
                             .done((jsonResponse: api.rest.JsonResponse<any>) => {
-                                var json = jsonResponse.getJson();
+                                let json = jsonResponse.getJson();
 
                                 if (json.results && json.results.length > 0) {
-                                    var key = json.results[0].principalKey;
+                                    let key = json.results[0].principalKey;
 
                                     api.notify.showFeedback('Principal [' + key + '] deleted!');
                                     api.security.UserItemDeletedEvent.create().setPrincipals(principalItems).build().fire();
@@ -61,10 +60,10 @@ export class DeletePrincipalAction extends Action {
                             .setKeys(userStoreKeys)
                             .send()
                             .done((jsonResponse: api.rest.JsonResponse<any>) => {
-                                var json = jsonResponse.getJson();
+                                let json = jsonResponse.getJson();
 
                                 if (json.results && json.results.length > 0) {
-                                    var key = json.results[0].userStoreKey;
+                                    let key = json.results[0].userStoreKey;
 
                                     api.notify.showFeedback('UserStore [' + key + '] deleted!');
                                     api.security.UserItemDeletedEvent.create().setUserStores(userStoreItems).build().fire();

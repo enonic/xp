@@ -4,7 +4,7 @@ module api.content.util {
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import ContentTypeName = api.schema.content.ContentTypeName;
 
-    var TYPES_ALLOWED_EVERYWHERE: {[key:string]: ContentTypeName} = {};
+    let TYPES_ALLOWED_EVERYWHERE: {[key:string]: ContentTypeName} = {};
     [ContentTypeName.UNSTRUCTURED, ContentTypeName.FOLDER, ContentTypeName.SITE,
         ContentTypeName.SHORTCUT, ContentTypeName.FRAGMENT].forEach((contentTypeName: ContentTypeName) => {
         TYPES_ALLOWED_EVERYWHERE[contentTypeName.toString()] = contentTypeName;
@@ -30,11 +30,11 @@ module api.content.util {
         }
 
         isCreateContentAllowed(parentContent: ContentSummary, contentType: ContentTypeSummary): boolean {
-            var parentContentIsTemplateFolder = parentContent && parentContent.getType().isTemplateFolder();
-            var parentContentIsSite = parentContent && parentContent.getType().isSite();
-            var parentContentIsPageTemplate = parentContent && parentContent.getType().isPageTemplate();
+            let parentContentIsTemplateFolder = parentContent && parentContent.getType().isTemplateFolder();
+            let parentContentIsSite = parentContent && parentContent.getType().isSite();
+            let parentContentIsPageTemplate = parentContent && parentContent.getType().isPageTemplate();
 
-            var contentTypeName = contentType.getContentTypeName();
+            let contentTypeName = contentType.getContentTypeName();
             if (contentType.isAbstract()) {
                 return false;
             }

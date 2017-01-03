@@ -13,7 +13,7 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
     protected loader: MoveContentSummaryLoader;
 
     constructor() {
-        var richComboBoxBuilder: RichComboBoxBuilder<ContentSummary> = new RichComboBoxBuilder<ContentSummary>();
+        let richComboBoxBuilder: RichComboBoxBuilder<ContentSummary> = new RichComboBoxBuilder<ContentSummary>();
         richComboBoxBuilder
             .setMaximumOccurrences(1)
             .setComboBoxName("contentSelector")

@@ -37,7 +37,7 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
 
             if (this.isRendered()) {
 
-                var viewedPrincipal = this.assembleViewedItem();
+                let viewedPrincipal = this.assembleViewedItem();
                 if (!this.isPersistedEqualsViewed()) {
 
                     console.warn("Received Principal from server differs from what's viewed:");
@@ -71,8 +71,8 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
     }
 
     hasUnsavedChanges(): boolean {
-        var persistedPrincipal = this.getPersistedItem();
-        var wizardHeader = this.getWizardHeader();
+        let persistedPrincipal = this.getPersistedItem();
+        let wizardHeader = this.getWizardHeader();
         if (persistedPrincipal == undefined) {
             return wizardHeader.getName() !== "" ||
                    wizardHeader.getDisplayName() !== "" ||

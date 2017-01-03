@@ -56,10 +56,10 @@ module api.ui.treegrid {
          column value extractor.
          */
         nodeExtractor(node: any, column: Slick.Column<NODE>) {
-            var names = column.field.split('.');
-            var val = node["data"][names[0]];
+            let names = column.field.split('.');
+            let val = node["data"][names[0]];
 
-            for (var i = 1; i < names.length; i++) {
+            for (let i = 1; i < names.length; i++) {
                 if (val && typeof val == 'object' && names[i] in val) {
                     val = val[names[i]];
                 } else {

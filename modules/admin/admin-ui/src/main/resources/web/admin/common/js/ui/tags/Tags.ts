@@ -102,12 +102,12 @@ module api.ui.tags {
                 this.textInput.getEl().setWidth('');
             });
 
-            var searchSuggestionHandler = api.util.AppHelper.debounce((searchString: string) => {
+            let searchSuggestionHandler = api.util.AppHelper.debounce((searchString: string) => {
                 this.searchSuggestions(searchString);
             }, 300, false);
 
             this.textInput.onValueChanged((event: api.ValueChangedEvent) => {
-                var searchString = event.getNewValue();
+                let searchString = event.getNewValue();
 
                 if (api.util.StringHelper.isBlank(searchString)) {
                     this.tagSuggestions.hide();
@@ -139,7 +139,7 @@ module api.ui.tags {
                     return;
                 }
 
-                var existingValues = this.doGetTags().concat(searchString);
+                let existingValues = this.doGetTags().concat(searchString);
                 values = values.filter((value: string) => (existingValues.indexOf(value) < 0));
 
                 if (values.length == 0) {
@@ -159,10 +159,10 @@ module api.ui.tags {
         }
 
         private handleWordCompleted() {
-            var inputValue = this.textInput.getValue();
-            var word = inputValue.trim();
+            let inputValue = this.textInput.getValue();
+            let word = inputValue.trim();
 
-            var tag = this.doAddTag(word);
+            let tag = this.doAddTag(word);
             if (tag) {
                 this.textInput.setValue("");
 
@@ -183,7 +183,7 @@ module api.ui.tags {
                 return null;
             }
 
-            var tag = new TagBuilder().setValue(value).setRemovable(true).build();
+            let tag = new TagBuilder().setValue(value).setRemovable(true).build();
             this.tags.push(tag);
             tag.insertBeforeEl(this.textInput);
 
@@ -201,7 +201,7 @@ module api.ui.tags {
         }
 
         private doRemoveTag(tag: Tag, silent?: boolean) {
-            var index = this.indexOf(tag.getValue());
+            let index = this.indexOf(tag.getValue());
             if (index >= 0) {
                 tag.remove();
                 this.tags.splice(index, 1);
@@ -219,7 +219,7 @@ module api.ui.tags {
 
         private indexOf(value: string): number {
             if (!api.util.StringHelper.isEmpty(value)) {
-                for (var i = 0; i < this.tags.length; i++) {
+                for (let i = 0; i < this.tags.length; i++) {
                     if (value == this.tags[i].getValue()) {
                         return i;
                     }

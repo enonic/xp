@@ -44,7 +44,7 @@ module api.schema {
                 return false;
             }
 
-            var other = <Schema>o;
+            let other = <Schema>o;
 
             if (!ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;

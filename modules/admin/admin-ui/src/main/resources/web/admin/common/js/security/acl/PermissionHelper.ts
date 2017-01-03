@@ -5,9 +5,9 @@ module api.security.acl {
         static hasPermission(permission: api.security.acl.Permission,
                              loginResult: api.security.auth.LoginResult,
                              accessControlList: AccessControlList): boolean {
-            var result = false;
-            var entries = accessControlList.getEntries();
-            var accessEntriesWithGivenPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
+            let result = false;
+            let entries = accessControlList.getEntries();
+            let accessEntriesWithGivenPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
                 return item.isAllowed(permission);
             });
 
@@ -23,7 +23,7 @@ module api.security.acl {
 
         static isPrincipalPresent(principalKey: api.security.PrincipalKey,
                                   accessEntriesToCheck: AccessControlEntry[]): boolean {
-            var result = false;
+            let result = false;
             accessEntriesToCheck.some((entry: AccessControlEntry) => {
                 if (entry.getPrincipalKey().equals(principalKey)) {
                     result = true;

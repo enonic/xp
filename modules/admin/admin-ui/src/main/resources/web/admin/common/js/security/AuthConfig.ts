@@ -21,7 +21,7 @@ module api.security {
                 return false;
             }
 
-            var other = <AuthConfig> o;
+            let other = <AuthConfig> o;
 
             return this.applicationKey.equals(other.applicationKey) &&
                    this.config.equals(other.config);

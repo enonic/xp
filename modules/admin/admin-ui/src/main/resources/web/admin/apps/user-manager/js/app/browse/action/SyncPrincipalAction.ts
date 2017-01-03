@@ -1,9 +1,8 @@
 import "../../../api.ts";
-
-import Action = api.ui.Action;
 import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
 import {UserTreeGridItem} from "../UserTreeGridItem";
-import {UserTreeGridItemType} from "../UserTreeGridItem";
+
+import Action = api.ui.Action;
 
 export class SyncPrincipalAction extends Action {
 
@@ -11,7 +10,7 @@ export class SyncPrincipalAction extends Action {
         super("Sync");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var principals: UserTreeGridItem[] = grid.getSelectedDataList();
+            let principals: UserTreeGridItem[] = grid.getSelectedDataList();
             grid.getSelectedDataList().forEach((elem) => {
                 this.sync(elem);
             });

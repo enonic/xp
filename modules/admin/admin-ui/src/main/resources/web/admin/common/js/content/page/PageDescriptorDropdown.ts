@@ -44,16 +44,16 @@ module api.content.page {
 
         private initListeners() {
             this.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
-                var pageDescriptor = event.getOption().displayValue;
-                var setController = new SetController(this).setDescriptor(pageDescriptor);
+                let pageDescriptor = event.getOption().displayValue;
+                let setController = new SetController(this).setDescriptor(pageDescriptor);
                 this.liveEditModel.getPageModel().setController(setController);
             });
 
-            var onApplicationAddedHandler = () => {
+            let onApplicationAddedHandler = () => {
                 this.load();
             };
 
-            var onApplicationRemovedHandler = (event: ApplicationRemovedEvent) => {
+            let onApplicationRemovedHandler = (event: ApplicationRemovedEvent) => {
 
                 let currentController = this.liveEditModel.getPageModel().getController();
                 let removedApp = event.getApplicationKey();

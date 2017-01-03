@@ -25,12 +25,12 @@ module api.content.form.inputtype.long {
                 property.convertValueType(ValueTypes.LONG);
             }
 
-            var inputEl = api.ui.text.TextInput.middle(undefined, this.getPropertyValue(property));
+            let inputEl = api.ui.text.TextInput.middle(undefined, this.getPropertyValue(property));
             inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
 
-                var isValid = this.isValid(event.getNewValue()),
+                let isValid = this.isValid(event.getNewValue()),
                     value = isValid ? ValueTypes.LONG.newValue(event.getNewValue()) : this.newInitialValue();
 
                 this.notifyOccurrenceValueChanged(inputEl, value);
@@ -45,7 +45,7 @@ module api.content.form.inputtype.long {
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
-            var input = <api.ui.text.TextInput> occurrence;
+            let input = <api.ui.text.TextInput> occurrence;
 
             if (!unchangedOnly || !input.isDirty()) {
                 input.setValue(this.getPropertyValue(property));
@@ -53,7 +53,7 @@ module api.content.form.inputtype.long {
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            var input = <api.ui.text.TextInput> occurrence;
+            let input = <api.ui.text.TextInput> occurrence;
 
             input.resetBaseValues();
         }
@@ -63,13 +63,13 @@ module api.content.form.inputtype.long {
         }
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
-            var value = <api.ui.text.TextInput>inputElement;
+            let value = <api.ui.text.TextInput>inputElement;
 
             return this.isValid(value.getValue());
         }
 
         private isValid(value: string): boolean {
-            var validUserInput = true;
+            let validUserInput = true;
 
             if (api.util.StringHelper.isEmpty(value)) {
                 validUserInput = true;

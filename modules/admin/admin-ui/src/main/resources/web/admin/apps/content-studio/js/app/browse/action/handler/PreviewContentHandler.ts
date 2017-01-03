@@ -60,7 +60,7 @@ export class PreviewContentHandler {
 
         // check existing items if there are no changes
         // because selected items might have become (not) renderable
-        var browseItems = changes && changes.getAdded().length > 0 ? changes.getAdded() : contentBrowseItems;
+        let browseItems = changes && changes.getAdded().length > 0 ? changes.getAdded() : contentBrowseItems;
 
         return browseItems.map((contentBrowseItem) => {
             let contentSummary = contentBrowseItem.getModel().getContentSummary();
@@ -123,7 +123,7 @@ export class PreviewContentHandler {
     removeRenderableIds(contentIds: ContentId[], silent ?: boolean) {
         if (contentIds) {
             contentIds.forEach((contentId) => {
-                var index = this.renderableIds.indexOf(contentId.toString());
+                let index = this.renderableIds.indexOf(contentId.toString());
                 if (index >= 0) {
                     this.renderableIds.splice(index, 1);
                 }
@@ -135,7 +135,7 @@ export class PreviewContentHandler {
     }
 
     private notifyPreviewStateChangedIfNeeded() {
-        var newRenderable = this.isBlocked() || this.renderableIds.length > 0;
+        let newRenderable = this.isBlocked() || this.renderableIds.length > 0;
         if (newRenderable != this.anyRenderable) {
             this.notifyPreviewStateChanged(newRenderable);
             this.anyRenderable = newRenderable;

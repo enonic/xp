@@ -18,7 +18,7 @@ module api.util {
                 return false;
             }
 
-            var other = <BinaryReference>o;
+            let other = <BinaryReference>o;
 
             if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;

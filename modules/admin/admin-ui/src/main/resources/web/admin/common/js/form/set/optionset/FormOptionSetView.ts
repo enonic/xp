@@ -49,7 +49,7 @@ module api.form {
         }
 
         protected getPropertyArray(parentPropertySet: PropertySet): PropertyArray {
-            var propertyArray = parentPropertySet.getPropertyArray(this.formSet.getName());
+            let propertyArray = parentPropertySet.getPropertyArray(this.formSet.getName());
             if (!propertyArray) {
                 propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formSet.getName()).setParent(
                     this.parentDataSet).build();

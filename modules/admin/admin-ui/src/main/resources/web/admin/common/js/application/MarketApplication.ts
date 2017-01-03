@@ -118,7 +118,7 @@ module api.application {
 
         public static formatStatus(appStatus: MarketAppStatus, progress?: number): string {
 
-            var status;
+            let status;
 
             switch (appStatus) {
             case MarketAppStatus.NOT_INSTALLED:
@@ -149,7 +149,7 @@ module api.application {
 
         public static getStatusCssClass(appStatus: MarketAppStatus): string {
 
-            var cssClass;
+            let cssClass;
 
             switch (appStatus) {
             case MarketAppStatus.NOT_INSTALLED:
@@ -180,7 +180,7 @@ module api.application {
 
         public static formatPerformedAction(appStatus: MarketAppStatus): string {
 
-            var performedOperation;
+            let performedOperation;
 
             switch (appStatus) {
             case MarketAppStatus.NOT_INSTALLED:

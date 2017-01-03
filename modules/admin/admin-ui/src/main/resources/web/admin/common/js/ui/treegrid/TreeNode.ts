@@ -120,7 +120,7 @@ module api.ui.treegrid {
         }
 
         getRoot(): TreeNode<DATA> {
-            var root: TreeNode<DATA> = this,
+            let root: TreeNode<DATA> = this,
                 parent: TreeNode<DATA> = this.getParent();
             while (parent) {
                 root = parent;
@@ -188,8 +188,8 @@ module api.ui.treegrid {
         }
 
         removeChild(child: TreeNode<DATA>) {
-            var children: TreeNode<DATA>[] = [];
-            for (var i = 0; i < this.children.length; i++) {
+            let children: TreeNode<DATA>[] = [];
+            for (let i = 0; i < this.children.length; i++) {
                 if (this.children[i].getId() !== child.getId()) {
                     children.push(this.children[i]);
                 }
@@ -219,8 +219,8 @@ module api.ui.treegrid {
          Element is visible, if all parents are expanded
          */
         isVisible(): boolean {
-            var visible = true;
-            var parent = this.parent;
+            let visible = true;
+            let parent = this.parent;
             while (parent && visible) {
                 visible = parent.isExpanded();
                 parent = parent.getParent();
@@ -235,7 +235,7 @@ module api.ui.treegrid {
          * @param selected - determines to display only seleted nodes.
          */
         treeToList(empty: boolean = false, expanded: boolean = true, selected: boolean = false): TreeNode<DATA>[] {
-            var list: TreeNode<DATA>[] = [];
+            let list: TreeNode<DATA>[] = [];
 
             if (this.selected === true || selected === false) {
                 if (this.getData() || empty === true) {
@@ -258,8 +258,8 @@ module api.ui.treegrid {
                 return this;
             }
 
-            for (var i = 0; i < this.children.length; i++) {
-                var child = this.children[i].findNode(dataId);
+            for (let i = 0; i < this.children.length; i++) {
+                let child = this.children[i].findNode(dataId);
                 if (child) {
                     return child;
                 }
@@ -274,10 +274,10 @@ module api.ui.treegrid {
                 return [this];
             }
 
-            var nodes = [];
+            let nodes = [];
 
             this.children.forEach((el) => {
-                var children = el.findNodes(dataId);
+                let children = el.findNodes(dataId);
                 if (!!children) {
                     nodes = nodes.concat(children);
                 }
@@ -287,7 +287,7 @@ module api.ui.treegrid {
         }
 
         calcLevel(): number {
-            var parent = this.parent,
+            let parent = this.parent,
                 lvl = 0;
             while (parent) {
                 parent = parent.getParent();
@@ -300,10 +300,10 @@ module api.ui.treegrid {
         pinToRoot() {
             // Not already in the root
             if (this.calcLevel() > 1 && this.data && this.parent) {
-                var duplicated = false;
-                var relatives = this.getRoot().getChildren();
+                let duplicated = false;
+                let relatives = this.getRoot().getChildren();
                 // check if duplicate is already in root
-                for (var i = 0; i < relatives.length; i++) {
+                for (let i = 0; i < relatives.length; i++) {
                     if (relatives[i].getData() && relatives[i].getDataId() === this.getDataId()) {
                         duplicated = true;
                         break;

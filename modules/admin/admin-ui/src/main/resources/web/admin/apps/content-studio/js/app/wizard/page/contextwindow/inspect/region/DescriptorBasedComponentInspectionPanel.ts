@@ -72,8 +72,8 @@ extends ComponentInspectionPanel<COMPONENT> {
             return;
         }
 
-        var form = descriptor.getConfig();
-        var config = component.getConfig();
+        let form = descriptor.getConfig();
+        let config = component.getConfig();
         this.formView = new FormView(this.formContext, form, config.getRoot());
         this.appendChild(this.formView);
         component.setDisableEventForwarding(true);

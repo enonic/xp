@@ -4,15 +4,15 @@ module api.aggregation {
 
         initialize() {
 
-            var displayNameMap: {[name:string]:string} = {};
+            let displayNameMap: {[name:string]:string} = {};
 
-            var mask: api.ui.mask.LoadMask = new api.ui.mask.LoadMask(this);
+            let mask: api.ui.mask.LoadMask = new api.ui.mask.LoadMask(this);
             this.appendChild(mask);
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
                 mask.show();
             });
 
-            var request = new api.schema.content.GetAllContentTypesRequest();
+            let request = new api.schema.content.GetAllContentTypesRequest();
             request.sendAndParse().done((contentTypes: api.schema.content.ContentTypeSummary[]) => {
 
                 contentTypes.forEach((contentType: api.schema.content.ContentTypeSummary)=> {

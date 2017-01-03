@@ -35,10 +35,10 @@ module api.ui.panel {
         }
 
         private updateScrolledNavigationItem() {
-            var scrollTop = this.getScrollable().getHTMLElement().scrollTop;
+            let scrollTop = this.getScrollable().getHTMLElement().scrollTop;
 
-            var focusVisible = this.isFocusedPanelVisible(scrollTop);
-            var scrollIndex = this.getScrolledPanelIndex(scrollTop);
+            let focusVisible = this.isFocusedPanelVisible(scrollTop);
+            let scrollIndex = this.getScrolledPanelIndex(scrollTop);
             if (this.scrollIndex != scrollIndex || this.focusVisible != focusVisible) {
                 if (focusVisible) {
                     this.navigator.selectNavigationItem(this.focusIndex, true);
@@ -55,7 +55,7 @@ module api.ui.panel {
                 return false;
             }
 
-            var totalHeight = this.getScrollable().getEl().getHeight(),
+            let totalHeight = this.getScrollable().getEl().getHeight(),
                 headerHeight = this.getFocusedHeaderHeight(this.focusIndex),
                 panelEl = this.getPanel(this.focusIndex).getEl(),
                 panelTop = panelEl.getOffsetToParent().top - this.getScrollOffset() - headerHeight,
@@ -64,14 +64,14 @@ module api.ui.panel {
         }
 
         private getScrolledPanelIndex(scrollTop: number): number {
-            var panelEl, panelTop, panelBottom;
+            let panelEl, panelTop, panelBottom;
             if (scrollTop == 0) {
                 // select first element if we are in the beginning
                 return 0;
             }
-            for (var i = 0; i < this.getSize(); i++) {
+            for (let i = 0; i < this.getSize(); i++) {
                 panelEl = this.getPanel(i).getEl();
-                var headerHeight = this.getFocusedHeaderHeight(i);
+                let headerHeight = this.getFocusedHeaderHeight(i);
                 if (panelEl.isVisible()) {
                     panelTop = scrollTop + panelEl.getOffsetToParent().top - this.getScrollOffset() - headerHeight;
                     panelBottom = panelTop + panelEl.getHeight();
@@ -89,7 +89,7 @@ module api.ui.panel {
 
         insertNavigablePanel(item: NavigationItem, panel: Panel, header: string, index: number, select?: boolean): number {
             this.navigator.insertNavigationItem(item, index);
-            var panelHeader = select ? null : header;
+            let panelHeader = select ? null : header;
             super.insertPanel(panel, index, panelHeader);
 
             // select corresponding step on focus
@@ -122,9 +122,9 @@ module api.ui.panel {
         }
 
         removeNavigablePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {
-            var removedPanelIndex = super.removePanel(panel, checkCanRemovePanel);
+            let removedPanelIndex = super.removePanel(panel, checkCanRemovePanel);
             if (removedPanelIndex > -1) {
-                var navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(removedPanelIndex);
+                let navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(removedPanelIndex);
                 this.navigator.removeNavigationItem(navigationItem);
             }
             return removedPanelIndex;

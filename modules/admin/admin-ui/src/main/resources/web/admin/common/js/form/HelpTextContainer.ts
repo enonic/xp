@@ -14,7 +14,7 @@ module api.form {
 
             this.helpTextDiv = new api.dom.DivEl("help-text");
 
-            var pEl = new api.dom.PEl();
+            let pEl = new api.dom.PEl();
             pEl.getEl().setText(value);
 
             this.helpTextDiv.appendChild(pEl);

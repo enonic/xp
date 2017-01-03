@@ -4,7 +4,7 @@ module api.util {
 
         static moveElement(oldIndex: number, newIndex: number, array: any[]) {
 
-            var element = array.splice(oldIndex, 1)[0];
+            let element = array.splice(oldIndex, 1)[0];
             if (newIndex >= array.length) {
                 array[newIndex] = element;
             } else {
@@ -20,16 +20,16 @@ module api.util {
         }
 
         static removeValue(value: any, array: any[]) {
-            var index = array.indexOf(value);
+            let index = array.indexOf(value);
             if (index > -1) {
                 array.splice(index, 1);
             }
         }
 
         static removeDuplicates<T>(array: T[], keyFunction: (item: T)=> string): T[] {
-            var seen = {};
+            let seen = {};
             return array.filter((item) => {
-                var key = keyFunction(item);
+                let key = keyFunction(item);
                 if (!seen.hasOwnProperty(key)) {
                     seen[key] = true;
                     return true;
@@ -61,7 +61,7 @@ module api.util {
         }
 
         static findElementByFieldValue<T>(array: Array<T>, field: string, value: any): T {
-            var result: T = null;
+            let result: T = null;
 
             array.every((element: T) => {
                 if (element[field] == value) {

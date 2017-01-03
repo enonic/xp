@@ -104,14 +104,14 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.layoutComponent = <LayoutComponent> layoutView.getComponent();
 
         this.setComponent(this.layoutComponent);
-        var key: DescriptorKey = this.layoutComponent.getDescriptor();
+        const key: DescriptorKey = this.layoutComponent.getDescriptor();
         if (key) {
-            var descriptor: LayoutDescriptor = this.selector.getDescriptor(key);
+            const descriptor: LayoutDescriptor = this.selector.getDescriptor(key);
             if (descriptor) {
                 this.setSelectorValue(descriptor);
             } else {
-                new GetLayoutDescriptorByKeyRequest(key).sendAndParse().then((descriptor: LayoutDescriptor) => {
-                    this.setSelectorValue(descriptor);
+                new GetLayoutDescriptorByKeyRequest(key).sendAndParse().then((receivedDescriptor: LayoutDescriptor) => {
+                    this.setSelectorValue(receivedDescriptor);
                 }).catch((reason: any) => {
                     if (this.isNotFoundError(reason)) {
                         this.setSelectorValue(null);
@@ -142,9 +142,9 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.selector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
             if (this.handleSelectorEvents) {
 
-                var option: Option<LayoutDescriptor> = event.getOption();
+                let option: Option<LayoutDescriptor> = event.getOption();
 
-                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                let selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                 this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
             }
         });

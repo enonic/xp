@@ -13,7 +13,7 @@ module api.ui {
         }
 
         addOption(value: string, displayName: string) {
-            var option = new DropdownOption(value, displayName);
+            let option = new DropdownOption(value, displayName);
             this.appendChild(option);
         }
     }

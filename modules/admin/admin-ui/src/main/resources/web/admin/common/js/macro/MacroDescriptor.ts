@@ -53,7 +53,7 @@ module api.macro {
                 return false;
             }
 
-            var other = <MacroDescriptor>o;
+            let other = <MacroDescriptor>o;
 
             if (this.displayName != other.displayName) {
                 return false;

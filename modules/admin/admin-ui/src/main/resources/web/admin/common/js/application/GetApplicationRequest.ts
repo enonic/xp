@@ -28,8 +28,8 @@ module api.application {
 
         sendAndParse(): wemQ.Promise<Application> {
 
-            var cache = ApplicationCache.get();
-            var appObj = this.skipCache ? null : cache.getByKey(this.applicationKey);
+            let cache = ApplicationCache.get();
+            let appObj = this.skipCache ? null : cache.getByKey(this.applicationKey);
             if (appObj) {
                 return wemQ(appObj);
             }

@@ -32,7 +32,7 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var fn = (contentPath: ContentPath) => {
+            let fn = (contentPath: ContentPath) => {
                 return contentPath.toString();
             };
             return {

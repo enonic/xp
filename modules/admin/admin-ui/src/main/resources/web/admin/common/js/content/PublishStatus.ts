@@ -7,7 +7,7 @@ module api.content {
     export class PublishStatusFormatter {
         public static formatStatus(publishStatus: PublishStatus): string {
 
-            var status;
+            let status;
 
             switch (publishStatus) {
             case PublishStatus.ONLINE:

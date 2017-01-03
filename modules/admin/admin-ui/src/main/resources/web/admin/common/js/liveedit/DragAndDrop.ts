@@ -201,10 +201,10 @@ module api.liveedit {
                 console.groupEnd();
             }
 
-            var regionView: RegionView = this.getRegionView(ui.item.parent());
+            let regionView: RegionView = this.getRegionView(ui.item.parent());
 
-            var itemType: ItemType;
-            var placeholder = DragPlaceholder.get().setRegionView(regionView);
+            let itemType: ItemType;
+            let placeholder = DragPlaceholder.get().setRegionView(regionView);
 
             if (this.isDraggingFromContextWindow()) {
                 // Dragging from context window
@@ -262,7 +262,7 @@ module api.liveedit {
                 return;
             }
 
-            var regionView: RegionView = this.getRegionView(ui.item.parent());
+            let regionView: RegionView = this.getRegionView(ui.item.parent());
 
             if (!DragHelper.get().isDropAllowed()) {
                 // Don't allow to drop if it is forbidden (i.e. layout on layout, or outside region)
@@ -272,7 +272,7 @@ module api.liveedit {
 
                 this.cancelDrag(<HTMLElement> event.target);
             } else {
-                var componentIndex = wemjq('>.drag-helper, >.' + api.StyleHelper.getCls("item-view"),
+                let componentIndex = wemjq('>.drag-helper, >.' + api.StyleHelper.getCls("item-view"),
                     regionView.getHTMLElement()).index(ui.item);
 
                 if (this.isDraggingFromContextWindow()) {
@@ -280,9 +280,9 @@ module api.liveedit {
                         this.pageView.setLocked(false);
                     }
                     // Create component and view if we drag from context window
-                    var componentType: ComponentItemType = <ComponentItemType> this.newItemItemType;
+                    let componentType: ComponentItemType = <ComponentItemType> this.newItemItemType;
 
-                    var newComponent = regionView.createComponent(componentType.toComponentType());
+                    let newComponent = regionView.createComponent(componentType.toComponentType());
 
                     this.draggedComponentView = componentType.createView(new CreateItemViewConfig<RegionView,Component>().
                         setParentView(regionView).
@@ -357,7 +357,7 @@ module api.liveedit {
                 console.groupEnd();
             }
 
-            var regionView: RegionView = this.getRegionView(ui.placeholder.parent());
+            let regionView: RegionView = this.getRegionView(ui.placeholder.parent());
 
             this.processMouseOverRegionView(regionView);
 
@@ -383,7 +383,7 @@ module api.liveedit {
                 return;
             }
 
-            var regionView: RegionView = this.getRegionView(ui.placeholder.parent());
+            let regionView: RegionView = this.getRegionView(ui.placeholder.parent());
 
             this.processMouseOutRegionView(regionView);
 
@@ -424,7 +424,7 @@ module api.liveedit {
                 console.groupEnd();
             }
 
-            var fromRegionView = this.getRegionView(wemjq(event.target));
+            let fromRegionView = this.getRegionView(wemjq(event.target));
             fromRegionView.refreshEmptyState();
         }
 
@@ -437,7 +437,7 @@ module api.liveedit {
                 console.groupEnd();
             }
 
-            var toRegionView = this.getRegionView(wemjq(event.target));
+            let toRegionView = this.getRegionView(wemjq(event.target));
             toRegionView.refreshEmptyState();
         }
 
@@ -545,8 +545,8 @@ module api.liveedit {
 
 
         private updateHelperAndPlaceholder(regionView: RegionView, enter: boolean = true) {
-            var helper = DragHelper.get();
-            var placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
+            let helper = DragHelper.get();
+            let placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
 
             helper.setItemName(this.draggedComponentView ?
                                this.draggedComponentView.getName() : api.util.StringHelper.capitalize(this.getItemType().getShortName()));
@@ -580,11 +580,11 @@ module api.liveedit {
 
 
         private isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
-            var isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() == 'layout';
+            let isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() == 'layout';
             if (!isLayout) {
-                var itemType = this.getItemType();
+                let itemType = this.getItemType();
                 if (api.liveedit.fragment.FragmentItemType.get().equals(itemType)) {
-                    var fragment = <api.liveedit.fragment.FragmentComponentView> this.draggedComponentView;
+                    let fragment = <api.liveedit.fragment.FragmentComponentView> this.draggedComponentView;
                     isLayout = fragment && fragment.containsLayout();
                     if (isLayout && DragAndDrop.debug) {
                         console.log('DragAndDrop.isDraggingLayoutOverLayout - Fragment contains layout');
@@ -599,21 +599,21 @@ module api.liveedit {
 
 
         private getComponentView(jq: JQuery): ComponentView<Component> {
-            var comp = this.pageView.getComponentViewByElement(jq.get(0));
+            let comp = this.pageView.getComponentViewByElement(jq.get(0));
             api.util.assertState(!!comp, "ComponentView is not expected to be null");
             return comp;
         }
 
 
         private getRegionView(jq: JQuery): RegionView {
-            var region = this.pageView.getRegionViewByElement(jq.get(0));
+            let region = this.pageView.getRegionViewByElement(jq.get(0));
             api.util.assertState(!!region, "RegionView is not expected to be null");
             return region;
         }
 
         private createSortableItemsSelector(): string {
 
-            var sortableItemsSelector: string[] = [];
+            let sortableItemsSelector: string[] = [];
             ItemType.getDraggables().forEach((draggableItemType: ItemType) => {
                 sortableItemsSelector.push(draggableItemType.getConfig().getCssSelector());
             });
@@ -622,15 +622,15 @@ module api.liveedit {
         }
 
         private updateScrollSensitivity(selector: any): void {
-            var scrollSensitivity = this.calculateScrollSensitivity();
+            let scrollSensitivity = this.calculateScrollSensitivity();
             wemjq(selector).sortable('option', 'scrollSensitivity', scrollSensitivity);
         }
 
         private calculateScrollSensitivity(): number {
             // use getViewPortSize() instead of document.body.clientHeight
             // which returned the height of the whole rendered page,not just of the part visible in LiveEdit
-            var height = wemjq(window).height();
-            var scrollSensitivity = Math.round(height / 8);
+            let height = wemjq(window).height();
+            let scrollSensitivity = Math.round(height / 8);
             scrollSensitivity = Math.max(20, Math.min(scrollSensitivity, 100));
             return scrollSensitivity;
         }

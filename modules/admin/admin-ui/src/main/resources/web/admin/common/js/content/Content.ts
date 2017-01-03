@@ -77,11 +77,11 @@ module api.content {
                 return true;
             }
 
-            for (var i = 0; i < this.permissions.getEntries().length; i++) {
-                var entry = this.permissions.getEntries()[i];
+            for (let i = 0; i < this.permissions.getEntries().length; i++) {
+                let entry = this.permissions.getEntries()[i];
 
                 if (entry.isAllowed(permission)) {
-                    var principalInEntry = principalKeys.some((principalKey: api.security.PrincipalKey) => {
+                    let principalInEntry = principalKeys.some((principalKey: api.security.PrincipalKey) => {
                         if (principalKey.equals(entry.getPrincipalKey())) {
                             return true;
                         }
@@ -95,13 +95,13 @@ module api.content {
         }
 
         private trimPropertyTree(data: PropertyTree): PropertyTree {
-            var copy = data.copy();
+            let copy = data.copy();
             copy.getRoot().removeEmptyValues();
             return copy;
         }
 
         private trimExtraData(extraData: ExtraData): ExtraData {
-            var copy = extraData.clone();
+            let copy = extraData.clone();
             copy.getData().getRoot().removeEmptyValues();
             return copy;
         }
@@ -127,7 +127,7 @@ module api.content {
                 extraData = this.extraData;
                 otherExtraData = other;
             }
-            var comparator = new api.content.util.ExtraDataByMixinNameComparator();
+            let comparator = new api.content.util.ExtraDataByMixinNameComparator();
 
             return api.ObjectHelper.arrayEquals(extraData.sort(comparator.compare), otherExtraData.sort(comparator.compare));
         }
@@ -141,7 +141,7 @@ module api.content {
                 return false;
             }
 
-            var other = <Content>o;
+            let other = <Content>o;
 
             if (!shallow) {
                 if (!this.dataEquals(other.getContentData(), ignoreEmptyValues)) {
@@ -186,7 +186,7 @@ module api.content {
 
         static fromJson(json: api.content.json.ContentJson): Content {
 
-            var type = new api.schema.content.ContentTypeName(json.type);
+            let type = new api.schema.content.ContentTypeName(json.type);
 
             if (type.isSite()) {
                 return new site.SiteBuilder().fromContentJson(json).build();
@@ -198,7 +198,7 @@ module api.content {
         }
 
         static fromJsonArray(jsonArray: api.content.json.ContentJson[]): Content[] {
-            var array: Content[] = [];
+            let array: Content[] = [];
             jsonArray.forEach((json: api.content.json.ContentJson) => {
                 array.push(Content.fromJson(json));
             });

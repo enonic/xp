@@ -23,7 +23,7 @@ export class PageTemplateOption {
     }
 
     isCustom(): boolean {
-        var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+        let pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 
         return this.template && this.template.getDisplayName() == pageTemplateDisplayName[pageTemplateDisplayName.Custom];
     }

@@ -55,7 +55,7 @@ module api.content.page.region {
         }
 
         getPath(): RegionPath {
-            var parentPath: ComponentPath = null;
+            let parentPath: ComponentPath = null;
             if (this.parent) {
                 parentPath = this.parent.getPath();
             }
@@ -94,7 +94,7 @@ module api.content.page.region {
             }
 
             // parent will be cleared on unregister so grab path before it
-            var path = component.getPath();
+            let path = component.getPath();
             this.unregisterComponent(component);
             this.notifyComponentRemoved(path);
 
@@ -106,9 +106,9 @@ module api.content.page.region {
         }
 
         getComponentByIndex(index: number): Component {
-            var component = this.components[index];
+            let component = this.components[index];
             if (!component) {
-                var message = "The rendered page is not consistent with the page components structure. Expected component with index " +
+                let message = "The rendered page is not consistent with the page components structure. Expected component with index " +
                               index + " was not found in region '" + this.getName() + "'.";
                 console.error(message);
                 throw new api.Exception(message, api.ExceptionType.ERROR);
@@ -120,7 +120,7 @@ module api.content.page.region {
 
         toJson(): RegionJson {
 
-            var componentJsons: ComponentTypeWrapperJson[] = [];
+            let componentJsons: ComponentTypeWrapperJson[] = [];
 
             this.components.forEach((component: Component) => {
                 componentJsons.push(component.toJson());
@@ -142,7 +142,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <Region>o;
+            let other = <Region>o;
 
             if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
@@ -167,7 +167,7 @@ module api.content.page.region {
         }
 
         private refreshIndexes(start?: number) {
-            for (var i = Math.min(0, start); i < this.components.length; i++) {
+            for (let i = Math.min(0, start); i < this.components.length; i++) {
                 this.components[i].setIndex(i);
             }
         }
@@ -203,7 +203,7 @@ module api.content.page.region {
             component.unChanged(this.componentChangedEventHandler);
             component.unPropertyChanged(this.componentPropertyChangedEventHandler);
 
-            var index = component.getIndex();
+            let index = component.getIndex();
             if (index == -1) {
                 throw new Error(component.toString() + " to remove does not exist in " + this.toString());
             }
@@ -245,7 +245,7 @@ module api.content.page.region {
         }
 
         private notifyComponentAdded(componentPath: ComponentPath) {
-            var event = new ComponentAddedEvent(this.getPath(), componentPath);
+            let event = new ComponentAddedEvent(this.getPath(), componentPath);
             this.componentAddedListeners.forEach((listener: (event: ComponentAddedEvent) => void) => {
                 listener(event);
             });
@@ -264,7 +264,7 @@ module api.content.page.region {
         }
 
         private notifyComponentRemoved(componentPath: ComponentPath) {
-            var event = new ComponentRemovedEvent(this.getPath(), componentPath);
+            let event = new ComponentRemovedEvent(this.getPath(), componentPath);
             this.componentRemovedListeners.forEach((listener: (event: ComponentRemovedEvent) => void) => {
                 listener(event);
             });
@@ -300,7 +300,7 @@ module api.content.page.region {
         }
 
         private notifyRegionPropertyValueChanged(propertyName: string) {
-            var event = new RegionPropertyValueChangedEvent(this.getPath(), propertyName);
+            let event = new RegionPropertyValueChangedEvent(this.getPath(), propertyName);
             this.propertyValueChangedListeners.forEach((listener: (event: RegionPropertyValueChangedEvent)=>void) => {
                 listener(event);
             });

@@ -22,7 +22,7 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {
 
-            var cached = this.cache.getByApplication(this.applicationKey);
+            let cached = this.cache.getByApplication(this.applicationKey);
             if (cached) {
                 return wemQ(cached);
             }

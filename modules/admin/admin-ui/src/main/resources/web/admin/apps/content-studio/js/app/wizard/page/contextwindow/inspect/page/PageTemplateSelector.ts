@@ -36,7 +36,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
         this.pageModel = liveEditModel.getPageModel();
 
-        var pageTemplateOptions = new PageTemplateOptions(liveEditModel.getSiteModel().getSiteId(),
+        let pageTemplateOptions = new PageTemplateOptions(liveEditModel.getSiteModel().getSiteId(),
             liveEditModel.getContent().getType(), this.pageModel);
 
         pageTemplateOptions.getOptions().then((options: Option<PageTemplateOption>[]) => {
@@ -59,7 +59,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
             }
 
             this.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
-                var selectedOption = event.getOption().displayValue;
+                let selectedOption = event.getOption().displayValue;
                 if (selectedOption.getPageTemplate() && selectedOption.isCustom()) {
                     this.notifyCustomizedSelected();
                 }
@@ -70,7 +70,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
             this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
                 if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
-                    var pageTemplateKey = <PageTemplateKey>event.getNewValue();
+                    let pageTemplateKey = <PageTemplateKey>event.getNewValue();
                     if (pageTemplateKey) {
                         this.selectTemplate(pageTemplateKey);
                     } else {
@@ -92,7 +92,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
     }
 
     private selectTemplate(template: PageTemplateKey) {
-        var optionToSelect = this.getOptionByValue(template.toString());
+        let optionToSelect = this.getOptionByValue(template.toString());
         if (optionToSelect) {
             this.selectOption(optionToSelect, true);
         }
@@ -129,12 +129,12 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
     }
 
     private createCustomizedOption(): Option<PageTemplateOption> {
-        var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
-        var pageTemplate: PageTemplate = (<PageTemplateBuilder> new PageTemplateBuilder()
+        let pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+        let pageTemplate: PageTemplate = (<PageTemplateBuilder> new PageTemplateBuilder()
             .setData(new api.data.PropertyTree())
             .setDisplayName(pageTemplateDisplayName[pageTemplateDisplayName.Custom]))
             .build();
-        var option = {
+        let option = {
             value: "Customized",
             displayValue: new PageTemplateOption(pageTemplate, this.pageModel)
         };

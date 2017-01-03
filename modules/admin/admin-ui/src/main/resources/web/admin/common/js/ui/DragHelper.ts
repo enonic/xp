@@ -29,7 +29,7 @@ module api.ui {
         }
 
         public setItemName(itemName: string) {
-            var p = new api.dom.PEl();
+            let p = new api.dom.PEl();
             p.setClass("drag-item-name");
             p.setHtml(itemName);
 

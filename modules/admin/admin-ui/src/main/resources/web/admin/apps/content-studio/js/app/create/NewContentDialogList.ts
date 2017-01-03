@@ -29,14 +29,14 @@ export class NewContentDialogList extends api.ui.selector.list.ListBox<NewConten
     }
 
     createItemView(item: NewContentDialogListItem): api.dom.LiEl {
-        var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+        let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
         namesAndIconView
             .setIconUrl(item.getIconUrl())
             .setMainName(item.getDisplayName())
             .setSubName(item.getName())
             .setDisplayIconLabel(item.isSite());
 
-        var itemEl = new api.dom.LiEl('content-types-list-item' + (item.isSite() ? ' site' : ''));
+        let itemEl = new api.dom.LiEl('content-types-list-item' + (item.isSite() ? ' site' : ''));
         itemEl.getEl().setTabIndex(0);
         itemEl.appendChild(namesAndIconView);
         itemEl.onClicked((event: MouseEvent) => this.notifySelected(item));

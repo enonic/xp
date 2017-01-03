@@ -45,7 +45,7 @@ module api.ui.responsive {
          (for the first time initialization).
          */
         update() {
-            var newRangeValue = this.element.getEl().getWidthWithBorder();
+            let newRangeValue = this.element.getEl().getWidthWithBorder();
             this.oldRangeValue = this.rangeValue;
             this.oldRangeSize = this.rangeSize;
             if (newRangeValue !== this.rangeValue) {

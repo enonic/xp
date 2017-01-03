@@ -35,7 +35,7 @@ module api.content.form.inputtype.upload {
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
 
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
             this.uploaderEl.setContentId(this.getContext().content.getContentId().toString());
 
                 return superPromise.then(() => {
@@ -51,7 +51,7 @@ module api.content.form.inputtype.upload {
 
         protected setFileNameProperty(fileName: string) {
 
-            var value = new Value(fileName, ValueTypes.STRING);
+            let value = new Value(fileName, ValueTypes.STRING);
 
             if (!this.getPropertyArray().containsValue(value)) {
                 this.ignorePropertyChange = true;
@@ -74,7 +74,7 @@ module api.content.form.inputtype.upload {
         }
 
         protected createUploaderWrapper(): api.dom.DivEl {
-            var wrapper = new api.dom.DivEl("uploader-wrapper");
+            const wrapper = new api.dom.DivEl("uploader-wrapper");
 
             wrapper.appendChild(this.uploaderEl);
 

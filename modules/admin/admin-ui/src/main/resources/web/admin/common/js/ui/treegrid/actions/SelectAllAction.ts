@@ -27,7 +27,7 @@ module api.ui.treegrid.actions {
         }
 
         private getCount(treeGrid: TreeGrid<DATA>): number {
-            var allCount = treeGrid.getGrid().getDataView().getLength();
+            let allCount = treeGrid.getGrid().getDataView().getLength();
             return allCount - treeGrid.getEmptyNodesCount();
         }
     }

@@ -51,8 +51,8 @@ module api.content.site.inputtype.authappselector {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var readOnlyConfig = inputConfig['readOnly'] && inputConfig['readOnly'][0];
-            var readOnlyValue = readOnlyConfig && readOnlyConfig['value'];
+            let readOnlyConfig = inputConfig['readOnly'] && inputConfig['readOnly'][0];
+            let readOnlyValue = readOnlyConfig && readOnlyConfig['value'];
             this.readOnly = readOnlyValue === "true";
         }
 
@@ -72,7 +72,7 @@ module api.content.site.inputtype.authappselector {
 
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
             this.siteConfigProvider.setPropertyArray(propertyArray);
 
             this.siteConfigProvider.setPropertyArray(propertyArray);
@@ -93,13 +93,13 @@ module api.content.site.inputtype.authappselector {
 
         private saveToSet(siteConfig: SiteConfig, index: number) {
 
-            var propertySet = this.getPropertyArray().get(index).getPropertySet();
+            let propertySet = this.getPropertyArray().get(index).getPropertySet();
             if (!propertySet) {
                 propertySet = this.getPropertyArray().addSet();
             }
 
-            var config = siteConfig.getConfig();
-            var appKey = siteConfig.getApplicationKey();
+            let config = siteConfig.getConfig();
+            let appKey = siteConfig.getApplicationKey();
 
             propertySet.setStringByPath('applicationKey', appKey.toString());
             propertySet.setPropertySetByPath('config', config);
@@ -108,7 +108,7 @@ module api.content.site.inputtype.authappselector {
         protected getValueFromPropertyArray(propertyArray: api.data.PropertyArray): string {
             return propertyArray.getProperties().map((property) => {
                 if (property.hasNonNullValue()) {
-                    var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
+                    let siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
                     return siteConfig.getApplicationKey().toString();
                 }
             }).join(';');
@@ -116,9 +116,9 @@ module api.content.site.inputtype.authappselector {
 
         private createComboBox(input: api.form.Input, siteConfigProvider: SiteConfigProvider): AuthApplicationComboBox {
 
-            var value = this.getValueFromPropertyArray(this.getPropertyArray());
-            var siteConfigFormsToDisplay = value.split(';');
-            var comboBox = new AuthApplicationComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider,
+            let value = this.getValueFromPropertyArray(this.getPropertyArray());
+            let siteConfigFormsToDisplay = value.split(';');
+            let comboBox = new AuthApplicationComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider,
                 this.formContext, value, this.readOnly);
 
             // creating selected option might involve property changes
@@ -161,7 +161,7 @@ module api.content.site.inputtype.authappselector {
             });
 
             comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
-                var indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
+                let indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
                 if (indexToRemove != -1) {
                     siteConfigFormsToDisplay.splice(indexToRemove, 1);
                 }
@@ -187,11 +187,11 @@ module api.content.site.inputtype.authappselector {
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-            var recording = new api.form.inputtype.InputValidationRecording();
+            let recording = new api.form.inputtype.InputValidationRecording();
 
             this.comboBox.getSelectedOptionViews().forEach((view: AuthApplicationSelectedOptionView) => {
 
-                var validationRecording = view.getFormView().validate(true);
+                let validationRecording = view.getFormView().validate(true);
                 if (!validationRecording.isMinimumOccurrencesValid()) {
                     recording.setBreaksMinimumOccurrences(true);
                 }

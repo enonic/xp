@@ -14,7 +14,7 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
-            var statusDiv = this.initStatusDiv(this.item.getModel().getCompareStatus(), this.item.getModel().getPublishStatus());
+            let statusDiv = this.initStatusDiv(this.item.getModel().getCompareStatus(), this.item.getModel().getPublishStatus());
             this.appendChild(statusDiv);
 
             return rendered;

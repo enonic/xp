@@ -31,7 +31,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ExtraData>o;
+            let other = <ExtraData>o;
 
             if (!api.ObjectHelper.equals(this.name, other.name)) {
                 return false;

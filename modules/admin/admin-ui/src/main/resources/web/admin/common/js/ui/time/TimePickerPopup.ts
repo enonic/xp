@@ -79,7 +79,7 @@ module api.ui.time {
         constructor(builder: TimePickerPopupBuilder) {
             super('time-picker-dialog');
 
-            var hourContainer = new api.dom.LiEl();
+            let hourContainer = new api.dom.LiEl();
             this.appendChild(hourContainer);
 
             this.nextHour = new api.dom.AEl('next');
@@ -116,7 +116,7 @@ module api.ui.time {
 
             this.appendChild(new api.dom.LiEl('colon'));
 
-            var minuteContainer = new api.dom.LiEl();
+            let minuteContainer = new api.dom.LiEl();
             this.appendChild(minuteContainer);
 
             this.nextMinute = new api.dom.AEl('next');
@@ -158,7 +158,7 @@ module api.ui.time {
             }
 
             if (this.timezone) {
-                var timezoneContainer = new api.dom.LiEl("timezone");
+                let timezoneContainer = new api.dom.LiEl("timezone");
 
                 this.timezoneLocation = new api.dom.SpanEl("timezone-location").setHtml(this.timezone.getLocation());
                 this.timezoneOffset = new api.dom.SpanEl("timezone-offset").setHtml(this.getUTCString(this.timezone.getOffset()));
@@ -190,9 +190,9 @@ module api.ui.time {
         }
 
         private startInterval(fn: Function, ...args: any[]) {
-            var times = 0;
-            var delay = 400;
-            var intervalFn = () => {
+            let times = 0;
+            let delay = 400;
+            let intervalFn = () => {
                 fn.apply(this, args);
                 if (++times % 5 == 0 && delay > 50) {
                     // speed up after 5 occurrences but not faster than 50ms
@@ -212,7 +212,7 @@ module api.ui.time {
             if (!value && value != 0) {
                 return "";
             }
-            var result = "UTC";
+            let result = "UTC";
             result = value > 0 ? result + "+" : (value == 0 ? result + "-" : result);
             return result + value;
         }

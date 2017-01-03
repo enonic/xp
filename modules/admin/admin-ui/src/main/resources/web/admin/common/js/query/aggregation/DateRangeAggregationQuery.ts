@@ -25,7 +25,7 @@ module api.query.aggregation {
 
         toJson(): AggregationQueryTypeWrapperJson {
 
-            var json: DateRangeAggregationQueryJson = <DateRangeAggregationQueryJson>super.toAggregationQueryJson();
+            let json: DateRangeAggregationQueryJson = <DateRangeAggregationQueryJson>super.toAggregationQueryJson();
             json.fieldName = this.getFieldName();
             json.ranges = [];
 

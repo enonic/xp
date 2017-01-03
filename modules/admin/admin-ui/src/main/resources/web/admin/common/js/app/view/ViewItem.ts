@@ -101,7 +101,7 @@ module api.app.view {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ViewItem)) {
                 return false;
             }
-            var other = <ViewItem<M>> o;
+            let other = <ViewItem<M>> o;
             return this.model.equals(other.getModel()) &&
                    this.displayName === other.getDisplayName() &&
                    this.path === other.getPath() &&

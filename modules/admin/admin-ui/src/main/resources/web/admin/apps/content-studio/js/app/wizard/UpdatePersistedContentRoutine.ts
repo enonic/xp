@@ -40,7 +40,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
     public execute(): wemQ.Promise<Content> {
 
-        var context = new UpdatePersistedContentRoutineContext();
+        let context = new UpdatePersistedContentRoutineContext();
         context.content = this.persistedContent;
         return this.doExecute(context);
     }
@@ -83,7 +83,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
     private doHandlePage(context: UpdatePersistedContentRoutineContext): wemQ.Promise<void> {
 
-        var pageCUDRequest = this.producePageCUDRequest(context.content, this.viewedContent);
+        let pageCUDRequest = this.producePageCUDRequest(context.content, this.viewedContent);
 
         if (pageCUDRequest != null) {
             return pageCUDRequest
@@ -94,7 +94,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
                 });
         }
         else {
-            var deferred = wemQ.defer<void>();
+            let deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
@@ -103,22 +103,27 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
     private producePageCUDRequest(persistedContent: Content, viewedContent: Content): PageCUDRequest {
 
         if (persistedContent.isPage() && !viewedContent.isPage()) {
-
             return new DeletePageRequest(persistedContent.getContentId());
         }
         else if (!persistedContent.isPage() && viewedContent.isPage()) {
-
-            var viewedPage = viewedContent.getPage();
-            return new CreatePageRequest(persistedContent.getContentId()).setController(viewedPage.getController()).setPageTemplateKey(
-                viewedPage.getTemplate()).setConfig(viewedPage.getConfig()).setRegions(viewedPage.getRegions()).setFragment(
-                viewedPage.getFragment()).setCustomized(viewedPage.isCustomized());
+            const viewedPage = viewedContent.getPage();
+            return new CreatePageRequest(persistedContent.getContentId())
+                .setController(viewedPage.getController())
+                .setPageTemplateKey(viewedPage.getTemplate())
+                .setConfig(viewedPage.getConfig())
+                .setRegions(viewedPage.getRegions())
+                .setFragment(viewedPage.getFragment())
+                .setCustomized(viewedPage.isCustomized());
         }
         else if (persistedContent.isPage() && viewedContent.isPage()) {
-
-            var viewedPage = viewedContent.getPage();
-            return new UpdatePageRequest(persistedContent.getContentId()).setController((viewedPage.getController())).setPageTemplateKey(
-                (viewedPage.getTemplate())).setConfig(viewedPage.getConfig()).setRegions(viewedPage.getRegions()).setFragment(
-                viewedPage.getFragment()).setCustomized(viewedPage.isCustomized());
+            const viewedPage = viewedContent.getPage();
+            return new UpdatePageRequest(persistedContent.getContentId())
+                .setController((viewedPage.getController()))
+                .setPageTemplateKey((viewedPage.getTemplate()))
+                .setConfig(viewedPage.getConfig())
+                .setRegions(viewedPage.getRegions())
+                .setFragment(viewedPage.getFragment())
+                .setCustomized(viewedPage.isCustomized());
         }
     }
 

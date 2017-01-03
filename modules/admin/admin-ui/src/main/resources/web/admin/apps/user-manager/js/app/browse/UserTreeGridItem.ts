@@ -108,7 +108,7 @@ export class UserTreeGridItem implements api.Equitable {
             return false;
         }
 
-        var other = <UserTreeGridItem> o;
+        let other = <UserTreeGridItem> o;
         return this.principal === other.getPrincipal() && this.userStore == other.getUserStore();
     }
 

@@ -15,7 +15,7 @@ module api.content.event {
         }
 
         static fromJson(nodeEventJson: api.event.NodeEventJson): ContentServerEvent {
-            var change = ContentServerChange.fromJson(nodeEventJson);
+            let change = ContentServerChange.fromJson(nodeEventJson);
             return new ContentServerEvent(change);
         }
     }

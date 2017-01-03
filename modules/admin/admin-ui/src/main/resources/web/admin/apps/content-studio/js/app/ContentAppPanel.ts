@@ -37,11 +37,11 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
     }
 
     private route(path?: api.rest.Path) {
-        var action = path ? path.getElement(0) : undefined;
+        const action = path ? path.getElement(0) : null;
+        const id = path ? path.getElement(1) : null;
 
         switch (action) {
         case 'edit':
-            var id = path.getElement(1);
             if (id) {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
@@ -50,7 +50,6 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
             }
             break;
         case 'view' :
-            var id = path.getElement(1);
             if (id) {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {

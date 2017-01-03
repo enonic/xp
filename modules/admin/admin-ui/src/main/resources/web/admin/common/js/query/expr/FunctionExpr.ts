@@ -19,10 +19,10 @@ module api.query.expr {
         }
 
         toString() {
-            var result: string = this.name;
+            let result: string = this.name;
             result = result.concat("(");
 
-            var sub = [];
+            let sub = [];
             this.args.forEach((expr: ValueExpr) => {
                 sub.push(expr.toString());
             });

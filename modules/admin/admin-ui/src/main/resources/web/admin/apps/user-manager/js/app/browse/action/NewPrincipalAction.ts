@@ -1,9 +1,9 @@
 import "../../../api.ts";
-
-import Action = api.ui.Action;
 import {NewPrincipalEvent} from "../NewPrincipalEvent";
 import {UserTreeGridItem} from "../UserTreeGridItem";
 import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
+
+import Action = api.ui.Action;
 
 export class NewPrincipalAction extends Action {
 
@@ -11,7 +11,7 @@ export class NewPrincipalAction extends Action {
         super("New", "mod+alt+n");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var principals: UserTreeGridItem[] = grid.getSelectedDataList();
+            let principals: UserTreeGridItem[] = grid.getSelectedDataList();
             new NewPrincipalEvent(principals).fire();
         });
     }

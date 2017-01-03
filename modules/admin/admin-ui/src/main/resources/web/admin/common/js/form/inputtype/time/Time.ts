@@ -28,42 +28,42 @@ module api.content.form.inputtype.time {
                 property.convertValueType(ValueTypes.LOCAL_TIME);
             }
 
-            var value = this.getValueFromProperty(property);
-            var timePicker = new api.ui.time.TimePickerBuilder().setHours(value.hours).setMinutes(value.minutes).build();
+            const value = this.getValueFromProperty(property);
+            const timePicker = new api.ui.time.TimePickerBuilder().setHours(value.hours).setMinutes(value.minutes).build();
 
             timePicker.onSelectedTimeChanged((hours: number, minutes: number) => {
-                var valueStr = hours + ':' + minutes;
-                var value = new Value(api.util.LocalTime.isValidString(valueStr) ? api.util.LocalTime.fromString(valueStr) : null,
+                const valueStr = hours + ':' + minutes;
+                const newValue = new Value(api.util.LocalTime.isValidString(valueStr) ? api.util.LocalTime.fromString(valueStr) : null,
                     ValueTypes.LOCAL_TIME);
-                this.notifyOccurrenceValueChanged(timePicker, value);
+                this.notifyOccurrenceValueChanged(timePicker, newValue);
             });
 
             return timePicker;
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
-            var localTime = <api.ui.time.TimePicker> occurrence;
+            let localTime = <api.ui.time.TimePicker> occurrence;
 
             if (!unchangedOnly || !localTime.isDirty() || !localTime.isValid()) {
 
-                var value = this.getValueFromProperty(property);
+                let value = this.getValueFromProperty(property);
                 localTime.setSelectedTime(value.hours, value.minutes);
             }
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            var input = <api.ui.time.TimePicker> occurrence;
+            let input = <api.ui.time.TimePicker> occurrence;
 
             input.resetBase();
         }
 
         private getValueFromProperty(property: api.data.Property): {hours: number; minutes: number} {
-            var hours = -1,
+            let hours = -1,
                 minutes = -1;
             if (property && property.hasNonNullValue()) {
-                var localTime: api.util.LocalTime = property.getLocalTime();
+                let localTime: api.util.LocalTime = property.getLocalTime();
                 if (localTime) {
-                    var adjustedTime = localTime.getAdjustedTime();
+                    let adjustedTime = localTime.getAdjustedTime();
                     hours = adjustedTime.hour;
                     minutes = adjustedTime.minute;
                 }
@@ -83,7 +83,7 @@ module api.content.form.inputtype.time {
         }
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
-            var timePicker = <api.ui.time.TimePicker> inputElement;
+            let timePicker = <api.ui.time.TimePicker> inputElement;
             return timePicker.isValid();
         }
 

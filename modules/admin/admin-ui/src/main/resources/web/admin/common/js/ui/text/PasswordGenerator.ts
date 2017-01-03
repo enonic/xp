@@ -31,10 +31,10 @@ module api.ui.text {
         constructor() {
             super("div", "password-generator");
 
-            var inputWrapper = new api.dom.DivEl('input-wrapper');
+            let inputWrapper = new api.dom.DivEl('input-wrapper');
             this.appendChild(inputWrapper);
 
-            var strengthMeter = new api.dom.DivEl('strength-meter');
+            let strengthMeter = new api.dom.DivEl('strength-meter');
             inputWrapper.appendChild(strengthMeter);
 
             this.input = new PasswordInput();
@@ -48,7 +48,7 @@ module api.ui.text {
             this.showLink = new api.dom.AEl('show-link');
             this.initFocusEvents(this.showLink);
             this.showLink.onClicked((event: MouseEvent) => {
-                var unlocked = this.hasClass('unlocked');
+                let unlocked = this.hasClass('unlocked');
                 this.toggleClass('unlocked', !unlocked);
                 this.input.setType(unlocked ? 'password' : 'text');
                 event.stopPropagation();
@@ -120,7 +120,7 @@ module api.ui.text {
 
 
         private generatePassword() {
-            var length = NumberHelper.randomBetween(14, 16),
+            let length = NumberHelper.randomBetween(14, 16),
                 maxSpecials = NumberHelper.randomBetween(1, 3),
                 specials = 0,
                 maxDigits = NumberHelper.randomBetween(2, 4),
@@ -130,11 +130,11 @@ module api.ui.text {
                 maxLowercase = length - maxSpecials - maxDigits - maxUppercase,
                 lowercase = 0;
 
-            var result = "";
-            var types = [CharType.SPECIAL, CharType.DIGIT, CharType.UPPERCASE, CharType.LOWERCASE];
+            let result = "";
+            let types = [CharType.SPECIAL, CharType.DIGIT, CharType.UPPERCASE, CharType.LOWERCASE];
 
-            for (var i = 0; i < length; i++) {
-                var type = types[NumberHelper.randomBetween(0, types.length - 1)];
+            for (let i = 0; i < length; i++) {
+                let type = types[NumberHelper.randomBetween(0, types.length - 1)];
                 switch (type) {
                 case CharType.SPECIAL:
                     if (specials < maxSpecials) {

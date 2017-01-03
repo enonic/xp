@@ -27,7 +27,7 @@ module api.content.form.inputtype.principalselector {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var principalTypeConfig = inputConfig['principalType'] || [];
+            let principalTypeConfig = inputConfig['principalType'] || [];
             this.principalTypes =
                 principalTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val).map(
                     (val: string) => api.security.PrincipalType[val]).filter((val) => !!val);
@@ -58,7 +58,7 @@ module api.content.form.inputtype.principalselector {
         }
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return superPromise.then(() => {
@@ -75,10 +75,10 @@ module api.content.form.inputtype.principalselector {
 
         private createComboBox(input: api.form.Input): api.ui.security.PrincipalComboBox {
 
-            var value = this.getValueFromPropertyArray(this.getPropertyArray());
-            var principalLoader = new api.security.PrincipalLoader().setAllowedTypes(this.principalTypes);
+            let value = this.getValueFromPropertyArray(this.getPropertyArray());
+            let principalLoader = new api.security.PrincipalLoader().setAllowedTypes(this.principalTypes);
 
-            var comboBox = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(
+            let comboBox = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(
                 input.getOccurrences().getMaximum()).setValue(value).build();
 
             comboBox.onOptionDeselected((event: SelectedOptionEvent<api.security.Principal>) => {
@@ -90,17 +90,17 @@ module api.content.form.inputtype.principalselector {
                 this.fireFocusSwitchEvent(event);
 
                 const selectedOption = event.getSelectedOption();
-                var key = selectedOption.getOption().displayValue.getKey();
+                let key = selectedOption.getOption().displayValue.getKey();
                 if (!key) {
                     return;
                 }
-                var selectedOptionView: PrincipalSelectedOptionView = <PrincipalSelectedOptionView>selectedOption.getOptionView();
+                let selectedOptionView: PrincipalSelectedOptionView = <PrincipalSelectedOptionView>selectedOption.getOptionView();
                 this.saveToSet(selectedOptionView.getOption(), selectedOption.getIndex());
                 this.validate(false);
             });
 
             comboBox.onOptionMoved((selectedOption: api.ui.selector.combobox.SelectedOption<api.security.Principal>) => {
-                var selectedOptionView: PrincipalSelectedOptionView = <PrincipalSelectedOptionView> selectedOption.getOptionView();
+                let selectedOptionView: PrincipalSelectedOptionView = <PrincipalSelectedOptionView> selectedOption.getOptionView();
                 this.saveToSet(selectedOptionView.getOption(), selectedOption.getIndex());
                 this.validate(false);
             });

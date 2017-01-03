@@ -59,8 +59,8 @@ module api.liveedit.fragment {
         }
 
         private handleContentRemovedEvent() {
-            var contentDeletedListener = (event) => {
-                var deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
+            let contentDeletedListener = (event) => {
+                let deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
                     return !deletedItem.isPending() && deletedItem.getContentId().equals(this.component.getFragment());
                 });
                 if (deleted) {
@@ -79,7 +79,7 @@ module api.liveedit.fragment {
         }
 
         private handleContentUpdatedEvent() {
-            var contentUpdatedListener = (event: ContentUpdatedEvent) => {
+            let contentUpdatedListener = (event: ContentUpdatedEvent) => {
                 if (event.getContentId().equals(this.component.getFragment())) {
                     new FragmentComponentReloadRequiredEvent(this).fire();
                 }
@@ -96,7 +96,7 @@ module api.liveedit.fragment {
             this.getEl().setAttribute("data-portal-placeholder", "true");
             this.getEl().setAttribute("data-portal-placeholder-error", "true");
             this.removeChild(this.getFirstChild());
-            var errorSpan = new api.dom.SpanEl("data-portal-placeholder-error");
+            let errorSpan = new api.dom.SpanEl("data-portal-placeholder-error");
             errorSpan.setHtml("Fragment content could not be found");
             this.prependChild(errorSpan);
         }
@@ -116,7 +116,7 @@ module api.liveedit.fragment {
         }
 
         private loadFragmentContent() {
-            var contentId = this.component.getFragment();
+            let contentId = this.component.getFragment();
             if (contentId) {
                 if (!this.fragmentContent || !contentId.equals(this.fragmentContent.getContentId())) {
                     new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
@@ -144,7 +144,7 @@ module api.liveedit.fragment {
                 new api.ui.Action("Edit in new tab").onExecuted(() => {
                     this.deselect();
                     new GetContentByIdRequest(this.component.getFragment()).sendAndParse().then((content: Content)=> {
-                        var contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        let contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
                         new api.content.event.EditContentEvent([contentAndSummary]).fire();
                     });
                 })
@@ -152,21 +152,21 @@ module api.liveedit.fragment {
         }
 
         private parseContentViews(parentElement?: api.dom.Element, parentType?: api.liveedit.ItemType) {
-            var children = parentElement.getChildren();
+            let children = parentElement.getChildren();
             children.forEach((childElement: api.dom.Element) => {
-                var itemType = ItemType.fromElement(childElement);
+                let itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     if (api.liveedit.layout.LayoutItemType.get().equals(itemType)) {
                         this.fragmentContainsLayout = true;
                     }
 
                     // remove component-type attributes to avoid inner components of fragment to be affected by d&d sorting
-                    var htmlElement = childElement.getHTMLElement();
+                    let htmlElement = childElement.getHTMLElement();
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
                 }
 
-                var isTextComponent = api.liveedit.text.TextItemType.get().equals(parentType);
+                let isTextComponent = api.liveedit.text.TextItemType.get().equals(parentType);
                 if (isTextComponent && childElement.getEl().getTagName().toUpperCase() == 'SECTION') {
                     // convert image urls in text component for web
                     childElement.setHtml(HTMLAreaHelper.prepareImgSrcsInValueForEdit(childElement.getHtml()), false);
@@ -191,7 +191,7 @@ module api.liveedit.fragment {
         }
 
         notifyFragmentContentLoaded() {
-            var event = new api.liveedit.FragmentComponentLoadedEvent(this);
+            let event = new api.liveedit.FragmentComponentLoadedEvent(this);
             this.fragmentContentLoadedListeners.forEach((listener) => {
                 listener(event);
             });
@@ -208,7 +208,7 @@ module api.liveedit.fragment {
         }
 
         notifyFragmentLoadError() {
-            var event = new api.liveedit.FragmentLoadErrorEvent(this);
+            let event = new api.liveedit.FragmentLoadErrorEvent(this);
             this.fragmentLoadErrorListeners.forEach((listener) => {
                 listener(event);
             });

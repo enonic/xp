@@ -93,7 +93,7 @@ module api.security {
                 return false;
             }
 
-            var other = <Principal> o;
+            let other = <Principal> o;
 
             if (!api.ObjectHelper.equals(this.key, other.key)) {
                 return false;

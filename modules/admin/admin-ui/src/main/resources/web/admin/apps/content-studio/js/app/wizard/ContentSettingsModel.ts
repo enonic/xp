@@ -26,7 +26,7 @@ export class ContentSettingsModel implements api.Equitable {
 
     setOwner(owner: api.security.PrincipalKey, silent?: boolean): ContentSettingsModel {
         if (!silent) {
-            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_OWNER, this.owner, owner);
+            let event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_OWNER, this.owner, owner);
             this.notifyPropertyChanged(event);
         }
         this.owner = owner;
@@ -39,7 +39,7 @@ export class ContentSettingsModel implements api.Equitable {
 
     setLanguage(lang: string, silent?: boolean): ContentSettingsModel {
         if (!silent) {
-            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_LANG, this.language, lang);
+            let event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_LANG, this.language, lang);
             this.notifyPropertyChanged(event);
         }
         this.language = lang;
@@ -63,7 +63,7 @@ export class ContentSettingsModel implements api.Equitable {
         if (!api.ObjectHelper.iFrameSafeInstanceOf(other, ContentSettingsModel)) {
             return false;
         } else {
-            var otherModel = <ContentSettingsModel> other;
+            let otherModel = <ContentSettingsModel> other;
             return otherModel.owner == this.owner && otherModel.language == this.language;
         }
     }

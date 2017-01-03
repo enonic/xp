@@ -47,7 +47,7 @@ module api.ui.text {
                 return;
             }
 
-            var inputEl = this.getEl(),
+            let inputEl = this.getEl(),
                 cloneEl = this.clone.getEl();
 
             cloneEl.setFontSize(inputEl.getFontSize()).

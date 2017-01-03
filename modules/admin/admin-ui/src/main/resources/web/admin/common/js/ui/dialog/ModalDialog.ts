@@ -36,7 +36,7 @@ module api.ui.dialog {
 
             this.forceHorizontalCentering = forceHorizontalCentering;
 
-            var wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
+            let wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
             this.appendChild(wrapper);
 
             this.cancelAction = this.createDefaultCancelAction();
@@ -50,10 +50,10 @@ module api.ui.dialog {
             this.contentPanel = new ModalDialogContentPanel();
             wrapper.appendChild(this.contentPanel);
 
-            var push = new api.dom.DivEl("modal-dialog-content-push");
+            let push = new api.dom.DivEl("modal-dialog-content-push");
             wrapper.appendChild(push);
 
-            var footer = new api.dom.DivEl("modal-dialog-footer");
+            let footer = new api.dom.DivEl("modal-dialog-footer");
             this.appendChild(footer);
 
             this.buttonRow = new ModalDialogButtonRow();
@@ -61,7 +61,7 @@ module api.ui.dialog {
 
             this.mouseClickListener = (event: MouseEvent) => {
                 if (this.isVisible()) {
-                    for (var element = event.target; element; element = (<any>element).parentNode) {
+                    for (let element = event.target; element; element = (<any>element).parentNode) {
                         if (element == this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
                         }
@@ -120,7 +120,7 @@ module api.ui.dialog {
         }
 
         private isIgnoredElementClicked(element: HTMLElement): boolean {
-            var ignoredElementClicked = false;
+            let ignoredElementClicked = false;
             if (!!element && !!element.className && !!element.className.indexOf) {
                 ignoredElementClicked = element.className.indexOf("mce-") > -1 || element.className.indexOf("html-area-modal-dialog") > -1;
             }
@@ -131,7 +131,7 @@ module api.ui.dialog {
         }
 
         private createDefaultCancelAction() {
-            var cancelAction = new api.ui.Action("Cancel", "esc");
+            let cancelAction = new api.ui.Action("Cancel", "esc");
             cancelAction.setIconClass("cancel-button-top");
             cancelAction.setLabel("");
             cancelAction.onExecuted(()=> {
@@ -146,7 +146,7 @@ module api.ui.dialog {
         }
 
         addCancelButtonToBottom(buttonLabel: string = "Cancel") {
-            var cancelAction = new api.ui.Action(buttonLabel);
+            let cancelAction = new api.ui.Action(buttonLabel);
             cancelAction.setIconClass("cancel-button-bottom");
             cancelAction.onExecuted(() => this.cancelAction.execute());
             this.buttonRow.addAction(cancelAction);
@@ -189,7 +189,7 @@ module api.ui.dialog {
             if (ModalDialog.debug) {
                 console.debug("ModalDialog.centerMyself", api.ClassHelper.getClassName(this));
             }
-            var el = this.getEl();
+            let el = this.getEl();
             el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
 
             if (this.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
@@ -201,7 +201,7 @@ module api.ui.dialog {
         }
 
         centerHorisontally() {
-            var el = this.getEl();
+            let el = this.getEl();
             el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px");
             el.addClass("centered_horizontally");
         }
@@ -356,7 +356,7 @@ module api.ui.dialog {
         }
 
         addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean): DialogButton {
-            var button = new DialogButton(action);
+            let button = new DialogButton(action);
             if (useDefault) {
                 this.defaultButton = button;
             }

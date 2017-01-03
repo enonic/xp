@@ -35,11 +35,11 @@ module api.ui.grid {
 
 
         protected handleDragStart() {
-            var draggableClass = this.contentGrid.getOptions().getSelectedCellCssClass() || "";
+            let draggableClass = this.contentGrid.getOptions().getSelectedCellCssClass() || "";
             draggableClass = (" " + draggableClass).replace(/\s/g, ".");
-            var row = Element.fromString(draggableClass).getParentElement();
+            let row = Element.fromString(draggableClass).getParentElement();
 
-            var nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
+            let nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
                 draggedNode = nodes[row.getSiblingIndex()];
             draggedNode.setExpanded(false);
             this.contentGrid.refreshNode(draggedNode);
@@ -53,9 +53,9 @@ module api.ui.grid {
             row.getEl().setDisplay("none");
 
             this.rowHeight = row.getEl().getHeight();
-            var proxyEl = Element.fromString(".slick-reorder-proxy").getEl();
+            let proxyEl = Element.fromString(".slick-reorder-proxy").getEl();
             this.draggableItem.getEl().setTop(proxyEl.getTop()).setPosition("absolute");
-            var gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, ".");
+            let gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, ".");
 
 
             wemjq(".tree-grid " + gridClasses + " .slick-viewport").append(wemjq(this.draggableItem.getHTMLElement()));
@@ -66,7 +66,7 @@ module api.ui.grid {
             if (!this.draggableItem) {
                 this.handleDragStart();
             }
-            var top = Element.fromString(".slick-reorder-proxy").getEl().getTopPx();
+            let top = Element.fromString(".slick-reorder-proxy").getEl().getTopPx();
             this.draggableItem.getEl().setTopPx(top /*- this.rowHeight*//* / 2*/).setZindex(2);
         }
 
@@ -113,22 +113,22 @@ module api.ui.grid {
 
 
         protected handleMoveRows(event: Event, args: DragEventData) {
-            var dataView = this.contentGrid.getGrid().getDataView();
-            var draggableRow = args.rows[0];
+            let dataView = this.contentGrid.getGrid().getDataView();
+            let draggableRow = args.rows[0];
 
-            var rowDataId = this.getModelId(dataView.getItem(draggableRow).getData());
-            var insertTarget = args.insertBefore;
+            let rowDataId = this.getModelId(dataView.getItem(draggableRow).getData());
+            let insertTarget = args.insertBefore;
 
             // when dragging forwards/down insertBefore is the target element
             // when dragging backwards/up insertBefore is one position after the target element
-            var insertBefore = draggableRow < insertTarget ? insertTarget + 1 : insertTarget;
+            let insertBefore = draggableRow < insertTarget ? insertTarget + 1 : insertTarget;
 
-            var moveBeforeRowDataId = ((dataView.getLength() - 1) <= insertTarget)
+            let moveBeforeRowDataId = ((dataView.getLength() - 1) <= insertTarget)
                 ? null
                 : this.getModelId(dataView.getItem(insertBefore).getData());
 
             // draggable count in new data
-            var selectedRow = this.makeMovementInNodes(draggableRow, insertTarget);
+            let selectedRow = this.makeMovementInNodes(draggableRow, insertTarget);
 
             if (selectedRow <= this.contentGrid.getRoot().getCurrentRoot().treeToList().length - 1) {
                 this.contentGrid.getGrid().setSelectedRows([selectedRow]);
@@ -140,10 +140,10 @@ module api.ui.grid {
 
         protected makeMovementInNodes(draggableRow: number, insertBefore: number): number {
 
-            var root = this.contentGrid.getRoot().getCurrentRoot();
-            var rootChildren = root.treeToList();
+            let root = this.contentGrid.getRoot().getCurrentRoot();
+            let rootChildren = root.treeToList();
 
-            var item = rootChildren.slice(draggableRow, draggableRow + 1)[0];
+            let item = rootChildren.slice(draggableRow, draggableRow + 1)[0];
             rootChildren.splice(rootChildren.indexOf(item), 1);
             rootChildren.splice(insertBefore, 0, item);
 

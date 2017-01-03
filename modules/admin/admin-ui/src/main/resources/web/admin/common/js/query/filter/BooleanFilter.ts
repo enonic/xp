@@ -22,7 +22,7 @@ module api.query.filter {
 
         toJson(): api.query.filter.FilterTypeWrapperJson {
 
-            var json: api.query.filter.BooleanFilterJson = {
+            let json: api.query.filter.BooleanFilterJson = {
                 must: this.toJsonWrapperElements(this.must),
                 mustNot: this.toJsonWrapperElements(this.mustNot),
                 should: this.toJsonWrapperElements(this.should)
@@ -35,10 +35,10 @@ module api.query.filter {
 
         toJsonWrapperElements(filters: api.query.filter.Filter[]): api.query.filter.FilterTypeWrapperJson[] {
 
-            var wrapperJsons: api.query.filter.FilterTypeWrapperJson[] = [];
+            let wrapperJsons: api.query.filter.FilterTypeWrapperJson[] = [];
 
             filters.forEach((filter: api.query.filter.Filter)=> {
-                var filterTypeWrapperJson = filter.toJson();
+                let filterTypeWrapperJson = filter.toJson();
                 wrapperJsons.push(filterTypeWrapperJson);
             });
 

@@ -22,10 +22,10 @@ module api.util {
         }
 
         start():void {
-            var startTime = this.getCurrentTime();
+            let startTime = this.getCurrentTime();
 
             this.id = setInterval(() => {
-                var progress = Math.min((this.getCurrentTime() - startTime) / this.duration, 1);
+                let progress = Math.min((this.getCurrentTime() - startTime) / this.duration, 1);
 
                 if (this.doStep) {
                     this.doStep(progress);

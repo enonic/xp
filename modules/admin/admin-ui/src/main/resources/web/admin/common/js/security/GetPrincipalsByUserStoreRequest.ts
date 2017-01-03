@@ -26,7 +26,7 @@ module api.security {
         }
 
         private getType(): string {
-            var typeStr: string = "";
+            let typeStr: string = "";
             this.principalTypes.forEach((type) => {
                 typeStr += PrincipalType[type];
                 typeStr += ",";

@@ -32,7 +32,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentMetadata>o;
+            let other = <ContentMetadata>o;
 
             if (this.hits !== other.hits ||
                 this.totalHits !== other.totalHits) {

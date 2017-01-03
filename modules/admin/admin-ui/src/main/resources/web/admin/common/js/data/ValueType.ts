@@ -46,7 +46,7 @@ module api.data {
                 return false;
             }
 
-            var other = <ValueType>o;
+            let other = <ValueType>o;
 
             if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;

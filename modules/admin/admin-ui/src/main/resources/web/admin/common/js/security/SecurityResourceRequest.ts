@@ -18,7 +18,7 @@ module api.security {
         }
 
         fromJsonToPrincipal(json: api.security.PrincipalJson): Principal {
-            var pKey: PrincipalKey = PrincipalKey.fromString(json.key);
+            let pKey: PrincipalKey = PrincipalKey.fromString(json.key);
             if (pKey.isRole()) {
                 return Role.fromJson(<api.security.RoleJson>json);
 

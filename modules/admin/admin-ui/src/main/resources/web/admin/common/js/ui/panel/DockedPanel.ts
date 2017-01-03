@@ -28,7 +28,7 @@ module api.ui.panel {
         }
 
         addItem<T extends Panel>(label: string, addLabelTitleAttribute: boolean, panel: T, select?: boolean): number {
-            var item = new api.ui.tab.TabBarItemBuilder().setLabel(label).setAddLabelTitleAttribute(addLabelTitleAttribute).build();
+            let item = new api.ui.tab.TabBarItemBuilder().setLabel(label).setAddLabelTitleAttribute(addLabelTitleAttribute).build();
             this.items.push(item);
 
             this.deck.addNavigablePanel(item, panel, select || this.items.length == 1);

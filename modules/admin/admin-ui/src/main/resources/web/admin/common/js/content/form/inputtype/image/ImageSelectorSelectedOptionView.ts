@@ -27,7 +27,7 @@ module api.content.form.inputtype.image {
         setOption(option: api.ui.selector.Option<ImageSelectorDisplayValue>) {
             super.setOption(option);
 
-            var content: ImageSelectorDisplayValue = this.getOption().displayValue;
+            let content: ImageSelectorDisplayValue = this.getOption().displayValue;
 
             if (content.getContentSummary()) {
                 this.updateIconSrc(content);
@@ -38,7 +38,7 @@ module api.content.form.inputtype.image {
         }
 
         private updateIconSrc(content: ImageSelectorDisplayValue) {
-            var newIconSrc = content.getImageUrl() + "?thumbnail=false&size=" + ImageSelectorSelectedOptionView.IMAGE_SIZE;
+            let newIconSrc = content.getImageUrl() + "?thumbnail=false&size=" + ImageSelectorSelectedOptionView.IMAGE_SIZE;
 
             if (this.icon.getSrc().indexOf(newIconSrc) == -1) {
                 if (this.isVisible()) {
@@ -64,7 +64,7 @@ module api.content.form.inputtype.image {
             this.error = new api.dom.DivEl("error");
             this.loadMask = new LoadMask(this);
 
-            var squaredContent = new api.dom.DivEl('squared-content');
+            let squaredContent = new api.dom.DivEl('squared-content');
             squaredContent.appendChildren<api.dom.Element>(this.icon, this.label, this.check, this.progress, this.error, this.loadMask);
 
             this.appendChild(squaredContent);
@@ -130,7 +130,7 @@ module api.content.form.inputtype.image {
         }
 
         updateProportions() {
-            var contentHeight = this.getEl().getHeightWithBorder() -
+            let contentHeight = this.getEl().getHeightWithBorder() -
                                 this.getEl().getBorderTopWidth() -
                                 this.getEl().getBorderBottomWidth();
 

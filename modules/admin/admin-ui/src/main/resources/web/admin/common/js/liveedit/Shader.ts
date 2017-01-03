@@ -38,7 +38,7 @@ module api.liveedit {
 
             this.shaders = [this.pageShader, this.northShader, this.eastShader, this.southShader, this.westShader];
 
-            var body = Body.get();
+            let body = Body.get();
             body.appendChildren.apply(body, this.shaders);
             body.onMouseWheel((event: MouseEvent) => {
                 if (this.target && this.isVisible()) {
@@ -198,7 +198,7 @@ module api.liveedit {
         }
 
         private showShaderIfNecessary(shader: Element, x: number, y: number, width: number, height: number) {
-            var shaderEl = shader.getEl();
+            let shaderEl = shader.getEl();
             shaderEl.setTopPx(y).
                 setLeftPx(x).
                 setWidthPx(width).
@@ -220,13 +220,13 @@ module api.liveedit {
 
             this.target = element;
 
-            var win = api.dom.WindowDOM.get(),
+            let win = api.dom.WindowDOM.get(),
                 bodyEl = api.dom.Body.get().getEl(),
             // check if body is bigger than window to account for scroll
                 documentWidth = Math.max(win.getWidth(), bodyEl.getWidth()),
                 documentHeight = Math.max(win.getHeight(), bodyEl.getHeight());
 
-            var dimensions = element.getEl().getDimensions(),
+            let dimensions = element.getEl().getDimensions(),
                 x1 = Math.max(0, dimensions.left),
                 y1 = Math.max(0, dimensions.top),
                 x2 = Math.min(documentWidth, dimensions.left + dimensions.width),

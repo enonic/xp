@@ -32,7 +32,7 @@ module api.liveedit.text {
         }
 
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {
-            var config = super.getItemTypeConfig(itemType);
+            let config = super.getItemTypeConfig(itemType);
 
             config.getContextMenuConfig().push("edit");
 

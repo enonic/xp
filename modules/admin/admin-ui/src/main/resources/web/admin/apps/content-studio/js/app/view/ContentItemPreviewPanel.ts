@@ -32,8 +32,8 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         this.image = new api.dom.ImgEl();
         this.image.onLoaded((event: UIEvent) => {
             this.hideMask();
-            var imgEl = this.image.getEl();
-            var myEl = this.getEl();
+            let imgEl = this.image.getEl();
+            let myEl = this.getEl();
             this.centerImage(imgEl.getWidth(), imgEl.getHeight(), myEl.getWidth(), myEl.getHeight());
         });
 
@@ -45,7 +45,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
         api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
             if (this.hasClass("image-preview")) {
-                var imgEl = this.image.getEl(),
+                let imgEl = this.image.getEl(),
                     el = this.getEl();
                 this.centerImage(imgEl.getWidth(), imgEl.getHeight(), el.getWidth(), el.getHeight());
             }
@@ -64,7 +64,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         });
 
         this.frame.onLoaded((event: UIEvent) => {
-            var frameWindow = this.frame.getHTMLElement()["contentWindow"];
+            let frameWindow = this.frame.getHTMLElement()["contentWindow"];
 
             try {
                 if (frameWindow) {
@@ -77,14 +77,14 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
     private frameClickHandler(event: UIEvent) {
         let linkClicked: string = this.getLinkClicked(event);
         if (linkClicked) {
-            var frameWindow = this.frame.getHTMLElement()["contentWindow"];
+            let frameWindow = this.frame.getHTMLElement()["contentWindow"];
             if (!!frameWindow && !UriHelper.isNavigatingOutsideOfXP(linkClicked, frameWindow)) {
-                var contentPreviewPath = UriHelper.trimUrlParams(
+                let contentPreviewPath = UriHelper.trimUrlParams(
                     UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(linkClicked,
                     frameWindow)));
                 if (!this.isNavigatingWithinSamePage(contentPreviewPath, frameWindow)) {
                     event.preventDefault();
-                    var clickedLinkRelativePath = "/" + UriHelper.trimWindowProtocolAndPortFromHref(linkClicked, frameWindow);
+                    let clickedLinkRelativePath = "/" + UriHelper.trimWindowProtocolAndPortFromHref(linkClicked, frameWindow);
                     this.skipNextSetItemCall = true;
                     new ContentPreviewPathChangedEvent(contentPreviewPath).fire();
                     this.showMask();
@@ -116,12 +116,12 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
     }
 
     private isNavigatingWithinSamePage(contentPreviewPath: string, frameWindow: Window): boolean {
-        var href = frameWindow.location.href;
+        let href = frameWindow.location.href;
         return contentPreviewPath === UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(href, frameWindow));
     }
 
     private centerImage(imgWidth: number, imgHeight: number, myWidth: number, myHeight: number) {
-        var imgMarginTop = 0;
+        let imgMarginTop = 0;
         if (imgHeight < myHeight) {
             // image should be centered vertically
             imgMarginTop = (myHeight - imgHeight) / 2;
@@ -131,8 +131,8 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
     }
 
     public addImageSizeToUrl(item: ViewItem<ContentSummaryAndCompareStatus>) {
-        var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
-        var imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(item.getModel().getContentId()).setTimestamp(
+        let imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
+        let imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(item.getModel().getContentId()).setTimestamp(
             item.getModel().getContentSummary().getModifiedTime()).setSize(imgSize).resolve();
         this.image.setSrc(imgUrl);
     }
@@ -148,7 +148,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                 if (this.isVisible()) {
                     if (item.getModel().getContentSummary().getType().equals(ContentTypeName.MEDIA_VECTOR)) {
                         this.setPreviewType(PREVIEW_TYPE.SVG);
-                        var imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(
+                        let imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(
                             item.getModel().getContentId()).setTimestamp(
                             item.getModel().getContentSummary().getModifiedTime()).resolve();
                         this.image.setSrc(imgUrl);
@@ -166,7 +166,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
                 this.showMask();
                 if (item.isRenderable()) {
                     this.setPreviewType(PREVIEW_TYPE.PAGE);
-                    var src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW, api.content.Branch.DRAFT);
+                    let src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW, api.content.Branch.DRAFT);
                     // test if it returns no error( like because of used app was deleted ) first and show no preview otherwise
                     wemjq.ajax({
                         type: "HEAD",

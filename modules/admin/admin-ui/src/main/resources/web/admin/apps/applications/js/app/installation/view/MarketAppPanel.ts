@@ -31,7 +31,7 @@ export class MarketAppPanel extends api.ui.panel.Panel {
     }
 
     private initDataLoadListener() {
-        var firstLoadListener = () => {
+        let firstLoadListener = () => {
             if (this.marketAppsTreeGrid.getGrid().getDataView().getLength() > 0) {
                 this.marketAppsTreeGrid.unLoaded(firstLoadListener);
                 setTimeout(() => {

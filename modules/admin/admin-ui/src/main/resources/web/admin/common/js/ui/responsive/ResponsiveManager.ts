@@ -33,7 +33,7 @@ module api.ui.responsive {
             if (el.isVisible()) {
                 responsiveItem.update();
             } else {
-                var renderedHandler = (event) => {
+                let renderedHandler = (event) => {
                     responsiveItem.update();
                     el.unShown(renderedHandler); // update needs
                 };
@@ -71,7 +71,7 @@ module api.ui.responsive {
 
         // Manual event triggering
         static fireResizeEvent() {
-            var customEvent = document.createEvent('Event');
+            let customEvent = document.createEvent('Event');
             customEvent.initEvent('availablesizechange', false, true); // No bubbling
             ResponsiveManager.window.getHTMLElement().dispatchEvent(customEvent);
         }

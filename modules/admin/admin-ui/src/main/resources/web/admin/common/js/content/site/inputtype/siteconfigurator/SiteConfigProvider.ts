@@ -25,7 +25,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         getConfig(applicationKey: ApplicationKey, addMissing: boolean = true): SiteConfig {
-            var match: SiteConfig = null;
+            let match: SiteConfig = null;
 
             if (!applicationKey) {
                 return match;
@@ -33,8 +33,8 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
-                    var siteConfigAsSet = property.getPropertySet();
-                    var siteConfig = SiteConfig.create().fromData(siteConfigAsSet).build();
+                    let siteConfigAsSet = property.getPropertySet();
+                    let siteConfig = SiteConfig.create().fromData(siteConfigAsSet).build();
                     if (siteConfig.getApplicationKey().equals(applicationKey)) {
                         match = siteConfig;
                     }
@@ -44,10 +44,10 @@ module api.content.site.inputtype.siteconfigurator {
             if (!match && addMissing) {
                 this.notifyBeforePropertyChanged();
 
-                var siteConfigAsSet = this.propertyArray.addSet();
+                let siteConfigAsSet = this.propertyArray.addSet();
                 siteConfigAsSet.addString("applicationKey", applicationKey.toString());
                 siteConfigAsSet.addPropertySet("config");
-                var newSiteConfig = SiteConfig.create().
+                let newSiteConfig = SiteConfig.create().
                     fromData(siteConfigAsSet).
                     build();
 

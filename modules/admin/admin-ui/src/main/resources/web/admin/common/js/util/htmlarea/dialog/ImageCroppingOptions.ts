@@ -20,10 +20,10 @@ module api.util.htmlarea.dialog {
 
         static getOptions(): Option<ImageCroppingOption>[] {
 
-            var options: Option<ImageCroppingOption>[] = [];
+            let options: Option<ImageCroppingOption>[] = [];
 
             ImageCroppingOptions.getCroppingOptions().forEach((imageCroppingOption: ImageCroppingOption) => {
-                var option = {
+                let option = {
                     value: imageCroppingOption.getName(),
                     displayValue: imageCroppingOption
                 };
@@ -47,7 +47,7 @@ module api.util.htmlarea.dialog {
         }
 
         static getOptionByProportion(proportion: string): ImageCroppingOption {
-            var imageCroppingOption: ImageCroppingOption = null,
+            let imageCroppingOption: ImageCroppingOption = null,
                 imageCroppingOptions: ImageCroppingOption[] = ImageCroppingOptions.getCroppingOptions();
 
             for (let i = 0; i < imageCroppingOptions.length; i++) {

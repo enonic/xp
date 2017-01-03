@@ -46,7 +46,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
     }
 
     treeNodesToBrowseItems(nodes: TreeNode<Application>[]): BrowseItem<Application>[] {
-        var browseItems: BrowseItem<Application>[] = [];
+        let browseItems: BrowseItem<Application>[] = [];
 
         // do not proceed duplicated content. still, it can be selected
         nodes.forEach((node: TreeNode<Application>, index: number) => {
@@ -57,8 +57,8 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
                 }
             }
             if (i === index) {
-                var applicationEl = node.getData();
-                var item = new BrowseItem<Application>(applicationEl).setId(applicationEl.getId()).setDisplayName(
+                let applicationEl = node.getData();
+                let item = new BrowseItem<Application>(applicationEl).setId(applicationEl.getId()).setDisplayName(
                     applicationEl.getDisplayName()).setPath(applicationEl.getName()).setIconUrl(this.applicationIconUrl);
                 browseItems.push(item);
             }
@@ -68,18 +68,18 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
 
     private registerEvents() {
         StopApplicationEvent.on((event: StopApplicationEvent) => {
-            var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
+            let applicationKeys = ApplicationKey.fromApplications(event.getApplications());
             new StopApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
         StartApplicationEvent.on((event: StartApplicationEvent) => {
-            var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
+            let applicationKeys = ApplicationKey.fromApplications(event.getApplications());
             new StartApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
 
         UninstallApplicationEvent.on((event: UninstallApplicationEvent) => {
-            var applicationKeys = ApplicationKey.fromClusterApplications(event.getApplications());
+            let applicationKeys = ApplicationKey.fromClusterApplications(event.getApplications());
             new UninstallApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
@@ -88,20 +88,20 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
                 this.treeGrid.placeApplicationNode(event.getApplicationKey()).then(() => {
                     setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar
                         this.treeGrid.triggerSelectionChangedListeners();
-                        var installedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey()),
+                        let installedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey()),
                             installedAppName = !!installedApp ? installedApp.getDisplayName() : event.getApplicationKey();
                         api.notify.showFeedback("Application '" + installedAppName + "' installed successfully");
                     }, 200);
                 });
 
             } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
-                var uninstalledApp = this.treeGrid.getByApplicationKey(event.getApplicationKey()),
+                let uninstalledApp = this.treeGrid.getByApplicationKey(event.getApplicationKey()),
                     uninstalledAppName = !!uninstalledApp ? uninstalledApp.getDisplayName() : event.getApplicationKey();
                 api.notify.showFeedback("Application '" + uninstalledAppName + "' uninstalled successfully");
                 this.treeGrid.deleteApplicationNode(event.getApplicationKey());
             } else if (ApplicationEventType.STOPPED == event.getEventType()) {
                 setTimeout(() => { // as uninstall usually follows stop event, lets wait to check if app still exists
-                    var stoppedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
+                    let stoppedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
                     // seems to be present in the grid and xp is running
                     if (stoppedApp && api.app.ServerEventsConnection.getInstance().isConnected()) {
                         this.treeGrid.updateApplicationNode(event.getApplicationKey());

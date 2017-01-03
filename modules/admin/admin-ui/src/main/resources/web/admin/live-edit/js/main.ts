@@ -7,7 +7,7 @@ declare var wemjq: JQueryStatic;
  */
 api.StyleHelper.setCurrentPrefix(api.StyleHelper.PAGE_EDITOR_PREFIX);
 
-var liveEditPage: LiveEdit.LiveEditPage;
+let liveEditPage: LiveEdit.LiveEditPage;
 
 wemjq(document).ready(() => {
 
@@ -54,9 +54,9 @@ wemjq(document).ready(() => {
 
     function stopBrowserShortcuts(event: any) {
         // get the parent's frame bindings
-        var activeBindings = parent['api']['ui']['KeyBindings'].get().getActiveBindings();
+        let activeBindings = parent['api']['ui']['KeyBindings'].get().getActiveBindings();
 
-        var hasMatch = hasMatchingBinding(activeBindings, event);
+        let hasMatch = hasMatchingBinding(activeBindings, event);
 
         if (hasMatch) {
             event.preventDefault();
@@ -65,12 +65,12 @@ wemjq(document).ready(() => {
     }
 
     function hasMatchingBinding(keys: KeyBinding[], event: KeyboardEvent) {
-        var isMod = event.ctrlKey || event.metaKey;
-        var isAlt = event.altKey;
-        var key = event.keyCode || event.which;
+        let isMod = event.ctrlKey || event.metaKey;
+        let isAlt = event.altKey;
+        let key = event.keyCode || event.which;
 
-        for (var i = 0; i < keys.length; i++) {
-            var matches = false;
+        for (let i = 0; i < keys.length; i++) {
+            let matches = false;
 
             switch (keys[i].getCombination()) {
             case 'backspace':

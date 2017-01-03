@@ -33,10 +33,10 @@ module api.content.site {
 
         private initApplicationPropertyListeners() {
             this.applicationPropertyAddedListener = (event: api.data.PropertyAddedEvent) => {
-                var property: api.data.Property = event.getProperty();
+                let property: api.data.Property = event.getProperty();
                 // TODO:? property.getPath().startsWith(PropertyPath.fromString(".siteConfig")) &&  property.getName( )=="config")
                 if (property.getPath().toString().indexOf(".siteConfig") == 0 && property.getName() == "config") {
-                    var siteConfig: SiteConfig = api.content.site.SiteConfig.create().fromData(property.getParent()).build();
+                    let siteConfig: SiteConfig = api.content.site.SiteConfig.create().fromData(property.getParent()).build();
                     if (!this.siteConfigs) {
                         this.siteConfigs = [];
                     }
@@ -46,9 +46,9 @@ module api.content.site {
             };
 
             this.applicationPropertyRemovedListener = (event: api.data.PropertyRemovedEvent) => {
-                var property: api.data.Property = event.getProperty();
+                let property: api.data.Property = event.getProperty();
                 if (property.getName() == "siteConfig") {
-                    var applicationKey = ApplicationKey.fromString(property.getPropertySet().getString("applicationKey"));
+                    let applicationKey = ApplicationKey.fromString(property.getPropertySet().getString("applicationKey"));
                     this.siteConfigs = this.siteConfigs.filter((siteConfig: SiteConfig) =>
                         !siteConfig.getApplicationKey().equals(applicationKey)
                     );
@@ -109,7 +109,7 @@ module api.content.site {
         }
 
         private notifyPropertyChanged(property: string, oldValue: any, newValue: any, source: any) {
-            var event = new api.PropertyChangedEvent(property, oldValue, newValue, source);
+            let event = new api.PropertyChangedEvent(property, oldValue, newValue, source);
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener(event);
             });
@@ -127,7 +127,7 @@ module api.content.site {
         }
 
         private notifyApplicationAdded(siteConfig: SiteConfig) {
-            var event = new ApplicationAddedEvent(siteConfig);
+            let event = new ApplicationAddedEvent(siteConfig);
             this.applicationAddedListeners.forEach((listener: (event: ApplicationAddedEvent)=>void) => {
                 listener(event);
             });
@@ -145,7 +145,7 @@ module api.content.site {
         }
 
         private notifyApplicationRemoved(applicationKey: ApplicationKey) {
-            var event = new ApplicationRemovedEvent(applicationKey);
+            let event = new ApplicationRemovedEvent(applicationKey);
             this.applicationRemovedListeners.forEach((listener: (event: ApplicationRemovedEvent)=>void) => {
                 listener(event);
             });

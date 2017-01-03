@@ -20,11 +20,11 @@ module api.content.site {
 
         getSiteConfigs(): SiteConfig[] {
 
-            var siteConfigs: SiteConfig[] = [];
+            let siteConfigs: SiteConfig[] = [];
             this.getContentData().forEachProperty("siteConfig", (applicationProperty: Property) => {
-                var siteConfigData = applicationProperty.getPropertySet();
+                let siteConfigData = applicationProperty.getPropertySet();
                 if (siteConfigData) {
-                    var siteConfig = SiteConfig.create().fromData(siteConfigData).build();
+                    let siteConfig = SiteConfig.create().fromData(siteConfigData).build();
                     siteConfigs.push(siteConfig);
                 }
             });

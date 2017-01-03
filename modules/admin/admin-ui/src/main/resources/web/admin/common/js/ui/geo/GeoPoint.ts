@@ -12,7 +12,7 @@ module api.ui.geo {
             this.setPlaceholder(api.i18n.i18n('latitude,longitude'));
 
             this.onValueChanged((event: api.ValueChangedEvent) => {
-                var typedGeoPoint = this.getValue();
+                let typedGeoPoint = this.getValue();
                 this.validUserInput = api.util.StringHelper.isEmpty(typedGeoPoint) ||
                                       api.util.GeoPoint.isValidString(typedGeoPoint);
 
@@ -26,7 +26,7 @@ module api.ui.geo {
         }
 
         getGeoPoint(): api.util.GeoPoint {
-            var value = this.getValue();
+            let value = this.getValue();
             if (api.util.StringHelper.isEmpty(value)) {
                 return null;
             }

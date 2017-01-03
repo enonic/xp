@@ -1,4 +1,5 @@
 import "../../../api.ts";
+import {DefaultModels} from "./DefaultModels";
 
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -6,7 +7,6 @@ import PageTemplate = api.content.page.PageTemplate;
 import PageDescriptor = api.content.page.PageDescriptor;
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
-import {DefaultModels} from "./DefaultModels";
 
 export interface DefaultModelsFactoryConfig {
 
@@ -24,7 +24,7 @@ export class DefaultModelsFactory {
         return new GetDefaultPageTemplateRequest(config.siteId, config.contentType).sendAndParse().then(
             (defaultPageTemplate: PageTemplate) => {
 
-                var defaultPageTemplateDescriptorPromise = null;
+                let defaultPageTemplateDescriptorPromise = null;
                 if (defaultPageTemplate && defaultPageTemplate.isPage()) {
                     defaultPageTemplateDescriptorPromise =
                         new GetPageDescriptorByKeyRequest(defaultPageTemplate.getController()).sendAndParse();
@@ -33,7 +33,7 @@ export class DefaultModelsFactory {
                     defaultPageTemplate = null;
                 }
 
-                var deferred = wemQ.defer<DefaultModels>();
+                let deferred = wemQ.defer<DefaultModels>();
                 if (defaultPageTemplateDescriptorPromise) {
                     defaultPageTemplateDescriptorPromise.then((defaultPageTemplateDescriptor: PageDescriptor) => {
 

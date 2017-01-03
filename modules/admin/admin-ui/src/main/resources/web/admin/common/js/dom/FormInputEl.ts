@@ -29,9 +29,9 @@ module api.dom {
 
             // Descendant class might override my methods
             // therefore set value on added to make sure it's ready
-            this.onAdded((event) => {
+            this.onAdded(() => {
 
-                this.onChange((event: Event) => {
+                this.onChange(() => {
                     this.refreshDirtyState();
                     this.refreshValueChanged();
                 });
@@ -179,7 +179,7 @@ module api.dom {
          * @param silent
          */
         protected refreshValueChanged(silent?: boolean) {
-            var value = this.doGetValue();
+            let value = this.doGetValue();
 
             if (this.oldValue != value) {
                 if (FormInputEl.debug) {

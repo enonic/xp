@@ -8,7 +8,7 @@ export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemp
     }
 
     resolveDisplayName(object: PageTemplateOption): string {
-        var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+        let pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 
         return !!object.getPageTemplate() ?
                (object.isCustom() ? pageTemplateDisplayName[pageTemplateDisplayName.Custom] : object.getPageTemplate().getDisplayName())
@@ -33,7 +33,7 @@ export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemp
     }
 
     resolveIconClass(object: PageTemplateOption): string {
-        var iconClass = !!object.getPageTemplate() ? (object.isCustom() ? "icon-cog" : "icon-newspaper") : "icon-wand";
+        let iconClass = !!object.getPageTemplate() ? (object.isCustom() ? "icon-cog" : "icon-newspaper") : "icon-wand";
 
         return iconClass + " icon-large";
     }

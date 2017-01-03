@@ -67,7 +67,7 @@ module api.ui.toolbar {
         }
 
         pop(): api.dom.Element {
-            var top = this.dropdown.getFirstChild();
+            let top = this.dropdown.getFirstChild();
             this.dropdown.removeChild(top);
             this.widthCache.shift();
             return top;

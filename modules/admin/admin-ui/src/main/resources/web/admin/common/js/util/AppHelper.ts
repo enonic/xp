@@ -38,16 +38,16 @@ module api.util {
         static preventDragRedirect(message: String = "", element?: api.dom.Element): void {
             element = element || api.dom.Body.get();
 
-            var window = api.dom.WindowDOM.get();
-            var timeout = null;
+            let window = api.dom.WindowDOM.get();
+            let timeout = null;
 
-            var beforeUnloadHandler = (event) => {
+            let beforeUnloadHandler = (event) => {
                 (event || window.asWindow().event)['returnValue'] = message;
                 event.preventDefault();
                 return message;
             };
 
-            var unBeforeUnload = () => {
+            let unBeforeUnload = () => {
                 timeout = null;
                 window.unBeforeUnload(beforeUnloadHandler);
             };

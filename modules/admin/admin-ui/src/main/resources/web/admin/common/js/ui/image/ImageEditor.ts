@@ -146,9 +146,9 @@ module api.ui.image {
 
             this.image.onError(imageErrorHandler);
 
-            var myId = this.getId();
+            let myId = this.getId();
 
-            var clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' +
+            let clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' +
                            '    <defs>' +
                            '        <clipPath id="' + myId + '-focusClipPath">' +
                            '            <circle cx="0" cy="0" r="0" class="clip-circle"/>' +
@@ -185,7 +185,7 @@ module api.ui.image {
                 return false;
             };
 
-            var imageMask = new api.dom.DivEl("image-bg-mask");
+            let imageMask = new api.dom.DivEl("image-bg-mask");
 
             this.canvas.appendChildren(imageMask, this.image, this.clip);
 
@@ -194,7 +194,7 @@ module api.ui.image {
             this.stickyToolbar = this.createStickyToolbar();
             this.appendChildren(this.stickyToolbar, this.frame);
 
-            var scrollListener = (event) => this.updateStickyToolbar();
+            let scrollListener = (event) => this.updateStickyToolbar();
 
             this.onAdded((event: api.dom.ElementAddedEvent) => {
                 // sticky toolbar needs to have access to parent elements
@@ -237,7 +237,7 @@ module api.ui.image {
 
         setSrc(src: string) {
             this.image.setSrc(src);
-            var image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
+            let image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('xlink:href', src);
         }
 
@@ -254,7 +254,7 @@ module api.ui.image {
         }
 
         private setImageClipPath(path: Element) {
-            var image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
+            let image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('clip-path', 'url(#' + path.getId() + ')');
         }
 
@@ -291,8 +291,8 @@ module api.ui.image {
          * @returns {SVGRect} normalized to 0-1 rectangle
          */
         private normalizeRect(rect: SVGRect): SVGRect {
-            var minW = this.frameW;
-            var minH = this.frameH;
+            let minW = this.frameW;
+            let minH = this.frameH;
             return {
                 x: rect.x / minW,
                 y: rect.y / minH,
@@ -307,8 +307,8 @@ module api.ui.image {
          * @returns {SVGRect} denormalized rectangle
          */
         private denormalizeRect(rect: SVGRect): SVGRect {
-            var minW = this.frameW;
-            var minH = this.frameH;
+            let minW = this.frameW;
+            let minH = this.frameH;
             return {
                 x: rect.x * minW,
                 y: rect.y * minH,
@@ -350,10 +350,10 @@ module api.ui.image {
         }
 
         private updateImageDimensions(reset: boolean = false, scale: boolean = false) {
-            var imgEl = this.image.getEl(),
+            let imgEl = this.image.getEl(),
                 frameEl = this.frame.getEl();
 
-            var zoomPct: SVGRect, cropPct: SVGRect, focusPosPct: Point, focusRadPct,
+            let zoomPct: SVGRect, cropPct: SVGRect, focusPosPct: Point, focusRadPct,
                 revZoomPct: SVGRect, revCropPct: SVGRect, revFocusPosPct: Point, revFocusRadPct;
 
             if (scale) {
@@ -442,7 +442,7 @@ module api.ui.image {
                     this.revertZoomData = this.denormalizeRect(revZoomPct);
                 }
                 if (revCropPct) {
-                    var revCrop = this.denormalizeRect(revCropPct);
+                    let revCrop = this.denormalizeRect(revCropPct);
                     this.revertCropData = {
                         x: revCrop.x,
                         y: revCrop.y,
@@ -452,8 +452,8 @@ module api.ui.image {
                     };
                 }
                 if (revFocusPosPct && revFocusRadPct) {
-                    var revFocusPos = this.denormalizePoint(revFocusPosPct.x, revFocusPosPct.y);
-                    var revFocusRad = this.denormalizeRadius(revFocusRadPct);
+                    let revFocusPos = this.denormalizePoint(revFocusPosPct.x, revFocusPosPct.y);
+                    let revFocusRad = this.denormalizeRadius(revFocusRadPct);
                     this.revertFocusData = {
                         x: revFocusPos.x,
                         y: revFocusPos.y,
@@ -473,7 +473,7 @@ module api.ui.image {
         }
 
         private isOutside(event: MouseEvent) {
-            var el = this.getEl(),
+            let el = this.getEl(),
                 offset = el.getOffset(),
                 bottom = offset.top + el.getHeightWithBorder(),
                 right = offset.left + el.getWidthWithBorder(),
@@ -494,7 +494,7 @@ module api.ui.image {
                 console.log('setShaderVisible', visible);
             }
 
-            var bodyMask = api.ui.mask.BodyMask.get();
+            let bodyMask = api.ui.mask.BodyMask.get();
             if (visible) {
                 if (!this.maskClickListener) {
                     this.maskClickListener = (event: MouseEvent) => {
@@ -528,18 +528,18 @@ module api.ui.image {
 
                 if (!this.maskWheelListener) {
                     this.maskWheelListener = (event: WheelEvent) => {
-                        var el = this.getEl(),
+                        let el = this.getEl(),
                             win = api.dom.WindowDOM.get(),
                             myHeight = el.getHeight(),
                             myTop = el.getTopPx(),
                             winHeight = win.getHeight();
 
-                        var newTop = myTop - this.normalizeWheel(event).pixelY;
+                        let newTop = myTop - this.normalizeWheel(event).pixelY;
 
-                        var newTopLimited;
-                        var heightLimit = this.stickyToolbar.getEl().getHeight() + 100;
+                        let newTopLimited;
+                        let heightLimit = this.stickyToolbar.getEl().getHeight() + 100;
                         newTopLimited = Math.min(winHeight - heightLimit, Math.max(heightLimit - myHeight, newTop));
-                        var isInsideLimit = newTop == newTopLimited;
+                        let isInsideLimit = newTop == newTopLimited;
                         if (!isInsideLimit && (Math.abs(newTop - newTopLimited) > Math.abs(myTop - newTopLimited))) {
                             // we are outside limit and trying to move away from it
                             // so keep my current position to prevent it
@@ -584,7 +584,7 @@ module api.ui.image {
 
         // https://github.com/facebook/fixed-data-table/blob/master/dist/fixed-data-table.js#L2052
         private normalizeWheel(event: (WheelEvent|any)) {
-            var sX = 0, sY = 0,       // spinX, spinY
+            let sX = 0, sY = 0,       // spinX, spinY
                 pX = 0, pY = 0;       // pixelX, pixelY
 
             // Legacy
@@ -628,9 +628,9 @@ module api.ui.image {
         }
 
         private createStickyToolbar(): DivEl {
-            var toolbar = new DivEl('sticky-toolbar');
+            let toolbar = new DivEl('sticky-toolbar');
 
-            var editContainer = new DivEl('edit-container');
+            let editContainer = new DivEl('edit-container');
 
             this.editResetButton = new Button('Reset');
             this.editResetButton.setVisible(false).addClass('transparent').onClicked((event: MouseEvent) => {
@@ -645,7 +645,7 @@ module api.ui.image {
                 }
             });
 
-            var applyButton = new Button('Apply');
+            let applyButton = new Button('Apply');
             applyButton.addClass('blue').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -656,7 +656,7 @@ module api.ui.image {
                 }
             });
 
-            var cancelButton = new api.ui.button.CloseButton();
+            let cancelButton = new api.ui.button.CloseButton();
             cancelButton.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -669,8 +669,8 @@ module api.ui.image {
 
             editContainer.appendChildren(this.editResetButton, applyButton, cancelButton);
 
-            var standbyContainer = new DivEl('standby-container');
-            var resetButton = new Button('Reset filters');
+            let standbyContainer = new DivEl('standby-container');
+            let resetButton = new Button('Reset filters');
             resetButton.addClass('button-reset transparent').setVisible(false).onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -730,12 +730,12 @@ module api.ui.image {
                 }
             });
 
-            var rightContainer = new DivEl('right-container');
+            let rightContainer = new DivEl('right-container');
             rightContainer.appendChildren(standbyContainer, editContainer);
 
-            var zoomContainer = this.createZoomContainer();
+            let zoomContainer = this.createZoomContainer();
 
-            var topContainer = new DivEl('top-container');
+            let topContainer = new DivEl('top-container');
             topContainer.appendChildren(this.editCropButton, this.editFocusButton, rightContainer);
 
             toolbar.appendChildren(topContainer, zoomContainer);
@@ -744,7 +744,7 @@ module api.ui.image {
         }
 
         private updateStickyToolbar() {
-            var relativeScrollTop = this.getRelativeScrollTop();
+            let relativeScrollTop = this.getRelativeScrollTop();
             if (!this.isTopEdgeVisible(relativeScrollTop) && this.isBottomEdgeVisible(relativeScrollTop)) {
                 this.addClass("sticky-mode");
                 this.stickyToolbar.getEl().setTopPx(-relativeScrollTop);
@@ -761,7 +761,7 @@ module api.ui.image {
             this.zoomKnob = new api.dom.SpanEl('zoom-knob');
             this.zoomLine.appendChild(this.zoomKnob);
 
-            var zoomTitle = new api.dom.SpanEl('zoom-title');
+            let zoomTitle = new api.dom.SpanEl('zoom-title');
             zoomTitle.setHtml('Zoom');
 
             this.zoomContainer.appendChildren(zoomTitle, this.zoomLine);
@@ -775,18 +775,18 @@ module api.ui.image {
 
         private isBottomEdgeVisible(relativeScrollTop: number): boolean {
             // use crop area bottom edge
-            var stickyToolbarHeight = this.stickyToolbar.getEl().getHeight(),
+            let stickyToolbarHeight = this.stickyToolbar.getEl().getHeight(),
                 frameHeight = this.frame.getEl().getHeight(),
                 totalHeight = this.getEl().getHeight();
 
             // in crop edit mode toolbar grows bigger because of zoom control, so calc difference
-            var toolbarDelta = stickyToolbarHeight - (totalHeight - frameHeight);
+            let toolbarDelta = stickyToolbarHeight - (totalHeight - frameHeight);
 
             return (this.getCropPositionPx().h + relativeScrollTop - toolbarDelta ) > 0;
         }
 
         private getRelativeScrollTop(): number {
-            var scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR),
+            let scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR),
                 scrollElOffsetTop = scrollEl.length == 1
                     ? scrollEl.offset().top
                     : 0,
@@ -806,7 +806,7 @@ module api.ui.image {
             this.setShaderVisible(edit);
             this.toggleClass('edit-mode', edit);
 
-            var crop, zoom, focus, radius;
+            let crop, zoom, focus, radius;
 
             if (edit) {
                 this.updateRevertCropData();
@@ -934,7 +934,7 @@ module api.ui.image {
         }
 
         private setFocusPositionPx(position: Point, updateAuto: boolean = true) {
-            var oldX = this.focusData.x,
+            let oldX = this.focusData.x,
                 oldY = this.focusData.y;
 
             if (ImageEditor.debug) {
@@ -986,7 +986,7 @@ module api.ui.image {
                 console.log('resetFocusPosition');
             }
 
-            var denormalizedPoint = this.denormalizePoint(0.5, 0.5);
+            let denormalizedPoint = this.denormalizePoint(0.5, 0.5);
             // make sure it resets to the center of the crop area
             this.setFocusPositionPx({
                 x: denormalizedPoint.x,
@@ -1004,7 +1004,7 @@ module api.ui.image {
         }
 
         private setFocusRadiusPx(r: number, updateAuto: boolean = true) {
-            var oldR = this.focusData.r;
+            let oldR = this.focusData.r;
 
             if (ImageEditor.debug) {
                 console.group('ImageEditor.setFocusRadiusPx');
@@ -1050,7 +1050,7 @@ module api.ui.image {
             if (ImageEditor.debug) {
                 console.log('setFocusAutoPositioned', auto);
             }
-            var autoChanged = this.focusData.auto != auto;
+            let autoChanged = this.focusData.auto != auto;
             this.focusData.auto = auto;
 
             this.toggleClass('focused', !auto);
@@ -1061,14 +1061,14 @@ module api.ui.image {
         }
 
         private bindFocusMouseListeners() {
-            var mouseDown: boolean = false;
-            var lastPos: Point;
+            let mouseDown: boolean = false;
+            let lastPos: Point;
 
             if (ImageEditor.debug) {
                 console.log('ImageEditor.bindFocusMouseListeners');
             }
 
-            var mouseDownOriginalTarget;
+            let mouseDownOriginalTarget;
             this.mouseDownListener = (event: MouseEvent) => {
 
                 if (ImageEditor.debug) {
@@ -1090,7 +1090,7 @@ module api.ui.image {
                         console.log('ImageEditor.mouseMoveListener');
                     }
 
-                    var restrainedPos = {
+                    let restrainedPos = {
                         x: this.restrainFocusX(this.focusData.x + this.getOffsetX(event) - lastPos.x),
                         y: this.restrainFocusY(this.focusData.y + this.getOffsetY(event) - lastPos.y)
                     };
@@ -1117,7 +1117,7 @@ module api.ui.image {
                     }
 
                     // allow focus positioning by clicking
-                    var restrainedPos = {
+                    let restrainedPos = {
                         x: this.restrainFocusX(this.getOffsetX(event)),
                         y: this.restrainFocusY(this.getOffsetY(event))
                     };
@@ -1139,16 +1139,16 @@ module api.ui.image {
         }
 
         private updateFocusMaskPosition() {
-            var clipCircle = this.focusClipPath.getHTMLElement().querySelector('circle'),
+            let clipCircle = this.focusClipPath.getHTMLElement().querySelector('circle'),
                 strokeCircle = this.clip.getHTMLElement().querySelector('.focus-group circle');
 
             if (ImageEditor.debug) {
                 console.log('ImageEditor.updateFocusPosition', this.focusData);
             }
 
-            var circles = [clipCircle, strokeCircle];
-            for (var i = 0; i < circles.length; i++) {
-                var circle = <HTMLElement> circles[i];
+            let circles = [clipCircle, strokeCircle];
+            for (let i = 0; i < circles.length; i++) {
+                let circle = <HTMLElement> circles[i];
                 circle.setAttribute('r', this.focusData.r.toString());
                 // focus position is calculated relative to crop area
                 circle.setAttribute('cx', (this.cropData.x + this.focusData.x).toString());
@@ -1251,7 +1251,7 @@ module api.ui.image {
          * @param h
          */
         setCropPosition(x: number, y: number, x2: number, y2: number) {
-            var svg = this.rectToSVG(x, y, x2, y2);
+            let svg = this.rectToSVG(x, y, x2, y2);
             if (this.isImageLoaded()) {
                 this.setCropPositionPx(this.denormalizeRect(svg));
             } else {
@@ -1269,7 +1269,7 @@ module api.ui.image {
 
         private setCropPositionPx(crop: SVGRect, updateAuto: boolean = true) {
 
-            var oldX = this.cropData.x,
+            let oldX = this.cropData.x,
                 oldY = this.cropData.y,
                 oldW = this.cropData.w,
                 oldH = this.cropData.h;
@@ -1296,7 +1296,7 @@ module api.ui.image {
                 oldH != this.cropData.h) {
 
 
-                var dx = this.cropData.x - oldX,
+                let dx = this.cropData.x - oldX,
                     dy = this.cropData.y - oldY;
 
                 if (ImageEditor.debug) {
@@ -1342,7 +1342,7 @@ module api.ui.image {
             if (ImageEditor.debug) {
                 console.log('resetCropPosition');
             }
-            var crop = {x: 0, y: 0, w: 1, h: 1};
+            let crop = {x: 0, y: 0, w: 1, h: 1};
             this.setCropPositionPx(this.denormalizeRect(crop), false);
             this.setCropAutoPositioned(true);
         }
@@ -1351,7 +1351,7 @@ module api.ui.image {
             if (ImageEditor.debug) {
                 console.log('setCropAutoPositioned', auto);
             }
-            var autoChanged = this.cropData.auto != auto;
+            let autoChanged = this.cropData.auto != auto;
             this.cropData.auto = auto;
 
             if (autoChanged) {
@@ -1360,7 +1360,7 @@ module api.ui.image {
         }
 
         private updateCropMaskPosition() {
-            var rect = this.cropClipPath.getHTMLElement().querySelector('rect'),
+            let rect = this.cropClipPath.getHTMLElement().querySelector('rect'),
                 drag = this.dragHandle.getHTMLElement();
 
             if (ImageEditor.debug) {
@@ -1386,10 +1386,10 @@ module api.ui.image {
         }
 
         private bindCropMouseListeners() {
-            var dragMouseDown = false,
+            let dragMouseDown = false,
                 zoomMouseDown = false,
                 panMouseDown = false;
-            var lastPos: Point;
+            let lastPos: Point;
 
             if (ImageEditor.debug) {
                 console.log('ImageEditor.bindCropMouseListeners');
@@ -1397,7 +1397,7 @@ module api.ui.image {
 
             // FF doesn't generate click after mouse down - up events if their originalTarget properties don't match
             // Chrome doesn't have such property
-            var mouseDownOriginalTarget;
+            let mouseDownOriginalTarget;
 
             this.dragMouseDownListener = (event: MouseEvent) => {
                 event.stopPropagation();
@@ -1438,7 +1438,7 @@ module api.ui.image {
                 event.stopPropagation();
                 event.preventDefault();
 
-                var x = this.getOffsetX(event),
+                let x = this.getOffsetX(event),
                     y = this.getOffsetY(event);
 
                 if (ImageEditor.debug) {
@@ -1466,7 +1466,7 @@ module api.ui.image {
 
             this.mouseMoveListener = (event: MouseEvent) => {
 
-                var currPos = {
+                let currPos = {
                     x: this.getOffsetX(event),
                     y: this.getOffsetY(event)
                 };
@@ -1482,7 +1482,7 @@ module api.ui.image {
 
                 } else if (dragMouseDown) {
 
-                    var deltaY = this.getOffsetY(event) - lastPos.y,
+                    let deltaY = this.getOffsetY(event) - lastPos.y,
                         toolbarEl = this.stickyToolbar.getEl(),
                         topBoundary = toolbarEl.getHeight() + toolbarEl.getOffsetTop() - this.frame.getEl().getOffsetTop(),
                         distBetweenCropAndZoomBottoms = this.zoomData.h - this.cropData.h - this.cropData.y,
@@ -1607,7 +1607,7 @@ module api.ui.image {
          */
 
         setZoomPosition(x: number, y: number, x2: number, y2: number) {
-            var zoom = this.rectToSVG(x, y, x2, y2);
+            let zoom = this.rectToSVG(x, y, x2, y2);
             if (this.isImageLoaded()) {
                 this.setZoomPositionPx(this.denormalizeRect(zoom));
             } else {
@@ -1623,7 +1623,7 @@ module api.ui.image {
         }
 
         private setZoomPositionPx(zoom: SVGRect, updateAuto: boolean = true) {
-            var oldX = this.zoomData.x,
+            let oldX = this.zoomData.x,
                 oldY = this.zoomData.y,
                 oldW = this.zoomData.w,
                 oldH = this.zoomData.h;
@@ -1643,7 +1643,7 @@ module api.ui.image {
                 oldW != this.zoomData.w ||
                 oldH != this.zoomData.h) {
 
-                var dx = this.zoomData.x - oldX,
+                let dx = this.zoomData.x - oldX,
                     dy = this.zoomData.y - oldY;
 
                 if (ImageEditor.debug) {
@@ -1686,7 +1686,7 @@ module api.ui.image {
             if (ImageEditor.debug) {
                 console.log('resetZoomPosition');
             }
-            var zoom = {x: 0, y: 0, w: 1, h: 1};
+            let zoom = {x: 0, y: 0, w: 1, h: 1};
             this.setZoomPositionPx(this.denormalizeRect(zoom), false);
             this.setCropAutoPositioned(true);
         }
@@ -1698,17 +1698,17 @@ module api.ui.image {
 
         private moveZoomKnobByPx(delta: number) {
 
-            var zoomLineEl = this.zoomLine.getEl(),
+            let zoomLineEl = this.zoomLine.getEl(),
                 zoomKnobEl = this.zoomKnob.getEl();
 
-            var sliderLength = zoomLineEl.getWidth(),
+            let sliderLength = zoomLineEl.getWidth(),
                 knobX = zoomKnobEl.getLeftPx() || 0,
                 knobNewX = Math.max(0, Math.min(sliderLength, knobX + delta));
 
             if (knobNewX != knobX) {
                 zoomKnobEl.setLeftPx(knobNewX);
 
-                var knobPct = knobNewX / sliderLength,
+                let knobPct = knobNewX / sliderLength,
                     zoomCoeff = 1 + knobPct * ( this.maxZoom - 1),
                     newW = this.restrainZoomW(this.frameW * zoomCoeff),
                     newH = this.restrainZoomH(this.frameH * zoomCoeff),
@@ -1736,10 +1736,10 @@ module api.ui.image {
                 setLeftPx(this.zoomData.x).
                 setTopPx(this.zoomData.y);
 
-            var zoomKnobEl = this.zoomKnob.getEl(),
+            let zoomKnobEl = this.zoomKnob.getEl(),
                 zoomLineEl = this.zoomLine.getEl();
 
-            var sliderLength = zoomLineEl.getWidth(),
+            let sliderLength = zoomLineEl.getWidth(),
                 knobPct = (this.zoomData.w / this.frameW - 1 ) / (this.maxZoom - 1),
                 knobNewX = Math.max(0, Math.min(sliderLength, knobPct * sliderLength));
 
@@ -1747,7 +1747,7 @@ module api.ui.image {
         }
 
         private updateRevertCropData() {
-            var cropPosition = this.getCropPositionPx();
+            let cropPosition = this.getCropPositionPx();
             this.revertCropData = {
                 x: cropPosition.x,
                 y: cropPosition.y,
@@ -1758,7 +1758,7 @@ module api.ui.image {
         }
 
         private updateRevertZoomData() {
-            var zoomPosition = this.getZoomPositionPx();
+            let zoomPosition = this.getZoomPositionPx();
             this.revertZoomData = {
                 x: zoomPosition.x,
                 y: zoomPosition.y,
@@ -1768,7 +1768,7 @@ module api.ui.image {
         }
 
         private updateRevertFocusData() {
-            var focusPosition = this.getFocusPositionPx();
+            let focusPosition = this.getFocusPositionPx();
             this.revertFocusData = {
                 x: focusPosition.x,
                 y: focusPosition.y,
@@ -1851,7 +1851,7 @@ module api.ui.image {
         }
 
         private notifyFocusPositionChanged(position: Point) {
-            var normalizedPosition = this.normalizePoint(position);
+            let normalizedPosition = this.normalizePoint(position);
             this.focusPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);
             });
@@ -1868,7 +1868,7 @@ module api.ui.image {
         }
 
         private notifyFocusRadiusChanged(r: number) {
-            var normalizedRadius = this.normalizeRadius(r);
+            let normalizedRadius = this.normalizeRadius(r);
             this.focusRadiusChangedListeners.forEach((listener) => {
                 listener(normalizedRadius);
             });
@@ -1906,7 +1906,7 @@ module api.ui.image {
         }
 
         private notifyCropPositionChanged(position: SVGRect) {
-            var normalizedPosition = this.rectFromSVG(this.normalizeRect(position));
+            let normalizedPosition = this.rectFromSVG(this.normalizeRect(position));
             this.cropPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);
             });

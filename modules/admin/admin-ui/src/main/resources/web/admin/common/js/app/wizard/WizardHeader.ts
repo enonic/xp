@@ -20,7 +20,7 @@ module api.app.wizard {
         }
 
         notifyPropertyChanged(property: string, oldValue: string, newValue: string) {
-            var event = new api.PropertyChangedEvent(property, oldValue, newValue);
+            let event = new api.PropertyChangedEvent(property, oldValue, newValue);
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener.call(this, event);
             });

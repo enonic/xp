@@ -27,7 +27,7 @@ module api.ui.menu {
         }
 
         addAction(action: api.ui.Action): Menu {
-            var menuItem = this.createMenuItem(action);
+            let menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
             return this;
         }
@@ -40,7 +40,7 @@ module api.ui.menu {
         }
 
         removeAction(action: api.ui.Action): Menu {
-            var menuItem = this.getMenuItem(action);
+            let menuItem = this.getMenuItem(action);
             if (menuItem) {
                 this.removeMenuItem(menuItem);
                 this.removeChild(menuItem);
@@ -84,7 +84,7 @@ module api.ui.menu {
         }
 
         private createMenuItem(action: api.ui.Action): MenuItem {
-            var menuItem = new MenuItem(action);
+            let menuItem = new MenuItem(action);
             menuItem.onClicked((event: MouseEvent) => {
                 this.notifyItemClicked(menuItem);
                 if (this.hideOnItemClick) {
@@ -104,8 +104,8 @@ module api.ui.menu {
         }
 
         private getMenuItem(action: api.ui.Action): MenuItem {
-            for (var i = 0; i < this.menuItems.length; i++) {
-                var menuItem = this.menuItems[i];
+            for (let i = 0; i < this.menuItems.length; i++) {
+                let menuItem = this.menuItems[i];
                 if (menuItem.getAction() == action) {
                     return menuItem;
                 }

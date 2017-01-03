@@ -18,7 +18,7 @@ module api.content.page.region {
 
         fromJsonToLayoutDescriptor(json: LayoutDescriptorJson): LayoutDescriptor {
 
-            var descriptor = new LayoutDescriptorBuilder().fromJson(json).build();
+            let descriptor = new LayoutDescriptorBuilder().fromJson(json).build();
             this.cache.put(descriptor);
             return  descriptor;
         }

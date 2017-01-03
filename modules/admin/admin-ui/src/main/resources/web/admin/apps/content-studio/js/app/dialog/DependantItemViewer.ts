@@ -9,7 +9,7 @@ export class DependantItemViewer extends api.ui.NamesAndIconViewer<ContentSummar
     }
 
     resolveDisplayName(object: ContentSummaryAndCompareStatus): string {
-        var pendingDelete = (api.content.CompareStatus.PENDING_DELETE == object.getCompareStatus());
+        let pendingDelete = (api.content.CompareStatus.PENDING_DELETE == object.getCompareStatus());
 
         this.toggleClass("pending-delete", pendingDelete);
         return object.getPath().toString();

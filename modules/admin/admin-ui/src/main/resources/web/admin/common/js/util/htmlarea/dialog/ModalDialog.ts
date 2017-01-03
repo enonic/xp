@@ -85,7 +85,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected createForm(formItems: FormItem[]): Form {
-            var form = new Form(),
+            let form = new Form(),
                 validationCls = api.form.FormView.VALIDATION_CLASS;
 
             formItems.forEach((formItem: FormItem) => {
@@ -108,7 +108,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected createFormPanel(formItems: FormItem[]): api.ui.panel.Panel {
-            var panel = new api.ui.panel.Panel(),
+            let panel = new api.ui.panel.Panel(),
                 form = this.createForm(formItems);
 
             panel.appendChild(form);
@@ -117,13 +117,13 @@ module api.util.htmlarea.dialog {
         }
 
         public createFieldSet(formItem: FormItem): Fieldset {
-            var fieldSet = new Fieldset();
+            let fieldSet = new Fieldset();
 
             fieldSet.addClass("modal-dialog-fieldset");
             fieldSet.add(formItem);
 
             if (formItem.getValidator()) {
-                var validationRecordingViewer = new api.form.ValidationRecordingViewer();
+                let validationRecordingViewer = new api.form.ValidationRecordingViewer();
 
                 fieldSet.appendChild(validationRecordingViewer);
                 fieldSet.onValidityChanged((event: ValidityChangedEvent) => {
@@ -142,7 +142,7 @@ module api.util.htmlarea.dialog {
 
         protected createFormItem(id: string, label: string, validator?: (input: api.dom.FormInputEl) => string, value?: string,
                                  inputEl?: api.dom.FormItemEl): FormItem {
-            var formItemEl = inputEl || new api.ui.text.TextInput(),
+            let formItemEl = inputEl || new api.ui.text.TextInput(),
                 formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label),
                 inputWrapper = new api.dom.DivEl("input-wrapper"),
                 formItem;

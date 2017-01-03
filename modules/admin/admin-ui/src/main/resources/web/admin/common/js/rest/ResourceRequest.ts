@@ -46,7 +46,7 @@ module api.rest {
 
             this.validate();
 
-            var jsonRequest = new JsonRequest<RAW_JSON_TYPE>().
+            let jsonRequest = new JsonRequest<RAW_JSON_TYPE>().
                 setMethod(this.method).setParams(this.getParams()).setPath(this.getRequestPath()).setTimeout(
                 !this.heavyOperation ? this.timeoutMillis : 0);
             return jsonRequest.send();

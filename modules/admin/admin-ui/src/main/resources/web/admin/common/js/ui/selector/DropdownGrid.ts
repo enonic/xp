@@ -88,7 +88,7 @@ module api.ui.selector {
         }
 
         protected createColumns(): api.ui.grid.GridColumn<any>[] {
-            var columnFormatter =
+            let columnFormatter =
                 (row: number, cell: number, value: OPTION_DISPLAY_VALUE, columnDef: any, dataContext: Option<OPTION_DISPLAY_VALUE>) => {
                     this.optionDisplayValueViewer.setObject(value);
                     return this.optionDisplayValueViewer.toString();
@@ -181,11 +181,11 @@ module api.ui.selector {
 
         adjustGridHeight() {
 
-            var gridEl = this.grid.getEl();
-            var rowsHeight = this.getOptionCount() * this.optionDisplayValueViewer.getPreferredHeight();
+            let gridEl = this.grid.getEl();
+            let rowsHeight = this.getOptionCount() * this.optionDisplayValueViewer.getPreferredHeight();
 
             if (rowsHeight < this.customHeight) {
-                var borderWidth = gridEl.getBorderTopWidth() + gridEl.getBorderBottomWidth();
+                let borderWidth = gridEl.getBorderTopWidth() + gridEl.getBorderBottomWidth();
                 gridEl.setHeightPx(rowsHeight + borderWidth);
                 this.grid.getOptions().setAutoHeight(true);
             } else if (gridEl.getHeight() < this.customHeight) {
@@ -209,10 +209,10 @@ module api.ui.selector {
 
         markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
 
-            var stylesHash: Slick.CellCssStylesHash = {};
-            var rows: number[] = [];
+            let stylesHash: Slick.CellCssStylesHash = {};
+            let rows: number[] = [];
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
-                var row = this.gridData.getRowById(selectedOption.value);
+                let row = this.gridData.getRowById(selectedOption.value);
                 rows.push(row);
                 stylesHash[row] = {option: "selected"};
             });
@@ -224,12 +224,12 @@ module api.ui.selector {
 
         markReadOnly(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
 
-            var stylesHash: Slick.CellCssStylesHash = {};
-            var rows: number[] = [];
+            let stylesHash: Slick.CellCssStylesHash = {};
+            let rows: number[] = [];
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
                 if(selectedOption.readOnly)
                 {
-                    var row = this.gridData.getRowById(selectedOption.value);
+                    let row = this.gridData.getRowById(selectedOption.value);
                     rows.push(row);
                     stylesHash[row] = {_checkbox_selector: "readonly" ,option: "readonly"};
                 }
@@ -271,9 +271,9 @@ module api.ui.selector {
         }
 
         toggleRowSelection(row: number, isMaximumReached: boolean = false) {
-            var rows = this.grid.getSelectedRows();
-            var oldRows = rows.join();
-            var index = rows.indexOf(row);
+            let rows = this.grid.getSelectedRows();
+            let oldRows = rows.join();
+            let index = rows.indexOf(row);
 
             if (index >= 0) {
                 rows.splice(index, 1);

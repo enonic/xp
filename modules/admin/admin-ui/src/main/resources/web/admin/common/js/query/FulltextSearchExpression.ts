@@ -13,19 +13,19 @@ module api.query {
             if (searchString == null) {
                 return null;
             }
-            var args: api.query.expr.ValueExpr[] = [];
+            let args: api.query.expr.ValueExpr[] = [];
 
             args.push(ValueExpr.stringValue(queryFields.toString()));
             args.push(ValueExpr.stringValue(searchString));
             args.push(ValueExpr.stringValue("AND"));
 
-            var fulltextExp: FunctionExpr = new FunctionExpr("fulltext", args);
-            var fulltextDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(fulltextExp);
+            let fulltextExp: FunctionExpr = new FunctionExpr("fulltext", args);
+            let fulltextDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(fulltextExp);
 
-            var nGramExpr: FunctionExpr = new FunctionExpr("ngram", args);
-            var nGramDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(nGramExpr);
+            let nGramExpr: FunctionExpr = new FunctionExpr("ngram", args);
+            let nGramDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(nGramExpr);
 
-            var booleanExpr: LogicalExpr = new LogicalExpr(fulltextDynamicExpr, LogicalOperator.OR, nGramDynamicExpr);
+            let booleanExpr: LogicalExpr = new LogicalExpr(fulltextDynamicExpr, LogicalOperator.OR, nGramDynamicExpr);
             return booleanExpr;
         }
     }

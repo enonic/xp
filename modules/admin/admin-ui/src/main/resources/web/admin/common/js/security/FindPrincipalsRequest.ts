@@ -31,7 +31,7 @@ module api.security {
         sendAndParse(): wemQ.Promise<FindPrincipalsResult> {
             return this.send().
                 then((response: api.rest.JsonResponse<FindPrincipalsResultJson>) => {
-                    var principals: Principal[] = response.getResult().principals.map((principalJson: PrincipalJson) => {
+                    let principals: Principal[] = response.getResult().principals.map((principalJson: PrincipalJson) => {
                         return this.fromJsonToPrincipal(principalJson);
                     });
                     if (this.filterPredicate) {

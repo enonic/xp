@@ -55,7 +55,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initFormView() {
-        var formBuilder = new api.form.FormBuilder().addFormItem(
+        let formBuilder = new api.form.FormBuilder().addFormItem(
             new api.form.InputBuilder().setName("from").setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
                 "Online from").setHelpText("Time from which your contents will be available online").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
@@ -109,12 +109,12 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     getFromDate(): Date {
-        var publishFrom = this.propertySet.getDateTime("from");
+        let publishFrom = this.propertySet.getDateTime("from");
         return publishFrom && publishFrom.toDate();
     }
 
     getToDate(): Date {
-        var publishTo = this.propertySet.getDateTime("to");
+        let publishTo = this.propertySet.getDateTime("to");
         return publishTo && publishTo.toDate();
     }
 

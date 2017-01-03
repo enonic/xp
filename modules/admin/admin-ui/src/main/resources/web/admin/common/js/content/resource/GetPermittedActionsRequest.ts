@@ -32,10 +32,10 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var fn = (contentId: ContentId) => {
+            let fn = (contentId: ContentId) => {
                 return contentId.toString();
             };
-            var fn2 = (permission: Permission) => {
+            let fn2 = (permission: Permission) => {
                 return Permission[permission];
             };
 

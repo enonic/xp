@@ -41,7 +41,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         this.cancelAction = cancelAction;
 
         this.applicationUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<Application>) => {
-            var names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<Application>) => {
+            let names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<Application>) => {
                 return uploadItem.getName();
             });
             this.textInput.setValue(names.join(', '));

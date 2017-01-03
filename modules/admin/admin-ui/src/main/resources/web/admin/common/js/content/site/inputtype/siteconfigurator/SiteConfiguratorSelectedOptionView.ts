@@ -40,9 +40,9 @@ module api.content.site.inputtype.siteconfigurator {
 
         doRender(): wemQ.Promise<boolean> {
 
-            var header = new api.dom.DivEl('header');
+            let header = new api.dom.DivEl('header');
 
-            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
+            let namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
                 this.application.getName() + (!!this.application.getVersion() ? "-" + this.application.getVersion() : ""));
 
@@ -71,7 +71,7 @@ module api.content.site.inputtype.siteconfigurator {
                 header.appendChild(this.createEditButton());
             }
 
-            var removeButton = new api.dom.AEl("remove");
+            let removeButton = new api.dom.AEl("remove");
             removeButton.onClicked((event: MouseEvent) => {
                 if (this.isEditable()) {
                     this.notifyRemoveClicked();
@@ -90,7 +90,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private createEditButton(): api.dom.AEl {
-            var editButton = new api.dom.AEl('edit');
+            let editButton = new api.dom.AEl('edit');
 
             editButton.onClicked((event: MouseEvent) => {
                 if (this.isEditable()) {
@@ -109,29 +109,29 @@ module api.content.site.inputtype.siteconfigurator {
 
             if (this.application.getForm().getFormItems().length > 0) {
 
-                var tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
+                let tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
 
-                var formViewStateOnDialogOpen = this.formView;
+                let formViewStateOnDialogOpen = this.formView;
                 this.unbindValidationEvent(formViewStateOnDialogOpen);
 
                 this.formView = this.createFormView(tempSiteConfig);
                 this.bindValidationEvent(this.formView);
 
-                var okCallback = () => {
+                let okCallback = () => {
                     if (!tempSiteConfig.equals(this.siteConfig)) {
                         this.applyTemporaryConfig(tempSiteConfig);
                         new api.content.event.ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
                     }
                 };
 
-                var cancelCallback = () => {
+                let cancelCallback = () => {
                     this.revertFormViewToGivenState(formViewStateOnDialogOpen);
                     if (comboBoxToUndoSelectionOnCancel) {
                         this.undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel);
                     }
                 };
 
-                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
+                let siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
                     this.formView,
                     okCallback,
                     cancelCallback);
@@ -156,7 +156,7 @@ module api.content.site.inputtype.siteconfigurator {
                 this.siteConfig.getConfig().setProperty(property.getName(), property.getIndex(), property.getValue());
             });
             this.siteConfig.getConfig().forEach((property) => {
-                var prop = tempSiteConfig.getConfig().getProperty(property.getName(), property.getIndex());
+                let prop = tempSiteConfig.getConfig().getProperty(property.getName(), property.getIndex());
                 if (!prop) {
                     this.siteConfig.getConfig().removeProperty(property.getName(), property.getIndex());
                 }
@@ -164,13 +164,13 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private makeTemporarySiteConfig(): SiteConfig {
-            var propSet = (new PropertyTree(this.siteConfig.getConfig())).getRoot();
+            let propSet = (new PropertyTree(this.siteConfig.getConfig())).getRoot();
             propSet.setContainerProperty(this.siteConfig.getConfig().getProperty());
             return SiteConfig.create().setConfig(propSet).setApplicationKey(this.siteConfig.getApplicationKey()).build();
         }
 
         private createFormView(siteConfig: SiteConfig): FormView {
-            var formView = new FormView(this.formContext, this.application.getForm(), siteConfig.getConfig());
+            let formView = new FormView(this.formContext, this.application.getForm(), siteConfig.getConfig());
             formView.addClass("site-form");
 
             formView.onLayoutFinished(() => {

@@ -23,7 +23,7 @@ module api.form {
         }
 
         private resolveRefString(): string {
-            var s = "";
+            let s = "";
             if (this.parentDataSet && !this.parentDataSet.isRoot()) {
                 s += this.parentDataSet.toString();
                 if (this.dataName) {
@@ -63,7 +63,7 @@ module api.form {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ValidationRecordingPath)) {
                 return false;
             }
-            var other = <ValidationRecordingPath>o;
+            let other = <ValidationRecordingPath>o;
 
             return api.ObjectHelper.stringEquals(this.refString, other.refString);
         }

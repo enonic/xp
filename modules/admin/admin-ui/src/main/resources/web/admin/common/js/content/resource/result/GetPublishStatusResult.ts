@@ -26,7 +26,7 @@ module api.content.resource.result {
                 return false;
             }
 
-            var other = <GetPublishStatusResult>o;
+            let other = <GetPublishStatusResult>o;
 
             if (!api.ObjectHelper.stringEquals(this.id.toString(), other.id.toString())) {
                 return false;
@@ -41,7 +41,7 @@ module api.content.resource.result {
 
         static fromJson(json: api.content.json.GetPublishStatusResultJson): GetPublishStatusResult {
 
-            var status: PublishStatus = <PublishStatus>PublishStatus[json.publishStatus];
+            let status: PublishStatus = <PublishStatus>PublishStatus[json.publishStatus];
 
             return new GetPublishStatusResult(json.id, status);
         }
