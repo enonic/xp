@@ -12,20 +12,20 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.macro.MacroProcessor;
-import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
+import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 
 @Component
-public final class MacroProcessorScriptFactoryImpl
-    implements MacroProcessorScriptFactory
+public final class MacroProcessorFactoryImpl
+    implements MacroProcessorFactory
 {
     private PortalScriptService scriptService;
 
     private final Map<String, MacroProcessor> macroProcessors;
 
-    public MacroProcessorScriptFactoryImpl()
+    public MacroProcessorFactoryImpl()
     {
         this.macroProcessors = Maps.newConcurrentMap();
     }
