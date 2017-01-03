@@ -46,11 +46,11 @@ final class ContentExistsCommand
             {
                 if ( contentId != null )
                 {
-                    node = nodeService.getById( NodeId.from( contentId ) );
+                    node = runAsAdmin( () -> nodeService.getById( NodeId.from( contentId ) ) );
                 }
                 else
                 {
-                    node = nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
+                    node = runAsAdmin( () -> nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) ) );
                 }
             }
             catch ( NodeNotFoundException e )

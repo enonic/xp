@@ -13,10 +13,24 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Beta
 public class ContentConstants
 {
+    private static final PrincipalKey CONTENT_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "content-su" );
+
+    private static final User CONTENT_SUPER_USER = User.create().key( CONTENT_SUPER_USER_KEY ).login( "content" ).build();
+
+    public static final AuthenticationInfo CONTENT_SU_AUTH_INFO = AuthenticationInfo.create().
+        principals( CONTENT_SUPER_USER_KEY, RoleKeys.ADMIN ).
+        user( CONTENT_SUPER_USER ).
+        build();
+
     public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";
 
     public static final Branch BRANCH_DRAFT = Branch.create().

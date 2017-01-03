@@ -8,7 +8,7 @@ module api.ui.panel {
         private navigator: api.ui.Navigator;
 
         constructor(navigator: Navigator, className?: string) {
-            super(className);
+            super("navigated-panel" + (className ? " " + className : ""));
             this.navigator = navigator;
 
             navigator.onNavigationItemSelected((event: NavigatorEvent) => {

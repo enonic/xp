@@ -1,4 +1,7 @@
 import "../../../../../../api.ts";
+import {PageTemplateOption} from "./PageTemplateOption";
+import {PageTemplateOptions} from "./PageTemplateOptions";
+import {PageTemplateOptionViewer} from "./PageTemplateOptionViewer";
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import ContentId = api.content.ContentId;
@@ -12,9 +15,6 @@ import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
 import PageModel = api.content.page.PageModel;
 import LiveEditModel = api.liveedit.LiveEditModel;
 import PageMode = api.content.page.PageMode;
-import {PageTemplateOption} from "./PageTemplateOption";
-import {PageTemplateOptions} from "./PageTemplateOptions";
-import {PageTemplateOptionViewer} from "./PageTemplateOptionViewer";
 
 export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
@@ -83,7 +83,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
             });
 
             this.pageModel.onReset(() => {
-                this.selectOption(pageTemplateOptions.getDefault(), true);
+                this.selectOption(pageTemplateOptions.getDefault());
             });
 
         }).catch((reason: any) => {

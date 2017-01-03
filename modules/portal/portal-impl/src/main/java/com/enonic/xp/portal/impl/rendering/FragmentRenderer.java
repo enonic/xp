@@ -90,6 +90,20 @@ public final class FragmentRenderer
         final PortalResponse fragmentResponse = renderer.render( fragmentComponent, portalRequest );
         if ( renderMode == RenderMode.EDIT && fragmentResponse != null )
         {
+            if ( !( fragmentResponse.getBody() instanceof String ) || !fragmentResponse.getContentType().is( MediaType.parse( "text/html" ) ) )
+            {
+                return fragmentResponse;
+            }
+
+            final String body = (String) fragmentResponse.getBody();
+
+            final String noMethodErrorMessage = "No method provided to handle request";
+
+            if( body.contains( noMethodErrorMessage ) )
+            {
+                return renderErrorComponentPlaceHolder( component, noMethodErrorMessage );
+            }
+
             return wrapFragmentForEditMode( fragmentResponse, type );
         }
         return fragmentResponse;
@@ -97,10 +111,6 @@ public final class FragmentRenderer
 
     private PortalResponse wrapFragmentForEditMode( final PortalResponse response, final String type )
     {
-        if ( !( response.getBody() instanceof String ) || !response.getContentType().is( MediaType.parse( "text/html" ) ) )
-        {
-            return response;
-        }
         final String body = (String) response.getBody();
         final String wrappedBody = MessageFormat.format( EDIT_MODE_FRAGMENT_WRAPPER_HTML, type, body );
         return PortalResponse.create( response ).body( wrappedBody ).build();

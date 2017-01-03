@@ -23,7 +23,8 @@ public class BundleInfoTest
         final File file = new File( "/some/location/my.jar" );
 
         final BundleInfo info1 = new BundleInfo( file, 10 );
-        assertEquals( "file:/some/location/my.jar", info1.getUri().toString() );
+        // win adds drive letter in URIs so can't compare them explicitly for OS independence
+        assertTrue( info1.getUri().equals( file.toURI() ) );
     }
 
     @Test
