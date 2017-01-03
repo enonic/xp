@@ -53,7 +53,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
-import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
+import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -76,7 +76,7 @@ public final class MacroResource
 
     private MacroIconUrlResolver macroIconUrlResolver;
 
-    private MacroProcessorScriptFactory macroProcessorScriptFactory;
+    private MacroProcessorFactory macroProcessorFactory;
 
     private PortalUrlService portalUrlService;
 
@@ -135,7 +135,7 @@ public final class MacroResource
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
-        final MacroProcessor macroProcessor = macroProcessorScriptFactory.fromScript( macroDescriptor.toControllerResourceKey() );
+        final MacroProcessor macroProcessor = macroProcessorFactory.fromScript( macroDescriptor.toControllerResourceKey() );
         if ( macroProcessor == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
@@ -304,9 +304,9 @@ public final class MacroResource
     }
 
     @Reference
-    public void setMacroProcessorScriptFactory( final MacroProcessorScriptFactory macroProcessorScriptFactory )
+    public void setMacroProcessorFactory( final MacroProcessorFactory macroProcessorFactory )
     {
-        this.macroProcessorScriptFactory = macroProcessorScriptFactory;
+        this.macroProcessorFactory = macroProcessorFactory;
     }
 
     @Reference

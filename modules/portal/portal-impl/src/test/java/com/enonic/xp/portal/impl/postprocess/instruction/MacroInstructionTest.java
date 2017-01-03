@@ -19,7 +19,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.macro.MacroProcessor;
-import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
+import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -35,7 +35,7 @@ public class MacroInstructionTest
 {
     private MacroDescriptorService macroDescriptorService;
 
-    private MacroProcessorScriptFactory macroProcessorScriptFactory;
+    private MacroProcessorFactory macroProcessorFactory;
 
     private MacroInstruction macroInstruction;
 
@@ -45,11 +45,11 @@ public class MacroInstructionTest
     public void setUp()
     {
         macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
-        macroProcessorScriptFactory = Mockito.mock( MacroProcessorScriptFactory.class );
+        macroProcessorFactory = Mockito.mock( MacroProcessorFactory.class );
 
         macroInstruction = new MacroInstruction();
         macroInstruction.setMacroDescriptorService( macroDescriptorService );
-        macroInstruction.setMacroScriptFactory( macroProcessorScriptFactory );
+        macroInstruction.setMacroProcessorFactory( macroProcessorFactory );
 
         portalRequest = new PortalRequest();
         Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
@@ -67,7 +67,7 @@ public class MacroInstructionTest
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
             ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
-        when( macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macro );
+        when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml =
             macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
@@ -147,7 +147,7 @@ public class MacroInstructionTest
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
             ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
-        when( macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macro );
+        when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml =
             macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
@@ -185,7 +185,7 @@ public class MacroInstructionTest
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
             ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
-        when( macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macro );
+        when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml =
             macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getAsString();
