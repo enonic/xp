@@ -38,8 +38,6 @@ function startApplication() {
     let appBar = new api.app.bar.AppBar(application);
     let appPanel = new UserAppPanel(appBar, application.getPath());
 
-    appBar.addClass("show-tab-menu");
-
     let body = api.dom.Body.get();
     body.appendChild(appBar);
     body.appendChild(appPanel);
@@ -54,14 +52,6 @@ function startApplication() {
 
     startLostConnectionDetector();
 
-    window.onmessage = (e: MessageEvent) => {
-        if (e.data.appLauncherEvent) {
-            let eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if (eventType == api.app.AppLauncherEventType.Show) {
-                appPanel.activateCurrentKeyBindings();
-            }
-        }
-    };
     api.security.event.PrincipalServerEventsHandler.getInstance().start();
 }
 

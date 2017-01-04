@@ -10,14 +10,12 @@
   overflow: hidden;
   .box-sizing(border-box);
 
-  &.show-tab-menu {
+  .flexbox();
+  flex-flow: row no-wrap;
+  align-items: stretch;
+  align-content: stretch;
+  .appbar-tab-menu {
     .flexbox();
-    flex-flow: row no-wrap;
-    align-items: stretch;
-    align-content: stretch;
-    .appbar-tab-menu {
-      .flexbox();
-    }
   }
 
   .home-button {
@@ -57,10 +55,6 @@
         color: rgba(255,255,255,0.5);
       }
     }
-  }
-
-  .launcher-button {
-    opacity: 0;
   }
 }
 

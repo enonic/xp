@@ -38,7 +38,7 @@ function startApplication() {
 
     let application: api.app.Application = getApplication();
     let appBar = new api.app.bar.AppBar(application);
-    let appPanel = new ApplicationAppPanel(appBar, application.getPath());
+    let appPanel = new ApplicationAppPanel(application.getPath());
 
     let body = api.dom.Body.get();
     body.appendChild(appBar);
@@ -52,15 +52,6 @@ function startApplication() {
     serverEventsListener.start();
 
     startLostConnectionDetector();
-
-    window.onmessage = (e: MessageEvent) => {
-        if (e.data.appLauncherEvent) {
-            let eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if (eventType == api.app.AppLauncherEventType.Show) {
-                appPanel.activateCurrentKeyBindings();
-            }
-        }
-    };
 
     let installAppDialog = new InstallAppDialog();
 

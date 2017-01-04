@@ -31,28 +31,25 @@ interface PrincipalData {
     principalType: PrincipalType;
 }
 
-export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeGridItem> {
+export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private mask: api.ui.mask.LoadMask;
 
-    constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
+    constructor(appBar: api.app.bar.TabbedAppBar, path?: api.rest.Path) {
 
-        super({
-            appBar: appBar
-        });
+        super(appBar);
+
         this.mask = new api.ui.mask.LoadMask(this);
-
-        this.handleGlobalEvents();
 
         this.route(path);
     }
 
     private route(path?: api.rest.Path) {
         const action = path ? path.getElement(0) : null;
-        const id = path ? path.getElement(1) : null;
 
         switch (action) {
         case 'edit':
+            const id = path.getElement(1);
             if (id && this.isValidPrincipalKey(id)) {
                 new api.security.GetPrincipalByKeyRequest(api.security.PrincipalKey.fromString(id)).sendAndParse().done(
                     (principal: api.security.Principal) => {
@@ -73,6 +70,7 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
             }
             break;
         case 'view':
+            const id = path.getElement(1);
             if (id) {
                 //TODO
             }
@@ -122,11 +120,8 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
         });
     }
 
-    private handleGlobalEvents() {
-
-        api.app.ShowBrowsePanelEvent.on((event) => {
-            this.handleBrowse(event);
-        });
+    protected handleGlobalEvents() {
+        super.handleGlobalEvents();
 
         NewPrincipalEvent.on((event) => {
             this.handleNew(event);
@@ -137,13 +132,8 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
         });
     }
 
-    private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
-        let browsePanel: api.app.browse.BrowsePanel<UserTreeGridItem> = this.getBrowsePanel();
-        if (!browsePanel) {
-            this.addBrowsePanel(new UserBrowsePanel());
-        } else {
-            this.selectPanelByIndex(this.getPanelIndex(browsePanel));
-        }
+    protected createBrowsePanel() {
+        return new UserBrowsePanel();
     }
 
 

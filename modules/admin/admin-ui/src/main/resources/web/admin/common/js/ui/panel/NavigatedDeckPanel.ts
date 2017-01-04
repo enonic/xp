@@ -7,8 +7,9 @@ module api.ui.panel {
 
         private navigator: api.ui.Navigator;
 
-        constructor(navigator: Navigator, className?: string) {
-            super("navigated-panel" + (className ? " " + className : ""));
+        constructor(navigator: Navigator) {
+            super();
+
             this.navigator = navigator;
 
             navigator.onNavigationItemSelected((event: NavigatorEvent) => {
@@ -29,26 +30,10 @@ module api.ui.panel {
             return index;
         }
 
-        selectPanel(item: NavigationItem) {
-            this.selectPanelByIndex(item.getIndex());
-        }
-
         selectPanelByIndex(index: number) {
             this.navigator.selectNavigationItem(index);
             // panel will be shown because of the selected navigator listener in constructor
         }
 
-        removeNavigablePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {
-            let index = this.removePanel(panel, checkCanRemovePanel);
-            if (index > -1) {
-                let navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(index);
-                this.navigator.removeNavigationItem(navigationItem);
-            }
-            return index;
-        }
-
-        getNavigator(): api.ui.Navigator {
-            return this.navigator;
-        }
     }
 }
