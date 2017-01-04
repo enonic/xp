@@ -74,7 +74,7 @@ export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
 
     private handleNew(newContentEvent: NewContentEvent) {
         if (newContentEvent.getContentType().isSite() && this.browsePanel) {
-            var content: Content = newContentEvent.getParentContent();
+            let content: Content = newContentEvent.getParentContent();
             if (!!content) { // refresh site's node
                 this.browsePanel.getTreeGrid().refreshNodeById(content.getId());
             }

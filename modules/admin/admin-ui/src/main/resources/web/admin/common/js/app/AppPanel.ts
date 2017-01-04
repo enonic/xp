@@ -42,7 +42,7 @@ module api.app {
             };
         }
 
-        private handleBrowse(event) {
+        private handleBrowse(event: ShowBrowsePanelEvent) {
             if (!this.browsePanel) {
                 this.addBrowsePanel(this.createBrowsePanel());
             }

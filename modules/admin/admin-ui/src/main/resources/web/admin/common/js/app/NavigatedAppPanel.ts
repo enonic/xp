@@ -34,7 +34,7 @@ module api.app {
 
         addNavigablePanel(item: AppBarTabMenuItem, panel: Panel, select?: boolean) {
             this.appBarTabMenu.addNavigationItem(item);
-            var index = this.addPanel(panel);
+            let index = this.addPanel(panel);
             if (select) {
                 this.selectPanelByIndex(index);
             }
@@ -42,9 +42,9 @@ module api.app {
         }
 
         removeNavigablePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {
-            var index = this.removePanel(panel, checkCanRemovePanel);
+            let index = this.removePanel(panel, checkCanRemovePanel);
             if (index > -1) {
-                var navigationItem: AppBarTabMenuItem = <AppBarTabMenuItem>this.appBarTabMenu.getNavigationItem(index);
+                let navigationItem: AppBarTabMenuItem = <AppBarTabMenuItem>this.appBarTabMenu.getNavigationItem(index);
                 this.appBarTabMenu.removeNavigationItem(navigationItem);
             }
 
@@ -75,7 +75,7 @@ module api.app {
 
         canRemovePanel(panel: api.ui.panel.Panel): boolean {
             if (api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.wizard.WizardPanel)) {
-                var wizardPanel: api.app.wizard.WizardPanel<any> = <api.app.wizard.WizardPanel<any>>panel;
+                let wizardPanel: api.app.wizard.WizardPanel<any> = <api.app.wizard.WizardPanel<any>>panel;
                 return wizardPanel.canClose();
             }
             return true;
@@ -85,7 +85,7 @@ module api.app {
             if (!this.browsePanel) {
                 this.browsePanel = browsePanel;
 
-                var browseMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("<Select>").setTabId(
+                let browseMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("<Select>").setTabId(
                     new api.app.bar.AppBarTabId("hidden", "____home")).build();
                 browseMenuItem.setVisibleInMenu(false);
                 this.addNavigablePanel(browseMenuItem, browsePanel);
