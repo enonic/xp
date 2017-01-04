@@ -6,7 +6,7 @@ import {ChangeUserPasswordDialog} from "./app/wizard/ChangeUserPasswordDialog";
 import {Router} from "./app/Router";
 
 function getApplication(): api.app.Application {
-    var application = new api.app.Application('user-manager', 'Users', 'UM', 'user-manager');
+    let application = new api.app.Application('user-manager', 'Users', 'UM', 'user-manager');
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
 
@@ -34,20 +34,20 @@ function startLostConnectionDetector() {
 
 function startApplication() {
 
-    var application: api.app.Application = getApplication();
-    var appBar = new api.app.bar.TabbedAppBar(application);
-    var appPanel = new UserAppPanel(appBar, application.getPath());
+    let application: api.app.Application = getApplication();
+    let appBar = new api.app.bar.AppBar(application);
+    let appPanel = new UserAppPanel(appBar, application.getPath());
 
-    var body = api.dom.Body.get();
+    let body = api.dom.Body.get();
     body.appendChild(appBar);
     body.appendChild(appPanel);
 
     api.util.AppHelper.preventDragRedirect();
 
-    var changePasswordDialog = new ChangeUserPasswordDialog();
+    let changePasswordDialog = new ChangeUserPasswordDialog();
     application.setLoaded(true);
 
-    var serverEventsListener = new api.app.ServerEventsListener([application]);
+    let serverEventsListener = new api.app.ServerEventsListener([application]);
     serverEventsListener.start();
 
     startLostConnectionDetector();

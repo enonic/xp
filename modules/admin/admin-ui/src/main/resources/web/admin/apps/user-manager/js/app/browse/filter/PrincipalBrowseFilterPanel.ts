@@ -1,12 +1,12 @@
 import "../../../api.ts";
+import {PrincipalBrowseResetEvent} from "./PrincipalBrowseResetEvent";
+import {PrincipalBrowseSearchEvent} from "./PrincipalBrowseSearchEvent";
 
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import SearchInputValues = api.query.SearchInputValues;
 import Principal = api.security.Principal;
 import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
 import PrincipalType = api.security.PrincipalType;
-import {PrincipalBrowseResetEvent} from "./PrincipalBrowseResetEvent";
-import {PrincipalBrowseSearchEvent} from "./PrincipalBrowseSearchEvent";
 
 export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
@@ -43,7 +43,7 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private searchFacets(isRefresh: boolean = false) {
-        var values = this.getSearchInputValues(),
+        let values = this.getSearchInputValues(),
             searchText = values.getTextSearchFieldValue();
         if (!searchText) {
             this.handleEmptyFilterInput(isRefresh);

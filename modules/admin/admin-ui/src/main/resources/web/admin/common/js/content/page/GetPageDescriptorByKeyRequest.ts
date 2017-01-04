@@ -22,7 +22,7 @@ module api.content.page {
 
         sendAndParse(): wemQ.Promise<PageDescriptor> {
 
-            var pageDescriptor = this.cache.getByKey(this.key);
+            let pageDescriptor = this.cache.getByKey(this.key);
             if (pageDescriptor) {
                 return wemQ(pageDescriptor);
             }

@@ -99,7 +99,7 @@ module api.ui.time {
         }
 
         protected wrapChildrenAndAppend() {
-            var wrapper = new api.dom.DivEl('wrapper', api.StyleHelper.COMMON_PREFIX);
+            let wrapper = new api.dom.DivEl('wrapper', api.StyleHelper.COMMON_PREFIX);
             wrapper.appendChildren<api.dom.Element>(this.input, this.popup);
 
             this.appendChild(wrapper);

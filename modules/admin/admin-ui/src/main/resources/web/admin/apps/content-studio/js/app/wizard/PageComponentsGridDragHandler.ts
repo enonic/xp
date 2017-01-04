@@ -18,7 +18,7 @@ import Element = api.dom.Element;
 export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
     protected handleDragInit(e: DragEvent, dd: DragEventData) {
-        var row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target)),
+        let row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target)),
             nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
             draggedNode = nodes[row.getSiblingIndex()];
 
@@ -58,12 +58,12 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
     protected handleBeforeMoveRows(event: Event, data: any): boolean {
 
-        var dataList = this.contentGrid.getRoot().getCurrentRoot().treeToList();
+        let dataList = this.contentGrid.getRoot().getCurrentRoot().treeToList();
 
-        var draggableRow = data.rows[0],
+        let draggableRow = data.rows[0],
             insertBefore = data.insertBefore;
 
-        var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
+        let insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
 
         this.updateDragHelperStatus(draggableRow, insertPosition, dataList);
 
@@ -81,11 +81,11 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
     protected makeMovementInNodes(draggableRow: number, insertBefore: number): number {
 
-        var root = this.contentGrid.getRoot().getCurrentRoot();
-        var dataList = root.treeToList();
+        let root = this.contentGrid.getRoot().getCurrentRoot();
+        let dataList = root.treeToList();
 
-        var item = dataList.slice(draggableRow, draggableRow + 1)[0];
-        var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
+        let item = dataList.slice(draggableRow, draggableRow + 1)[0];
+        let insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
 
         this.moveIntoNewParent(item, insertPosition, dataList);
 
@@ -105,11 +105,11 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     }
 
     protected moveIntoNewParent(item: TreeNode<ItemView>, insertBefore: number, data: TreeNode<ItemView>[]) {
-        var insertData = this.getParentPosition(insertBefore, data),
+        let insertData = this.getParentPosition(insertBefore, data),
             regionPosition = insertData.parentPosition,
             insertIndex = insertData.insertIndex;
 
-        var newParent = data[regionPosition];
+        let newParent = data[regionPosition];
 
         if (newParent == item.getParent() && data.indexOf(item) < insertBefore) {
             insertIndex--;
@@ -129,9 +129,9 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
     private updateDragHelperStatus(draggableRow: number, insertBeforePos: number, data: TreeNode<ItemView>[]) {
 
-        var parentPosition = this.getParentPosition(insertBeforePos, data).parentPosition;
+        let parentPosition = this.getParentPosition(insertBeforePos, data).parentPosition;
 
-        var parentComponentNode = data[parentPosition],
+        let parentComponentNode = data[parentPosition],
             parentComponentView = parentComponentNode.getData(),
             draggableComponentView = data[draggableRow].getData();
 
@@ -159,7 +159,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
                 DragHelper.get().setDropAllowed(true);
 
-                var draggableItem = this.getDraggableItem();
+                let draggableItem = this.getDraggableItem();
                 if (draggableItem) {
                     this.updateDraggableItemPosition(draggableItem, parentComponentNode.calcLevel());
                 }
@@ -170,8 +170,8 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     }
 
     private updateDraggableItemPosition(draggableItem: Element, parentLevel: number) {
-        var margin = parentLevel * api.ui.treegrid.TreeGrid.LEVEL_STEP_INDENT;
-        var nodes = draggableItem.getEl().getElementsByClassName("toggle icon");
+        let margin = parentLevel * api.ui.treegrid.TreeGrid.LEVEL_STEP_INDENT;
+        let nodes = draggableItem.getEl().getElementsByClassName("toggle icon");
 
         if (nodes.length == 1) {
             nodes[0].setMarginLeft(margin + "px");

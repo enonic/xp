@@ -106,14 +106,14 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.partComponent = <PartComponent>partView.getComponent();
 
         this.setComponent(this.partComponent);
-        var key: DescriptorKey = this.partComponent.getDescriptor();
+        const key: DescriptorKey = this.partComponent.getDescriptor();
         if (key) {
-            var descriptor: PartDescriptor = this.selector.getDescriptor(key);
+            const descriptor: PartDescriptor = this.selector.getDescriptor(key);
             if (descriptor) {
                 this.setSelectorValue(descriptor);
             } else {
-                new GetPartDescriptorByKeyRequest(key).sendAndParse().then((descriptor: PartDescriptor) => {
-                    this.setSelectorValue(descriptor);
+                new GetPartDescriptorByKeyRequest(key).sendAndParse().then((receivedDescriptor: PartDescriptor) => {
+                    this.setSelectorValue(receivedDescriptor);
                 }).catch((reason: any) => {
                     if (this.isNotFoundError(reason)) {
                         this.setSelectorValue(null);
@@ -133,8 +133,8 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
         this.selector.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
             if (this.handleSelectorEvents) {
-                var option: Option<PartDescriptor> = event.getOption();
-                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                let option: Option<PartDescriptor> = event.getOption();
+                let selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                 this.partComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
             }
         });

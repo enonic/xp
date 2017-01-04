@@ -248,7 +248,7 @@ module api.ui {
 
         getKeyBindings(): KeyBinding[] {
 
-            var bindings: KeyBinding[] = [];
+            let bindings: KeyBinding[] = [];
 
             if (this.hasShortcut()) {
                 bindings.push(this.getShortcut());
@@ -264,7 +264,7 @@ module api.ui {
 
         static getKeyBindings(actions: api.ui.Action[]): KeyBinding[] {
 
-            var bindings: KeyBinding[] = [];
+            let bindings: KeyBinding[] = [];
             actions.forEach((action: Action) => {
                 action.getKeyBindings().forEach((keyBinding: KeyBinding) => {
                     bindings.push(keyBinding);

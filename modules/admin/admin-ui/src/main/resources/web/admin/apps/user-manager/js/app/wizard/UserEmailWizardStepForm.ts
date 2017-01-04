@@ -23,12 +23,12 @@ export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
         this.email = new EmailInput();
         this.email.setUserStoreKey(this.userStoreKey);
 
-        var emailFormItem = new FormItemBuilder(this.email).setLabel('Email').setValidator(Validators.required).build();
+        let emailFormItem = new FormItemBuilder(this.email).setLabel('Email').setValidator(Validators.required).build();
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(emailFormItem);
 
-        var form = new api.ui.form.Form(api.form.FormView.VALIDATION_CLASS).add(fieldSet);
+        let form = new api.ui.form.Form(api.form.FormView.VALIDATION_CLASS).add(fieldSet);
 
         form.onFocus((event) => {
             this.notifyFocused(event);

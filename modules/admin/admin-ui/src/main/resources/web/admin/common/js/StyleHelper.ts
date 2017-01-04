@@ -24,7 +24,7 @@ module api {
             if (!prefix) {
                 return cls;
             }
-            var clsArr = cls.trim().split(" ");
+            let clsArr = cls.trim().split(" ");
             clsArr.forEach((clsEl: string, index: number, arr: string[]) => {
                 if (!api.StyleHelper.isPrefixed(clsEl, prefix)) {
                     arr[index] = prefix + clsEl;

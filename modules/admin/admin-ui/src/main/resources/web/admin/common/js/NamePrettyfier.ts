@@ -24,7 +24,7 @@ module api {
                 return '';
             }
 
-            var prettifiedPathName: string = notPretty;
+            let prettifiedPathName: string = notPretty;
 
             prettifiedPathName = this.makeLowerCase(prettifiedPathName);
             prettifiedPathName = this.replaceWithHyphens(prettifiedPathName);
@@ -59,10 +59,10 @@ module api {
                 return "";
             }
 
-            var result = "";
+            let result = "";
 
-            for (var i = 0, len = prettifiedName.length; i < len; i++) {
-                var character = prettifiedName[i],
+            for (let i = 0, len = prettifiedName.length; i < len; i++) {
+                let character = prettifiedName[i],
                     replace = this.REPLACE_WITH_HYPHEN_CHARS[character];
                 result += (replace != null ? replace : character);
             }
@@ -75,7 +75,7 @@ module api {
                 return "";
             }
 
-            var trimmedName: string = prettifiedName.trim();
+            let trimmedName: string = prettifiedName.trim();
 
             return trimmedName.replace(/\s+/g, "-");
         }
@@ -109,7 +109,7 @@ module api {
 
             this.STRIP_BEGINNING_PATTERN.lastIndex = this.STRIP_ENDING_PATTERN.lastIndex = 0;
 
-            var match = this.STRIP_BEGINNING_PATTERN.exec(prettifiedName);
+            let match = this.STRIP_BEGINNING_PATTERN.exec(prettifiedName);
             if (!!match) {
                 prettifiedName = prettifiedName.replace(match[0], match[2]);
             }
@@ -127,28 +127,28 @@ module api {
                 return '';
             }
 
-            var result = "";
+            let result = "";
 
-            for (var i = 0, len = transcribeMe.length; i < len; i++) {
-                var character = transcribeMe[i],
+            for (let i = 0, len = transcribeMe.length; i < len; i++) {
+                let character = transcribeMe[i],
                     replace = this.NON_DIACRITICS[character];
 
                 replace = replace != null ? replace : this.DIACRITICS[character];
                 result += (replace != null ? replace : character);
             }
 
-            var normalized = result;
+            let normalized = result;
 
             if ((<any>result).normalize) {
                 normalized = (<any>result).normalize('NFD');
             }
 
-            var nonAsciiCleaned = normalized.replace(this.NOT_ASCII, this.DEFAULT_REPLACE);
+            let nonAsciiCleaned = normalized.replace(this.NOT_ASCII, this.DEFAULT_REPLACE);
             return nonAsciiCleaned.toLowerCase();
         }
 
         private static buildDiacriticsMap(): Object {
-            var defaultDiacriticsRemovalMap = [
+            let defaultDiacriticsRemovalMap = [
                 {
                     'base': 'A',
                     // tslint:disable-next-line:max-line-length
@@ -310,10 +310,10 @@ module api {
                 {'base': 'z', 'letters': '\u007A\u24E9\uFF5A\u017A\u1E91\u017C\u017E\u1E93\u1E95\u01B6\u0225\u0240\u2C6C\uA763'}
             ];
 
-            var diacriticsMap = {};
-            for (var i = 0; i < defaultDiacriticsRemovalMap.length; i++) {
-                var letters = defaultDiacriticsRemovalMap [i].letters;
-                for (var j = 0; j < letters.length; j++) {
+            let diacriticsMap = {};
+            for (let i = 0; i < defaultDiacriticsRemovalMap.length; i++) {
+                let letters = defaultDiacriticsRemovalMap [i].letters;
+                for (let j = 0; j < letters.length; j++) {
                     diacriticsMap[letters[j]] = defaultDiacriticsRemovalMap [i].base;
                 }
             }
@@ -322,7 +322,7 @@ module api {
         }
 
         private static buildReplaceWithHyphenMap(): Object {
-            var replaceWithHyphenObject = {
+            let replaceWithHyphenObject = {
                 '$': "-",
                 '&': "-",
                 '|': "-",
@@ -356,7 +356,7 @@ module api {
         }
 
         private static buildNonDiacriticsMap(): Object {
-            var nonDiacriticsObject = {};
+            let nonDiacriticsObject = {};
 
             //remove crap strings with no semantics
             nonDiacriticsObject['\"'] = this.DEFAULT_REPLACE;

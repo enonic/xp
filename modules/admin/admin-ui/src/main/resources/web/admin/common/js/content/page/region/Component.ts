@@ -57,7 +57,7 @@ module api.content.page.region {
         }
 
         setName(newValue: ComponentName) {
-            var oldValue = this.name;
+            let oldValue = this.name;
             this.name = newValue;
             if (!api.ObjectHelper.equals(oldValue, newValue)) {
                 this.notifyPropertyChanged(Component.PROPERTY_NAME);
@@ -82,8 +82,8 @@ module api.content.page.region {
         }
 
         duplicate(): Component {
-            var duplicateName = this.getName();
-            var duplicatedComponent = this.clone();
+            let duplicateName = this.getName();
+            let duplicatedComponent = this.clone();
             duplicatedComponent.setName(duplicateName);
 
             return duplicatedComponent;
@@ -114,7 +114,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <Component>o;
+            let other = <Component>o;
 
             if (!api.ObjectHelper.equals(this.name, other.name)) {
                 return false;
@@ -155,7 +155,7 @@ module api.content.page.region {
         }
 
         private notifyResetEvent() {
-            var event = new ComponentResetEvent(this.getPath());
+            let event = new ComponentResetEvent(this.getPath());
             this.resetListeners.forEach((listener: (event: ComponentResetEvent)=>void) => {
                 listener(event);
             });
@@ -176,7 +176,7 @@ module api.content.page.region {
         }
 
         notifyPropertyChanged(propertyName: string) {
-            var event = ComponentPropertyChangedEvent.create().setComponent(this).setPropertyName(propertyName).build();
+            let event = ComponentPropertyChangedEvent.create().setComponent(this).setPropertyName(propertyName).build();
             this.propertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
                 listener(event);
             });
@@ -204,7 +204,7 @@ module api.content.page.region {
         }
 
         notifyPropertyValueChanged(propertyName: string) {
-            var event = new ComponentPropertyValueChangedEvent(this.getPath(), propertyName);
+            let event = new ComponentPropertyValueChangedEvent(this.getPath(), propertyName);
             this.propertyValueChangedListeners.forEach((listener: (event: ComponentPropertyValueChangedEvent)=>void) => {
                 listener(event);
             });

@@ -12,7 +12,7 @@ export class UnpublishContentAction extends Action {
         this.setEnabled(false);
 
         this.onExecuted(() => {
-            var contents: api.content.ContentSummaryAndCompareStatus[]
+            let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
             new ContentUnpublishPromptEvent(contents).fire();
         });

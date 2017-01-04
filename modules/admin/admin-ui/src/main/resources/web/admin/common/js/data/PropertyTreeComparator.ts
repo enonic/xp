@@ -14,7 +14,7 @@ module api.data {
             // Check those existing in A, but not in B
             setA.forEach((propertyA: Property, index: number) => {
 
-                var propertyB = setB.getProperty(propertyA.getName(), index);
+                let propertyB = setB.getProperty(propertyA.getName(), index);
                 if (!propertyB) {
                     console.log("Property A[" + propertyA.getPath().toString() + "] does not exist in B[" +
                                 setB.getPropertyPath().toString() + "]");
@@ -26,8 +26,8 @@ module api.data {
                 }
 
                 if (propertyA.getValue().isPropertySet()) {
-                    var childSetA = propertyA.getPropertySet();
-                    var childSetB = propertyB.getPropertySet();
+                    let childSetA = propertyA.getPropertySet();
+                    let childSetB = propertyB.getPropertySet();
                     this.compareSet(childSetA, childSetB);
                 }
 
@@ -36,7 +36,7 @@ module api.data {
             // Check those existing in B, but not in A
             setB.forEach((propertyB: Property, index: number) => {
 
-                var propertyA = setA.getProperty(propertyB.getName(), index);
+                let propertyA = setA.getProperty(propertyB.getName(), index);
                 if (!propertyA) {
                     console.log("Property B[" + propertyB.getPath().toString() + "] does not exist in A[" +
                                 setA.getPropertyPath().toString() + "]");

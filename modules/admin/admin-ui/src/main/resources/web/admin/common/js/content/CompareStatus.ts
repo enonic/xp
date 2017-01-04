@@ -17,7 +17,7 @@ module api.content {
     export class CompareStatusFormatter {
         public static formatStatus(compareStatus: CompareStatus): string {
 
-            var status;
+            let status;
 
             switch (compareStatus) {
             case CompareStatus.NEW:

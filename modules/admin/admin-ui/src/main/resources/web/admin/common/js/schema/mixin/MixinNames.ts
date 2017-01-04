@@ -8,7 +8,7 @@ module api.schema.mixin {
             this.array = [];
             array.forEach((mixinName: MixinName) => {
 
-                var duplicate = this.array.some((possibleDuplicate: MixinName) => {
+                let duplicate = this.array.some((possibleDuplicate: MixinName) => {
                     return mixinName.equals(possibleDuplicate);
                 });
 
@@ -28,7 +28,7 @@ module api.schema.mixin {
         }
 
         contains(mixinName: MixinName): boolean {
-            var containName = this.array.some((curMixin: MixinName) => {
+            let containName = this.array.some((curMixin: MixinName) => {
                 return curMixin.equals(mixinName);
             });
             return !!containName;
@@ -51,7 +51,7 @@ module api.schema.mixin {
                 return false;
             }
 
-            var other = <MixinNames>o;
+            let other = <MixinNames>o;
             return api.ObjectHelper.arrayEquals(this.array, other.array);
         }
 

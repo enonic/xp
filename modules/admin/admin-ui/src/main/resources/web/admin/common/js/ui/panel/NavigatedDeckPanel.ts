@@ -23,7 +23,7 @@ module api.ui.panel {
 
         addNavigablePanel(item: NavigationItem, panel: Panel, select?: boolean) {
             this.navigator.addNavigationItem(item);
-            var index = this.addPanel(panel);
+            let index = this.addPanel(panel);
             if (select) {
                 this.selectPanelByIndex(index);
             }

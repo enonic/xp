@@ -241,8 +241,8 @@ module api.ui.grid {
         }
 
         getSelectedRowItems(): T[] {
-            var rowItems: T[] = [];
-            var rows = this.getSelectedRows();
+            let rowItems: T[] = [];
+            let rows = this.getSelectedRows();
             rows.forEach((rowIndex: number) => {
                 rowItems.push(this.dataView.getItem(rowIndex));
             });
@@ -256,7 +256,7 @@ module api.ui.grid {
 
         selectRow(row: number, debounce?: boolean): number {
             // Prevent unnecessary render on the same row
-            var rows = this.getSelectedRows();
+            let rows = this.getSelectedRows();
             if (rows.length > 1 || (rows.length < 2 && rows.indexOf(row) < 0)) {
                 this.setSelectedRows([row], debounce);
                 return row;
@@ -265,7 +265,7 @@ module api.ui.grid {
         }
 
         addSelectedRow(row: number, debounce?: boolean) {
-            var rows = this.getSelectedRows();
+            let rows = this.getSelectedRows();
             if (rows.indexOf(row) < 0) {
                 rows.push(row);
                 this.setSelectedRows(rows, debounce);
@@ -273,7 +273,7 @@ module api.ui.grid {
         }
 
         addSelectedRows(rowsToAdd: number[], debounce?: boolean) {
-            var rows = this.getSelectedRows();
+            let rows = this.getSelectedRows();
             rowsToAdd.forEach((row) => {
                 if (rows.indexOf(row) < 0) {
                     rows.push(row);
@@ -285,7 +285,7 @@ module api.ui.grid {
 
         toggleRow(row: number, debounce?: boolean): number {
             // Prevent unnecessary render on the same row
-            var rows = this.getSelectedRows(),
+            let rows = this.getSelectedRows(),
                 index = rows.indexOf(row);
             if (index < 0) {
                 rows.push(row);
@@ -301,7 +301,7 @@ module api.ui.grid {
         }
 
         isRowSelected(row: number): boolean {
-            var rows = this.getSelectedRows(),
+            let rows = this.getSelectedRows(),
                 index = rows.indexOf(row);
 
             return index >= 0;
@@ -327,10 +327,10 @@ module api.ui.grid {
 
         moveSelectedUp() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort((a, b) => {
+                let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
-                var row = selected.length >= 1
+                let row = selected.length >= 1
                     ? selected[0] - 1
                     : -1;
 
@@ -354,10 +354,10 @@ module api.ui.grid {
 
         moveSelectedDown() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort((a, b) => {
+                let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
-                var row = selected.length >= 1
+                let row = selected.length >= 1
                     ? Math.min(selected[selected.length - 1] + 1, this.slickGrid.getDataLength() - 1)
                     : 0;
 
@@ -371,12 +371,12 @@ module api.ui.grid {
 
         addSelectedUp() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort((a, b) => {
+                let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
 
                 if (selected.length > 0 && (selected[0] - 1) >= 0) {
-                    var row = selected[0] - 1;
+                    let row = selected[0] - 1;
                     selected.push(row);
                     selected = selected.sort((a, b) => {
                         return a - b;
@@ -391,12 +391,12 @@ module api.ui.grid {
 
         addSelectedDown(): number {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort((a, b) => {
+                let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
 
                 if (selected.length > 0 && (selected[selected.length - 1] + 1) < this.slickGrid.getDataLength()) {
-                    var row = selected[selected.length - 1] + 1;
+                    let row = selected[selected.length - 1] + 1;
                     selected.push(row);
                     this.setSelectedRows(selected, true);
                     return row;
@@ -479,7 +479,7 @@ module api.ui.grid {
         }
 
         subscribeOnSelectedRowsChanged(callback: (e: any, args: any) => void) {
-            var debouncedCallback = api.util.AppHelper.debounce(callback, 500, false);
+            let debouncedCallback = api.util.AppHelper.debounce(callback, 500, false);
             this.slickGrid.onSelectedRowsChanged.subscribe((e, args) => {
                 if (this.debounceSelectionChange) {
                     debouncedCallback(e, args);

@@ -38,7 +38,7 @@ declare var CONFIG;
  */
 
 function getApplication(): api.app.Application {
-    var application = new api.app.Application('content-studio', 'Content Studio', 'CM', 'content-studio');
+    let application = new api.app.Application('content-studio', 'Content Studio', 'CM', 'content-studio');
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
 
@@ -94,7 +94,7 @@ function initToolTip() {
             position: "absolute", top, left
         }).show();
         };
-    wemjq(document).on("mouseenter", "*[title]", function (e: any) {
+    wemjq(document).on("mouseenter", "*[title]:not([disabled]):visible", function (e: any) {
         wemjq(window).data(DATA, wemjq(window).attr("title"));
         wemjq(window).removeAttr("title").addClass(CLS_ON);
         wemjq("<div id='" + ID + "' />").appendTo("body");
@@ -139,7 +139,7 @@ function clearFavicon() {
 function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver) {
     let resolver = iconUrlResolver.setContent(content).setCrop(false);
     let shouldUpdate = shouldUpdateFavicon(content.getType());
-    for (var href in faviconCache) {
+    for (let href in faviconCache) {
         if (faviconCache.hasOwnProperty(href)) {
             let link = faviconCache[href];
             if (shouldUpdate) {

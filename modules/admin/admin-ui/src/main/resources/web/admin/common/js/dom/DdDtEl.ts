@@ -3,7 +3,7 @@ module api.dom {
     export class DdDtEl extends Element {
 
         constructor(tag: string, className?: string) {
-            var builder = new NewElementBuilder();
+            let builder = new NewElementBuilder();
             if (className) {
                 builder.setClassName(className);
             }

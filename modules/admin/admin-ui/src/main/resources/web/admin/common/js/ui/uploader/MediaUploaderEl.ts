@@ -48,8 +48,8 @@ module api.ui.uploader {
         }
 
         getMediaValue(item: api.content.Content): api.data.Value {
-            var mediaProperty = item.getContentData().getProperty("media");
-            var mediaValue;
+            let mediaProperty = item.getContentData().getProperty("media");
+            let mediaValue;
             switch (mediaProperty.getType()) {
                 case ValueTypes.DATA:
                     mediaValue = mediaProperty.getPropertySet().getProperty('attachment').getValue();

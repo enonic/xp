@@ -2,11 +2,15 @@ import "../api.ts";
 import {ApplicationBrowsePanel} from "./browse/ApplicationBrowsePanel";
 import Application = api.application.Application;
 
-export class ApplicationAppPanel extends api.app.AppPanel<Application> {
+export class ApplicationAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Application> {
 
-    constructor(path?: api.rest.Path) {
+    constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
 
-        super();
+        super({
+            appBar: appBar
+        });
+
+        this.handleGlobalEvents();
 
         this.route(path);
     }

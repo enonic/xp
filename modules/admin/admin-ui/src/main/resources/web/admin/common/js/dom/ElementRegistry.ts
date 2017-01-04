@@ -7,7 +7,7 @@ module api.dom {
         private static elements: { [index: string]: api.dom.Element; } = {};
 
         public static registerElement(el: api.dom.Element): string {
-            var fullName,
+            let fullName,
                 id = el.getId();
 
             if (!id) {
@@ -15,7 +15,7 @@ module api.dom {
             } else {
                 fullName = id;
             }
-            var count = ElementRegistry.counters[fullName];
+            let count = ElementRegistry.counters[fullName];
             if (count >= 0) {
                 id += '-' + (++count);
             }

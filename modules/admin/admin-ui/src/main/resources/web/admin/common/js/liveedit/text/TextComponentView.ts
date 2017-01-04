@@ -94,7 +94,7 @@ module api.liveedit.text {
                 this.destroyEditor();
             });
 
-            var handleDialogCreated = (event) => {
+            let handleDialogCreated = (event) => {
                 if (this.currentDialogConfig === event.getConfig()) {
                     this.modalDialog = event.getModalDialog();
                 }
@@ -139,7 +139,7 @@ module api.liveedit.text {
         }
 
         highlight() {
-            var isDragging = DragAndDrop.get().isDragging();
+            let isDragging = DragAndDrop.get().isDragging();
             if (!this.isEditMode() && !isDragging) {
                 super.highlight();
             }
@@ -152,8 +152,8 @@ module api.liveedit.text {
         }
 
         private initializeRootElement() {
-            for (var i = 0; i < this.getChildren().length; i++) {
-                var child = this.getChildren()[i];
+            for (let i = 0; i < this.getChildren().length; i++) {
+                let child = this.getChildren()[i];
                 if (child.getEl().getTagName().toUpperCase() == 'SECTION') {
                     this.rootElement = child;
                     // convert image urls in text component for web
@@ -215,7 +215,7 @@ module api.liveedit.text {
                 return;
             }
 
-            var timeSinceLastClick = new Date().getTime() - this.lastClicked;
+            let timeSinceLastClick = new Date().getTime() - this.lastClicked;
 
             if (timeSinceLastClick > TextComponentView.DBL_CLICK_TIMEOUT) {
                 this.singleClickTimer = setTimeout(() => {
@@ -279,7 +279,7 @@ module api.liveedit.text {
 
         private triggerEventInActiveEditorForFirefox(eventName: string) {
             if (api.BrowserHelper.isFirefox()) {
-                var activeEditor = tinymce.activeEditor;
+                let activeEditor = tinymce.activeEditor;
                 if (activeEditor) {
                     activeEditor.fire(eventName);
                 }
@@ -297,7 +297,7 @@ module api.liveedit.text {
 
             setTimeout(() => {
                 if (!this.anyEditorHasFocus()) {
-                    var pageView = this.getPageView();
+                    let pageView = this.getPageView();
                     if (pageView.isTextEditMode()) {
                         pageView.setTextEditMode(false);
                         // preventing mouse click event that triggered blur from further processing in ItemView
@@ -311,7 +311,7 @@ module api.liveedit.text {
         }
 
         private onKeydownHandler(e: KeyboardEvent) {
-            var saveShortcut = (e.keyCode == 83 && (e.ctrlKey || e.metaKey));
+            let saveShortcut = (e.keyCode == 83 && (e.ctrlKey || e.metaKey));
 
             if (saveShortcut) { //Cmd-S
                 this.processEditorValue();
@@ -321,7 +321,7 @@ module api.liveedit.text {
                 this.closePageTextEditMode();
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             } else if ((e.altKey) && e.keyCode === 9) { // alt+tab for OSX
-                var nextFocusable = api.dom.FormEl.getNextFocusable(this, ".xp-page-editor-text-view", true);
+                let nextFocusable = api.dom.FormEl.getNextFocusable(this, ".xp-page-editor-text-view", true);
                 if (nextFocusable) {
                     wemjq(nextFocusable.getHTMLElement()).simulate("click");
                     nextFocusable.giveFocus();
@@ -346,7 +346,7 @@ module api.liveedit.text {
 
         private doInitEditor() {
             this.isInitializingEditor = true;
-            var assetsUri = CONFIG.assetsUri,
+            let assetsUri = CONFIG.assetsUri,
                 id = this.getId().replace(/\./g, '_');
 
             this.addClass(id);
@@ -403,13 +403,13 @@ module api.liveedit.text {
         }
 
         private anyEditorHasFocus(): boolean {
-            var textItemViews = this.getPageView().getItemViewsByType(api.liveedit.text.TextItemType.get());
+            let textItemViews = this.getPageView().getItemViewsByType(api.liveedit.text.TextItemType.get());
 
-            var editorFocused = textItemViews.some((view: ItemView) => {
+            let editorFocused = textItemViews.some((view: ItemView) => {
                 return view.getEl().hasClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             });
 
-            var dialogVisible = !!this.modalDialog && this.modalDialog.isVisible();
+            let dialogVisible = !!this.modalDialog && this.modalDialog.isVisible();
 
             return editorFocused || dialogVisible;
         }
@@ -432,12 +432,12 @@ module api.liveedit.text {
         }
 
         private isEditorEmpty(): boolean {
-            var editorContent = this.htmlAreaEditor.getContent();
+            let editorContent = this.htmlAreaEditor.getContent();
             return editorContent.trim() === "" || editorContent == "<h2>&nbsp;</h2>";
         }
 
         private destroyEditor(): void {
-            var editor = this.htmlAreaEditor;
+            let editor = this.htmlAreaEditor;
             if (editor) {
                 try {
                     editor.destroy(false);
@@ -455,7 +455,7 @@ module api.liveedit.text {
         }
 
         private startPageTextEditMode() {
-            var pageView = this.getPageView();
+            let pageView = this.getPageView();
 
             if (pageView.hasSelectedView()) {
                 pageView.getSelectedView().deselect();
@@ -469,7 +469,7 @@ module api.liveedit.text {
         }
 
         private closePageTextEditMode() {
-            var pageView = this.getPageView();
+            let pageView = this.getPageView();
             if (pageView.isTextEditMode()) {
                 pageView.setTextEditMode(false);
             }

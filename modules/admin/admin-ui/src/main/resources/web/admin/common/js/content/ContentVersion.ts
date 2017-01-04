@@ -18,7 +18,7 @@ module api.content {
 
         static fromJson(contentVersionJson: api.content.json.ContentVersionJson, workspaces?: string[]): ContentVersion {
 
-            var contentVersion: ContentVersion = new ContentVersion();
+            let contentVersion: ContentVersion = new ContentVersion();
             contentVersion.modifier = contentVersionJson.modifier;
             contentVersion.displayName = contentVersionJson.displayName;
             contentVersion.modified = new Date(contentVersionJson.modified);

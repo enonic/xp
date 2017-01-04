@@ -21,7 +21,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentId>o;
+            let other = <ContentId>o;
 
             if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;

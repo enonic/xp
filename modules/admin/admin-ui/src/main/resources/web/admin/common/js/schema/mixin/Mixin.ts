@@ -34,7 +34,7 @@ module api.schema.mixin {
                 return false;
             }
 
-            var other = <Mixin>o;
+            let other = <Mixin>o;
 
 
             if (!api.ObjectHelper.stringEquals(this.schemaKey, other.schemaKey)) {
@@ -78,7 +78,7 @@ module api.schema.mixin {
 
             this.formItems = [];
             mixinJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
-                var formItem = api.form.FormItemFactory.createFormItem(formItemJson);
+                let formItem = api.form.FormItemFactory.createFormItem(formItemJson);
                 if (formItem) {
                     this.formItems.push(formItem);
                 }

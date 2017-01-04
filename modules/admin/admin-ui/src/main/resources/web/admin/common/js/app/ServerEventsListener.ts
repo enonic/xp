@@ -17,7 +17,7 @@ module api.app {
 
             this.aggregator.onBatchIsReady(() => {
 
-                var event = new BatchContentServerEvent(<ContentServerEvent[]>this.aggregator.getEvents(), this.aggregator.getType());
+                let event = new BatchContentServerEvent(<ContentServerEvent[]>this.aggregator.getEvents(), this.aggregator.getType());
                 this.fireEvent(event);
 
                 this.aggregator.resetEvents();
@@ -58,7 +58,7 @@ module api.app {
 
         private fireEvent(event: api.event.Event) {
             this.applications.forEach((application)=> {
-                var appWindow = application.getWindow();
+                let appWindow = application.getWindow();
                 if (appWindow) {
                     event.fire(appWindow);
                 }

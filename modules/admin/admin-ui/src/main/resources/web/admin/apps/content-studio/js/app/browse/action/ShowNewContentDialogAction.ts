@@ -1,8 +1,8 @@
 import "../../../api.ts";
-
-import Action = api.ui.Action;
 import {ShowNewContentDialogEvent} from "../ShowNewContentDialogEvent";
 import {ContentTreeGrid} from "../ContentTreeGrid";
+
+import Action = api.ui.Action;
 
 export class ShowNewContentDialogAction extends Action {
 
@@ -10,7 +10,7 @@ export class ShowNewContentDialogAction extends Action {
         super("New", "alt+n");
         this.setEnabled(true);
         this.onExecuted(() => {
-            var contents: api.content.ContentSummaryAndCompareStatus[]
+            let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
             new ShowNewContentDialogEvent(contents.length > 0 ? contents[0] : null).fire();
         });

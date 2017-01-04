@@ -1,5 +1,4 @@
 import "../../../../../../api.ts";
-
 import {PageTemplateSelector} from "./PageTemplateSelector";
 
 export class PageTemplateForm extends api.ui.form.Form {
@@ -10,7 +9,7 @@ export class PageTemplateForm extends api.ui.form.Form {
         super('page-template-form');
         this.templateSelector = templateSelector;
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).setLabel("Page Template").build());
         this.add(fieldSet);
     }

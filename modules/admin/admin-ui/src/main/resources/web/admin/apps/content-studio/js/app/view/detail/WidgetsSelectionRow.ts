@@ -26,7 +26,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
         this.widgetSelectorDropdown.addClass("widget-selector");
 
         this.widgetSelectorDropdown.onOptionSelected((event: OptionSelectedEvent<WidgetViewOption>) => {
-            var widgetView = event.getOption().displayValue.getWidgetView();
+            let widgetView = event.getOption().displayValue.getWidgetView();
             widgetView.setActive();
         });
 
@@ -61,7 +61,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
 
         widgetViews.forEach((view: WidgetView) => {
 
-            var option = {
+            let option = {
                 value: view.getWidgetName(),
                 displayValue: new WidgetViewOption(view)
             };
@@ -73,7 +73,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
             this.widgetSelectorDropdown.addClass("single-optioned");
         }
 
-        var visisbleNow = this.isVisible();
+        let visisbleNow = this.isVisible();
 
         if (visisbleNow) {
             this.setVisible(false);
@@ -97,7 +97,7 @@ export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
         this.onClicked((event) => {
             if (this.isDefaultOptionDisplayValueViewer(event.target)) {
                 if (this.getSelectedOption()) {
-                    var widgetView = this.getSelectedOption().displayValue.getWidgetView();
+                    let widgetView = this.getSelectedOption().displayValue.getWidgetView();
                     if (widgetView != detailsView.getActiveWidget()) {
                         widgetView.setActive();
                     }
@@ -113,7 +113,7 @@ export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
 
     private isDefaultOptionDisplayValueViewer(object: Object) {
         if (object && object["id"]) {
-            var id = object["id"].toString();
+            let id = object["id"].toString();
             return id.indexOf("DropdownHandle") < 0 && id.indexOf("InfoWidgetToggleButton") < 0;
         }
         return false;

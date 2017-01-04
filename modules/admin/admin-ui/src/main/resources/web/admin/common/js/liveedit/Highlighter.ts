@@ -20,8 +20,8 @@ module api.liveedit {
         constructor(type?: HighlighterMode) {
             // Needs to be a SVG element as the css has pointer-events:none
             // CSS pointer-events only works for SVG in IE
-            var svgCls = api.StyleHelper.getCls("highlighter");
-            var html = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="${svgCls}" style="top:-5000px;left:-5000px">
+            let svgCls = api.StyleHelper.getCls("highlighter");
+            let html = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="${svgCls}" style="top:-5000px;left:-5000px">
                            <rect width="150" height="150"/>
                            <path d=""/>
                        </svg>`;
@@ -50,8 +50,8 @@ module api.liveedit {
                 this.hide();
                 return;
             }
-            var dimensions = itemView.getEl().getDimensions();
-            var style = itemView.getType().getConfig().getHighlighterStyle();
+            let dimensions = itemView.getEl().getDimensions();
+            let style = itemView.getType().getConfig().getHighlighterStyle();
 
             if (!!itemView.getPageView() && itemView.getPageView().hasToolbarContainer()) {
                 dimensions.top = dimensions.top - itemView.getPageView().getEditorToolbarHeight();
@@ -110,7 +110,7 @@ module api.liveedit {
         }
 
         private resize(dimensions: ElementDimensions, style: HighlighterStyle): void {
-            var w = Math.round(dimensions.width),
+            let w = Math.round(dimensions.width),
                 h = Math.round(dimensions.height),
                 strokeW,
                 top = Math.round(dimensions.top),

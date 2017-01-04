@@ -21,7 +21,7 @@ module api.ui.time {
 
         public static getByNumberCode(value: number) {
 
-            var match: DayOfWeek = null;
+            let match: DayOfWeek = null;
             DaysOfWeek.ALL.forEach((dayOfWeek: DayOfWeek) => {
                 if (dayOfWeek.getNumberCode() == value) {
                     match = dayOfWeek;

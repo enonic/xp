@@ -48,7 +48,7 @@ module api.content.page.region {
 
         public setRegions(value: Regions) {
 
-            var oldValue = this.regions;
+            let oldValue = this.regions;
             if (oldValue) {
                 this.unregisterRegionsListeners(oldValue);
             }
@@ -73,8 +73,8 @@ module api.content.page.region {
         }
 
         addRegions(layoutDescriptor: LayoutDescriptor) {
-            var sourceRegions = this.getRegions();
-            var mergedRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), this);
+            let sourceRegions = this.getRegions();
+            let mergedRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), this);
             this.setRegions(mergedRegions);
         }
 
@@ -83,7 +83,7 @@ module api.content.page.region {
         }
 
         public toJson(): ComponentTypeWrapperJson {
-            var json: LayoutComponentJson = <LayoutComponentJson>super.toComponentJson();
+            let json: LayoutComponentJson = <LayoutComponentJson>super.toComponentJson();
             json.regions = this.regions.toJson();
 
             return <ComponentTypeWrapperJson> {
@@ -97,7 +97,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <LayoutComponent>o;
+            let other = <LayoutComponent>o;
 
             if (!super.equals(o)) {
                 return false;
@@ -164,8 +164,8 @@ module api.content.page.region {
             }
             this.setParent(region);
 
-            var layoutComponent = this.build();
-            var layoutRegions = Regions.create().fromJson(json.regions, layoutComponent).build();
+            let layoutComponent = this.build();
+            let layoutRegions = Regions.create().fromJson(json.regions, layoutComponent).build();
             layoutComponent.setRegions(layoutRegions);
             return layoutComponent;
         }

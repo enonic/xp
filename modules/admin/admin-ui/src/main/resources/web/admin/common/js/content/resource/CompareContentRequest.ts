@@ -14,7 +14,7 @@ module api.content.resource {
 
         static fromContentSummaries(contentSummaries: ContentSummary[]): CompareContentRequest {
 
-            var ids: string[] = [];
+            let ids: string[] = [];
 
             contentSummaries.forEach((contentSummary: ContentSummary) => {
 

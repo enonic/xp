@@ -33,9 +33,9 @@ module api.content.resource {
 
         private fromJsonToContentVersions(json: ActiveContentVersionJson[]): ContentVersion[] {
 
-            var contentVersionJson: ContentVersionJson;
-            var contentVersion: ContentVersion;
-            var contentVersionsMap: {[id: string]: ContentVersion} = {};
+            let contentVersionJson: ContentVersionJson;
+            let contentVersion: ContentVersion;
+            let contentVersionsMap: {[id: string]: ContentVersion} = {};
 
             json.forEach((activeContentVersion: ActiveContentVersionJson) => {
 

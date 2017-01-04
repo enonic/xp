@@ -74,7 +74,7 @@ module api.ui.tab {
                 return;
             }
 
-            var oldValue = this.label;
+            let oldValue = this.label;
             this.label = newValue;
             this.labelEl.setHtml(newValue);
 

@@ -15,7 +15,7 @@ module api.form {
 
             if (formOptionSetJson.options != null) {
                 formOptionSetJson.options.forEach((formOptionSetOptionJson: api.form.json.FormOptionSetOptionJson) => {
-                    var option = FormOptionSetOption.fromJson(formOptionSetOptionJson);
+                    let option = FormOptionSetOption.fromJson(formOptionSetOptionJson);
                     if (option) {
                         this.addSetOption(option);
                     }
@@ -73,7 +73,7 @@ module api.form {
                 return false;
             }
 
-            var other = <FormOptionSet>o;
+            let other = <FormOptionSet>o;
 
             if (!api.ObjectHelper.booleanEquals(this.expanded, other.expanded)) {
                 return false;

@@ -38,7 +38,7 @@ module api.ui.text {
             });
 
             mediaUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<api.content.Content>) => {
-                var names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<api.content.Content>) => {
+                let names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<api.content.Content>) => {
                     return uploadItem.getName();
                 });
                 this.textInput.setValue(names.join(', '));

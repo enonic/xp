@@ -54,7 +54,7 @@ export class WidgetView extends api.dom.DivEl {
 
     private applyConfig() {
         if (this.isUrlBased()) {
-            var config = this.widget.getConfig();
+            let config = this.widget.getConfig();
             if (!!config && config.hasOwnProperty("render-on-resize") && config["render-on-resize"] == "true") {
                 this.handleRerenderOnResize();
             }
@@ -62,8 +62,8 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private handleRerenderOnResize() {
-        var updateWidgetItemViewsHandler = () => {
-            var containerWidth = this.detailsView.getEl().getWidth();
+        let updateWidgetItemViewsHandler = () => {
+            let containerWidth = this.detailsView.getEl().getWidth();
             if (this.detailsView.getItem() && containerWidth !== this.containerWidth) {
                 this.updateWidgetItemViews(true);
             }
@@ -72,7 +72,7 @@ export class WidgetView extends api.dom.DivEl {
             if (this.isActive()) {
                 updateWidgetItemViewsHandler();
             } else {
-                var onActivatedHandler = () => {
+                let onActivatedHandler = () => {
                     updateWidgetItemViewsHandler();
                     this.unActivated(onActivatedHandler);
                 };
@@ -90,7 +90,7 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private updateCustomWidgetItemViews(force: boolean = false): wemQ.Promise<any>[] {
-        var promises = [];
+        let promises = [];
 
         this.url = this.getWidgetUrl();
         this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
@@ -101,7 +101,7 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     public updateWidgetItemViews(force: boolean = false): wemQ.Promise<any> {
-        var content = this.detailsView.getItem(),
+        let content = this.detailsView.getItem(),
             promises = [];
 
         if (this.widgetShouldBeUpdated(force)) {
@@ -122,7 +122,7 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private widgetShouldBeUpdated(force: boolean = false): boolean {
-        var content = this.detailsView.getItem();
+        let content = this.detailsView.getItem();
         return content && ActiveDetailsPanelManager.getActiveDetailsPanel().isVisibleOrAboutToBeVisible() &&
                (force || !api.ObjectHelper.equals(this.content, content) || (this.isUrlBased() && this.url !== this.getWidgetUrl()));
     }
@@ -138,7 +138,7 @@ export class WidgetView extends api.dom.DivEl {
 
         this.slideOut();
 
-        var layoutTasks: wemQ.Promise<any>[] = [];
+        let layoutTasks: wemQ.Promise<any>[] = [];
 
         this.widgetItemViews.forEach((itemView: WidgetItemView) => {
             this.appendChild(itemView);
@@ -199,7 +199,7 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private redoLayout() {
-        var firstItemView = this.widgetItemViews[0];
+        let firstItemView = this.widgetItemViews[0];
         if (!firstItemView) {
             return;
         }

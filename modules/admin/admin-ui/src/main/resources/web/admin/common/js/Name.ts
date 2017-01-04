@@ -31,7 +31,7 @@ module api {
                 return false;
             }
 
-            var other = <Name>o;
+            let other = <Name>o;
 
             if (this.value != other.value) {
                 return false;

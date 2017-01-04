@@ -1,8 +1,8 @@
 import "../../../api.ts";
+import {PrincipalWizardPanel} from "../PrincipalWizardPanel";
 
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;
-import {PrincipalWizardPanel} from "../PrincipalWizardPanel";
 
 export class DeleteUserItemAction extends api.ui.Action {
 
@@ -16,7 +16,7 @@ export class DeleteUserItemAction extends api.ui.Action {
 
                     wizardPanel.close();
 
-                    var persistedItem = wizardPanel.getPersistedItem(),
+                    let persistedItem = wizardPanel.getPersistedItem(),
                         isPrincipal = (wizardPanel instanceof PrincipalWizardPanel) && !!persistedItem,
                         userItemKey;
                     if (isPrincipal) {
@@ -25,10 +25,10 @@ export class DeleteUserItemAction extends api.ui.Action {
                             .setKeys([userItemKey])
                             .send()
                             .done((jsonResponse: api.rest.JsonResponse<any>) => {
-                                var json = jsonResponse.getJson();
+                                let json = jsonResponse.getJson();
 
                                 if (json.results && json.results.length > 0) {
-                                    var key = json.results[0].principalKey;
+                                    let key = json.results[0].principalKey;
 
                                     api.notify.showFeedback('Principal [' + key + '] deleted!');
                                     api.security.UserItemDeletedEvent.create().setPrincipals([<Principal>persistedItem]).build().fire();
@@ -40,10 +40,10 @@ export class DeleteUserItemAction extends api.ui.Action {
                             .setKeys([userItemKey])
                             .send()
                             .done((jsonResponse: api.rest.JsonResponse<any>) => {
-                                var json = jsonResponse.getJson();
+                                let json = jsonResponse.getJson();
 
                                 if (json.results && json.results.length > 0) {
-                                    var key = json.results[0].userStoreKey;
+                                    let key = json.results[0].userStoreKey;
 
                                     api.notify.showFeedback('UserStore [' + key + '] deleted!');
                                     api.security.UserItemDeletedEvent.create().setUserStores([<UserStore>persistedItem]).build().fire();

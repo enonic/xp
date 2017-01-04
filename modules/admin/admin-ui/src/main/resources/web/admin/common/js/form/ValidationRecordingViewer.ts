@@ -46,7 +46,7 @@ module api.form {
         }
 
         private createItemView(path: ValidationRecordingPath, breaksMin: boolean): api.dom.LiEl {
-            var text = breaksMin ? this.resolveMinText(path) : this.resolveMaxText(path);
+            let text = breaksMin ? this.resolveMinText(path) : this.resolveMaxText(path);
             return new api.dom.LiEl().setHtml(text);
         }
 

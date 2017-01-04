@@ -14,7 +14,7 @@ export class PrincipalDescriptionWizardStepForm extends api.app.wizard.WizardSte
         this.description.onBlur((event) => {
             this.notifyBlurred(event);
         });
-        var formView = new api.dom.DivEl("form-view"),
+        let formView = new api.dom.DivEl("form-view"),
             inputView = new api.dom.DivEl("input-view valid"),
             label = new api.dom.LabelEl("Description", this.description, "input-label"),
             inputTypeView = new api.dom.DivEl("input-type-view"),
@@ -34,7 +34,7 @@ export class PrincipalDescriptionWizardStepForm extends api.app.wizard.WizardSte
     layout(principal: api.security.Principal) {
         if (api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Role)
             || api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Group)) {
-            var description = principal.getDescription();
+            let description = principal.getDescription();
             this.description.setValue(!!description ? description : "");
         }
         else {

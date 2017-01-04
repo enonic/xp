@@ -28,7 +28,7 @@ export class ContextWindowController {
         this.contextWindowToggler = contentWizardPanel.getContextWindowToggler();
         this.componentsViewToggler = contentWizardPanel.getComponentsViewToggler();
 
-        var componentsView = this.contextWindow.getComponentsView();
+        let componentsView = this.contextWindow.getComponentsView();
 
         this.contextWindowToggler.onClicked((event: MouseEvent) => {
             // set overriden flag when toggle is on by click only
@@ -48,7 +48,7 @@ export class ContextWindowController {
         this.componentsViewToggler.onActiveChanged((isActive: boolean) => {
             if (!componentsView.getParentElement() && isActive) {
                 //append it on click only to be sure that content wizard panel is ready
-                var offset = contentWizardPanel.getLivePanel().getEl().getOffsetToParent();
+                let offset = contentWizardPanel.getLivePanel().getEl().getOffsetToParent();
                 componentsView.getEl().setOffset(offset);
                 contentWizardPanel.appendChild(componentsView);
             }
@@ -60,14 +60,14 @@ export class ContextWindowController {
             this.componentsViewToggler.setActive(false, true);
         });
 
-        var liveEditShownHandler = () => {
+        let liveEditShownHandler = () => {
             if (this.contextWindow.isLiveFormShown()) {
                 this.contextWindowToggler.setEnabled(true);
                 this.componentsViewToggler.setEnabled(true);
             }
         };
 
-        var liveEditHiddenHandler = () => {
+        let liveEditHiddenHandler = () => {
             this.contextWindowToggler.setEnabled(false);
             this.componentsViewToggler.setEnabled(false);
         };

@@ -24,7 +24,7 @@ module api.content.order {
         }
 
         static toArrayJson(expressions: OrderExpr[]): OrderExprWrapperJson[] {
-            var wrappers: OrderExprWrapperJson[] = [];
+            let wrappers: OrderExprWrapperJson[] = [];
             expressions.forEach((expr: OrderExpr) => {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(expr, FieldOrderExpr)) {
                     wrappers.push(<OrderExprWrapperJson>{"FieldOrderExpr": expr.toJson()});
@@ -39,7 +39,7 @@ module api.content.order {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, OrderExpr)) {
                 return false;
             }
-            var other = <OrderExpr>o;
+            let other = <OrderExpr>o;
             if (this.direction.toLowerCase() != other.getDirection().toLowerCase()) {
                 return false;
             }

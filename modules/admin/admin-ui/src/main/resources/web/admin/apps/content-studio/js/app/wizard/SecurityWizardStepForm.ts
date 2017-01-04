@@ -35,7 +35,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
     constructor() {
         super("security-wizard-step-form");
 
-        var label = new DivEl("input-label"),
+        let label = new DivEl("input-label"),
             wrapper = new DivEl("wrapper required");
         this.label = new LabelEl("Permissions");
         wrapper.appendChild(this.label);
@@ -56,7 +56,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             this.notifyBlurred(event);
         });
 
-        var formView = new DivEl("form-view"),
+        let formView = new DivEl("form-view"),
             inputView = new DivEl("input-view valid"),
             inputTypeView = new DivEl("input-type-view"),
             inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
@@ -92,7 +92,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.permissions.getEntries().sort().forEach((entry) => {
             this.accessListView.addItem(entry);
 
-            var entryView = <AccessControlEntryView> this.accessListView.getItemView(entry),
+            let entryView = <AccessControlEntryView> this.accessListView.getItemView(entry),
                 selector = entryView.getPermissionSelector();
 
             // detach onValueChanged events
@@ -100,7 +100,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             entryView.getPermissionSelector().hide();
 
             entryView.onClicked(() => {
-                var isDisplayed = selector.getEl().getDisplay() !== "block";
+                let isDisplayed = selector.getEl().getDisplay() !== "block";
 
                 this.accessListView.getItemViews().forEach((itemView) => {
                     (<AccessControlEntryView>itemView).getPermissionSelector().hide();
@@ -113,7 +113,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             });
         });
 
-        var inheritsText = "";
+        let inheritsText = "";
         if (this.inheritPermissions && this.contentPath.isRoot() == false) {
             inheritsText = "Inherits permissions from parent";
             this.inheritance.addClass("inheritance");

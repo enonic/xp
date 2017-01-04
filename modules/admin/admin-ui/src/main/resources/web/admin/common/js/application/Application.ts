@@ -147,7 +147,7 @@ module api.application {
         }
 
         static fromJsonArray(jsonArray: api.application.json.ApplicationJson[]): Application[] {
-            var array: Application[] = [];
+            let array: Application[] = [];
             jsonArray.forEach((json: api.application.json.ApplicationJson) => {
                 array.push(Application.fromJson(json));
             });
@@ -158,7 +158,7 @@ module api.application {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Application) || !super.equals(o)) {
                 return false;
             }
-            var other = <Application>o;
+            let other = <Application>o;
 
             return this.applicationKey.equals(other.applicationKey) &&
                    this.displayName == other.displayName &&

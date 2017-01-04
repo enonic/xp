@@ -7,9 +7,9 @@ import ApplicationUploadMock = api.application.ApplicationUploadMock;
 export class ApplicationRowFormatter {
 
     public static nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Application>) {
-        var viewer = <ApplicationViewer>node.getViewer("name");
+        let viewer = <ApplicationViewer>node.getViewer("name");
         if (!viewer) {
-            var viewer = new ApplicationViewer();
+            viewer = new ApplicationViewer();
             viewer.setObject(node.getData());
             node.setViewer("name", viewer);
         }

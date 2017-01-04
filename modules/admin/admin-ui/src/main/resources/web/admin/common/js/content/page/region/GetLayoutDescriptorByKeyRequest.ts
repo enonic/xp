@@ -24,7 +24,7 @@ module api.content.page.region {
         }
 
         sendAndParse(): wemQ.Promise<LayoutDescriptor> {
-            var deferred = wemQ.defer<LayoutDescriptor>();
+            let deferred = wemQ.defer<LayoutDescriptor>();
 
             new GetLayoutDescriptorsByApplicationRequest(this.key.getApplicationKey()).sendAndParse()
                 .then((descriptors: LayoutDescriptor[]) => {

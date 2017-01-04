@@ -31,10 +31,10 @@ module api.util.htmlarea.dialog {
         }
 
         private addNoneOption() {
-            var noneOption = new ImageCroppingOption("none", 0 , 0);
+            let noneOption = new ImageCroppingOption("none", 0 , 0);
             noneOption.setDisplayValue("<None>");
 
-            var option =  {
+            let option =  {
                 value: noneOption.getName(),
                 displayValue: noneOption
             };

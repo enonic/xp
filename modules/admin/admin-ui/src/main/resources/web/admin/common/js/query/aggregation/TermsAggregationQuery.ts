@@ -14,7 +14,7 @@ module api.query.aggregation {
 
         toJson(): AggregationQueryTypeWrapperJson {
 
-            var json: TermsAggregationQueryJson = <TermsAggregationQueryJson>super.toAggregationQueryJson();
+            let json: TermsAggregationQueryJson = <TermsAggregationQueryJson>super.toAggregationQueryJson();
             json.fieldName = this.getFieldName();
             json.size = this.getSize();
             json.orderByDirection = this.orderByDirection;

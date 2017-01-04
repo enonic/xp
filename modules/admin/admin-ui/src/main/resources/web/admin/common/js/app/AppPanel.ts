@@ -19,10 +19,10 @@ module api.app {
                 this.browsePanel.refreshFilter();
             }
 
-            var previousActions = this.resolveActions(event.getPreviousPanel());
+            let previousActions = this.resolveActions(event.getPreviousPanel());
             api.ui.KeyBindings.get().unbindKeys(api.ui.Action.getKeyBindings(previousActions));
 
-            var nextActions = this.resolveActions(event.getPanel());
+            let nextActions = this.resolveActions(event.getPanel());
             this.currentKeyBindings = api.ui.Action.getKeyBindings(nextActions);
             api.ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
         }

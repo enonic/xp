@@ -32,14 +32,14 @@ module api.dom {
 
         getTopParent(): WindowDOM {
 
-            var parent = this.getParent();
+            let parent = this.getParent();
             if (!parent) {
                 return null;
             }
 
-            var i = 0;
+            let i = 0;
             do {
-                var next = parent.getParent();
+                let next = parent.getParent();
                 if (!next) {
                     return parent;
                 }
@@ -51,7 +51,7 @@ module api.dom {
         }
 
         getParent(): WindowDOM {
-            var parent = this.el.parent;
+            let parent = this.el.parent;
             if (parent === this.el) {
                 return null;
             }

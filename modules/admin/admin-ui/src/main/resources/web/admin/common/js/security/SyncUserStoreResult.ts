@@ -19,7 +19,7 @@ module api.security {
         }
 
         static fromJson(json: api.security.SyncUserStoreResultJson): SyncUserStoreResult {
-            var result = new SyncUserStoreResult();
+            let result = new SyncUserStoreResult();
             result.userStoreKey = UserStoreKey.fromString(json.userStoreKey);
             result.synchronized = json.synchronized;
             result.reason = json.reason;

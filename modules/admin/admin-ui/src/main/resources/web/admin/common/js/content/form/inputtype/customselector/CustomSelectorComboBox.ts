@@ -10,9 +10,9 @@ module api.content.form.inputtype.customselector {
     export class CustomSelectorComboBox extends RichComboBox<CustomSelectorItem> {
 
         constructor(input: api.form.Input, requestPath: string, value: string) {
-            var loader = new CustomSelectorLoader(requestPath);
+            let loader = new CustomSelectorLoader(requestPath);
 
-            var builder = new RichComboBoxBuilder<CustomSelectorItem>()
+            let builder = new RichComboBoxBuilder<CustomSelectorItem>()
                 .setComboBoxName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setOptionDisplayValueViewer(new CustomSelectorItemViewer())

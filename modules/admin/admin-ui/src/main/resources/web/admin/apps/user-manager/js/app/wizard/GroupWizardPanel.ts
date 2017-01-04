@@ -24,10 +24,10 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     createSteps(principal?: Principal): WizardStep[] {
-        var steps: WizardStep[] = [];
+        let steps: WizardStep[] = [];
 
-        var descriptionStep = this.getDescriptionWizardStepForm();
-        var membersStep = this.getMembersWizardStepForm();
+        let descriptionStep = this.getDescriptionWizardStepForm();
+        let membersStep = this.getMembersWizardStepForm();
 
         steps.push(new WizardStep("Group", descriptionStep));
         steps.push(new WizardStep("Grants", membersStep));
@@ -50,8 +50,8 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     produceCreateGroupRequest(): CreateGroupRequest {
-        var wizardHeader = this.getWizardHeader();
-        var key = PrincipalKey.ofGroup(this.getUserStore().getKey(), wizardHeader.getName()),
+        let wizardHeader = this.getWizardHeader();
+        let key = PrincipalKey.ofGroup(this.getUserStore().getKey(), wizardHeader.getName()),
             name = wizardHeader.getDisplayName(),
             members = this.getMembersWizardStepForm().getMembers().map((el) => {
                 return el.getKey();
@@ -65,7 +65,7 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     produceUpdateRequest(viewedPrincipal:Principal):UpdateGroupRequest {
-        var group = viewedPrincipal.asGroup(),
+        let group = viewedPrincipal.asGroup(),
             key = group.getKey(),
             displayName = group.getDisplayName(),
             description = group.getDescription(),
@@ -99,8 +99,8 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     isPersistedEqualsViewed(): boolean {
-        var persistedPrincipal = this.getPersistedItem().asGroup();
-        var viewedPrincipal = this.assembleViewedItem().asGroup();
+        let persistedPrincipal = this.getPersistedItem().asGroup();
+        let viewedPrincipal = this.assembleViewedItem().asGroup();
         // Group/User order can be different for viewed and persisted principal
         viewedPrincipal.getMembers().sort((a, b) => {
             return a.getId().localeCompare(b.getId());

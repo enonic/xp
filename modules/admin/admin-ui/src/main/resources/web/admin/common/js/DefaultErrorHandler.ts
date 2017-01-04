@@ -10,13 +10,13 @@ module api {
                 throw error;
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(error, AccessDeniedException)) {
-                var application: api.app.Application = api.app.Application.getApplication();
-                var wnd = application.getWindow();
+                let application: api.app.Application = api.app.Application.getApplication();
+                let wnd = application.getWindow();
                 new api.app.ShowAppLauncherEvent(application, true).fire(wnd.parent);
                 new api.app.ShowAppLauncherEvent(application, true).fire(wnd);
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
-                var message = error.getMessage();
+                let message = error.getMessage();
 
                 switch (error.getType()) {
                 case ExceptionType.ERROR:

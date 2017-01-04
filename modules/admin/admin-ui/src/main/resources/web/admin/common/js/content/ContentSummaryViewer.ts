@@ -7,7 +7,7 @@ module api.content {
         }
 
         resolveDisplayName(object: ContentSummary): string {
-            var contentName = object.getName(),
+            let contentName = object.getName(),
                 invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
                 pendingDelete = object.getContentState().isPendingDelete();
             this.toggleClass("invalid", invalid);
@@ -21,7 +21,7 @@ module api.content {
         }
 
         resolveSubName(object: ContentSummary, relativePath: boolean = false): string {
-            var contentName = object.getName();
+            let contentName = object.getName();
             if (relativePath) {
                 return !contentName.isUnnamed() ? object.getName().toString() :
                        api.content.ContentUnnamed.prettifyUnnamed();

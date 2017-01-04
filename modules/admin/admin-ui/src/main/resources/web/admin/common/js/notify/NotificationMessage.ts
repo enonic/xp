@@ -7,9 +7,9 @@ module api.notify {
         constructor(message: string) {
             super("notification");
             this.notificationInner = new api.dom.DivEl("notification-inner");
-            var notificationRemove = new api.dom.SpanEl("notification-remove");
+            let notificationRemove = new api.dom.SpanEl("notification-remove");
             notificationRemove.setHtml("X");
-            var notificationContent = new api.dom.DivEl("notification-content");
+            let notificationContent = new api.dom.DivEl("notification-content");
             notificationContent.getEl().setInnerHtml(message, false);
             this.notificationInner.appendChild(notificationRemove).appendChild(notificationContent);
             this.appendChild(this.notificationInner);

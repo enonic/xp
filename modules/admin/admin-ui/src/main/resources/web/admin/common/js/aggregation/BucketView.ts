@@ -40,7 +40,7 @@ module api.aggregation {
         }
 
         private resolveKey(): string {
-            var key = this.bucket.getKey();
+            let key = this.bucket.getKey();
             if (key.indexOf(":") > 0) {
                 return api.util.StringHelper.capitalize(key.substring(key.indexOf(":") + 1));
             }

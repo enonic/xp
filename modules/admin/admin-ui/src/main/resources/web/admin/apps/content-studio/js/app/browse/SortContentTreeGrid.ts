@@ -52,13 +52,13 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
     }
 
     private dragFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        var wrapper = new api.dom.SpanEl();
+        let wrapper = new api.dom.SpanEl();
 
         if (!api.util.StringHelper.isBlank(value)) {
             wrapper.getEl().setTitle(value);
         }
 
-        var icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls("menu") + " drag-icon");
+        let icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls("menu") + " drag-icon");
         wrapper.getEl().setInnerHtml(icon.toString(), false);
         return wrapper.toString();
     }
@@ -66,7 +66,7 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
     public static nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
         const data = node.getData();
         if (data.getContentSummary()) {
-            var viewer: ContentSummaryViewer = <ContentSummaryViewer>node.getViewer("name");
+            let viewer: ContentSummaryViewer = <ContentSummaryViewer>node.getViewer("name");
             if (!viewer) {
                 viewer = new ContentSummaryViewer();
                 viewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
@@ -89,8 +89,8 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
     }
 
     fetchChildren(): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        var parentContentId: api.content.ContentId;
-        var parentNode = this.getRoot().getCurrentRoot();
+        let parentContentId: api.content.ContentId;
+        let parentNode = this.getRoot().getCurrentRoot();
         if (parentNode.getData()) {
             parentContentId = parentNode.getData().getContentSummary().getContentId();
             this.contentId = parentContentId;
@@ -99,7 +99,7 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
             parentContentId = this.contentId;
         }
 
-        var from = parentNode.getChildren().length;
+        let from = parentNode.getChildren().length;
         if (from > 0 && !parentNode.getChildren()[from - 1].getData().getContentSummary()) {
             parentNode.getChildren().pop();
             from--;
@@ -107,10 +107,10 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
 
         return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, SortContentTreeGrid.MAX_FETCH_SIZE,
             this.curChildOrder).then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
-            var contents = parentNode.getChildren().map((el) => {
+            let contents = parentNode.getChildren().map((el) => {
                 return el.getData();
             }).slice(0, from).concat(data.getContents());
-            var meta = data.getMetadata();
+            let meta = data.getMetadata();
             parentNode.setMaxChildren(meta.getTotalHits());
             if (from + meta.getHits() < meta.getTotalHits()) {
                 contents.push(new ContentSummaryAndCompareStatus());

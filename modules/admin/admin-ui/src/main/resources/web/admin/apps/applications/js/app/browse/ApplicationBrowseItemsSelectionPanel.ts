@@ -7,7 +7,7 @@ import ApplicationViewer = api.application.ApplicationViewer;
 export class ApplicationBrowseItemsSelectionPanel extends api.app.browse.BrowseItemsSelectionPanel<Application> {
 
     createItemViewer(item: BrowseItem<Application>): ApplicationViewer {
-        var viewer = new ApplicationViewer();
+        let viewer = new ApplicationViewer();
         viewer.setObject(item.getModel());
         return viewer;
     }

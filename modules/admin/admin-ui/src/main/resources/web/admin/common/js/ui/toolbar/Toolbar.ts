@@ -25,7 +25,7 @@ module api.ui.toolbar {
 
         addAction(action: api.ui.Action): ActionButton {
             this.actions.push(action);
-            action.onPropertyChanged((action) => this.foldOrExpand());
+            action.onPropertyChanged(() => this.foldOrExpand());
             return <ActionButton>this.addElement(new ActionButton(action));
         }
 
@@ -76,13 +76,13 @@ module api.ui.toolbar {
                 return;
             }
 
-            var toolbarWidth = this.getEl().getWidth();
+            let toolbarWidth = this.getEl().getWidth();
             if (toolbarWidth <= this.getVisibleButtonsWidth()) {
 
                 while (toolbarWidth <= this.getVisibleButtonsWidth() && this.getNextFoldableButton()) {
 
-                    var buttonToHide = this.getNextFoldableButton();
-                    var buttonWidth = buttonToHide.getEl().getWidthWithMargin();
+                    let buttonToHide = this.getNextFoldableButton();
+                    let buttonWidth = buttonToHide.getEl().getWidthWithMargin();
 
                     this.removeChild(buttonToHide);
                     this.fold.push(buttonToHide, buttonWidth);
@@ -97,7 +97,7 @@ module api.ui.toolbar {
                 while (!this.fold.isEmpty() &&
                        (this.getVisibleButtonsWidth(this.fold.getButtonsCount() > 1) + this.fold.getNextButtonWidth() < toolbarWidth)) {
 
-                    var buttonToShow = this.fold.pop();
+                    let buttonToShow = this.fold.pop();
                     buttonToShow.insertBeforeEl(this.fold);
 
                     if (this.fold.isEmpty()) {

@@ -77,15 +77,15 @@ module api.form.inputtype.text {
                 property.convertValueType(ValueTypes.STRING);
             }
 
-            var value = HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString());
-            var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
+            let value = HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString());
+            let textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
 
-            var editorId = textAreaEl.getId();
+            let editorId = textAreaEl.getId();
 
-            var clazz = editorId.replace(/\./g, '_');
+            let clazz = editorId.replace(/\./g, '_');
             textAreaEl.addClass(clazz);
 
-            var textAreaWrapper = new api.dom.DivEl();
+            let textAreaWrapper = new api.dom.DivEl();
 
             this.editors.push({id: editorId, textAreaWrapper: textAreaWrapper, property: property, hasStickyToolbar: false});
 
@@ -110,8 +110,8 @@ module api.form.inputtype.text {
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
-            var textArea = <api.ui.text.TextArea> occurrence.getFirstChild();
-            var id = textArea.getId();
+            let textArea = <api.ui.text.TextArea> occurrence.getFirstChild();
+            let id = textArea.getId();
 
             if (!unchangedOnly || !textArea.isDirty()) {
                 this.setEditorContent(id, property);
@@ -127,10 +127,10 @@ module api.form.inputtype.text {
         }
 
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
-            var focusedEditorCls = "html-area-focused";
-            var baseUrl = CONFIG.assetsUri;
+            let focusedEditorCls = "html-area-focused";
+            let baseUrl = CONFIG.assetsUri;
 
-            var focusHandler = (e) => {
+            let focusHandler = (e) => {
                 this.resetInputHeight();
                 textAreaWrapper.addClass(focusedEditorCls);
 
@@ -140,11 +140,11 @@ module api.form.inputtype.text {
                 new api.ui.selector.SelectorOnBlurEvent(this).fire();
             };
 
-            var notifyValueChanged = this.notifyValueChanged.bind(this, id, textAreaWrapper);
+            let notifyValueChanged = this.notifyValueChanged.bind(this, id, textAreaWrapper);
 
-            var isMouseOverRemoveOccurenceButton = false;
+            let isMouseOverRemoveOccurenceButton = false;
 
-            var blurHandler = (e) => {
+            let blurHandler = (e) => {
                 //checking if remove occurence button clicked or not
                 api.util.AppHelper.dispatchCustomEvent("focusout", this);
 
@@ -155,7 +155,7 @@ module api.form.inputtype.text {
                 this.notifyBlurred(e);
             };
 
-            var keydownHandler = (e) => {
+            let keydownHandler = (e) => {
                 if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
                     e.preventDefault();
 
@@ -194,7 +194,7 @@ module api.form.inputtype.text {
                 }
             };
 
-            var createDialogHandler = event => {
+            let createDialogHandler = event => {
                 api.util.htmlarea.dialog.HTMLAreaDialogHandler.createAndOpenDialog(event);
                 textAreaWrapper.addClass(focusedEditorCls);
             };
@@ -211,7 +211,7 @@ module api.form.inputtype.text {
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
 
-                var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
+                let removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
                     ".remove-button")[0];
                 removeButtonEL.addEventListener("mouseover", () => {
                     isMouseOverRemoveOccurenceButton = true;
@@ -231,7 +231,7 @@ module api.form.inputtype.text {
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
             inputOccurence.giveFocus = () => {
-                var editor = this.getEditor(id);
+                let editor = this.getEditor(id);
                 if (editor) {
                     editor.focus();
                     return true;
@@ -242,7 +242,7 @@ module api.form.inputtype.text {
         }
 
         private setupStickyEditorToolbarForInputOccurence(inputOccurence: Element, editorId: string) {
-            var scrollHandler = api.util.AppHelper.debounce((e) => {
+            let scrollHandler = api.util.AppHelper.debounce((e) => {
                 this.updateStickyEditorToolbar(inputOccurence, this.getEditorInfo(editorId));
             }, 20, false);
 
@@ -304,9 +304,9 @@ module api.form.inputtype.text {
         }
 
         private editorLowerEdgeIsVisible(inputOccurence: Element): boolean {
-            var distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea(inputOccurence);
-            var editorToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
-            var mceStatusToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-statusbar").outerHeight(true);
+            let distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea(inputOccurence);
+            let editorToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
+            let mceStatusToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-statusbar").outerHeight(true);
             return (inputOccurence.getEl().getHeightWithoutPadding() - editorToolbarHeight - mceStatusToolbarHeight +
                     distToTopOfScrlblArea) > 0;
         }
@@ -316,7 +316,7 @@ module api.form.inputtype.text {
         }
 
         private getToolbarOffsetTop(delta: number = 0): number {
-            var toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
+            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
                 stickyToolbarHeight = toolbar.outerHeight(true),
                 offset = toolbar.offset(),
                 stickyToolbarOffset = offset ? offset.top : 0;
@@ -337,7 +337,7 @@ module api.form.inputtype.text {
         }
 
         private setEditorContent(editorId: string, property: Property): void {
-            var editor = this.getEditor(editorId);
+            let editor = this.getEditor(editorId);
             if (editor) {
                 editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : "");
                 HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
@@ -351,7 +351,7 @@ module api.form.inputtype.text {
         }
 
         private notifyValueChanged(id: string, occurrence: api.dom.Element) {
-            var value = ValueTypes.STRING.newValue(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id)));
+            let value = ValueTypes.STRING.newValue(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id)));
             this.notifyOccurrenceValueChanged(occurrence, value);
         }
 
@@ -386,12 +386,12 @@ module api.form.inputtype.text {
         handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
             super.handleDnDStart(event, ui);
 
-            var editorId = wemjq('textarea', ui.item)[0].id;
+            let editorId = wemjq('textarea', ui.item)[0].id;
             this.destroyEditor(editorId);
         }
 
         handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
-            var editorId = wemjq('textarea', ui.item)[0].id;
+            let editorId = wemjq('textarea', ui.item)[0].id;
 
             this.reInitEditor(editorId);
             tinymce.execCommand('mceAddEditor', false, editorId);
@@ -433,7 +433,7 @@ module api.form.inputtype.text {
 
 
         private destroyEditor(id: string): void {
-            var editor = this.getEditor(id);
+            let editor = this.getEditor(id);
             if (editor) {
                 try {
                     editor.destroy(false);
@@ -445,7 +445,7 @@ module api.form.inputtype.text {
         }
 
         private reInitEditor(id: string) {
-            var savedEditor: HtmlAreaOccurrenceInfo = this.getEditorInfo(id);
+            let savedEditor: HtmlAreaOccurrenceInfo = this.getEditorInfo(id);
 
             if (!!savedEditor) {
                 this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);

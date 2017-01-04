@@ -43,7 +43,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-        var contentId = item.getContentId();
+        let contentId = item.getContentId();
         if (UserAccessWidgetItemView.debug) {
             console.debug('UserAccessWidgetItemView.setContentId: ', contentId);
         }
@@ -52,7 +52,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     }
 
     private layoutHeader(content: Content) {
-        var entry = content.getPermissions().getEntry(api.security.RoleKeys.EVERYONE);
+        let entry = content.getPermissions().getEntry(api.security.RoleKeys.EVERYONE);
         this.everyoneAccessValue = null;
 
         if (this.hasChild(this.headerEl)) {
@@ -62,9 +62,9 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         if (entry) {
 
             this.everyoneAccessValue = AccessControlEntryView.getAccessValueFromEntry(entry);
-            var headerStr = entry.getPrincipalDisplayName() + " " + this.getOptionName(this.everyoneAccessValue) +
+            let headerStr = entry.getPrincipalDisplayName() + " " + this.getOptionName(this.everyoneAccessValue) +
                             " this item";
-            var headerStrEl = new api.dom.SpanEl("header-string").setHtml(headerStr);
+            let headerStrEl = new api.dom.SpanEl("header-string").setHtml(headerStr);
 
             this.headerEl = new api.dom.DivEl("user-access-widget-header");
 
@@ -98,16 +98,16 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private layoutList(content: Content): wemQ.Promise<boolean> {
 
-        var deferred = wemQ.defer<boolean>();
+        let deferred = wemQ.defer<boolean>();
 
-        var request = new api.content.resource.GetEffectivePermissionsRequest(content.getContentId());
+        let request = new api.content.resource.GetEffectivePermissionsRequest(content.getContentId());
 
         request.sendAndParse().then((results: api.ui.security.acl.EffectivePermission[]) => {
 
             if (this.hasChild(this.accessListView)) {
                 this.removeChild(this.accessListView);
             }
-            var userAccessList = this.getUserAccessList(results);
+            let userAccessList = this.getUserAccessList(results);
 
             this.accessListView = new UserAccessListView();
             this.accessListView.setItemViews(userAccessList);
@@ -153,7 +153,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
         return results.filter(item => item.getAccess() != this.everyoneAccessValue &&
                                       item.getPermissionAccess().getCount() > 0).map((item: api.ui.security.acl.EffectivePermission) => {
-            var view = new UserAccessListItemView();
+            let view = new UserAccessListItemView();
             view.setObject(item);
             view.setCurrentUser(this.currentUser);
             return view;
@@ -161,7 +161,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     }
 
     private getOptionName(access: Access): string {
-        var currentOption = UserAccessWidgetItemView.OPTIONS.filter(option => {
+        let currentOption = UserAccessWidgetItemView.OPTIONS.filter(option => {
             return option.value == access;
         });
         if (currentOption && currentOption.length > 0) {

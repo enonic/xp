@@ -45,7 +45,7 @@ module api.content.resource {
 
         private fromJsonToContentVersions(json: api.content.json.ContentVersionJson[]): ContentVersion[] {
 
-            var contentVersions: ContentVersion[] = [];
+            let contentVersions: ContentVersion[] = [];
             json.forEach((contentVersionJson: api.content.json.ContentVersionJson) => {
                 contentVersions.push(ContentVersion.fromJson(contentVersionJson));
             });

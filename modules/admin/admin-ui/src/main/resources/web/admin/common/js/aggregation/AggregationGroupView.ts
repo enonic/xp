@@ -58,14 +58,14 @@ module api.aggregation {
 
         getSelectedValuesByAggregationName(): AggregationSelection[] {
 
-            var aggregationSelections: AggregationSelection[] = [];
+            let aggregationSelections: AggregationSelection[] = [];
 
             this.aggregationViews.forEach((bucketAggregationView: BucketAggregationView) => {
 
-                var selectedBuckets: api.aggregation.Bucket[] = bucketAggregationView.getSelectedValues();
+                let selectedBuckets: api.aggregation.Bucket[] = bucketAggregationView.getSelectedValues();
 
                 if (selectedBuckets != null) {
-                    var aggregationSelection: AggregationSelection = new AggregationSelection(bucketAggregationView.getName());
+                    let aggregationSelection: AggregationSelection = new AggregationSelection(bucketAggregationView.getName());
                     aggregationSelection.setValues(selectedBuckets);
 
                     aggregationSelections.push(aggregationSelection);
@@ -76,8 +76,8 @@ module api.aggregation {
         }
 
         hasSelections(): boolean {
-            var hasSelections = false;
-            for (var i = 0; i < this.aggregationViews.length; i++) {
+            let hasSelections = false;
+            for (let i = 0; i < this.aggregationViews.length; i++) {
                 if (this.aggregationViews[i].hasSelectedEntry()) {
                     hasSelections = true;
                     break;
@@ -115,7 +115,7 @@ module api.aggregation {
 
             aggregations.forEach((aggregation: api.aggregation.Aggregation) => {
 
-                var existingAggregationView: api.aggregation.AggregationView = this.getAggregationView(aggregation.getName());
+                let existingAggregationView: api.aggregation.AggregationView = this.getAggregationView(aggregation.getName());
 
                 if (existingAggregationView == null) {
                     this.addAggregationView(api.aggregation.AggregationView.createAggregationView(aggregation, this));
@@ -123,7 +123,7 @@ module api.aggregation {
                 else {
                     if (api.ObjectHelper.iFrameSafeInstanceOf(existingAggregationView, BucketAggregationView)) {
 
-                        var bucketAggregationView: BucketAggregationView = <BucketAggregationView>existingAggregationView;
+                        let bucketAggregationView: BucketAggregationView = <BucketAggregationView>existingAggregationView;
                         bucketAggregationView.update(aggregation);
                     }
                     // Here be Metric-aggregations
@@ -133,8 +133,8 @@ module api.aggregation {
 
         private getAggregationView(name: string): api.aggregation.AggregationView {
 
-            for (var i = 0; i < this.aggregationViews.length; i++) {
-                var aggregationView: api.aggregation.AggregationView = this.aggregationViews[i];
+            for (let i = 0; i < this.aggregationViews.length; i++) {
+                let aggregationView: api.aggregation.AggregationView = this.aggregationViews[i];
                 if (aggregationView.getName() == name) {
                     return aggregationView;
                 }

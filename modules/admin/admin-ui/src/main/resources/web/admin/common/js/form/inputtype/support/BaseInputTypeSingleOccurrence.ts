@@ -51,7 +51,7 @@ module api.form.inputtype.support {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-            var property = propertyArray.get(0);
+            let property = propertyArray.get(0);
             this.registerProperty(property);
 
             this.layoutProperty(input, this.property);
@@ -64,7 +64,7 @@ module api.form.inputtype.support {
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            var property = propertyArray.get(0);
+            let property = propertyArray.get(0);
             this.registerProperty(property);
 
             return this.updateProperty(this.property, unchangedOnly);

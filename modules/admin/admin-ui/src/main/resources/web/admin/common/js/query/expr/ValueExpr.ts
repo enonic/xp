@@ -17,7 +17,7 @@ module api.query.expr {
         }
 
         toString() {
-            var type: api.data.ValueType = this.value.getType();
+            let type: api.data.ValueType = this.value.getType();
 
             if (type == api.data.ValueTypes.DOUBLE) {
                 return this.value.getString();

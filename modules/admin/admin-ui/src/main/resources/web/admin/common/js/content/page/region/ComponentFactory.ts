@@ -11,7 +11,7 @@ module api.content.page.region {
                 return new ImageComponentBuilder().fromJson(json.ImageComponent, region).build();
             }
             else if (json.LayoutComponent) {
-                var layoutComponentBuilder = new LayoutComponentBuilder();
+                let layoutComponentBuilder = new LayoutComponentBuilder();
                 layoutComponentBuilder.setIndex(componentIndex);
                 return layoutComponentBuilder.fromJson(json.LayoutComponent, region);
             }

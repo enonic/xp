@@ -51,7 +51,7 @@ module api.schema.content {
 
         constructor(name: string) {
             api.util.assertNotNull(name, "Content type name can't be null");
-            var parts = name.split(api.application.ApplicationBasedName.SEPARATOR);
+            let parts = name.split(api.application.ApplicationBasedName.SEPARATOR);
             super(ApplicationKey.fromString(parts[0]), parts[1]);
         }
 

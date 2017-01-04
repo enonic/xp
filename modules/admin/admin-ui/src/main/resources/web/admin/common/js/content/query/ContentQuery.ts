@@ -98,7 +98,7 @@ module api.content.query {
                 return false;
             }
 
-            var other = <ContentQuery>o;
+            let other = <ContentQuery>o;
 
             if (!api.ObjectHelper.numberEquals(this.from, other.from)) {
                 return false;

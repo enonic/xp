@@ -51,9 +51,9 @@ module api.app {
                 return api.app.AppManager.INSTANCE;
             } else if (window !== window.parent) {
                 // look for instance in parent frame
-                var apiAppModule = (<any> window.parent).api.app;
+                let apiAppModule = (<any> window.parent).api.app;
                 if (apiAppModule && apiAppModule.AppManager) {
-                    var parentAppManager = <api.app.AppManager> apiAppModule.AppManager.INSTANCE;
+                    let parentAppManager = <api.app.AppManager> apiAppModule.AppManager.INSTANCE;
                     if (parentAppManager) {
                         api.app.AppManager.INSTANCE = parentAppManager;
                     }

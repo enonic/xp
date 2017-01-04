@@ -22,7 +22,7 @@ module api.security.event {
         }
 
         static fromJson(nodeEventJson: api.event.NodeEventJson): PrincipalServerEvent {
-            var change = PrincipalServerChange.fromJson(nodeEventJson);
+            let change = PrincipalServerChange.fromJson(nodeEventJson);
             return new PrincipalServerEvent(change);
         }
     }

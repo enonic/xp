@@ -21,7 +21,7 @@ module api.query.expr {
         }
 
         toString() {
-            var result: string = "";
+            let result: string = "";
 
             if (this.constraint != null) {
                 result = result.concat(this.constraint.toString());
@@ -30,7 +30,7 @@ module api.query.expr {
             if (this.orderList.length > 0) {
                 result = result.concat(" ORDER BY ");
 
-                var sub = [];
+                let sub = [];
                 this.orderList.forEach((expr: OrderExpr) => {
                     sub.push(expr.toString());
                 });

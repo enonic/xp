@@ -137,7 +137,7 @@ module api.util.htmlarea.editor {
         }
 
         private excludeTools(tools: any[]) {
-            var strTools = this.tools;
+            let strTools = this.tools;
             tools.forEach((toolStr: any) => {
                 toolStr.value.split(" ").forEach((tool: string) => {
                     if (tool == "*") {
@@ -187,7 +187,7 @@ module api.util.htmlarea.editor {
                 this.includeTool("code");
             }
 
-            var deferred = wemQ.defer<HtmlAreaEditor>();
+            let deferred = wemQ.defer<HtmlAreaEditor>();
 
             tinymce.init({
                 selector: this.selector,
@@ -288,9 +288,9 @@ module api.util.htmlarea.editor {
                             e.preventDefault();
                         }
                         else if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
-                            var selectedNode = editor.selection.getRng().startContainer;
+                            let selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                var previousEl = selectedNode.previousSibling;
+                                let previousEl = selectedNode.previousSibling;
                                 e.preventDefault();
                                 selectedNode.remove();
                                 if (previousEl) {
@@ -307,7 +307,7 @@ module api.util.htmlarea.editor {
                         }
                     });
 
-                    var dragParentElement;
+                    let dragParentElement;
                     editor.on('dragstart', (e) => {
                         dragParentElement = e.target.parentElement || e.target.parentNode;
                     });

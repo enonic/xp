@@ -54,7 +54,7 @@ module api.form {
                 return false;
             }
 
-            var other = <InputTypeName>o;
+            let other = <InputTypeName>o;
 
             if (!api.ObjectHelper.booleanEquals(this.custom, other.custom)) {
                 return false;

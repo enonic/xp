@@ -12,7 +12,7 @@ module api.macro {
 
         constructor(builder: MacroComboBoxBuilder) {
 
-            var richComboBoxBuilder = new RichComboBoxBuilder<MacroDescriptor>().
+            let richComboBoxBuilder = new RichComboBoxBuilder<MacroDescriptor>().
                 setComboBoxName('macroSelector').
                 setLoader(builder.loader).
                 setSelectedOptionsView(new MacroSelectedOptionsView()).
@@ -45,7 +45,7 @@ module api.macro {
     export class MacroSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<MacroDescriptor> {
 
         createSelectedOption(option: api.ui.selector.Option<MacroDescriptor>): SelectedOption<MacroDescriptor> {
-            var optionView = new MacroSelectedOptionView(option);
+            let optionView = new MacroSelectedOptionView(option);
             return new SelectedOption<MacroDescriptor>(optionView, this.count());
         }
     }

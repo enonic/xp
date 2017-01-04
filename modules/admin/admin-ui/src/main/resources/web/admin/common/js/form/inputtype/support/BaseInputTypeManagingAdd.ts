@@ -137,14 +137,14 @@ module api.form.inputtype.support {
 
         private ensureOccurrenceLimits(propertyArray: PropertyArray) {
 
-            var max = this.input.getOccurrences().getMaximum(),
+            let max = this.input.getOccurrences().getMaximum(),
                 actual = propertyArray.getSize();
 
             if (max > 0 && max < actual) {
                 if (BaseInputTypeManagingAdd.debug) {
                     console.info(`BaseInputTypeManagingAdd: expected max ${max} occurrences, but found ${actual}, dropping extra`);
                 }
-                for (var i = actual - 1; i > max - 1; i--) {
+                for (let i = actual - 1; i > max - 1; i--) {
                     propertyArray.remove(i);
                 }
             }
@@ -161,14 +161,14 @@ module api.form.inputtype.support {
         validate(silent: boolean = true,
                  rec: api.form.inputtype.InputValidationRecording = null): api.form.inputtype.InputValidationRecording {
 
-            var recording = rec || new api.form.inputtype.InputValidationRecording();
+            let recording = rec || new api.form.inputtype.InputValidationRecording();
 
             if (this.layoutInProgress) {
                 this.previousValidationRecording = recording;
                 return recording;
             }
 
-            var numberOfValids = this.getNumberOfValids();
+            let numberOfValids = this.getNumberOfValids();
 
             if (this.input.getOccurrences().minimumBreached(numberOfValids)) {
                 recording.setBreaksMinimumOccurrences(true);

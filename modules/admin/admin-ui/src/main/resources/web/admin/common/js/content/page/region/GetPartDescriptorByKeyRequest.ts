@@ -24,7 +24,7 @@ module api.content.page.region {
         }
 
         sendAndParse(): wemQ.Promise<PartDescriptor> {
-            var deferred = wemQ.defer<PartDescriptor>();
+            let deferred = wemQ.defer<PartDescriptor>();
 
             new GetPartDescriptorsByApplicationRequest(this.key.getApplicationKey()).sendAndParse()
                 .then((descriptors: PartDescriptor[]) => {

@@ -50,7 +50,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     constructor(applicationInput: ApplicationInput) {
 
-        var nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
+        let nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
             .setName("Name")
             .setId("displayName")
             .setField("displayName")
@@ -58,14 +58,14 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             .setMinWidth(170)
             .setFormatter(MarketAppsTreeGrid.nameFormatter)
             .build();
-        var versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
+        let versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
             .setName("Version")
             .setId("version")
             .setField("latestVersion")
             .setCssClass("version")
             .setMinWidth(40)
             .build();
-        var appStatusColumns = new GridColumnBuilder<TreeNode<MarketApplication>>()
+        let appStatusColumns = new GridColumnBuilder<TreeNode<MarketApplication>>()
             .setName("AppStatus")
             .setId("appStatus")
             .setField("status")
@@ -102,12 +102,12 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     }
 
     private initAppsFilter() {
-        var changeHandler = () => {
+        let changeHandler = () => {
             this.refresh();
         };
         this.applicationInput.onTextValueChanged(changeHandler);
 
-        var showMask = api.util.AppHelper.debounce(this.mask.bind(this), 300, false);
+        let showMask = api.util.AppHelper.debounce(this.mask.bind(this), 300, false);
         this.applicationInput.getTextInput().onValueChanged(() => {
             showMask();
         });
@@ -122,7 +122,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     private subscribeOnUninstallEvent() { // set status of market app to NOT_INSTALLED if it was uninstalled
         api.application.ApplicationEvent.on((event: ApplicationEvent) => {
             if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
-                var nodeToUpdate = this.getRoot().getCurrentRoot().findNode(event.getApplicationKey().toString());
+                let nodeToUpdate = this.getRoot().getCurrentRoot().findNode(event.getApplicationKey().toString());
                 if (!!nodeToUpdate) {
                     (<MarketApplication>nodeToUpdate.getData()).setStatus(MarketAppStatus.NOT_INSTALLED);
                     this.refresh();
@@ -133,8 +133,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     private findNodeByAppUrl(url: string): TreeNode<MarketApplication> {
         let nodes: TreeNode<MarketApplication>[] = this.getGrid().getDataView().getItems();
-        for (var i = 0; i < nodes.length; i++) {
-            var node = nodes[i];
+        for (let i = 0; i < nodes.length; i++) {
+            let node = nodes[i];
             if (node.getData().getLatestVersionDownloadUrl() == url) {
                 return node;
             }
@@ -187,7 +187,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                     new api.application.GetApplicationRequest(event.getApplicationKey(), true).sendAndParse()
                         .then((application: api.application.Application)=> {
                             if (!!application) {
-                                var marketApplication: MarketApplication = <MarketApplication>nodeToUpdate.getData();
+                                let marketApplication: MarketApplication = <MarketApplication>nodeToUpdate.getData();
 
                                 if (MarketApplicationsFetcher.installedAppCanBeUpdated(marketApplication, application)) {
                                     marketApplication.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
@@ -208,7 +208,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     private subscribeAndManageInstallClick() {
         this.getGrid().subscribeOnClick((event, data) => {
-            var node = this.getItem(data.row),
+            let node = this.getItem(data.row),
                 app = <MarketApplication>node.getData(),
                 url = app.getLatestVersionDownloadUrl(),
                 elem = new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(event.target))),
@@ -257,7 +257,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         const data = <MarketApplication>node.getData();
 
         if (data.getAppKey()) {
-            var viewer: MarketAppViewer = <MarketAppViewer>node.getViewer("name");
+            let viewer: MarketAppViewer = <MarketAppViewer>node.getViewer("name");
             if (!viewer) {
                 viewer = new MarketAppViewer();
                 viewer.setObject(data, node.calcLevel() > 1);
@@ -305,7 +305,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     fetchChildren(): wemQ.Promise<MarketApplication[]> {
         let root = this.getRoot().getCurrentRoot();
         let children = root.getChildren();
-        var from = root.getChildren().length;
+        let from = root.getChildren().length;
         if (from > 0 && !children[from - 1].getData().getAppKey()) {
             children.pop();
             from--;
@@ -330,7 +330,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 }
                 return applications;
             }).catch((reason: any) => {
-            var status500Message = "Woops... The server seems to be experiencing problems. Please try again later.",
+            let status500Message = "Woops... The server seems to be experiencing problems. Please try again later.",
                 defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
             this.handleError(reason, reason.getStatusCode() === 500 ? status500Message : defaultErrorMessage);
             return [];
@@ -338,7 +338,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     }
 
     initData(nodes: TreeNode<MarketApplication>[]) {
-        var items = nodes;
+        let items = nodes;
         if (this.applicationInput && !api.util.StringHelper.isEmpty(this.applicationInput.getValue())) {
             items = nodes.filter((node: TreeNode<MarketApplication>) => {
                 return this.nodePassesFilterCondition(node);
@@ -350,7 +350,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     }
 
     private nodePassesFilterCondition(node: TreeNode<MarketApplication>): boolean {
-        var app: MarketApplication = node.getData();
+        let app: MarketApplication = node.getData();
         // true for empty app because empty app is empty node that triggers loading
         return app.isEmpty() ? true : this.appHasFilterEntry(app);
     }

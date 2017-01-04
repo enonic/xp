@@ -17,8 +17,8 @@ module api {
             if (func.name) {
                 return func.name;
             } else {
-                var funcNameRegex = /function (.+)\(/;
-                var results = (funcNameRegex).exec(func.toString());
+                let funcNameRegex = /function (.+)\(/;
+                let results = (funcNameRegex).exec(func.toString());
                 return (results && results.length > 1) ? results[1] : "";
             }
         }
@@ -55,7 +55,7 @@ module api {
          */
 
         static getModuleName(instance: any): string {
-            var fullName = ClassHelper.getFullName(instance);
+            let fullName = ClassHelper.getFullName(instance);
             return fullName ? fullName.substr(0, fullName.lastIndexOf(".")) : "";
         }
 
@@ -66,7 +66,7 @@ module api {
          * @returns {string} full class name.
          */
         static getFullName(instance: any): string {
-            var constructor = (typeof instance === 'function') ? instance : instance["constructor"];
+            let constructor = (typeof instance === 'function') ? instance : instance["constructor"];
             //last one expression for IE
             return ClassHelper.findPath(window, constructor) || constructor["name"] ||
                    constructor.toString().match(/^function\s*([^\s(]+)/)[1];
@@ -81,8 +81,9 @@ module api {
          * @returns {string} full name included modules and class name.
          */
 
-        static findPath(obj: Object, constructor: Function, nestLevel?: number): string {
-            var value, path, nestLevel = nestLevel || 1;
+        static findPath(obj: Object, constructor: Function, nestLevel: number = 1): string {
+            let value;
+            let path;
 
             // don't search in current package if nest level is to big
             if (nestLevel > ClassHelper.MAX_NEST_LEVEL) {
@@ -90,24 +91,24 @@ module api {
             }
 
             // iterate through object keys, check if they contains constructor function
-            for (var key in obj) {
+            for (let key in obj) {
                 if (obj.hasOwnProperty(key)) {
-                    if (nestLevel == 1 && ClassHelper.ALLOWED_PACKAGES.indexOf(key) < 0) {
+                    if (nestLevel === 1 && ClassHelper.ALLOWED_PACKAGES.indexOf(key) < 0) {
                         // look into allowed top level packages only or up to max nest level
                         continue;
                     }
                     value = obj[key];
                     // skip nulls and recursive values
-                    if (!value || value == obj) {
+                    if (!value || value === obj) {
                         continue;
                     }
                     if (typeof value === 'object') {
                         path = ClassHelper.findPath(value, constructor, nestLevel + 1);
                         if (path) {
-                            return key + "." + path;
+                            return `${key}.${path}`;
                         }
                     } else if (typeof value === 'function') {
-                        if (value == constructor) {
+                        if (value === constructor) {
                             return ClassHelper.getFunctionName(constructor);
                         }
                     }
@@ -125,8 +126,8 @@ module api {
                 return 0;
             }
 
-            var distance = 0;
-            var prototype = Object.getPrototypeOf(instance);
+            let distance = 0;
+            let prototype = Object.getPrototypeOf(instance);
             do {
                 prototype = Object.getPrototypeOf(prototype);
                 if (!prototype) {

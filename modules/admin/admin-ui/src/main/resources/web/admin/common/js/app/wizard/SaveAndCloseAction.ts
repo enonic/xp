@@ -7,7 +7,7 @@ module api.app.wizard {
 
             this.onExecuted(() => {
 
-                var deferred = wemQ.defer();
+                let deferred = wemQ.defer();
 
                 let saveAction = new SaveAction(wizardPanel);
                 saveAction.onAfterExecute(() => {

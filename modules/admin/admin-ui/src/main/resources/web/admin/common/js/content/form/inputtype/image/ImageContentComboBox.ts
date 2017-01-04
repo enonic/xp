@@ -16,9 +16,9 @@ module api.content.form.inputtype.image {
 
         constructor(builder: ImageContentComboBoxBuilder) {
 
-            var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
+            let loader = builder.loader ? builder.loader : new ContentSummaryLoader();
 
-            var richComboBoxBuilder = new RichComboBoxBuilder().
+            let richComboBoxBuilder = new RichComboBoxBuilder().
                 setComboBoxName(builder.name ? builder.name : 'imageContentSelector').
                 setLoader(loader).
                 setSelectedOptionsView(builder.selectedOptionsView || new ImageSelectorSelectedOptionsView()).

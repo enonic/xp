@@ -15,7 +15,7 @@ module api.ui.security.acl {
         }
 
         createItemView(entry: UserStoreAccessControlEntry, readOnly: boolean): UserStoreAccessControlEntryView {
-            var itemView = new UserStoreAccessControlEntryView(entry);
+            let itemView = new UserStoreAccessControlEntryView(entry);
             itemView.setEditable(this.itemsEditable);
             itemView.onRemoveClicked(() => {
                 this.removeItem(entry);

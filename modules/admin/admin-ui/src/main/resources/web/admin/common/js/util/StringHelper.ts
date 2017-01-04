@@ -89,9 +89,9 @@ module api.util {
             if (StringHelper.isEmpty(str) || StringHelper.isEmpty(left) || StringHelper.isEmpty(right)) {
                 return StringHelper.EMPTY_STRING;
             }
-            var start = str.indexOf(left);
+            let start = str.indexOf(left);
             if (start !== -1) {
-                var end = str.indexOf(right, start + left.length);
+                let end = str.indexOf(right, start + left.length);
                 if (end !== -1) {
                     return str.substring(start + left.length, end);
                 }

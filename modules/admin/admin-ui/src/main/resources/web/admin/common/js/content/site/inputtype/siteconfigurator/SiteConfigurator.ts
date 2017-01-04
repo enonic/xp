@@ -64,7 +64,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             super.layout(input, propertyArray);
 
-            var deferred = wemQ.defer<void>();
+            let deferred = wemQ.defer<void>();
 
             this.siteConfigProvider = new SiteConfigProvider(propertyArray);
             // ignore changes made to property by siteConfigProvider
@@ -108,13 +108,13 @@ module api.content.site.inputtype.siteconfigurator {
 
         private saveToSet(siteConfig: SiteConfig, index: number) {
 
-            var propertySet = this.getPropertyArray().get(index).getPropertySet();
+            let propertySet = this.getPropertyArray().get(index).getPropertySet();
             if (!propertySet) {
                 propertySet = this.getPropertyArray().addSet();
             }
 
-            var config = siteConfig.getConfig();
-            var appKey = siteConfig.getApplicationKey();
+            let config = siteConfig.getConfig();
+            let appKey = siteConfig.getApplicationKey();
 
             propertySet.setStringByPath('applicationKey', appKey.toString());
             propertySet.setPropertySetByPath('config', config);
@@ -123,7 +123,7 @@ module api.content.site.inputtype.siteconfigurator {
         protected getValueFromPropertyArray(propertyArray: api.data.PropertyArray): string {
             return propertyArray.getProperties().map((property) => {
                 if (property.hasNonNullValue()) {
-                    var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
+                    let siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
                     return siteConfig.getApplicationKey().toString();
                 }
             }).join(';');
@@ -173,7 +173,7 @@ module api.content.site.inputtype.siteconfigurator {
             });
 
             comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
-                var indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
+                let indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
                 if (indexToRemove != -1) {
                     siteConfigFormsToDisplay.splice(indexToRemove, 1);
                 }
@@ -185,7 +185,7 @@ module api.content.site.inputtype.siteconfigurator {
                 this.validate(false);
             });
 
-            var handleAppEvent = (view: SiteConfiguratorSelectedOptionView, hasUninstalledClass: boolean, hasStoppedClass) => {
+            let handleAppEvent = (view: SiteConfiguratorSelectedOptionView, hasUninstalledClass: boolean, hasStoppedClass) => {
                 if (view) {
                     view.toggleClass("stopped", hasStoppedClass);
                     view.toggleClass("uninstalled", hasUninstalledClass);
@@ -196,7 +196,7 @@ module api.content.site.inputtype.siteconfigurator {
                 if (ApplicationEventType.STOPPED == event.getEventType()) {
                     handleAppEvent(this.getMatchedOption(comboBox, event), false, true);
                 } else if (ApplicationEventType.STARTED == event.getEventType()) {
-                    var view = this.getMatchedOption(comboBox, event);
+                    let view = this.getMatchedOption(comboBox, event);
                     handleAppEvent(view, false, false);
                     if (view && !!view.getOption().empty) {
                         view.removeClass("empty");
@@ -210,7 +210,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private getMatchedOption(combobox: SiteConfiguratorComboBox, event: ApplicationEvent): SiteConfiguratorSelectedOptionView {
-            var result;
+            let result;
             combobox.getSelectedOptionViews().some((view: SiteConfiguratorSelectedOptionView) => {
                 if (view.getApplication() && view.getApplication().getApplicationKey().equals(event.getApplicationKey())) {
                     result = view;
@@ -231,11 +231,11 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-            var recording = new api.form.inputtype.InputValidationRecording();
+            let recording = new api.form.inputtype.InputValidationRecording();
 
             this.comboBox.getSelectedOptionViews().forEach((view: SiteConfiguratorSelectedOptionView) => {
 
-                var validationRecording = view.getFormView().validate(true);
+                let validationRecording = view.getFormView().validate(true);
                 if (!validationRecording.isMinimumOccurrencesValid()) {
                     recording.setBreaksMinimumOccurrences(true);
                 }

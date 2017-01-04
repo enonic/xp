@@ -80,7 +80,7 @@ module api.util {
         }
 
         timeToString(): string {
-            var fractions = this.fractions ? DateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
+            let fractions = this.fractions ? DateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
 
             return this.padNumber(this.hours) + DateTime.TIME_SEPARATOR +
                    this.padNumber(this.minutes) + DateTime.TIME_SEPARATOR +
@@ -98,7 +98,7 @@ module api.util {
                 return false;
             }
 
-            var other = <DateTime>o;
+            let other = <DateTime>o;
 
             if (!api.ObjectHelper.stringEquals(this.toString(), other.toString())) {
                 return false;
@@ -118,7 +118,7 @@ module api.util {
         }
 
         private padNumber(num: number, length: number = 2): string {
-            var numAsString = String(num);
+            let numAsString = String(num);
 
             while (numAsString.length < length){
                 numAsString = "0" + numAsString;
@@ -154,7 +154,7 @@ module api.util {
                 throw new Error("Cannot parse DateTime from string: " + s);
             }
 
-            var date, timezone;
+            let date, timezone;
 
             if(DateHelper.isUTCdate(s)) {
                 date = DateHelper.makeDateFromUTCString(s);
@@ -170,7 +170,7 @@ module api.util {
                     DateTime.TIME_SEPARATOR,
                     DateTime.FRACTION_SEPARATOR
                 );
-                var offset = DateTime.parseOffset(s);
+                let offset = DateTime.parseOffset(s);
                 if(offset != null) {
                     timezone = Timezone.fromOffset(offset);
                 } else {
@@ -217,14 +217,14 @@ module api.util {
             if (DateHelper.isUTCdate(value)) {
                 return 0;
             } else {
-                var dateStr = (value || '').trim();
+                const dateStr = (value || '').trim();
 
                 if (dateStr.indexOf("+") > 0) { // case with positive offset
-                    var parts = dateStr.split("+");
-                    if (parts.length == 2) {
-                        var offsetPart = parts[1];
+                    const parts = dateStr.split("+");
+                    if (parts.length === 2) {
+                        const offsetPart = parts[1];
 
-                        var offset = parseFloat(offsetPart);
+                        const offset = parseFloat(offsetPart);
                         if (isNaN(offset)) {
                             return 0;
                         }
@@ -233,16 +233,16 @@ module api.util {
                     } else {
                         return 0;
                     }
-                } else if (dateStr.split("-").length == 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
-                    var parts = dateStr.split("-");
-                    var offsetPart = parts[3];
+                } else if (dateStr.split("-").length === 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
+                    const parts = dateStr.split("-");
+                    const offsetPart = parts[3];
 
-                    var offset = parseFloat(offsetPart);
+                    const offset = parseFloat(offsetPart);
                     if (isNaN(offset)) {
                         return 0;
                     }
 
-                    return offset * -1;
+                    return -offset;
                 } else {
                     return 0;
                 }
@@ -250,7 +250,7 @@ module api.util {
         }
 
         private static trimTZ(dateString : string): string {
-            var tzStartIndex = dateString.indexOf("+");
+            let tzStartIndex = dateString.indexOf("+");
             if(tzStartIndex > 0) {
                 return dateString.substr(0, tzStartIndex);
             } else if (dateString.split("-").length == 4) {

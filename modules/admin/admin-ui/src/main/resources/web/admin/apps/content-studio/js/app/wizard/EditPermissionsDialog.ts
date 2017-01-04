@@ -50,27 +50,27 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         this.inheritPermissionsCheck.addClass('inherit-perm-check');
         this.appendChildToContentPanel(this.inheritPermissionsCheck);
 
-        var section = new api.dom.SectionEl();
+        let section = new api.dom.SectionEl();
         this.appendChildToContentPanel(section);
 
-        var form = new api.ui.form.Form();
+        let form = new api.ui.form.Form();
         section.appendChild(form);
 
         this.comboBox = new AccessControlComboBox();
         this.comboBox.addClass('principal-combobox');
         form.appendChild(this.comboBox);
 
-        var comboBoxChangeListener = () => {
-            var currentEntries: AccessControlEntry[] = this.getEntries().sort();
+        let comboBoxChangeListener = () => {
+            let currentEntries: AccessControlEntry[] = this.getEntries().sort();
 
-            var permissionsModified: boolean = !api.ObjectHelper.arrayEquals(currentEntries, this.originalValues);
-            var inheritCheckModified: boolean = this.inheritPermissionsCheck.isChecked() !== this.originalInherit;
-            var overwriteModified: boolean = this.overwriteChildPermissionsCheck.isChecked() !== this.originalOverwrite;
+            let permissionsModified: boolean = !api.ObjectHelper.arrayEquals(currentEntries, this.originalValues);
+            let inheritCheckModified: boolean = this.inheritPermissionsCheck.isChecked() !== this.originalInherit;
+            let overwriteModified: boolean = this.overwriteChildPermissionsCheck.isChecked() !== this.originalOverwrite;
 
             this.applyAction.setEnabled(permissionsModified || inheritCheckModified || overwriteModified);
         };
 
-        var changeListener = () => {
+        let changeListener = () => {
             const inheritPermissions = this.inheritPermissionsCheck.isChecked();
 
             this.comboBox.toggleClass('disabled', inheritPermissions);
@@ -141,13 +141,13 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     }
 
     private applyPermissions() {
-        var permissions = new AccessControlList(this.getEntries());
+        let permissions = new AccessControlList(this.getEntries());
 
         if (this.immediateApply) {
-            var req = new api.content.resource.ApplyContentPermissionsRequest().setId(this.contentId).setInheritPermissions(
+            let req = new api.content.resource.ApplyContentPermissionsRequest().setId(this.contentId).setInheritPermissions(
                 this.inheritPermissionsCheck.isChecked()).setPermissions(permissions).setOverwriteChildPermissions(
                 this.overwriteChildPermissionsCheck.isChecked());
-            var res = req.sendAndParse();
+            let res = req.sendAndParse();
 
             res.done((updatedContent: Content) => {
                 api.notify.showFeedback("Permissions applied to content '" + updatedContent.getDisplayName() + "'");
@@ -166,7 +166,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         this.comboBox.clearSelection(true);
         this.overwriteChildPermissionsCheck.setChecked(false);
 
-        var contentPermissionsEntries: AccessControlEntry[] = this.permissions.getEntries();
+        let contentPermissionsEntries: AccessControlEntry[] = this.permissions.getEntries();
         this.originalValues = contentPermissionsEntries.sort();
         this.originalInherit = this.inheritPermissions;
         this.originalOverwrite = this.overwritePermissions;
@@ -196,9 +196,9 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     }
 
     private getParentPermissions(): wemQ.Promise<AccessControlList> {
-        var deferred = wemQ.defer<AccessControlList>();
+        let deferred = wemQ.defer<AccessControlList>();
 
-        var parentPath = this.contentPath.getParentPath();
+        let parentPath = this.contentPath.getParentPath();
         if (parentPath && parentPath.isNotRoot()) {
             new api.content.resource.GetContentByPathRequest(parentPath).sendAndParse().then((content: Content) => {
                 deferred.resolve(content.getPermissions());
