@@ -195,7 +195,7 @@ exports.testGetNoName = function () {
 };
 
 exports.testList = function () {
-    var result = content.listTypes();
+    var result = content.getTypes();
 
     var expected = [
         {

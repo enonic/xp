@@ -43,7 +43,7 @@ public class ContentTypeHandlerTest
     }
 
     @Test
-    public void testExampleListTypes()
+    public void testExampleGetTypes()
     {
         final Form form = getForm();
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
@@ -51,7 +51,7 @@ public class ContentTypeHandlerTest
         final ContentTypes contentTypes = testContentTypes();
         Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn( contentTypes );
 
-        runScript( "/site/lib/xp/examples/content/listTypes.js" );
+        runScript( "/site/lib/xp/examples/content/getTypes.js" );
     }
 
     @Test

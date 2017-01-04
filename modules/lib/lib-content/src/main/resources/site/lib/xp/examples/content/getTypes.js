@@ -3,7 +3,7 @@ var assert = require('/lib/xp/assert');
 
 // BEGIN
 // Gets the list of all content types in the system
-var contentTypes = contentLib.listTypes();
+var contentTypes = contentLib.getTypes();
 
 log.info(contentTypes.length + ' content types found:');
 contentTypes.forEach(function (ct) {

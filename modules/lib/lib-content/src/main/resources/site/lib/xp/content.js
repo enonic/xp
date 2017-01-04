@@ -39,6 +39,7 @@ function nullOrValue(value) {
  * @property {object} [icon.data] Stream with the binary data for the icon.
  * @property {string} [icon.mimeType] Mime type of the icon image.
  * @property {string} [icon.modifiedTime] Modified time of the icon. May be used for caching.
+ * @property {object[]} form Form schema represented as an array of form items: Input, ItemSet, Layout, OptionSet.
  */
 
 /**
@@ -415,7 +416,7 @@ exports.getPermissions = function (params) {
  * @example-ref examples/content/getType.js
  *
  * @param name Name of the content type, as 'app:name' (e.g. 'com.enonic.myapp:article').
- * @returns {ContentType} The content type object if found, or null otherwise.
+ * @returns {ContentType} The content type object if found, or null otherwise. See ContentType type definition below.
  */
 exports.getType = function (name) {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
@@ -426,11 +427,11 @@ exports.getType = function (name) {
 /**
  * Returns the list of all the content types currently registered in the system.
  *
- * @example-ref examples/content/listTypes.js
+ * @example-ref examples/content/getTypes.js
  *
- * @returns {ContentType[]} Array with all the content types found.
+ * @returns {ContentType[]} Array with all the content types found. See ContentType type definition below.
  */
-exports.listTypes = function () {
+exports.getTypes = function () {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
     return __.toNativeObject(bean.getAllContentTypes());
 };
