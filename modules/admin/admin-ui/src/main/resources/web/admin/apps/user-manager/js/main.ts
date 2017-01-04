@@ -35,7 +35,7 @@ function startLostConnectionDetector() {
 function startApplication() {
 
     let application: api.app.Application = getApplication();
-    let appBar = new api.app.bar.AppBar(application);
+    let appBar = new api.app.bar.TabbedAppBar(application);
     let appPanel = new UserAppPanel(appBar, application.getPath());
 
     let body = api.dom.Body.get();

@@ -46,10 +46,11 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private route(path?: api.rest.Path) {
         const action = path ? path.getElement(0) : null;
+        let id;
 
         switch (action) {
         case 'edit':
-            const id = path.getElement(1);
+            id = path.getElement(1);
             if (id && this.isValidPrincipalKey(id)) {
                 new api.security.GetPrincipalByKeyRequest(api.security.PrincipalKey.fromString(id)).sendAndParse().done(
                     (principal: api.security.Principal) => {
@@ -70,7 +71,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
             }
             break;
         case 'view':
-            const id = path.getElement(1);
+            id = path.getElement(1);
             if (id) {
                 //TODO
             }

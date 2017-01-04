@@ -13,16 +13,17 @@ export class ApplicationAppPanel extends api.app.AppPanel<Application> {
 
     private route(path?: api.rest.Path) {
         let action = path ? path.getElement(0) : undefined;
+        let id;
 
         switch (action) {
         case 'edit':
-            let id = path.getElement(1);
+            id = path.getElement(1);
             if (id) {
                 //TODO
             }
             break;
         case 'view' :
-            let id = path.getElement(1);
+            id = path.getElement(1);
             if (id) {
                 //TODO
             }
