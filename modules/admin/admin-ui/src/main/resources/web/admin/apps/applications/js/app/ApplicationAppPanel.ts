@@ -2,31 +2,27 @@ import "../api.ts";
 import {ApplicationBrowsePanel} from "./browse/ApplicationBrowsePanel";
 import Application = api.application.Application;
 
-export class ApplicationAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Application> {
+export class ApplicationAppPanel extends api.app.AppPanel<Application> {
 
-    constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
+    constructor(path?: api.rest.Path) {
 
-        super({
-            appBar: appBar
-        });
-
-        this.handleGlobalEvents();
+        super();
 
         this.route(path);
     }
 
     private route(path?: api.rest.Path) {
-        var action = path ? path.getElement(0) : undefined;
+        let action = path ? path.getElement(0) : undefined;
 
         switch (action) {
         case 'edit':
-            var id = path.getElement(1);
+            let id = path.getElement(1);
             if (id) {
                 //TODO
             }
             break;
         case 'view' :
-            var id = path.getElement(1);
+            let id = path.getElement(1);
             if (id) {
                 //TODO
             }
