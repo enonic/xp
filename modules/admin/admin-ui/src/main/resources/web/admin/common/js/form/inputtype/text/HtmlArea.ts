@@ -327,7 +327,10 @@ module api.form.inputtype.text {
         }
 
         private setStaticInputHeight() {
-            wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
+            var height = wemjq(this.getHTMLElement()).height();
+            if (height != 0) {
+                wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
+            }
         }
 
         private getEditor(editorId: string): HtmlAreaEditor {
