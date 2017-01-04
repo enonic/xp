@@ -85,7 +85,7 @@
     }
   }
 
-  .form-option-set-occurrence-view {
+  .occurrence-views-container .form-option-set-occurrence-view {
 
     .selection-message {
       display: none;
@@ -95,14 +95,26 @@
       margin-left: 0px;
     }
 
+    & > .remove-button {
+      margin: 2px 0 0 10px;
+    }
+
     .form-option-set-option-view {
 
       &:not(:last-child) {
         margin-bottom: 5px;
       }
 
-      .input-view .input-label .label {
-        color: @admin-dark-gray;
+      .input-view {
+        .input-label .label {
+          color: @admin-dark-gray;
+        }
+
+        &.invalid {
+          .bottom-button-row {
+            background-color: @input-light-red;
+          }
+        }
       }
 
       > .help-text {
