@@ -83,7 +83,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
             });
 
             this.pageModel.onReset(() => {
-                this.selectOption(pageTemplateOptions.getDefault());
+                this.selectOption(pageTemplateOptions.getDefault(), true);
             });
 
         }).catch((reason: any) => {
