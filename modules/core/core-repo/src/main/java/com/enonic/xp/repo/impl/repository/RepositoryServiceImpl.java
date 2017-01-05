@@ -83,7 +83,7 @@ public class RepositoryServiceImpl
             }
 
             //If the root node does not exist, creates it
-            if ( getRootNode( params ) != null )
+            if ( getRootNode( params ) == null )
             {
                 createRootNode( params );
             }
